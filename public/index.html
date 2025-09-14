@@ -10449,7 +10449,7 @@
                             cardsHtml = '';
                             
                             characterNames.forEach(characterName => {
-                                const cards = characterGroups[characterName];
+                                const cards = characterGroups[characterName].sort((a, b) => a.name.localeCompare(b.name));
                                 const cardItems = cards.map(card => `
                                     <div class="card-item" 
                                          draggable="true" 
