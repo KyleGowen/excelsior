@@ -8935,6 +8935,21 @@
             setTimeout(() => {
                 applyCharacterBackgroundsToEditor();
             }, 100);
+            
+            // Force layout recalculation to fix any rendering issues
+            requestAnimationFrame(() => {
+                // Trigger a reflow to ensure proper layout
+                deckCardsEditor.offsetHeight;
+                
+                // If there are any collapsed sections, ensure they're properly hidden
+                const collapsedSections = deckCardsEditor.querySelectorAll('.deck-section.collapsed');
+                collapsedSections.forEach(section => {
+                    const content = section.querySelector('.deck-section-content');
+                    if (content) {
+                        content.style.display = 'none';
+                    }
+                });
+            });
         }
         
         // Apply background images to character, power, location, special, mission, and aspect cards in deck editor
@@ -11316,6 +11331,15 @@
             
             // Validate deck after adding card
             await showDeckValidation(deckEditorCards);
+            
+            // Force layout recalculation after adding card
+            requestAnimationFrame(() => {
+                const deckCardsEditor = document.getElementById('deckCardsEditor');
+                if (deckCardsEditor) {
+                    // Trigger a reflow to ensure proper layout
+                    deckCardsEditor.offsetHeight;
+                }
+            });
         }
 
         async function saveDeckChanges() {
