@@ -449,7 +449,14 @@ class InMemoryDatabase {
       // Victory Harben special cards - map to correct image files
       'abner_perrys_lab_assistant': 'specials/266_abner_perrys_lab_assistant.webp',
       'archery_knives_jiujitsu': 'specials/267_archery_knives_and_jiu_jitsu.webp',
-      'chamstonhedding_estate': 'specials/268_chamston-hedding_estate.webp'
+      'chamstonhedding_estate': 'specials/268_chamston-hedding_estate.webp',
+      
+      // Count of Monte Cristo special cards - map to correct image files
+      'friend_to_foe': 'specials/043_friend_or_foe.webp',
+      'jacopo': 'specials/044_jacopo.webp',
+      'network_of_thieves': 'specials/045_network_of_theives.webp',
+      'surprise_swordsman': 'specials/046_suprise_swordsman.webp',
+      'unlimited_resources': 'specials/047_unlimited_resources.webp'
     };
     
     if (knownMismatches[snakeCaseName]) {
@@ -1723,6 +1730,9 @@ class InMemoryDatabase {
             
             if (powerType && value && !isNaN(value)) {
               const alternateImages = this.getPowerCardAlternateImages(powerType, value);
+              if (alternateImages.length > 0) {
+                console.log(`🔍 Power card ${powerType} ${value} has ${alternateImages.length} alternate images:`, alternateImages);
+              }
               const card: PowerCard = {
                 id: `power_${this.nextPowerCardId++}`,
                 power_type: powerType,
