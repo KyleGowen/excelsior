@@ -7556,7 +7556,7 @@
                     let visibleCount = 0;
                     
                     cardItems.forEach(cardItem => {
-                        const cardText = cardItem.textContent.trim();
+                        const cardText = cardItem.textContent.trim().replace(/\s+/g, ' ').replace(/\s*\+$/, '');
                         console.log(`  Processing power card: "${cardText}"`);
                         const match = cardText.match(/^(\d+) - (.+)$/);
                         
