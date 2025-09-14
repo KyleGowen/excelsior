@@ -7523,6 +7523,10 @@
                 .map(card => characterMap[card.cardId])
                 .filter(char => char); // Remove undefined entries
             
+            console.log(`Power cards filter: Found ${deckCharacters.length} characters in deck`);
+            if (deckCharacters.length === 0) {
+                console.log('No characters in deck - showing all power cards');
+            }
             
             // Get all power card groups
             const powerGroups = powerCardsCategory.querySelectorAll('.character-group');
@@ -7535,6 +7539,18 @@
                 const powerType = header.textContent.split(' (')[0];
                 
                 if (isChecked) {
+                    // If no characters in deck, show all power cards
+                    if (deckCharacters.length === 0) {
+                        const cardItems = group.querySelectorAll('.card-item');
+                        cardItems.forEach(cardItem => {
+                            cardItem.style.display = 'block';
+                        });
+                        group.style.display = 'block';
+                        totalVisibleCards += cardItems.length;
+                        console.log(`  ${powerType}: showing all ${cardItems.length} cards (no characters in deck)`);
+                        return;
+                    }
+                    
                     // Filter power cards based on character stats
                     const cardItems = group.querySelectorAll('.card-item');
                     let visibleCount = 0;
