@@ -8664,7 +8664,7 @@
                         
                         sortedCharacterNames.forEach(characterName => {
                             const characterCards = characterGroups[characterName];
-                            const cardCount = characterCards.length;
+                            const cardCount = characterCards.reduce((total, card) => total + (card.quantity || 1), 0);
                             
                             // Check if this character group should be expanded
                             const isExpanded = characterGroupExpansionState[characterName] === true;
@@ -8770,7 +8770,7 @@
                         
                         sortedPowerTypes.forEach(powerType => {
                             const powerTypeCards = powerTypeGroups[powerType];
-                            const cardCount = powerTypeCards.length;
+                            const cardCount = powerTypeCards.reduce((total, card) => total + (card.quantity || 1), 0);
                             
                             // Check if this power type group should be expanded
                             const isExpanded = characterGroupExpansionState[`power_${powerType}`] === true;
