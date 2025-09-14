@@ -10051,6 +10051,15 @@
                 const availableCard = availableCardsMap.get(`${specialCard.type}_${specialCard.cardId}`);
                 if (!availableCard) return true; // Remove if card not found
                 
+                // Check if this is an "Any Character" special card - these should never be removed
+                const isAnyCharacter = availableCard.character === 'Any Character' || 
+                                     availableCard.character_name === 'Any Character' ||
+                                     (availableCard.characters && availableCard.characters.includes('Any Character'));
+                
+                if (isAnyCharacter) {
+                    return false; // Don't remove "Any Character" cards
+                }
+                
                 // Check if this special card belongs to any selected character
                 const belongsToCharacter = characterNames.some(charName => {
                     return availableCard.character === charName || 
