@@ -175,6 +175,19 @@ app.get('/api/special-cards/:id/alternate-images', (req, res) => {
   }
 });
 
+app.get('/api/power-cards/:id/alternate-images', (req, res) => {
+  try {
+    const powerCard = database.getPowerCardById(req.params.id);
+    if (!powerCard) {
+      return res.status(404).json({ success: false, error: 'Power card not found' });
+    }
+    
+    res.json({ success: true, data: powerCard.alternateImages || [] });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to fetch alternate images' });
+  }
+});
+
 app.get('/api/locations', (req, res) => {
   try {
     const locations = database.getAllLocations();

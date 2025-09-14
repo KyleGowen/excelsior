@@ -306,6 +306,36 @@ class InMemoryDatabase {
     return alternateImages;
   }
 
+  private getPowerCardAlternateImages(powerType: string, value: number): string[] {
+    const alternateImages: string[] = [];
+    const alternateDir = path.join(process.cwd(), 'src/resources/cards/images/power-cards/alternate');
+    
+    if (!fs.existsSync(alternateDir)) {
+      return alternateImages;
+    }
+    
+    try {
+      const files = fs.readdirSync(alternateDir);
+      const powerTypeLower = powerType.toLowerCase().replace(/\s+/g, '_');
+      
+      for (const file of files) {
+        if (file.endsWith('.webp') || file.endsWith('.png')) {
+          const fileName = file.toLowerCase().replace(/\.(webp|png)$/, '');
+          // Check if the filename matches the power type and value
+          // This handles cases like "8_intelligence.webp" for Intelligence power cards with value 8
+          if (fileName === `${value}_${powerTypeLower}` || 
+              fileName.startsWith(`${value}_${powerTypeLower}`)) {
+            alternateImages.push(file);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error reading power card alternate images directory:', error);
+    }
+    
+    return alternateImages;
+  }
+
   public getCharacterEffectiveImage(characterId: string, selectedAlternateImage?: string): string {
     const character = this.characters.get(characterId);
     if (!character) {
@@ -334,6 +364,21 @@ class InMemoryDatabase {
     
     // Otherwise, use the default image
     return specialCard.image;
+  }
+
+  public getPowerCardEffectiveImage(powerCardId: string, selectedAlternateImage?: string): string {
+    const powerCard = this.powerCards.get(powerCardId);
+    if (!powerCard) {
+      return '';
+    }
+    
+    // If a specific alternate image is selected, use it
+    if (selectedAlternateImage && powerCard.alternateImages?.includes(selectedAlternateImage)) {
+      return `power-cards/alternate/${selectedAlternateImage}`;
+    }
+    
+    // Otherwise, use the default image
+    return powerCard.image;
   }
 
   private getSpecialCardImage(cardName: string): string {
@@ -705,6 +750,11 @@ class InMemoryDatabase {
   // Special card management
   getSpecialCardById(id: string): SpecialCard | undefined {
     return this.specialCards.get(id);
+  }
+
+  // Power card management
+  getPowerCardById(id: string): PowerCard | undefined {
+    return this.powerCards.get(id);
   }
 
   getAllSpecialCards(): SpecialCard[] {
@@ -1672,11 +1722,13 @@ class InMemoryDatabase {
             const value = parseInt(cols[1]);
             
             if (powerType && value && !isNaN(value)) {
+              const alternateImages = this.getPowerCardAlternateImages(powerType, value);
               const card: PowerCard = {
                 id: `power_${this.nextPowerCardId++}`,
                 power_type: powerType,
                 value: value,
-                image: this.getPowerCardImage(powerType, value)
+                image: this.getPowerCardImage(powerType, value),
+                ...(alternateImages.length > 0 && { alternateImages })
               };
               this.powerCards.set(card.id, card);
             }

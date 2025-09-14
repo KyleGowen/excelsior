@@ -9087,9 +9087,9 @@
                             const selectedAlternateImage = card.selectedAlternateImage;
                             const bgImageData = (isCharacter || isPower || isLocation || isMission || isEvent || isAspect || isTeamwork || card.type === 'ally_universe' || card.type === 'basic_universe' || card.type === 'advanced_universe' || card.type === 'training') ? `data-bg-image="${getCardImagePath(availableCard, card.type, selectedAlternateImage)}"` : '';
                             
-                            // Add alternate art button for characters and special cards with alternate images
+                            // Add alternate art button for characters, special cards, and power cards with alternate images
                             let alternateArtButton = '';
-                            if ((isCharacter || card.type === 'special') && availableCard.alternateImages && availableCard.alternateImages.length > 0) {
+                            if ((isCharacter || card.type === 'special' || card.type === 'power') && availableCard.alternateImages && availableCard.alternateImages.length > 0) {
                                 const cardName = (availableCard.name || availableCard.card_name || getCardName(card)).replace(/'/g, "\\'");
                                 alternateArtButton = `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>`;
                             }
@@ -9785,6 +9785,11 @@
                         return imagePath;
                     }
                 } else if (cardType === 'power') {
+                    // If a specific alternate image is selected, use it
+                    if (selectedAlternateImage && card.alternateImages && card.alternateImages.includes(selectedAlternateImage)) {
+                        return `/src/resources/cards/images/power-cards/alternate/${selectedAlternateImage}`;
+                    }
+                    
                     // Power cards use the image field (which already includes the directory)
                     if (card.image) {
                         return `/src/resources/cards/images/${card.image}`;
@@ -11326,18 +11331,23 @@
             }
             
             // Determine image paths based on card type
-            const defaultImagePath = cardType === 'character' 
-                ? `/src/resources/cards/images/characters/${card.image}`
-                : `/src/resources/cards/images/${card.image}`;
-            const alternateImagePath = cardType === 'character'
-                ? '/src/resources/cards/images/characters/alternate/'
-                : '/src/resources/cards/images/specials/alternate/';
+            let defaultImagePath, alternateImagePath;
+            if (cardType === 'character') {
+                defaultImagePath = `/src/resources/cards/images/characters/${card.image}`;
+                alternateImagePath = '/src/resources/cards/images/characters/alternate/';
+            } else if (cardType === 'power') {
+                defaultImagePath = `/src/resources/cards/images/${card.image}`;
+                alternateImagePath = '/src/resources/cards/images/power-cards/alternate/';
+            } else {
+                defaultImagePath = `/src/resources/cards/images/${card.image}`;
+                alternateImagePath = '/src/resources/cards/images/specials/alternate/';
+            }
             
             const modal = document.createElement('div');
             modal.className = 'alternate-art-modal';
             modal.innerHTML = `
                 <div class="alternate-art-content">
-                    <h3>Select Art for ${card.name}</h3>
+                    <h3>Select Art for ${cardType === 'power' ? `${card.value} - ${card.power_type}` : card.name}</h3>
                     <div class="alternate-art-options">
                         <div class="art-option ${currentSelectedImage === card.image ? 'selected' : ''}" data-image="${card.image}">
                             <img src="${defaultImagePath}" alt="Default Art">
@@ -11389,13 +11399,18 @@
 
         // Function to show alternate art selection for existing card
         function showAlternateArtSelectionForExistingCard(cardId, cardIndex) {
-            // Get card data from availableCardsMap (try both character and special)
+            // Get card data from availableCardsMap (try character, special, and power)
             let card = availableCardsMap.get(`character_${cardId}`);
             let cardType = 'character';
             
             if (!card) {
                 card = availableCardsMap.get(`special_${cardId}`);
                 cardType = 'special';
+            }
+            
+            if (!card) {
+                card = availableCardsMap.get(`power_${cardId}`);
+                cardType = 'power';
             }
             
             if (!card) {
@@ -11464,6 +11479,15 @@
                 const specialCard = availableCardsMap.get(`special_${cardId}`);
                 if (specialCard && specialCard.alternateImages && specialCard.alternateImages.length > 0 && !selectedAlternateImage) {
                     showAlternateArtSelection(specialCard, cardId, cardName, null, 'special');
+                    return;
+                }
+            }
+            
+            // Check if power card has alternate images and none selected
+            if (cardType === 'power') {
+                const powerCard = availableCardsMap.get(`power_${cardId}`);
+                if (powerCard && powerCard.alternateImages && powerCard.alternateImages.length > 0 && !selectedAlternateImage) {
+                    showAlternateArtSelection(powerCard, cardId, cardName, null, 'power');
                     return;
                 }
             }

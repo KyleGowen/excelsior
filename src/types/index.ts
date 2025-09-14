@@ -141,6 +141,7 @@ export interface PowerCard {
   power_type: string;   // Energy | Combat | Brute Force | Intelligence | Any-Power | Multi-Power
   value: number;        // 1..8, or 3..5 for Multi-Power
   image: string;
+  alternateImages?: string[]; // Array of alternate image filenames
 }
 
 // Deck management interfaces
