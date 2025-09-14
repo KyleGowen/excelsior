@@ -7165,23 +7165,26 @@
             }
         }
 
-        // Toggle character group collapse/expand within special cards
-        function toggleCharacterGroup(headerElement) {
+        // Toggle character group collapse/expand within special cards and power cards
+        function toggleCharacterGroup(headerElement, groupKey = null) {
             const group = headerElement.closest('.character-group');
             const content = group.querySelector('.character-group-content');
             const icon = headerElement.querySelector('.collapse-icon');
-            const characterName = headerElement.querySelector('span').textContent.split(' (')[0]; // Extract character name
+            const groupName = headerElement.querySelector('span').textContent.split(' (')[0]; // Extract group name
+            
+            // Use provided groupKey or fall back to groupName for backward compatibility
+            const stateKey = groupKey || groupName;
             
             if (content.classList.contains('collapsed')) {
                 // Expand
                 content.classList.remove('collapsed');
                 icon.textContent = '▼';
-                characterGroupExpansionState[characterName] = true;
+                characterGroupExpansionState[stateKey] = true;
             } else {
                 // Collapse
                 content.classList.add('collapsed');
                 icon.textContent = '▶';
-                characterGroupExpansionState[characterName] = false;
+                characterGroupExpansionState[stateKey] = false;
             }
             
             // Save character group expansion state
@@ -8723,6 +8726,104 @@
                                             ${card.quantity > 1 ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
                                             <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
                                             ${alternateArtButton}
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                            
+                            cardsHtml += `
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else if (type === 'power') {
+                        // Special handling for power cards - group by power type
+                        const powerTypeGroups = {};
+                        
+                        typeCards.forEach(cardData => {
+                            const card = cardData;
+                            // Convert internal type format to map key format
+                            let mapKeyType = card.type;
+                            if (card.type === 'ally_universe') {
+                                mapKeyType = 'ally-universe';
+                            } else if (card.type === 'basic_universe') {
+                                mapKeyType = 'basic-universe';
+                            } else if (card.type === 'advanced_universe') {
+                                mapKeyType = 'advanced-universe';
+                            }
+                            const availableCard = availableCardsMap.get(`${mapKeyType}_${card.cardId}`);
+                            
+                            if (!availableCard) {
+                                console.warn('Power card not found in availableCardsMap:', card);
+                                return;
+                            }
+                            
+                            const powerType = availableCard.power_type || 'Unknown';
+                            if (!powerTypeGroups[powerType]) {
+                                powerTypeGroups[powerType] = [];
+                            }
+                            powerTypeGroups[powerType].push(cardData);
+                        });
+                        
+                        // Sort power types alphabetically
+                        const sortedPowerTypes = Object.keys(powerTypeGroups).sort((a, b) => a.localeCompare(b));
+                        
+                        sortedPowerTypes.forEach(powerType => {
+                            const powerTypeCards = powerTypeGroups[powerType];
+                            const cardCount = powerTypeCards.length;
+                            
+                            // Check if this power type group should be expanded
+                            const isExpanded = characterGroupExpansionState[`power_${powerType}`] === true;
+                            const collapsedClass = isExpanded ? '' : 'collapsed';
+                            const iconText = isExpanded ? '▼' : '▶';
+                            
+                            cardsHtml += `
+                                <div class="character-group">
+                                    <div class="character-group-header" onclick="toggleCharacterGroup(this, 'power_${powerType}')">
+                                        <span>${powerType} (${cardCount})</span>
+                                        <span class="collapse-icon">${iconText}</span>
+                                    </div>
+                                    <div class="character-group-content ${collapsedClass}">
+                            `;
+                            
+                            powerTypeCards.forEach(cardData => {
+                                const card = cardData;
+                                const index = cardData.originalIndex;
+                                // Convert internal type format to map key format
+                                let mapKeyType = card.type;
+                                if (card.type === 'ally_universe') {
+                                    mapKeyType = 'ally-universe';
+                                } else if (card.type === 'basic_universe') {
+                                    mapKeyType = 'basic-universe';
+                                } else if (card.type === 'advanced_universe') {
+                                    mapKeyType = 'advanced-universe';
+                                }
+                                const availableCard = availableCardsMap.get(`${mapKeyType}_${card.cardId}`);
+                                
+                                if (!availableCard) {
+                                    console.warn('Card not found in availableCardsMap:', card);
+                                    return;
+                                }
+                                
+                                // Power card details - no additional details needed
+                                const cardDetails = '';
+                                
+                                cardsHtml += `
+                                    <div class="deck-card-editor-item preview-view power-card" draggable="true" data-index="${index}" data-type="${card.type}"
+                                         data-bg-image="${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}"
+                                         onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}', '${`${availableCard.value} - ${availableCard.power_type}`.replace(/\\'92/g, "'").replace(/'/g, "\\'")}')"
+                                         onmouseleave="hideCardHoverModal()"
+                                         ondragstart="handleDeckCardDragStart(event)"
+                                         ondragend="handleDeckCardDragEnd(event)"
+                                         ondragover="handleDeckCardDragOver(event)"
+                                         ondrop="handleDeckCardDrop(event)">
+                                        <div class="deck-card-editor-info">
+                                            <div class="deck-card-editor-name">${`${availableCard.value} - ${availableCard.power_type}`.replace(/\\'92/g, "'").replace(/'/g, "\\'")} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
+                                            <div class="deck-card-editor-stats">${cardDetails}</div>
+                                        </div>
+                                        <div class="deck-card-editor-actions">
+                                            ${card.quantity > 1 ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
+                                            <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
                                         </div>
                                     </div>
                                 `;
