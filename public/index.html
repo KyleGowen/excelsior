@@ -9422,12 +9422,12 @@
             // Apply the expansion state to each section
             console.log('Applying expansion state:', deckEditorExpansionState);
             Object.keys(deckEditorExpansionState).forEach(type => {
-                const section = document.getElementById(`deck-type-${type}`);
-                console.log(`Looking for section deck-type-${type}:`, section);
-                if (section) {
-                    const cardsDiv = section.querySelector('.deck-type-cards');
-                    const header = section.previousElementSibling;
-                    const toggle = header.querySelector('.deck-type-toggle');
+                const cardsDiv = document.getElementById(`deck-type-${type}`);
+                console.log(`Looking for cards div deck-type-${type}:`, cardsDiv);
+                if (cardsDiv) {
+                    const section = cardsDiv.closest('.deck-type-section');
+                    const header = section ? section.querySelector('.deck-type-header') : null;
+                    const toggle = header ? header.querySelector('.deck-type-toggle') : null;
                     
                     console.log(`Section ${type} - cardsDiv:`, cardsDiv, 'header:', header, 'toggle:', toggle);
                     
