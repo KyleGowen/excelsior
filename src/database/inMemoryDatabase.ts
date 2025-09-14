@@ -457,7 +457,10 @@ class InMemoryDatabase implements OverPowerRepository {
       'jacopo': 'specials/044_jacopo.webp',
       'network_of_thieves': 'specials/045_network_of_theives.webp',
       'surprise_swordsman': 'specials/046_suprise_swordsman.webp',
-      'unlimited_resources': 'specials/047_unlimited_resources.webp'
+      'unlimited_resources': 'specials/047_unlimited_resources.webp',
+      
+      // Professor Moriarty special cards - map to correct image files
+      'mathematical_genius': 'specials/185_mathematical_genius.webp'
     };
     
     if (knownMismatches[snakeCaseName]) {
