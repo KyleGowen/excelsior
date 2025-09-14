@@ -147,7 +147,7 @@ export class DeckPersistenceService {
     if (existingCardIndex >= 0) {
       // Update existing card quantity and alternate image if provided
       deck.cards[existingCardIndex].quantity += quantity;
-      if (selectedAlternateImage && (cardType === 'character' || cardType === 'special')) {
+      if (selectedAlternateImage && (cardType === 'character' || cardType === 'special' || cardType === 'power')) {
         deck.cards[existingCardIndex].selectedAlternateImage = selectedAlternateImage;
       }
     } else {
@@ -157,7 +157,7 @@ export class DeckPersistenceService {
         type: cardType,
         cardId,
         quantity,
-        ...((cardType === 'character' || cardType === 'special') && selectedAlternateImage && { selectedAlternateImage })
+        ...((cardType === 'character' || cardType === 'special' || cardType === 'power') && selectedAlternateImage && { selectedAlternateImage })
       };
       deck.cards.push(newCard);
     }

@@ -8874,6 +8874,13 @@
                                     // Power card details - no additional details needed
                                     const cardDetails = '';
                                     
+                                    // Add alternate art button for power cards with alternate images
+                                    let alternateArtButton = '';
+                                    if (availableCard.alternateImages && availableCard.alternateImages.length > 0) {
+                                        const cardName = (availableCard.name || availableCard.card_name || getCardName(card)).replace(/'/g, "\\'");
+                                        alternateArtButton = `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>`;
+                                    }
+                                    
                                     cardsHtml += `
                                         <div class="deck-card-editor-item preview-view power-card" draggable="true" data-index="${index}" data-type="${card.type}"
                                              data-bg-image="${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}"
@@ -8890,6 +8897,7 @@
                                             <div class="deck-card-editor-actions">
                                                 ${card.quantity > 1 ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
                                                 <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
+                                                ${alternateArtButton}
                                             </div>
                                         </div>
                                     `;
@@ -8927,6 +8935,13 @@
                                 // Power card details - no additional details needed
                                 const cardDetails = '';
                                 
+                                // Add alternate art button for power cards with alternate images
+                                let alternateArtButton = '';
+                                if (availableCard.alternateImages && availableCard.alternateImages.length > 0) {
+                                    const cardName = (availableCard.name || availableCard.card_name || getCardName(card)).replace(/'/g, "\\'");
+                                    alternateArtButton = `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>`;
+                                }
+                                
                                 cardsHtml += `
                                     <div class="deck-card-editor-item preview-view power-card" draggable="true" data-index="${index}" data-type="${card.type}"
                                          data-bg-image="${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}"
@@ -8943,6 +8958,7 @@
                                         <div class="deck-card-editor-actions">
                                             ${card.quantity > 1 ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
                                             <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
+                                            ${alternateArtButton}
                                         </div>
                                     </div>
                                 `;
