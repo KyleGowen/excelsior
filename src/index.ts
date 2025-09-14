@@ -1,5 +1,5 @@
 import express from 'express';
-import { database } from './database/inMemoryDatabase';
+import { DataSourceConfig } from './config/DataSourceConfig';
 import { DeckPersistenceService } from './services/deckPersistence';
 import { UserPersistenceService } from './persistence/userPersistence';
 import { Character } from './types';
@@ -11,6 +11,8 @@ const PORT = process.env.PORT || 3000;
 // Initialize services
 const deckService = new DeckPersistenceService();
 const userService = new UserPersistenceService();
+const dataSource = DataSourceConfig.getInstance();
+const repository = dataSource.getRepository();
 
 // Middleware
 app.use(express.json());
@@ -35,11 +37,11 @@ app.use('/src/resources/cards/images', express.static(path.join(process.cwd(), '
 app.use('/src/resources/images', express.static(path.join(process.cwd(), 'src/resources/images')));
 
 // Initialize database
-database.initialize().then(() => {
+repository.initialize().then(() => {
   console.log('🚀 Overpower Deckbuilder server running on port', PORT);
   console.log('📖 API documentation available at http://localhost:' + PORT);
   
-  const stats = database.getStats();
+  const stats = repository.getStats();
   console.log('🔍 Database loaded:', stats.characters, 'characters,', stats.locations, 'locations');
 });
 
@@ -142,7 +144,7 @@ app.get('/api/auth/me', authenticateUser, (req: any, res) => {
 // API Routes
 app.get('/api/characters', (req, res) => {
   try {
-    const characters = database.getAllCharacters();
+    const characters = repository.getAllCharacters();
     res.json({ success: true, data: characters });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch characters' });
@@ -151,7 +153,7 @@ app.get('/api/characters', (req, res) => {
 
 app.get('/api/characters/:id/alternate-images', (req, res) => {
   try {
-    const character = database.getCharacterById(req.params.id);
+    const character = repository.getCharacterById(req.params.id);
     if (!character) {
       return res.status(404).json({ success: false, error: 'Character not found' });
     }
@@ -164,7 +166,7 @@ app.get('/api/characters/:id/alternate-images', (req, res) => {
 
 app.get('/api/special-cards/:id/alternate-images', (req, res) => {
   try {
-    const specialCard = database.getSpecialCardById(req.params.id);
+    const specialCard = repository.getSpecialCardById(req.params.id);
     if (!specialCard) {
       return res.status(404).json({ success: false, error: 'Special card not found' });
     }
@@ -177,7 +179,7 @@ app.get('/api/special-cards/:id/alternate-images', (req, res) => {
 
 app.get('/api/power-cards/:id/alternate-images', (req, res) => {
   try {
-    const powerCard = database.getPowerCardById(req.params.id);
+    const powerCard = repository.getPowerCardById(req.params.id);
     if (!powerCard) {
       return res.status(404).json({ success: false, error: 'Power card not found' });
     }
@@ -190,7 +192,7 @@ app.get('/api/power-cards/:id/alternate-images', (req, res) => {
 
 app.get('/api/locations', (req, res) => {
   try {
-    const locations = database.getAllLocations();
+    const locations = repository.getAllLocations();
     res.json({ success: true, data: locations });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch locations' });
@@ -199,7 +201,7 @@ app.get('/api/locations', (req, res) => {
 
 app.get('/api/special-cards', (req, res) => {
   try {
-    const specialCards = database.getAllSpecialCards();
+    const specialCards = repository.getAllSpecialCards();
     res.json({ success: true, data: specialCards });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch special cards' });
@@ -208,7 +210,7 @@ app.get('/api/special-cards', (req, res) => {
 
 app.get('/api/missions', (req, res) => {
   try {
-    const missions = database.getAllMissions();
+    const missions = repository.getAllMissions();
     res.json({ success: true, data: missions });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch missions' });
@@ -217,7 +219,7 @@ app.get('/api/missions', (req, res) => {
 
 app.get('/api/events', (req, res) => {
   try {
-    const events = database.getAllEvents();
+    const events = repository.getAllEvents();
     res.json({ success: true, data: events });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch events' });
@@ -226,7 +228,7 @@ app.get('/api/events', (req, res) => {
 
 app.get('/api/aspects', (req, res) => {
   try {
-    const aspects = database.getAllAspects();
+    const aspects = repository.getAllAspects();
     res.json({ success: true, data: aspects });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch aspects' });
@@ -235,7 +237,7 @@ app.get('/api/aspects', (req, res) => {
 
 app.get('/api/advanced-universe', (req, res) => {
   try {
-    const advancedUniverse = database.getAllAdvancedUniverse();
+    const advancedUniverse = repository.getAllAdvancedUniverse();
     res.json({ success: true, data: advancedUniverse });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch advanced universe' });
@@ -244,7 +246,7 @@ app.get('/api/advanced-universe', (req, res) => {
 
 app.get('/api/teamwork', (req, res) => {
   try {
-    const teamwork = database.getAllTeamwork();
+    const teamwork = repository.getAllTeamwork();
     res.json({ success: true, data: teamwork });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch teamwork' });
@@ -253,7 +255,7 @@ app.get('/api/teamwork', (req, res) => {
 
 app.get('/api/ally-universe', (req, res) => {
   try {
-    const ally = database.getAllAllyUniverse();
+    const ally = repository.getAllAllyUniverse();
     res.json({ success: true, data: ally });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch ally universe' });
@@ -262,7 +264,7 @@ app.get('/api/ally-universe', (req, res) => {
 
 app.get('/api/training', (req, res) => {
   try {
-    const training = database.getAllTraining();
+    const training = repository.getAllTraining();
     res.json({ success: true, data: training });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch training cards' });
@@ -271,7 +273,7 @@ app.get('/api/training', (req, res) => {
 
 app.get('/api/basic-universe', (req, res) => {
   try {
-    const basicUniverse = database.getAllBasicUniverse();
+    const basicUniverse = repository.getAllBasicUniverse();
     res.json({ success: true, data: basicUniverse });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch basic universe cards' });
@@ -280,7 +282,7 @@ app.get('/api/basic-universe', (req, res) => {
 
 app.get('/api/power-cards', (req, res) => {
   try {
-    const powerCards = database.getAllPowerCards();
+    const powerCards = repository.getAllPowerCards();
     res.json({ success: true, data: powerCards });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch power cards' });
@@ -288,9 +290,9 @@ app.get('/api/power-cards', (req, res) => {
 });
 
 app.get('/test', (req, res) => {
-  const characters = database.getAllCharacters();
-  const locations = database.getAllLocations();
-  const stats = database.getStats();
+  const characters = repository.getAllCharacters();
+  const locations = repository.getAllLocations();
+  const stats = repository.getStats();
   
   res.json({
     characters: characters.length,
@@ -302,7 +304,7 @@ app.get('/test', (req, res) => {
 
 app.get('/api/users', (req, res) => {
   try {
-    const users = database.getAllUsers();
+    const users = repository.getAllUsers();
     res.json({ success: true, data: users });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch users' });

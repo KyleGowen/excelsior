@@ -1,8 +1,9 @@
 import { User, Deck, Character, Location, SpecialCard, Mission, Event, Aspect, AdvancedUniverse, Teamwork, AllyUniverse, TrainingCard, BasicUniverse, PowerCard, ApiResponse } from '../types';
+import { OverPowerRepository } from '../repository/OverPowerRepository';
 import * as fs from 'fs';
 import * as path from 'path';
 
-class InMemoryDatabase {
+class InMemoryDatabase implements OverPowerRepository {
   private users: Map<string, User> = new Map();
   private decks: Map<string, Deck> = new Map();
   private characters: Map<string, Character> = new Map();
@@ -1795,5 +1796,5 @@ class InMemoryDatabase {
   }
 }
 
-export const database = new InMemoryDatabase();
+export { InMemoryDatabase };
 
