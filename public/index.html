@@ -9420,21 +9420,27 @@
             }
             
             // Apply the expansion state to each section
+            console.log('Applying expansion state:', deckEditorExpansionState);
             Object.keys(deckEditorExpansionState).forEach(type => {
                 const section = document.getElementById(`deck-type-${type}`);
+                console.log(`Looking for section deck-type-${type}:`, section);
                 if (section) {
                     const cardsDiv = section.querySelector('.deck-type-cards');
                     const header = section.previousElementSibling;
                     const toggle = header.querySelector('.deck-type-toggle');
                     
+                    console.log(`Section ${type} - cardsDiv:`, cardsDiv, 'header:', header, 'toggle:', toggle);
+                    
                     if (cardsDiv && header && toggle) {
                         if (!deckEditorExpansionState[type]) {
                             // Collapse the section
+                            console.log(`Collapsing section ${type}`);
                             cardsDiv.style.display = 'none';
                             toggle.textContent = '▶';
                             header.classList.add('collapsed');
                         } else {
                             // Expand the section (default state)
+                            console.log(`Expanding section ${type}`);
                             cardsDiv.style.display = 'block';
                             toggle.textContent = '▼';
                             header.classList.remove('collapsed');
@@ -10317,7 +10323,7 @@
                                              draggable="${!isCharacterLimitReached}" 
                                              data-type="${category.type}" 
                                              data-id="${card.id}"
-                                             onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${card.name.replace(/'/g, "\\'")}')"
+                                             onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
                                              onmouseleave="hideCardHoverModal()"
                                              onclick="handleCardClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')"
                                              data-name="${card[category.nameField]}"
@@ -10363,7 +10369,7 @@
                                              draggable="${!isMissionLimitReached}" 
                                              data-type="${category.type}" 
                                              data-id="${card.id}"
-                                             onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${card.name.replace(/'/g, "\\'")}')"
+                                             onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
                                              onmouseleave="hideCardHoverModal()"
                                              onclick="handleCardClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')"
                                              data-name="${card[category.nameField]}"
@@ -10411,7 +10417,7 @@
                                          draggable="true" 
                                          data-type="${category.type}" 
                                          data-id="${card.id}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${card.name.replace(/'/g, "\\'")}')"
+                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
                                          onmouseleave="hideCardHoverModal()"
                                          onclick="handleCardClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')"
                                          onclick="handleCardClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')"
@@ -10455,7 +10461,7 @@
                                          draggable="true" 
                                          data-type="${category.type}" 
                                          data-id="${card.id}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${card.name.replace(/'/g, "\\'")}')"
+                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
                                          onmouseleave="hideCardHoverModal()"
                                          onclick="handleCardClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')"
                                          data-name="${card[category.nameField]}">
@@ -10499,7 +10505,7 @@
                                          draggable="true" 
                                          data-type="${category.type}" 
                                          data-id="${card.id}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${card.name.replace(/'/g, "\\'")}')"
+                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
                                          onmouseleave="hideCardHoverModal()"
                                          onclick="handleCardClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')"
                                          data-name="${card[category.nameField]}">
@@ -10710,7 +10716,7 @@
                                      draggable="true" 
                                      data-type="${category.type}" 
                                      data-id="${card.id}"
-                                     onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${card.name.replace(/'/g, "\\'")}')"
+                                     onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
                                      onmouseleave="hideCardHoverModal()"
                                      data-name="${card[category.nameField]}">
                                     <div class="card-item-content">${card[category.nameField]}</div>
