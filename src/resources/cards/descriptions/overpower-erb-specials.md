@@ -75,11 +75,16 @@
 
 ## Count of Monte Cristo
 
-| Card Name | Card Type | Character | Card Effect |
-|-----------|-----------|-----------|--------------|
+## Count of Monte Cristo
+
+| Card Name           | Card Type   | Character           | Card Effect |
+|--------------------|-------------|--------------------|-------------|
 | Friend to Foe | Special Card | Count of Monte Cristo | Count of Monte Cristo steals 1 placed Power card from target character. Count of Monte Cristo must immediately attack with the stolen card against a different Front Line character. **One Per Deck** |
 | Jacopo | Special Card | Count of Monte Cristo | Acts as a level 4 Brute Force attack. Count of Monte Cristo may make 1 additional numerical attack face down. Opponent must guess defense. **One Per Deck** |
-n
+| Network of Thieves | Special Card | Count of Monte Cristo | Acts as a level 6 Influence attack. If successful, target character must discard 2 cards of Opponent’s choice. Cards must be placed, exposed to target, or in hand. |
+| Surprise Swordsman | Special Card | Count of Monte Cristo | Avoid 1 attack with a Combat or Brute Force Icon. Opponent must discard 1 card of their choice from hand. |
+| Unlimited Resources | Special Card | Count of Monte Cristo | Draw 3 cards. Discard duplicates. **One Per Deck** |
+
 ## Angry Mob
 
 | Card Name | Card Type | Character | Card Effect |
@@ -94,13 +99,6 @@ n
 | Union Power | Special Card | Angry Mob | Acts as a level 8 MultiPower attack. If successful, Angry Mob's team is +2 to defense for remainder of battle. **One Per Deck** |
 | Online Cyber Attack | Special Card | Angry Mob | Acts as a level 7 Intelligence attack. If successful, Opponent may not use cards with an Intelligence icon to attack for remainder of battle. **One Per Deck** |
 | Ransom Your Secrets | Special Card | Angry Mob | Opponent must immediately, and after each Venture phase, reveal hand and play open handed for remainder of battle. After the turn, Opponent may discard any 2 cards, placed or in hand, to negate this card. **One Per Deck** |
-
-## Count of Monte Cristo
-
-| Card Name | Card Type | Character | Card Effect |
-|-----------|-----------|-----------|--------------|
-| Friend to Foe | Special Card | Count of Monte Cristo | Count of Monte Cristo steals 1 placed Power card from target character. Count of Monte Cristo must immediately attack with the stolen card against a different Front Line character. **One Per Deck** |
-| Jacopo | Special Card | Count of Monte Cristo | Acts as a level 4 Brute Force attack. Count of Monte Cristo may make 1 additional numerical attack face down. Opponent must guess defense. **One Per Deck** |
 
 ## Cthulhu
 
