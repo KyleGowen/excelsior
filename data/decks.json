@@ -262,389 +262,389 @@
       "name": "Dr. Acula",
       "description": "Dracula and Sherlock Holmes found themselves unlikely allies when London was threatened by a shadowy mastermind who commanded both science and sorcery.",
       "created": "2025-09-11T03:25:02.252Z",
-      "lastModified": "2025-09-14T16:15:53.606Z",
+      "lastModified": "2025-09-14T16:29:47.489Z",
       "cardCount": 62,
       "userId": "kyle-001"
     },
     "cards": [
       {
-        "id": "cd8adaf1-2d30-4478-aae5-a96ca76aa386",
+        "id": "bad86c6f-8f52-4873-8273-954e0a30aef3",
         "type": "character",
         "cardId": "char_12",
         "quantity": 1,
         "selectedAlternateImage": "dracula2.webp"
       },
       {
-        "id": "7c08bb4b-e406-443c-87ce-6b014aa8e340",
+        "id": "73eae902-754e-4c5f-9fab-0668b75d5854",
         "type": "mission",
         "cardId": "mission_1",
         "quantity": 1
       },
       {
-        "id": "6d9ff1f0-9458-44d1-94d1-e98205d546e8",
+        "id": "2b39665d-0846-43ed-ad8e-cee2be9ac343",
         "type": "mission",
         "cardId": "mission_2",
         "quantity": 1
       },
       {
-        "id": "a9edc09f-e3da-49a1-a056-b8c559e33505",
+        "id": "a164d4ae-a3ef-40df-b534-08eeaea53eb5",
         "type": "mission",
         "cardId": "mission_3",
         "quantity": 1
       },
       {
-        "id": "59c505c9-a159-4845-8cde-951ce41554ab",
+        "id": "5b3ae02c-bd96-4472-beaa-f1794fca6280",
         "type": "mission",
         "cardId": "mission_4",
         "quantity": 1
       },
       {
-        "id": "b5a78fff-0ff8-4c34-b461-1c459b5efee2",
+        "id": "334281bd-0563-4e37-bce7-9c97ff208a39",
         "type": "mission",
         "cardId": "mission_5",
         "quantity": 1
       },
       {
-        "id": "b9d75c9a-8fbf-4198-ad4f-ebe68349eb00",
+        "id": "df11e7d7-1a63-4548-98d4-00a678c06e7b",
         "type": "mission",
         "cardId": "mission_6",
         "quantity": 1
       },
       {
-        "id": "162988d4-d2fa-49cb-96a8-609250c46fa6",
+        "id": "99a4e21b-0b66-45aa-82d2-d7b793fd41f1",
         "type": "mission",
         "cardId": "mission_7",
         "quantity": 1
       },
       {
-        "id": "457d8cdd-a879-438a-9132-e6bef1878919",
+        "id": "daa7bfb5-6f0a-4b22-b56d-75fb3c02488c",
         "type": "event",
         "cardId": "event_4",
         "quantity": 1
       },
       {
-        "id": "d228cb98-4efb-48eb-a50b-052b03b3157a",
+        "id": "6617c67a-9e3f-4ec1-8e60-dda008e102bb",
         "type": "aspect",
         "cardId": "aspect_5",
         "quantity": 1
       },
       {
-        "id": "20c4ba70-bb74-44fa-b012-9da285787f58",
+        "id": "5f6868c5-c7c4-4318-a287-0478e612f28e",
         "type": "character",
         "cardId": "char_40",
         "quantity": 1
       },
       {
-        "id": "3368e965-00db-496e-90a8-7db9785b3007",
+        "id": "9695e924-e1ba-4388-9d7c-b3fb8c117f46",
         "type": "character",
         "cardId": "char_32",
         "quantity": 1,
         "selectedAlternateImage": "Sherlock Holmes.webp"
       },
       {
-        "id": "4de22d13-4497-4b3d-8e9d-8916fe5e3c68",
+        "id": "9e07e2e7-8a01-40b8-a309-370eb2ace66d",
         "type": "character",
         "cardId": "char_11",
         "quantity": 1,
         "selectedAlternateImage": "dr. watson.png"
       },
       {
-        "id": "8e202230-e9ba-44a8-961b-02cc6b6e1dec",
+        "id": "698888d4-8dc2-457d-8b35-36a9ea20609b",
         "type": "location",
         "cardId": "loc_6",
         "quantity": 1
       },
       {
-        "id": "3ebafdc6-a392-4d7d-866d-32a8823dea10",
+        "id": "3d837087-0337-4e5e-a5db-77cbcfddfa27",
         "type": "teamwork",
         "cardId": "teamwork_33",
         "quantity": 1
       },
       {
-        "id": "cdc3a74a-8d44-40aa-a4ca-fb8931880f75",
+        "id": "a0c5f625-c740-4fcb-8217-ecea6b1ed7da",
         "type": "teamwork",
         "cardId": "teamwork_37",
         "quantity": 1
       },
       {
-        "id": "f8be3349-2171-4bdd-8eff-3bfc3df86e31",
+        "id": "5bcb9e7e-c99a-46e8-b623-548fc78b5e08",
         "type": "teamwork",
         "cardId": "teamwork_38",
         "quantity": 1
       },
       {
-        "id": "7eb022a1-054b-4f54-ae21-604f5a063b68",
+        "id": "6e4a7ec7-fb13-45f5-9477-a7fa34bc00b7",
         "type": "special",
         "cardId": "special_83",
         "quantity": 1
       },
       {
-        "id": "6860f2b0-d8c5-4536-9bc2-52e9271e85c8",
+        "id": "27d029cf-274e-43de-918e-8618cd6f561d",
         "type": "special",
         "cardId": "special_84",
         "quantity": 2
       },
       {
-        "id": "96a92e3a-6e52-480d-bce1-ad735377434b",
+        "id": "4aedc95a-b990-4302-adaa-42f723398627",
         "type": "special",
         "cardId": "special_86",
         "quantity": 1
       },
       {
-        "id": "dd3470dc-022e-439e-b0b8-8bb6d7636caa",
+        "id": "f4dc8e68-b0d4-4e7a-979b-39606db7f1fe",
         "type": "special",
         "cardId": "special_85",
         "quantity": 1
       },
       {
-        "id": "5e661cc2-c6d3-4f6e-b76d-4f957ec5f7fe",
+        "id": "3cddfa61-dd9c-4795-a213-532723832d52",
         "type": "special",
         "cardId": "special_87",
         "quantity": 1
       },
       {
-        "id": "32868d0a-5f39-425a-b4e5-f913cdde6ad7",
+        "id": "47da0f40-9b15-4322-9078-848673cf827d",
         "type": "special",
         "cardId": "special_201",
         "quantity": 1
       },
       {
-        "id": "ffd530e2-8d5d-4bd9-a361-fca1bf69a3b1",
+        "id": "c65d5b98-327d-481f-ab25-7fc8c02243e9",
         "type": "special",
         "cardId": "special_204",
         "quantity": 1
       },
       {
-        "id": "1ff9baab-933b-495c-bd40-8e8d8b61c45c",
+        "id": "32bae1a8-0a0a-44cc-9e65-76dfa5248947",
         "type": "special",
         "cardId": "special_202",
         "quantity": 2
       },
       {
-        "id": "e5fcc156-6729-47e7-af69-9f6a889046fe",
+        "id": "9a3d3566-7325-4ce3-8db8-35b6c141ed8d",
         "type": "special",
         "cardId": "special_205",
         "quantity": 2
       },
       {
-        "id": "f1918ad5-ec23-42cc-a71b-42041d28550a",
+        "id": "95be5ae7-8ca2-4664-b446-bea98cfa6cad",
         "type": "special",
         "cardId": "special_81",
         "quantity": 2
       },
       {
-        "id": "e3817eba-2902-4e34-918a-92e33b17433c",
+        "id": "966b1949-3d1f-461e-8d6e-1140ab01b959",
         "type": "special",
         "cardId": "special_82",
         "quantity": 1
       },
       {
-        "id": "0979988b-748d-4e2a-b521-ca46567d6e77",
+        "id": "e05c2c89-0044-48c1-82bd-d95838d25c88",
         "type": "special",
         "cardId": "special_253",
         "quantity": 1
       },
       {
-        "id": "8209daf1-35dc-488e-85fb-7ec2b303aa86",
+        "id": "fdb21165-77af-4c60-bd63-046b6ff07880",
         "type": "special",
         "cardId": "special_251",
         "quantity": 1
       },
       {
-        "id": "a021bb2c-a6fd-4cbe-816b-57a271df1f23",
+        "id": "b6ba73f7-9aef-40bf-b084-c6c0e5929cb8",
         "type": "special",
         "cardId": "special_252",
         "quantity": 1
       },
       {
-        "id": "7cc6d287-6873-48f2-bd5e-b467ae82f42e",
+        "id": "ca33d98d-b1c8-48d4-af22-8608af9791b2",
         "type": "special",
         "cardId": "special_249",
         "quantity": 2
       },
       {
-        "id": "11934760-fc41-447b-bc03-ff6a63b313e9",
+        "id": "a7202553-f7f4-463a-a51c-ea02b99df180",
         "type": "special",
         "cardId": "special_248",
         "quantity": 1
       },
       {
-        "id": "b0da536a-179a-45c5-b592-cc130ca958b8",
+        "id": "4c3c3f16-16e1-4b7d-9a47-27da271a72d0",
         "type": "special",
         "cardId": "special_250",
         "quantity": 1
       },
       {
-        "id": "78ee061c-6f20-44e6-a55a-181309f3872c",
+        "id": "d95062a9-dd88-4f03-9940-c491977cefb3",
         "type": "ally_universe",
         "cardId": "ally_1",
         "quantity": 1
       },
       {
-        "id": "42681fe9-e078-4abf-a16a-18194b498cea",
+        "id": "505cc235-9193-4100-9cc3-8fa4e40a4381",
         "type": "ally_universe",
         "cardId": "ally_5",
         "quantity": 1
       },
       {
-        "id": "bec0e24e-c81e-4680-bff8-4c041b149e59",
+        "id": "7c6debeb-7d53-4d9c-a694-c437a0a7fe8f",
         "type": "ally_universe",
         "cardId": "ally_3",
         "quantity": 1
       },
       {
-        "id": "29deb6b8-1b26-404a-b173-e2bf6af94680",
+        "id": "6cbfeacb-e1b7-4fe1-a8e2-a139af74aa9c",
         "type": "power",
         "cardId": "power_1",
         "quantity": 1
       },
       {
-        "id": "ddff21b3-d650-4630-903f-71f09d2e4182",
+        "id": "958068fa-fe59-4e02-8a7b-acd61c1d94eb",
         "type": "power",
         "cardId": "power_12",
         "quantity": 1
       },
       {
-        "id": "903599ea-6093-4016-aafd-67ac78e4f9df",
+        "id": "5237275d-9455-4be3-9e27-2ca695b43c57",
         "type": "power",
         "cardId": "power_13",
         "quantity": 1
       },
       {
-        "id": "5ba49a33-c0b8-491f-b381-95a9c6c617ea",
+        "id": "c27ef91f-878f-4495-9c5c-23aaa65b84e8",
         "type": "power",
         "cardId": "power_19",
         "quantity": 2
       },
       {
-        "id": "99f0db7e-60d5-4270-85a8-864b3dc89dc7",
+        "id": "e8a24a72-072f-4e25-8109-ea6a5f13e6d5",
         "type": "power",
         "cardId": "power_18",
         "quantity": 1
       },
       {
-        "id": "70a1b669-e476-4f74-9495-ab9845d6aa46",
+        "id": "0076d417-5179-46cc-9e65-169090a7222e",
         "type": "power",
         "cardId": "power_31",
         "quantity": 3
       },
       {
-        "id": "203e146e-b14d-4e3a-b018-0ed5a43cba39",
+        "id": "6f1d53c8-6f4b-4ae2-85ff-43d173cc1c43",
         "type": "power",
         "cardId": "power_30",
         "quantity": 2
       },
       {
-        "id": "38a67f4d-1f21-496f-b031-66c9292d80b0",
+        "id": "5dbeea2f-8a50-4831-8e34-0f43930dfabb",
         "type": "power",
         "cardId": "power_32",
         "quantity": 3
       },
       {
-        "id": "e25d0ab2-95ea-483e-99d8-e22a455b9bfd",
+        "id": "64084d1e-14ad-4fd0-ac73-824c65f9f3fb",
         "type": "power",
         "cardId": "power_26",
         "quantity": 1
       },
       {
-        "id": "77ceb9e4-d81a-415c-a050-b23e2a143c79",
+        "id": "1d1c5a16-1571-4fe2-9022-3edb6f27263a",
         "type": "power",
         "cardId": "power_28",
         "quantity": 1
       },
       {
-        "id": "725d864a-ed10-4363-a9c9-5f69fe842c07",
+        "id": "b59d7d14-f0ed-4275-9d0e-587f03294e7e",
         "type": "power",
         "cardId": "power_25",
         "quantity": 1
       },
       {
-        "id": "949f04da-26f4-43c2-a1d6-190778491f8e",
+        "id": "f997b787-53de-47f1-a52b-325356c9c6a5",
         "type": "power",
         "cardId": "power_38",
         "quantity": 1
       },
       {
-        "id": "0e670548-0b47-407f-b23d-5351a4931002",
+        "id": "d49d4f12-848f-49d4-ad09-c31dd85985b4",
         "type": "power",
         "cardId": "power_39",
         "quantity": 1
       },
       {
-        "id": "88a545b1-3a42-4bf6-bc3e-19c0e1541dc8",
+        "id": "276e4977-e4d8-4a6a-ac1f-9594dce45c90",
         "type": "power",
         "cardId": "power_37",
         "quantity": 1
       },
       {
-        "id": "bc7a7162-3205-4962-afc9-c581e85e9d81",
+        "id": "2a03776a-039b-4a04-ac86-47cf81d051e1",
         "type": "power",
         "cardId": "power_34",
         "quantity": 1
       },
       {
-        "id": "9b86ef0a-6b3c-4398-b6ea-0d10ecc481de",
+        "id": "f43a989f-d37f-4004-b61a-0056d90b3442",
         "type": "power",
         "cardId": "power_33",
         "quantity": 1
       },
       {
-        "id": "c9fa4072-dd57-4a60-860d-eb6b600bb13c",
+        "id": "13e7f5fd-12e1-4414-bf3f-bffcb054f676",
         "type": "special",
         "cardId": "special_25",
         "quantity": 1,
         "selectedAlternateImage": "the_gemini.webp"
       },
       {
-        "id": "1d02969b-3d37-443d-a270-0c2d3f989f32",
+        "id": "44acf9fa-e267-4228-8d71-e03bb0eb23e1",
         "type": "special",
         "cardId": "special_5",
         "quantity": 1
       },
       {
-        "id": "539b7ce6-4cd5-4028-b2fb-a112bb770c90",
+        "id": "e18fe499-f61e-4e94-9a40-3818e5f61687",
         "type": "special",
         "cardId": "special_17",
         "quantity": 1
       },
       {
-        "id": "f7234c77-301d-468e-9389-9ab62995916c",
+        "id": "a5f6279c-f9ba-461a-a431-6a69fe640da0",
         "type": "special",
         "cardId": "special_21",
         "quantity": 1
       },
       {
-        "id": "d540d9b7-f2e8-4591-9887-7197bcd2a42e",
+        "id": "550211c0-7608-4fdb-862d-5074ab855413",
         "type": "special",
         "cardId": "special_18",
         "quantity": 1
       },
       {
-        "id": "87a7eeb0-a8c5-487a-9711-1df9381fe5aa",
+        "id": "a8856608-d38e-4b5c-aae3-430e5abb5cae",
         "type": "special",
         "cardId": "special_22",
         "quantity": 1
       },
       {
-        "id": "dc56f79e-b7ad-42a0-ac47-67fb6b36b456",
+        "id": "cb197551-adc3-44e6-9e15-8bebbb7fa8e8",
         "type": "special",
         "cardId": "special_16",
         "quantity": 1
       },
       {
-        "id": "1daee0e9-fe9a-4c7c-9170-dcb9380bec11",
+        "id": "13b66666-8579-44db-aa37-2a42142b5161",
         "type": "special",
         "cardId": "special_20",
         "quantity": 1
       },
       {
-        "id": "bc5d5d3b-335a-4b4a-8558-4dc89a63a9d7",
+        "id": "92890b8d-3bbc-4359-b385-6e98a904976e",
         "type": "special",
         "cardId": "special_9",
         "quantity": 1
       },
       {
-        "id": "85d390f7-7328-4733-93f2-313778c40ab0",
+        "id": "5a60f846-71a1-4bd7-876d-739b25e5093b",
         "type": "special",
         "cardId": "special_13",
         "quantity": 1
