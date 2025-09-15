@@ -474,6 +474,44 @@ app.get('/api/deck-stats', authenticateUser, (req: any, res) => {
   }
 });
 
+// UI Preferences API routes
+app.get('/api/decks/:id/ui-preferences', authenticateUser, (req: any, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Check if user owns this deck
+    if (!deckService.userOwnsDeck(id, req.user.userId)) {
+      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
+    }
+    
+    const preferences = deckRepository.getUIPreferences(id);
+    res.json({ success: true, data: preferences || {} });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to fetch UI preferences' });
+  }
+});
+
+app.put('/api/decks/:id/ui-preferences', authenticateUser, (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const preferences = req.body;
+    
+    // Check if user owns this deck
+    if (!deckService.userOwnsDeck(id, req.user.userId)) {
+      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
+    }
+    
+    const success = deckRepository.updateUIPreferences(id, preferences);
+    if (success) {
+      res.json({ success: true, data: preferences });
+    } else {
+      res.status(404).json({ success: false, error: 'Deck not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to update UI preferences' });
+  }
+});
+
 // Main page route - displays characters table
 // Main application route - serves the app with login modal
 app.get('/', (req, res) => {

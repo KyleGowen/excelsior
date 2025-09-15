@@ -8261,6 +8261,133 @@
             }
         }
 
+        // ===== UI PREFERENCES MANAGEMENT =====
+
+        // Load UI preferences from database
+        async function loadUIPreferences(deckId) {
+            try {
+                const response = await fetch(`/api/decks/${deckId}/ui-preferences`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    return data.data || {};
+                } else {
+                    console.warn('Failed to load UI preferences:', data.error);
+                    return {};
+                }
+            } catch (error) {
+                console.error('Error loading UI preferences:', error);
+                return {};
+            }
+        }
+
+        // Save UI preferences to database
+        async function saveUIPreferences(deckId, preferences) {
+            try {
+                const response = await fetch(`/api/decks/${deckId}/ui-preferences`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(preferences)
+                });
+                
+                const data = await response.json();
+                if (!data.success) {
+                    console.warn('Failed to save UI preferences:', data.error);
+                }
+            } catch (error) {
+                console.error('Error saving UI preferences:', error);
+            }
+        }
+
+        // Get current UI preferences object
+        function getCurrentUIPreferences() {
+            return {
+                dividerPosition: getDividerPosition(),
+                expansionState: getExpansionState(),
+                powerCardsSortMode: powerCardsSortMode,
+                characterGroupExpansionState: characterGroupExpansionState
+            };
+        }
+
+        // Get current divider position as percentage
+        function getDividerPosition() {
+            const deckPane = document.querySelector('.deck-pane');
+            const layout = document.querySelector('.deck-editor-layout');
+            if (deckPane && layout) {
+                return (deckPane.offsetWidth / layout.offsetWidth) * 100;
+            }
+            return 50; // Default to 50%
+        }
+
+        // Get current expansion state
+        function getExpansionState() {
+            const state = {};
+            const categories = ['characters', 'special_cards', 'power_cards', 'missions', 'events', 'aspects', 'advanced_universe', 'teamwork', 'ally_universe', 'training', 'basic_universe'];
+            
+            categories.forEach(category => {
+                const header = document.querySelector(`#${category}-header`);
+                if (header) {
+                    state[category] = !header.classList.contains('collapsed');
+                }
+            });
+            
+            return state;
+        }
+
+        // Apply UI preferences to the interface
+        function applyUIPreferences(preferences) {
+            // Apply divider position
+            if (preferences.dividerPosition) {
+                const layout = document.querySelector('.deck-editor-layout');
+                if (layout) {
+                    const deckPane = document.querySelector('.deck-pane');
+                    if (deckPane) {
+                        const newWidth = (preferences.dividerPosition / 100) * layout.offsetWidth;
+                        deckPane.style.width = `${newWidth}px`;
+                    }
+                }
+            }
+
+            // Apply expansion state
+            if (preferences.expansionState) {
+                Object.entries(preferences.expansionState).forEach(([category, isExpanded]) => {
+                    const header = document.querySelector(`#${category}-header`);
+                    if (header) {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.collapse-icon');
+                        
+                        if (isExpanded) {
+                            header.classList.remove('collapsed');
+                            content.classList.remove('collapsed');
+                            content.classList.add('expanded');
+                            if (icon) icon.textContent = '▼';
+                        } else {
+                            header.classList.add('collapsed');
+                            content.classList.add('collapsed');
+                            content.classList.remove('expanded');
+                            if (icon) icon.textContent = '▲';
+                        }
+                    }
+                });
+            }
+
+            // Apply power cards sort mode
+            if (preferences.powerCardsSortMode) {
+                powerCardsSortMode = preferences.powerCardsSortMode;
+                const checkbox = document.getElementById('powerCardsSortToggle');
+                if (checkbox) {
+                    checkbox.checked = powerCardsSortMode === 'value';
+                }
+            }
+
+            // Apply character group expansion state
+            if (preferences.characterGroupExpansionState) {
+                Object.assign(characterGroupExpansionState, preferences.characterGroupExpansionState);
+            }
+        }
+
         // ===== DECK EDITOR FUNCTIONS =====
 
         function showDeckEditor() {
@@ -8531,10 +8658,9 @@
                     // Load available cards first, then display deck cards
                     await loadAvailableCards();
                     
-                    // Load expansion state before displaying deck cards
-                    loadDeckExpansionState();
-                    loadCharacterGroupExpansionState();
-                    loadPowerCardsSortMode();
+                    // Load UI preferences from database
+                    const uiPreferences = await loadUIPreferences(deckId);
+                    applyUIPreferences(uiPreferences);
                     
                     // Display deck cards after available cards are loaded
                     await displayDeckCardsForEditing();

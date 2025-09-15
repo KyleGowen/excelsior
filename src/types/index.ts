@@ -12,6 +12,10 @@ export interface Deck {
   id: string;
   user_id: string;
   name: string;
+  description?: string;
+  ui_preferences?: UIPreferences;
+  created_at?: string;
+  updated_at?: string;
 }
 
 // Character table (from overpower-erb-characters.md)
@@ -156,6 +160,13 @@ export interface DeckCard {
 // Extended type for API operations that includes special cases
 export type CardTypeOrAll = DeckCard['type'] | 'all';
 
+export interface UIPreferences {
+  dividerPosition?: number; // Percentage position of the divider (0-100)
+  expansionState?: Record<string, boolean>; // Expansion state of deck content categories
+  powerCardsSortMode?: 'type' | 'value'; // Sort mode for power cards
+  characterGroupExpansionState?: Record<string, boolean>; // Expansion state of character groups
+}
+
 export interface DeckMetadata {
   id: string;
   name: string;
@@ -164,7 +175,7 @@ export interface DeckMetadata {
   lastModified: string; // ISO date string
   cardCount: number; // Total number of cards in deck
   userId: string; // Owner of the deck
-  uiState?: { expansionState: Record<string, boolean>; }; // UI state persistence
+  uiPreferences?: UIPreferences; // UI state persistence
 }
 
 export interface DeckData {

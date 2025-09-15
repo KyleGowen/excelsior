@@ -1,4 +1,4 @@
-import { Deck } from '../types';
+import { Deck, UIPreferences } from '../types';
 import { DeckRepository } from '../repository/DeckRepository';
 
 export class InMemoryDeckRepository implements DeckRepository {
@@ -10,9 +10,17 @@ export class InMemoryDeckRepository implements DeckRepository {
     // Decks are created dynamically
   }
 
-  createDeck(userId: string, name: string): Deck {
+  createDeck(userId: string, name: string, description?: string): Deck {
     const id = `deck_${this.nextDeckId++}`;
-    const deck: Deck = { id, user_id: userId, name };
+    const now = new Date().toISOString();
+    const deck: Deck = { 
+      id, 
+      user_id: userId, 
+      name, 
+      description,
+      created_at: now,
+      updated_at: now
+    };
     this.decks.set(id, deck);
     return deck;
   }
@@ -27,6 +35,41 @@ export class InMemoryDeckRepository implements DeckRepository {
 
   getAllDecks(): Deck[] {
     return Array.from(this.decks.values());
+  }
+
+  updateDeck(id: string, updates: Partial<Deck>): Deck | undefined {
+    const deck = this.decks.get(id);
+    if (!deck) return undefined;
+
+    const updatedDeck = {
+      ...deck,
+      ...updates,
+      updated_at: new Date().toISOString()
+    };
+    this.decks.set(id, updatedDeck);
+    return updatedDeck;
+  }
+
+  deleteDeck(id: string): boolean {
+    return this.decks.delete(id);
+  }
+
+  updateUIPreferences(deckId: string, preferences: UIPreferences): boolean {
+    const deck = this.decks.get(deckId);
+    if (!deck) return false;
+
+    const updatedDeck = {
+      ...deck,
+      ui_preferences: preferences,
+      updated_at: new Date().toISOString()
+    };
+    this.decks.set(deckId, updatedDeck);
+    return true;
+  }
+
+  getUIPreferences(deckId: string): UIPreferences | undefined {
+    const deck = this.decks.get(deckId);
+    return deck?.ui_preferences;
   }
 
   getDeckStats(): { decks: number } {
