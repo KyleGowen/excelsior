@@ -1,19 +1,8 @@
-import { User, Deck, Character, Location, SpecialCard, Mission, Event, Aspect, AdvancedUniverse, Teamwork, AllyUniverse, TrainingCard, BasicUniverse, PowerCard } from '../types';
+import { Character, Location, SpecialCard, Mission, Event, Aspect, AdvancedUniverse, Teamwork, AllyUniverse, TrainingCard, BasicUniverse, PowerCard } from '../types';
 
-export interface OverPowerRepository {
+export interface CardRepository {
   // Initialization
   initialize(): Promise<void>;
-
-  // User management
-  createUser(name: string, email: string): User;
-  getUserById(id: string): User | undefined;
-  getAllUsers(): User[];
-
-  // Deck management
-  createDeck(userId: string, name: string): Deck;
-  getDeckById(id: string): Deck | undefined;
-  getDecksByUserId(userId: string): Deck[];
-  getAllDecks(): Deck[];
 
   // Character management
   getCharacterById(id: string): Character | undefined;
@@ -66,9 +55,7 @@ export interface OverPowerRepository {
   getPowerCardEffectiveImage(powerCardId: string, selectedAlternateImage?: string): string;
 
   // Statistics
-  getStats(): {
-    users: number;
-    decks: number;
+  getCardStats(): {
     characters: number;
     locations: number;
     specialCards: number;
@@ -77,5 +64,9 @@ export interface OverPowerRepository {
     aspects: number;
     advancedUniverse: number;
     teamwork: number;
+    allyUniverse: number;
+    training: number;
+    basicUniverse: number;
+    powerCards: number;
   };
 }

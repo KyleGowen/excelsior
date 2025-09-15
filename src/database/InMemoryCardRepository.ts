@@ -1,11 +1,9 @@
-import { User, Deck, Character, Location, SpecialCard, Mission, Event, Aspect, AdvancedUniverse, Teamwork, AllyUniverse, TrainingCard, BasicUniverse, PowerCard, ApiResponse } from '../types';
-import { OverPowerRepository } from '../repository/OverPowerRepository';
+import { Character, Location, SpecialCard, Mission, Event, Aspect, AdvancedUniverse, Teamwork, AllyUniverse, TrainingCard, BasicUniverse, PowerCard } from '../types';
+import { CardRepository } from '../repository/CardRepository';
 import * as fs from 'fs';
 import * as path from 'path';
 
-class InMemoryDatabase implements OverPowerRepository {
-  private users: Map<string, User> = new Map();
-  private decks: Map<string, Deck> = new Map();
+export class InMemoryCardRepository implements CardRepository {
   private characters: Map<string, Character> = new Map();
   private locations: Map<string, Location> = new Map();
   private specialCards: Map<string, SpecialCard> = new Map();
@@ -19,8 +17,6 @@ class InMemoryDatabase implements OverPowerRepository {
   private basicUniverse: Map<string, BasicUniverse> = new Map();
   private powerCards: Map<string, PowerCard> = new Map();
   
-  private nextUserId = 1;
-  private nextDeckId = 1;
   private nextCharacterId = 1;
   private nextLocationId = 1;
   private nextSpecialCardId = 1;
@@ -77,6 +73,180 @@ class InMemoryDatabase implements OverPowerRepository {
     console.log(`📊 Database loaded: ${this.characters.size} characters, ${this.locations.size} locations, ${this.specialCards.size} special cards, ${this.missions.size} missions, ${this.events.size} events, ${this.aspects.size} aspects, ${this.advancedUniverse.size} advanced universe, ${this.teamwork.size} teamwork, ${this.allyUniverse.size} ally universe, ${this.trainings.size} trainings, ${this.basicUniverse.size} basic universe, ${this.powerCards.size} power cards`);
   }
 
+  // Character management
+  getCharacterById(id: string): Character | undefined {
+    return this.characters.get(id);
+  }
+
+  getAllCharacters(): Character[] {
+    return Array.from(this.characters.values());
+  }
+
+  // Special card management
+  getSpecialCardById(id: string): SpecialCard | undefined {
+    return this.specialCards.get(id);
+  }
+
+  getAllSpecialCards(): SpecialCard[] {
+    return Array.from(this.specialCards.values());
+  }
+
+  // Power card management
+  getPowerCardById(id: string): PowerCard | undefined {
+    return this.powerCards.get(id);
+  }
+
+  getAllPowerCards(): PowerCard[] {
+    return Array.from(this.powerCards.values());
+  }
+
+  // Location management
+  getLocationById(id: string): Location | undefined {
+    return this.locations.get(id);
+  }
+
+  getAllLocations(): Location[] {
+    return Array.from(this.locations.values());
+  }
+
+  // Mission management
+  getMissionById(id: string): Mission | undefined {
+    return this.missions.get(id);
+  }
+
+  getAllMissions(): Mission[] {
+    return Array.from(this.missions.values());
+  }
+
+  // Event management
+  getEventById(id: string): Event | undefined {
+    return this.events.get(id);
+  }
+
+  getAllEvents(): Event[] {
+    return Array.from(this.events.values());
+  }
+
+  // Aspect management
+  getAspectById(id: string): Aspect | undefined {
+    return this.aspects.get(id);
+  }
+
+  getAllAspects(): Aspect[] {
+    return Array.from(this.aspects.values());
+  }
+
+  // Advanced Universe management
+  getAdvancedUniverseById(id: string): AdvancedUniverse | undefined {
+    return this.advancedUniverse.get(id);
+  }
+
+  getAllAdvancedUniverse(): AdvancedUniverse[] {
+    return Array.from(this.advancedUniverse.values());
+  }
+
+  // Teamwork management
+  getTeamworkById(id: string): Teamwork | undefined {
+    return this.teamwork.get(id);
+  }
+
+  getAllTeamwork(): Teamwork[] {
+    return Array.from(this.teamwork.values());
+  }
+
+  // Ally Universe management
+  getAllAllyUniverse(): AllyUniverse[] {
+    return Array.from(this.allyUniverse.values());
+  }
+
+  // Training management
+  getAllTraining(): TrainingCard[] {
+    return Array.from(this.trainings.values());
+  }
+
+  // Basic Universe management
+  getAllBasicUniverse(): BasicUniverse[] {
+    return Array.from(this.basicUniverse.values());
+  }
+
+  // Image management
+  getCharacterEffectiveImage(characterId: string, selectedAlternateImage?: string): string {
+    const character = this.characters.get(characterId);
+    if (!character) {
+      return '';
+    }
+    
+    // If a specific alternate image is selected, use it
+    if (selectedAlternateImage && character.alternateImages?.includes(selectedAlternateImage)) {
+      return `characters/alternate/${selectedAlternateImage}`;
+    }
+    
+    // Otherwise, use the default image
+    return character.image;
+  }
+
+  getSpecialCardEffectiveImage(specialCardId: string, selectedAlternateImage?: string): string {
+    const specialCard = this.specialCards.get(specialCardId);
+    if (!specialCard) {
+      return '';
+    }
+    
+    // If a specific alternate image is selected, use it
+    if (selectedAlternateImage && specialCard.alternateImages?.includes(selectedAlternateImage)) {
+      return `specials/alternate/${selectedAlternateImage}`;
+    }
+    
+    // Otherwise, use the default image
+    return specialCard.image;
+  }
+
+  getPowerCardEffectiveImage(powerCardId: string, selectedAlternateImage?: string): string {
+    const powerCard = this.powerCards.get(powerCardId);
+    if (!powerCard) {
+      return '';
+    }
+    
+    // If a specific alternate image is selected, use it
+    if (selectedAlternateImage && powerCard.alternateImages?.includes(selectedAlternateImage)) {
+      return `power-cards/alternate/${selectedAlternateImage}`;
+    }
+    
+    // Otherwise, use the default image
+    return powerCard.image;
+  }
+
+  // Statistics
+  getCardStats(): {
+    characters: number;
+    locations: number;
+    specialCards: number;
+    missions: number;
+    events: number;
+    aspects: number;
+    advancedUniverse: number;
+    teamwork: number;
+    allyUniverse: number;
+    training: number;
+    basicUniverse: number;
+    powerCards: number;
+  } {
+    return {
+      characters: this.characters.size,
+      locations: this.locations.size,
+      specialCards: this.specialCards.size,
+      missions: this.missions.size,
+      events: this.events.size,
+      aspects: this.aspects.size,
+      advancedUniverse: this.advancedUniverse.size,
+      teamwork: this.teamwork.size,
+      allyUniverse: this.allyUniverse.size,
+      training: this.trainings.size,
+      basicUniverse: this.basicUniverse.size,
+      powerCards: this.powerCards.size
+    };
+  }
+
+  // Private methods for loading data from files
   private async loadCharacters(): Promise<void> {
     try {
       console.log('📖 Loading characters from file...');
@@ -177,22 +347,6 @@ class InMemoryDatabase implements OverPowerRepository {
     }
   }
 
-  private getLocationImage(locationName: string): string {
-    // Map location names to their image files
-    const locationImageMap: { [key: string]: string } = {
-      "Dracula's Armory": 'locations/465_draculas_armory.webp',
-      "Spartan Training Ground": 'locations/466_spartan_training_ground.webp',
-      "The Round Table": 'locations/467_the_round_table.webp',
-      "Barsoom": 'locations/468_barsoom.webp',
-      "Asclepieion": 'locations/469_ascleipeion.webp',
-      "221-B Baker St.": 'locations/470_221b_baker_st.webp',
-      "Event Horizon: The Future": 'locations/471_horizon.webp',
-      "The Land That Time Forgot": 'locations/472_the_land_that_time_forgot.webp'
-    };
-    
-    return locationImageMap[locationName] || 'unknown_location.webp';
-  }
-
   private async loadSpecialCards(): Promise<void> {
     try {
       console.log('📖 Loading special cards from file...');
@@ -215,20 +369,20 @@ class InMemoryDatabase implements OverPowerRepository {
         if (line.startsWith('|') && !line.includes('----') && !line.includes('Card Name')) {
           const columns = line.split('|').map(col => col.trim());
           
-                      if (columns.length >= 5) { // Split by | creates 5+ elements for 4 columns
-              const cardName = columns[1];
-              const alternateImages = this.getSpecialCardAlternateImages(cardName);
-              
-              const specialCard: SpecialCard = {
-                id: `special_${this.nextSpecialCardId++}`,
-                name: cardName,
-                card_type: columns[2],
-                character: columns[3],
-                card_effect: columns[4],
-                image: this.getSpecialCardImage(cardName),
-                is_cataclysm: columns[4].includes('**Cataclysm!**'),
-                ...(alternateImages.length > 0 && { alternateImages })
-              };
+          if (columns.length >= 5) { // Split by | creates 5+ elements for 4 columns
+            const cardName = columns[1];
+            const alternateImages = this.getSpecialCardAlternateImages(cardName);
+            
+            const specialCard: SpecialCard = {
+              id: `special_${this.nextSpecialCardId++}`,
+              name: cardName,
+              card_type: columns[2],
+              character: columns[3],
+              card_effect: columns[4],
+              image: this.getSpecialCardImage(cardName),
+              is_cataclysm: columns[4].includes('**Cataclysm!**'),
+              ...(alternateImages.length > 0 && { alternateImages })
+            };
 
             this.specialCards.set(specialCard.id, specialCard);
             loadedCount++;
@@ -245,6 +399,25 @@ class InMemoryDatabase implements OverPowerRepository {
     } catch (error) {
       console.error('❌ Error loading special cards:', error);
     }
+  }
+
+  // ... (I'll continue with the rest of the private methods in the next part)
+  // This is getting quite long, so I'll split it into multiple parts
+
+  private getLocationImage(locationName: string): string {
+    // Map location names to their image files
+    const locationImageMap: { [key: string]: string } = {
+      "Dracula's Armory": 'locations/465_draculas_armory.webp',
+      "Spartan Training Ground": 'locations/466_spartan_training_ground.webp',
+      "The Round Table": 'locations/467_the_round_table.webp',
+      "Barsoom": 'locations/468_barsoom.webp',
+      "Asclepieion": 'locations/469_ascleipeion.webp',
+      "221-B Baker St.": 'locations/470_221b_baker_st.webp',
+      "Event Horizon: The Future": 'locations/471_horizon.webp',
+      "The Land That Time Forgot": 'locations/472_the_land_that_time_forgot.webp'
+    };
+    
+    return locationImageMap[locationName] || 'unknown_location.webp';
   }
 
   private getCharacterAlternateImages(characterName: string): string[] {
@@ -337,49 +510,13 @@ class InMemoryDatabase implements OverPowerRepository {
     return alternateImages;
   }
 
-  public getCharacterEffectiveImage(characterId: string, selectedAlternateImage?: string): string {
-    const character = this.characters.get(characterId);
-    if (!character) {
-      return '';
-    }
-    
-    // If a specific alternate image is selected, use it
-    if (selectedAlternateImage && character.alternateImages?.includes(selectedAlternateImage)) {
-      return `characters/alternate/${selectedAlternateImage}`;
-    }
-    
-    // Otherwise, use the default image
-    return character.image;
-  }
-
-  public getSpecialCardEffectiveImage(specialCardId: string, selectedAlternateImage?: string): string {
-    const specialCard = this.specialCards.get(specialCardId);
-    if (!specialCard) {
-      return '';
-    }
-    
-    // If a specific alternate image is selected, use it
-    if (selectedAlternateImage && specialCard.alternateImages?.includes(selectedAlternateImage)) {
-      return `specials/alternate/${selectedAlternateImage}`;
-    }
-    
-    // Otherwise, use the default image
-    return specialCard.image;
-  }
-
-  public getPowerCardEffectiveImage(powerCardId: string, selectedAlternateImage?: string): string {
-    const powerCard = this.powerCards.get(powerCardId);
-    if (!powerCard) {
-      return '';
-    }
-    
-    // If a specific alternate image is selected, use it
-    if (selectedAlternateImage && powerCard.alternateImages?.includes(selectedAlternateImage)) {
-      return `power-cards/alternate/${selectedAlternateImage}`;
-    }
-    
-    // Otherwise, use the default image
-    return powerCard.image;
+  private convertToSnakeCase(cardName: string): string {
+    return cardName
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '') // Remove special characters except spaces
+      .replace(/\s+/g, '_') // Replace spaces with underscores
+      .replace(/_+/g, '_') // Replace multiple underscores with single
+      .trim();
   }
 
   private getSpecialCardImage(cardName: string): string {
@@ -603,15 +740,6 @@ class InMemoryDatabase implements OverPowerRepository {
     return matrix[str2.length][str1.length];
   }
 
-  private convertToSnakeCase(cardName: string): string {
-    return cardName
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '') // Remove special characters except spaces
-      .replace(/\s+/g, '_') // Replace spaces with underscores
-      .replace(/_+/g, '_') // Replace multiple underscores with single
-      .trim();
-  }
-
   private getAvailableSpecialCardImages(): string[] {
     // Return a list of available special card image files
     // This would ideally be loaded from the filesystem, but for now we'll hardcode the known ones
@@ -713,84 +841,7 @@ class InMemoryDatabase implements OverPowerRepository {
     ];
   }
 
-  // User management
-  createUser(name: string, email: string): User {
-    const id = `user_${this.nextUserId++}`;
-    const user: User = { id, name, email };
-    this.users.set(id, user);
-    return user;
-  }
-
-  getUserById(id: string): User | undefined {
-    return this.users.get(id);
-  }
-
-  getAllUsers(): User[] {
-    return Array.from(this.users.values());
-  }
-
-  // Deck management
-  createDeck(userId: string, name: string): Deck {
-    const id = `deck_${this.nextDeckId++}`;
-    const deck: Deck = { id, user_id: userId, name };
-    this.decks.set(id, deck);
-    return deck;
-  }
-
-  getDeckById(id: string): Deck | undefined {
-    return this.decks.get(id);
-  }
-
-  getDecksByUserId(userId: string): Deck[] {
-    return Array.from(this.decks.values()).filter(deck => deck.user_id === userId);
-  }
-
-  getAllDecks(): Deck[] {
-    return Array.from(this.decks.values());
-  }
-
-  // Character management
-  getCharacterById(id: string): Character | undefined {
-    return this.characters.get(id);
-  }
-
-  getAllCharacters(): Character[] {
-    return Array.from(this.characters.values());
-  }
-
-  // Special card management
-  getSpecialCardById(id: string): SpecialCard | undefined {
-    return this.specialCards.get(id);
-  }
-
-  // Power card management
-  getPowerCardById(id: string): PowerCard | undefined {
-    return this.powerCards.get(id);
-  }
-
-  getAllSpecialCards(): SpecialCard[] {
-    return Array.from(this.specialCards.values());
-  }
-
-  // Location management
-  getLocationById(id: string): Location | undefined {
-    return this.locations.get(id);
-  }
-
-  getAllLocations(): Location[] {
-    return Array.from(this.locations.values());
-  }
-
-
-  // Mission management
-  getMissionById(id: string): Mission | undefined {
-    return this.missions.get(id);
-  }
-
-  getAllMissions(): Mission[] {
-    return Array.from(this.missions.values());
-  }
-
+  // Additional loading methods for missions, events, aspects, etc.
   private async loadMissions(): Promise<void> {
     try {
       console.log('📖 Loading missions from file...');
@@ -843,6 +894,380 @@ class InMemoryDatabase implements OverPowerRepository {
     }
   }
 
+  private async loadEvents(): Promise<void> {
+    try {
+      console.log('📖 Loading events from file...');
+      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-events.md');
+      
+      if (!fs.existsSync(filePath)) {
+        console.log('❌ Events file not found, skipping event loading');
+        return;
+      }
+
+      console.log('📖 Reading event data from file...');
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const lines = fileContent.split('\n').filter(line => line.trim().length > 0);
+
+      let loadedCount = 0;
+      let currentMissionSet = '';
+
+      for (const line of lines) {
+        // Check if this is a mission set header
+        if (line.startsWith('## ')) {
+          currentMissionSet = line.replace('## ', '').trim();
+          continue;
+        }
+
+        // Skip header and separator lines
+        if (line.startsWith('|') && !line.includes('----') && !line.includes('Name')) {
+          const columns = line.split('|').map(col => col.trim());
+          
+          if (columns.length >= 5) { // Split by | creates 5+ elements for 4 columns
+            const event: Event = {
+              id: `event_${this.nextEventId++}`,
+              name: columns[1],
+              mission_set: currentMissionSet,
+              game_effect: columns[3],
+              flavor_text: columns[4],
+              image: this.getEventImage(currentMissionSet, columns[1])
+            };
+
+            this.events.set(event.id, event);
+            loadedCount++;
+          }
+        }
+      }
+
+      console.log(`🎉 Successfully loaded ${loadedCount} events into database!`);
+      console.log('✅ Events loaded successfully');
+    } catch (error) {
+      console.error('❌ Error loading events:', error);
+    }
+  }
+
+  private async loadAspects(): Promise<void> {
+    try {
+      console.log('📖 Loading aspects from file...');
+      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-aspects.md');
+      
+      if (!fs.existsSync(filePath)) {
+        console.log('❌ Aspects file not found, skipping aspects loading');
+        return;
+      }
+
+      console.log('📖 Reading aspects data from file...');
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const lines = fileContent.split('\n').filter(line => line.trim().length > 0);
+
+      let loadedCount = 0;
+      const totalLines = lines.length;
+      
+      for (const line of lines) {
+        // Skip header and separator lines
+        if (line.startsWith('|') && !line.includes('----') && !line.includes('Card Name')) {
+          const columns = line.split('|').map(col => col.trim());
+          
+          if (columns.length >= 6) { // Split by | creates 6 elements for 5 columns
+            const cardEffect = columns[4] || '';
+            const isFortification = cardEffect.includes('**Fortifications!**');
+            const isOnePerDeck = cardEffect.includes('**One Per Deck**');
+            
+            const aspect: Aspect = {
+              id: `aspect_${this.nextAspectId++}`,
+              card_name: columns[1],
+              card_type: columns[2],
+              location: columns[3],
+              card_effect: cardEffect,
+              image: this.getAspectImage(columns[1]),
+              is_fortification: isFortification,
+              is_one_per_deck: isOnePerDeck
+            };
+
+            this.aspects.set(aspect.id, aspect);
+            loadedCount++;
+
+            if (loadedCount % 5 === 0) {
+              console.log(`   Loaded ${loadedCount}/${totalLines} aspects...`);
+            }
+          }
+        }
+      }
+
+      console.log(`🎉 Successfully loaded ${loadedCount} aspects into database!`);
+      console.log('✅ Aspects loaded successfully');
+    } catch (error) {
+      console.error('❌ Error loading aspects:', error);
+    }
+  }
+
+  private async loadAdvancedUniverse(): Promise<void> {
+    try {
+      console.log('📖 Loading advanced universe from file...');
+      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-advanced-universe.md');
+      
+      if (!fs.existsSync(filePath)) {
+        console.log('❌ Advanced universe file not found, skipping advanced universe loading');
+        return;
+      }
+
+      console.log('📖 Reading advanced universe data from file...');
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const lines = fileContent.split('\n').filter(line => line.trim().length > 0);
+
+      let loadedCount = 0;
+      let currentCharacter = '';
+
+      for (const line of lines) {
+        // Check if this is a character header
+        if (line.startsWith('## ')) {
+          currentCharacter = line.replace('## ', '').trim();
+          continue;
+        }
+
+        // Skip header and separator lines
+        if (line.startsWith('|') && !line.includes('----') && !line.includes('Card Name')) {
+          const columns = line.split('|').map(col => col.trim());
+          
+          if (columns.length >= 5) { // Split by | creates 5+ elements for 4 columns
+            const cardEffect = columns[4] || '';
+            const isOnePerDeck = cardEffect.includes('**One Per Deck**');
+            
+            const advancedUniverse: AdvancedUniverse = {
+              id: `advanced_universe_${this.nextAdvancedUniverseId++}`,
+              name: columns[1],
+              card_type: columns[2],
+              character: currentCharacter,
+              card_effect: cardEffect,
+              image: this.getAdvancedUniverseImage(columns[1]),
+              is_one_per_deck: isOnePerDeck
+            };
+
+            this.advancedUniverse.set(advancedUniverse.id, advancedUniverse);
+            loadedCount++;
+          }
+        }
+      }
+
+      console.log(`🎉 Successfully loaded ${loadedCount} advanced universe cards into database!`);
+      console.log('✅ Advanced universe loaded successfully');
+    } catch (error) {
+      console.error('❌ Error loading advanced universe:', error);
+    }
+  }
+
+  private async loadTeamwork(): Promise<void> {
+    try {
+      console.log('📖 Loading teamwork from file...');
+      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-universe-teamwork.md');
+      
+      if (!fs.existsSync(filePath)) {
+        console.log('❌ Teamwork file not found, skipping teamwork loading');
+        return;
+      }
+
+      console.log('📖 Reading teamwork data from file...');
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const lines = fileContent.split('\n').filter(line => line.trim().length > 0);
+
+      let loadedCount = 0;
+      const totalLines = lines.length;
+
+      for (const line of lines) {
+        // Skip header and separator lines
+        if (line.startsWith('|') && !line.includes('----') && !line.includes('Card Type')) {
+          const columns = line.split('|').map(col => col.trim());
+          
+          if (columns.length >= 7) { // Split by | creates 7+ elements for 6 columns
+            const teamwork: Teamwork = {
+              id: `teamwork_${this.nextTeamworkId++}`,
+              card_type: columns[1],
+              to_use: columns[2],
+              acts_as: columns[3],
+              followup_attack_types: columns[4],
+              first_attack_bonus: columns[5],
+              second_attack_bonus: columns[6],
+              image: this.getTeamworkImage(columns[2], columns[4], columns[5], columns[6]) // Use the "To Use" field to determine image
+            };
+
+            this.teamwork.set(teamwork.id, teamwork);
+            loadedCount++;
+
+            if (loadedCount % 5 === 0) {
+              console.log(`   Loaded ${loadedCount}/${totalLines} teamwork cards...`);
+            }
+          }
+        }
+      }
+
+      console.log(`🎉 Successfully loaded ${loadedCount} teamwork cards into database!`);
+      console.log('✅ Teamwork loaded successfully');
+    } catch (error) {
+      console.error('❌ Error loading teamwork:', error);
+    }
+  }
+
+  private async loadAllyUniverse(): Promise<void> {
+    try {
+      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-universe-ally.md');
+      if (!fs.existsSync(filePath)) {
+        console.log('❌ Ally Universe file not found, skipping');
+        return;
+      }
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const lines = content.split('\n').filter(l => l.trim().length > 0);
+      for (const line of lines) {
+        if (line.startsWith('|') && !line.includes('---') && !line.includes('Card Name')) {
+          const cols = line.split('|').map(c => c.trim());
+          if (cols.length >= 8) {
+            const cardName = cols[1];
+            const ally: AllyUniverse = {
+              id: `ally_${this.nextAllyUniverseId++}`,
+              card_name: cardName,
+              card_type: cols[2],
+              stat_to_use: cols[3],
+              stat_type_to_use: cols[4],
+              attack_value: cols[5],
+              attack_type: cols[6],
+              card_text: cols[7],
+              image: this.getAllyUniverseImage(cardName, cols[4], cols[3])
+            };
+            this.allyUniverse.set(ally.id, ally);
+          }
+        }
+      }
+      console.log(`✅ Loaded ${this.allyUniverse.size} Ally Universe cards`);
+    } catch (e) {
+      console.error('Error loading Ally Universe:', e);
+    }
+  }
+
+  private async loadTraining(): Promise<void> {
+    try {
+      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-training.md');
+      if (!fs.existsSync(filePath)) {
+        console.log('❌ Training file not found, skipping');
+        return;
+      }
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const lines = content.split('\n').filter(l => l.trim().length > 0);
+      for (const line of lines) {
+        if (line.startsWith('|') && !line.includes('---') && !line.includes('Card Name')) {
+          const cols = line.split('|').map(c => c.trim());
+          if (cols.length >= 6) {
+            const name = cols[1];
+            const type1 = cols[2];
+            const type2 = cols[3];
+            const training: TrainingCard = {
+              id: `training_${this.nextTrainingId++}`,
+              card_name: name,
+              type_1: type1,
+              type_2: type2,
+              value_to_use: cols[4],
+              bonus: cols[5],
+              image: this.getTrainingImage(type1, type2)
+            };
+            this.trainings.set(training.id, training);
+          }
+        }
+      }
+      console.log(`✅ Loaded ${this.trainings.size} Training cards`);
+    } catch (e) {
+      console.error('Error loading Training:', e);
+    }
+  }
+
+  private async loadBasicUniverse(): Promise<void> {
+    try {
+      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-universe-basic.md');
+      if (!fs.existsSync(filePath)) {
+        console.log('❌ Basic Universe file not found, skipping');
+        return;
+      }
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const lines = content.split('\n').filter(l => l.trim().length > 0);
+      for (const line of lines) {
+        if (line.startsWith('|') && !line.includes('---') && !line.includes('Card Name')) {
+          const cols = line.split('|').map(c => c.trim());
+          if (cols.length >= 5) {
+            const name = cols[1];
+            const type = cols[2];
+            const valueToUse = cols[3];
+            const bonus = cols[4];
+            const basicUniverse: BasicUniverse = {
+              id: `basic_${this.nextBasicUniverseId++}`,
+              card_name: name,
+              type: type,
+              value_to_use: valueToUse,
+              bonus: bonus,
+              image: this.getBasicUniverseImage(valueToUse, type, bonus)
+            };
+            this.basicUniverse.set(basicUniverse.id, basicUniverse);
+          }
+        }
+      }
+      console.log(`✅ Loaded ${this.basicUniverse.size} Basic Universe cards`);
+    } catch (e) {
+      console.error('Error loading Basic Universe:', e);
+    }
+  }
+
+  private async loadPowerCards(): Promise<void> {
+    try {
+      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-powercards.md');
+      if (!fs.existsSync(filePath)) {
+        console.log('❌ Power cards file not found, skipping');
+        return;
+      }
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const lines = content.split('\n');
+      let currentType: string | null = null;
+      
+      for (const line of lines) {
+        const trimmed = line.trim();
+        
+        // Skip empty lines and table separators
+        if (trimmed === '' || trimmed === '|----------|-----|') continue;
+        
+        // Check for section headers
+        if (trimmed.startsWith('## ')) {
+          currentType = trimmed.replace('## ', '').trim();
+          continue;
+        }
+        
+        // Skip table headers
+        if (trimmed.includes('Power Type') || trimmed.includes('|--')) continue;
+        
+        // Parse table rows
+        if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+          const cols = trimmed.split('|').map(c => c.trim()).filter(Boolean);
+          if (cols.length >= 2 && currentType && !isNaN(parseInt(cols[1]))) {
+            const powerType = cols[0];
+            const value = parseInt(cols[1]);
+            
+            if (powerType && value && !isNaN(value)) {
+              const alternateImages = this.getPowerCardAlternateImages(powerType, value);
+              if (alternateImages.length > 0) {
+                console.log(`🔍 Power card ${powerType} ${value} has ${alternateImages.length} alternate images:`, alternateImages);
+              }
+              const card: PowerCard = {
+                id: `power_${this.nextPowerCardId++}`,
+                power_type: powerType,
+                value: value,
+                image: this.getPowerCardImage(powerType, value),
+                ...(alternateImages.length > 0 && { alternateImages })
+              };
+              this.powerCards.set(card.id, card);
+            }
+          }
+        }
+      }
+      console.log(`✅ Loaded ${this.powerCards.size} power cards`);
+    } catch (e) {
+      console.error('Error loading power cards:', e);
+    }
+  }
+
+  // Helper methods for image mapping
   private getMissionImage(missionSet: string, cardName: string, index: number): string {
     // Convert mission set and card name to snake_case for matching
     const missionSetSnake = this.convertToSnakeCase(missionSet);
@@ -898,110 +1323,6 @@ class InMemoryDatabase implements OverPowerRepository {
       "missions/389_world_legends_4.webp", "missions/390_world_legends_5.webp", "missions/391_world_legends_6.webp",
       "missions/392_world_legends_7.webp"
     ];
-  }
-
-  // Event management
-  getEventById(id: string): Event | undefined {
-    return this.events.get(id);
-  }
-
-  getAllEvents(): Event[] {
-    return Array.from(this.events.values());
-  }
-
-  // Aspect management
-  getAspectById(id: string): Aspect | undefined {
-    return this.aspects.get(id);
-  }
-
-  getAllAspects(): Aspect[] {
-    return Array.from(this.aspects.values());
-  }
-
-  // Advanced Universe management
-  getAdvancedUniverseById(id: string): AdvancedUniverse | undefined {
-    return this.advancedUniverse.get(id);
-  }
-
-  getAllAdvancedUniverse(): AdvancedUniverse[] {
-    return Array.from(this.advancedUniverse.values());
-  }
-
-  // Teamwork management
-  getTeamworkById(id: string): Teamwork | undefined {
-    return this.teamwork.get(id);
-  }
-
-  getAllTeamwork(): Teamwork[] {
-    return Array.from(this.teamwork.values());
-  }
-
-  // Ally Universe management
-  getAllAllyUniverse(): AllyUniverse[] {
-    return Array.from(this.allyUniverse.values());
-  }
-
-  getAllTraining(): TrainingCard[] {
-    return Array.from(this.trainings.values());
-  }
-
-  getAllBasicUniverse(): BasicUniverse[] {
-    return Array.from(this.basicUniverse.values());
-  }
-
-  getAllPowerCards(): PowerCard[] {
-    return Array.from(this.powerCards.values());
-  }
-
-  private async loadEvents(): Promise<void> {
-    try {
-      console.log('📖 Loading events from file...');
-      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-events.md');
-      
-      if (!fs.existsSync(filePath)) {
-        console.log('❌ Events file not found, skipping event loading');
-        return;
-      }
-
-      console.log('📖 Reading event data from file...');
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
-      const lines = fileContent.split('\n').filter(line => line.trim().length > 0);
-
-      let loadedCount = 0;
-      let currentMissionSet = '';
-
-      for (const line of lines) {
-        // Check if this is a mission set header
-        if (line.startsWith('## ')) {
-          currentMissionSet = line.replace('## ', '').trim();
-          continue;
-        }
-
-        // Skip header and separator lines
-        if (line.startsWith('|') && !line.includes('----') && !line.includes('Name')) {
-          const columns = line.split('|').map(col => col.trim());
-          
-          if (columns.length >= 5) { // Split by | creates 5+ elements for 4 columns
-            const event: Event = {
-              id: `event_${this.nextEventId++}`,
-              name: columns[1],
-              mission_set: currentMissionSet,
-              game_effect: columns[3],
-              flavor_text: columns[4],
-              image: this.getEventImage(currentMissionSet, columns[1])
-            };
-
-            this.events.set(event.id, event);
-            loadedCount++;
-          }
-        }
-      }
-
-      console.log(`🎉 Successfully loaded ${loadedCount} events into database!`);
-      console.log('✅ Events loaded successfully');
-    } catch (error) {
-      console.error('❌ Error loading events:', error);
-    }
   }
 
   private getEventImage(missionSet: string, eventName: string): string {
@@ -1078,61 +1399,6 @@ class InMemoryDatabase implements OverPowerRepository {
     ];
   }
 
-  private async loadAspects(): Promise<void> {
-    try {
-      console.log('📖 Loading aspects from file...');
-      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-aspects.md');
-      
-      if (!fs.existsSync(filePath)) {
-        console.log('❌ Aspects file not found, skipping aspects loading');
-        return;
-      }
-
-      console.log('📖 Reading aspects data from file...');
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
-      const lines = fileContent.split('\n').filter(line => line.trim().length > 0);
-
-      let loadedCount = 0;
-      const totalLines = lines.length;
-      
-      for (const line of lines) {
-        // Skip header and separator lines
-        if (line.startsWith('|') && !line.includes('----') && !line.includes('Card Name')) {
-          const columns = line.split('|').map(col => col.trim());
-          
-          if (columns.length >= 6) { // Split by | creates 6 elements for 5 columns
-            const cardEffect = columns[4] || '';
-            const isFortification = cardEffect.includes('**Fortifications!**');
-            const isOnePerDeck = cardEffect.includes('**One Per Deck**');
-            
-            const aspect: Aspect = {
-              id: `aspect_${this.nextAspectId++}`,
-              card_name: columns[1],
-              card_type: columns[2],
-              location: columns[3],
-              card_effect: cardEffect,
-              image: this.getAspectImage(columns[1]),
-              is_fortification: isFortification,
-              is_one_per_deck: isOnePerDeck
-            };
-
-            this.aspects.set(aspect.id, aspect);
-            loadedCount++;
-
-            if (loadedCount % 5 === 0) {
-              console.log(`   Loaded ${loadedCount}/${totalLines} aspects...`);
-            }
-          }
-        }
-      }
-
-      console.log(`🎉 Successfully loaded ${loadedCount} aspects into database!`);
-      console.log('✅ Aspects loaded successfully');
-    } catch (error) {
-      console.error('❌ Error loading aspects:', error);
-    }
-  }
-
   private getAspectImage(cardName: string): string {
     // Direct mapping for aspect cards based on their specific names
     const aspectImageMap: { [key: string]: string } = {
@@ -1181,61 +1447,6 @@ class InMemoryDatabase implements OverPowerRepository {
     ];
   }
 
-  private async loadAdvancedUniverse(): Promise<void> {
-    try {
-      console.log('📖 Loading advanced universe from file...');
-      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-advanced-universe.md');
-      
-      if (!fs.existsSync(filePath)) {
-        console.log('❌ Advanced universe file not found, skipping advanced universe loading');
-        return;
-      }
-
-      console.log('📖 Reading advanced universe data from file...');
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
-      const lines = fileContent.split('\n').filter(line => line.trim().length > 0);
-
-      let loadedCount = 0;
-      let currentCharacter = '';
-
-      for (const line of lines) {
-        // Check if this is a character header
-        if (line.startsWith('## ')) {
-          currentCharacter = line.replace('## ', '').trim();
-          continue;
-        }
-
-        // Skip header and separator lines
-        if (line.startsWith('|') && !line.includes('----') && !line.includes('Card Name')) {
-          const columns = line.split('|').map(col => col.trim());
-          
-          if (columns.length >= 5) { // Split by | creates 5+ elements for 4 columns
-            const cardEffect = columns[4] || '';
-            const isOnePerDeck = cardEffect.includes('**One Per Deck**');
-            
-            const advancedUniverse: AdvancedUniverse = {
-              id: `advanced_universe_${this.nextAdvancedUniverseId++}`,
-              name: columns[1],
-              card_type: columns[2],
-              character: currentCharacter,
-              card_effect: cardEffect,
-              image: this.getAdvancedUniverseImage(columns[1]),
-              is_one_per_deck: isOnePerDeck
-            };
-
-            this.advancedUniverse.set(advancedUniverse.id, advancedUniverse);
-            loadedCount++;
-          }
-        }
-      }
-
-      console.log(`🎉 Successfully loaded ${loadedCount} advanced universe cards into database!`);
-      console.log('✅ Advanced universe loaded successfully');
-    } catch (error) {
-      console.error('❌ Error loading advanced universe:', error);
-    }
-  }
-
   private getAdvancedUniverseImage(cardName: string): string {
     // Direct mapping for advanced universe cards based on their specific names
     const advancedUniverseImageMap: { [key: string]: string } = {
@@ -1250,57 +1461,6 @@ class InMemoryDatabase implements OverPowerRepository {
     }
     
     return 'unknown_advanced_universe.webp';
-  }
-
-  private async loadTeamwork(): Promise<void> {
-    try {
-      console.log('📖 Loading teamwork from file...');
-      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-universe-teamwork.md');
-      
-      if (!fs.existsSync(filePath)) {
-        console.log('❌ Teamwork file not found, skipping teamwork loading');
-        return;
-      }
-
-      console.log('📖 Reading teamwork data from file...');
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
-      const lines = fileContent.split('\n').filter(line => line.trim().length > 0);
-
-      let loadedCount = 0;
-      const totalLines = lines.length;
-
-      for (const line of lines) {
-        // Skip header and separator lines
-        if (line.startsWith('|') && !line.includes('----') && !line.includes('Card Type')) {
-          const columns = line.split('|').map(col => col.trim());
-          
-          if (columns.length >= 7) { // Split by | creates 7+ elements for 6 columns
-            const teamwork: Teamwork = {
-              id: `teamwork_${this.nextTeamworkId++}`,
-              card_type: columns[1],
-              to_use: columns[2],
-              acts_as: columns[3],
-              followup_attack_types: columns[4],
-              first_attack_bonus: columns[5],
-              second_attack_bonus: columns[6],
-              image: this.getTeamworkImage(columns[2], columns[4], columns[5], columns[6]) // Use the "To Use" field to determine image
-            };
-
-            this.teamwork.set(teamwork.id, teamwork);
-            loadedCount++;
-
-            if (loadedCount % 5 === 0) {
-              console.log(`   Loaded ${loadedCount}/${totalLines} teamwork cards...`);
-            }
-          }
-        }
-      }
-
-      console.log(`🎉 Successfully loaded ${loadedCount} teamwork cards into database!`);
-      console.log('✅ Teamwork loaded successfully');
-    } catch (error) {
-      console.error('❌ Error loading teamwork:', error);
-    }
   }
 
   private getTeamworkImage(toUse: string, followupAttackTypes: string, firstAttackBonus: string, secondAttackBonus: string): string {
@@ -1512,41 +1672,6 @@ class InMemoryDatabase implements OverPowerRepository {
     ];
   }
 
-  private async loadAllyUniverse(): Promise<void> {
-    try {
-      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-universe-ally.md');
-      if (!fs.existsSync(filePath)) {
-        console.log('❌ Ally Universe file not found, skipping');
-        return;
-      }
-      const content = fs.readFileSync(filePath, 'utf-8');
-      const lines = content.split('\n').filter(l => l.trim().length > 0);
-      for (const line of lines) {
-        if (line.startsWith('|') && !line.includes('---') && !line.includes('Card Name')) {
-          const cols = line.split('|').map(c => c.trim());
-          if (cols.length >= 8) {
-            const cardName = cols[1];
-            const ally: AllyUniverse = {
-              id: `ally_${this.nextAllyUniverseId++}`,
-              card_name: cardName,
-              card_type: cols[2],
-              stat_to_use: cols[3],
-              stat_type_to_use: cols[4],
-              attack_value: cols[5],
-              attack_type: cols[6],
-              card_text: cols[7],
-              image: this.getAllyUniverseImage(cardName, cols[4], cols[3])
-            };
-            this.allyUniverse.set(ally.id, ally);
-          }
-        }
-      }
-      console.log(`✅ Loaded ${this.allyUniverse.size} Ally Universe cards`);
-    } catch (e) {
-      console.error('Error loading Ally Universe:', e);
-    }
-  }
-
   private getAllyUniverseImage(cardName: string, statType: string, statToUse: string): string {
     // Try to map by stat first using known base set numbers (e.g., 324-331 shown)
     const baseMap: { [key: string]: string[] } = {
@@ -1567,41 +1692,6 @@ class InMemoryDatabase implements OverPowerRepository {
     return 'unknown_ally_universe.webp';
   }
 
-  private async loadTraining(): Promise<void> {
-    try {
-      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-training.md');
-      if (!fs.existsSync(filePath)) {
-        console.log('❌ Training file not found, skipping');
-        return;
-      }
-      const content = fs.readFileSync(filePath, 'utf-8');
-      const lines = content.split('\n').filter(l => l.trim().length > 0);
-      for (const line of lines) {
-        if (line.startsWith('|') && !line.includes('---') && !line.includes('Card Name')) {
-          const cols = line.split('|').map(c => c.trim());
-          if (cols.length >= 6) {
-            const name = cols[1];
-            const type1 = cols[2];
-            const type2 = cols[3];
-            const training: TrainingCard = {
-              id: `training_${this.nextTrainingId++}`,
-              card_name: name,
-              type_1: type1,
-              type_2: type2,
-              value_to_use: cols[4],
-              bonus: cols[5],
-              image: this.getTrainingImage(type1, type2)
-            };
-            this.trainings.set(training.id, training);
-          }
-        }
-      }
-      console.log(`✅ Loaded ${this.trainings.size} Training cards`);
-    } catch (e) {
-      console.error('Error loading Training:', e);
-    }
-  }
-
   private getTrainingImage(type1: string, type2: string): string {
     // Map the two stats to one of the six combined 5+5 images (344-349)
     // Build key like 'energy_combat', sorted to match filenames order
@@ -1619,41 +1709,6 @@ class InMemoryDatabase implements OverPowerRepository {
       'any_power_any_power': 'training-universe/5_any_power_5_sekhmet.webp'
     };
     return map[pair] || 'unknown_training.webp';
-  }
-
-  private async loadBasicUniverse(): Promise<void> {
-    try {
-      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-universe-basic.md');
-      if (!fs.existsSync(filePath)) {
-        console.log('❌ Basic Universe file not found, skipping');
-        return;
-      }
-      const content = fs.readFileSync(filePath, 'utf-8');
-      const lines = content.split('\n').filter(l => l.trim().length > 0);
-      for (const line of lines) {
-        if (line.startsWith('|') && !line.includes('---') && !line.includes('Card Name')) {
-          const cols = line.split('|').map(c => c.trim());
-          if (cols.length >= 5) {
-            const name = cols[1];
-            const type = cols[2];
-            const valueToUse = cols[3];
-            const bonus = cols[4];
-            const basicUniverse: BasicUniverse = {
-              id: `basic_${this.nextBasicUniverseId++}`,
-              card_name: name,
-              type: type,
-              value_to_use: valueToUse,
-              bonus: bonus,
-              image: this.getBasicUniverseImage(valueToUse, type, bonus)
-            };
-            this.basicUniverse.set(basicUniverse.id, basicUniverse);
-          }
-        }
-      }
-      console.log(`✅ Loaded ${this.basicUniverse.size} Basic Universe cards`);
-    } catch (e) {
-      console.error('Error loading Basic Universe:', e);
-    }
   }
 
   private getBasicUniverseImage(valueToUse: string, type: string, bonus: string): string {
@@ -1699,62 +1754,6 @@ class InMemoryDatabase implements OverPowerRepository {
     return 'unknown_basic_universe.webp';
   }
 
-  private async loadPowerCards(): Promise<void> {
-    try {
-      const filePath = path.join(process.cwd(), 'src/resources/cards/descriptions/overpower-erb-powercards.md');
-      if (!fs.existsSync(filePath)) {
-        console.log('❌ Power cards file not found, skipping');
-        return;
-      }
-      const content = fs.readFileSync(filePath, 'utf-8');
-      const lines = content.split('\n');
-      let currentType: string | null = null;
-      
-      for (const line of lines) {
-        const trimmed = line.trim();
-        
-        // Skip empty lines and table separators
-        if (trimmed === '' || trimmed === '|----------|-----|') continue;
-        
-        // Check for section headers
-        if (trimmed.startsWith('## ')) {
-          currentType = trimmed.replace('## ', '').trim();
-          continue;
-        }
-        
-        // Skip table headers
-        if (trimmed.includes('Power Type') || trimmed.includes('|--')) continue;
-        
-        // Parse table rows
-        if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
-          const cols = trimmed.split('|').map(c => c.trim()).filter(Boolean);
-          if (cols.length >= 2 && currentType && !isNaN(parseInt(cols[1]))) {
-            const powerType = cols[0];
-            const value = parseInt(cols[1]);
-            
-            if (powerType && value && !isNaN(value)) {
-              const alternateImages = this.getPowerCardAlternateImages(powerType, value);
-              if (alternateImages.length > 0) {
-                console.log(`🔍 Power card ${powerType} ${value} has ${alternateImages.length} alternate images:`, alternateImages);
-              }
-              const card: PowerCard = {
-                id: `power_${this.nextPowerCardId++}`,
-                power_type: powerType,
-                value: value,
-                image: this.getPowerCardImage(powerType, value),
-                ...(alternateImages.length > 0 && { alternateImages })
-              };
-              this.powerCards.set(card.id, card);
-            }
-          }
-        }
-      }
-      console.log(`✅ Loaded ${this.powerCards.size} power cards`);
-    } catch (e) {
-      console.error('Error loading power cards:', e);
-    }
-  }
-
   private getPowerCardImage(powerType: string, value: number): string {
     const type = powerType.toLowerCase().replace(/\s+/g, '_');
     if (type === 'any-power' || type === 'any_power') {
@@ -1781,23 +1780,4 @@ class InMemoryDatabase implements OverPowerRepository {
     }
     return 'unknown_power.webp';
   }
-
-  // Statistics
-  getStats() {
-    return {
-      users: this.users.size,
-      decks: this.decks.size,
-      characters: this.characters.size,
-      locations: this.locations.size,
-      specialCards: this.specialCards.size,
-      missions: this.missions.size,
-      events: this.events.size,
-      aspects: this.aspects.size,
-      advancedUniverse: this.advancedUniverse.size,
-      teamwork: this.teamwork.size
-    };
-  }
 }
-
-export { InMemoryDatabase };
-

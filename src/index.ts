@@ -12,7 +12,9 @@ const PORT = process.env.PORT || 3000;
 const deckService = new DeckPersistenceService();
 const userService = new UserPersistenceService();
 const dataSource = DataSourceConfig.getInstance();
-const repository = dataSource.getRepository();
+const userRepository = dataSource.getUserRepository();
+const deckRepository = dataSource.getDeckRepository();
+const cardRepository = dataSource.getCardRepository();
 
 // Middleware
 app.use(express.json());
@@ -37,12 +39,16 @@ app.use('/src/resources/cards/images', express.static(path.join(process.cwd(), '
 app.use('/src/resources/images', express.static(path.join(process.cwd(), 'src/resources/images')));
 
 // Initialize database
-repository.initialize().then(() => {
+Promise.all([
+  userRepository.initialize(),
+  deckRepository.initialize(),
+  cardRepository.initialize()
+]).then(() => {
   console.log('🚀 Overpower Deckbuilder server running on port', PORT);
   console.log('📖 API documentation available at http://localhost:' + PORT);
   
-  const stats = repository.getStats();
-  console.log('🔍 Database loaded:', stats.characters, 'characters,', stats.locations, 'locations');
+  const cardStats = cardRepository.getCardStats();
+  console.log('🔍 Database loaded:', cardStats.characters, 'characters,', cardStats.locations, 'locations');
 });
 
 // Authentication middleware
@@ -144,7 +150,7 @@ app.get('/api/auth/me', authenticateUser, (req: any, res) => {
 // API Routes
 app.get('/api/characters', (req, res) => {
   try {
-    const characters = repository.getAllCharacters();
+    const characters = cardRepository.getAllCharacters();
     res.json({ success: true, data: characters });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch characters' });
@@ -153,7 +159,7 @@ app.get('/api/characters', (req, res) => {
 
 app.get('/api/characters/:id/alternate-images', (req, res) => {
   try {
-    const character = repository.getCharacterById(req.params.id);
+    const character = cardRepository.getCharacterById(req.params.id);
     if (!character) {
       return res.status(404).json({ success: false, error: 'Character not found' });
     }
@@ -166,7 +172,7 @@ app.get('/api/characters/:id/alternate-images', (req, res) => {
 
 app.get('/api/special-cards/:id/alternate-images', (req, res) => {
   try {
-    const specialCard = repository.getSpecialCardById(req.params.id);
+    const specialCard = cardRepository.getSpecialCardById(req.params.id);
     if (!specialCard) {
       return res.status(404).json({ success: false, error: 'Special card not found' });
     }
@@ -179,7 +185,7 @@ app.get('/api/special-cards/:id/alternate-images', (req, res) => {
 
 app.get('/api/power-cards/:id/alternate-images', (req, res) => {
   try {
-    const powerCard = repository.getPowerCardById(req.params.id);
+    const powerCard = cardRepository.getPowerCardById(req.params.id);
     if (!powerCard) {
       return res.status(404).json({ success: false, error: 'Power card not found' });
     }
@@ -192,7 +198,7 @@ app.get('/api/power-cards/:id/alternate-images', (req, res) => {
 
 app.get('/api/locations', (req, res) => {
   try {
-    const locations = repository.getAllLocations();
+    const locations = cardRepository.getAllLocations();
     res.json({ success: true, data: locations });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch locations' });
@@ -201,7 +207,7 @@ app.get('/api/locations', (req, res) => {
 
 app.get('/api/special-cards', (req, res) => {
   try {
-    const specialCards = repository.getAllSpecialCards();
+    const specialCards = cardRepository.getAllSpecialCards();
     res.json({ success: true, data: specialCards });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch special cards' });
@@ -210,7 +216,7 @@ app.get('/api/special-cards', (req, res) => {
 
 app.get('/api/missions', (req, res) => {
   try {
-    const missions = repository.getAllMissions();
+    const missions = cardRepository.getAllMissions();
     res.json({ success: true, data: missions });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch missions' });
@@ -219,7 +225,7 @@ app.get('/api/missions', (req, res) => {
 
 app.get('/api/events', (req, res) => {
   try {
-    const events = repository.getAllEvents();
+    const events = cardRepository.getAllEvents();
     res.json({ success: true, data: events });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch events' });
@@ -228,7 +234,7 @@ app.get('/api/events', (req, res) => {
 
 app.get('/api/aspects', (req, res) => {
   try {
-    const aspects = repository.getAllAspects();
+    const aspects = cardRepository.getAllAspects();
     res.json({ success: true, data: aspects });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch aspects' });
@@ -237,7 +243,7 @@ app.get('/api/aspects', (req, res) => {
 
 app.get('/api/advanced-universe', (req, res) => {
   try {
-    const advancedUniverse = repository.getAllAdvancedUniverse();
+    const advancedUniverse = cardRepository.getAllAdvancedUniverse();
     res.json({ success: true, data: advancedUniverse });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch advanced universe' });
@@ -246,7 +252,7 @@ app.get('/api/advanced-universe', (req, res) => {
 
 app.get('/api/teamwork', (req, res) => {
   try {
-    const teamwork = repository.getAllTeamwork();
+    const teamwork = cardRepository.getAllTeamwork();
     res.json({ success: true, data: teamwork });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch teamwork' });
@@ -255,7 +261,7 @@ app.get('/api/teamwork', (req, res) => {
 
 app.get('/api/ally-universe', (req, res) => {
   try {
-    const ally = repository.getAllAllyUniverse();
+    const ally = cardRepository.getAllAllyUniverse();
     res.json({ success: true, data: ally });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch ally universe' });
@@ -264,7 +270,7 @@ app.get('/api/ally-universe', (req, res) => {
 
 app.get('/api/training', (req, res) => {
   try {
-    const training = repository.getAllTraining();
+    const training = cardRepository.getAllTraining();
     res.json({ success: true, data: training });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch training cards' });
@@ -273,7 +279,7 @@ app.get('/api/training', (req, res) => {
 
 app.get('/api/basic-universe', (req, res) => {
   try {
-    const basicUniverse = repository.getAllBasicUniverse();
+    const basicUniverse = cardRepository.getAllBasicUniverse();
     res.json({ success: true, data: basicUniverse });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch basic universe cards' });
@@ -282,7 +288,7 @@ app.get('/api/basic-universe', (req, res) => {
 
 app.get('/api/power-cards', (req, res) => {
   try {
-    const powerCards = repository.getAllPowerCards();
+    const powerCards = cardRepository.getAllPowerCards();
     res.json({ success: true, data: powerCards });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch power cards' });
@@ -290,21 +296,21 @@ app.get('/api/power-cards', (req, res) => {
 });
 
 app.get('/test', (req, res) => {
-  const characters = repository.getAllCharacters();
-  const locations = repository.getAllLocations();
-  const stats = repository.getStats();
+  const characters = cardRepository.getAllCharacters();
+  const locations = cardRepository.getAllLocations();
+  const cardStats = cardRepository.getCardStats();
   
   res.json({
     characters: characters.length,
     locations: locations.length,
-    stats: stats,
+    stats: cardStats,
     sampleLocation: locations[0]
   });
 });
 
 app.get('/api/users', (req, res) => {
   try {
-    const users = repository.getAllUsers();
+    const users = userRepository.getAllUsers();
     res.json({ success: true, data: users });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch users' });
