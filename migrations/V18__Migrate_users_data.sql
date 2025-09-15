@@ -1,0 +1,3 @@
+-- Migrate users data from JSON files
+-- This will be populated by the data migration script
+-- Placeholder for user data migration

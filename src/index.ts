@@ -2,6 +2,7 @@ import express from 'express';
 import { DataSourceConfig } from './config/DataSourceConfig';
 import { DeckPersistenceService } from './services/deckPersistence';
 import { UserPersistenceService } from './persistence/userPersistence';
+import { DatabaseInitializationService } from './services/databaseInitialization';
 import { Character } from './types';
 import path from 'path';
 
@@ -11,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 // Initialize services
 const deckService = new DeckPersistenceService();
 const userService = new UserPersistenceService();
+const databaseInit = new DatabaseInitializationService();
 const dataSource = DataSourceConfig.getInstance();
 const userRepository = dataSource.getUserRepository();
 const deckRepository = dataSource.getDeckRepository();
@@ -39,17 +41,39 @@ app.use('/src/resources/cards/images', express.static(path.join(process.cwd(), '
 app.use('/src/resources/images', express.static(path.join(process.cwd(), 'src/resources/images')));
 
 // Initialize database
-Promise.all([
-  userRepository.initialize(),
-  deckRepository.initialize(),
-  cardRepository.initialize()
-]).then(() => {
-  console.log('🚀 Overpower Deckbuilder server running on port', PORT);
-  console.log('📖 API documentation available at http://localhost:' + PORT);
-  
-  const cardStats = cardRepository.getCardStats();
-  console.log('🔍 Database loaded:', cardStats.characters, 'characters,', cardStats.locations, 'locations');
-});
+async function initializeServer() {
+  try {
+    console.log('🔄 Starting server initialization...');
+    
+    // First, initialize database with Flyway migrations and data
+    await databaseInit.initializeDatabase();
+    
+    // Then initialize the in-memory repositories
+    await Promise.all([
+      userRepository.initialize(),
+      deckRepository.initialize(),
+      cardRepository.initialize()
+    ]);
+    
+    console.log('🚀 Overpower Deckbuilder server running on port', PORT);
+    console.log('📖 API documentation available at http://localhost:' + PORT);
+    
+    const cardStats = cardRepository.getCardStats();
+    console.log('🔍 Database loaded:', cardStats.characters, 'characters,', cardStats.locations, 'locations');
+    
+    // Start the server
+    app.listen(PORT, () => {
+      console.log('🌐 Server is listening on port', PORT);
+    });
+    
+  } catch (error) {
+    console.error('❌ Server initialization failed:', error);
+    process.exit(1);
+  }
+}
+
+// Start the server
+initializeServer();
 
 // Authentication middleware
 const authenticateUser = (req: any, res: any, next: any) => {
@@ -504,7 +528,36 @@ app.use('/public', express.static('public'));
 app.use(express.static('public'));
 app.use('/src/resources', express.static('src/resources'));
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server starting on port ${PORT}...`);
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    database: 'PostgreSQL with Flyway migrations'
+  });
 });
+
+// Database status endpoint
+app.get('/api/database/status', async (req, res) => {
+  try {
+    const isValid = await databaseInit.validateDatabase();
+    const isUpToDate = await databaseInit.checkDatabaseStatus();
+    
+    res.json({
+      status: 'OK',
+      database: {
+        valid: isValid,
+        upToDate: isUpToDate,
+        migrations: 'Flyway managed'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'ERROR',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Server startup is now handled in initializeServer() function
 

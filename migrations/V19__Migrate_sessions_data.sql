@@ -1,0 +1,3 @@
+-- Migrate sessions data from JSON files
+-- This will be populated by the data migration script
+-- Placeholder for session data migration
