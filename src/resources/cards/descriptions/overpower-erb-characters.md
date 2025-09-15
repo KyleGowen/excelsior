@@ -6,7 +6,7 @@
 | Anubis | 6 | 2 | 7 | 5 | 18 |  | 014_anubis.webp |
 | Billy the Kid | 4 | 7 | 3 | 4 | 17 | May play numerical Special cards from Reserve. | 021_billy_the_kid.webp |
 | Captain Nemo | 3 | 6 | 3 | 7 | 20 |  | 028_captain_nemo.webp |
-| Carson of Venus | 7 | 5 | 4 | 7 | 20 | Threat Level is 19 if he starts the game in Reserve. | 035_carson_of_venus.webp |
+| Carson of Venus | 7 | 5 | 4 | 7 | 18 | Threat Level is 19 if he starts the game in Reserve. | 035_carson_of_venus.webp |
 | Count of Monte Cristo | 1 | 6 | 3 | 7 | 20 |  | 042_count_of_monte_cristo.webp |
 | Cthulhu | 6 | 1 | 8 | 7 | 22 | May play Intelligence Teamwork cards from Reserve. | 048_cthulhu.webp |
 | Dejah Thoris | 6 | 6 | 2 | 3 | 18 |  | 055_dejah_thoris.webp |
