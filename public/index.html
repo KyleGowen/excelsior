@@ -6257,8 +6257,8 @@
                     const characterCards = deck.cards.filter(card => card.type === 'character');
                     if (characterCards.length > 0) {
                         const characterNames = characterCards.map(card => {
-                            // Direct lookup using UUID
-                            const character = availableCardsMap.get(card.cardId);
+                            // Look up character using the characterMap we fetched
+                            const character = characterMap[card.cardId];
                             return character ? character.name : 'Unknown Character';
                         });
                         characterList = `<div class="deck-characters">👥 Characters: ${characterNames.join(', ')}</div>`;
@@ -6266,8 +6266,8 @@
                         // Create character display with rotating file effect
                         const characterDisplayCards = characterCards.slice(0, 4); // Max 4 characters
                         let characterDisplayHTML = characterDisplayCards.map(card => {
-                            // Direct lookup using UUID
-                            const character = availableCardsMap.get(card.cardId);
+                            // Look up character using the characterMap we fetched
+                            const character = characterMap[card.cardId];
                             if (character && character.image) {
                                 // Use getCardImagePath to handle alternate images
                                 const imagePath = getCardImagePath(character, 'character', card.selectedAlternateImage);
@@ -9984,7 +9984,26 @@
                 'teamwork-universe/416_6_brute_force_0e_1c.webp': 'teamwork-universe/416_6_brute_force_0e_1c.webp',
                 'teamwork-universe/418_6_brute_force_0c_1i.webp': 'teamwork-universe/418_6_brute_force_0c_1i.webp',
                 'teamwork-universe/408_6_combat_0e_1i.webp': 'teamwork-universe/408_6_combat_0e_1i.webp',
-                'teamwork-universe/411_7_combat_1e_1i.webp': 'teamwork-universe/411_7_combat_1e_1i.webp'
+                'teamwork-universe/411_7_combat_1e_1i.webp': 'teamwork-universe/411_7_combat_1e_1i.webp',
+                
+                // Power Cards (these already have correct filenames in DB, but included for completeness)
+                'power-cards/475_7_anypower.webp': 'power-cards/475_7_anypower.webp',
+                'power-cards/474_6_anypower.webp': 'power-cards/474_6_anypower.webp',
+                'power-cards/309_7_brute_force.webp': 'power-cards/309_7_brute_force.webp',
+                'power-cards/313_3_brute_force.webp': 'power-cards/313_3_brute_force.webp',
+                'power-cards/315_1_brute_force.webp': 'power-cards/315_1_brute_force.webp',
+                'power-cards/301_7_combat.webp': 'power-cards/301_7_combat.webp',
+                'power-cards/297_3_energy.webp': 'power-cards/297_3_energy.webp',
+                'power-cards/320_4_intelligence.webp': 'power-cards/320_4_intelligence.webp',
+                'power-cards/477_3_multipower.webp': 'power-cards/477_3_multipower.webp',
+                
+                // Events (these already have correct filenames in DB, but included for completeness)
+                'events/a_captive_no_more.jpg': 'events/a_captive_no_more.jpg',
+                'events/370_tarzan_the_terrible.webp': 'events/370_tarzan_the_terrible.webp',
+                'events/369_the_lost_city_of_opar.webp': 'events/369_the_lost_city_of_opar.webp',
+                
+                // Aspects (these already have correct filenames in DB, but included for completeness)
+                'aspects/437_cheshire_cat.webp': 'aspects/437_cheshire_cat.webp'
             };
             
             return imageMappings[imagePath] || imagePath;
@@ -10027,7 +10046,7 @@
                     // Events use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/events/${actualImagePath}`;
+                        return `/src/resources/cards/images/${actualImagePath}`;
                     }
                 } else if (cardType === 'special') {
                     // If a specific alternate image is selected, use it
@@ -10038,13 +10057,13 @@
                     // Special cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/specials/${actualImagePath}`;
+                        return `/src/resources/cards/images/${actualImagePath}`;
                     }
                 } else if (cardType === 'aspect') {
                     // Aspects use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/aspects/${actualImagePath}`;
+                        return `/src/resources/cards/images/${actualImagePath}`;
                     }
                 } else if (cardType === 'teamwork') {
                     // Teamwork cards use the image field (which already includes the directory)
@@ -10061,7 +10080,7 @@
                     // Power cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/power-cards/${actualImagePath}`;
+                        return `/src/resources/cards/images/${actualImagePath}`;
                     }
                 } else if (cardType === 'advanced-universe' || cardType === 'advanced_universe') {
                     // Advanced universe cards use the image field (which already includes the directory)
@@ -11649,18 +11668,11 @@
                 currentSelectedImage = deckEditorCards[cardIndex].selectedAlternateImage;
             }
             
-            // Determine image paths based on card type
-            let defaultImagePath, alternateImagePath;
-            if (cardType === 'character') {
-                defaultImagePath = `/src/resources/cards/images/characters/${card.image}`;
-                alternateImagePath = '/src/resources/cards/images/characters/alternate/';
-            } else if (cardType === 'power') {
-                defaultImagePath = `/src/resources/cards/images/${card.image}`;
-                alternateImagePath = '/src/resources/cards/images/power-cards/alternate/';
-            } else {
-                defaultImagePath = `/src/resources/cards/images/${card.image}`;
-                alternateImagePath = '/src/resources/cards/images/specials/alternate/';
-            }
+            // Use getCardImagePath to construct proper image paths
+            const defaultImagePath = getCardImagePath(card, cardType);
+            const alternateImagePath = cardType === 'character' ? '/src/resources/cards/images/characters/alternate/' :
+                                     cardType === 'power' ? '/src/resources/cards/images/power-cards/alternate/' :
+                                     '/src/resources/cards/images/specials/alternate/';
             
             const modal = document.createElement('div');
             modal.className = 'alternate-art-modal';
@@ -11674,9 +11686,11 @@
                         </div>
                         ${card.alternateImages.map((altImage, index) => {
                             const imageNumber = card.alternateImages.length > 1 ? ` ${index + 1}` : '';
+                            // Check if altImage already contains the full path
+                            const imageSrc = altImage.includes('/') ? `/src/resources/cards/images/${altImage}` : `${alternateImagePath}${altImage}`;
                             return `
                                 <div class="art-option ${currentSelectedImage === altImage ? 'selected' : ''}" data-image="${altImage}">
-                                    <img src="${alternateImagePath}${altImage}" alt="Alternate Art${imageNumber}">
+                                    <img src="${imageSrc}" alt="Alternate Art${imageNumber}">
                                     <span>Alternate Art${imageNumber}</span>
                                 </div>
                             `;
