@@ -9907,40 +9907,12 @@
         }
         
         // Helper function to map database IDs to deck card IDs (reverse mapping)
+        // Note: After UUID migration, this function is no longer needed as we'll use
+        // a different approach to map between deck card IDs and database UUIDs
         function mapDatabaseIdToDeckCardId(databaseId, cardType) {
-            // For now, we'll create a comprehensive mapping table
-            // This would ideally be loaded from a configuration file or database
-            const cardMappings = {
-                // Characters
-                'character_zeus': 'char_42',
-                'character_leonidas': 'char_22', 
-                'character_dr._watson': 'char_11',
-                'character_sherlock_holmes': 'char_8',
-                'character_dracula': 'char_12',
-                
-                // Power cards - these need to be mapped based on the actual database IDs
-                // For now, we'll use a simple approach and map based on patterns
-                
-                // Special cards - these need to be mapped based on the actual database IDs
-                // For now, we'll use a simple approach and map based on patterns
-                
-                // Missions - these need to be mapped based on the actual database IDs
-                // For now, we'll use a simple approach and map based on patterns
-                
-                // Events - these need to be mapped based on the actual database IDs
-                // For now, we'll use a simple approach and map based on patterns
-                
-                // Aspects - these need to be mapped based on the actual database IDs
-                // For now, we'll use a simple approach and map based on patterns
-                
-                // Locations - these need to be mapped based on the actual database IDs
-                // For now, we'll use a simple approach and map based on patterns
-                
-                // Teamwork - these need to be mapped based on the actual database IDs
-                // For now, we'll use a simple approach and map based on patterns
-            };
-            
-            return cardMappings[databaseId] || null;
+            // This function is deprecated after UUID migration
+            // We'll use a different approach based on card names or other attributes
+            return null;
         }
 
         // Helper function to map card IDs to database IDs
@@ -10209,27 +10181,24 @@
                         
                         if (data.success && data.data.length > 0) {
                             data.data.forEach(card => {
-                                // Store with database ID format
+                                // Store with database UUID format
+                                availableCardsMap.set(card.id, card);
+                                
+                                // Store with category prefix for compatibility
                                 availableCardsMap.set(`${category.type}_${card.id}`, card);
                                 
-                                // Also store with deck card ID format for compatibility
-                                const deckCardId = mapDatabaseIdToDeckCardId(card.id, category.type);
-                                if (deckCardId) {
-                                    availableCardsMap.set(deckCardId, card);
-                                }
-                                
-                                // For characters, also store with the simple char_ format for compatibility
+                                // For characters, create a mapping from deck card IDs to database UUIDs
                                 if (category.type === 'character') {
                                     const charMappings = {
-                                        'character_zeus': 'char_42',
-                                        'character_leonidas': 'char_22', 
-                                        'character_dr._watson': 'char_11',
-                                        'character_sherlock_holmes': 'char_8',
-                                        'character_dracula': 'char_12'
+                                        'Zeus': 'char_42',
+                                        'Leonidas': 'char_22', 
+                                        'Dr. Watson': 'char_11',
+                                        'Sherlock Holmes': 'char_8',
+                                        'Dracula': 'char_12'
                                     };
-                                    const simpleId = charMappings[card.id];
-                                    if (simpleId) {
-                                        availableCardsMap.set(simpleId, card);
+                                    const deckCardId = charMappings[card.name];
+                                    if (deckCardId) {
+                                        availableCardsMap.set(deckCardId, card);
                                     }
                                 }
                             });
@@ -10678,27 +10647,24 @@
                         if (data.success && data.data.length > 0) {
                             // Populate the global map for deck editor use
                             data.data.forEach(card => {
-                                // Store with database ID format
+                                // Store with database UUID format
+                                availableCardsMap.set(card.id, card);
+                                
+                                // Store with category prefix for compatibility
                                 availableCardsMap.set(`${category.type}_${card.id}`, card);
                                 
-                                // Also store with deck card ID format for compatibility
-                                const deckCardId = mapDatabaseIdToDeckCardId(card.id, category.type);
-                                if (deckCardId) {
-                                    availableCardsMap.set(deckCardId, card);
-                                }
-                                
-                                // For characters, also store with the simple char_ format for compatibility
+                                // For characters, create a mapping from deck card IDs to database UUIDs
                                 if (category.type === 'character') {
                                     const charMappings = {
-                                        'character_zeus': 'char_42',
-                                        'character_leonidas': 'char_22', 
-                                        'character_dr._watson': 'char_11',
-                                        'character_sherlock_holmes': 'char_8',
-                                        'character_dracula': 'char_12'
+                                        'Zeus': 'char_42',
+                                        'Leonidas': 'char_22', 
+                                        'Dr. Watson': 'char_11',
+                                        'Sherlock Holmes': 'char_8',
+                                        'Dracula': 'char_12'
                                     };
-                                    const simpleId = charMappings[card.id];
-                                    if (simpleId) {
-                                        availableCardsMap.set(simpleId, card);
+                                    const deckCardId = charMappings[card.name];
+                                    if (deckCardId) {
+                                        availableCardsMap.set(deckCardId, card);
                                     }
                                 }
                             });
