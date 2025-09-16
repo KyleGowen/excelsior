@@ -1,4 +1,4 @@
-import { Deck, UIPreferences } from '../types';
+import { Deck, UIPreferences, DeckCard } from '../types';
 
 export interface DeckRepository {
   // Initialization
@@ -20,4 +20,11 @@ export interface DeckRepository {
   getDeckStats(): Promise<{
     decks: number;
   }>;
+
+  // Deck card management
+  addCardToDeck(deckId: string, cardType: string, cardId: string, quantity?: number, selectedAlternateImage?: string): Promise<boolean>;
+  removeCardFromDeck(deckId: string, cardType: string, cardId: string, quantity?: number): Promise<boolean>;
+  updateCardInDeck(deckId: string, cardType: string, cardId: string, updates: { quantity?: number; selectedAlternateImage?: string }): Promise<boolean>;
+  removeAllCardsFromDeck(deckId: string): Promise<boolean>;
+  getDeckCards(deckId: string): Promise<DeckCard[]>;
 }

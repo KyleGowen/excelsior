@@ -1,4 +1,4 @@
-import { Deck, UIPreferences } from '../types';
+import { Deck, UIPreferences, DeckCard } from '../types';
 import { DeckRepository } from '../repository/DeckRepository';
 
 export class InMemoryDeckRepository implements DeckRepository {
@@ -76,5 +76,95 @@ export class InMemoryDeckRepository implements DeckRepository {
     return {
       decks: this.decks.size
     };
+  }
+
+  // Deck card management methods (stub implementations for in-memory)
+  async addCardToDeck(deckId: string, cardType: string, cardId: string, quantity: number = 1, selectedAlternateImage?: string): Promise<boolean> {
+    const deck = this.decks.get(deckId);
+    if (!deck) return false;
+
+    // Initialize cards array if it doesn't exist
+    if (!deck.cards) {
+      deck.cards = [];
+    }
+
+    // Check if card already exists
+    const existingCardIndex = deck.cards.findIndex(card => card.type === cardType && card.cardId === cardId);
+    
+    if (existingCardIndex >= 0) {
+      // Update quantity
+      deck.cards[existingCardIndex].quantity += quantity;
+    } else {
+      // Add new card
+      const newCard: DeckCard = {
+        id: `deck_card_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        type: cardType as any,
+        cardId,
+        quantity,
+        ...(selectedAlternateImage && { selectedAlternateImage })
+      };
+      deck.cards.push(newCard);
+    }
+
+    deck.updated_at = new Date().toISOString();
+    this.decks.set(deckId, deck);
+    return true;
+  }
+
+  async removeCardFromDeck(deckId: string, cardType: string, cardId: string, quantity: number = 1): Promise<boolean> {
+    const deck = this.decks.get(deckId);
+    if (!deck || !deck.cards) return false;
+
+    const cardIndex = deck.cards.findIndex(card => card.type === cardType && card.cardId === cardId);
+    if (cardIndex === -1) return false;
+
+    const currentQuantity = deck.cards[cardIndex].quantity;
+    const newQuantity = currentQuantity - quantity;
+
+    if (newQuantity <= 0) {
+      // Remove card completely
+      deck.cards.splice(cardIndex, 1);
+    } else {
+      // Update quantity
+      deck.cards[cardIndex].quantity = newQuantity;
+    }
+
+    deck.updated_at = new Date().toISOString();
+    this.decks.set(deckId, deck);
+    return true;
+  }
+
+  async updateCardInDeck(deckId: string, cardType: string, cardId: string, updates: { quantity?: number; selectedAlternateImage?: string }): Promise<boolean> {
+    const deck = this.decks.get(deckId);
+    if (!deck || !deck.cards) return false;
+
+    const cardIndex = deck.cards.findIndex(card => card.type === cardType && card.cardId === cardId);
+    if (cardIndex === -1) return false;
+
+    if (updates.quantity !== undefined) {
+      deck.cards[cardIndex].quantity = updates.quantity;
+    }
+    if (updates.selectedAlternateImage !== undefined) {
+      deck.cards[cardIndex].selectedAlternateImage = updates.selectedAlternateImage;
+    }
+
+    deck.updated_at = new Date().toISOString();
+    this.decks.set(deckId, deck);
+    return true;
+  }
+
+  async removeAllCardsFromDeck(deckId: string): Promise<boolean> {
+    const deck = this.decks.get(deckId);
+    if (!deck) return false;
+
+    deck.cards = [];
+    deck.updated_at = new Date().toISOString();
+    this.decks.set(deckId, deck);
+    return true;
+  }
+
+  async getDeckCards(deckId: string): Promise<DeckCard[]> {
+    const deck = this.decks.get(deckId);
+    return deck?.cards || [];
   }
 }
