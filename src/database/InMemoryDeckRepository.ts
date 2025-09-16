@@ -10,14 +10,14 @@ export class InMemoryDeckRepository implements DeckRepository {
     // Decks are created dynamically
   }
 
-  createDeck(userId: string, name: string, description?: string): Deck {
+  async createDeck(userId: string, name: string, description?: string): Promise<Deck> {
     const id = `deck_${this.nextDeckId++}`;
     const now = new Date().toISOString();
     const deck: Deck = { 
       id, 
       user_id: userId, 
       name, 
-      description,
+      ...(description && { description }),
       created_at: now,
       updated_at: now
     };
@@ -25,19 +25,19 @@ export class InMemoryDeckRepository implements DeckRepository {
     return deck;
   }
 
-  getDeckById(id: string): Deck | undefined {
+  async getDeckById(id: string): Promise<Deck | undefined> {
     return this.decks.get(id);
   }
 
-  getDecksByUserId(userId: string): Deck[] {
+  async getDecksByUserId(userId: string): Promise<Deck[]> {
     return Array.from(this.decks.values()).filter(deck => deck.user_id === userId);
   }
 
-  getAllDecks(): Deck[] {
+  async getAllDecks(): Promise<Deck[]> {
     return Array.from(this.decks.values());
   }
 
-  updateDeck(id: string, updates: Partial<Deck>): Deck | undefined {
+  async updateDeck(id: string, updates: Partial<Deck>): Promise<Deck | undefined> {
     const deck = this.decks.get(id);
     if (!deck) return undefined;
 
@@ -50,11 +50,11 @@ export class InMemoryDeckRepository implements DeckRepository {
     return updatedDeck;
   }
 
-  deleteDeck(id: string): boolean {
+  async deleteDeck(id: string): Promise<boolean> {
     return this.decks.delete(id);
   }
 
-  updateUIPreferences(deckId: string, preferences: UIPreferences): boolean {
+  async updateUIPreferences(deckId: string, preferences: UIPreferences): Promise<boolean> {
     const deck = this.decks.get(deckId);
     if (!deck) return false;
 
@@ -67,12 +67,12 @@ export class InMemoryDeckRepository implements DeckRepository {
     return true;
   }
 
-  getUIPreferences(deckId: string): UIPreferences | undefined {
+  async getUIPreferences(deckId: string): Promise<UIPreferences | undefined> {
     const deck = this.decks.get(deckId);
     return deck?.ui_preferences;
   }
 
-  getDeckStats(): { decks: number } {
+  async getDeckStats(): Promise<{ decks: number }> {
     return {
       decks: this.decks.size
     };

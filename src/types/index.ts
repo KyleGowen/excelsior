@@ -16,6 +16,7 @@ export interface Deck {
   ui_preferences?: UIPreferences;
   created_at?: string;
   updated_at?: string;
+  cards?: DeckCard[];
 }
 
 // Character table (from overpower-erb-characters.md)

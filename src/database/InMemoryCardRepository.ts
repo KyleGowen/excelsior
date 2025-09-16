@@ -74,103 +74,103 @@ export class InMemoryCardRepository implements CardRepository {
   }
 
   // Character management
-  getCharacterById(id: string): Character | undefined {
+  async getCharacterById(id: string): Promise<Character | undefined> {
     return this.characters.get(id);
   }
 
-  getAllCharacters(): Character[] {
+  async getAllCharacters(): Promise<Character[]> {
     return Array.from(this.characters.values());
   }
 
   // Special card management
-  getSpecialCardById(id: string): SpecialCard | undefined {
+  async getSpecialCardById(id: string): Promise<SpecialCard | undefined> {
     return this.specialCards.get(id);
   }
 
-  getAllSpecialCards(): SpecialCard[] {
+  async getAllSpecialCards(): Promise<SpecialCard[]> {
     return Array.from(this.specialCards.values());
   }
 
   // Power card management
-  getPowerCardById(id: string): PowerCard | undefined {
+  async getPowerCardById(id: string): Promise<PowerCard | undefined> {
     return this.powerCards.get(id);
   }
 
-  getAllPowerCards(): PowerCard[] {
+  async getAllPowerCards(): Promise<PowerCard[]> {
     return Array.from(this.powerCards.values());
   }
 
   // Location management
-  getLocationById(id: string): Location | undefined {
+  async getLocationById(id: string): Promise<Location | undefined> {
     return this.locations.get(id);
   }
 
-  getAllLocations(): Location[] {
+  async getAllLocations(): Promise<Location[]> {
     return Array.from(this.locations.values());
   }
 
   // Mission management
-  getMissionById(id: string): Mission | undefined {
+  async getMissionById(id: string): Promise<Mission | undefined> {
     return this.missions.get(id);
   }
 
-  getAllMissions(): Mission[] {
+  async getAllMissions(): Promise<Mission[]> {
     return Array.from(this.missions.values());
   }
 
   // Event management
-  getEventById(id: string): Event | undefined {
+  async getEventById(id: string): Promise<Event | undefined> {
     return this.events.get(id);
   }
 
-  getAllEvents(): Event[] {
+  async getAllEvents(): Promise<Event[]> {
     return Array.from(this.events.values());
   }
 
   // Aspect management
-  getAspectById(id: string): Aspect | undefined {
+  async getAspectById(id: string): Promise<Aspect | undefined> {
     return this.aspects.get(id);
   }
 
-  getAllAspects(): Aspect[] {
+  async getAllAspects(): Promise<Aspect[]> {
     return Array.from(this.aspects.values());
   }
 
   // Advanced Universe management
-  getAdvancedUniverseById(id: string): AdvancedUniverse | undefined {
+  async getAdvancedUniverseById(id: string): Promise<AdvancedUniverse | undefined> {
     return this.advancedUniverse.get(id);
   }
 
-  getAllAdvancedUniverse(): AdvancedUniverse[] {
+  async getAllAdvancedUniverse(): Promise<AdvancedUniverse[]> {
     return Array.from(this.advancedUniverse.values());
   }
 
   // Teamwork management
-  getTeamworkById(id: string): Teamwork | undefined {
+  async getTeamworkById(id: string): Promise<Teamwork | undefined> {
     return this.teamwork.get(id);
   }
 
-  getAllTeamwork(): Teamwork[] {
+  async getAllTeamwork(): Promise<Teamwork[]> {
     return Array.from(this.teamwork.values());
   }
 
   // Ally Universe management
-  getAllAllyUniverse(): AllyUniverse[] {
+  async getAllAllyUniverse(): Promise<AllyUniverse[]> {
     return Array.from(this.allyUniverse.values());
   }
 
   // Training management
-  getAllTraining(): TrainingCard[] {
+  async getAllTraining(): Promise<TrainingCard[]> {
     return Array.from(this.trainings.values());
   }
 
   // Basic Universe management
-  getAllBasicUniverse(): BasicUniverse[] {
+  async getAllBasicUniverse(): Promise<BasicUniverse[]> {
     return Array.from(this.basicUniverse.values());
   }
 
   // Image management
-  getCharacterEffectiveImage(characterId: string, selectedAlternateImage?: string): string {
+  async getCharacterEffectiveImage(characterId: string, selectedAlternateImage?: string): Promise<string> {
     const character = this.characters.get(characterId);
     if (!character) {
       return '';
@@ -185,7 +185,7 @@ export class InMemoryCardRepository implements CardRepository {
     return character.image;
   }
 
-  getSpecialCardEffectiveImage(specialCardId: string, selectedAlternateImage?: string): string {
+  async getSpecialCardEffectiveImage(specialCardId: string, selectedAlternateImage?: string): Promise<string> {
     const specialCard = this.specialCards.get(specialCardId);
     if (!specialCard) {
       return '';
@@ -200,7 +200,7 @@ export class InMemoryCardRepository implements CardRepository {
     return specialCard.image;
   }
 
-  getPowerCardEffectiveImage(powerCardId: string, selectedAlternateImage?: string): string {
+  async getPowerCardEffectiveImage(powerCardId: string, selectedAlternateImage?: string): Promise<string> {
     const powerCard = this.powerCards.get(powerCardId);
     if (!powerCard) {
       return '';
@@ -216,7 +216,7 @@ export class InMemoryCardRepository implements CardRepository {
   }
 
   // Statistics
-  getCardStats(): {
+  async getCardStats(): Promise<{
     characters: number;
     locations: number;
     specialCards: number;
@@ -229,7 +229,7 @@ export class InMemoryCardRepository implements CardRepository {
     training: number;
     basicUniverse: number;
     powerCards: number;
-  } {
+  }> {
     return {
       characters: this.characters.size,
       locations: this.locations.size,

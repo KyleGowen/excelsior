@@ -5,57 +5,57 @@ export interface CardRepository {
   initialize(): Promise<void>;
 
   // Character management
-  getCharacterById(id: string): Character | undefined;
-  getAllCharacters(): Character[];
+  getCharacterById(id: string): Promise<Character | undefined>;
+  getAllCharacters(): Promise<Character[]>;
 
   // Special card management
-  getSpecialCardById(id: string): SpecialCard | undefined;
-  getAllSpecialCards(): SpecialCard[];
+  getSpecialCardById(id: string): Promise<SpecialCard | undefined>;
+  getAllSpecialCards(): Promise<SpecialCard[]>;
 
   // Power card management
-  getPowerCardById(id: string): PowerCard | undefined;
-  getAllPowerCards(): PowerCard[];
+  getPowerCardById(id: string): Promise<PowerCard | undefined>;
+  getAllPowerCards(): Promise<PowerCard[]>;
 
   // Location management
-  getLocationById(id: string): Location | undefined;
-  getAllLocations(): Location[];
+  getLocationById(id: string): Promise<Location | undefined>;
+  getAllLocations(): Promise<Location[]>;
 
   // Mission management
-  getMissionById(id: string): Mission | undefined;
-  getAllMissions(): Mission[];
+  getMissionById(id: string): Promise<Mission | undefined>;
+  getAllMissions(): Promise<Mission[]>;
 
   // Event management
-  getEventById(id: string): Event | undefined;
-  getAllEvents(): Event[];
+  getEventById(id: string): Promise<Event | undefined>;
+  getAllEvents(): Promise<Event[]>;
 
   // Aspect management
-  getAspectById(id: string): Aspect | undefined;
-  getAllAspects(): Aspect[];
+  getAspectById(id: string): Promise<Aspect | undefined>;
+  getAllAspects(): Promise<Aspect[]>;
 
   // Advanced Universe management
-  getAdvancedUniverseById(id: string): AdvancedUniverse | undefined;
-  getAllAdvancedUniverse(): AdvancedUniverse[];
+  getAdvancedUniverseById(id: string): Promise<AdvancedUniverse | undefined>;
+  getAllAdvancedUniverse(): Promise<AdvancedUniverse[]>;
 
   // Teamwork management
-  getTeamworkById(id: string): Teamwork | undefined;
-  getAllTeamwork(): Teamwork[];
+  getTeamworkById(id: string): Promise<Teamwork | undefined>;
+  getAllTeamwork(): Promise<Teamwork[]>;
 
   // Ally Universe management
-  getAllAllyUniverse(): AllyUniverse[];
+  getAllAllyUniverse(): Promise<AllyUniverse[]>;
 
   // Training management
-  getAllTraining(): TrainingCard[];
+  getAllTraining(): Promise<TrainingCard[]>;
 
   // Basic Universe management
-  getAllBasicUniverse(): BasicUniverse[];
+  getAllBasicUniverse(): Promise<BasicUniverse[]>;
 
   // Image management
-  getCharacterEffectiveImage(characterId: string, selectedAlternateImage?: string): string;
-  getSpecialCardEffectiveImage(specialCardId: string, selectedAlternateImage?: string): string;
-  getPowerCardEffectiveImage(powerCardId: string, selectedAlternateImage?: string): string;
+  getCharacterEffectiveImage(characterId: string, selectedAlternateImage?: string): Promise<string>;
+  getSpecialCardEffectiveImage(specialCardId: string, selectedAlternateImage?: string): Promise<string>;
+  getPowerCardEffectiveImage(powerCardId: string, selectedAlternateImage?: string): Promise<string>;
 
   // Statistics
-  getCardStats(): {
+  getCardStats(): Promise<{
     characters: number;
     locations: number;
     specialCards: number;
@@ -68,5 +68,5 @@ export interface CardRepository {
     training: number;
     basicUniverse: number;
     powerCards: number;
-  };
+  }>;
 }

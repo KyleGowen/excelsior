@@ -3567,11 +3567,11 @@
             <form id="loginForm" class="login-form">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>
+                    <input type="text" id="username" name="username" autocomplete="username" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" autocomplete="current-password" required>
                 </div>
                 <div id="loginError" class="error-message" style="display: none;"></div>
                 <button type="submit" class="login-btn">Log In</button>
@@ -6225,13 +6225,13 @@
             // Fetch full deck data for each deck to get character information
             const decksWithCharacters = await Promise.all(decks.map(async (deck) => {
                 try {
-                    const response = await fetch(`/api/decks/${deck.id}`);
+                    const response = await fetch(`/api/decks/${deck.metadata.id}`);
                     const data = await response.json();
                     if (data.success) {
                         return { ...deck, cards: data.data.cards };
                     }
                 } catch (error) {
-                    console.error(`Error fetching deck ${deck.id}:`, error);
+                    console.error(`Error fetching deck ${deck.metadata.id}:`, error);
                 }
                 return deck;
             }));
@@ -6257,7 +6257,8 @@
                     const characterCards = deck.cards.filter(card => card.type === 'character');
                     if (characterCards.length > 0) {
                         const characterNames = characterCards.map(card => {
-                            const character = characterMap[card.cardId];
+                            const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                            const character = characterMap[databaseId];
                             return character ? character.name : 'Unknown Character';
                         });
                         characterList = `<div class="deck-characters">👥 Characters: ${characterNames.join(', ')}</div>`;
@@ -6265,7 +6266,8 @@
                         // Create character display with rotating file effect
                         const characterDisplayCards = characterCards.slice(0, 4); // Max 4 characters
                         let characterDisplayHTML = characterDisplayCards.map(card => {
-                            const character = characterMap[card.cardId];
+                            const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                            const character = characterMap[databaseId];
                             if (character && character.image) {
                                 // Use getCardImagePath to handle alternate images
                                 const imagePath = getCardImagePath(character, 'character', card.selectedAlternateImage);
@@ -6292,24 +6294,24 @@
                 }
                 
                 return `
-                    <div class="deck-card" onclick="editDeck('${deck.id}')">
+                    <div class="deck-card" onclick="editDeck('${deck.metadata.id}')">
                         <div class="deck-header">
                             <div class="deck-info">
-                                <h4>${deck.name} ${validationStatus}</h4>
-                                ${deck.description ? `<div class="deck-description">${deck.description}</div>` : ''}
+                                <h4>${deck.metadata.name} ${validationStatus}</h4>
+                                ${deck.metadata.description ? `<div class="deck-description">${deck.metadata.description}</div>` : ''}
                                 ${characterList}
                                 <div class="deck-meta">
-                                    <span>📊 ${deck.cardCount} cards</span>
-                                    <span>📅 Created: ${new Date(deck.created).toLocaleDateString()}</span>
-                                    <span>✏️ Modified: ${new Date(deck.lastModified).toLocaleDateString()}</span>
+                                    <span>📊 ${deck.metadata.cardCount} cards</span>
+                                    <span>📅 Created: ${new Date(deck.metadata.created).toLocaleDateString()}</span>
+                                    <span>✏️ Modified: ${new Date(deck.metadata.lastModified).toLocaleDateString()}</span>
                                 </div>
                             </div>
                         </div>
                         ${characterDisplay}
                             <div class="deck-actions" onclick="event.stopPropagation()">
-                                <button class="deck-action-btn" onclick="editDeck('${deck.id}')">Edit</button>
-                                <button class="deck-action-btn" onclick="viewDeck('${deck.id}')">View</button>
-                                <button class="deck-action-btn danger" onclick="deleteDeck('${deck.id}')">Delete</button>
+                                <button class="deck-action-btn" onclick="editDeck('${deck.metadata.id}')">Edit</button>
+                                <button class="deck-action-btn" onclick="viewDeck('${deck.metadata.id}')">View</button>
+                                <button class="deck-action-btn danger" onclick="deleteDeck('${deck.metadata.id}')">Delete</button>
                         </div>
                     </div>
                 `;
@@ -6655,7 +6657,8 @@
                 let cardName = getCardName(card);
                 
                 if (card.type === 'character') {
-                    const character = characterMap[card.cardId];
+                    const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                    const character = characterMap[databaseId];
                     if (character && character.image) {
                         const imagePath = getCardImagePath(character, 'character', card.selectedAlternateImage);
                         cardImage = `<div class="deck-card-image" style="background-image: url('${imagePath}')" title="${character.name}"></div>`;
@@ -6931,7 +6934,8 @@
                 } else if (card.type === 'advanced_universe') {
                     mapKeyType = 'advanced-universe';
                 }
-                const availableCard = availableCardsMap.get(`${mapKeyType}_${card.cardId}`);
+                const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                const availableCard = availableCardsMap.get(`${mapKeyType}_${databaseId}`);
                 if (availableCard && availableCard.one_per_deck) {
                     const cardKey = `${card.type}_${card.cardId}`;
                     onePerDeckCards[cardKey] = (onePerDeckCards[cardKey] || 0) + 1;
@@ -6962,7 +6966,8 @@
                 } else if (card.type === 'advanced_universe') {
                     mapKeyType = 'advanced-universe';
                 }
-                const availableCard = availableCardsMap.get(`${mapKeyType}_${card.cardId}`);
+                const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                const availableCard = availableCardsMap.get(`${mapKeyType}_${databaseId}`);
                 if (availableCard && availableCard.threat_level) {
                     totalThreat += availableCard.threat_level;
                 }
@@ -6980,7 +6985,8 @@
                 } else if (card.type === 'advanced_universe') {
                     mapKeyType = 'advanced-universe';
                 }
-                const availableCard = availableCardsMap.get(`${mapKeyType}_${card.cardId}`);
+                const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                const availableCard = availableCardsMap.get(`${mapKeyType}_${databaseId}`);
                 if (availableCard && availableCard.threat_level) {
                     totalThreat += availableCard.threat_level;
                 }
@@ -7009,7 +7015,8 @@
                 } else if (card.type === 'advanced_universe') {
                     mapKeyType = 'advanced-universe';
                 }
-                const availableCard = availableCardsMap.get(`${mapKeyType}_${card.cardId}`);
+                const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                const availableCard = availableCardsMap.get(`${mapKeyType}_${databaseId}`);
                 return availableCard ? availableCard.name || availableCard.card_name : 'Unknown';
             });
             
@@ -7025,7 +7032,8 @@
                 } else if (card.type === 'advanced_universe') {
                     mapKeyType = 'advanced-universe';
                 }
-                const availableCard = availableCardsMap.get(`${mapKeyType}_${card.cardId}`);
+                const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                const availableCard = availableCardsMap.get(`${mapKeyType}_${databaseId}`);
                     if (availableCard && availableCard.character && !characterNames.includes(availableCard.character)) {
                         warnings.push(`"${availableCard.name || availableCard.card_name}" requires character "${availableCard.character}" in your team`);
                     }
@@ -7075,7 +7083,8 @@
                         });
                         
                         characterCards.forEach(card => {
-                            const characterData = characterMap[card.cardId];
+                            const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                            const characterData = characterMap[databaseId];
                             if (characterData) {
                                 if (characterData.energy > maxEnergy) maxEnergy = characterData.energy;
                                 if (characterData.combat > maxCombat) maxCombat = characterData.combat;
@@ -7366,8 +7375,9 @@
             
             const deckCharacterCards = deckEditorCards.filter(card => card.type === 'character');
             const deckCharacterNames = deckCharacterCards.map(card => {
-                const characterName = characterMap[card.cardId];
-                return characterName;
+                const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                const character = characterMap[databaseId];
+                return character ? character.name : null;
             }).filter(name => name); // Remove any undefined names
             
             
@@ -7497,7 +7507,8 @@
                 const deckCharacterNames = deckEditorCards
                     .filter(card => card.type === 'character')
                     .map(card => {
-                        const availableCard = availableCardsMap.get(`character_${card.cardId}`);
+                        const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                        const availableCard = availableCardsMap.get(`character_${databaseId}`);
                         return availableCard ? availableCard.name : null;
                     })
                     .filter(name => name !== null);
@@ -7577,7 +7588,10 @@
             
             const deckCharacters = deckEditorCards
                 .filter(card => card.type === 'character')
-                .map(card => characterMap[card.cardId])
+                .map(card => {
+                    const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                    return characterMap[databaseId];
+                })
                 .filter(char => char); // Remove undefined entries
             
             console.log(`Power cards filter: Found ${deckCharacters.length} characters in deck`);
@@ -7749,7 +7763,10 @@
             
             const deckCharacters = deckEditorCards
                 .filter(card => card.type === 'character')
-                .map(card => characterMap[card.cardId])
+                .map(card => {
+                    const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                    return characterMap[databaseId];
+                })
                 .filter(char => char); // Remove undefined entries
             
             
@@ -7764,7 +7781,8 @@
                 
                 if (cardType === 'basic-universe') {
                     // Get the card data from the available cards map
-                    const availableCard = availableCardsMap.get(`${cardType}_${cardId}`);
+                    const databaseId = mapCardIdToDatabaseId(cardId, cardType);
+                    const availableCard = availableCardsMap.get(`${cardType}_${databaseId}`);
                     
                     if (availableCard) {
                         const cardName = availableCard.card_name;
@@ -7888,7 +7906,8 @@
                     const hasUsableCharacter = deckEditorCards.some(deckCard => {
                         if (deckCard.type !== 'character') return false;
                         
-                        const availableCard = availableCardsMap.get(`character_${deckCard.cardId}`);
+                        const databaseId = mapCardIdToDatabaseId(deckCard.cardId, deckCard.type);
+                        const availableCard = availableCardsMap.get(`character_${databaseId}`);
                         if (!availableCard) return false;
                         
                         // Check the specific stat type
@@ -8009,7 +8028,10 @@
             
             const deckCharacters = deckEditorCards
                 .filter(card => card.type === 'character')
-                .map(card => characterMap[card.cardId])
+                .map(card => {
+                    const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                    return characterMap[databaseId];
+                })
                 .filter(char => char); // Remove undefined entries
             
             
@@ -8024,7 +8046,8 @@
                 
                 if (cardType === 'training') {
                     // Get the card data from the available cards map
-                    const availableCard = availableCardsMap.get(`${cardType}_${cardId}`);
+                    const databaseId = mapCardIdToDatabaseId(cardId, cardType);
+                    const availableCard = availableCardsMap.get(`${cardType}_${databaseId}`);
                     
                     if (availableCard) {
                         const cardName = availableCard.card_name;
@@ -8168,7 +8191,10 @@
             
             const deckCharacters = deckEditorCards
                 .filter(card => card.type === 'character')
-                .map(card => characterMap[card.cardId])
+                .map(card => {
+                    const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                    return characterMap[databaseId];
+                })
                 .filter(char => char); // Remove undefined entries
             
             
@@ -8183,7 +8209,8 @@
                 
                 if (cardType === 'ally-universe') {
                     // Get the card data from the available cards map
-                    const availableCard = availableCardsMap.get(`${cardType}_${cardId}`);
+                    const databaseId = mapCardIdToDatabaseId(cardId, cardType);
+                    const availableCard = availableCardsMap.get(`${cardType}_${databaseId}`);
                     
                     if (availableCard) {
                         const cardName = availableCard.card_name;
@@ -8753,7 +8780,8 @@
                     if (type === 'mission' && typeCards.length > 0) {
                         const missionSetCounts = {};
                         typeCards.forEach(cardData => {
-                            const availableCard = availableCardsMap.get(`${cardData.type}_${cardData.cardId}`);
+                            const databaseId = mapCardIdToDatabaseId(cardData.cardId, cardData.type);
+                            const availableCard = availableCardsMap.get(`${cardData.type}_${databaseId}`);
                             if (availableCard && availableCard.mission_set) {
                                 missionSetCounts[availableCard.mission_set] = (missionSetCounts[availableCard.mission_set] || 0) + 1;
                             }
@@ -8832,7 +8860,8 @@
                             } else if (card.type === 'advanced_universe') {
                                 mapKeyType = 'advanced-universe';
                             }
-                            const availableCard = availableCardsMap.get(`${mapKeyType}_${card.cardId}`);
+                            const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                            const availableCard = availableCardsMap.get(`${mapKeyType}_${databaseId}`);
                             
                             if (!availableCard) {
                                 console.warn('Special card not found in availableCardsMap:', card);
@@ -8883,7 +8912,8 @@
                 } else if (card.type === 'advanced_universe') {
                     mapKeyType = 'advanced-universe';
                 }
-                const availableCard = availableCardsMap.get(`${mapKeyType}_${card.cardId}`);
+                const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                const availableCard = availableCardsMap.get(`${mapKeyType}_${databaseId}`);
                                 
                                 if (!availableCard) {
                                     console.warn('Card not found in availableCardsMap:', card);
@@ -8943,7 +8973,8 @@
                                 } else if (card.type === 'advanced_universe') {
                                     mapKeyType = 'advanced-universe';
                                 }
-                                const availableCard = availableCardsMap.get(`${mapKeyType}_${card.cardId}`);
+                                const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                            const availableCard = availableCardsMap.get(`${mapKeyType}_${databaseId}`);
                                 
                                 if (!availableCard) {
                                     console.warn('Power card not found in availableCardsMap:', card);
@@ -8990,7 +9021,8 @@
                                     } else if (card.type === 'advanced_universe') {
                                         mapKeyType = 'advanced-universe';
                                     }
-                                    const availableCard = availableCardsMap.get(`${mapKeyType}_${card.cardId}`);
+                                    const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                            const availableCard = availableCardsMap.get(`${mapKeyType}_${databaseId}`);
                                     
                                     if (!availableCard) {
                                         console.warn('Card not found in availableCardsMap:', card);
@@ -9037,8 +9069,10 @@
                         } else {
                             // Value sorted view - sort all power cards by value
                             const sortedCards = typeCards.sort((a, b) => {
-                                const cardA = availableCardsMap.get(`power_${a.cardId}`);
-                                const cardB = availableCardsMap.get(`power_${b.cardId}`);
+                                const databaseIdA = mapCardIdToDatabaseId(a.cardId, 'power');
+                                const databaseIdB = mapCardIdToDatabaseId(b.cardId, 'power');
+                                const cardA = availableCardsMap.get(`power_${databaseIdA}`);
+                                const cardB = availableCardsMap.get(`power_${databaseIdB}`);
                                 
                                 if (!cardA || !cardB) return 0;
                                 
@@ -9051,7 +9085,8 @@
                             sortedCards.forEach(cardData => {
                                 const card = cardData;
                                 const index = cardData.originalIndex;
-                                const availableCard = availableCardsMap.get(`power_${card.cardId}`);
+                                const databaseId = mapCardIdToDatabaseId(card.cardId, 'power');
+                                const availableCard = availableCardsMap.get(`power_${databaseId}`);
                                 
                                 if (!availableCard) {
                                     console.warn('Card not found in availableCardsMap:', card);
@@ -9104,7 +9139,8 @@
                             } else if (card.type === 'advanced_universe') {
                                 mapKeyType = 'advanced-universe';
                             }
-                            const availableCard = availableCardsMap.get(`${mapKeyType}_${card.cardId}`);
+                            const databaseId = mapCardIdToDatabaseId(card.cardId, card.type);
+                            const availableCard = availableCardsMap.get(`${mapKeyType}_${databaseId}`);
                         
                         if (!availableCard) {
                             console.warn('Card not found in availableCardsMap:', card);
@@ -9870,6 +9906,187 @@
             }
         }
         
+        // Helper function to map database IDs to deck card IDs (reverse mapping)
+        function mapDatabaseIdToDeckCardId(databaseId, cardType) {
+            // For now, we'll create a comprehensive mapping table
+            // This would ideally be loaded from a configuration file or database
+            const cardMappings = {
+                // Characters
+                'character_zeus': 'char_42',
+                'character_leonidas': 'char_22', 
+                'character_dr._watson': 'char_11',
+                'character_sherlock_holmes': 'char_8',
+                'character_dracula': 'char_12',
+                
+                // Power cards - these need to be mapped based on the actual database IDs
+                // For now, we'll use a simple approach and map based on patterns
+                
+                // Special cards - these need to be mapped based on the actual database IDs
+                // For now, we'll use a simple approach and map based on patterns
+                
+                // Missions - these need to be mapped based on the actual database IDs
+                // For now, we'll use a simple approach and map based on patterns
+                
+                // Events - these need to be mapped based on the actual database IDs
+                // For now, we'll use a simple approach and map based on patterns
+                
+                // Aspects - these need to be mapped based on the actual database IDs
+                // For now, we'll use a simple approach and map based on patterns
+                
+                // Locations - these need to be mapped based on the actual database IDs
+                // For now, we'll use a simple approach and map based on patterns
+                
+                // Teamwork - these need to be mapped based on the actual database IDs
+                // For now, we'll use a simple approach and map based on patterns
+            };
+            
+            return cardMappings[databaseId] || null;
+        }
+
+        // Helper function to map card IDs to database IDs
+        function mapCardIdToDatabaseId(cardId, cardType) {
+            if (cardType === 'character') {
+                // Map char_42 to character_zeus format
+                // This is a simplified mapping - in a real system, you'd have a proper mapping table
+                const charMappings = {
+                    'char_42': 'character_zeus',
+                    'char_22': 'character_leonidas', 
+                    'char_11': 'character_dr._watson',
+                    'char_8': 'character_sherlock_holmes',
+                    'char_12': 'character_dracula',
+                    'char_40': 'character_sherlock_holmes',
+                    'char_32': 'character_sherlock_holmes'
+                };
+                return charMappings[cardId] || cardId;
+            } else if (cardType === 'power') {
+                // For power cards, we need to map from power_1 to the actual database ID
+                // This is a simplified mapping - in a real system, you'd have a proper mapping table
+                const powerMappings = {
+                    'power_1': 'power_card_1',
+                    'power_9': 'power_card_9',
+                    'power_11': 'power_card_11',
+                    'power_12': 'power_card_12',
+                    'power_13': 'power_card_13',
+                    'power_17': 'power_card_17',
+                    'power_18': 'power_card_18',
+                    'power_19': 'power_card_19',
+                    'power_25': 'power_card_25',
+                    'power_26': 'power_card_26',
+                    'power_28': 'power_card_28',
+                    'power_30': 'power_card_30',
+                    'power_31': 'power_card_31',
+                    'power_32': 'power_card_32',
+                    'power_33': 'power_card_33',
+                    'power_34': 'power_card_34',
+                    'power_37': 'power_card_37',
+                    'power_38': 'power_card_38',
+                    'power_39': 'power_card_39'
+                };
+                return powerMappings[cardId] || cardId.replace('power_', 'power_card_');
+            } else if (cardType === 'special') {
+                // For special cards, we need to map from special_83 to the actual database ID
+                // This is a simplified mapping - in a real system, you'd have a proper mapping table
+                const specialMappings = {
+                    'special_5': 'special_card_5',
+                    'special_9': 'special_card_9',
+                    'special_13': 'special_card_13',
+                    'special_16': 'special_card_16',
+                    'special_17': 'special_card_17',
+                    'special_18': 'special_card_18',
+                    'special_20': 'special_card_20',
+                    'special_21': 'special_card_21',
+                    'special_22': 'special_card_22',
+                    'special_25': 'special_card_25',
+                    'special_77': 'special_card_77',
+                    'special_78': 'special_card_78',
+                    'special_79': 'special_card_79',
+                    'special_80': 'special_card_80',
+                    'special_81': 'special_card_81',
+                    'special_82': 'special_card_82',
+                    'special_83': 'special_card_83',
+                    'special_84': 'special_card_84',
+                    'special_85': 'special_card_85',
+                    'special_86': 'special_card_86',
+                    'special_87': 'special_card_87',
+                    'special_201': 'special_card_201',
+                    'special_202': 'special_card_202',
+                    'special_204': 'special_card_204',
+                    'special_205': 'special_card_205',
+                    'special_248': 'special_card_248',
+                    'special_249': 'special_card_249',
+                    'special_250': 'special_card_250',
+                    'special_251': 'special_card_251',
+                    'special_252': 'special_card_252',
+                    'special_253': 'special_card_253',
+                    'special_260': 'special_card_260'
+                };
+                return specialMappings[cardId] || cardId.replace('special_', 'special_card_');
+            } else if (cardType === 'mission') {
+                // For missions, we need to map from mission_1 to the actual database ID
+                // This is a simplified mapping - in a real system, you'd have a proper mapping table
+                const missionMappings = {
+                    'mission_1': 'mission_card_1',
+                    'mission_2': 'mission_card_2',
+                    'mission_3': 'mission_card_3',
+                    'mission_4': 'mission_card_4',
+                    'mission_5': 'mission_card_5',
+                    'mission_6': 'mission_card_6',
+                    'mission_7': 'mission_card_7',
+                    'mission_15': 'mission_card_15',
+                    'mission_16': 'mission_card_16',
+                    'mission_17': 'mission_card_17',
+                    'mission_18': 'mission_card_18',
+                    'mission_19': 'mission_card_19',
+                    'mission_20': 'mission_card_20',
+                    'mission_21': 'mission_card_21'
+                };
+                return missionMappings[cardId] || cardId.replace('mission_', 'mission_card_');
+            } else if (cardType === 'event') {
+                // Map event_4 to event_card_4 format
+                return cardId.replace('event_', 'event_card_');
+            } else if (cardType === 'aspect') {
+                // Map aspect_2 to aspect_card_2 format
+                return cardId.replace('aspect_', 'aspect_card_');
+            } else if (cardType === 'location') {
+                // Map loc_7 to location_card_7 format
+                return cardId.replace('loc_', 'location_card_');
+            } else if (cardType === 'teamwork') {
+                // Map teamwork_20 to teamwork_card_20 format
+                return cardId.replace('teamwork_', 'teamwork_card_');
+            } else if (cardType === 'ally-universe') {
+                // Map ally_2 to ally_universe_card_2 format
+                return cardId.replace('ally_', 'ally_universe_card_');
+            } else if (cardType === 'training') {
+                // Map training_1 to training_card_1 format
+                return cardId.replace('training_', 'training_card_');
+            } else if (cardType === 'basic-universe') {
+                // Map basic_1 to basic_universe_card_1 format
+                return cardId.replace('basic_', 'basic_universe_card_');
+            } else if (cardType === 'advanced-universe') {
+                // Map advanced_1 to advanced_universe_card_1 format
+                return cardId.replace('advanced_', 'advanced_universe_card_');
+            }
+            // For other card types, return as-is for now
+            return cardId;
+        }
+
+        // Helper function to map database image paths to actual file paths
+        function mapImagePathToActualFile(imagePath) {
+            if (!imagePath) return imagePath;
+            
+            // Map database image paths to actual file names
+            const imageMappings = {
+                'characters/zeus.webp': '279_zeus.webp',
+                'characters/leonidas.webp': '139_leonidis.webp',
+                'characters/dr._watson.webp': '062_dr_watson.webp',
+                'characters/sherlock_holmes.webp': '209_sherlock_holmes.webp',
+                'characters/dracula.webp': '069_dracula.webp',
+                'characters/alternate/Zeus.webp': '279_zeus.webp'
+            };
+            
+            return imageMappings[imagePath] || imagePath;
+        }
+
         // Helper function to get card image path
         function getCardImagePath(card, cardType, selectedAlternateImage = null) {
             try {
@@ -9881,7 +10098,8 @@
                     
                     // Characters use the image field from the database
                     if (card.image) {
-                        return `/src/resources/cards/images/characters/${card.image}`;
+                        const actualImagePath = mapImagePathToActualFile(card.image);
+                        return `/src/resources/cards/images/characters/${actualImagePath}`;
                     }
                     // Fallback: try to construct from name
                     const characterName = card.name || card.card_name || '';
@@ -9991,7 +10209,29 @@
                         
                         if (data.success && data.data.length > 0) {
                             data.data.forEach(card => {
+                                // Store with database ID format
                                 availableCardsMap.set(`${category.type}_${card.id}`, card);
+                                
+                                // Also store with deck card ID format for compatibility
+                                const deckCardId = mapDatabaseIdToDeckCardId(card.id, category.type);
+                                if (deckCardId) {
+                                    availableCardsMap.set(deckCardId, card);
+                                }
+                                
+                                // For characters, also store with the simple char_ format for compatibility
+                                if (category.type === 'character') {
+                                    const charMappings = {
+                                        'character_zeus': 'char_42',
+                                        'character_leonidas': 'char_22', 
+                                        'character_dr._watson': 'char_11',
+                                        'character_sherlock_holmes': 'char_8',
+                                        'character_dracula': 'char_12'
+                                    };
+                                    const simpleId = charMappings[card.id];
+                                    if (simpleId) {
+                                        availableCardsMap.set(simpleId, card);
+                                    }
+                                }
                             });
                         }
                     } catch (error) {
@@ -10187,7 +10427,8 @@
             
             // Get character names
             const characterNames = selectedCharacters.map(charCard => {
-                const availableCard = availableCardsMap.get(`${charCard.type}_${charCard.cardId}`);
+                const databaseId = mapCardIdToDatabaseId(charCard.cardId, charCard.type);
+                const availableCard = availableCardsMap.get(`${charCard.type}_${databaseId}`);
                 return availableCard ? (availableCard.name || availableCard.card_name) : null;
             }).filter(name => name);
             
@@ -10201,7 +10442,8 @@
             
             // Find unusable special cards (those that don't belong to any selected character)
             const unusableCards = specialCards.filter(specialCard => {
-                const availableCard = availableCardsMap.get(`${specialCard.type}_${specialCard.cardId}`);
+                const databaseId = mapCardIdToDatabaseId(specialCard.cardId, specialCard.type);
+                const availableCard = availableCardsMap.get(`${specialCard.type}_${databaseId}`);
                 if (!availableCard) return true; // Remove if card not found
                 
                 // Check if this is an "Any Character" special card - these should never be removed
@@ -10436,7 +10678,29 @@
                         if (data.success && data.data.length > 0) {
                             // Populate the global map for deck editor use
                             data.data.forEach(card => {
+                                // Store with database ID format
                                 availableCardsMap.set(`${category.type}_${card.id}`, card);
+                                
+                                // Also store with deck card ID format for compatibility
+                                const deckCardId = mapDatabaseIdToDeckCardId(card.id, category.type);
+                                if (deckCardId) {
+                                    availableCardsMap.set(deckCardId, card);
+                                }
+                                
+                                // For characters, also store with the simple char_ format for compatibility
+                                if (category.type === 'character') {
+                                    const charMappings = {
+                                        'character_zeus': 'char_42',
+                                        'character_leonidas': 'char_22', 
+                                        'character_dr._watson': 'char_11',
+                                        'character_sherlock_holmes': 'char_8',
+                                        'character_dracula': 'char_12'
+                                    };
+                                    const simpleId = charMappings[card.id];
+                                    if (simpleId) {
+                                        availableCardsMap.set(simpleId, card);
+                                    }
+                                }
                             });
                             
                             let cardsHtml = '';
@@ -11541,18 +11805,45 @@
 
         // Function to show alternate art selection for existing card
         function showAlternateArtSelectionForExistingCard(cardId, cardIndex) {
-            // Get card data from availableCardsMap (try character, special, and power)
-            let card = availableCardsMap.get(`character_${cardId}`);
+            // First try to get the card directly from availableCardsMap
+            let card = availableCardsMap.get(cardId);
             let cardType = 'character';
             
+            // If not found, try to determine card type and map to database ID
             if (!card) {
-                card = availableCardsMap.get(`special_${cardId}`);
-                cardType = 'special';
-            }
-            
-            if (!card) {
-                card = availableCardsMap.get(`power_${cardId}`);
-                cardType = 'power';
+                if (cardId.startsWith('char_')) {
+                    cardType = 'character';
+                    const databaseId = mapCardIdToDatabaseId(cardId, cardType);
+                    card = availableCardsMap.get(databaseId);
+                } else if (cardId.startsWith('special_')) {
+                    cardType = 'special';
+                    const databaseId = mapCardIdToDatabaseId(cardId, cardType);
+                    card = availableCardsMap.get(databaseId);
+                } else if (cardId.startsWith('power_')) {
+                    cardType = 'power';
+                    const databaseId = mapCardIdToDatabaseId(cardId, cardType);
+                    card = availableCardsMap.get(databaseId);
+                } else if (cardId.startsWith('mission_')) {
+                    cardType = 'mission';
+                    const databaseId = mapCardIdToDatabaseId(cardId, cardType);
+                    card = availableCardsMap.get(databaseId);
+                } else if (cardId.startsWith('event_')) {
+                    cardType = 'event';
+                    const databaseId = mapCardIdToDatabaseId(cardId, cardType);
+                    card = availableCardsMap.get(databaseId);
+                } else if (cardId.startsWith('aspect_')) {
+                    cardType = 'aspect';
+                    const databaseId = mapCardIdToDatabaseId(cardId, cardType);
+                    card = availableCardsMap.get(databaseId);
+                } else if (cardId.startsWith('loc_')) {
+                    cardType = 'location';
+                    const databaseId = mapCardIdToDatabaseId(cardId, cardType);
+                    card = availableCardsMap.get(databaseId);
+                } else if (cardId.startsWith('teamwork_')) {
+                    cardType = 'teamwork';
+                    const databaseId = mapCardIdToDatabaseId(cardId, cardType);
+                    card = availableCardsMap.get(databaseId);
+                }
             }
             
             if (!card) {

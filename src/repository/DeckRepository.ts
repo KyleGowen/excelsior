@@ -5,19 +5,19 @@ export interface DeckRepository {
   initialize(): Promise<void>;
 
   // Deck management
-  createDeck(userId: string, name: string, description?: string): Deck;
-  getDeckById(id: string): Deck | undefined;
-  getDecksByUserId(userId: string): Deck[];
-  getAllDecks(): Deck[];
-  updateDeck(id: string, updates: Partial<Deck>): Deck | undefined;
-  deleteDeck(id: string): boolean;
+  createDeck(userId: string, name: string, description?: string): Promise<Deck>;
+  getDeckById(id: string): Promise<Deck | undefined>;
+  getDecksByUserId(userId: string): Promise<Deck[]>;
+  getAllDecks(): Promise<Deck[]>;
+  updateDeck(id: string, updates: Partial<Deck>): Promise<Deck | undefined>;
+  deleteDeck(id: string): Promise<boolean>;
 
   // UI Preferences
-  updateUIPreferences(deckId: string, preferences: UIPreferences): boolean;
-  getUIPreferences(deckId: string): UIPreferences | undefined;
+  updateUIPreferences(deckId: string, preferences: UIPreferences): Promise<boolean>;
+  getUIPreferences(deckId: string): Promise<UIPreferences | undefined>;
 
   // Statistics
-  getDeckStats(): {
+  getDeckStats(): Promise<{
     decks: number;
-  };
+  }>;
 }

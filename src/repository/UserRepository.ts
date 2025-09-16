@@ -5,12 +5,15 @@ export interface UserRepository {
   initialize(): Promise<void>;
 
   // User management
-  createUser(name: string, email: string): User;
-  getUserById(id: string): User | undefined;
-  getAllUsers(): User[];
+  createUser(name: string, email: string, passwordHash: string): Promise<User>;
+  getUserById(id: string): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  getAllUsers(): Promise<User[]>;
+  updateUser(id: string, updates: Partial<User>): Promise<User | undefined>;
+  deleteUser(id: string): Promise<boolean>;
 
   // Statistics
-  getUserStats(): {
+  getUserStats(): Promise<{
     users: number;
-  };
+  }>;
 }
