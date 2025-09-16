@@ -9929,12 +9929,49 @@
             
             // Map database image paths to actual file names
             const imageMappings = {
+                // Characters
                 'characters/zeus.webp': '279_zeus.webp',
                 'characters/leonidas.webp': '139_leonidis.webp',
                 'characters/dr._watson.webp': '062_dr_watson.webp',
                 'characters/sherlock_holmes.webp': '209_sherlock_holmes.webp',
                 'characters/dracula.webp': '069_dracula.webp',
-                'characters/alternate/Zeus.webp': '279_zeus.webp'
+                'characters/merlin.webp': '200_merlin.webp',
+                'characters/hercules.webp': '120_hercules.webp',
+                'characters/alternate/Zeus.webp': '279_zeus.webp',
+                
+                // Locations
+                'locations/221b_baker_st.webp': '470_221b_baker_st.webp',
+                'locations/asclepieion.webp': '469_ascleipeion.webp',
+                'locations/barsoom.webp': '468_barsoom.webp',
+                'locations/draculas_armory.webp': '465_draculas_armory.webp',
+                'locations/event_horizon_the_future.webp': '471_horizon.webp',
+                'locations/spartan_training_ground.webp': '466_spartan_training_ground.webp',
+                'locations/the_land_that_time_forgot.webp': '472_the_land_that_time_forgot.webp',
+                'locations/the_round_table.webp': '467_the_round_table.webp',
+                
+                // Special Cards
+                'specials/freya_goddess_of_protection.webp': 'freya_goddess_of_protection.webp',
+                'specials/friend_to_foe.webp': 'friend_to_foe.webp',
+                'specials/fortune_of_helium.webp': 'fortune_of_helium.webp',
+                'specials/mark_of_the_headless.webp': 'mark_of_the_headless.webp',
+                'specials/meriem_and_jackie_clayton.webp': 'meriem_and_jackie_clayton.webp',
+                'specials/foretell_the_future.webp': 'foretell_the_future.webp',
+                'specials/vampiric_celerity.webp': 'vampiric_celerity.webp',
+                'specials/form_of_water.webp': 'form_of_water.webp',
+                'specials/mathematical_genius.webp': 'mathematical_genius.webp',
+                'specials/master_archer.webp': 'master_archer.webp',
+                'specials/master_thief.webp': 'master_thief.webp',
+                'specials/fourarmed_warrior.webp': 'fourarmed_warrior.webp',
+                'specials/master_of_escape.webp': 'master_of_escape.webp',
+                
+                // Missions
+                'missions/tarzan_of_the_apes.webp': 'tarzan_of_the_apes.webp',
+                'missions/tarzans_quest.webp': 'tarzans_quest.webp',
+                'missions/the_alert.webp': 'the_alert.webp',
+                'missions/the_battle_of_kings.webp': 'the_battle_of_kings.webp',
+                'missions/the_dreams_of_men.webp': 'the_dreams_of_men.webp',
+                'missions/the_face_of_deception.webp': 'the_face_of_deception.webp',
+                'missions/the_gods_return.webp': 'the_gods_return.webp'
             };
             
             return imageMappings[imagePath] || imagePath;
@@ -9964,17 +10001,20 @@
                 } else if (cardType === 'location') {
                     // Locations use the image field (which already includes the directory)
                     if (card.image) {
-                        return `/src/resources/cards/images/${card.image}`;
+                        const actualImagePath = mapImagePathToActualFile(card.image);
+                        return `/src/resources/cards/images/locations/${actualImagePath}`;
                     }
                 } else if (cardType === 'mission') {
                     // Missions use the image field (which already includes the directory)
                     if (card.image) {
-                        return `/src/resources/cards/images/${card.image}`;
+                        const actualImagePath = mapImagePathToActualFile(card.image);
+                        return `/src/resources/cards/images/missions/${actualImagePath}`;
                     }
                 } else if (cardType === 'event') {
                     // Events use the image field (which already includes the directory)
                     if (card.image) {
-                        return `/src/resources/cards/images/${card.image}`;
+                        const actualImagePath = mapImagePathToActualFile(card.image);
+                        return `/src/resources/cards/images/events/${actualImagePath}`;
                     }
                 } else if (cardType === 'special') {
                     // If a specific alternate image is selected, use it
@@ -9984,18 +10024,20 @@
                     
                     // Special cards use the image field (which already includes the directory)
                     if (card.image) {
-                        return `/src/resources/cards/images/${card.image}`;
+                        const actualImagePath = mapImagePathToActualFile(card.image);
+                        return `/src/resources/cards/images/specials/${actualImagePath}`;
                     }
                 } else if (cardType === 'aspect') {
                     // Aspects use the image field (which already includes the directory)
                     if (card.image) {
-                        return `/src/resources/cards/images/${card.image}`;
+                        const actualImagePath = mapImagePathToActualFile(card.image);
+                        return `/src/resources/cards/images/aspects/${actualImagePath}`;
                     }
                 } else if (cardType === 'teamwork') {
                     // Teamwork cards use the image field (which already includes the directory)
                     if (card.image) {
-                        const imagePath = `/src/resources/cards/images/${card.image}`;
-                        return imagePath;
+                        const actualImagePath = mapImagePathToActualFile(card.image);
+                        return `/src/resources/cards/images/teamwork-universe/${actualImagePath}`;
                     }
                 } else if (cardType === 'power') {
                     // If a specific alternate image is selected, use it
@@ -10005,27 +10047,32 @@
                     
                     // Power cards use the image field (which already includes the directory)
                     if (card.image) {
-                        return `/src/resources/cards/images/${card.image}`;
+                        const actualImagePath = mapImagePathToActualFile(card.image);
+                        return `/src/resources/cards/images/power-cards/${actualImagePath}`;
                     }
                 } else if (cardType === 'advanced-universe' || cardType === 'advanced_universe') {
                     // Advanced universe cards use the image field (which already includes the directory)
                     if (card.image) {
-                        return `/src/resources/cards/images/${card.image}`;
+                        const actualImagePath = mapImagePathToActualFile(card.image);
+                        return `/src/resources/cards/images/advanced-universe/${actualImagePath}`;
                     }
                 } else if (cardType === 'ally-universe' || cardType === 'ally_universe') {
                     // Ally universe cards use the image field (which already includes the directory)
                     if (card.image) {
-                        return `/src/resources/cards/images/${card.image}`;
+                        const actualImagePath = mapImagePathToActualFile(card.image);
+                        return `/src/resources/cards/images/ally-universe/${actualImagePath}`;
                     }
                 } else if (cardType === 'training') {
                     // Training cards use the image field (which already includes the directory)
                     if (card.image) {
-                        return `/src/resources/cards/images/${card.image}`;
+                        const actualImagePath = mapImagePathToActualFile(card.image);
+                        return `/src/resources/cards/images/training-universe/${actualImagePath}`;
                     }
                 } else if (cardType === 'basic-universe' || cardType === 'basic_universe') {
                     // Basic universe cards use the image field (which already includes the directory)
                     if (card.image) {
-                        return `/src/resources/cards/images/${card.image}`;
+                        const actualImagePath = mapImagePathToActualFile(card.image);
+                        return `/src/resources/cards/images/basic-universe/${actualImagePath}`;
                     }
                 }
                 
