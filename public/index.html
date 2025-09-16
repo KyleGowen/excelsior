@@ -9971,7 +9971,20 @@
                 'missions/the_battle_of_kings.webp': 'the_battle_of_kings.webp',
                 'missions/the_dreams_of_men.webp': 'the_dreams_of_men.webp',
                 'missions/the_face_of_deception.webp': 'the_face_of_deception.webp',
-                'missions/the_gods_return.webp': 'the_gods_return.webp'
+                'missions/the_gods_return.webp': 'the_gods_return.webp',
+                
+                // Advanced Universe Cards
+                'advanced-universe/shards_of_the_staff.webp': '192_shards_of_the_staff.webp',
+                'advanced-universe/staff_fragments.webp': '193_staff_fragments.webp',
+                'advanced-universe/staff_head.webp': '194_staff_head.webp',
+                
+                // Teamwork Cards (these already have full paths, so just return as-is)
+                'teamwork-universe/480_6_anypower.webp': 'teamwork-universe/480_6_anypower.webp',
+                'teamwork-universe/417_6_brute_force_0e_1i.webp': 'teamwork-universe/417_6_brute_force_0e_1i.webp',
+                'teamwork-universe/416_6_brute_force_0e_1c.webp': 'teamwork-universe/416_6_brute_force_0e_1c.webp',
+                'teamwork-universe/418_6_brute_force_0c_1i.webp': 'teamwork-universe/418_6_brute_force_0c_1i.webp',
+                'teamwork-universe/408_6_combat_0e_1i.webp': 'teamwork-universe/408_6_combat_0e_1i.webp',
+                'teamwork-universe/411_7_combat_1e_1i.webp': 'teamwork-universe/411_7_combat_1e_1i.webp'
             };
             
             return imageMappings[imagePath] || imagePath;
@@ -10037,7 +10050,7 @@
                     // Teamwork cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/teamwork-universe/${actualImagePath}`;
+                        return `/src/resources/cards/images/${actualImagePath}`;
                     }
                 } else if (cardType === 'power') {
                     // If a specific alternate image is selected, use it
@@ -10054,25 +10067,25 @@
                     // Advanced universe cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/advanced-universe/${actualImagePath}`;
+                        return `/src/resources/cards/images/${actualImagePath}`;
                     }
                 } else if (cardType === 'ally-universe' || cardType === 'ally_universe') {
                     // Ally universe cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/ally-universe/${actualImagePath}`;
+                        return `/src/resources/cards/images/${actualImagePath}`;
                     }
                 } else if (cardType === 'training') {
                     // Training cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/training-universe/${actualImagePath}`;
+                        return `/src/resources/cards/images/${actualImagePath}`;
                     }
                 } else if (cardType === 'basic-universe' || cardType === 'basic_universe') {
                     // Basic universe cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/basic-universe/${actualImagePath}`;
+                        return `/src/resources/cards/images/${actualImagePath}`;
                     }
                 }
                 
