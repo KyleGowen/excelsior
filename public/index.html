@@ -10003,7 +10003,12 @@
                 } else if (cardType === 'power') {
                     // If a specific alternate image is selected, use it
                     if (selectedAlternateImage && card.alternateImages && card.alternateImages.includes(selectedAlternateImage)) {
-                        return `/src/resources/cards/images/power-cards/alternate/${selectedAlternateImage}`;
+                        // Check if the alternate image already contains a directory path
+                        if (selectedAlternateImage.includes('/')) {
+                            return `/src/resources/cards/images/${selectedAlternateImage}`;
+                        } else {
+                            return `/src/resources/cards/images/power-cards/alternate/${selectedAlternateImage}`;
+                        }
                     }
                     
                     // Power cards use the image field (which already includes the directory)
@@ -11676,41 +11681,25 @@
             let card = availableCardsMap.get(cardId);
             let cardType = 'character';
             
-            // If not found, try to determine card type and map to database ID
-            if (!card) {
-                if (cardId.startsWith('char_')) {
-                    cardType = 'character';
-                    // Direct lookup using UUID
-                    card = availableCardsMap.get(cardId);
-                } else if (cardId.startsWith('special_')) {
-                    cardType = 'special';
-                    // Direct lookup using UUID
-                    card = availableCardsMap.get(cardId);
-                } else if (cardId.startsWith('power_')) {
-                    cardType = 'power';
-                    // Direct lookup using UUID
-                    card = availableCardsMap.get(cardId);
-                } else if (cardId.startsWith('mission_')) {
-                    cardType = 'mission';
-                    // Direct lookup using UUID
-                    card = availableCardsMap.get(cardId);
-                } else if (cardId.startsWith('event_')) {
-                    cardType = 'event';
-                    // Direct lookup using UUID
-                    card = availableCardsMap.get(cardId);
-                } else if (cardId.startsWith('aspect_')) {
-                    cardType = 'aspect';
-                    // Direct lookup using UUID
-                    card = availableCardsMap.get(cardId);
-                } else if (cardId.startsWith('loc_')) {
-                    cardType = 'location';
-                    // Direct lookup using UUID
-                    card = availableCardsMap.get(cardId);
-                } else if (cardId.startsWith('teamwork_')) {
-                    cardType = 'teamwork';
-                    // Direct lookup using UUID
-                    card = availableCardsMap.get(cardId);
-                }
+            // Always try to get card type from deck card data first (most reliable)
+            if (cardIndex !== null && deckEditorCards[cardIndex]) {
+                cardType = deckEditorCards[cardIndex].type;
+            } else if (cardId.startsWith('char_')) {
+                cardType = 'character';
+            } else if (cardId.startsWith('special_')) {
+                cardType = 'special';
+            } else if (cardId.startsWith('power_')) {
+                cardType = 'power';
+            } else if (cardId.startsWith('mission_')) {
+                cardType = 'mission';
+            } else if (cardId.startsWith('event_')) {
+                cardType = 'event';
+            } else if (cardId.startsWith('aspect_')) {
+                cardType = 'aspect';
+            } else if (cardId.startsWith('loc_')) {
+                cardType = 'location';
+            } else if (cardId.startsWith('teamwork_')) {
+                cardType = 'teamwork';
             }
             
             if (!card) {
