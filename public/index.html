@@ -6246,7 +6246,9 @@
         // Load decks when switching to deck builder tab
         async function loadDecks() {
             try {
-                const response = await fetch('/api/decks');
+                const response = await fetch('/api/decks', {
+                    credentials: 'include'
+                });
                 const data = await response.json();
                     if (data.success) {
                     await displayDecks(data.data);
@@ -6288,7 +6290,9 @@
             // Fetch full deck data for each deck to get character information
             const decksWithCharacters = await Promise.all(decks.map(async (deck) => {
                 try {
-                    const response = await fetch(`/api/decks/${deck.metadata.id}`);
+                    const response = await fetch(`/api/decks/${deck.metadata.id}`, {
+                        credentials: 'include'
+                    });
                     const data = await response.json();
                     if (data.success) {
                         return { ...deck, cards: data.data.cards };
@@ -6510,6 +6514,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ 
                         name, 
                         description,
@@ -6553,7 +6558,8 @@
         function deleteDeck(deckId) {
             if (confirm('Are you sure you want to delete this deck? This action cannot be undone.')) {
                 fetch(`/api/decks/${deckId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    credentials: 'include'
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -6660,7 +6666,9 @@
         // Load deck details and display cards
         async function loadDeckDetails(deckId) {
             try {
-                const response = await fetch(`/api/decks/${deckId}`);
+                const response = await fetch(`/api/decks/${deckId}`, {
+                    credentials: 'include'
+                });
                 const data = await response.json();
                 
                 if (data.success) {
@@ -6770,6 +6778,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
                         cardType: 'character', // TODO: Get actual card type
                         cardId: cardId,
@@ -6802,6 +6811,7 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
+                        credentials: 'include',
                         body: JSON.stringify({
                             cardType: 'character', // TODO: Get actual card type
                             cardId: cardId,
@@ -6921,6 +6931,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
                         cardType,
                         cardId,
@@ -8365,7 +8376,9 @@
         // Load UI preferences from database
         async function loadUIPreferences(deckId) {
             try {
-                const response = await fetch(`/api/decks/${deckId}/ui-preferences`);
+                const response = await fetch(`/api/decks/${deckId}/ui-preferences`, {
+                    credentials: 'include'
+                });
                 const data = await response.json();
                 
                 console.log('Loaded UI preferences from database:', data);
@@ -8390,6 +8403,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'include',
                     body: JSON.stringify(preferences)
                 });
                 
@@ -8903,7 +8917,9 @@
         async function loadDeckForEditing(deckId) {
             console.log('loadDeckForEditing called with deckId:', deckId);
             try {
-                const response = await fetch(`/api/decks/${deckId}`);
+                const response = await fetch(`/api/decks/${deckId}`, {
+                    credentials: 'include'
+                });
                 const data = await response.json();
                 console.log('Deck data loaded:', data);
                 
@@ -12222,6 +12238,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
                         cardType: 'all',
                         cardId: 'all',
@@ -12247,6 +12264,7 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
+                        credentials: 'include',
                         body: JSON.stringify(cardData)
                     });
                 }
@@ -12257,6 +12275,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
                         name: currentDeckData.metadata.name,
                         description: currentDeckData.metadata.description || ''
