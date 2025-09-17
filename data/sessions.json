@@ -1,11 +1,5 @@
 [
   {
-    "sessionId": "sess_ijx944z6l_mf8j0rdq",
-    "userId": "kyle-001",
-    "username": "kyle",
-    "expiresAt": "2025-09-06T19:17:02.750Z"
-  },
-  {
     "sessionId": "sess_hu1u3dgzg_mf95wxja",
     "userId": "kyle-001",
     "username": "kyle",
@@ -208,5 +202,11 @@
     "userId": "c567175f-a07b-41b7-b274-e82901d1b4f1",
     "username": "kyle",
     "expiresAt": "2025-09-16T19:55:33.189Z"
+  },
+  {
+    "sessionId": "sess_9xqhbi2oj_mfni2e1b",
+    "userId": "c567175f-a07b-41b7-b274-e82901d1b4f1",
+    "username": "kyle",
+    "expiresAt": "2025-09-17T06:46:51.791Z"
   }
 ]

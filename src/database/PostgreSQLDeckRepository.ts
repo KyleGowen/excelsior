@@ -365,4 +365,22 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       client.release();
     }
   }
+
+  async userOwnsDeck(deckId: string, userId: string): Promise<boolean> {
+    const client = await this.pool.connect();
+    try {
+      const result = await client.query(
+        'SELECT user_id FROM decks WHERE id = $1',
+        [deckId]
+      );
+      
+      if (result.rows.length === 0) {
+        return false; // Deck doesn't exist
+      }
+      
+      return result.rows[0].user_id === userId;
+    } finally {
+      client.release();
+    }
+  }
 }

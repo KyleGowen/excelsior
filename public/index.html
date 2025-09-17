@@ -9934,9 +9934,45 @@
                 'characters/leonidas.webp': '139_leonidis.webp',
                 'characters/dr._watson.webp': '062_dr_watson.webp',
                 'characters/sherlock_holmes.webp': '209_sherlock_holmes.webp',
+                'characters/victory_harben.webp': '265_victory_harben.webp',
                 'characters/dracula.webp': '069_dracula.webp',
                 'characters/merlin.webp': '146_merlin.webp',
                 'characters/hercules.webp': '083_hercules.webp',
+                'characters/angry_mob_(middle_ages).webp': '001_angry_mob_middle_ages.webp',
+                'characters/angry_mob_(industrial_age).webp': '008_angry_mob_industrial_age.webp',
+                'characters/angry_mob_(modern_age).webp': '011_angry_mob_modern_age.webp',
+                'characters/anubis.webp': '014_anubis.webp',
+                'characters/billy_the_kid.webp': '021_billy_the_kid.webp',
+                'characters/captain_nemo.webp': '028_captain_nemo.webp',
+                'characters/jane_porter.webp': '097_jane_porter.webp',
+                'characters/john_carter_of_mars.webp': '111_john_carter_of_mars.webp',
+                'characters/tarzan.webp': '230_tarzan.webp',
+                'characters/king_arthur.webp': '118_king_arthur.webp',
+                'characters/robin_hood.webp': '195_robin_hood.webp',
+                'characters/joan_of_arc.webp': '104_joan_of_arc.webp',
+                'characters/carson_of_venus.webp': '035_carson_of_venus.webp',
+                'characters/count_of_monte_cristo.webp': '042_count_of_monte_cristo.webp',
+                'characters/cthulhu.webp': '048_cthulhu.webp',
+                'characters/dejah_thoris.webp': '055_dejah_thoris.webp',
+                'characters/headless_horseman.webp': '076_headless_horseman.webp',
+                'characters/invisible_man.webp': '090_invisible_man.webp',
+                'characters/korak.webp': '125_korak.webp',
+                'characters/lancelot.webp': '132_lancelot.webp',
+                'characters/mina_harker.webp': '153_mina_harker.webp',
+                'characters/morgan_le_fay.webp': '160_morgan_le_fay.webp',
+                'characters/mr._hyde.webp': '167_mr_hyde.webp',
+                'characters/poseidon.webp': '174_poseidon.webp',
+                'characters/professor_moriarty.webp': '181_professor_moriarty.webp',
+                'characters/ra.webp': '188_ra.webp',
+                'characters/sheriff_of_nottingham.webp': '202_sheriff_of_nottingham.webp',
+                'characters/sun_wukong.webp': '216_sun_wukong.webp',
+                'characters/tars_tarkas.webp': '223_tars_tarkas.webp',
+                'characters/the_mummy.webp': '237_the_mummy.webp',
+                'characters/the_three_musketeers.webp': '244_three_musketeers.webp',
+                'characters/time_traveler.webp': '251_time_traveler.webp',
+                'characters/van_helsing.webp': '258_van_helsing.webp',
+                'characters/wicked_witch.webp': '272_wicked_witch.webp',
+                'characters/zorro.webp': '285_zorro.webp',
                 'characters/alternate/Zeus.webp': '279_zeus.webp',
                 
                 // Locations
@@ -9963,6 +9999,10 @@
                 'specials/master_thief.webp': 'master_thief.webp',
                 'specials/fourarmed_warrior.webp': 'fourarmed_warrior.webp',
                 'specials/master_of_escape.webp': 'master_of_escape.webp',
+                'specials/tunupa_mountain_god.webp': '442_tunupa_mountain_god.webp',
+                'specials/freya_goddess_of_protection.webp': '455_freya_goddess_of_protection.webp',
+                'specials/all_chips_on_the_table.webp': '063_all_chips_on_the_table.webp',
+                'specials/undead_flesh.webp': '075_undead_flesh.webp',
                 
                 // Missions
                 'missions/tarzan_of_the_apes.webp': 'tarzan_of_the_apes.webp',
@@ -9972,6 +10012,17 @@
                 'missions/the_dreams_of_men.webp': 'the_dreams_of_men.webp',
                 'missions/the_face_of_deception.webp': 'the_face_of_deception.webp',
                 'missions/the_gods_return.webp': 'the_gods_return.webp',
+                // Placeholder mappings for missing mission files
+                'missions/a_fighting_man_of_mars.webp': 'placeholder_mission.webp',
+                'missions/battle_at_olympus.webp': 'placeholder_mission.webp',
+                'missions/beasts_of_tarzan.webp': 'placeholder_mission.webp',
+                'missions/divine_retribution.webp': 'placeholder_mission.webp',
+                'missions/gone_too_far.webp': 'placeholder_mission.webp',
+                'missions/johansens_window.webp': 'placeholder_mission.webp',
+                'missions/new_orleans_1918.webp': 'placeholder_mission.webp',
+                'missions/professor_angells_investigation.webp': 'placeholder_mission.webp',
+                'missions/supernatural_allies.webp': 'placeholder_mission.webp',
+                'missions/swords_of_mars.webp': 'placeholder_mission.webp',
                 
                 // Advanced Universe Cards
                 'advanced-universe/shards_of_the_staff.webp': '192_shards_of_the_staff.webp',
@@ -10015,7 +10066,12 @@
                 if (cardType === 'character') {
                     // If a specific alternate image is selected, use it
                     if (selectedAlternateImage && card.alternateImages && card.alternateImages.includes(selectedAlternateImage)) {
-                        return `/src/resources/cards/images/characters/alternate/${selectedAlternateImage}`;
+                        // Check if the alternate image already contains a directory path
+                        if (selectedAlternateImage.includes('/')) {
+                            return `/src/resources/cards/images/${selectedAlternateImage}`;
+                        } else {
+                            return `/src/resources/cards/images/characters/alternate/${selectedAlternateImage}`;
+                        }
                     }
                     
                     // Characters use the image field from the database
@@ -10046,7 +10102,7 @@
                     // Events use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/${actualImagePath}`;
+                        return `/src/resources/cards/images/events/${actualImagePath}`;
                     }
                 } else if (cardType === 'special') {
                     // If a specific alternate image is selected, use it
@@ -10057,19 +10113,19 @@
                     // Special cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/${actualImagePath}`;
+                        return `/src/resources/cards/images/specials/${actualImagePath}`;
                     }
                 } else if (cardType === 'aspect') {
                     // Aspects use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/${actualImagePath}`;
+                        return `/src/resources/cards/images/aspects/${actualImagePath}`;
                     }
                 } else if (cardType === 'teamwork') {
                     // Teamwork cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/${actualImagePath}`;
+                        return `/src/resources/cards/images/teamwork-universe/${actualImagePath}`;
                     }
                 } else if (cardType === 'power') {
                     // If a specific alternate image is selected, use it
@@ -10080,31 +10136,31 @@
                     // Power cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/${actualImagePath}`;
+                        return `/src/resources/cards/images/power-cards/${actualImagePath}`;
                     }
                 } else if (cardType === 'advanced-universe' || cardType === 'advanced_universe') {
                     // Advanced universe cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/${actualImagePath}`;
+                        return `/src/resources/cards/images/advanced-universe/${actualImagePath}`;
                     }
                 } else if (cardType === 'ally-universe' || cardType === 'ally_universe') {
                     // Ally universe cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/${actualImagePath}`;
+                        return `/src/resources/cards/images/ally-universe/${actualImagePath}`;
                     }
                 } else if (cardType === 'training') {
                     // Training cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/${actualImagePath}`;
+                        return `/src/resources/cards/images/training-cards/${actualImagePath}`;
                     }
                 } else if (cardType === 'basic-universe' || cardType === 'basic_universe') {
                     // Basic universe cards use the image field (which already includes the directory)
                     if (card.image) {
                         const actualImagePath = mapImagePathToActualFile(card.image);
-                        return `/src/resources/cards/images/${actualImagePath}`;
+                        return `/src/resources/cards/images/basic-universe/${actualImagePath}`;
                     }
                 }
                 
@@ -10157,7 +10213,8 @@
                                         'Leonidas': 'char_22', 
                                         'Dr. Watson': 'char_11',
                                         'Sherlock Holmes': 'char_8',
-                                        'Dracula': 'char_12'
+                                        'Dracula': 'char_12',
+                                        'Victory Harben': 'char_15'
                                     };
                                     const deckCardId = charMappings[card.name];
                                     if (deckCardId) {
@@ -10527,18 +10584,27 @@
         // Function to update just the character limit status without affecting collapse state
         function updateCharacterLimitStatus() {
             const characterCards = document.querySelectorAll('.card-item.character-card');
-            const currentCharacterCount = deckEditorCards
+            const uniqueCharacterCount = deckEditorCards
                 .filter(card => card.type === 'character')
-                .reduce((total, card) => total + card.quantity, 0);
-            
-            
-            const isCharacterLimitReached = currentCharacterCount >= 4;
+                .length;
             
             characterCards.forEach(card => {
-                if (isCharacterLimitReached) {
+                const cardId = card.dataset.id; // Fixed: changed from dataset.cardId to dataset.id
+                const isExistingCharacter = deckEditorCards.some(deckCard => 
+                    deckCard.type === 'character' && deckCard.cardId === cardId
+                );
+                
+                // Disable if we have 4 different characters OR if this character is already in the deck
+                const shouldDisable = uniqueCharacterCount >= 4 || isExistingCharacter;
+                
+                if (shouldDisable) {
                     card.classList.add('disabled');
                     card.setAttribute('draggable', 'false');
-                    card.title = 'Character limit reached (max 4)';
+                    if (isExistingCharacter) {
+                        card.title = 'This character is already in your deck';
+                    } else {
+                        card.title = 'Character limit reached (max 4 different characters)';
+                    }
                 } else {
                     card.classList.remove('disabled');
                     card.setAttribute('draggable', 'true');
@@ -10626,7 +10692,8 @@
                                         'Leonidas': 'char_22', 
                                         'Dr. Watson': 'char_11',
                                         'Sherlock Holmes': 'char_8',
-                                        'Dracula': 'char_12'
+                                        'Dracula': 'char_12',
+                                        'Victory Harben': 'char_15'
                                     };
                                     const deckCardId = charMappings[card.name];
                                     if (deckCardId) {
@@ -11793,18 +11860,26 @@
         async function addCardToEditor(cardType, cardId, cardName, selectedAlternateImage = null) {
             // Check character limit before adding
             if (cardType === 'character') {
-                const currentCharacterCount = deckEditorCards
+                // Check if we already have this character in the deck
+                const existingCharacter = deckEditorCards.find(card => card.type === 'character' && card.cardId === cardId);
+                
+                if (existingCharacter) {
+                    showNotification('This character is already in your deck', 'error');
+                    return;
+                }
+                
+                // Check if we already have 4 different characters
+                const uniqueCharacterCount = deckEditorCards
                     .filter(card => card.type === 'character')
-                    .reduce((total, card) => total + card.quantity, 0);
+                    .length;
                 
-                
-                if (currentCharacterCount >= 4) {
-                    showNotification('Cannot add more than 4 characters to a deck', 'error');
+                if (uniqueCharacterCount >= 4) {
+                    showNotification('Cannot add more than 4 different characters to a deck', 'error');
                     return;
                 }
                 
                 // Check if character has alternate images and none selected
-                const character = availableCardsMap.get(`character_${cardId}`);
+                const character = availableCardsMap.get(cardId);
                 if (character && character.alternateImages && character.alternateImages.length > 0 && !selectedAlternateImage) {
                     showAlternateArtSelection(character, cardId, cardName, null, 'character');
                     return;
@@ -11836,7 +11911,7 @@
             
             // Check if special card has alternate images and none selected
             if (cardType === 'special') {
-                const specialCard = availableCardsMap.get(`special_${cardId}`);
+                const specialCard = availableCardsMap.get(cardId);
                 if (specialCard && specialCard.alternateImages && specialCard.alternateImages.length > 0 && !selectedAlternateImage) {
                     showAlternateArtSelection(specialCard, cardId, cardName, null, 'special');
                     return;
@@ -11845,7 +11920,7 @@
             
             // Check if power card has alternate images and none selected
             if (cardType === 'power') {
-                const powerCard = availableCardsMap.get(`power_${cardId}`);
+                const powerCard = availableCardsMap.get(cardId);
                 if (powerCard && powerCard.alternateImages && powerCard.alternateImages.length > 0 && !selectedAlternateImage) {
                     showAlternateArtSelection(powerCard, cardId, cardName, null, 'power');
                     return;
@@ -11868,15 +11943,19 @@
             );
             
             if (existingCardIndex >= 0) {
-                // Increase quantity and update alternate image if provided
+                // For characters, don't allow adding duplicates
+                if (cardType === 'character') {
+                    showNotification('This character is already in your deck', 'error');
+                    return;
+                }
+                
+                // For other card types, increase quantity and update alternate image if provided
                 deckEditorCards[existingCardIndex].quantity += 1;
-                if (selectedAlternateImage && (cardType === 'character' || cardType === 'special')) {
+                if (selectedAlternateImage && (cardType === 'special')) {
                     deckEditorCards[existingCardIndex].selectedAlternateImage = selectedAlternateImage;
                 }
                 // Show notification for adding additional copies
-                if (cardType !== 'character') {
-                    showNotification(`Added another copy of ${cardName}`, 'success');
-                }
+                showNotification(`Added another copy of ${cardName}`, 'success');
             } else {
                 // Add new card
                 const newCard = {

@@ -479,7 +479,7 @@ app.delete('/api/decks/:id', authenticateUser, async (req: any, res) => {
   }
 });
 
-app.post('/api/decks/:id/cards', authenticateUser, (req: any, res) => {
+app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
     const { cardType, cardId, quantity, selectedAlternateImage } = req.body;
     if (!cardType || !cardId) {
@@ -487,21 +487,24 @@ app.post('/api/decks/:id/cards', authenticateUser, (req: any, res) => {
     }
     
     // Check if user owns this deck
-    if (!deckService.userOwnsDeck(req.params.id, req.user.userId)) {
+    if (!await deckRepository.userOwnsDeck(req.params.id, req.user.userId)) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
-    const deck = deckService.addCardToDeck(req.params.id, cardType, cardId, quantity || 1, selectedAlternateImage);
-    if (!deck) {
-      return res.status(404).json({ success: false, error: 'Deck not found' });
+    const success = await deckRepository.addCardToDeck(req.params.id, cardType, cardId, quantity || 1, selectedAlternateImage);
+    if (!success) {
+      return res.status(404).json({ success: false, error: 'Deck not found or failed to add card' });
     }
-    res.json({ success: true, data: deck });
+    
+    // Return the updated deck
+    const updatedDeck = await deckRepository.getDeckById(req.params.id);
+    res.json({ success: true, data: updatedDeck });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to add card to deck' });
   }
 });
 
-app.delete('/api/decks/:id/cards', authenticateUser, (req: any, res) => {
+app.delete('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
     const { cardType, cardId, quantity } = req.body;
     if (!cardType || !cardId) {
@@ -509,15 +512,26 @@ app.delete('/api/decks/:id/cards', authenticateUser, (req: any, res) => {
     }
     
     // Check if user owns this deck
-    if (!deckService.userOwnsDeck(req.params.id, req.user.userId)) {
+    if (!await deckRepository.userOwnsDeck(req.params.id, req.user.userId)) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
-    const deck = deckService.removeCardFromDeck(req.params.id, cardType, cardId, quantity || 1);
-    if (!deck) {
-      return res.status(404).json({ success: false, error: 'Deck not found' });
+    let success;
+    
+    // Special case: clear all cards
+    if (cardType === 'all' && cardId === 'all') {
+      success = await deckRepository.removeAllCardsFromDeck(req.params.id);
+    } else {
+      success = await deckRepository.removeCardFromDeck(req.params.id, cardType, cardId, quantity || 1);
     }
-    res.json({ success: true, data: deck });
+    
+    if (!success) {
+      return res.status(404).json({ success: false, error: 'Deck not found or failed to remove card' });
+    }
+    
+    // Return the updated deck
+    const updatedDeck = await deckRepository.getDeckById(req.params.id);
+    res.json({ success: true, data: updatedDeck });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to remove card from deck' });
   }
@@ -536,16 +550,16 @@ app.get('/api/deck-stats', authenticateUser, async (req: any, res) => {
 });
 
 // UI Preferences API routes
-app.get('/api/decks/:id/ui-preferences', authenticateUser, (req: any, res) => {
+app.get('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res) => {
   try {
     const { id } = req.params;
     
     // Check if user owns this deck
-    if (!deckService.userOwnsDeck(id, req.user.userId)) {
+    if (!await deckRepository.userOwnsDeck(id, req.user.userId)) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
-    const preferences = deckRepository.getUIPreferences(id);
+    const preferences = await deckRepository.getUIPreferences(id);
     res.json({ success: true, data: preferences || {} });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch UI preferences' });
@@ -558,7 +572,7 @@ app.put('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res)
     const preferences = req.body;
     
     // Check if user owns this deck
-    if (!deckService.userOwnsDeck(id, req.user.userId)) {
+    if (!await deckRepository.userOwnsDeck(id, req.user.userId)) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     

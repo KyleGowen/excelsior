@@ -167,4 +167,9 @@ export class InMemoryDeckRepository implements DeckRepository {
     const deck = this.decks.get(deckId);
     return deck?.cards || [];
   }
+
+  async userOwnsDeck(deckId: string, userId: string): Promise<boolean> {
+    const deck = this.decks.get(deckId);
+    return deck ? deck.user_id === userId : false;
+  }
 }
