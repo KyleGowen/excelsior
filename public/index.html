@@ -1409,6 +1409,69 @@
             padding-left: 20px;
         }
 
+        /* Inline editing styles */
+        .editable-title {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            background: transparent;
+        }
+
+        .editable-title:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(78, 205, 196, 0.3);
+        }
+
+        .editable-title.editing {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #4ecdc4;
+            cursor: text;
+        }
+
+        .editable-description {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            background: transparent;
+            min-height: 20px;
+        }
+
+        .editable-description:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(78, 205, 196, 0.3);
+        }
+
+        .editable-description.editing {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #4ecdc4;
+            cursor: text;
+        }
+
+        .editable-description.placeholder {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .edit-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: inherit;
+            font: inherit;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .edit-input::placeholder {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
         /* Deck Summary Section */
         .deck-summary-section {
             background: rgba(255, 255, 255, 0.05);
@@ -4311,8 +4374,8 @@
         <div class="modal-content large-modal" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <div class="deck-editor-title-section">
-                    <h3 id="deckEditorTitle">Edit Deck</h3>
-                    <p id="deckEditorDescription" class="deck-description"></p>
+                    <h3 id="deckEditorTitle" class="editable-title" onclick="startEditingTitle()">Edit Deck</h3>
+                    <p id="deckEditorDescription" class="deck-description editable-description" onclick="startEditingDescription()"></p>
                 </div>
                 <div class="deck-editor-actions">
                     <button class="btn-secondary" onclick="closeDeckEditor()">Cancel</button>
@@ -7212,6 +7275,10 @@
             // Save sort mode to localStorage
             if (currentDeckId) {
                 localStorage.setItem(`powerCardsSortMode_${currentDeckId}`, powerCardsSortMode);
+                
+                // Also save UI preferences to database
+                const preferences = getCurrentUIPreferences();
+                saveUIPreferences(currentDeckId, preferences);
             }
             
             // Re-render the deck to apply new sort mode
@@ -8417,6 +8484,143 @@
 
         // ===== DECK EDITOR FUNCTIONS =====
 
+        // Inline editing functions for deck title and description
+        function startEditingTitle() {
+            const titleElement = document.getElementById('deckEditorTitle');
+            const currentTitle = titleElement.textContent;
+            
+            // Create input element
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'edit-input';
+            input.value = currentTitle;
+            input.placeholder = 'Enter deck title';
+            
+            // Replace content with input
+            titleElement.innerHTML = '';
+            titleElement.appendChild(input);
+            titleElement.classList.add('editing');
+            
+            // Focus and select text
+            input.focus();
+            input.select();
+            
+            // Handle save on blur or enter
+            input.addEventListener('blur', () => saveTitleEdit(input));
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveTitleEdit(input);
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancelTitleEdit(input, currentTitle);
+                }
+            });
+        }
+
+        function startEditingDescription() {
+            const descElement = document.getElementById('deckEditorDescription');
+            const currentDescription = descElement.textContent;
+            
+            // Create textarea element
+            const textarea = document.createElement('textarea');
+            textarea.className = 'edit-input';
+            textarea.value = currentDescription;
+            textarea.placeholder = 'Enter deck description';
+            textarea.rows = 2;
+            textarea.style.resize = 'none';
+            
+            // Replace content with textarea
+            descElement.innerHTML = '';
+            descElement.appendChild(textarea);
+            descElement.classList.add('editing');
+            
+            // Focus and select text
+            textarea.focus();
+            textarea.select();
+            
+            // Handle save on blur or enter (with Ctrl/Cmd)
+            textarea.addEventListener('blur', () => saveDescriptionEdit(textarea));
+            textarea.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    saveDescriptionEdit(textarea);
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancelDescriptionEdit(textarea, currentDescription);
+                }
+            });
+        }
+
+        function saveTitleEdit(input) {
+            const newTitle = input.value.trim();
+            const titleElement = document.getElementById('deckEditorTitle');
+            
+            if (newTitle && newTitle !== currentDeckData?.metadata?.name) {
+                // Update the deck data
+                if (currentDeckData) {
+                    currentDeckData.metadata.name = newTitle;
+                }
+                
+                // Update the display
+                titleElement.textContent = newTitle;
+                titleElement.classList.remove('editing');
+                
+                // Show save indicator
+                showNotification('Title updated - remember to save changes', 'info');
+            } else {
+                // Revert to original
+                titleElement.textContent = currentDeckData?.metadata?.name || 'Edit Deck';
+                titleElement.classList.remove('editing');
+            }
+        }
+
+        function saveDescriptionEdit(textarea) {
+            const newDescription = textarea.value.trim();
+            const descElement = document.getElementById('deckEditorDescription');
+            
+            // Update the deck data
+            if (currentDeckData) {
+                currentDeckData.metadata.description = newDescription;
+            }
+            
+            // Update the display
+            if (newDescription) {
+                descElement.textContent = newDescription;
+                descElement.classList.remove('placeholder');
+                descElement.style.display = 'block';
+            } else {
+                descElement.textContent = '';
+                descElement.classList.add('placeholder');
+                descElement.style.display = 'none';
+            }
+            
+            descElement.classList.remove('editing');
+            
+            // Show save indicator
+            showNotification('Description updated - remember to save changes', 'info');
+        }
+
+        function cancelTitleEdit(input, originalTitle) {
+            const titleElement = document.getElementById('deckEditorTitle');
+            titleElement.textContent = originalTitle;
+            titleElement.classList.remove('editing');
+        }
+
+        function cancelDescriptionEdit(textarea, originalDescription) {
+            const descElement = document.getElementById('deckEditorDescription');
+            if (originalDescription) {
+                descElement.textContent = originalDescription;
+                descElement.classList.remove('placeholder');
+                descElement.style.display = 'block';
+            } else {
+                descElement.textContent = '';
+                descElement.classList.add('placeholder');
+                descElement.style.display = 'none';
+            }
+            descElement.classList.remove('editing');
+        }
+
         function showDeckEditor() {
             console.log('showDeckEditor called');
             try {
@@ -8448,7 +8652,13 @@
             }
         }
 
-        function closeDeckEditor() {
+        async function closeDeckEditor() {
+            // Save UI preferences before closing
+            if (currentDeckId) {
+                const preferences = getCurrentUIPreferences();
+                await saveUIPreferences(currentDeckId, preferences);
+            }
+            
             document.getElementById('deckEditorModal').style.display = 'none';
             currentDeckId = null;
             currentDeckData = null;
@@ -8622,6 +8832,10 @@
             if (currentDeckId) {
                 const percentage = (deckWidth / totalWidth) * 100;
                 localStorage.setItem(`slider_position_${currentDeckId}`, percentage.toString());
+                
+                // Also save UI preferences to database
+                const preferences = getCurrentUIPreferences();
+                saveUIPreferences(currentDeckId, preferences);
             }
         }
 
@@ -8677,9 +8891,12 @@
                     const descriptionElement = document.getElementById('deckEditorDescription');
                     if (currentDeckData.metadata.description) {
                         descriptionElement.textContent = currentDeckData.metadata.description;
+                        descriptionElement.classList.remove('placeholder');
                         descriptionElement.style.display = 'block';
                     } else {
-                        descriptionElement.style.display = 'none';
+                        descriptionElement.textContent = 'Click to add description';
+                        descriptionElement.classList.add('placeholder');
+                        descriptionElement.style.display = 'block';
                     }
                     
                     // Load available cards first, then display deck cards
@@ -9853,6 +10070,10 @@
             if (currentDeckId) {
                 console.log('Saving expansion state for deck:', currentDeckId, 'state:', deckEditorExpansionState);
                 localStorage.setItem(`deckExpansionState_${currentDeckId}`, JSON.stringify(deckEditorExpansionState));
+                
+                // Also save UI preferences to database
+                const preferences = getCurrentUIPreferences();
+                saveUIPreferences(currentDeckId, preferences);
             }
         }
         
@@ -9883,6 +10104,10 @@
         function saveCharacterGroupExpansionState() {
             if (currentDeckId) {
                 localStorage.setItem(`characterGroupExpansionState_${currentDeckId}`, JSON.stringify(characterGroupExpansionState));
+                
+                // Also save UI preferences to database
+                const preferences = getCurrentUIPreferences();
+                saveUIPreferences(currentDeckId, preferences);
             }
         }
         
@@ -11936,8 +12161,24 @@
                     });
                 }
                 
+                // Save deck metadata (name and description)
+                await fetch(`/api/decks/${currentDeckId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: currentDeckData.metadata.name,
+                        description: currentDeckData.metadata.description || ''
+                    })
+                });
+                
                 // Save expansion state
                 saveDeckExpansionState();
+                
+                // Save UI preferences to database
+                const preferences = getCurrentUIPreferences();
+                await saveUIPreferences(currentDeckId, preferences);
                 
                 // Check validation status before saving
                 const validation = validateDeck(deckEditorCards);
