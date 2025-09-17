@@ -7017,6 +7017,12 @@
                 errors.push(`Deck must have exactly ${DECK_RULES.MAX_CHARACTERS} characters (${characterCards.length}/${DECK_RULES.MAX_CHARACTERS})`);
             }
             
+            // Check location count - only 0 or 1 location allowed
+            const locationCards = deckCards.filter(card => card.type === 'location');
+            if (locationCards.length > 1) {
+                errors.push(`Deck can have at most 1 location (${locationCards.length} locations)`);
+            }
+            
             // Check threat level (characters + locations)
             let totalThreat = 0;
             characterCards.forEach(card => {
@@ -7037,7 +7043,6 @@
             });
             
             // Add location threat levels
-            const locationCards = deckCards.filter(card => card.type === 'location');
             locationCards.forEach(card => {
                 // Convert internal type format to map key format
                 let mapKeyType = card.type;
@@ -8906,6 +8911,18 @@
                     currentDeckData = data.data;
                     deckEditorCards = [...data.data.cards]; // Create working copy
                     console.log('Working copy created:', deckEditorCards);
+                    
+                    // Validate and fix location count (max 1 location allowed)
+                    const locationCards = deckEditorCards.filter(card => card.type === 'location');
+                    if (locationCards.length > 1) {
+                        console.log(`Found ${locationCards.length} location cards, removing extra ones`);
+                        // Keep only the first location card
+                        const firstLocationIndex = deckEditorCards.findIndex(card => card.type === 'location');
+                        deckEditorCards = deckEditorCards.filter((card, index) => 
+                            card.type !== 'location' || index === firstLocationIndex
+                        );
+                        showNotification(`Removed ${locationCards.length - 1} extra location card(s) - only 1 location allowed per deck`, 'warning');
+                    }
                     
                     // Update modal title and description
                     document.getElementById('deckEditorTitle').textContent = currentDeckData.metadata.name;
@@ -12048,6 +12065,17 @@
                         await toggleSpecialCardsCharacterFilter();
                     }
                 }, 100); // Small delay to ensure DOM is updated
+            }
+            
+            // Check location limit before adding
+            if (cardType === 'location') {
+                // Check if we already have a location in the deck
+                const existingLocation = deckEditorCards.find(card => card.type === 'location');
+                
+                if (existingLocation) {
+                    showNotification('Cannot add more than 1 location to a deck', 'error');
+                    return;
+                }
             }
             
             // Check mission limit before adding
