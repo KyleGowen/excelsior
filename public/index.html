@@ -8363,6 +8363,8 @@
                 const response = await fetch(`/api/decks/${deckId}/ui-preferences`);
                 const data = await response.json();
                 
+                console.log('Loaded UI preferences from database:', data);
+                
                 if (data.success) {
                     return data.data || {};
                 } else {
@@ -8418,12 +8420,25 @@
         // Get current expansion state
         function getExpansionState() {
             const state = {};
-            const categories = ['characters', 'special_cards', 'power_cards', 'missions', 'events', 'aspects', 'advanced_universe', 'teamwork', 'ally_universe', 'training', 'basic_universe'];
+            const categories = ['character', 'location', 'mission', 'event', 'special', 'aspect', 'advanced_universe', 'teamwork', 'ally_universe', 'training', 'basic_universe', 'power'];
             
             categories.forEach(category => {
-                const header = document.querySelector(`#${category}-header`);
-                if (header) {
-                    state[category] = !header.classList.contains('collapsed');
+                // Check deck editor sections (deck-type-${category})
+                const cardsDiv = document.getElementById(`deck-type-${category}`);
+                
+                if (cardsDiv) {
+                    const section = cardsDiv.closest('.deck-type-section');
+                    const header = section ? section.querySelector('.deck-type-header') : null;
+                    
+                    if (header) {
+                        state[category] = !header.classList.contains('collapsed');
+                    } else {
+                        // Fallback: check if cards div is visible
+                        state[category] = cardsDiv.style.display !== 'none';
+                    }
+                } else {
+                    // Fallback: use the global deckEditorExpansionState, default to true if not set
+                    state[category] = deckEditorExpansionState[category] !== undefined ? deckEditorExpansionState[category] : true;
                 }
             });
             
@@ -8446,22 +8461,28 @@
 
             // Apply expansion state
             if (preferences.expansionState) {
+                // Update the global deckEditorExpansionState to match database preferences
+                deckEditorExpansionState = { ...preferences.expansionState };
+                
+                // Apply the expansion state to deck editor sections
                 Object.entries(preferences.expansionState).forEach(([category, isExpanded]) => {
-                    const header = document.querySelector(`#${category}-header`);
-                    if (header) {
-                        const content = header.nextElementSibling;
-                        const icon = header.querySelector('.collapse-icon');
+                    // Handle deck editor sections (deck-type-${category})
+                    const cardsDiv = document.getElementById(`deck-type-${category}`);
+                    if (cardsDiv) {
+                        const section = cardsDiv.closest('.deck-type-section');
+                        const header = section ? section.querySelector('.deck-type-header') : null;
+                        const toggle = header ? header.querySelector('.deck-type-toggle') : null;
                         
-                        if (isExpanded) {
-                            header.classList.remove('collapsed');
-                            content.classList.remove('collapsed');
-                            content.classList.add('expanded');
-                            if (icon) icon.textContent = '▼';
-                        } else {
-                            header.classList.add('collapsed');
-                            content.classList.add('collapsed');
-                            content.classList.remove('expanded');
-                            if (icon) icon.textContent = '▲';
+                        if (cardsDiv && header && toggle) {
+                            if (isExpanded) {
+                                cardsDiv.style.display = 'block';
+                                toggle.textContent = '▼';
+                                header.classList.remove('collapsed');
+                            } else {
+                                cardsDiv.style.display = 'none';
+                                toggle.textContent = '▶';
+                                header.classList.add('collapsed');
+                            }
                         }
                     }
                 });
@@ -8902,12 +8923,12 @@
                     // Load available cards first, then display deck cards
                     await loadAvailableCards();
                     
-                    // Load UI preferences from database
-                    const uiPreferences = await loadUIPreferences(deckId);
-                    applyUIPreferences(uiPreferences);
-                    
                     // Display deck cards after available cards are loaded
                     await displayDeckCardsForEditing();
+                    
+                    // Load UI preferences from database AFTER deck cards are displayed
+                    const uiPreferences = await loadUIPreferences(deckId);
+                    applyUIPreferences(uiPreferences);
                     
                     // Update card count
 
@@ -9537,8 +9558,7 @@
                 }
             }
             
-            // Apply expansion state
-            applyDeckEditorExpansionState();
+            // Note: Expansion state will be applied after loading UI preferences from database
             
             // Apply character background images
             setTimeout(() => {
