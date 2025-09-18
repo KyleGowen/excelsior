@@ -9204,14 +9204,14 @@
                                 cardsHtml += `
                                     <div class="deck-card-editor-item preview-view special-card" draggable="true" data-index="${index}" data-type="${card.type}"
                                          data-bg-image="${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}', '${(card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))).replace(/\\'92/g, "'").replace(/'/g, "\\'")}')"
+                                         onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}', '${(card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))).replace(/'/g, "\\'")}')"
                                          onmouseleave="hideCardHoverModal()"
                                          ondragstart="handleDeckCardDragStart(event)"
                                          ondragend="handleDeckCardDragEnd(event)"
                                          ondragover="handleDeckCardDragOver(event)"
                                          ondrop="handleDeckCardDrop(event)">
                                         <div class="deck-card-editor-info">
-                                            <div class="deck-card-editor-name">${(card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally_universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic_universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card)))))).replace(/\\'92/g, "'").replace(/'/g, "\\'")} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
+                                            <div class="deck-card-editor-name">${(card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally_universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic_universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))))))} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
                                             <div class="deck-card-editor-stats">${cardDetails}</div>
                                         </div>
                                         <div class="deck-card-editor-actions">
@@ -9313,14 +9313,14 @@
                                     cardsHtml += `
                                         <div class="deck-card-editor-item preview-view power-card" draggable="true" data-index="${index}" data-type="${card.type}"
                                              data-bg-image="${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}"
-                                             onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}', '${`${availableCard.value} - ${availableCard.power_type}`.replace(/\\'92/g, "'").replace(/'/g, "\\'")}')"
+                                             onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}', '${`${availableCard.value} - ${availableCard.power_type}`.replace(/'/g, "\\'")}')"
                                              onmouseleave="hideCardHoverModal()"
                                              ondragstart="handleDeckCardDragStart(event)"
                                              ondragend="handleDeckCardDragEnd(event)"
                                              ondragover="handleDeckCardDragOver(event)"
                                              ondrop="handleDeckCardDrop(event)">
                                             <div class="deck-card-editor-info">
-                                                <div class="deck-card-editor-name">${`${availableCard.value} - ${availableCard.power_type}`.replace(/\\'92/g, "'").replace(/'/g, "\\'")} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
+                                                <div class="deck-card-editor-name">${`${availableCard.value} - ${availableCard.power_type}`} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
                                                 <div class="deck-card-editor-stats">${cardDetails}</div>
                                             </div>
                                             <div class="deck-card-editor-actions">
@@ -9376,14 +9376,14 @@
                                 cardsHtml += `
                                     <div class="deck-card-editor-item preview-view power-card" draggable="true" data-index="${index}" data-type="${card.type}"
                                          data-bg-image="${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}', '${`${availableCard.value} - ${availableCard.power_type}`.replace(/\\'92/g, "'").replace(/'/g, "\\'")}')"
+                                         onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}', '${`${availableCard.value} - ${availableCard.power_type}`.replace(/'/g, "\\'")}')"
                                          onmouseleave="hideCardHoverModal()"
                                          ondragstart="handleDeckCardDragStart(event)"
                                          ondragend="handleDeckCardDragEnd(event)"
                                          ondragover="handleDeckCardDragOver(event)"
                                          ondrop="handleDeckCardDrop(event)">
                                         <div class="deck-card-editor-info">
-                                            <div class="deck-card-editor-name">${`${availableCard.value} - ${availableCard.power_type}`.replace(/\\'92/g, "'").replace(/'/g, "\\'")} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
+                                            <div class="deck-card-editor-name">${`${availableCard.value} - ${availableCard.power_type}`} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
                                             <div class="deck-card-editor-stats">${cardDetails}</div>
                                         </div>
                                         <div class="deck-card-editor-actions">
@@ -9545,14 +9545,14 @@
                         cardsHtml += `
                                 <div class="deck-card-editor-item preview-view ${characterClass} ${powerClass} ${locationClass} ${missionClass} ${eventClass} ${aspectClass} ${teamworkClass} ${allyUniverseClass} ${basicUniverseClass} ${advancedUniverseClass} ${trainingClass}" draggable="true" data-index="${index}" data-type="${card.type}"
                                      ${bgImageData}
-                                     onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, selectedAlternateImage)}', '${card.type === 'power' ? `${availableCard.value} - ${availableCard.power_type}` : (card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))).replace(/\\'92/g, "'").replace(/'/g, "\\'")}')"
+                                     onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, selectedAlternateImage)}', '${card.type === 'power' ? `${availableCard.value} - ${availableCard.power_type}` : (card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))).replace(/'/g, "\\'")}')"
                                  onmouseleave="hideCardHoverModal()"
                                  ondragstart="handleDeckCardDragStart(event)"
                                  ondragend="handleDeckCardDragEnd(event)"
                                  ondragover="handleDeckCardDragOver(event)"
                                  ondrop="handleDeckCardDrop(event)">
                                 <div class="deck-card-editor-info">
-                                        <div class="deck-card-editor-name">${card.type === 'power' ? `${availableCard.value} - ${availableCard.power_type}` : (card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally_universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic_universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card)))))).replace(/\\'92/g, "'").replace(/'/g, "\\'")} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
+                                        <div class="deck-card-editor-name">${card.type === 'power' ? `${availableCard.value} - ${availableCard.power_type}` : (card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally_universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic_universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))))))} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
                                     ${cardDetails ? `<div class="deck-card-editor-stats">${cardDetails}</div>` : ''}
                                 </div>
                                 <div class="deck-card-editor-actions">
