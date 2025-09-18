@@ -10205,7 +10205,14 @@
         function mapImagePathToActualFile(imagePath) {
             if (!imagePath) return imagePath;
             
-            // Since we removed numeric prefixes, the database paths now match the actual filenames
+            // For missions, the database now contains the full directory structure
+            // like "missions/the-warlord-of-mars/a_fighting_man_of_mars.webp"
+            // So we need to return the path after "missions/" to preserve the directory structure
+            if (imagePath.startsWith('missions/')) {
+                return imagePath.substring('missions/'.length);
+            }
+            
+            // For other card types, since we removed numeric prefixes, the database paths now match the actual filenames
             // Just return the filename part (after the last slash)
             const filename = imagePath.split('/').pop();
             return filename;

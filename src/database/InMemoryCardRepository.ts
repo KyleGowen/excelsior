@@ -1273,65 +1273,72 @@ export class InMemoryCardRepository implements CardRepository {
     const missionSetSnake = this.convertToSnakeCase(missionSet);
     const cardNameSnake = this.convertToSnakeCase(cardName);
     
-    // Map mission set names to their image prefixes
+    // Map mission set names to their directory names
     const missionSetMapping: { [key: string]: string } = {
-      'The Call of Cthulhu': 'call_of_cthulu',
-      'King of the Jungle': 'tarzan_king_of_the_jungle',
-      'Warlord of Mars': 'chronicles_of_mars',
-      'Time Wars: Rise of the Gods': 'world_legends'
+      'The Call of Cthulhu': 'the-call-of-cthulhu',
+      'King of the Jungle': 'king-of-the-jungle',
+      'The Warlord of Mars': 'the-warlord-of-mars',
+      'Time Wars: Rise of the Gods': 'time-wars-rise-of-the-gods'
     };
     
-    // Get the mapped image prefix for this mission set
-    const imagePrefix = missionSetMapping[missionSet];
-    if (!imagePrefix) {
-      return 'unknown_mission.webp';
+    // Get the mapped directory name for this mission set
+    const directoryName = missionSetMapping[missionSet];
+    if (!directoryName) {
+      return 'missions/unknown_mission.webp';
     }
     
-    // Look for the specific image with the correct index
-    const availableImages = this.getAvailableMissionImages();
-    
-    for (const imageFile of availableImages) {
-      const imageName = imageFile.replace('.webp', '');
-      
-      // Check if this image matches the mission set and index
-      if (imageName.includes(imagePrefix) && imageName.includes(`_${index}`)) {
-        return imageFile;
-      }
-    }
-    
-    // Fallback to unknown image
-    return 'unknown_mission.webp';
+    // Return the new path format
+    return `missions/${directoryName}/${cardNameSnake}.webp`;
   }
 
   private getAvailableMissionImages(): string[] {
-    // Return a list of available mission image files
+    // Return a list of available mission image files based on new directory structure
     return [
-      // Call of Cthulhu missions (350-356)
-      "missions/350_call_of_cthulu_1.webp", "missions/351_call_of_cthulu_2.webp", "missions/352_call_of_cthulu_3.webp",
-      "missions/353_call_of_cthulu_4.webp", "missions/354_call_of_cthulu_5.webp", "missions/355_call_of_cthulu_6.webp",
-      "missions/356_call_of_cthulu_7.webp",
-      // Tarzan King of the Jungle missions (362-368)
-      "missions/362_tarzan_king_of_the_jungle_1.webp", "missions/363_tarzan_king_of_the_jungle_2.webp", "missions/364_tarzan_king_of_the_jungle_3.webp",
-      "missions/365_tarzan_king_of_the_jungle_4.webp", "missions/366_tarzan_king_of_the_jungle_5.webp", "missions/367_tarzan_king_of_the_jungle_6.webp",
-      "missions/368_tarzan_king_of_the_jungle_7.webp",
-      // Chronicles of Mars missions (374-380)
-      "missions/374_chronicles_of_mars_1.webp", "missions/375_chronicles_of_mars_2.webp", "missions/376_chronicles_of_mars_3.webp",
-      "missions/377_chronicles_of_mars_4.webp", "missions/378_chronicles_of_mars_5.webp", "missions/379_chronicles_of_mars_6.webp",
-      "missions/380_chronicles_of_mars_7.webp",
-      // World Legends missions (386-392)
-      "missions/386_world_legends_1.webp", "missions/387_world_legends_2.webp", "missions/388_world_legends_3.webp",
-      "missions/389_world_legends_4.webp", "missions/390_world_legends_5.webp", "missions/391_world_legends_6.webp",
-      "missions/392_world_legends_7.webp"
+      // King of the Jungle missions
+      "missions/king-of-the-jungle/beasts_of_tarzan.webp",
+      "missions/king-of-the-jungle/tarzan_and_the_castaways.webp",
+      "missions/king-of-the-jungle/tarzan_and_the_city_of_gold.webp",
+      "missions/king-of-the-jungle/tarzan_and_the_golden_lion.webp",
+      "missions/king-of-the-jungle/tarzan_at_the_earths_core.webp",
+      "missions/king-of-the-jungle/tarzan_of_the_apes.webp",
+      "missions/king-of-the-jungle/tarzans_quest.webp",
+      
+      // The Call of Cthulhu missions
+      "missions/the-call-of-cthulhu/gone_too_far.webp",
+      "missions/the-call-of-cthulhu/johansens_widow.webp",
+      "missions/the-call-of-cthulhu/new_orleans_1908.webp",
+      "missions/the-call-of-cthulhu/professor_angells_investigation.webp",
+      "missions/the-call-of-cthulhu/the_alert.webp",
+      "missions/the-call-of-cthulhu/the_dreams_of_men.webp",
+      "missions/the-call-of-cthulhu/worshipping_the_great_old_one.webp",
+      
+      // The Warlord of Mars missions
+      "missions/the-warlord-of-mars/a_fighting_man_of_mars.webp",
+      "missions/the-warlord-of-mars/swords_of_mars.webp",
+      "missions/the-warlord-of-mars/the_battle_of_kings.webp",
+      "missions/the-warlord-of-mars/the_face_of_death.webp",
+      "missions/the-warlord-of-mars/the_invisible_men.webp",
+      "missions/the-warlord-of-mars/the_loyalty_of_woola.webp",
+      "missions/the-warlord-of-mars/under_the_moons_of_mars.webp",
+      
+      // Time Wars: Rise of the Gods missions
+      "missions/time-wars-rise-of-the-gods/battle_at_olympus.webp",
+      "missions/time-wars-rise-of-the-gods/divine_retribution.webp",
+      "missions/time-wars-rise-of-the-gods/supernatural_allies.webp",
+      "missions/time-wars-rise-of-the-gods/the_gods_return.webp",
+      "missions/time-wars-rise-of-the-gods/tide_begins_to_turn.webp",
+      "missions/time-wars-rise-of-the-gods/travelers_warning.webp",
+      "missions/time-wars-rise-of-the-gods/warriors_from_across_time.webp"
     ];
   }
 
   private getEventImage(missionSet: string, eventName: string): string {
-    // Map mission set names to their image prefixes and find the event image
+    // Map mission set names to their directory names
     const missionSetMapping: { [key: string]: string } = {
-      'The Call of Cthulhu': 'call_of_cthulu',
-      'King of the Jungle': 'tarzan_king_of_the_jungle',
-      'Chronicles of Mars': 'chronicles_of_mars',
-      'Time Wars: Rise of the Gods': 'world_legends'
+      'The Call of Cthulhu': 'the-call-of-cthulhu',
+      'King of the Jungle': 'king-of-the-jungle',
+      'The Warlord of Mars': 'the-warlord-of-mars',
+      'Time Wars: Rise of the Gods': 'time-wars-rise-of-the-gods'
     };
     
     // Get the mapped image prefix for this mission set
