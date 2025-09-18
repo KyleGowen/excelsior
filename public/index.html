@@ -3685,14 +3685,6 @@
                     <div class="stat-number" id="total-locations">-</div>
                     <div class="stat-label">Locations</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="db-total-decks">-</div>
-                    <div class="stat-label">Decks</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="total-users">-</div>
-                    <div class="stat-label">Users</div>
-                </div>
             </div>
             <div class="section-header">
             </div>
@@ -4622,29 +4614,6 @@
                 console.error('total-characters element not found');
             }
             
-            // Load deck stats to get actual deck count
-            fetch('/api/deck-stats')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const totalDecksEl = document.getElementById('db-total-decks');
-                        if (totalDecksEl) {
-                            totalDecksEl.textContent = data.data.totalDecks;
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading deck stats:', error);
-                    const totalDecksEl = document.getElementById('db-total-decks');
-                    if (totalDecksEl) {
-                        totalDecksEl.textContent = '0';
-                    }
-                });
-            
-            const totalUsersEl = document.getElementById('total-users');
-            if (totalUsersEl) {
-                totalUsersEl.textContent = '0';
-            }
         }
 
         function updateAllStats() {
