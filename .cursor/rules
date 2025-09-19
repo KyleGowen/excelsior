@@ -86,3 +86,189 @@ This is a Node.js/TypeScript deck building application for the Overpower card ga
 - Use parameterized queries for database operations
 - Implement proper authentication and authorization
 - Sanitize data before displaying in HTML
+
+## OverPower Game Rules
+
+### Game Overview
+OverPower is a card game where players control teams of legendary heroes and villains competing through battles to complete missions. Players build decks of at least 51 cards (or 56 if using Event cards) and win by either KO'ing all 4 opposing characters, completing all 7 Mission Objective cards, or having the opponent lose all their Mission Objective cards.
+
+### Card Types
+
+#### Character Cards
+- **Team Composition**: Exactly 4 characters (3 Front Line, 1 Reserve)
+- **Power Grid Values**: Range from 1-8, determine maximum Power card values each character can use
+- **Threat Value**: Each character has a threat value; total team threat cannot exceed 76 (including Homebase)
+- **Special Cards**: Each character has specific Special cards only they can play
+- **Reserve Character**: Cannot play cards unless a card/effect allows it
+- **KO Replacement**: When a Front Line Character is KO'd, Reserve moves to Front Line at start of next Draw Phase
+
+#### Location Homebase Cards
+- **Limit**: One per team, starts in play
+- **Inherent Abilities**: Affect the game as described on each card
+- **Threat Value**: Some have threat values that count toward team total
+- **Team Total**: Character threat values + Homebase threat value ≤ 76
+
+#### Power Cards
+- **Types**: 6 different types (Energy, Combat, Brute Force, Intelligence, Any-Power, MultiPower)
+- **Values**: Range from 1-8 for energy, 5-8 for Any-Power, 3-5 for MultiPower
+- **Usage**: Characters can use Power cards ≤ their Power Grid Value in that type
+- **Energy (Yellow Atom)**: Energy projection, rays, blasts, magic, elemental attacks
+- **Combat (Red Sword/Shield)**: Direct combat, weapons, martial arts, fighting tactics
+- **Brute Force (Green Rock)**: Raw strength, destructive capability, large groups
+- **Intelligence (Blue Book)**: Thinking, planning, strategy, manipulation
+- **Any-Power (White Circle)**: Universal attacks, no specific power type, don't contribute to Spectrum KO
+- **MultiPower (Multiple Icons)**: Can act as any declared power type, wild for Spectrum KO
+
+#### Special Cards
+- **Character-Specific**: Only characters with matching names can play them
+- **Copies**: Most allow multiple copies; "One Per Deck" cards limited to 1 copy
+- **Actions**: Played as offensive (Crossed Swords) or defensive (Shield) actions
+- **Duration Icons**:
+  - Remainder of Game (Full Hourglass): Until end of game
+  - Remainder of Battle (Half Hourglass): Until end of current battle
+  - Attach to Character (Paperclip): Attached to character for duration
+  - 1ST Icon: Can only be played as first card of turn
+  - Astral Plane (Large A): Placed in special Astral Plane area
+
+#### Universe Cards
+- **Types**: Mission Objective, Event, Aspect cards
+- **Mission Objectives**: 7 cards per player, win condition
+- **Events**: Optional cards that affect gameplay
+- **Aspects**: Additional game mechanics
+
+### Deck Building Rules
+1. **Minimum Size**: 51 cards (56 if using Event cards)
+2. **Character Team**: Exactly 4 characters (3 Front Line, 1 Reserve)
+3. **Threat Limit**: Total team threat value ≤ 76 (including Homebase)
+4. **Special Cards**: Only include specials for characters in your team
+5. **One Per Deck**: Special cards with this restriction limited to 1 copy
+6. **Location Limit**: Maximum 1 location per deck (enforced in code)
+
+### Game Phases
+1. **Draw Phase**: Draw cards, move Reserve to Front Line if needed
+2. **Events Phase**: Play Event cards
+3. **Discard Phase**: Discard down to hand limit
+4. **Placing Phase**: Place cards on characters
+5. **Venture Phase**: Wager on Mission Objectives
+6. **Battle Phase**: Attack and defend
+7. **Post-concession Phase**: Handle concessions
+8. **End-of-Battle Phase**: Resolve battle results
+
+### Win Conditions
+1. **KO All Opponents**: Knock out all 4 opposing characters
+2. **Complete Mission**: Advance all 7 Mission Objective cards to completed pile
+3. **Opponent Mission Loss**: Opponent loses all 7 Mission Objective cards (all in defeated pile)
+
+### Game Modes
+
+#### Constructed Play
+- **Venture**: Standard mode with Mission Objectives and Events
+- **Brawl**: No Mission Objectives or Events, win only by KO'ing all opponents
+- **Skirmish**: Shared Mission Objectives (5, 7, or 9), highest Venture Total wins each battle
+
+#### Limited Play
+- **Draft**: 8-10 players, 3 packs, draft Character Stacks
+- **Sealed Deck**: 1 Starter + 3-6 Booster packs, build from opened cards only
+- **Basic Power Cards**: Always allowed in limited formats (levels 1-8)
+
+### Technical Implementation Notes
+- Deck validation must enforce all game rules
+- Character power grid values must be respected for card usage
+- Threat value calculations must include characters and homebase
+- Special card restrictions must be enforced
+- Mission Objective tracking is critical for win conditions
+- Battle resolution must handle KO mechanics properly
+
+### Advanced Game Rules (Comprehensive)
+
+#### Universe Card Types
+- **Basic Universe Cards**: Items that increase attack/defense values, require specific Power Grid levels, discarded after use, don't count toward damage or Venture Total
+- **Advanced Universe Cards**: Complex equipment with unique effects, may modify attacks/defenses, can have remainder of battle/game effects
+- **Training Universe Cards**: Training to increase Power card values, require Power Grid ≤ 5, choice between 2 Power Types, larger bonuses than Basic
+- **Teamwork Universe Cards**: Coordinated multi-character attacks, require specific Power Grid level, acts as attack + requires teammate follow-up with Power card, 3rd teammate may follow up
+- **Ally Universe Cards**: Sidekick/associate help, require specific Power Grid level, acts as attack + requires teammate Special card, numerically weaker than Teamwork
+
+#### Special Card Mechanics
+- **Character-Specific**: Only characters with matching names can play
+- **Any Character Specials**: Can be played by any character
+- **One Per Deck**: Limited to 1 copy per deck
+- **Power Type/Value**: Located in top left corner for numerical attacks
+- **Function Icons**:
+  - Remainder of Game (Full Hourglass): Active until end of game
+  - Remainder of Battle (Half Hourglass): Active until end of current battle
+  - Offensive Action (Crossed Swords): Playable on your turn only
+  - Defensive Action (Shield): Playable in response to opponent's attack
+  - Attach to Character (Paperclip): Attached to character for duration
+  - 1ST Icon: Can only be played as first card of turn
+  - Astral Plane (Large A): Placed in special Astral Plane area
+
+#### Mission and Event Cards
+- **Mission Objectives**: 7 cards per player, start in Reserve Objectives Pile, win condition to complete all
+- **Event Cards**: Mission-specific or Any-Mission, played during Event Phase, affect both players, only 1 per battle
+- **Event Resolution**: Draw 1 card after playing, discard duplicates, place in Astral Plane if ongoing effect
+
+#### Artifact and Homebase Cards
+- **Artifact Cards**: Mystical/supernatural items, Power Grid requirements, strong long-lasting effects, don't affect Venture Total directly
+- **Homebase Cards**: Team abilities active throughout game, threat level cost, 1 per team
+- **Aspect Cards**: Played by Homebase, Any-Homebase or specific Homebase, 1 slot per Homebase
+
+#### Deck Building Rules (Detailed)
+- **Minimum Deck Size**: 51 cards (no Events) or 56 cards (with Events)
+- **Maximum Deck Size**: No maximum, but typically 60-70 cards (rarely over 85)
+- **Threat Level Limit**: 76 points total (characters + homebase + other cards)
+- **Legacy Play Threat Limits** (3-stat characters):
+  - 4 three-stat characters: ≤ 58 threat points
+  - 3 three-stat characters: ≤ 62 threat points
+  - 2 three-stat characters: ≤ 67 threat points
+  - 1 three-stat character: ≤ 72 threat points
+- **Power Card Distribution**: 2-3 copies of levels 3-8, 1-2 copies of levels 1-2
+- **Special Card Distribution**: 1-3 copies depending on importance and strategy
+- **Other Cards**: Generally 1 copy each unless specific strategy requires more
+
+#### Game Phases (Detailed)
+1. **Draw Phase**: Draw 8 cards, move Reserve to Front Line if Front Line character KO'd
+2. **Event Phase**: Play Event cards, declare and resolve in initiative order
+3. **Discard Phase**: Remove duplicates and unusable cards
+4. **Placement Phase**: Place cards face-up on characters/homebase, build war chest
+5. **Venture Phase**: Bet on Mission Objectives based on expected battle success
+6. **Battle Phase**: Attack and defend with placed cards and hand
+7. **Post-concession Phase**: Handle battle concessions
+8. **End-of-Battle Phase**: Resolve battle results, move Objectives
+
+#### Duplicate Card Rules
+- **Power Cards**: Any Power card of equal value is duplicate regardless of type
+- **Universe/Aspect/Artifact Cards**: Exact same value, requirements, and function
+- **Special Cards**: Duplicate only for same character
+- **Event Cards**: Multiple Events drawn = choose 1, discard others
+- **Placed Cards**: Count as duplicates with hand cards
+- **Unusable Cards**: Must be discarded if only usable by KO'd character, Reserve character without play ability, or Event-specified
+
+#### Discard Pile Rules
+- **Power Pack**: Usable Power cards (shuffled when Draw Pile empty)
+- **Defeated Characters Pile**: Any Character Specials, used Events, defeated Characters
+- **Dead Pile**: All other cards (unusable Power cards, Universe cards, character Specials, Aspects)
+
+#### Placement Rules
+- **Character Slots**: 1 Power, 1 Universe, 1 Artifact/Tactic, 1 Special per character
+- **Homebase Slots**: 1 Aspect, 1 Special card per homebase
+- **Reserve Characters**: Can place cards but cannot play unless effect allows
+- **War Chest**: Placed cards remain until used or removed
+
+#### Battle Mechanics
+- **Initiative**: First player makes all decisions first each phase
+- **Attack/Defense**: Power cards + Universe cards for bonuses
+- **MultiPower/Any-Power**: Can act as any Power Type, declare when playing
+- **Spectrum KO**: MultiPower cards act as any type for KO purposes
+- **Cumulative KO**: Any-Power cards only count toward cumulative damage
+
+#### Victory Conditions
+1. **Complete Mission**: Move all 7 Mission Objectives to Completed pile
+2. **Defeat Opponent Mission**: Move all opponent's Objectives to Defeated pile  
+3. **KO All Characters**: Knock out all 4 opponent characters
+
+#### Game Modes
+- **Venture**: Standard mode with Mission Objectives and Events
+- **Brawl**: No Mission Objectives/Events, win only by KO'ing all opponents
+- **Skirmish**: Shared Mission Objectives (5/7/9), highest Venture Total wins each battle
+- **Draft**: 8-10 players, 3 packs, draft Character Stacks
+- **Sealed Deck**: 1 Starter + 3-6 Booster packs, build from opened cards only
