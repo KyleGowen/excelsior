@@ -3022,7 +3022,6 @@
 
         .card-category-header .collapse-icon {
             font-size: 1.02rem;
-            transition: transform 0.3s ease;
             flex-shrink: 0; /* Prevent shrinking */
             min-width: 17px; /* Ensure minimum width */
         }
@@ -7241,27 +7240,19 @@
             const content = category.querySelector('.card-category-content');
             const icon = headerElement.querySelector('.collapse-icon');
             
-            console.log('Toggle category clicked. Header has collapsed class:', headerElement.classList.contains('collapsed'));
-            console.log('Current icon text:', icon.textContent);
-            
             if (headerElement.classList.contains('collapsed')) {
                 // Expand
-                console.log('Expanding category');
                 headerElement.classList.remove('collapsed');
                 content.classList.remove('collapsed');
                 content.classList.add('expanded');
                 icon.textContent = '▼';
             } else {
                 // Collapse
-                console.log('Collapsing category');
                 headerElement.classList.add('collapsed');
                 content.classList.add('collapsed');
                 content.classList.remove('expanded');
                 icon.textContent = '▶';
             }
-            
-            console.log('After toggle - Header has collapsed class:', headerElement.classList.contains('collapsed'));
-            console.log('After toggle - Icon text:', icon.textContent);
         }
 
         // Toggle power cards sort mode between type and value
