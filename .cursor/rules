@@ -1,0 +1,88 @@
+# Overpower Deckbuilder Cursor Rules
+
+## Project Overview
+This is a Node.js/TypeScript deck building application for the Overpower card game with PostgreSQL database, Flyway migrations, and a web-based frontend.
+
+## Code Style & Patterns
+
+### TypeScript/JavaScript
+- Use explicit types and interfaces
+- Prefer `const` over `let` when possible
+- Use template literals for string interpolation
+- Use async/await over promises when possible
+- Always handle errors appropriately
+
+### Database & Migrations
+- Use Flyway migrations for all database schema changes
+- Migration files should be named: `V{number}__{descriptive_name}.sql`
+- Always test migrations before committing
+- Use UUIDs for primary keys (not auto-incrementing integers)
+- Include proper indexes for performance
+
+### API Design
+- Use RESTful endpoints with clear naming
+- Include proper HTTP status codes
+- Always include authentication checks for protected routes
+- Use `credentials: 'include'` for fetch requests that need authentication
+- Return consistent JSON response formats
+
+### Frontend (HTML/JavaScript)
+- Keep HTML semantic and accessible
+- Use CSS classes for styling, avoid inline styles
+- Implement proper error handling and user feedback
+- Use event delegation for dynamic content
+- Cache DOM queries when possible
+
+## Project-Specific Rules
+
+### Card Data Handling
+- Card names should display apostrophes correctly (no double-escaping)
+- Image paths should use the `mapImagePathToActualFile` function for consistency
+- Card types: character, location, mission, event, aspect, special, power, teamwork, ally_universe, training, basic_universe, advanced_universe
+
+### Deck Management
+- Enforce game rules (e.g., max 1 location per deck)
+- Validate deck composition before saving
+- Provide clear user feedback for validation errors
+- Auto-cleanup invalid deck states when loading
+
+### Authentication
+- Always include `credentials: 'include'` in fetch requests to authenticated endpoints
+- Handle authentication failures gracefully
+- Maintain session state properly
+
+### Image Management
+- Images are stored in `src/resources/cards/images/` with subdirectories by type
+- Use proper image path mapping for different card types
+- Include cache-busting when needed for development
+
+## File Organization
+- Keep related functionality together
+- Use descriptive function and variable names
+- Comment complex business logic
+- Separate concerns (database, API, frontend)
+
+## Testing & Debugging
+- Use console.log for debugging (remove before production)
+- Test all user flows thoroughly
+- Verify database changes with queries
+- Check browser console for errors
+
+## Git Workflow
+- **NEVER commit or push to git without explicit user instruction**
+- Write descriptive commit messages
+- Don't commit without explicit user instruction
+- Test changes before committing
+- Use meaningful branch names for features
+
+## Performance
+- Optimize database queries
+- Minimize DOM manipulation
+- Use efficient data structures
+- Consider caching for frequently accessed data
+
+## Security
+- Validate all user inputs
+- Use parameterized queries for database operations
+- Implement proper authentication and authorization
+- Sanitize data before displaying in HTML

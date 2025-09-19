@@ -1,0 +1,58 @@
+# Cursor Instructions for Overpower Deckbuilder
+
+## When Making Changes
+
+### Before Starting
+1. Always confirm your plan with the user before enacting code changes
+2. Ensure the server is running properly without needing to be reminded
+3. Check for any existing linter errors before making changes
+
+### During Development
+1. Test changes thoroughly before considering them complete
+2. Use the existing codebase patterns and conventions
+3. Maintain consistency with the current architecture
+4. Handle errors gracefully and provide user feedback
+
+### After Changes
+1. Ensure the server is started and accessible
+2. Test the functionality in the browser
+3. Check for any new linter errors
+4. **NEVER commit or push code without explicit user instruction**
+
+## Common Tasks
+
+### Database Changes
+- Always create Flyway migrations for schema changes
+- Test migrations on a copy of the database first
+- Use UUIDs for new primary keys
+- Update both PostgreSQL and in-memory repositories if needed
+
+### Frontend Changes
+- Test in multiple browsers if possible
+- Ensure responsive design works
+- Check for JavaScript console errors
+- Verify all user interactions work as expected
+
+### API Changes
+- Update both the endpoint and any frontend code that uses it
+- Test with proper authentication
+- Include appropriate error handling
+- Document any new endpoints
+
+## User Preferences
+- User prefers deck IDs to be standard UUIDs
+- User prefers the assistant to confirm plans before enacting changes
+- User prefers the assistant to ensure server is running properly
+- User prefers clear filter button placement consistency
+- User prefers saving changes should not close the editor
+- User prefers no git commits/pushes without explicit instruction
+- User prefers server verification after code changes
+
+## Project Context
+This is a card game deck builder with:
+- PostgreSQL database with Flyway migrations
+- Node.js/TypeScript backend
+- HTML/JavaScript frontend
+- Card image management system
+- User authentication and session management
+- Deck validation and game rule enforcement
