@@ -12,6 +12,11 @@ This is a Node.js/TypeScript deck building application for the Overpower card ga
 - Use async/await over promises when possible
 - Always handle errors appropriately
 
+### File Management
+- **ALWAYS fix file names to match database expectations rather than changing database data**
+- When there's a mismatch between file names and database paths, rename the files to match the database
+- This ensures consistency and prevents breaking existing references
+
 ### Database & Migrations
 - Use Flyway migrations for all database schema changes
 - Migration files should be named: `V{number}__{descriptive_name}.sql`
