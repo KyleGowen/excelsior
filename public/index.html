@@ -2635,16 +2635,34 @@
             background: rgba(78, 205, 196, 0.2);
             color: #4ecdc4;
             border: 1px solid rgba(78, 205, 196, 0.3);
-            padding: 0.352rem 0.704rem;
+            padding: 3.3px 6.6px;
             border-radius: 3.3px;
             cursor: pointer;
-            font-size: 0.704rem;
+            font-size: 11px;
             transition: all 0.3s ease;
-            width: 100%;
             text-align: center;
         }
 
         .alternate-art-btn:hover {
+            background: rgba(78, 205, 196, 0.3);
+            border-color: rgba(78, 205, 196, 0.5);
+            color: #ffffff;
+        }
+
+        /* Ensure alternate-art-btn for power cards matches quantity-btn size exactly */
+        .deck-card-editor-item.power-card .alternate-art-btn {
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            padding: 3.3px 6.6px;
+            border-radius: 3.3px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .deck-card-editor-item.power-card .alternate-art-btn:hover {
             background: rgba(78, 205, 196, 0.3);
             border-color: rgba(78, 205, 196, 0.5);
             color: #ffffff;
@@ -9421,8 +9439,8 @@
                                         </div>
                                         <div class="deck-card-editor-actions">
                                             ${card.quantity > 1 ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
-                                            <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
                                             ${alternateArtButton}
+                                            <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
                                         </div>
                                     </div>
                                 `;
@@ -9530,8 +9548,8 @@
                                             </div>
                                             <div class="deck-card-editor-actions">
                                                 ${card.quantity > 1 ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
-                                                <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
                                                 ${alternateArtButton}
+                                                <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
                                             </div>
                                         </div>
                                     `;
@@ -9593,8 +9611,8 @@
                                         </div>
                                         <div class="deck-card-editor-actions">
                                             ${card.quantity > 1 ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
-                                            <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
                                             ${alternateArtButton}
+                                            <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
                                         </div>
                                     </div>
                                 `;
@@ -9762,8 +9780,8 @@
                                 </div>
                                 <div class="deck-card-editor-actions">
                                     ${card.quantity > 1 ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
-                                    <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
                                     ${alternateArtButton}
+                                    <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
                                 </div>
                             </div>
                         `;
