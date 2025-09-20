@@ -59,6 +59,7 @@ export interface SpecialCard {
   card_effect: string;
   image: string;
   is_cataclysm: boolean;
+  one_per_deck: boolean;
   alternateImages?: string[]; // Array of alternate image filenames
 }
 

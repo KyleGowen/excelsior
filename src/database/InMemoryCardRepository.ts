@@ -381,6 +381,7 @@ export class InMemoryCardRepository implements CardRepository {
               card_effect: columns[4],
               image: this.getSpecialCardImage(cardName),
               is_cataclysm: columns[4].includes('**Cataclysm!**'),
+              one_per_deck: columns[4].includes('**One Per Deck**'),
               ...(alternateImages.length > 0 && { alternateImages })
             };
 

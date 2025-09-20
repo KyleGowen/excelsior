@@ -10242,7 +10242,12 @@
                 } else if (cardType === 'special') {
                     // If a specific alternate image is selected, use it
                     if (selectedAlternateImage && card.alternateImages && card.alternateImages.includes(selectedAlternateImage)) {
-                        return `/src/resources/cards/images/specials/alternate/${selectedAlternateImage}`;
+                        // Check if the alternate image already contains a directory path
+                        if (selectedAlternateImage.includes('/')) {
+                            return `/src/resources/cards/images/${selectedAlternateImage}`;
+                        } else {
+                            return `/src/resources/cards/images/specials/alternate/${selectedAlternateImage}`;
+                        }
                     }
                     
                     // Special cards use the image field (which already includes the directory)
@@ -12075,6 +12080,22 @@
                 if (existingLocation) {
                     showNotification('Cannot add more than 1 location to a deck', 'error');
                     return;
+                }
+            }
+            
+            // Check "One Per Deck" limit before adding
+            if (cardType === 'special') {
+                const specialCard = availableCardsMap.get(cardId);
+                if (specialCard && specialCard.one_per_deck) {
+                    // Check if we already have this "One Per Deck" card in the deck
+                    const existingOnePerDeckCard = deckEditorCards.find(card => 
+                        card.type === 'special' && card.cardId === cardId
+                    );
+                    
+                    if (existingOnePerDeckCard) {
+                        showNotification(`Cannot add more than 1 copy of "${cardName}" - One Per Deck`, 'error');
+                        return;
+                    }
                 }
             }
             

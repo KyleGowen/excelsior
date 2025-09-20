@@ -114,6 +114,7 @@ export class PostgreSQLCardRepository implements CardRepository {
         card_effect: card.card_effect,
         image: card.image_path,
         is_cataclysm: card.cataclysm || false,
+        one_per_deck: card.one_per_deck || false,
         alternateImages: card.alternate_images || []
       };
     } finally {
@@ -134,6 +135,7 @@ export class PostgreSQLCardRepository implements CardRepository {
         card_effect: card.card_effect,
         image: card.image_path,
         is_cataclysm: card.cataclysm || false,
+        one_per_deck: card.one_per_deck || false,
         alternateImages: card.alternate_images || []
       }));
     } finally {
