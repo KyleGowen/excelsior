@@ -78,10 +78,12 @@ This is a Node.js/TypeScript deck building application for the Overpower card ga
 - Verify database changes with queries
 - Check browser console for errors
 
-## Git Workflow
-- **NEVER commit or push to git without explicit user instruction**
-- Write descriptive commit messages
-- Don't commit without explicit user instruction
+## Git Workflow - CRITICAL RULE
+- **🚨 NEVER COMMIT OR PUSH TO GIT WITHOUT EXPLICIT USER INSTRUCTION 🚨**
+- **This is a MANDATORY rule that must be followed at all times**
+- **Even if I think changes are ready, I must wait for explicit "commit and push" instruction**
+- **Write descriptive commit messages when instructed to commit**
+- **Ask for permission before any git operations**
 - Test changes before committing
 - Use meaningful branch names for features
 

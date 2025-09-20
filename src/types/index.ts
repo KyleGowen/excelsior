@@ -147,6 +147,7 @@ export interface PowerCard {
   power_type: string;   // Energy | Combat | Brute Force | Intelligence | Any-Power | Multi-Power
   value: number;        // 1..8, or 3..5 for Multi-Power
   image: string;
+  one_per_deck: boolean; // Whether this card can only be included once per deck
   alternateImages?: string[]; // Array of alternate image filenames
 }
 

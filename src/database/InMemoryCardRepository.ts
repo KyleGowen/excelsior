@@ -1255,6 +1255,7 @@ export class InMemoryCardRepository implements CardRepository {
                 power_type: powerType,
                 value: value,
                 image: this.getPowerCardImage(powerType, value),
+                one_per_deck: powerType === 'Multi Power', // Multi-Power cards are One Per Deck
                 ...(alternateImages.length > 0 && { alternateImages })
               };
               this.powerCards.set(card.id, card);

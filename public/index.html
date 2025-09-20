@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Overpower Deckbuilder - Characters Database</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <title>Overpower Deckbuilder - Characters Database</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -4439,7 +4439,7 @@
     </div> <!-- Close mainContainer -->
 
     <script>
-        // Cache busting: 2024-12-19 15:30:00
+        // Cache busting: 2024-12-19 15:45:00 - Power card sorting fix
         // Utility function
         function debounce(func, wait) {
             let timeout;
@@ -7710,6 +7710,7 @@
                                         break;
                                     case 'Any-Power':
                                     case 'Multi-Power':
+                                    case 'Multi Power':  // Handle both hyphenated and spaced versions
                                         // These can be used by any character with any stat >= card value
                                         characterStat = Math.max(char.energy, char.combat, char.brute_force, char.intelligence);
                                         break;
@@ -11238,7 +11239,8 @@
                             });
                             
                             // Define the preferred order for power types (OverPower official order)
-                            const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Multi-Power', 'Any-Power'];
+                            // Using normalized names (with hyphens) to match the normalization logic
+                            const preferredOrder = ['Energy', 'Combat', 'Brute-Force', 'Intelligence', 'Multi-Power', 'Any-Power'];
                             const typeNames = Object.keys(typeGroups).sort((a, b) => {
                                 // Normalize power type names for comparison
                                 const normalizeType = (type) => type.replace(/\s+/g, '-');
@@ -11247,6 +11249,7 @@
                                 
                                 const aIndex = preferredOrder.indexOf(normalizedA);
                                 const bIndex = preferredOrder.indexOf(normalizedB);
+                                
                                 // If both are in preferred order, sort by their position
                                 if (aIndex !== -1 && bIndex !== -1) {
                                     return aIndex - bIndex;
@@ -12098,6 +12101,22 @@
                     // Check if we already have this "One Per Deck" card in the deck
                     const existingOnePerDeckCard = deckEditorCards.find(card => 
                         card.type === 'special' && card.cardId === cardId
+                    );
+                    
+                    if (existingOnePerDeckCard) {
+                        showNotification(`Cannot add more than 1 copy of "${cardName}" - One Per Deck`, 'error');
+                        return;
+                    }
+                }
+            }
+            
+            // Check "One Per Deck" limit for power cards
+            if (cardType === 'power') {
+                const powerCard = availableCardsMap.get(cardId);
+                if (powerCard && powerCard.one_per_deck) {
+                    // Check if we already have this "One Per Deck" power card in the deck
+                    const existingOnePerDeckCard = deckEditorCards.find(card => 
+                        card.type === 'power' && card.cardId === cardId
                     );
                     
                     if (existingOnePerDeckCard) {
