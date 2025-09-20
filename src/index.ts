@@ -400,7 +400,7 @@ app.post('/api/decks', authenticateUser, async (req: any, res) => {
       return res.status(400).json({ success: false, error: 'Deck name is required' });
     }
     
-    const deck = await deckRepository.createDeck(req.user.userId, name, description);
+    const deck = await deckRepository.createDeck(req.user.userId, name, description, characters);
     res.json({ success: true, data: deck });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to create deck' });

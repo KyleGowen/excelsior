@@ -15,15 +15,32 @@ export class PostgreSQLDeckRepository implements DeckRepository {
     console.log('✅ PostgreSQL DeckRepository initialized');
   }
 
-  async createDeck(userId: string, name: string, description?: string): Promise<Deck> {
+  async createDeck(userId: string, name: string, description?: string, characterIds?: string[]): Promise<Deck> {
     const client = await this.pool.connect();
     try {
+      await client.query('BEGIN');
+      
+      // Create the deck
       const result = await client.query(
         'INSERT INTO decks (user_id, name, description) VALUES ($1, $2, $3) RETURNING *',
         [userId, name, description || null]
       );
       
       const deck = result.rows[0];
+      const deckId = deck.id;
+      
+      // Add character cards if provided
+      if (characterIds && characterIds.length > 0) {
+        for (const characterId of characterIds) {
+          await client.query(
+            'INSERT INTO deck_cards (deck_id, card_type, card_id, quantity) VALUES ($1, $2, $3, $4)',
+            [deckId, 'character', characterId, 1]
+          );
+        }
+      }
+      
+      await client.query('COMMIT');
+      
       return {
         id: deck.id,
         user_id: deck.user_id,
@@ -33,6 +50,9 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         created_at: deck.created_at,
         updated_at: deck.updated_at
       };
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
     } finally {
       client.release();
     }

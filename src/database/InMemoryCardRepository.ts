@@ -567,7 +567,7 @@ export class InMemoryCardRepository implements CardRepository {
       'wrath_of_ra': 'specials/445_wrath_of_ra.webp',
       'valkyrie_skeggold': 'specials/446_valkyrie_skeggold.webp',
       'oni_and_succubus': 'specials/447_oni_and_succubus.webp',
-      'bodhisattava_enlightened_one': 'specials/448_bodhisattava_enlightened_one.webp',
+      'bodhisattva_enlightened_one': 'specials/bodhisattava_enlightened_one.webp',
       'mystical_energy': 'specials/449_mystical_energy.webp',
       'charge_into_battle': 'specials/450_charge_into_battle.webp',
       'subjugate_the_meek': 'specials/451_subjugate_the_meek.webp',
@@ -576,7 +576,7 @@ export class InMemoryCardRepository implements CardRepository {
       'disorient_opponent': 'specials/454_disorient_opponent.webp',
       'freya_goddess_of_protection': 'specials/455_freya_goddess_of_protection.webp',
       'grim_reaper': 'specials/456_grim_reaper.webp',
-      'gunnr': 'specials/457_gunnr.webp',
+      'gunnr_battle_valkyrie': 'specials/gunnr.webp',
       'hades_lord_of_the_underworld': 'specials/458_hades_lord_of_the_underworld.webp',
       'legendary_escape': 'specials/459_legendary_escape.webp',
       'merlins_magic': 'specials/460_merlins_magic.webp',
@@ -586,9 +586,9 @@ export class InMemoryCardRepository implements CardRepository {
       'valkyrie_hilder': 'specials/464_valkyrie_hilder.webp',
       
       // Victory Harben special cards - map to correct image files
-      'abner_perrys_lab_assistant': 'specials/266_abner_perrys_lab_assistant.webp',
-      'archery_knives_jiujitsu': 'specials/267_archery_knives_and_jiu_jitsu.webp',
-      'chamstonhedding_estate': 'specials/268_chamston-hedding_estate.webp',
+      'abner_perrys_lab_assistant': 'specials/abner_perrys_lab_assistant.webp',
+      'archery_knives_jiujitsu': 'specials/archery_knives_and_jiu_jitsu.webp',
+      'chamstonhedding_estate': 'specials/chamston-hedding_estate.webp',
       
       // Count of Monte Cristo special cards - map to correct image files
       'friend_to_foe': 'specials/043_friend_or_foe.webp',
@@ -748,10 +748,10 @@ export class InMemoryCardRepository implements CardRepository {
       // Any Character special cards (439-464)
       "specials/439_heimdall.webp", "specials/440_lady_of_the_lake.webp", "specials/441_robin_hood_master_thief.webp",
       "specials/442_tunupa_mountain_god.webp", "specials/443_fairy_protection.webp", "specials/444_loki.webp", "specials/445_wrath_of_ra.webp",
-      "specials/446_valkyrie_skeggold.webp", "specials/447_oni_and_succubus.webp", "specials/448_bodhisattava_enlightened_one.webp",
+      "specials/446_valkyrie_skeggold.webp", "specials/447_oni_and_succubus.webp", "specials/bodhisattava_enlightened_one.webp",
       "specials/449_mystical_energy.webp", "specials/450_charge_into_battle.webp", "specials/451_subjugate_the_meek.webp",
       "specials/452_draconic_leadership.webp", "specials/453_liliths_swarm.webp", "specials/454_disorient_opponent.webp",
-      "specials/455_freya_goddess_of_protection.webp", "specials/456_grim_reaper.webp", "specials/457_gunnr.webp", "specials/458_hades_lord_of_the_underworld.webp",
+      "specials/455_freya_goddess_of_protection.webp", "specials/456_grim_reaper.webp", "specials/gunnr.webp", "specials/458_hades_lord_of_the_underworld.webp",
       "specials/459_legendary_escape.webp", "specials/460_merlins_magic.webp", "specials/461_preternatural_healing.webp",
       "specials/462_princess_and_the_pea.webp", "specials/463_the_gemni.webp", "specials/464_valkyrie_hilder.webp",
       

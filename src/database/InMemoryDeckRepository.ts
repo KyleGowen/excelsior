@@ -10,16 +10,31 @@ export class InMemoryDeckRepository implements DeckRepository {
     // Decks are created dynamically
   }
 
-  async createDeck(userId: string, name: string, description?: string): Promise<Deck> {
+  async createDeck(userId: string, name: string, description?: string, characterIds?: string[]): Promise<Deck> {
     const id = `deck_${this.nextDeckId++}`;
     const now = new Date().toISOString();
+    
+    // Create initial cards array with selected characters
+    const initialCards: DeckCard[] = [];
+    if (characterIds && characterIds.length > 0) {
+      characterIds.forEach(characterId => {
+        initialCards.push({
+          id: `char_${characterId}_${Date.now()}`,
+          type: 'character',
+          cardId: characterId,
+          quantity: 1
+        });
+      });
+    }
+    
     const deck: Deck = { 
       id, 
       user_id: userId, 
       name, 
       ...(description && { description }),
       created_at: now,
-      updated_at: now
+      updated_at: now,
+      cards: initialCards
     };
     this.decks.set(id, deck);
     return deck;
