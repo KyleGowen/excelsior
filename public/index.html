@@ -11268,6 +11268,7 @@
                                              data-id="${card.id}"
                                              onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${summary}')"
                                              onmouseleave="hideCardHoverModal()"
+                                             onclick="handleCardClick(event, '${category.type}', '${card.id}', '${summary}')"
                                              data-name="${summary}">
                                             <div class="card-item-content">${summary}</div>
                                             <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${summary}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
