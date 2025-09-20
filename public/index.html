@@ -1376,6 +1376,105 @@
             border-color: rgba(255, 255, 255, 0.3);
         }
 
+        .btn-draw-hand {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .btn-draw-hand:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-draw-hand:disabled {
+            background: #555;
+            color: #888;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Draw Hand Section */
+        .draw-hand-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            border-radius: 8px;
+            margin: 20px;
+            padding: 15px;
+        }
+
+        .draw-hand-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .draw-hand-header h4 {
+            color: #4ecdc4;
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .draw-hand-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .draw-hand-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .draw-hand-content {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .drawn-card {
+            width: 120px;
+            height: 168px;
+            border-radius: 6px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .drawn-card.event-card {
+            width: 168px;
+            height: 120px;
+        }
+
+        .drawn-card:hover {
+            transform: scale(1.05);
+            border-color: #4ecdc4;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
+
         /* Large Modal Styles */
         .large-modal {
             max-width: 90vw;
@@ -4374,6 +4473,7 @@
                 <div class="deck-editor-actions">
                     <button class="btn-secondary" onclick="closeDeckEditor()">Cancel</button>
                     <button class="btn-primary" onclick="saveDeckChanges()">Save Changes</button>
+                    <button class="btn-draw-hand" id="drawHandBtn" onclick="toggleDrawHand()" disabled>Draw Hand</button>
                 </div>
             </div>
             
@@ -4409,6 +4509,17 @@
                     <div class="deck-summary-validation" id="deckSummaryValidation">
                         <!-- Validation content will be displayed here -->
                     </div>
+                </div>
+            </div>
+            
+            <!-- Draw Hand Section -->
+            <div class="draw-hand-section" id="drawHandSection" style="display: none;">
+                <div class="draw-hand-header">
+                    <h4>Draw Hand</h4>
+                    <button class="draw-hand-close" onclick="closeDrawHand()">×</button>
+                </div>
+                <div class="draw-hand-content" id="drawHandContent">
+                    <!-- Drawn cards will be displayed here -->
                 </div>
             </div>
             
@@ -6949,6 +7060,116 @@
             MAX_COPIES_ONE_PER_DECK: 1
         };
 
+        // Draw Hand functionality
+        function toggleDrawHand() {
+            const drawHandSection = document.getElementById('drawHandSection');
+            const drawHandBtn = document.getElementById('drawHandBtn');
+            
+            if (drawHandSection.style.display === 'none') {
+                drawHandSection.style.display = 'block';
+                drawHandBtn.textContent = 'Draw New Hand';
+                drawHand();
+            } else {
+                drawHand();
+            }
+        }
+
+        function closeDrawHand() {
+            const drawHandSection = document.getElementById('drawHandSection');
+            const drawHandBtn = document.getElementById('drawHandBtn');
+            
+            drawHandSection.style.display = 'none';
+            drawHandBtn.textContent = 'Draw Hand';
+        }
+
+        function drawHand() {
+            const deckCards = deckEditorCards;
+            const totalCards = deckCards.reduce((sum, card) => sum + card.quantity, 0);
+            
+            // Check if we have at least 8 cards
+            if (totalCards < 8) {
+                showNotification('Deck must have at least 8 cards to draw a hand', 'error');
+                return;
+            }
+
+            // Filter out characters, locations, and missions to create draw pile
+            const drawPile = [];
+            deckCards.forEach(card => {
+                if (card.type !== 'character' && card.type !== 'location' && card.type !== 'mission') {
+                    // Add each copy of the card to the draw pile
+                    for (let i = 0; i < card.quantity; i++) {
+                        drawPile.push(card);
+                    }
+                }
+            });
+
+            if (drawPile.length < 8) {
+                showNotification('Draw pile must have at least 8 cards (excluding characters, locations, missions)', 'error');
+                return;
+            }
+
+            // Draw 8 random cards, then check for event cards to determine if we need a 9th
+            const drawnCards = [];
+            const usedIndices = new Set();
+            const targetHandSize = 8;
+            
+            while (drawnCards.length < targetHandSize) {
+                const randomIndex = Math.floor(Math.random() * drawPile.length);
+                if (!usedIndices.has(randomIndex)) {
+                    usedIndices.add(randomIndex);
+                    drawnCards.push(drawPile[randomIndex]);
+                }
+            }
+
+            // Check if we have any event cards and draw a 9th card if so (maximum 9 cards total)
+            const hasEventCards = drawnCards.some(card => card.type === 'event');
+            if (hasEventCards && drawPile.length > 8 && drawnCards.length < 9) {
+                // Draw exactly one more card to make it 9 total (never more than 9)
+                while (drawnCards.length < 9) {
+                    const randomIndex = Math.floor(Math.random() * drawPile.length);
+                    if (!usedIndices.has(randomIndex)) {
+                        usedIndices.add(randomIndex);
+                        drawnCards.push(drawPile[randomIndex]);
+                        break; // Only draw one additional card
+                    }
+                }
+            }
+
+            // Display the drawn cards
+            displayDrawnCards(drawnCards);
+        }
+
+        function displayDrawnCards(cards) {
+            const drawHandContent = document.getElementById('drawHandContent');
+            drawHandContent.innerHTML = '';
+
+            cards.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'drawn-card';
+                
+                // Add event-card class for horizontal orientation
+                if (card.type === 'event') {
+                    cardElement.classList.add('event-card');
+                }
+                
+                // Get the card image path
+                const availableCard = availableCardsMap.get(card.cardId);
+                if (availableCard) {
+                    const imagePath = getCardImagePath(availableCard, card.type, card.selectedAlternateImage);
+                    cardElement.style.backgroundImage = `url('${imagePath}')`;
+                    
+                    // Add hover tooltip
+                    cardElement.title = availableCard.name || availableCard.card_name || card.name || 'Unknown Card';
+                } else {
+                    // Fallback for unknown cards
+                    cardElement.style.backgroundImage = 'url("/src/resources/cards/images/placeholder.webp")';
+                    cardElement.title = 'Unknown Card';
+                }
+                
+                drawHandContent.appendChild(cardElement);
+            });
+        }
+
         // Function to validate deck according to Overpower rules
         function validateDeck(deckCards) {
             const errors = [];
@@ -7114,6 +7335,17 @@
             }
             
             document.getElementById('deckTotalCards').textContent = totalCardsDisplay;
+            
+            // Enable/disable Draw Hand button based on total cards
+            const drawHandBtn = document.getElementById('drawHandBtn');
+            if (drawHandBtn) {
+                const totalCardsForDraw = deckCards.reduce((sum, card) => sum + card.quantity, 0);
+                if (totalCardsForDraw >= 8) {
+                    drawHandBtn.disabled = false;
+                } else {
+                    drawHandBtn.disabled = true;
+                }
+            }
             
             // Calculate maximum character stats and total threat level
             const characterCards = deckCards.filter(card => card.type === 'character');
