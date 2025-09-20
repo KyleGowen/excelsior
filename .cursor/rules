@@ -67,6 +67,11 @@ This is a Node.js/TypeScript deck building application for the Overpower card ga
 - Comment complex business logic
 - Separate concerns (database, API, frontend)
 
+## OverPower Game Sorting Rules
+- **Power Type Sorting Order**: Energy → Combat → Brute Force → Intelligence → Multi-Power → Any-Power
+- Any sorting by power types should follow this exact order
+- This applies to power card sections, character stat requirements, and any other power type sorting
+
 ## Testing & Debugging
 - Use console.log for debugging (remove before production)
 - Test all user flows thoroughly

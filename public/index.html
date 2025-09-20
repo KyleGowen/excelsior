@@ -11237,8 +11237,8 @@
                                 typeGroups[powerType].push(card);
                             });
                             
-                            // Define the preferred order for power types
-                            const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Any-Power', 'Multi-Power'];
+                            // Define the preferred order for power types (OverPower official order)
+                            const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Multi-Power', 'Any-Power'];
                             const typeNames = Object.keys(typeGroups).sort((a, b) => {
                                 // Normalize power type names for comparison
                                 const normalizeType = (type) => type.replace(/\s+/g, '-');
