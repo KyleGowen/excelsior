@@ -11240,8 +11240,13 @@
                             // Define the preferred order for power types
                             const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Any-Power', 'Multi-Power'];
                             const typeNames = Object.keys(typeGroups).sort((a, b) => {
-                                const aIndex = preferredOrder.indexOf(a);
-                                const bIndex = preferredOrder.indexOf(b);
+                                // Normalize power type names for comparison
+                                const normalizeType = (type) => type.replace(/\s+/g, '-');
+                                const normalizedA = normalizeType(a);
+                                const normalizedB = normalizeType(b);
+                                
+                                const aIndex = preferredOrder.indexOf(normalizedA);
+                                const bIndex = preferredOrder.indexOf(normalizedB);
                                 // If both are in preferred order, sort by their position
                                 if (aIndex !== -1 && bIndex !== -1) {
                                     return aIndex - bIndex;
@@ -11277,7 +11282,8 @@
                                 }).join('');
                                 
                                 // Add "Add All" button for Multi-Power and Any-Power subsections
-                                const addAllButton = (typeName === 'Multi-Power' || typeName === 'Any-Power') ? 
+                                const normalizedTypeName = typeName.replace(/\s+/g, '-');
+                                const addAllButton = (normalizedTypeName === 'Multi-Power' || normalizedTypeName === 'Any-Power') ? 
                                     `<button class="add-all-btn" onclick="event.stopPropagation(); addAllPowerCards('${typeName}', ${JSON.stringify(cards).replace(/"/g, '&quot;')})">Add All</button>` : '';
                                 
                                 cardsHtml += `
