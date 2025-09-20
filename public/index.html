@@ -11303,6 +11303,7 @@
                                      data-id="${card.id}"
                                      onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
                                      onmouseleave="hideCardHoverModal()"
+                                     onclick="handleCardClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')"
                                      data-name="${card[category.nameField]}">
                                     <div class="card-item-content">${card[category.nameField]}</div>
                                     <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
