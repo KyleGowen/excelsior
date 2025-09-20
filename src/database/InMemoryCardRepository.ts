@@ -591,14 +591,42 @@ export class InMemoryCardRepository implements CardRepository {
       'chamstonhedding_estate': 'specials/chamston-hedding_estate.webp',
       
       // Count of Monte Cristo special cards - map to correct image files
-      'friend_to_foe': 'specials/043_friend_or_foe.webp',
+      'friend_to_foe': 'specials/friend_or_foe.webp',
       'jacopo': 'specials/044_jacopo.webp',
-      'network_of_thieves': 'specials/045_network_of_theives.webp',
-      'surprise_swordsman': 'specials/046_suprise_swordsman.webp',
+      'network_of_thieves': 'specials/network_of_theives.webp',
+      'surprise_swordsman': 'specials/suprise_swordsman.webp',
       'unlimited_resources': 'specials/047_unlimited_resources.webp',
       
       // Professor Moriarty special cards - map to correct image files
-      'mathematical_genius': 'specials/185_mathematical_genius.webp'
+      'mathematical_genius': 'specials/185_mathematical_genius.webp',
+      
+      // Additional missing special cards - map to actual existing files
+      'disrupting_supply_lines': 'specials/disrupt_supply_lines.webp',
+      'siphon_strike': 'specials/syphon_strike.webp',
+      'weighing_of_the_heart': 'specials/_weighing_ofthe_heart.webp',
+      'tray_gun': 'specials/tray_guns.webp',
+      'visage_of_terror': 'specials/vissage_of_terror.webp',
+      'ive_murdered_before': 'specials/ive_murderd_before.webp',
+      'ethnoarchaeology': 'specials/ethnoarchiology.webp',
+      'tenacious_pursuit': 'specials/tenacious_persuit.webp',
+      'jungle_survival': 'specials/jungle_survival_en_108.webp',
+      'foretell_the_future': 'specials/fortell_the_future.webp',
+      'draculas_telepathic_connection': 'specials/dracluas_telepathic_connection.webp',
+      'jonathan_harker_solicitor': 'specials/john_harker_solicitor.webp',
+      'enchantress_guile': 'specials/enchantress__guile.webp',
+      'reclaim_the_waters': 'specials/reclaim_the_water.webp',
+      'cult_of_menevis_bull': 'specials/clut_of_mnevis_bull.webp',
+      'master_thief': 'specials/robin_hood_master_thief.webp',
+      'barsoomian_warrior_statesman': 'specials/barsoom_warrior_and_statesman.webp',
+      'fourarmed_warrior': 'specials/four_armed_warrior.webp',
+      'deceptive_maneuver': 'specials/deceptive_manuver.webp',
+      'the_eternal_journey': 'specials/the_eternal_jouney.webp',
+      'valiant_charge': 'specials/valient_charge.webp',
+      'sacred_wafers_from_amsterdam': 'specials/sacred_wafers_of_amsterdam.webp',
+      'wolves_crows_black_bees': 'specials/wolves_crows_black_birds_en_237.webp',
+      'ancestral_rapier': 'specials/ancestial_rapier.webp',
+      'feared_by_all_witches': 'specials/feard_by_all_witches.webp',
+      'worldrenowned_doctor': 'specials/world_renowned_doctor.webp'
     };
     
     if (knownMismatches[snakeCaseName]) {
