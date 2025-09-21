@@ -5847,18 +5847,44 @@
                 return;
             }
             
-            tbody.innerHTML = teamwork.map(card => `
+            // Sort teamwork cards by OverPower type order: Energy, Combat, Brute Force, Intelligence, Any-Power
+            const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Any-Power'];
+            const sortedTeamwork = teamwork.sort((a, b) => {
+                const aType = a.to_use || '';
+                const bType = b.to_use || '';
+                
+                // Extract the power type from "X Energy", "X Combat", etc.
+                const aPowerType = aType.replace(/^\d+\s+/, '');
+                const bPowerType = bType.replace(/^\d+\s+/, '');
+                
+                const aIndex = preferredOrder.indexOf(aPowerType);
+                const bIndex = preferredOrder.indexOf(bPowerType);
+                
+                // If both are in preferred order, sort by their position
+                if (aIndex !== -1 && bIndex !== -1) {
+                    return aIndex - bIndex;
+                }
+                
+                // If only one is in preferred order, prioritize it
+                if (aIndex !== -1) return -1;
+                if (bIndex !== -1) return 1;
+                
+                // If neither is in preferred order, sort alphabetically
+                return aPowerType.localeCompare(bPowerType);
+            });
+            
+            tbody.innerHTML = sortedTeamwork.map(card => `
                 <tr>
                     <td>
                         <img src="/src/resources/cards/images/teamwork-universe/${mapImagePathToActualFile(card.image)}" 
-                             alt="${card.card_type}" 
+                             alt="${card.card_type || ''}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
                              onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
-                             onmouseenter="showCardHoverModal('/src/resources/cards/images/teamwork-universe/${mapImagePathToActualFile(card.image)}', '${card.card_type.replace(/'/g, "\\'")}')"
+                             onmouseenter="showCardHoverModal('/src/resources/cards/images/teamwork-universe/${mapImagePathToActualFile(card.image)}', '${(card.card_type || '').replace(/'/g, "\\'")}')"
                              onmouseleave="hideCardHoverModal()"
                              onclick="openModal(this)">
                     </td>
-                    <td><strong>${card.card_type}</strong></td>
+                    <td><strong>${card.card_type || ''}</strong></td>
                     <td>${card.to_use}</td>
                     <td>${card.acts_as}</td>
                     <td>${card.followup_attack_types}</td>
@@ -5894,7 +5920,7 @@
                              alt="${card.card_name}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
                              onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
-                             onmouseenter="showCardHoverModal('/src/resources/cards/images/ally-universe/${mapImagePathToActualFile(card.image)}', '${card.card_name.replace(/'/g, "\\'")}')"
+                             onmouseenter="showCardHoverModal('/src/resources/cards/images/ally-universe/${mapImagePathToActualFile(card.image)}', '${(card.card_name || '').replace(/'/g, "\\'")}')"
                              onmouseleave="hideCardHoverModal()"
                              onclick="openModal(this)">
                     </td>
@@ -5960,7 +5986,7 @@
                              alt="${card.card_name}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
                              onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
-                             onmouseenter="showCardHoverModal('/src/resources/cards/images/training-universe/${mapImagePathToActualFile(card.image)}', '${card.card_name.replace(/'/g, "\\'")}')"
+                             onmouseenter="showCardHoverModal('/src/resources/cards/images/training-universe/${mapImagePathToActualFile(card.image)}', '${(card.card_name || '').replace(/'/g, "\\'")}')"
                              onmouseleave="hideCardHoverModal()"
                              onclick="openModal(this)">
                     </td>
@@ -6017,7 +6043,7 @@
                              alt="${card.card_name}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
                              onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
-                             onmouseenter="showCardHoverModal('/src/resources/cards/images/basic-universe/${mapImagePathToActualFile(card.image)}', '${card.card_name.replace(/'/g, "\\'")}')"
+                             onmouseenter="showCardHoverModal('/src/resources/cards/images/basic-universe/${mapImagePathToActualFile(card.image)}', '${(card.card_name || '').replace(/'/g, "\\'")}')"
                              onmouseleave="hideCardHoverModal()"
                              onclick="openModal(this)">
                     </td>
