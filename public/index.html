@@ -4823,17 +4823,35 @@
                 .replace(/&gt;/g, '>')   // Greater than
                 .replace(/&nbsp;/g, ' '); // Non-breaking spaces
             
-            // Check if the text contains "**One Per Deck**"
-            if (decodedText.includes('**One Per Deck**')) {
-                // Split the text at "**One Per Deck**"
-                const parts = decodedText.split('**One Per Deck**');
-                const mainText = parts[0].trim();
-                
-                // Format the main text and add One Per Deck on its own line (no bold)
-                return `${mainText}<br><br>One Per Deck`;
+            // Define special keywords that should be on their own lines
+            const specialKeywords = ['**One Per Deck**', '**Cataclysm!**', '**Assist!**', '**!Ambush**'];
+            const foundKeywords = [];
+            
+            // Find all special keywords in the text
+            for (const keyword of specialKeywords) {
+                if (decodedText.includes(keyword)) {
+                    foundKeywords.push(keyword);
+                }
             }
             
-            // If no "**One Per Deck**" found, return the decoded text
+            if (foundKeywords.length > 0) {
+                // Remove all special keywords from the main text
+                let mainText = decodedText;
+                for (const keyword of foundKeywords) {
+                    mainText = mainText.replace(new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '');
+                }
+                
+                // Clean up extra spaces and trim
+                mainText = mainText.replace(/\s+/g, ' ').trim();
+                
+                // Create keyword lines (remove ** markers)
+                const keywordLines = foundKeywords.map(keyword => keyword.replace(/\*\*/g, ''));
+                
+                // Format: main text + keywords on separate lines
+                return mainText + '<br><br>' + keywordLines.join('<br>');
+            }
+            
+            // If no special keywords found, return the decoded text
             return decodedText;
         }
 
