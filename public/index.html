@@ -568,6 +568,28 @@
             min-width: 200px;
         }
 
+        /* Missions table column widths */
+        #missions-table th:nth-child(2), /* Mission Set */
+        #missions-table td:nth-child(2) {
+            min-width: 220px;
+        }
+
+        #missions-table th:nth-child(4), /* Game Effect */
+        #missions-table td:nth-child(4) {
+            max-width: 300px;
+        }
+
+        /* Events table column widths */
+        #events-table th:nth-child(3), /* Mission Set */
+        #events-table td:nth-child(3) {
+            min-width: 220px;
+        }
+
+        #events-table th:nth-child(4), /* Game Effect */
+        #events-table td:nth-child(4) {
+            max-width: 300px;
+        }
+
         .filter-input:focus {
             outline: none;
             border-color: #4ecdc4;
@@ -5611,7 +5633,15 @@
                 return;
             }
             
-            tbody.innerHTML = events.map(event => `
+            // Sort events by mission set first, then by name alphabetically
+            const sortedEvents = events.sort((a, b) => {
+                if (a.mission_set !== b.mission_set) {
+                    return a.mission_set.localeCompare(b.mission_set);
+                }
+                return a.name.localeCompare(b.name);
+            });
+            
+            tbody.innerHTML = sortedEvents.map(event => `
                 <tr>
                     <td>
                         <img src="/src/resources/cards/images/events/${mapImagePathToActualFile(event.image)}" 
