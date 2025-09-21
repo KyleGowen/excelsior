@@ -5529,7 +5529,15 @@
                 return;
             }
             
-            tbody.innerHTML = missions.map(mission => `
+            // Sort missions by mission set first, then by card name alphabetically
+            const sortedMissions = missions.sort((a, b) => {
+                if (a.mission_set !== b.mission_set) {
+                    return a.mission_set.localeCompare(b.mission_set);
+                }
+                return a.card_name.localeCompare(b.card_name);
+            });
+            
+            tbody.innerHTML = sortedMissions.map(mission => `
                 <tr>
                     <td>
                         <img src="/src/resources/cards/images/missions/${mapImagePathToActualFile(mission.image)}" 
