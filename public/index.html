@@ -4810,6 +4810,24 @@
                 });
         }
 
+        function formatSpecialCardEffect(effectText) {
+            if (!effectText) return '';
+            
+            // Check if the text contains "**One Per Deck**"
+            if (effectText.includes('**One Per Deck**')) {
+                // Split the text at "**One Per Deck**"
+                const parts = effectText.split('**One Per Deck**');
+                const mainText = parts[0].trim();
+                const onePerDeckText = '**One Per Deck**';
+                
+                // Format the main text and add One Per Deck on its own line
+                return `${mainText}<br><br><strong>One Per Deck</strong>`;
+            }
+            
+            // If no "**One Per Deck**" found, return the original text
+            return effectText;
+        }
+
         function displaySpecialCards(specialCards) {
             const tbody = document.getElementById('special-cards-tbody');
             tbody.innerHTML = '';
@@ -4836,7 +4854,7 @@
                     <td>${card.card_type}</td>
                     <td>${card.character}</td>
                     <td class="${cataclysmClass} cataclysm-cell hidden">${cataclysmDisplay}</td>
-                    <td>${card.card_effect}</td>
+                    <td>${formatSpecialCardEffect(card.card_effect)}</td>
                 `;
                 
                 tbody.appendChild(row);
@@ -5647,7 +5665,7 @@
                     <td><strong>${aspect.card_name}</strong></td>
                     <td>${aspect.card_type}</td>
                     <td>${aspect.location}</td>
-                    <td>${aspect.card_effect}</td>
+                    <td>${formatSpecialCardEffect(aspect.card_effect)}</td>
                     <td class="fortifications-column hidden">${aspect.is_fortification ? 'Yes' : 'No'}</td>
                     <td class="one-per-deck-column hidden">${aspect.is_one_per_deck ? 'Yes' : 'No'}</td>
                 </tr>
@@ -5720,7 +5738,7 @@
                     <td><strong>${card.name}</strong></td>
                     <td>${card.card_type}</td>
                     <td>${card.character}</td>
-                    <td>${card.card_effect}</td>
+                    <td>${formatSpecialCardEffect(card.card_effect)}</td>
                     <td class="one-per-deck-advanced-column">${card.is_one_per_deck ? 'Yes' : 'No'}</td>
                 </tr>
             `).join('');
