@@ -507,22 +507,23 @@
 
         /* Fixed column widths to prevent resizing during filtering */
         #characters-table {
-            table-layout: fixed;
+            table-layout: auto;
             width: 100%;
         }
 
         #characters-table th,
         #characters-table td {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+            vertical-align: top;
         }
 
-        /* Specific column widths */
+        /* Image column styling */
         #characters-table th:nth-child(1), /* Image */
         #characters-table td:nth-child(1) {
-            width: 140px;
             text-align: center;
+            min-width: 140px;
         }
 
         #characters-table td:nth-child(1) img {
@@ -531,39 +532,40 @@
             max-height: 180px;
         }
 
+        /* Other columns will auto-size based on content */
         #characters-table th:nth-child(2), /* Name */
         #characters-table td:nth-child(2) {
-            width: 200px;
+            min-width: 150px;
         }
 
         #characters-table th:nth-child(3), /* Energy */
         #characters-table td:nth-child(3) {
-            width: 80px;
+            min-width: 60px;
         }
 
         #characters-table th:nth-child(4), /* Combat */
         #characters-table td:nth-child(4) {
-            width: 80px;
+            min-width: 60px;
         }
 
         #characters-table th:nth-child(5), /* Brute Force */
         #characters-table td:nth-child(5) {
-            width: 100px;
+            min-width: 80px;
         }
 
         #characters-table th:nth-child(6), /* Intelligence */
         #characters-table td:nth-child(6) {
-            width: 100px;
+            min-width: 80px;
         }
 
         #characters-table th:nth-child(7), /* Threat Level */
         #characters-table td:nth-child(7) {
-            width: 100px;
+            min-width: 80px;
         }
 
         #characters-table th:nth-child(8), /* Special Abilities */
         #characters-table td:nth-child(8) {
-            width: 300px;
+            min-width: 200px;
         }
 
         .filter-input:focus {
@@ -864,7 +866,7 @@
             text-align: center;
         }
 
-        /* Ensure stable column widths for all tables */
+        /* Enable flexible column widths for all tables to accommodate text wrapping */
         #missions-table,
         #events-table,
         #locations-table,
@@ -876,10 +878,10 @@
         #ally-universe-table,
         #training-table,
         #power-cards-table {
-            table-layout: fixed;
+            table-layout: auto;
         }
 
-        /* Prevent text wrapping and maintain column stability */
+        /* Enable text wrapping for all table cells */
         #missions-table th,
         #missions-table td,
         #events-table th,
@@ -902,9 +904,22 @@
         #training-table td,
         #power-cards-table th,
         #power-cards-table td {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+            vertical-align: top;
+            padding: 8px 12px;
+            line-height: 1.4;
+        }
+
+        /* Ensure long text content wraps properly */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        /* Make sure tables can expand horizontally if needed */
+        table {
+            min-width: 100%;
         }
         
         /* Teamwork table */

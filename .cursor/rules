@@ -78,7 +78,7 @@ This is a Node.js/TypeScript deck building application for the Overpower card ga
 - Verify database changes with queries
 - Check browser console for errors
 
-## Git Workflow - CRITICAL RULE
+if## Git Workflow - CRITICAL RULE
 - **🚨 NEVER COMMIT OR PUSH TO GIT WITHOUT EXPLICIT USER INSTRUCTION 🚨**
 - **This is a MANDATORY rule that must be followed at all times**
 - **Even if I think changes are ready, I must wait for explicit "commit and push" instruction**
@@ -284,3 +284,9 @@ OverPower is a card game where players control teams of legendary heroes and vil
 - **Skirmish**: Shared Mission Objectives (5/7/9), highest Venture Total wins each battle
 - **Draft**: 8-10 players, 3 packs, draft Character Stacks
 - **Sealed Deck**: 1 Starter + 3-6 Booster packs, build from opened cards only
+
+#### Text Display Rules
+- **NEVER truncate text with "..." unless explicitly requested by the user**
+- **Always display full text content with proper wrapping**
+- **Use CSS text wrapping to ensure all content is visible**
+- **Text should wrap within cells/containers rather than being cut off**
