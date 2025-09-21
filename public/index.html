@@ -4818,10 +4818,9 @@
                 // Split the text at "**One Per Deck**"
                 const parts = effectText.split('**One Per Deck**');
                 const mainText = parts[0].trim();
-                const onePerDeckText = '**One Per Deck**';
                 
-                // Format the main text and add One Per Deck on its own line
-                return `${mainText}<br><br><strong>One Per Deck</strong>`;
+                // Format the main text and add One Per Deck on its own line (no bold)
+                return `${mainText}<br><br>One Per Deck`;
             }
             
             // If no "**One Per Deck**" found, return the original text
