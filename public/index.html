@@ -5913,7 +5913,30 @@
                 tbody.innerHTML = '<tr><td colspan="8">No allies found</td></tr>';
                 return;
             }
-            tbody.innerHTML = allies.map(card => `
+            
+            // Sort ally cards by OverPower type order: Energy, Combat, Brute Force, Intelligence, Any-Power
+            const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Any-Power'];
+            const sortedAllies = allies.sort((a, b) => {
+                const aType = a.stat_type_to_use || '';
+                const bType = b.stat_type_to_use || '';
+                
+                const aIndex = preferredOrder.indexOf(aType);
+                const bIndex = preferredOrder.indexOf(bType);
+                
+                // If both are in preferred order, sort by their position
+                if (aIndex !== -1 && bIndex !== -1) {
+                    return aIndex - bIndex;
+                }
+                
+                // If only one is in preferred order, prioritize it
+                if (aIndex !== -1) return -1;
+                if (bIndex !== -1) return 1;
+                
+                // If neither is in preferred order, sort alphabetically
+                return aType.localeCompare(bType);
+            });
+            
+            tbody.innerHTML = sortedAllies.map(card => `
                 <tr>
                     <td>
                         <img src="/src/resources/cards/images/ally-universe/${mapImagePathToActualFile(card.image)}" 
