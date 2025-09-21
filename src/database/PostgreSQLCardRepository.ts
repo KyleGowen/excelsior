@@ -510,13 +510,13 @@ export class PostgreSQLCardRepository implements CardRepository {
   async getAllTraining(): Promise<TrainingCard[]> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query('SELECT * FROM training_cards ORDER BY universe, name');
+      const result = await client.query('SELECT id, name, type_1, type_2, value_to_use, bonus, image_path FROM training_cards ORDER BY universe, name');
       
       return result.rows.map(card => ({
         id: card.id,
         card_name: card.name,
-        type_1: card.type1,
-        type_2: card.type2,
+        type_1: card.type_1,
+        type_2: card.type_2,
         value_to_use: card.value_to_use,
         bonus: card.bonus,
         image: card.image_path
