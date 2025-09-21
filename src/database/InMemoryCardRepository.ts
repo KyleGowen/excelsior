@@ -626,7 +626,10 @@ export class InMemoryCardRepository implements CardRepository {
       'wolves_crows_black_bees': 'specials/wolves_crows_black_birds_en_237.webp',
       'ancestral_rapier': 'specials/ancestial_rapier.webp',
       'feared_by_all_witches': 'specials/feard_by_all_witches.webp',
-      'worldrenowned_doctor': 'specials/world_renowned_doctor.webp'
+      'worldrenowned_doctor': 'specials/world_renowned_doctor.webp',
+      
+      // Korak special cards - fix filename mismatches
+      'john_clayton_iii': 'specials/john_clayton_lll.webp'
     };
     
     if (knownMismatches[snakeCaseName]) {
@@ -773,15 +776,15 @@ export class InMemoryCardRepository implements CardRepository {
     // Return a list of available special card image files
     // This would ideally be loaded from the filesystem, but for now we'll hardcode the known ones
     return [
-      // Any Character special cards (439-464)
-      "specials/439_heimdall.webp", "specials/440_lady_of_the_lake.webp", "specials/441_robin_hood_master_thief.webp",
-      "specials/442_tunupa_mountain_god.webp", "specials/443_fairy_protection.webp", "specials/444_loki.webp", "specials/445_wrath_of_ra.webp",
-      "specials/446_valkyrie_skeggold.webp", "specials/447_oni_and_succubus.webp", "specials/bodhisattava_enlightened_one.webp",
-      "specials/449_mystical_energy.webp", "specials/450_charge_into_battle.webp", "specials/451_subjugate_the_meek.webp",
-      "specials/452_draconic_leadership.webp", "specials/453_liliths_swarm.webp", "specials/454_disorient_opponent.webp",
-      "specials/455_freya_goddess_of_protection.webp", "specials/456_grim_reaper.webp", "specials/gunnr.webp", "specials/458_hades_lord_of_the_underworld.webp",
-      "specials/459_legendary_escape.webp", "specials/460_merlins_magic.webp", "specials/461_preternatural_healing.webp",
-      "specials/462_princess_and_the_pea.webp", "specials/463_the_gemni.webp", "specials/464_valkyrie_hilder.webp",
+      // Any Character special cards
+      "specials/heimdall.webp", "specials/lady_of_the_lake.webp", "specials/robin_hood_master_thief.webp",
+      "specials/tunupa_mountain_god.webp", "specials/fairy_protection.webp", "specials/loki.webp", "specials/wrath_of_ra.webp",
+      "specials/valkyrie_skeggjold.webp", "specials/oni_and_succubus.webp", "specials/bodhisattava_enlightened_one.webp",
+      "specials/mystical_energy.webp", "specials/charge_into_battle.webp", "specials/subjugate_the_meek.webp",
+      "specials/draconic_leadership.webp", "specials/liliths_swarm.webp", "specials/disorient_opponent.webp",
+      "specials/freya_goddess_of_protection.webp", "specials/grim_reaper.webp", "specials/gunnr.webp", "specials/hades_lord_of_the_underworld.webp",
+      "specials/legendary_escape.webp", "specials/merlins_magic.webp", "specials/preternatural_healing.webp",
+      "specials/princess_and_the_pea.webp", "specials/the_gemini.webp", "specials/valkyrie_hildr_select_the_slain.webp",
       
       // Character-specific special cards (001-291)
       "specials/001_angry_mob_middle_ages.webp", "specials/002_dont_let_it_get_away.webp", "specials/003_mob_mentality.webp",
