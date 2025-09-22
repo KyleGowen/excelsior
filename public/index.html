@@ -1562,22 +1562,11 @@
             flex-direction: column;
         }
 
-        .screenshot-view-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border-bottom: 2px solid #4ECDC4;
-        }
-
-        .screenshot-view-header h4 {
-            color: #4ECDC4;
-            margin: 0;
-            font-size: 1.5rem;
-        }
 
         .screenshot-view-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
             background: #e74c3c;
             color: white;
             border: none;
@@ -1589,6 +1578,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 1001;
         }
 
         .screenshot-view-close:hover {
@@ -1987,7 +1977,7 @@
         /* Character cards container - aligned along left side */
         .screenshot-characters-container {
             position: absolute;
-            top: 45px;
+            top: 55px;
             left: 30px;
             display: flex;
             flex-direction: column;
@@ -1998,7 +1988,7 @@
         /* Individual character card group - contains character + specials */
         .screenshot-character-group {
             position: relative;
-            margin-bottom: 70px;
+            margin-bottom: 25px;
             display: flex;
             align-items: flex-start;
             width: 100%;
@@ -5190,16 +5180,13 @@
                 </div>
             </div>
             
-            <!-- Screenshot View Section -->
-            <div class="screenshot-view-section" id="screenshotViewSection" style="display: none;">
-                <div class="screenshot-view-header">
-                    <h4>Screenshot View</h4>
-                    <button class="screenshot-view-close" onclick="closeScreenshotView()">×</button>
-                </div>
-                <div class="screenshot-view-content" id="screenshotViewContent">
-                    <!-- Deck cards will be displayed here in tabletop layout -->
-                </div>
-            </div>
+       <!-- Screenshot View Section -->
+       <div class="screenshot-view-section" id="screenshotViewSection" style="display: none;">
+           <button class="screenshot-view-close" onclick="closeScreenshotView()">×</button>
+           <div class="screenshot-view-content" id="screenshotViewContent">
+               <!-- Deck cards will be displayed here in tabletop layout -->
+           </div>
+       </div>
             
             <div class="modal-body">
                 <div class="deck-editor-layout">
