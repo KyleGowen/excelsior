@@ -2076,6 +2076,53 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             transform: rotate(-90deg);
         }
+        
+        .screenshot-draggable-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 600px;
+            touch-action: none;
+        }
+        
+        .screenshot-draggable-card {
+            position: absolute;
+            width: 200px;
+            height: 140px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            cursor: move;
+            transform: rotate(-90deg);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            z-index: 10;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        
+        .screenshot-draggable-card:hover {
+            transform: rotate(-90deg) scale(1.05);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+        
+        .screenshot-draggable-card.dragging {
+            transform: rotate(-90deg) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            opacity: 0.9;
+        }
+        
+        .screenshot-blank-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #bdc3c7;
+            font-size: 18px;
+        }
 
         .screenshot-special-card:hover {
             transform: scale(1.05);
@@ -8347,8 +8394,91 @@
     function generateScreenshotContent() {
         const screenshotContent = document.getElementById('screenshotViewContent');
         if (!screenshotContent) return;
-        // Blank screenshot view per request
-        screenshotContent.innerHTML = '';
+        
+        // Filter for character cards only
+        const characterCards = deckEditorCards.filter(card => card.type === 'character');
+        
+        if (characterCards.length === 0) {
+            screenshotContent.innerHTML = '<div class="screenshot-blank-screen">No character cards in deck</div>';
+            return;
+        }
+        
+        let contentHtml = '<div class="screenshot-draggable-container">';
+        
+        characterCards.forEach((cardData, index) => {
+            const availableCard = availableCardsMap.get(cardData.cardId);
+            
+            if (availableCard) {
+                const imagePath = getCardImagePath(availableCard, cardData.type, cardData.selectedAlternateImage);
+                const quantity = cardData.quantity || 1;
+                
+                // Create draggable character card
+                contentHtml += `
+                    <div class="screenshot-draggable-card" 
+                         data-card-id="${cardData.cardId}"
+                         data-card-type="character"
+                         style="left: ${index * 60}px; top: ${index * 40}px; background-image: url('${imagePath}');">
+                        ${quantity > 1 ? `<div class="screenshot-card-quantity">${quantity}</div>` : ''}
+                    </div>
+                `;
+            }
+        });
+        
+        contentHtml += '</div>';
+        screenshotContent.innerHTML = contentHtml;
+        
+        // Setup drag and drop for screenshot view
+        setupScreenshotDragAndDrop();
+    }
+    
+    function setupScreenshotDragAndDrop() {
+        const container = document.querySelector('.screenshot-draggable-container');
+        if (!container) return;
+
+        const gridSize = 50;
+        let activeCard = null;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        function onPointerMove(e) {
+            if (!activeCard) return;
+            const rect = container.getBoundingClientRect();
+            const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left - offsetX;
+            const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top - offsetY;
+            activeCard.style.left = x + 'px';
+            activeCard.style.top = y + 'px';
+        }
+
+        function onPointerUp(e) {
+            if (!activeCard) return;
+            // Snap to grid on release
+            const rect = container.getBoundingClientRect();
+            const x = (e.clientX || (e.changedTouches && e.changedTouches[0].clientX)) - rect.left - offsetX;
+            const y = (e.clientY || (e.changedTouches && e.changedTouches[0].clientY)) - rect.top - offsetY;
+            const snappedX = Math.round(x / gridSize) * gridSize;
+            const snappedY = Math.round(y / gridSize) * gridSize;
+            activeCard.style.left = snappedX + 'px';
+            activeCard.style.top = snappedY + 'px';
+            activeCard.classList.remove('dragging');
+            container.removeEventListener('pointermove', onPointerMove);
+            window.removeEventListener('pointerup', onPointerUp);
+            activeCard = null;
+        }
+
+        container.querySelectorAll('.screenshot-draggable-card').forEach(card => {
+            // Disable native drag
+            card.setAttribute('draggable', 'false');
+
+            card.addEventListener('pointerdown', (e) => {
+                activeCard = card;
+                const rect = card.getBoundingClientRect();
+                offsetX = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+                offsetY = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+                card.classList.add('dragging');
+                container.addEventListener('pointermove', onPointerMove);
+                window.addEventListener('pointerup', onPointerUp);
+            });
+        });
     }
 
         function drawHand() {
