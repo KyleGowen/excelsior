@@ -8320,6 +8320,41 @@
             return;
         }
         
+        // Sort characters by number of selected special cards (including quantities),
+        // then alphabetically by name for ties
+        const allSpecials = deckEditorCards.filter(card => card.type === 'special');
+
+        function countSelectedSpecialsForCharacter(characterName) {
+            // Sum quantities of specials that belong to this character
+            return allSpecials.reduce((sum, specialData) => {
+                const availableSpecial = availableCardsMap.get(specialData.cardId);
+                if (!availableSpecial) return sum;
+                // Exclude Any Character or undefined mapping
+                if (!availableSpecial.character || availableSpecial.character === 'Any Character') {
+                    return sum;
+                }
+                if (availableSpecial.character === characterName) {
+                    const qty = Number(specialData.quantity || 1);
+                    return sum + qty;
+                }
+                return sum;
+            }, 0);
+        }
+
+        characterCards.sort((a, b) => {
+            const aCard = availableCardsMap.get(a.cardId);
+            const bCard = availableCardsMap.get(b.cardId);
+            if (!aCard || !bCard) return 0;
+
+            const aCount = countSelectedSpecialsForCharacter(aCard.name);
+            const bCount = countSelectedSpecialsForCharacter(bCard.name);
+
+            if (aCount !== bCount) {
+                return bCount - aCount; // Descending
+            }
+            return aCard.name.localeCompare(bCard.name);
+        });
+        
         let contentHtml = '<div class="screenshot-characters-container">';
         
         characterCards.forEach((cardData, index) => {

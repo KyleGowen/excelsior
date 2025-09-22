@@ -292,5 +292,17 @@
     "userId": "c567175f-a07b-41b7-b274-e82901d1b4f1",
     "username": "kyle",
     "expiresAt": "2025-09-22T06:47:21.756Z"
+  },
+  {
+    "sessionId": "sess_f3lta8i5r_mfurpzs3",
+    "userId": "c567175f-a07b-41b7-b274-e82901d1b4f1",
+    "username": "kyle",
+    "expiresAt": "2025-09-22T08:51:32.835Z"
+  },
+  {
+    "sessionId": "sess_d2ogurr60_mfvbexy4",
+    "userId": "c567175f-a07b-41b7-b274-e82901d1b4f1",
+    "username": "kyle",
+    "expiresAt": "2025-09-22T18:02:49.564Z"
   }
 ]
