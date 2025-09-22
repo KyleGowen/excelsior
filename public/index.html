@@ -1590,7 +1590,24 @@
             padding: 20px;
             overflow: hidden;
             position: relative;
+            /* Subtle grid over the existing background */
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        /* Light grid overlay (10px cells with 50px bold lines) */
+        .screenshot-view-content::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 10px 10px, 10px 10px, 50px 50px, 50px 50px;
+            background-position: 0 0, 0 0, 0 0, 0 0;
+            z-index: 1;
         }
 
         .screenshot-cards-container {
@@ -2040,6 +2057,24 @@
 
         .screenshot-special-card:last-child {
             margin-right: 0; /* Last card has no right margin */
+        }
+        
+        .screenshot-location-container {
+            position: absolute;
+            left: 500px; /* Position to the right of specials */
+            top: 0;
+            z-index: 5;
+        }
+        
+        .screenshot-location-card {
+            width: 200px;
+            height: 140px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transform: rotate(-90deg);
         }
 
         .screenshot-special-card:hover {
@@ -8311,116 +8346,9 @@
 
     function generateScreenshotContent() {
         const screenshotContent = document.getElementById('screenshotViewContent');
-        
-        // Filter for character cards only
-        const characterCards = deckEditorCards.filter(card => card.type === 'character');
-        
-        if (characterCards.length === 0) {
-            screenshotContent.innerHTML = '<div class="screenshot-blank-screen">No character cards in deck</div>';
-            return;
-        }
-        
-        // Sort characters by number of selected special cards (including quantities),
-        // then alphabetically by name for ties
-        const allSpecials = deckEditorCards.filter(card => card.type === 'special');
-
-        function countSelectedSpecialsForCharacter(characterName) {
-            // Sum quantities of specials that belong to this character
-            return allSpecials.reduce((sum, specialData) => {
-                const availableSpecial = availableCardsMap.get(specialData.cardId);
-                if (!availableSpecial) return sum;
-                // Exclude Any Character or undefined mapping
-                if (!availableSpecial.character || availableSpecial.character === 'Any Character') {
-                    return sum;
-                }
-                if (availableSpecial.character === characterName) {
-                    const qty = Number(specialData.quantity || 1);
-                    return sum + qty;
-                }
-                return sum;
-            }, 0);
-        }
-
-        characterCards.sort((a, b) => {
-            const aCard = availableCardsMap.get(a.cardId);
-            const bCard = availableCardsMap.get(b.cardId);
-            if (!aCard || !bCard) return 0;
-
-            const aCount = countSelectedSpecialsForCharacter(aCard.name);
-            const bCount = countSelectedSpecialsForCharacter(bCard.name);
-
-            if (aCount !== bCount) {
-                return bCount - aCount; // Descending
-            }
-            return aCard.name.localeCompare(bCard.name);
-        });
-        
-        let contentHtml = '<div class="screenshot-characters-container">';
-        
-        characterCards.forEach((cardData, index) => {
-            const availableCard = availableCardsMap.get(cardData.cardId);
-            
-            if (availableCard) {
-                const imagePath = getCardImagePath(availableCard, cardData.type, cardData.selectedAlternateImage);
-                const quantity = cardData.quantity || 1;
-                
-                // Start character group
-                contentHtml += '<div class="screenshot-character-group">';
-                
-                // Create character card
-                contentHtml += `
-                    <div class="screenshot-character-card" 
-                         style="background-image: url('${imagePath}'); z-index: 1;">
-                        ${quantity > 1 ? `<div class="screenshot-card-quantity">${quantity}</div>` : ''}
-                    </div>
-                `;
-                
-                // Find special cards for this character
-                const allSpecials = deckEditorCards.filter(card => card.type === 'special');
-                const characterName = availableCard.name;
-                
-                // Filter specials by looking up their character in availableCardsMap
-                const characterSpecials = allSpecials.filter(specialData => {
-                    const availableSpecial = availableCardsMap.get(specialData.cardId);
-                    if (availableSpecial && availableSpecial.character) {
-                        return availableSpecial.character === characterName;
-                    }
-                    return false;
-                });
-                
-                // Only show specials that belong to this character
-                const specialsToShow = characterSpecials;
-                
-                if (specialsToShow.length > 0) {
-                    contentHtml += '<div class="screenshot-specials-container">';
-                    
-                    specialsToShow.forEach((specialData, specialIndex) => {
-                        const availableSpecial = availableCardsMap.get(specialData.cardId);
-                        if (availableSpecial) {
-                            const specialImagePath = getCardImagePath(availableSpecial, specialData.type, specialData.selectedAlternateImage);
-                            const specialQuantity = specialData.quantity || 1;
-                            
-                            // Create multiple special cards if quantity > 1
-                            for (let i = 0; i < specialQuantity; i++) {
-                                contentHtml += `
-                                    <div class="screenshot-special-card" 
-                                         style="background-image: url('${specialImagePath}'); z-index: ${specialIndex + i + 2};">
-                                        ${specialQuantity > 1 ? `<div class="screenshot-card-quantity">${specialQuantity}</div>` : ''}
-                                    </div>
-                                `;
-                            }
-                        }
-                    });
-                    
-                    contentHtml += '</div>'; // Close specials container
-                }
-                
-                contentHtml += '</div>'; // Close character group
-            }
-        });
-        
-        contentHtml += '</div>';
-        screenshotContent.innerHTML = contentHtml;
+        if (!screenshotContent) return;
+        // Blank screenshot view per request
+        screenshotContent.innerHTML = '';
     }
 
         function drawHand() {
