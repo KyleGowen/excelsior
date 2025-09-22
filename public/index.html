@@ -795,7 +795,6 @@
             flex-direction: column;
             gap: 8px;
         }
-
         .checkbox-group label {
             display: flex;
             align-items: center;
@@ -1593,7 +1592,6 @@
             /* Subtle grid over the existing background */
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
         }
-
         /* Light grid overlay (10px cells with 50px bold lines) */
         .screenshot-view-content::before {
             content: '';
@@ -2093,9 +2091,11 @@
             background-position: center;
             background-repeat: no-repeat;
             border-radius: 8px;
+            border: 2px solid red; /* TEMP: visualize bounds for grid snapping */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             cursor: move;
-            transform: rotate(-90deg);
+            /* transform: rotate(-90deg); */ /* Temporarily removed for debugging */
+            /* transform-origin: top left; */ /* Not needed without rotation */
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             z-index: 10;
             user-select: none;
@@ -2103,13 +2103,15 @@
         }
         
         .screenshot-draggable-card:hover {
-            transform: rotate(-90deg) scale(1.05);
+            /* No magnification in screenshot view to prevent alignment issues */
+            /* transform: rotate(-90deg); */ /* Temporarily removed for debugging */
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
             z-index: 100;
         }
         
         .screenshot-draggable-card.dragging {
-            transform: rotate(-90deg) scale(1.1);
+            /* No scaling during drag to maintain alignment */
+            /* transform: rotate(-90deg); */ /* Temporarily removed for debugging */
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
             z-index: 1000;
             opacity: 0.9;
@@ -2388,7 +2390,6 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
         }
-
         .metadata-item {
             display: flex;
             flex-direction: column;
@@ -3186,7 +3187,6 @@
             align-items: flex-start;
             padding-top: 10px;
         }
-
         /* Character background styling for deck editor tiles */
         .deck-card-editor-item.character-card {
             background: linear-gradient(to right, 
@@ -3980,7 +3980,6 @@
         .card-item-content {
             flex: 1;
         }
-
         .card-item-plus {
             background: rgba(78, 205, 196, 0.2);
             border: 1px solid rgba(78, 205, 196, 0.4);
@@ -5211,7 +5210,6 @@
             <div id="cardHoverCaption" class="card-hover-caption"></div>
         </div>
     </div>
-
     <!-- Deck Editor Modal -->
     <div id="deckEditorModal" class="modal" onclick="closeDeckEditor()">
         <div class="modal-content large-modal" onclick="event.stopPropagation()">
@@ -6007,7 +6005,6 @@
             // Reload all characters
             loadCharacters();
         }
-
         // Modal functionality
         function openModal(imgElement) {
             document.getElementById('modalImage').src = imgElement.src;
@@ -6696,7 +6693,7 @@
                         <img src="/src/resources/cards/images/aspects/${mapImagePathToActualFile(aspect.image)}" 
                              alt="${aspect.card_name}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
-                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3ZnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
                              onmouseenter="showCardHoverModal('/src/resources/cards/images/aspects/${mapImagePathToActualFile(aspect.image)}', '${aspect.card_name.replace(/'/g, "\\'")}')"
                              onmouseleave="hideCardHoverModal()"
                              onclick="openModal(this)">
@@ -6776,7 +6773,7 @@
                         <img src="/src/resources/cards/images/advanced-universe/${mapImagePathToActualFile(card.image)}" 
                              alt="${card.name}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
-                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
                              onclick="openModal(this)">
                     </td>
                     <td>
@@ -6792,7 +6789,6 @@
                 </tr>
             `).join('');
         }
-
         function toggleOnePerDeckAdvancedColumn() {
             const onePerDeckAdvancedColumn = document.querySelectorAll('.one-per-deck-advanced-column');
             const toggleButton = document.getElementById('toggle-one-per-deck-advanced');
@@ -7500,7 +7496,6 @@
             loadDecks();
             updateStats();
         }
-
         document.addEventListener('DOMContentLoaded', () => {
             // Load current user from localStorage
             const storedUser = localStorage.getItem('currentUser');
@@ -8286,7 +8281,6 @@
                 </div>
             `).join('');
         }
-
         async function addCardToDeck(cardType, cardId) {
             if (!currentDeckId) {
                 showNotification('No deck selected', 'error');
@@ -8419,6 +8413,14 @@
         
         let contentHtml = '<div class="screenshot-draggable-container">';
         
+        // Calculate center position for the cards
+        const containerWidth = 800; // Approximate container width
+        const containerHeight = 600; // Approximate container height
+        const cardWidth = 200;
+        const cardHeight = 140;
+        const startX = (containerWidth - cardWidth) / 2; // Center horizontally
+        const startY = (containerHeight - cardHeight) / 2; // Center vertically
+        
         characterCards.forEach((cardData, index) => {
             const availableCard = availableCardsMap.get(cardData.cardId);
             
@@ -8426,12 +8428,12 @@
                 const imagePath = getCardImagePath(availableCard, cardData.type, cardData.selectedAlternateImage);
                 const quantity = cardData.quantity || 1;
                 
-                // Create draggable character card
+                // Create draggable character card centered with slight offset for multiple cards
                 contentHtml += `
                     <div class="screenshot-draggable-card" 
                          data-card-id="${cardData.cardId}"
                          data-card-type="character"
-                         style="left: ${index * 60}px; top: ${index * 40}px; background-image: url('${imagePath}');">
+                         style="left: ${startX + (index * 60)}px; top: ${startY + (index * 40)}px; background-image: url('${imagePath}');">
                         ${quantity > 1 ? `<div class="screenshot-card-quantity">${quantity}</div>` : ''}
                     </div>
                 `;
@@ -8450,6 +8452,12 @@
         if (!container) return;
 
         const gridSize = 50;
+        // Align snapping origin with the visible grid in .screenshot-view-content
+        const contentEl = document.querySelector('.screenshot-view-content');
+        const contentStyle = contentEl ? window.getComputedStyle(contentEl) : null;
+        // Grid snapping - align to 50px grid starting at 0,0
+        const gridOffsetX = 0;
+        const gridOffsetY = 0;
         let activeCard = null;
         let offsetX = 0;
         let offsetY = 0;
@@ -8458,6 +8466,7 @@
         let marqueeStartX = 0;
         let marqueeStartY = 0;
         let selectedCards = new Set();
+        let initialPositions = new Map(); // Store initial positions for group dragging
         
         function getCardBounds(card) {
             const rect = card.getBoundingClientRect();
@@ -8508,19 +8517,38 @@
             }
 
             if (!activeCard) return;
-            const x = clientX - rect.left - offsetX;
-            const y = clientY - rect.top - offsetY;
+            // Position cards by their visual center, maintaining the click offset
+            const cardWidth = 200;  // Card width
+            const cardHeight = 140; // Card height
+            const visualCenterX = rect.left + cardWidth/2;   // 100px from left
+            const visualCenterY = rect.top + cardHeight/2;   // 70px from top
+            // Position the card so its visual center is at the cursor position minus offset
+            const x = clientX - visualCenterX - offsetX;
+            const y = clientY - visualCenterY - offsetY;
 
             // Move either single card or group
             const toMove = selectedCards.size > 0 && selectedCards.has(activeCard) ? Array.from(selectedCards) : [activeCard];
-            const activeBounds = getCardBounds(activeCard);
-            const dx = x - activeBounds.left;
-            const dy = y - activeBounds.top;
-            toMove.forEach(card => {
-                const bounds = getCardBounds(card);
-                card.style.left = bounds.left + dx + 'px';
-                card.style.top = bounds.top + dy + 'px';
-            });
+            
+            if (toMove.length === 1) {
+                // Single card - move directly
+                toMove[0].style.left = x + 'px';
+                toMove[0].style.top = y + 'px';
+            } else {
+                // Group dragging - calculate delta from active card's initial position
+                const activeInitialPos = initialPositions.get(activeCard);
+                if (activeInitialPos) {
+                    const deltaX = x - activeInitialPos.x;
+                    const deltaY = y - activeInitialPos.y;
+                    
+                    toMove.forEach(card => {
+                        const initialPos = initialPositions.get(card);
+                        if (initialPos) {
+                            card.style.left = (initialPos.x + deltaX) + 'px';
+                            card.style.top = (initialPos.y + deltaY) + 'px';
+                        }
+                    });
+                }
+            }
         }
 
         function onPointerUp(e) {
@@ -8534,21 +8562,16 @@
             }
 
             if (!activeCard) return;
-            // Snap to grid on release for group or single
+            // End drag; no additional snapping here to avoid post-release movement
             const toMove = selectedCards.size > 0 && selectedCards.has(activeCard) ? Array.from(selectedCards) : [activeCard];
             toMove.forEach(card => {
-                const left = parseFloat(card.style.left || '0');
-                const top = parseFloat(card.style.top || '0');
-                const snappedX = Math.round(left / gridSize) * gridSize;
-                const snappedY = Math.round(top / gridSize) * gridSize;
-                card.style.left = snappedX + 'px';
-                card.style.top = snappedY + 'px';
                 card.classList.remove('dragging');
             });
 
             container.removeEventListener('pointermove', onPointerMove);
             window.removeEventListener('pointerup', onPointerUp);
             activeCard = null;
+            initialPositions.clear();
         }
 
         container.querySelectorAll('.screenshot-draggable-card').forEach(card => {
@@ -8574,8 +8597,24 @@
 
                 activeCard = card;
                 const rect = card.getBoundingClientRect();
-                offsetX = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
-                offsetY = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+                // For unrotated cards, visual dimensions are the same as original dimensions
+                const cardWidth = 200;  // Card width
+                const cardHeight = 140; // Card height
+                // Calculate the visual center of the card
+                const visualCenterX = rect.left + cardWidth/2;   // 100px from left
+                const visualCenterY = rect.top + cardHeight/2;   // 70px from top
+                // Calculate offset from click point to visual center
+                offsetX = (e.clientX || (e.touches && e.touches[0].clientX)) - visualCenterX;
+                offsetY = (e.clientY || (e.touches && e.touches[0].clientY)) - visualCenterY;
+                
+                // Store initial positions for group dragging
+                initialPositions.clear();
+                const toMove = selectedCards.size > 0 && selectedCards.has(card) ? Array.from(selectedCards) : [card];
+                toMove.forEach(cardToMove => {
+                    const bounds = getCardBounds(cardToMove);
+                    initialPositions.set(cardToMove, { x: bounds.left, y: bounds.top });
+                });
+                
                 card.classList.add('dragging');
                 container.addEventListener('pointermove', onPointerMove);
                 window.addEventListener('pointerup', onPointerUp);
@@ -8584,8 +8623,7 @@
 
         // Marquee selection on empty space
         container.addEventListener('pointerdown', (e) => {
-            const targetEl = e.target && (e.target as any);
-            if (targetEl && targetEl.classList && targetEl.classList.contains('screenshot-draggable-card')) {
+            if (e.target.classList && e.target.classList.contains('screenshot-draggable-card')) {
                 return; // handled by card listener
             }
             clearSelection();
@@ -8604,7 +8642,6 @@
             window.addEventListener('pointerup', onPointerUp);
         });
     }
-
         function drawHand() {
             const deckCards = deckEditorCards;
             const totalCards = deckCards.reduce((sum, card) => sum + card.quantity, 0);
@@ -9358,7 +9395,6 @@
                 }, 50);
             }
         }
-
         // Toggle advanced universe character filter
         async function toggleAdvancedUniverseCharacterFilter() {
             const filterCheckbox = document.getElementById('advancedUniverseCharacterFilter');
@@ -10031,7 +10067,6 @@
                 toggleTrainingCharacterFilter();
             }
         }
-
         // Toggle ally universe character filter
         async function toggleAllyUniverseCharacterFilter() {
             const filterCheckbox = document.getElementById('allyUniverseCharacterFilter');
@@ -10790,7 +10825,6 @@
                 showNotification('Failed to load deck for editing', 'error');
             }
         }
-
         async function displayDeckCardsForEditing() {
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             
@@ -11434,7 +11468,6 @@
                 });
             });
         }
-        
         // Apply background images to character, power, location, special, mission, and aspect cards in deck editor
         function applyCharacterBackgroundsToEditor() {
             const characterCards = document.querySelectorAll('.deck-card-editor-item.character-card');
@@ -12225,7 +12258,6 @@
                 console.error('Error loading available cards data:', error);
             }
         }
-
         async function removeCardFromEditor(index) {
             // Capture current expansion state before re-rendering
             const currentExpansionState = getExpansionState();
@@ -12660,7 +12692,6 @@
                 }
             });
         }
-
         async function loadAvailableCards() {
             try {
                 const cardCategories = document.getElementById('cardCategories');
@@ -13418,7 +13449,6 @@
                 }
             });
         }
-
         function setupDragAndDrop() {
             console.log('setupDragAndDrop called');
             try {
