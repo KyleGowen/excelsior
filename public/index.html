@@ -533,38 +533,55 @@
         }
 
         /* Other columns will auto-size based on content */
-        #characters-table th:nth-child(2), /* Name */
-        #characters-table td:nth-child(2) {
+        #characters-table th:nth-child(3), /* Add to Deck button */
+        #characters-table td:nth-child(3) {
+            width: 100px;
+            min-width: 100px;
+            max-width: 100px;
+        }
+
+        #characters-table th:nth-child(4), /* Name */
+        #characters-table td:nth-child(4) {
             min-width: 150px;
         }
 
-        #characters-table th:nth-child(3), /* Energy */
-        #characters-table td:nth-child(3) {
-            min-width: 60px;
-        }
-
-        #characters-table th:nth-child(4), /* Combat */
-        #characters-table td:nth-child(4) {
-            min-width: 60px;
-        }
-
-        #characters-table th:nth-child(5), /* Brute Force */
+        #characters-table th:nth-child(5), /* Energy */
         #characters-table td:nth-child(5) {
-            min-width: 80px;
+            width: 70px;
+            min-width: 70px;
+            max-width: 70px;
         }
 
-        #characters-table th:nth-child(6), /* Intelligence */
+        #characters-table th:nth-child(6), /* Combat */
         #characters-table td:nth-child(6) {
-            min-width: 80px;
+            width: 70px;
+            min-width: 70px;
+            max-width: 70px;
         }
 
-        #characters-table th:nth-child(7), /* Threat Level */
+        #characters-table th:nth-child(7), /* Brute Force */
         #characters-table td:nth-child(7) {
-            min-width: 80px;
+            width: 70px;
+            min-width: 70px;
+            max-width: 70px;
         }
 
-        #characters-table th:nth-child(8), /* Special Abilities */
+        #characters-table th:nth-child(8), /* Intelligence */
         #characters-table td:nth-child(8) {
+            width: 70px;
+            min-width: 70px;
+            max-width: 70px;
+        }
+
+        #characters-table th:nth-child(9), /* Threat Level */
+        #characters-table td:nth-child(9) {
+            width: 70px;
+            min-width: 70px;
+            max-width: 70px;
+        }
+
+        #characters-table th:nth-child(10), /* Special Abilities */
+        #characters-table td:nth-child(10) {
             min-width: 200px;
         }
 
@@ -1530,6 +1547,537 @@
             transform: rotate(5deg) scale(1.1);
             z-index: 1000;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Screenshot View Section */
+        .screenshot-view-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #1a1a1a;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screenshot-view-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 2px solid #4ECDC4;
+        }
+
+        .screenshot-view-header h4 {
+            color: #4ECDC4;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .screenshot-view-close {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .screenshot-view-close:hover {
+            background: #c0392b;
+        }
+
+        .screenshot-view-content {
+            flex: 1;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        .screenshot-cards-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 600px;
+        }
+
+        .screenshot-card-stack {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .screenshot-card-stack.horizontal {
+            flex-direction: row;
+        }
+
+        .screenshot-card {
+            position: relative;
+            width: 100px;
+            height: 150px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s ease;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .screenshot-card.landscape {
+            width: 150px;
+            height: 100px;
+        }
+
+        .screenshot-card:hover {
+            transform: scale(1.1) translateY(-5px);
+            z-index: 100;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+        }
+
+        .screenshot-card-quantity {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .screenshot-card-stack-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #4ECDC4;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            white-space: nowrap;
+            z-index: 50;
+        }
+
+        /* Structured tabletop layout matching sample images */
+        .screenshot-card-stack {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .screenshot-card-stack.horizontal {
+            flex-direction: row;
+        }
+
+        /* Characters - along left side with their specials overlapping next to them */
+        .screenshot-card-stack.characters {
+            top: 50px;
+            left: 30px;
+        }
+
+        .screenshot-card-stack.characters .screenshot-card {
+            margin-bottom: -25px;
+            transform: rotate(-2deg);
+        }
+
+        .screenshot-card-stack.characters .screenshot-card:nth-child(2) {
+            transform: rotate(1deg) translateX(5px);
+        }
+
+        .screenshot-card-stack.characters .screenshot-card:nth-child(3) {
+            transform: rotate(-1deg) translateX(-3px);
+        }
+
+        .screenshot-card-stack.characters .screenshot-card:nth-child(4) {
+            transform: rotate(2deg) translateX(8px);
+        }
+
+        /* Character specials - overlapping next to their character */
+        .screenshot-card-stack.specials {
+            top: 50px;
+            left: 200px;
+        }
+
+        .screenshot-card-stack.specials .screenshot-card {
+            margin-bottom: -30px;
+            transform: rotate(1deg);
+        }
+
+        .screenshot-card-stack.specials .screenshot-card:nth-child(2) {
+            transform: rotate(-1deg) translateX(-5px);
+        }
+
+        .screenshot-card-stack.specials .screenshot-card:nth-child(3) {
+            transform: rotate(2deg) translateX(3px);
+        }
+
+        .screenshot-card-stack.specials .screenshot-card:nth-child(4) {
+            transform: rotate(-2deg) translateX(-8px);
+        }
+
+        .screenshot-card-stack.specials .screenshot-card:nth-child(5) {
+            transform: rotate(1deg) translateX(10px);
+        }
+
+        /* Power cards - upper right, sorted by value in 2 rows */
+        .screenshot-card-stack.power-cards {
+            top: 50px;
+            right: 30px;
+        }
+
+        .screenshot-card-stack.power-cards .screenshot-card {
+            margin-right: -20px;
+            transform: rotate(1deg);
+        }
+
+        .screenshot-card-stack.power-cards .screenshot-card:nth-child(2) {
+            transform: rotate(-1deg) translateY(-8px);
+        }
+
+        .screenshot-card-stack.power-cards .screenshot-card:nth-child(3) {
+            transform: rotate(2deg) translateY(5px);
+        }
+
+        .screenshot-card-stack.power-cards .screenshot-card:nth-child(4) {
+            transform: rotate(-2deg) translateY(-12px);
+        }
+
+        .screenshot-card-stack.power-cards .screenshot-card:nth-child(5) {
+            transform: rotate(0.5deg) translateY(8px);
+        }
+
+        /* Second row of power cards */
+        .screenshot-card-stack.power-cards .screenshot-card:nth-child(6) {
+            position: absolute;
+            top: 120px;
+            right: 30px;
+            transform: rotate(-1deg);
+        }
+
+        .screenshot-card-stack.power-cards .screenshot-card:nth-child(7) {
+            position: absolute;
+            top: 120px;
+            right: 50px;
+            transform: rotate(1deg);
+        }
+
+        .screenshot-card-stack.power-cards .screenshot-card:nth-child(8) {
+            position: absolute;
+            top: 120px;
+            right: 70px;
+            transform: rotate(-0.5deg);
+        }
+
+        /* Teamwork - middle right */
+        .screenshot-card-stack.teamwork {
+            top: 200px;
+            right: 30px;
+        }
+
+        .screenshot-card-stack.teamwork .screenshot-card {
+            margin-bottom: -25px;
+            transform: rotate(-1deg);
+        }
+
+        .screenshot-card-stack.teamwork .screenshot-card:nth-child(2) {
+            transform: rotate(1deg) translateY(-6px);
+        }
+
+        .screenshot-card-stack.teamwork .screenshot-card:nth-child(3) {
+            transform: rotate(-2deg) translateY(8px);
+        }
+
+        .screenshot-card-stack.teamwork .screenshot-card:nth-child(4) {
+            transform: rotate(0.5deg) translateY(-10px);
+        }
+
+        /* Ally universe - middle right below teamwork */
+        .screenshot-card-stack.ally-universe {
+            top: 350px;
+            right: 30px;
+        }
+
+        .screenshot-card-stack.ally-universe .screenshot-card {
+            margin-bottom: -25px;
+            transform: rotate(-1deg);
+        }
+
+        .screenshot-card-stack.ally-universe .screenshot-card:nth-child(2) {
+            transform: rotate(1deg) translateY(-6px);
+        }
+
+        .screenshot-card-stack.ally-universe .screenshot-card:nth-child(3) {
+            transform: rotate(-2deg) translateY(8px);
+        }
+
+        /* Any Character specials - along the bottom */
+        .screenshot-card-stack.basic-universe {
+            bottom: 30px;
+            left: 50px;
+        }
+
+        .screenshot-card-stack.basic-universe .screenshot-card {
+            margin-right: -20px;
+            transform: rotate(0.5deg);
+        }
+
+        .screenshot-card-stack.basic-universe .screenshot-card:nth-child(2) {
+            transform: rotate(-0.5deg) translateY(-6px);
+        }
+
+        .screenshot-card-stack.basic-universe .screenshot-card:nth-child(3) {
+            transform: rotate(1deg) translateY(6px);
+        }
+
+        .screenshot-card-stack.basic-universe .screenshot-card:nth-child(4) {
+            transform: rotate(-1deg) translateY(-10px);
+        }
+
+        .screenshot-card-stack.basic-universe .screenshot-card:nth-child(5) {
+            transform: rotate(0.5deg) translateY(8px);
+        }
+
+        /* Aspect cards - tucked in with any character cards */
+        .screenshot-card-stack.aspects {
+            bottom: 30px;
+            left: 300px;
+        }
+
+        .screenshot-card-stack.aspects .screenshot-card {
+            margin-right: -20px;
+            transform: rotate(-0.5deg);
+        }
+
+        .screenshot-card-stack.aspects .screenshot-card:nth-child(2) {
+            transform: rotate(0.5deg) translateY(-6px);
+        }
+
+        .screenshot-card-stack.aspects .screenshot-card:nth-child(3) {
+            transform: rotate(-1deg) translateY(6px);
+        }
+
+        /* Location - near a character in center */
+        .screenshot-card-stack.locations {
+            top: 250px;
+            left: 400px;
+        }
+
+        .screenshot-card-stack.locations .screenshot-card {
+            margin-bottom: -25px;
+            transform: rotate(1deg);
+        }
+
+        .screenshot-card-stack.locations .screenshot-card:nth-child(2) {
+            transform: rotate(-1deg) translateX(6px);
+        }
+
+        .screenshot-card-stack.locations .screenshot-card:nth-child(3) {
+            transform: rotate(2deg) translateX(-4px);
+        }
+
+        /* Missions - upper middle left */
+        .screenshot-card-stack.missions {
+            top: 100px;
+            left: 150px;
+        }
+
+        .screenshot-card-stack.missions .screenshot-card {
+            margin-bottom: -22px;
+            transform: rotate(-2deg);
+        }
+
+        .screenshot-card-stack.missions .screenshot-card:nth-child(2) {
+            transform: rotate(1deg) translateX(8px);
+        }
+
+        .screenshot-card-stack.missions .screenshot-card:nth-child(3) {
+            transform: rotate(-1deg) translateX(-6px);
+        }
+
+        /* Events - upper middle right */
+        .screenshot-card-stack.events {
+            top: 100px;
+            right: 200px;
+        }
+
+        .screenshot-card-stack.events .screenshot-card {
+            margin-bottom: -22px;
+            transform: rotate(2deg);
+        }
+
+        .screenshot-card-stack.events .screenshot-card:nth-child(2) {
+            transform: rotate(-1deg) translateX(-8px);
+        }
+
+        .screenshot-card-stack.events .screenshot-card:nth-child(3) {
+            transform: rotate(1deg) translateX(6px);
+        }
+
+        /* Advanced universe - lower middle right */
+        .screenshot-card-stack.advanced-universe {
+            top: 450px;
+            right: 150px;
+        }
+
+        .screenshot-card-stack.advanced-universe .screenshot-card {
+            margin-bottom: -22px;
+            transform: rotate(1deg);
+        }
+
+        .screenshot-card-stack.advanced-universe .screenshot-card:nth-child(2) {
+            transform: rotate(-1deg) translateX(-6px);
+        }
+
+        .screenshot-card-stack.advanced-universe .screenshot-card:nth-child(3) {
+            transform: rotate(2deg) translateX(4px);
+        }
+
+        /* Training - middle right */
+        .screenshot-card-stack.training {
+            top: 300px;
+            right: 150px;
+        }
+
+        .screenshot-card-stack.training .screenshot-card {
+            margin-bottom: -22px;
+            transform: rotate(1deg);
+        }
+
+        .screenshot-card-stack.training .screenshot-card:nth-child(2) {
+            transform: rotate(-1deg) translateX(-7px);
+        }
+
+        .screenshot-card-stack.training .screenshot-card:nth-child(3) {
+            transform: rotate(0.5deg) translateX(5px);
+        }
+
+        /* Blank screen styling */
+        .screenshot-blank-screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #bdc3c7;
+            font-size: 24px;
+            font-weight: 300;
+        }
+
+        /* Character cards container - aligned along left side */
+        .screenshot-characters-container {
+            position: absolute;
+            top: 45px;
+            left: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 0px;
+            z-index: 10;
+        }
+
+        /* Individual character card group - contains character + specials */
+        .screenshot-character-group {
+            position: relative;
+            margin-bottom: 70px;
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+            min-height: 200px; /* Ensure enough height for special cards */
+        }
+
+        /* Individual character card - rotated 90 degrees counter-clockwise */
+        .screenshot-character-card {
+            width: 200px;
+            height: 140px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 2px solid #2c3e50;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transform: rotate(-90deg);
+            position: relative;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        /* Special cards container - horizontal stack next to character */
+        .screenshot-specials-container {
+            position: absolute;
+            left: 190px; /* Position a bit more to the right */
+            top: -30px; /* Move up a bit more to align with character card */
+            display: flex;
+            flex-direction: row;
+            z-index: 10;
+        }
+
+        /* Individual special card - overlapping stack */
+        .screenshot-special-card {
+            width: 140px;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 2px solid #2c3e50;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transition: transform 0.2s ease;
+            margin-right: -112px; /* Overlap by 80% (20% visible) - each card overlaps the right side of the next */
+            z-index: 1;
+        }
+
+        .screenshot-special-card:last-child {
+            margin-right: 0; /* Last card has no right margin */
+        }
+
+        .screenshot-special-card:hover {
+            transform: scale(1.05);
+            z-index: 1001;
+        }
+
+        .screenshot-character-card:hover {
+            transform: rotate(-90deg) scale(1.05);
+            z-index: 1001;
+        }
+
+        /* Quantity badge for multiple cards */
+        .screenshot-character-card .screenshot-card-quantity {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 10;
         }
 
         .drawn-card.drag-target {
@@ -4623,6 +5171,7 @@
                     </div>
                     <div class="summary-stat">
                         <button class="remove-all-btn" id="drawHandBtn" onclick="toggleDrawHand()" disabled>Draw Hand</button>
+                        <button class="remove-all-btn" id="screenshotViewBtn" onclick="toggleScreenshotView()">Screenshot View</button>
                     </div>
                     <div class="deck-summary-validation" id="deckSummaryValidation">
                         <!-- Validation content will be displayed here -->
@@ -4638,6 +5187,17 @@
                 </div>
                 <div class="draw-hand-content" id="drawHandContent">
                     <!-- Drawn cards will be displayed here -->
+                </div>
+            </div>
+            
+            <!-- Screenshot View Section -->
+            <div class="screenshot-view-section" id="screenshotViewSection" style="display: none;">
+                <div class="screenshot-view-header">
+                    <h4>Screenshot View</h4>
+                    <button class="screenshot-view-close" onclick="closeScreenshotView()">×</button>
+                </div>
+                <div class="screenshot-view-content" id="screenshotViewContent">
+                    <!-- Deck cards will be displayed here in tabletop layout -->
                 </div>
             </div>
             
@@ -5251,7 +5811,9 @@
             }
             
             // Setup clear filters button
-            clearFiltersBtn.addEventListener('click', clearAllFilters);
+            if (clearFiltersBtn) {
+                clearFiltersBtn.addEventListener('click', clearAllFilters);
+            }
         }
 
         // Apply all active filters
@@ -5278,13 +5840,13 @@
                     
                     if (hasInherentAbilityToggle && hasInherentAbilityToggle.checked) {
                         filteredCharacters = filteredCharacters.filter(character => 
-                            character.special_abilities.trim().length > 0
+                            character.special_abilities && character.special_abilities.trim().length > 0
                         );
                     }
                     
                     if (hasNoInherentAbilityToggle && hasNoInherentAbilityToggle.checked) {
                         filteredCharacters = filteredCharacters.filter(character => 
-                            character.special_abilities.trim().length === 0
+                            !character.special_abilities || character.special_abilities.trim().length === 0
                         );
                     }
 
@@ -5293,7 +5855,7 @@
                     if (abilitiesSearchInput && abilitiesSearchInput.value.toLowerCase().length > 0) {
                         const searchTerm = abilitiesSearchInput.value.toLowerCase();
                         filteredCharacters = filteredCharacters.filter(character => 
-                            character.special_abilities.toLowerCase().includes(searchTerm)
+                            character.special_abilities && character.special_abilities.toLowerCase().includes(searchTerm)
                         );
                     }
                     
@@ -7721,6 +8283,123 @@
             drawHandSection.style.display = 'none';
             drawHandBtn.textContent = 'Draw Hand';
         }
+
+        // Screenshot View functionality
+        function toggleScreenshotView() {
+            const screenshotViewSection = document.getElementById('screenshotViewSection');
+            const screenshotViewBtn = document.getElementById('screenshotViewBtn');
+            const deckPane = document.querySelector('.deck-pane');
+            const availablePane = document.querySelector('.available-pane');
+            
+            if (screenshotViewSection.style.display === 'none') {
+                // Show screenshot view
+                screenshotViewSection.style.display = 'flex';
+                screenshotViewBtn.textContent = 'Exit Screenshot';
+                
+                // Hide original panes
+                if (deckPane) deckPane.style.display = 'none';
+                if (availablePane) availablePane.style.display = 'none';
+                
+                // Generate screenshot content
+                generateScreenshotContent();
+            } else {
+                // Hide screenshot view
+                closeScreenshotView();
+            }
+        }
+
+        function closeScreenshotView() {
+            const screenshotViewSection = document.getElementById('screenshotViewSection');
+            const screenshotViewBtn = document.getElementById('screenshotViewBtn');
+            const deckPane = document.querySelector('.deck-pane');
+            const availablePane = document.querySelector('.available-pane');
+            
+            screenshotViewSection.style.display = 'none';
+            screenshotViewBtn.textContent = 'Screenshot View';
+            
+            // Show original panes
+            if (deckPane) deckPane.style.display = 'flex';
+            if (availablePane) availablePane.style.display = 'flex';
+        }
+
+    function generateScreenshotContent() {
+        const screenshotContent = document.getElementById('screenshotViewContent');
+        
+        // Filter for character cards only
+        const characterCards = deckEditorCards.filter(card => card.type === 'character');
+        
+        if (characterCards.length === 0) {
+            screenshotContent.innerHTML = '<div class="screenshot-blank-screen">No character cards in deck</div>';
+            return;
+        }
+        
+        let contentHtml = '<div class="screenshot-characters-container">';
+        
+        characterCards.forEach((cardData, index) => {
+            const availableCard = availableCardsMap.get(cardData.cardId);
+            
+            if (availableCard) {
+                const imagePath = getCardImagePath(availableCard, cardData.type, cardData.selectedAlternateImage);
+                const quantity = cardData.quantity || 1;
+                
+                // Start character group
+                contentHtml += '<div class="screenshot-character-group">';
+                
+                // Create character card
+                contentHtml += `
+                    <div class="screenshot-character-card" 
+                         style="background-image: url('${imagePath}'); z-index: 1;">
+                        ${quantity > 1 ? `<div class="screenshot-card-quantity">${quantity}</div>` : ''}
+                    </div>
+                `;
+                
+                // Find special cards for this character
+                const allSpecials = deckEditorCards.filter(card => card.type === 'special');
+                const characterName = availableCard.name;
+                
+                // Filter specials by looking up their character in availableCardsMap
+                const characterSpecials = allSpecials.filter(specialData => {
+                    const availableSpecial = availableCardsMap.get(specialData.cardId);
+                    if (availableSpecial && availableSpecial.character) {
+                        return availableSpecial.character === characterName;
+                    }
+                    return false;
+                });
+                
+                // Only show specials that belong to this character
+                const specialsToShow = characterSpecials;
+                
+                if (specialsToShow.length > 0) {
+                    contentHtml += '<div class="screenshot-specials-container">';
+                    
+                    specialsToShow.forEach((specialData, specialIndex) => {
+                        const availableSpecial = availableCardsMap.get(specialData.cardId);
+                        if (availableSpecial) {
+                            const specialImagePath = getCardImagePath(availableSpecial, specialData.type, specialData.selectedAlternateImage);
+                            const specialQuantity = specialData.quantity || 1;
+                            
+                            // Create multiple special cards if quantity > 1
+                            for (let i = 0; i < specialQuantity; i++) {
+                                contentHtml += `
+                                    <div class="screenshot-special-card" 
+                                         style="background-image: url('${specialImagePath}'); z-index: ${specialIndex + i + 2};">
+                                        ${specialQuantity > 1 ? `<div class="screenshot-card-quantity">${specialQuantity}</div>` : ''}
+                                    </div>
+                                `;
+                            }
+                        }
+                    });
+                    
+                    contentHtml += '</div>'; // Close specials container
+                }
+                
+                contentHtml += '</div>'; // Close character group
+            }
+        });
+        
+        contentHtml += '</div>';
+        screenshotContent.innerHTML = contentHtml;
+    }
 
         function drawHand() {
             const deckCards = deckEditorCards;
