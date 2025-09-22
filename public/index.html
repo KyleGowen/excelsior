@@ -2115,6 +2115,20 @@
             opacity: 0.9;
         }
         
+        .screenshot-draggable-card.selected {
+            outline: 3px solid rgba(52, 152, 219, 0.9);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.25), 0 8px 20px rgba(0,0,0,0.5);
+        }
+        
+        .screenshot-selection-rect {
+            position: absolute;
+            border: 2px dashed rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.15);
+            pointer-events: none;
+            z-index: 2000;
+        }
+        
         .screenshot-blank-screen {
             display: flex;
             align-items: center;
@@ -8439,27 +8453,99 @@
         let activeCard = null;
         let offsetX = 0;
         let offsetY = 0;
+        let selectionRect = null;
+        let isMarqueeSelecting = false;
+        let marqueeStartX = 0;
+        let marqueeStartY = 0;
+        let selectedCards = new Set();
+        
+        function getCardBounds(card) {
+            const rect = card.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            return {
+                left: rect.left - containerRect.left,
+                top: rect.top - containerRect.top,
+                right: rect.right - containerRect.left,
+                bottom: rect.bottom - containerRect.top,
+                width: rect.width,
+                height: rect.height
+            };
+        }
+        
+        function clearSelection() {
+            selectedCards.forEach(c => c.classList.remove('selected'));
+            selectedCards.clear();
+        }
 
         function onPointerMove(e) {
-            if (!activeCard) return;
             const rect = container.getBoundingClientRect();
-            const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left - offsetX;
-            const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top - offsetY;
-            activeCard.style.left = x + 'px';
-            activeCard.style.top = y + 'px';
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+            if (isMarqueeSelecting && selectionRect) {
+                const currentX = clientX - rect.left;
+                const currentY = clientY - rect.top;
+                const left = Math.min(currentX, marqueeStartX);
+                const top = Math.min(currentY, marqueeStartY);
+                const width = Math.abs(currentX - marqueeStartX);
+                const height = Math.abs(currentY - marqueeStartY);
+                selectionRect.style.left = left + 'px';
+                selectionRect.style.top = top + 'px';
+                selectionRect.style.width = width + 'px';
+                selectionRect.style.height = height + 'px';
+
+                // Update selection set by overlap
+                clearSelection();
+                container.querySelectorAll('.screenshot-draggable-card').forEach(card => {
+                    const b = getCardBounds(card);
+                    const overlaps = !(b.left > left + width || b.right < left || b.top > top + height || b.bottom < top);
+                    if (overlaps) {
+                        card.classList.add('selected');
+                        selectedCards.add(card);
+                    }
+                });
+                return;
+            }
+
+            if (!activeCard) return;
+            const x = clientX - rect.left - offsetX;
+            const y = clientY - rect.top - offsetY;
+
+            // Move either single card or group
+            const toMove = selectedCards.size > 0 && selectedCards.has(activeCard) ? Array.from(selectedCards) : [activeCard];
+            const activeBounds = getCardBounds(activeCard);
+            const dx = x - activeBounds.left;
+            const dy = y - activeBounds.top;
+            toMove.forEach(card => {
+                const bounds = getCardBounds(card);
+                card.style.left = bounds.left + dx + 'px';
+                card.style.top = bounds.top + dy + 'px';
+            });
         }
 
         function onPointerUp(e) {
+            if (isMarqueeSelecting) {
+                isMarqueeSelecting = false;
+                if (selectionRect && selectionRect.parentNode) selectionRect.parentNode.removeChild(selectionRect);
+                selectionRect = null;
+                container.removeEventListener('pointermove', onPointerMove);
+                window.removeEventListener('pointerup', onPointerUp);
+                return;
+            }
+
             if (!activeCard) return;
-            // Snap to grid on release
-            const rect = container.getBoundingClientRect();
-            const x = (e.clientX || (e.changedTouches && e.changedTouches[0].clientX)) - rect.left - offsetX;
-            const y = (e.clientY || (e.changedTouches && e.changedTouches[0].clientY)) - rect.top - offsetY;
-            const snappedX = Math.round(x / gridSize) * gridSize;
-            const snappedY = Math.round(y / gridSize) * gridSize;
-            activeCard.style.left = snappedX + 'px';
-            activeCard.style.top = snappedY + 'px';
-            activeCard.classList.remove('dragging');
+            // Snap to grid on release for group or single
+            const toMove = selectedCards.size > 0 && selectedCards.has(activeCard) ? Array.from(selectedCards) : [activeCard];
+            toMove.forEach(card => {
+                const left = parseFloat(card.style.left || '0');
+                const top = parseFloat(card.style.top || '0');
+                const snappedX = Math.round(left / gridSize) * gridSize;
+                const snappedY = Math.round(top / gridSize) * gridSize;
+                card.style.left = snappedX + 'px';
+                card.style.top = snappedY + 'px';
+                card.classList.remove('dragging');
+            });
+
             container.removeEventListener('pointermove', onPointerMove);
             window.removeEventListener('pointerup', onPointerUp);
             activeCard = null;
@@ -8470,6 +8556,22 @@
             card.setAttribute('draggable', 'false');
 
             card.addEventListener('pointerdown', (e) => {
+                // If clicking on a non-selected card, clear selection unless holding Shift (multi-select toggle)
+                const isShift = e.shiftKey;
+                if (!isShift && !card.classList.contains('selected')) {
+                    clearSelection();
+                }
+                if (isShift) {
+                    // Toggle selection
+                    if (card.classList.contains('selected')) {
+                        card.classList.remove('selected');
+                        selectedCards.delete(card);
+                    } else {
+                        card.classList.add('selected');
+                        selectedCards.add(card);
+                    }
+                }
+
                 activeCard = card;
                 const rect = card.getBoundingClientRect();
                 offsetX = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
@@ -8478,6 +8580,28 @@
                 container.addEventListener('pointermove', onPointerMove);
                 window.addEventListener('pointerup', onPointerUp);
             });
+        });
+
+        // Marquee selection on empty space
+        container.addEventListener('pointerdown', (e) => {
+            const targetEl = e.target && (e.target as any);
+            if (targetEl && targetEl.classList && targetEl.classList.contains('screenshot-draggable-card')) {
+                return; // handled by card listener
+            }
+            clearSelection();
+            const rect = container.getBoundingClientRect();
+            marqueeStartX = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+            marqueeStartY = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+            selectionRect = document.createElement('div');
+            selectionRect.className = 'screenshot-selection-rect';
+            selectionRect.style.left = marqueeStartX + 'px';
+            selectionRect.style.top = marqueeStartY + 'px';
+            selectionRect.style.width = '0px';
+            selectionRect.style.height = '0px';
+            container.appendChild(selectionRect);
+            isMarqueeSelecting = true;
+            container.addEventListener('pointermove', onPointerMove);
+            window.addEventListener('pointerup', onPointerUp);
         });
     }
 
