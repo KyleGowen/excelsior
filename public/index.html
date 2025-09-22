@@ -2085,33 +2085,43 @@
         
         .screenshot-draggable-card {
             position: absolute;
-            width: 200px;
-            height: 140px;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            width: 140px;  /* Rotated dimensions: height becomes width */
+            height: 200px; /* Rotated dimensions: width becomes height */
             border-radius: 8px;
             border: 2px solid red; /* TEMP: visualize bounds for grid snapping */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             cursor: move;
-            /* transform: rotate(-90deg); */ /* Temporarily removed for debugging */
-            /* transform-origin: top left; */ /* Not needed without rotation */
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            /* No rotation on the container - only the inner image */
+            transition: box-shadow 0.2s ease;
             z-index: 10;
             user-select: none;
             -webkit-user-drag: none;
         }
         
+        .screenshot-card-image {
+            width: 200px;  /* Original card width */
+            height: 140px; /* Original card height */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transform: rotate(-90deg);
+            transform-origin: center center;
+            /* Position the rotated image to fit within the container */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -70px;  /* Half of 140px height */
+            margin-left: -100px; /* Half of 200px width */
+        }
+        
         .screenshot-draggable-card:hover {
             /* No magnification in screenshot view to prevent alignment issues */
-            /* transform: rotate(-90deg); */ /* Temporarily removed for debugging */
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
             z-index: 100;
         }
         
         .screenshot-draggable-card.dragging {
             /* No scaling during drag to maintain alignment */
-            /* transform: rotate(-90deg); */ /* Temporarily removed for debugging */
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
             z-index: 1000;
             opacity: 0.9;
@@ -3853,6 +3863,7 @@
 
         .card-category-header.collapsed .collapse-icon {
             /* No rotation needed - using correct characters directly */
+            transform: none;
         }
 
         .card-category-content {
@@ -8433,7 +8444,8 @@
                     <div class="screenshot-draggable-card" 
                          data-card-id="${cardData.cardId}"
                          data-card-type="character"
-                         style="left: ${startX + (index * 60)}px; top: ${startY + (index * 40)}px; background-image: url('${imagePath}');">
+                         style="left: ${startX + (index * 60)}px; top: ${startY + (index * 40)}px;">
+                        <div class="screenshot-card-image" style="background-image: url('${imagePath}');"></div>
                         ${quantity > 1 ? `<div class="screenshot-card-quantity">${quantity}</div>` : ''}
                     </div>
                 `;
@@ -8487,6 +8499,7 @@
         }
 
         function onPointerMove(e) {
+            console.log('onPointerMove called, activeCard:', activeCard);
             const rect = container.getBoundingClientRect();
             const clientX = e.clientX || (e.touches && e.touches[0].clientX);
             const clientY = e.clientY || (e.touches && e.touches[0].clientY);
@@ -8516,15 +8529,28 @@
                 return;
             }
 
-            if (!activeCard) return;
+            if (!activeCard) {
+                console.log('No activeCard, returning');
+                return;
+            }
+            console.log('ActiveCard found, proceeding with drag');
+            e.preventDefault(); // Prevent text selection or other default browser behavior
             // Position cards by their visual center, maintaining the click offset
-            const cardWidth = 200;  // Card width
-            const cardHeight = 140; // Card height
-            const visualCenterX = rect.left + cardWidth/2;   // 100px from left
-            const visualCenterY = rect.top + cardHeight/2;   // 70px from top
-            // Position the card so its visual center is at the cursor position minus offset
-            const x = clientX - visualCenterX - offsetX;
-            const y = clientY - visualCenterY - offsetY;
+            const cardWidth = 140;  // Container width
+            const cardHeight = 200; // Container height
+            // Calculate center of container
+            const centerX = rect.left + cardWidth/2;
+            const centerY = rect.top + cardHeight/2;
+            // Position the card so its center is at the cursor position minus offset
+            const x = clientX - centerX - offsetX;
+            const y = clientY - centerY - offsetY;
+            
+            console.log('Drag calculation:', {
+                clientX, clientY,
+                centerX, centerY,
+                offsetX, offsetY,
+                calculatedX: x, calculatedY: y
+            });
 
             // Move either single card or group
             const toMove = selectedCards.size > 0 && selectedCards.has(activeCard) ? Array.from(selectedCards) : [activeCard];
@@ -8552,6 +8578,7 @@
         }
 
         function onPointerUp(e) {
+            console.log('onPointerUp called, activeCard:', activeCard);
             if (isMarqueeSelecting) {
                 isMarqueeSelecting = false;
                 if (selectionRect && selectionRect.parentNode) selectionRect.parentNode.removeChild(selectionRect);
@@ -8574,56 +8601,66 @@
             initialPositions.clear();
         }
 
-        container.querySelectorAll('.screenshot-draggable-card').forEach(card => {
-            // Disable native drag
-            card.setAttribute('draggable', 'false');
-
-            card.addEventListener('pointerdown', (e) => {
-                // If clicking on a non-selected card, clear selection unless holding Shift (multi-select toggle)
-                const isShift = e.shiftKey;
-                if (!isShift && !card.classList.contains('selected')) {
-                    clearSelection();
+        // Attach event listeners to all draggable cards
+        function attachDragListeners() {
+            const cards = container.querySelectorAll('.screenshot-draggable-card');
+            cards.forEach(card => {
+                // Skip if already has listeners attached
+                if (card.hasAttribute('data-drag-attached')) {
+                    return;
                 }
-                if (isShift) {
-                    // Toggle selection
-                    if (card.classList.contains('selected')) {
-                        card.classList.remove('selected');
-                        selectedCards.delete(card);
-                    } else {
-                        card.classList.add('selected');
-                        selectedCards.add(card);
+                
+                // Disable native drag
+                card.setAttribute('draggable', 'false');
+                card.setAttribute('data-drag-attached', 'true');
+
+                card.addEventListener('pointerdown', (e) => {
+                    console.log('Card pointerdown event triggered');
+                    // If clicking on a non-selected card, clear selection unless holding Shift (multi-select toggle)
+                    const isShift = e.shiftKey;
+                    if (!isShift && !card.classList.contains('selected')) {
+                        clearSelection();
                     }
-                }
+                    if (isShift) {
+                        // Toggle selection
+                        if (card.classList.contains('selected')) {
+                            card.classList.remove('selected');
+                            selectedCards.delete(card);
+                        } else {
+                            card.classList.add('selected');
+                            selectedCards.add(card);
+                        }
+                    }
 
-                activeCard = card;
-                const rect = card.getBoundingClientRect();
-                // For unrotated cards, visual dimensions are the same as original dimensions
-                const cardWidth = 200;  // Card width
-                const cardHeight = 140; // Card height
-                // Calculate the visual center of the card
-                const visualCenterX = rect.left + cardWidth/2;   // 100px from left
-                const visualCenterY = rect.top + cardHeight/2;   // 70px from top
-                // Calculate offset from click point to visual center
-                offsetX = (e.clientX || (e.touches && e.touches[0].clientX)) - visualCenterX;
-                offsetY = (e.clientY || (e.touches && e.touches[0].clientY)) - visualCenterY;
-                
-                // Store initial positions for group dragging
-                initialPositions.clear();
-                const toMove = selectedCards.size > 0 && selectedCards.has(card) ? Array.from(selectedCards) : [card];
-                toMove.forEach(cardToMove => {
-                    const bounds = getCardBounds(cardToMove);
-                    initialPositions.set(cardToMove, { x: bounds.left, y: bounds.top });
+                    activeCard = card;
+                    const rect = card.getBoundingClientRect();
+                    // For unrotated container (140x200)
+                    const cardWidth = 140;  // Container width
+                    const cardHeight = 200; // Container height
+                    // Calculate offset from click point to container center
+                    const centerX = rect.left + cardWidth/2;
+                    const centerY = rect.top + cardHeight/2;
+                    offsetX = (e.clientX || (e.touches && e.touches[0].clientX)) - centerX;
+                    offsetY = (e.clientY || (e.touches && e.touches[0].clientY)) - centerY;
+                        
+                    // Store initial positions for group dragging
+                    initialPositions.clear();
+                    const toMove = selectedCards.size > 0 && selectedCards.has(card) ? Array.from(selectedCards) : [card];
+                    toMove.forEach(cardToMove => {
+                        const bounds = getCardBounds(cardToMove);
+                        initialPositions.set(cardToMove, { x: bounds.left, y: bounds.top });
+                    });
+                    
+                    card.classList.add('dragging');
+                    container.addEventListener('pointermove', onPointerMove);
+                    window.addEventListener('pointerup', onPointerUp);
                 });
-                
-                card.classList.add('dragging');
-                container.addEventListener('pointermove', onPointerMove);
-                window.addEventListener('pointerup', onPointerUp);
-            });
         });
+        }
 
         // Marquee selection on empty space
         container.addEventListener('pointerdown', (e) => {
-            if (e.target.classList && e.target.classList.contains('screenshot-draggable-card')) {
+            if (e.target.closest('.screenshot-draggable-card')) {
                 return; // handled by card listener
             }
             clearSelection();
@@ -8641,6 +8678,9 @@
             container.addEventListener('pointermove', onPointerMove);
             window.addEventListener('pointerup', onPointerUp);
         });
+        
+        // Attach drag listeners to any existing cards
+        attachDragListeners();
     }
         function drawHand() {
             const deckCards = deckEditorCards;
