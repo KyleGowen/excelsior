@@ -6059,7 +6059,34 @@
                 tbody.innerHTML = '<tr><td colspan="5">No basic universe cards found</td></tr>';
                 return;
             }
-            tbody.innerHTML = cards.map(card => `
+            
+            // Sort basic universe cards by type, then value_to_use, then bonus
+            const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Any-Power'];
+            const sortedCards = cards.sort((a, b) => {
+                // First sort by type using OverPower order
+                const aTypeIndex = preferredOrder.indexOf(a.type);
+                const bTypeIndex = preferredOrder.indexOf(b.type);
+                
+                if (aTypeIndex !== bTypeIndex) {
+                    if (aTypeIndex === -1) return 1;  // Put unknown types at end
+                    if (bTypeIndex === -1) return -1;
+                    return aTypeIndex - bTypeIndex;
+                }
+                
+                // Then sort by value_to_use (extract numeric value)
+                const aValue = parseInt(a.value_to_use) || 0;
+                const bValue = parseInt(b.value_to_use) || 0;
+                if (aValue !== bValue) {
+                    return aValue - bValue;
+                }
+                
+                // Finally sort by bonus (extract numeric value)
+                const aBonus = parseInt(a.bonus.replace('+', '')) || 0;
+                const bBonus = parseInt(b.bonus.replace('+', '')) || 0;
+                return aBonus - bBonus;
+            });
+            
+            tbody.innerHTML = sortedCards.map(card => `
                 <tr>
                     <td>
                         <img src="/src/resources/cards/images/basic-universe/${mapImagePathToActualFile(card.image)}" 
