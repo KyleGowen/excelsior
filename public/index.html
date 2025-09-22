@@ -6250,7 +6250,27 @@
                 tbody.innerHTML = '<tr><td colspan="3">No power cards found</td></tr>';
                 return;
             }
-            tbody.innerHTML = cards.map(card => `
+            
+            // Sort power cards by type using OverPower order: Energy → Combat → Brute Force → Intelligence → Multi Power → Any-Power
+            const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Multi Power', 'Any-Power'];
+            const sortedCards = cards.sort((a, b) => {
+                const aTypeIndex = preferredOrder.indexOf(a.power_type);
+                const bTypeIndex = preferredOrder.indexOf(b.power_type);
+                
+                // If both are in preferred order, sort by their position
+                if (aTypeIndex !== -1 && bTypeIndex !== -1) {
+                    return aTypeIndex - bTypeIndex;
+                }
+                
+                // If only one is in preferred order, prioritize it
+                if (aTypeIndex !== -1) return -1;
+                if (bTypeIndex !== -1) return 1;
+                
+                // If neither is in preferred order, sort alphabetically
+                return a.power_type.localeCompare(b.power_type);
+            });
+            
+            tbody.innerHTML = sortedCards.map(card => `
                 <tr>
                     <td>
                         <img src="/src/resources/cards/images/power-cards/${mapImagePathToActualFile(card.image)}" 
@@ -6305,11 +6325,35 @@
 
                 let filtered = data.data;
 
-                // Filter by power type
+                // Filter by power type - handle Multi-Power independently
                 const selectedTypes = Array.from(document.querySelectorAll('#power-cards-tab input[type="checkbox"]:checked'))
                     .map(cb => cb.value);
+                
                 if (selectedTypes.length > 0) {
-                    filtered = filtered.filter(card => selectedTypes.includes(card.power_type));
+                    // Check if Multi-Power is selected
+                    const multiPowerSelected = selectedTypes.includes('Multi-Power');
+                    
+                    // Remove Multi-Power from the regular types for filtering
+                    const regularTypes = selectedTypes.filter(type => type !== 'Multi-Power');
+                    
+                    filtered = filtered.filter(card => {
+                        // If Multi-Power is selected, show Multi-Power cards
+                        if (multiPowerSelected && card.power_type === 'Multi Power') {
+                            return true;
+                        }
+                        
+                        // Show cards that match the regular selected types
+                        if (regularTypes.length > 0) {
+                            return regularTypes.includes(card.power_type);
+                        }
+                        
+                        // If only Multi-Power is selected, show only Multi-Power cards
+                        if (multiPowerSelected && regularTypes.length === 0) {
+                            return card.power_type === 'Multi Power';
+                        }
+                        
+                        return false;
+                    });
                 }
 
                 // Filter by value range
@@ -9769,8 +9813,24 @@
                                 powerTypeGroups[powerType].push(cardData);
                             });
                             
-                            // Sort power types alphabetically
-                            const sortedPowerTypes = Object.keys(powerTypeGroups).sort((a, b) => a.localeCompare(b));
+                            // Sort power types using OverPower order: Energy → Combat → Brute Force → Intelligence → Multi Power → Any-Power
+                            const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Multi Power', 'Any-Power'];
+                            const sortedPowerTypes = Object.keys(powerTypeGroups).sort((a, b) => {
+                                const aIndex = preferredOrder.indexOf(a);
+                                const bIndex = preferredOrder.indexOf(b);
+                                
+                                // If both are in preferred order, sort by their position
+                                if (aIndex !== -1 && bIndex !== -1) {
+                                    return aIndex - bIndex;
+                                }
+                                
+                                // If only one is in preferred order, prioritize it
+                                if (aIndex !== -1) return -1;
+                                if (bIndex !== -1) return 1;
+                                
+                                // If neither is in preferred order, sort alphabetically
+                                return a.localeCompare(b);
+                            });
                             
                             sortedPowerTypes.forEach(powerType => {
                                 const powerTypeCards = powerTypeGroups[powerType];
