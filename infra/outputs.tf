@@ -99,6 +99,50 @@ output "app_elastic_ip_allocation_id" {
 }
 
 # =============================================================================
+# SSM PARAMETER STORE
+# =============================================================================
+
+output "ssm_db_host_parameter" {
+  description = "SSM parameter name for database host"
+  value       = aws_ssm_parameter.db_host.name
+}
+
+output "ssm_db_port_parameter" {
+  description = "SSM parameter name for database port"
+  value       = aws_ssm_parameter.db_port.name
+}
+
+output "ssm_db_name_parameter" {
+  description = "SSM parameter name for database name"
+  value       = aws_ssm_parameter.db_name.name
+}
+
+output "ssm_db_username_parameter" {
+  description = "SSM parameter name for database username"
+  value       = aws_ssm_parameter.db_username.name
+}
+
+output "ssm_db_password_parameter" {
+  description = "SSM parameter name for database password"
+  value       = aws_ssm_parameter.db_password.name
+}
+
+output "ssm_db_url_parameter" {
+  description = "SSM parameter name for complete database URL"
+  value       = aws_ssm_parameter.db_url.name
+}
+
+output "ssm_app_environment_parameter" {
+  description = "SSM parameter name for application environment"
+  value       = aws_ssm_parameter.app_environment.name
+}
+
+output "ssm_app_port_parameter" {
+  description = "SSM parameter name for application port"
+  value       = aws_ssm_parameter.app_port.name
+}
+
+# =============================================================================
 # APPLICATION ACCESS
 # =============================================================================
 
