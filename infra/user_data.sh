@@ -23,6 +23,7 @@ usermod -a -G docker ec2-user
 
 # Install AWS CLI v2
 echo "Installing AWS CLI v2..."
+dnf install -y unzip
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 ./aws/install
