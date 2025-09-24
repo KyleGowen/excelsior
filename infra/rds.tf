@@ -109,30 +109,3 @@ resource "aws_db_instance" "postgres" {
   }
 }
 
-# Outputs
-output "rds_endpoint" {
-  description = "RDS instance endpoint"
-  value       = aws_db_instance.postgres.endpoint
-}
-
-output "rds_port" {
-  description = "RDS instance port"
-  value       = aws_db_instance.postgres.port
-}
-
-output "rds_database_name" {
-  description = "RDS database name"
-  value       = aws_db_instance.postgres.db_name
-}
-
-output "rds_username" {
-  description = "RDS master username"
-  value       = aws_db_instance.postgres.username
-  sensitive   = true
-}
-
-output "rds_connection_string" {
-  description = "PostgreSQL connection string"
-  value       = "postgresql://${aws_db_instance.postgres.username}:${var.db_password}@${aws_db_instance.postgres.endpoint}:${aws_db_instance.postgres.port}/${aws_db_instance.postgres.db_name}"
-  sensitive   = true
-}

@@ -86,29 +86,3 @@ resource "aws_ecr_repository_policy" "app_policy" {
   })
 }
 
-# Outputs
-output "ecr_repository_url" {
-  description = "ECR repository URL"
-  value       = aws_ecr_repository.app.repository_url
-}
-
-output "ecr_repository_arn" {
-  description = "ECR repository ARN"
-  value       = aws_ecr_repository.app.arn
-}
-
-output "ecr_registry_id" {
-  description = "ECR registry ID"
-  value       = aws_ecr_repository.app.registry_id
-}
-
-# Helper output for Docker commands
-output "docker_login_command" {
-  description = "Docker login command for ECR"
-  value       = "aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${aws_ecr_repository.app.repository_url}"
-}
-
-output "docker_build_command" {
-  description = "Docker build and push commands"
-  value       = "docker build -t ${aws_ecr_repository.app.name}:latest . && docker tag ${aws_ecr_repository.app.name}:latest ${aws_ecr_repository.app.repository_url}:latest && docker push ${aws_ecr_repository.app.repository_url}:latest"
-}
