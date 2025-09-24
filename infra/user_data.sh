@@ -14,6 +14,12 @@ echo "Starting user data script execution..."
 echo "Updating system packages..."
 dnf update -y
 
+# Install and configure SSM agent
+echo "Installing SSM agent..."
+dnf install -y amazon-ssm-agent
+systemctl enable amazon-ssm-agent
+systemctl start amazon-ssm-agent
+
 # Install Docker
 echo "Installing Docker..."
 dnf install -y docker

@@ -106,6 +106,12 @@ resource "aws_iam_role_policy_attachment" "ecr_attachment" {
   policy_arn = aws_iam_policy.ecr_policy.arn
 }
 
+# Attach AWS managed SSM policy for EC2 instances
+resource "aws_iam_role_policy_attachment" "ssm_managed_instance_core" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
 # Instance profile for EC2
 resource "aws_iam_instance_profile" "ec2_profile" {
   name = "${var.project_name}-ec2-profile"
