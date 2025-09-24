@@ -14,6 +14,14 @@ export class DatabaseInitializationService {
     }
 
     try {
+      // Check if migrations should be skipped
+      if (process.env.SKIP_MIGRATIONS === 'true') {
+        console.log('⏭️ Skipping Flyway migrations (SKIP_MIGRATIONS=true)');
+        this.isInitialized = true;
+        console.log('✅ Database initialization completed (migrations skipped)!');
+        return;
+      }
+
       console.log('🔄 Initializing database with Flyway migrations...');
       
       // Run Flyway migrations (includes schema and data population)
@@ -38,9 +46,24 @@ export class DatabaseInitializationService {
       let command: string;
       if (isProduction) {
         // Use Flyway CLI directly in production
-        const flywayUrl = process.env.FLYWAY_URL || process.env.DATABASE_URL?.replace('postgres://', 'jdbc:postgresql://');
-        const flywayUser = process.env.FLYWAY_USER || 'appuser';
-        const flywayPassword = process.env.FLYWAY_PASSWORD || 'password';
+        const flywayUrl = process.env.FLYWAY_URL || process.env.DATABASE_URL?.replace('postgresql://', 'jdbc:postgresql://');
+        
+        // Parse credentials from DATABASE_URL if not provided separately
+        let flywayUser = process.env.FLYWAY_USER;
+        let flywayPassword = process.env.FLYWAY_PASSWORD;
+        
+        if (!flywayUser || !flywayPassword) {
+          const dbUrl = process.env.DATABASE_URL;
+          if (dbUrl) {
+            const url = new URL(dbUrl);
+            flywayUser = flywayUser || url.username;
+            flywayPassword = flywayPassword || url.password;
+          }
+        }
+        
+        // Fallback to default values if still not set
+        flywayUser = flywayUser || 'postgres';
+        flywayPassword = flywayPassword || 'password';
         
         command = `flyway -url="${flywayUrl}" -user="${flywayUser}" -password="${flywayPassword}" -locations="filesystem:/app/migrations" migrate`;
       } else {
