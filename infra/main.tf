@@ -1,0 +1,49 @@
+# OverPower Deckbuilder - AWS Infrastructure
+# Terraform configuration for deploying the application to AWS
+
+terraform {
+  required_version = ">= 1.9.0"  # Latest stable version as of 2024
+  
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"  # Latest AWS provider
+    }
+  }
+}
+
+# Configure the AWS Provider
+provider "aws" {
+  region = var.aws_region
+  
+  # Optional: Uncomment if you want to specify a specific AWS profile
+  # profile = var.aws_profile
+  
+  default_tags {
+    tags = {
+      Project     = var.project_name
+      Environment = var.environment
+      ManagedBy   = "Terraform"
+    }
+  }
+}
+
+# Data sources for current AWS account and region info
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+# Output basic information
+output "aws_account_id" {
+  description = "AWS Account ID"
+  value       = data.aws_caller_identity.current.account_id
+}
+
+output "aws_region" {
+  description = "AWS Region"
+  value       = data.aws_region.current.name
+}
+
+output "project_name" {
+  description = "Project name"
+  value       = var.project_name
+}
