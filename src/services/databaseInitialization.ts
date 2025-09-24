@@ -30,7 +30,26 @@ export class DatabaseInitializationService {
   private async runMigrations(): Promise<void> {
     try {
       console.log('🔄 Running Flyway migrations...');
-      const { stdout, stderr } = await execAsync('npm run migrate');
+      
+      // In production (Docker), use Flyway CLI directly
+      // In development, use npm script with ts-node
+      const isProduction = process.env.NODE_ENV === 'production';
+      
+      let command: string;
+      if (isProduction) {
+        // Use Flyway CLI directly in production
+        const flywayUrl = process.env.FLYWAY_URL || process.env.DATABASE_URL?.replace('postgres://', 'jdbc:postgresql://');
+        const flywayUser = process.env.FLYWAY_USER || 'appuser';
+        const flywayPassword = process.env.FLYWAY_PASSWORD || 'password';
+        
+        command = `flyway -url="${flywayUrl}" -user="${flywayUser}" -password="${flywayPassword}" -locations="filesystem:/app/migrations" migrate`;
+      } else {
+        // Use npm script in development
+        command = 'npm run migrate';
+      }
+      
+      console.log(`🔧 Running command: ${command.replace(/-password="[^"]*"/, '-password="***"')}`);
+      const { stdout, stderr } = await execAsync(command);
       
       if (stderr && !stderr.includes('WARNING')) {
         console.error('❌ Migration error:', stderr);
