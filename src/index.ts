@@ -122,14 +122,9 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Username and password are required' });
     }
     
-    // For now, use a simple hardcoded user since we don't have password hashing set up
-    if (username === 'kyle' && password === 'test') {
-      let user = await userRepository.getUserByUsername('kyle');
-      if (!user) {
-        // Create the user if it doesn't exist
-        user = await userRepository.createUser('kyle', 'kyle@example.com', 'hashed_password');
-      }
-      
+    // Use database authentication
+    const user = await userRepository.authenticateUser(username, password);
+    if (user) {
       const sessionId = userService.createSession({ 
         id: user.id, 
         username: user.name, 

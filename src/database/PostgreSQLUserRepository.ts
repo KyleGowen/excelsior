@@ -80,6 +80,29 @@ export class PostgreSQLUserRepository implements UserRepository {
     }
   }
 
+  async authenticateUser(username: string, password: string): Promise<User | undefined> {
+    const client = await this.pool.connect();
+    try {
+      const result = await client.query(
+        'SELECT * FROM users WHERE username = $1 AND password_hash = $2',
+        [username, password]
+      );
+      
+      if (result.rows.length === 0) {
+        return undefined;
+      }
+      
+      const user = result.rows[0];
+      return {
+        id: user.id,
+        name: user.username, // Map username to name for compatibility
+        email: user.email
+      };
+    } finally {
+      client.release();
+    }
+  }
+
   async getAllUsers(): Promise<User[]> {
     const client = await this.pool.connect();
     try {
