@@ -3,7 +3,6 @@ CREATE TABLE characters (
     id VARCHAR(255) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     universe VARCHAR(255) NOT NULL,
-    description TEXT,
     energy INTEGER NOT NULL,
     combat INTEGER NOT NULL,
     brute_force INTEGER NOT NULL,
