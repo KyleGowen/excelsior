@@ -49,9 +49,10 @@ This is just the basic Terraform setup. We'll add resources step by step:
 
 1. ✅ **Basic Terraform setup** (completed)
 2. ✅ **RDS PostgreSQL Database** (completed)
-3. 🔄 **EC2 Instance** (next)
-4. 🔄 **Application Load Balancer** (optional - not free tier)
-5. 🔄 **Domain and SSL** (optional)
+3. ✅ **ECR Docker Registry** (completed)
+4. 🔄 **EC2 Instance** (next)
+5. 🔄 **Application Load Balancer** (optional - not free tier)
+6. 🔄 **Domain and SSL** (optional)
 
 ## RDS Database Configuration
 
@@ -67,12 +68,26 @@ The RDS PostgreSQL database is configured with:
 
 **⚠️ Security Note**: The database is configured for external access (0.0.0.0/0). In production, restrict access to specific IP ranges.
 
+## ECR Docker Registry Configuration
+
+The ECR (Elastic Container Registry) is configured with:
+
+- **Repository Name**: op-deckbuilder-repo
+- **Image Scanning**: Automatic vulnerability scanning on push
+- **Encryption**: AES256 encryption at rest
+- **Lifecycle Policy**: 
+  - Keep last 10 tagged images (v* tags)
+  - Delete untagged images older than 1 day
+- **Access**: Private repository with IAM-based access control
+- **Tag Mutability**: Mutable (allows overwriting tags for dev)
+
 ## Cost Estimation
 
 For a basic setup within free tier:
 - **EC2 t2.micro**: Free (750 hours/month)
 - **RDS db.t3.micro**: Free (750 hours/month)
 - **RDS Storage 20GB**: Free (20GB gp3)
+- **ECR**: Free (500MB storage/month)
 - **EBS 20GB**: Free
 - **Data Transfer**: Free (1GB/month)
 
