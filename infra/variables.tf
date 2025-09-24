@@ -107,3 +107,10 @@ variable "db_port" {
     error_message = "Database port must be between 1150 and 65535."
   }
 }
+
+# EC2 Configuration
+variable "key_pair_name" {
+  description = "Name of the AWS key pair for EC2 instance access (optional)"
+  type        = string
+  default     = ""
+}

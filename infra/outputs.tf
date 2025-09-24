@@ -143,6 +143,30 @@ output "ssm_app_port_parameter" {
 }
 
 # =============================================================================
+# EC2 INSTANCE
+# =============================================================================
+
+output "ec2_instance_id" {
+  description = "EC2 instance ID"
+  value       = aws_instance.app.id
+}
+
+output "ec2_instance_public_ip" {
+  description = "EC2 instance public IP"
+  value       = aws_instance.app.public_ip
+}
+
+output "ec2_instance_private_ip" {
+  description = "EC2 instance private IP"
+  value       = aws_instance.app.private_ip
+}
+
+output "ec2_instance_state" {
+  description = "EC2 instance state"
+  value       = aws_instance.app.instance_state
+}
+
+# =============================================================================
 # APPLICATION ACCESS
 # =============================================================================
 
