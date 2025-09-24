@@ -47,19 +47,32 @@ This directory contains Terraform configuration for deploying the OverPower Deck
 
 This is just the basic Terraform setup. We'll add resources step by step:
 
-1. ✅ **Basic Terraform setup** (current)
-2. 🔄 **VPC and Networking** (next)
-3. 🔄 **Security Groups**
-4. 🔄 **RDS PostgreSQL Database**
-5. 🔄 **EC2 Instance**
-6. 🔄 **Application Load Balancer** (optional - not free tier)
-7. 🔄 **Domain and SSL** (optional)
+1. ✅ **Basic Terraform setup** (completed)
+2. ✅ **RDS PostgreSQL Database** (completed)
+3. 🔄 **EC2 Instance** (next)
+4. 🔄 **Application Load Balancer** (optional - not free tier)
+5. 🔄 **Domain and SSL** (optional)
+
+## RDS Database Configuration
+
+The RDS PostgreSQL database is configured with:
+
+- **Engine**: PostgreSQL 16.4 (latest version)
+- **Instance Class**: db.t3.micro (free tier eligible)
+- **Storage**: 20GB gp3 (free tier eligible)
+- **Database Name**: "overpower" (auto-created)
+- **Access**: Publicly accessible from internet (for external database tools)
+- **Security**: Encrypted storage, 7-day backup retention
+- **Network**: Uses default VPC and subnets
+
+**⚠️ Security Note**: The database is configured for external access (0.0.0.0/0). In production, restrict access to specific IP ranges.
 
 ## Cost Estimation
 
 For a basic setup within free tier:
 - **EC2 t2.micro**: Free (750 hours/month)
 - **RDS db.t3.micro**: Free (750 hours/month)
+- **RDS Storage 20GB**: Free (20GB gp3)
 - **EBS 20GB**: Free
 - **Data Transfer**: Free (1GB/month)
 
