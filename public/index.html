@@ -598,15 +598,39 @@
             max-width: 300px;
         }
 
-        /* Events table column widths */
-        #events-table th:nth-child(3), /* Mission Set */
-        #events-table td:nth-child(3) {
-            min-width: 350px;
+        /* Events table column widths - percentage based */
+        #events-table {
+            table-layout: fixed;
+        }
+        
+        #events-table th:nth-child(1), /* Image */
+        #events-table td:nth-child(1) {
+            width: 15%;
         }
 
-        #events-table th:nth-child(4), /* Game Effect */
+        #events-table th:nth-child(2), /* Add To Deck */
+        #events-table td:nth-child(2) {
+            width: 8%;
+        }
+
+        #events-table th:nth-child(3), /* Name */
+        #events-table td:nth-child(3) {
+            width: 8%;
+        }
+
+        #events-table th:nth-child(4), /* Mission Set */
         #events-table td:nth-child(4) {
-            max-width: 300px;
+            width: 20%;
+        }
+
+        #events-table th:nth-child(5), /* Game Effect */
+        #events-table td:nth-child(5) {
+            width: 24%;
+        }
+
+        #events-table th:nth-child(6), /* Flavor Text */
+        #events-table td:nth-child(6) {
+            width: 25%;
         }
 
         .filter-input:focus {
