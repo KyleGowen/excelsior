@@ -5698,10 +5698,44 @@
             }
         }
 
+        // Global function to ensure no filters are applied by default
+        function clearAllFiltersGlobally() {
+            console.log('🔍 clearAllFiltersGlobally() called');
+            
+            // Clear all text search inputs
+            const headerFilters = document.querySelectorAll('.header-filter');
+            console.log('🔍 Found', headerFilters.length, 'header filters to clear');
+            headerFilters.forEach(input => {
+                input.value = '';
+            });
+            
+            // Clear all numeric filters
+            const filterInputs = document.querySelectorAll('.filter-input');
+            console.log('🔍 Found', filterInputs.length, 'filter inputs to clear');
+            filterInputs.forEach(input => {
+                input.value = '';
+            });
+            
+            // Clear all checkboxes
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            console.log('🔍 Found', checkboxes.length, 'checkboxes to clear');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            console.log('✅ All filters cleared globally');
+        }
+
         // Load database view data
         async function loadDatabaseViewData() {
-            console.log('Starting database view data load...');
+            console.log('🔍 Starting database view data load...');
+            
+            // Clear all filters globally before loading data
+            console.log('🔍 Clearing all filters globally...');
+            clearAllFiltersGlobally();
+            
             try {
+                console.log('🔍 About to load all data in parallel...');
                 await Promise.all([
                     loadCharacters(),
                     loadSpecialCards(),
@@ -5717,29 +5751,34 @@
                     loadPowerCards(),
                     loadUserDecks()
                 ]);
-                console.log('Database view data loaded successfully');
+                console.log('✅ Database view data loaded successfully');
+                
+                // Ensure Characters tab is properly loaded since it's the default active tab
+                console.log('🔍 Ensuring Characters tab is properly loaded...');
+                loadCharacters();
             } catch (error) {
-                console.error('Error loading database view data:', error);
+                console.error('❌ Error loading database view data:', error);
             }
         }
 
         // Load and display characters
         async function loadCharacters() {
-            console.log('Loading characters...');
+            console.log('🔍 loadCharacters() called');
             try {
                 const response = await fetch('/api/characters');
                 const data = await response.json();
-                console.log('Characters response:', data);
+                console.log('🔍 Characters API response:', data);
                 
                 if (data.success) {
+                    console.log('🔍 About to display', data.data.length, 'characters');
                     displayCharacters(data.data);
                     updateStats(data.data);
-                    console.log('Characters loaded successfully:', data.data.length);
+                    console.log('✅ Characters loaded and displayed successfully:', data.data.length);
                 } else {
                     throw new Error('Failed to load characters');
                 }
             } catch (error) {
-                console.error('Error loading characters:', error);
+                console.error('❌ Error loading characters:', error);
                 document.getElementById('characters-tbody').innerHTML = 
                     '<tr><td colspan="8" class="error">Error loading characters. Please try again.</td></tr>';
             }
@@ -5764,8 +5803,14 @@
         }
 
         function displayCharacters(characters) {
+            console.log('🔍 displayCharacters() called with', characters.length, 'characters');
             const tbody = document.getElementById('characters-tbody');
+            if (!tbody) {
+                console.error('❌ characters-tbody element not found!');
+                return;
+            }
             tbody.innerHTML = '';
+            console.log('🔍 Cleared tbody, about to render', characters.length, 'characters');
 
             characters.forEach(character => {
                 const row = document.createElement('tr');
@@ -5967,16 +6012,22 @@
 
         // Apply all active filters
         async function applyFilters() {
+            console.log('🔍 applyFilters() called');
             try {
                 const response = await fetch('/api/characters');
                 const data = await response.json();
                 
                 if (data.success) {
                     let filteredCharacters = data.data;
+                    console.log('🔍 Starting with', data.data.length, 'characters');
+                    
+                    // Check if any filters are actually applied
+                    let hasActiveFilters = false;
                     
                     // Apply name search filter
                     const nameSearchInput = document.querySelector('.header-filter[placeholder="Search names..."]');
                     if (nameSearchInput && nameSearchInput.value.toLowerCase().length > 0) {
+                        hasActiveFilters = true;
                         const searchTerm = nameSearchInput.value.toLowerCase();
                         filteredCharacters = filteredCharacters.filter(character => 
                             character.name.toLowerCase().includes(searchTerm)
@@ -5988,12 +6039,14 @@
                     const hasNoInherentAbilityToggle = document.getElementById('has-no-inherent-ability');
                     
                     if (hasInherentAbilityToggle && hasInherentAbilityToggle.checked) {
+                        hasActiveFilters = true;
                         filteredCharacters = filteredCharacters.filter(character => 
                             character.special_abilities && character.special_abilities.trim().length > 0
                         );
                     }
                     
                     if (hasNoInherentAbilityToggle && hasNoInherentAbilityToggle.checked) {
+                        hasActiveFilters = true;
                         filteredCharacters = filteredCharacters.filter(character => 
                             !character.special_abilities || character.special_abilities.trim().length === 0
                         );
@@ -6002,6 +6055,7 @@
                     // Apply inherent abilities search filter
                     const abilitiesSearchInput = document.querySelector('.header-filter[placeholder="Search abilities..."]');
                     if (abilitiesSearchInput && abilitiesSearchInput.value.toLowerCase().length > 0) {
+                        hasActiveFilters = true;
                         const searchTerm = abilitiesSearchInput.value.toLowerCase();
                         filteredCharacters = filteredCharacters.filter(character => 
                             character.special_abilities && character.special_abilities.toLowerCase().includes(searchTerm)
@@ -6018,6 +6072,7 @@
                         
                         // Apply equals filter
                         if (equalsInput && equalsInput.value !== '') {
+                            hasActiveFilters = true;
                             const equalsValue = parseInt(equalsInput.value);
                             filteredCharacters = filteredCharacters.filter(character => 
                                 character[column] === equalsValue
@@ -6026,6 +6081,7 @@
                         
                         // Apply min filter
                         if (minInput && minInput.value !== '') {
+                            hasActiveFilters = true;
                             const minValue = parseInt(minInput.value);
                             filteredCharacters = filteredCharacters.filter(character => 
                                 character[column] >= minValue
@@ -6034,6 +6090,7 @@
                         
                         // Apply max filter
                         if (maxInput && maxInput.value !== '') {
+                            hasActiveFilters = true;
                             const maxValue = parseInt(maxInput.value);
                             filteredCharacters = filteredCharacters.filter(character => 
                                 character[column] <= maxValue
@@ -6041,7 +6098,17 @@
                         }
                     });
                     
-                    displayCharacters(filteredCharacters);
+                    console.log('🔍 Character filtering - hasActiveFilters:', hasActiveFilters, 'filteredCharacters count:', filteredCharacters.length);
+                    
+                    // Only apply filtering if there are active filters, otherwise show all characters
+                    if (hasActiveFilters) {
+                        console.log('🔍 Applying filters, showing', filteredCharacters.length, 'filtered characters');
+                        displayCharacters(filteredCharacters);
+                    } else {
+                        // No filters active, show all characters
+                        console.log('🔍 No active filters, showing all', data.data.length, 'characters');
+                        displayCharacters(data.data);
+                    }
                 }
             } catch (error) {
                 console.error('Filter error:', error);
@@ -6050,25 +6117,8 @@
 
         // Clear all filters and reload all characters
         function clearAllFilters() {
-            // Clear text search inputs
-            document.querySelectorAll('.header-filter').forEach(input => {
-                input.value = '';
-            });
-            
-            // Clear all numeric filters
-            document.querySelectorAll('.filter-input').forEach(input => {
-                input.value = '';
-            });
-            
-            // Clear inherent ability toggles
-            const hasInherentAbilityToggle = document.getElementById('has-inherent-ability');
-            const hasNoInherentAbilityToggle = document.getElementById('has-no-inherent-ability');
-            if (hasInherentAbilityToggle) {
-                hasInherentAbilityToggle.checked = false;
-            }
-            if (hasNoInherentAbilityToggle) {
-                hasNoInherentAbilityToggle.checked = false;
-            }
+            // Use the global clear function
+            clearAllFiltersGlobally();
             
             // Reload all characters
             loadCharacters();
@@ -6194,37 +6244,28 @@
         }
 
         function clearLocationFilters() {
-            // Reset threat level inputs
-            document.getElementById('location-threat-min').value = '';
-            document.getElementById('location-threat-max').value = '';
-            
-            // Reload all locations
+            clearAllFiltersGlobally();
             loadLocations();
         }
 
         // Clear filter functions for all tabs
         function clearSpecialCardFilters() {
-            // Reset cataclysm toggle if needed
+            clearAllFiltersGlobally();
             loadSpecialCards();
         }
 
         function clearAdvancedUniverseFilters() {
-            // Reset one per deck toggle if needed
+            clearAllFiltersGlobally();
             loadAdvancedUniverse();
         }
 
         function clearAspectsFilters() {
-            // Reset fortifications and one per deck toggles if needed
+            clearAllFiltersGlobally();
             loadAspects();
         }
 
         function clearMissionsFilters() {
-            // Reset checkboxes
-            document.querySelectorAll('#missions-tab input[type="checkbox"]').forEach(checkbox => {
-                checkbox.checked = true;
-            });
-            
-            // Reload all missions
+            clearAllFiltersGlobally();
             loadMissions();
         }
 
@@ -6248,12 +6289,7 @@
         }
 
         function clearEventsFilters() {
-            // Reset checkboxes
-            document.querySelectorAll('#events-tab input[type="checkbox"]').forEach(checkbox => {
-                checkbox.checked = true;
-            });
-            
-            // Reload all events
+            clearAllFiltersGlobally();
             loadEvents();
         }
 
@@ -6277,22 +6313,25 @@
         }
 
         function clearTeamworkFilters() {
-            // Reload all teamwork
+            clearAllFiltersGlobally();
             loadTeamwork();
         }
 
         function clearAllyUniverseFilters() {
-            // Reload all ally universe
+            clearAllFiltersGlobally();
             loadAllyUniverse();
         }
 
         function clearTrainingFilters() {
-            // Reload all training
+            clearAllFiltersGlobally();
             loadTraining();
         }
 
         // Tab switching functionality
         function switchTab(tabName) {
+            // Clear all filters when switching tabs
+            clearAllFiltersGlobally();
+            
             // Hide all tabs
             document.getElementById('characters-tab').style.display = 'none';
             document.getElementById('special-cards-tab').style.display = 'none';
@@ -6349,31 +6388,43 @@
             // Add active class to clicked button
             event.target.classList.add('active');
             
-            // Update search functionality based on tab
+            // Update search functionality and reload data based on tab
             if (tabName === 'characters') {
                 setupSearch();
+                loadCharacters();
             } else if (tabName === 'special-cards') {
                 setupSpecialCardSearch();
+                loadSpecialCards();
             } else if (tabName === 'advanced-universe') {
                 setupAdvancedUniverseSearch();
+                loadAdvancedUniverse();
             } else if (tabName === 'locations') {
                 setupLocationSearch();
+                loadLocations();
             } else if (tabName === 'aspects') {
                 setupAspectSearch();
+                loadAspects();
             } else if (tabName === 'missions') {
                 setupMissionSearch();
+                loadMissions();
             } else if (tabName === 'events') {
                 setupEventSearch();
+                loadEvents();
             } else if (tabName === 'teamwork') {
                 setupTeamworkSearch();
+                loadTeamwork();
             } else if (tabName === 'ally-universe') {
                 setupAllyUniverseSearch();
+                loadAllyUniverse();
             } else if (tabName === 'training') {
                 setupTrainingSearch();
+                loadTraining();
             } else if (tabName === 'basic-universe') {
                 setupBasicUniverseSearch();
+                loadBasicUniverse();
             } else if (tabName === 'power-cards') {
                 setupPowerCardsSearch();
+                loadPowerCards();
             }
         }
 
@@ -7206,22 +7257,7 @@
         }
 
         function clearBasicUniverseFilters() {
-            // Reset checkboxes
-            document.querySelectorAll('#basic-universe-tab input[type="checkbox"]').forEach(checkbox => {
-                checkbox.checked = true;
-            });
-            
-            // Reset value inputs
-            document.querySelectorAll('#basic-universe-tab input[data-column="value"]').forEach(input => {
-                input.value = '';
-            });
-            
-            // Reset bonus inputs
-            document.querySelectorAll('#basic-universe-tab input[data-column="bonus"]').forEach(input => {
-                input.value = '';
-            });
-            
-            // Reload all cards
+            clearAllFiltersGlobally();
             loadBasicUniverse();
         }
 
@@ -7446,16 +7482,7 @@
         }
 
         function clearPowerCardFilters() {
-            // Reset checkboxes
-            document.querySelectorAll('#power-cards-tab input[type="checkbox"]').forEach(checkbox => {
-                checkbox.checked = true;
-            });
-            
-            // Reset value inputs
-            document.getElementById('power-value-min').value = '';
-            document.getElementById('power-value-max').value = '';
-            
-            // Reload all cards
+            clearAllFiltersGlobally();
             loadPowerCards();
         }
 
@@ -7533,11 +7560,31 @@
         }
 
         function showMainApp() {
+            console.log('🔍 showMainApp() called');
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('currentUsername').textContent = currentUser.username || currentUser.name || 'User';
             
             // Load user decks after successful login
             loadUserDecks();
+            
+            // Ensure database view is visible before loading data if it's the active view
+            const databaseView = document.getElementById('database-view');
+            if (databaseView) {
+                console.log('🔍 database-view element:', databaseView);
+                console.log('🔍 database-view display style (before check):', databaseView.style.display);
+                if (databaseView.style.display === 'none') {
+                    console.log('🔍 showMainApp() - database view was hidden, setting to block');
+                    databaseView.style.display = 'block'; // Explicitly make it visible
+                }
+            }
+
+            // Load database view data if we're on the database view
+            if (databaseView && databaseView.style.display !== 'none') {
+                console.log('🔍 showMainApp() - loading database view data...');
+                loadDatabaseViewData();
+            } else {
+                console.log('🔍 showMainApp() - database view not visible, skipping data load');
+            }
         }
 
         async function login(username, password) {
