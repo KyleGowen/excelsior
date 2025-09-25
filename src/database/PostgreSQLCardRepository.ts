@@ -427,6 +427,7 @@ export class PostgreSQLCardRepository implements CardRepository {
         card_type: card.card_type,
         character: card.character,
         card_effect: card.card_effect,
+        card_description: card.card_description,
         image: card.image_path,
         is_one_per_deck: card.one_per_deck || false
       }));

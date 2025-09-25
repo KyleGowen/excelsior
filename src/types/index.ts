@@ -96,6 +96,7 @@ export interface AdvancedUniverse {
   card_type: string;
   character: string;
   card_effect: string;
+  card_description?: string;
   image: string;
   is_one_per_deck: boolean;
 }

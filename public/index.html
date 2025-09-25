@@ -580,10 +580,12 @@
             max-width: 70px;
         }
 
-        #characters-table th:nth-child(10), /* Special Abilities */
+        #characters-table th:nth-child(10), /* Inherent Abilities */
         #characters-table td:nth-child(10) {
-            min-width: 200px;
+            width: 400px;
+            min-width: 400px;
         }
+
 
         /* Missions table column widths */
         #missions-table th:nth-child(2), /* Mission Set */
@@ -4679,7 +4681,6 @@
                             <th>Image</th>
                             <th></th>
                             <th>Name</th>
-                            <th>Card Type</th>
                             <th>Character</th>
                             <th>Card Effect</th>
                             <th class="one-per-deck-advanced-column">One Per Deck</th>
@@ -4692,13 +4693,12 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
                             <th class="one-per-deck-advanced-column"></th>
                         </tr>
                     </thead>
                     <tbody id="advanced-universe-tbody">
                         <tr>
-                            <td colspan="6" class="loading">Loading advanced universe cards...</td>
+                            <td colspan="5" class="loading">Loading advanced universe cards...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -6399,9 +6399,9 @@
                     if (data.success) {
                         const filteredAdvancedUniverse = data.data.filter(card => 
                             card.name.toLowerCase().includes(searchTerm) ||
-                            card.card_type.toLowerCase().includes(searchTerm) ||
                             card.character.toLowerCase().includes(searchTerm) ||
-                            card.card_effect.toLowerCase().includes(searchTerm)
+                            (card.card_description && card.card_description.toLowerCase().includes(searchTerm)) ||
+                            (card.card_effect && card.card_effect.toLowerCase().includes(searchTerm))
                         );
                         displayAdvancedUniverse(filteredAdvancedUniverse);
                     }
@@ -6774,7 +6774,7 @@
             const tbody = document.getElementById('advanced-universe-tbody');
             
             if (advancedUniverse.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7">No advanced universe cards found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5">No advanced universe cards found</td></tr>';
                 return;
             }
             
@@ -6783,9 +6783,12 @@
                     <td>
                         <img src="/src/resources/cards/images/advanced-universe/${mapImagePathToActualFile(card.image)}" 
                              alt="${card.name}" 
+                             class="card-image"
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
                              onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
-                             onclick="openModal(this)">
+                             onclick="openModal(this)"
+                             onmouseenter="showCardHoverModal('/src/resources/cards/images/advanced-universe/${mapImagePathToActualFile(card.image)}', '${card.name.replace(/'/g, "\\'")}')"
+                             onmouseleave="hideCardHoverModal()">
                     </td>
                     <td>
                         <button class="add-to-deck-btn" onclick="showDeckSelection('advanced-universe', '${card.id}', '${card.name.replace(/'/g, "\\'")}', this)">
@@ -6793,9 +6796,8 @@
                         </button>
                     </td>
                     <td><strong>${card.name}</strong></td>
-                    <td>${card.card_type}</td>
                     <td>${card.character}</td>
-                    <td>${formatSpecialCardEffect(card.card_effect)}</td>
+                    <td>${formatSpecialCardEffect(card.card_description || card.card_effect || 'No description available')}</td>
                     <td class="one-per-deck-advanced-column">${card.is_one_per_deck ? 'Yes' : 'No'}</td>
                 </tr>
             `).join('');
