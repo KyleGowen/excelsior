@@ -125,11 +125,11 @@ app.post('/api/auth/login', async (req, res) => {
     // Use database authentication
     const user = await userRepository.authenticateUser(username, password);
     if (user) {
-      const sessionId = userService.createSession({ 
-        id: user.id, 
-        username: user.name, 
-        password: '', 
-        createdAt: new Date() 
+      const sessionId = userService.createSession({
+        id: user.id,
+        username: user.name,
+        password: '', // Not needed for session
+        createdAt: new Date()
       });
       
       res.cookie('sessionId', sessionId, {

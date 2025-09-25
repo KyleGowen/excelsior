@@ -5699,7 +5699,14 @@
         }
 
         // Global function to ensure no filters are applied by default
+        let isClearingFilters = false;
         function clearAllFiltersGlobally() {
+            if (isClearingFilters) {
+                console.log('🔍 clearAllFiltersGlobally() already running, skipping...');
+                return;
+            }
+            
+            isClearingFilters = true;
             console.log('🔍 clearAllFiltersGlobally() called');
             
             // Clear all text search inputs
@@ -5724,6 +5731,7 @@
             });
             
             console.log('✅ All filters cleared globally');
+            isClearingFilters = false;
         }
 
         // Load database view data
@@ -5752,10 +5760,6 @@
                     loadUserDecks()
                 ]);
                 console.log('✅ Database view data loaded successfully');
-                
-                // Ensure Characters tab is properly loaded since it's the default active tab
-                console.log('🔍 Ensuring Characters tab is properly loaded...');
-                loadCharacters();
             } catch (error) {
                 console.error('❌ Error loading database view data:', error);
             }
