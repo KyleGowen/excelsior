@@ -85,6 +85,7 @@ export interface Aspect {
   card_type: string;
   location: string;
   card_effect: string;
+  aspect_description?: string;
   image: string;
   is_fortification: boolean;
   is_one_per_deck: boolean;

@@ -4755,7 +4755,6 @@
                             <th>Image</th>
                             <th></th>
                             <th>Card Name</th>
-                            <th>Card Type</th>
                             <th>Location</th>
                             <th>Card Effect</th>
                             <th class="fortifications-column hidden">Fortifications</th>
@@ -4769,14 +4768,13 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
                             <th class="fortifications-column hidden"></th>
                             <th class="one-per-deck-column hidden"></th>
                         </tr>
                     </thead>
                     <tbody id="aspects-tbody">
                         <tr>
-                            <td colspan="7" class="loading">Loading aspects...</td>
+                            <td colspan="6" class="loading">Loading aspects...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -6368,9 +6366,9 @@
                     if (data.success) {
                         const filteredAspects = data.data.filter(aspect => 
                             aspect.card_name.toLowerCase().includes(searchTerm) ||
-                            aspect.card_type.toLowerCase().includes(searchTerm) ||
                             aspect.location.toLowerCase().includes(searchTerm) ||
-                            aspect.card_effect.toLowerCase().includes(searchTerm)
+                            (aspect.aspect_description && aspect.aspect_description.toLowerCase().includes(searchTerm)) ||
+                            (aspect.card_effect && aspect.card_effect.toLowerCase().includes(searchTerm))
                         );
                         displayAspects(filteredAspects);
                     }
@@ -6694,7 +6692,7 @@
             const tbody = document.getElementById('aspects-tbody');
             
             if (aspects.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8">No aspects found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7">No aspects found</td></tr>';
                 return;
             }
             
@@ -6715,9 +6713,8 @@
                         </button>
                     </td>
                     <td><strong>${aspect.card_name}</strong></td>
-                    <td>${aspect.card_type}</td>
                     <td>${aspect.location}</td>
-                    <td>${formatSpecialCardEffect(aspect.card_effect)}</td>
+                    <td>${formatSpecialCardEffect(aspect.aspect_description || aspect.card_effect || 'No description available')}</td>
                     <td class="fortifications-column hidden">${aspect.is_fortification ? 'Yes' : 'No'}</td>
                     <td class="one-per-deck-column hidden">${aspect.is_one_per_deck ? 'Yes' : 'No'}</td>
                 </tr>
