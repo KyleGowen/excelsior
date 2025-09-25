@@ -46,19 +46,19 @@ export class DatabaseInitializationService {
       let command: string;
       if (isProduction) {
         // Use Flyway CLI directly in production
-        const flywayUrl = process.env.FLYWAY_URL || process.env.DATABASE_URL?.replace('postgresql://', 'jdbc:postgresql://');
-        
-        // Parse credentials from DATABASE_URL if not provided separately
+        let flywayUrl = process.env.FLYWAY_URL;
         let flywayUser = process.env.FLYWAY_USER;
         let flywayPassword = process.env.FLYWAY_PASSWORD;
         
-        if (!flywayUser || !flywayPassword) {
-          const dbUrl = process.env.DATABASE_URL;
-          if (dbUrl) {
-            const url = new URL(dbUrl);
-            flywayUser = flywayUser || url.username;
-            flywayPassword = flywayPassword || url.password;
-          }
+        // If FLYWAY_URL is not provided, construct it from DATABASE_URL
+        if (!flywayUrl && process.env.DATABASE_URL) {
+          const dbUrl = new URL(process.env.DATABASE_URL);
+          // Construct JDBC URL without credentials
+          flywayUrl = `jdbc:postgresql://${dbUrl.hostname}:${dbUrl.port}${dbUrl.pathname}${dbUrl.search}`;
+          
+          // Extract credentials from DATABASE_URL if not provided separately
+          if (!flywayUser) flywayUser = dbUrl.username;
+          if (!flywayPassword) flywayPassword = dbUrl.password;
         }
         
         // Fallback to default values if still not set
