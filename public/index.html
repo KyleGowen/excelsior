@@ -5805,7 +5805,7 @@
                 .replace(/&nbsp;/g, ' '); // Non-breaking spaces
             
             // Define special keywords that should be on their own lines
-            const specialKeywords = ['**One Per Deck**', '**Cataclysm!**', '**Assist!**', '**!Ambush**'];
+            const specialKeywords = ['**One Per Deck**', '**Cataclysm!**', '**Assist!**', '**!Ambush**', '**Fortifications!**'];
             const foundKeywords = [];
             
             // Find all special keywords in the text
@@ -5825,8 +5825,8 @@
                 // Clean up extra spaces and trim
                 mainText = mainText.replace(/\s+/g, ' ').trim();
                 
-                // Create keyword lines (remove ** markers)
-                const keywordLines = foundKeywords.map(keyword => keyword.replace(/\*\*/g, ''));
+                // Create keyword lines (convert ** to <strong> tags)
+                const keywordLines = foundKeywords.map(keyword => keyword.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'));
                 
                 // Format: main text + keywords on separate lines
                 return mainText + '<br><br>' + keywordLines.join('<br>');
