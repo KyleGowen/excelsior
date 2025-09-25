@@ -4869,7 +4869,6 @@
                         <tr>
                             <th>Image</th>
                             <th></th>
-                            <th>Card Type</th>
                             <th>To Use</th>
                             <th>Acts As</th>
                             <th>Followup Attack Types</th>
@@ -4886,12 +4885,11 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="teamwork-tbody">
                         <tr>
-                            <td colspan="7" class="loading">Loading teamwork cards...</td>
+                            <td colspan="6" class="loading">Loading teamwork cards...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -4904,7 +4902,6 @@
                             <th>Image</th>
                             <th></th>
                             <th>Card Name</th>
-                            <th>Card Type</th>
                             <th>Stat to Use</th>
                             <th>Stat Type</th>
                             <th>Attack Value</th>
@@ -4922,12 +4919,11 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="ally-universe-tbody">
                         <tr>
-                            <td colspan="8" class="loading">Loading allies...</td>
+                            <td colspan="7" class="loading">Loading allies...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -6842,7 +6838,7 @@
             const tbody = document.getElementById('teamwork-tbody');
             
             if (teamwork.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8">No teamwork cards found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7">No teamwork cards found</td></tr>';
                 return;
             }
             
@@ -6888,7 +6884,6 @@
                             Add to Deck
                         </button>
                     </td>
-                    <td><strong>${card.card_type || ''}</strong></td>
                     <td>${card.to_use}</td>
                     <td>${card.acts_as}</td>
                     <td>${card.followup_attack_types}</td>
@@ -6914,7 +6909,7 @@
         function displayAllyUniverse(allies) {
             const tbody = document.getElementById('ally-universe-tbody');
             if (!allies || allies.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9">No allies found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8">No allies found</td></tr>';
                 return;
             }
             
@@ -6957,7 +6952,6 @@
                         </button>
                     </td>
                     <td><strong>${card.card_name}</strong></td>
-                    <td>${card.card_type}</td>
                     <td>${card.stat_to_use}</td>
                     <td>${card.stat_type_to_use}</td>
                     <td>${card.attack_value}</td>
