@@ -65,15 +65,15 @@ resource "aws_db_instance" "postgres" {
   engine_version = "16.4"  # Latest PostgreSQL version supported by RDS
   
   # Instance configuration
-  instance_class    = var.db_instance_class
-  allocated_storage = var.db_allocated_storage
+  instance_class    = var.rds_instance_class
+  allocated_storage = var.rds_allocated_storage
   storage_type      = "gp3"  # General Purpose SSD (gp3) - better performance than gp2
   storage_encrypted = true   # Encrypt storage at rest
   
   # Database configuration
-  db_name  = var.db_name
-  username = var.db_username
-  password = var.db_password
+  db_name  = var.rds_database_name
+  username = var.rds_username
+  password = var.rds_password
   port     = var.db_port
   
   # Network configuration

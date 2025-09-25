@@ -4490,7 +4490,7 @@
         </div>
     </div>
 
-    <div class="container" id="mainContainer" style="display: none;">
+    <div class="container" id="mainContainer" style="display: block; opacity: 1;">
         <div class="header">
             <img src="/src/resources/images/op-logo.png" alt="Overpower Deckbuilder" style="max-width: 400px; height: auto; display: block; margin: 0 auto;">
             <p>Character Database & Deck Management System</p>
@@ -4504,8 +4504,8 @@
 
         <!-- Top-level application tabs -->
         <div class="app-tabs">
-            <button class="app-tab-button" onclick="window.location.href='/data'">Database View</button>
-            <button class="app-tab-button active" id="deckBuilderBtn" onclick="goToDeckBuilder()">Deck Builder</button>
+            <button class="app-tab-button" id="databaseViewBtn" onclick="switchToDatabaseView()">Database View</button>
+            <button class="app-tab-button active" id="deckBuilderBtn" onclick="switchToDeckBuilder()">Deck Builder</button>
         </div>
 
         <div id="database-view" class="database-section" style="display: block;">
@@ -5071,7 +5071,7 @@
 
 
         <!-- Deck Builder Section -->
-        <div id="deck-builder" class="deck-builder-section">
+        <div id="deck-builder" class="deck-builder-section" style="display: none;">
             <!-- Deck List -->
             <div class="deck-list-container">
                 <div class="deck-stats">
@@ -5357,17 +5357,71 @@
             }
         }
 
-        // Navigate to deck builder with current user's ID
-        function goToDeckBuilder() {
+        // Client-side navigation functions
+        function switchToDatabaseView() {
+            // Update URL without page reload
             const currentUser = getCurrentUser();
+            const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
+            history.pushState({view: 'database'}, '', `/users/${userId}/decks`);
             
-            if (currentUser && (currentUser.userId || currentUser.id)) {
-                const userId = currentUser.userId || currentUser.id;
-                window.location.href = `/users/${userId}/decks`;
+            // Update button states
+            document.getElementById('databaseViewBtn').classList.add('active');
+            document.getElementById('deckBuilderBtn').classList.remove('active');
+            
+            // Show database view, hide deck builder
+            document.getElementById('database-view').style.display = 'block';
+            document.getElementById('deck-builder').style.display = 'none';
+            
+            // Load database data if not already loaded
+            if (document.getElementById('total-characters').textContent === '-') {
+                loadDatabaseViewData();
+            }
+        }
+        
+        function switchToDeckBuilder() {
+            // Update URL without page reload
+            const currentUser = getCurrentUser();
+            const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
+            history.pushState({view: 'deckbuilder'}, '', `/users/${userId}/decks`);
+            
+            // Update button states
+            document.getElementById('deckBuilderBtn').classList.add('active');
+            document.getElementById('databaseViewBtn').classList.remove('active');
+            
+            // Show deck builder, hide database view
+            document.getElementById('deck-builder').style.display = 'block';
+            document.getElementById('database-view').style.display = 'none';
+            
+            // Load deck builder data if not already loaded
+            loadDecks();
+        }
+        
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', function(event) {
+            if (event.state && event.state.view === 'database') {
+                switchToDatabaseView();
             } else {
-                console.error('No current user found, falling back to guest');
-                // Fallback to guest if no user
-                window.location.href = '/users/guest/decks';
+                switchToDeckBuilder();
+            }
+        });
+        
+        // Load database view data
+        async function loadDatabaseViewData() {
+            try {
+                await Promise.all([
+                    loadCharacters(),
+                    loadAspects(),
+                    loadEvents(),
+                    loadTeamwork(),
+                    loadAllyUniverse(),
+                    loadTraining(),
+                    loadBasicUniverse(),
+                    loadPowerCards(),
+                    loadUserDecks()
+                ]);
+                console.log('Database view data loaded successfully');
+            } catch (error) {
+                console.error('Error loading database view data:', error);
             }
         }
 
@@ -7410,10 +7464,56 @@
         // Initialize page
         // Authentication functions
         let currentUser = null;
+        
+        // Check for stored user immediately to prevent any flash
+        (function() {
+            const storedUser = getCurrentUser();
+            if (storedUser) {
+                currentUser = storedUser;
+                // Hide login modal immediately if we have a stored user
+                document.addEventListener('DOMContentLoaded', function() {
+                    const loginModal = document.getElementById('loginModal');
+                    if (loginModal) {
+                        loginModal.style.display = 'none';
+                    }
+                });
+            }
+        })();
 
         async function checkAuthentication() {
+            // First check if we have a user in localStorage to prevent flash
+            const storedUser = getCurrentUser();
+            if (storedUser) {
+                currentUser = storedUser;
+                showMainApp();
+                
+                // Verify the session is still valid in the background
+                try {
+                    const response = await fetch('/api/auth/me', {
+                        credentials: 'include'
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        // Update currentUser with fresh data from server
+                        currentUser = data.data;
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    } else {
+                        // Session expired, clear stored user and show login
+                        localStorage.removeItem('currentUser');
+                        currentUser = null;
+                        showLoginModal();
+                    }
+                } catch (error) {
+                    console.error('Background auth verification failed:', error);
+                    // Don't show login modal for background verification failures
+                }
+                return;
+            }
+            
             try {
-                const response = await fetch('/api/auth/me');
+                const response = await fetch('/api/auth/me', {
+                    credentials: 'include'
+                });
                 if (response.ok) {
                     const data = await response.json();
                     currentUser = data.data;
@@ -7434,8 +7534,7 @@
 
         function showMainApp() {
             document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('mainContainer').style.display = 'block';
-            document.getElementById('currentUsername').textContent = currentUser.username;
+            document.getElementById('currentUsername').textContent = currentUser.username || currentUser.name || 'User';
             
             // Load user decks after successful login
             loadUserDecks();
@@ -7591,15 +7690,21 @@
             
             // Load data only if authenticated
             if (currentUser) {
-            loadAspects();
-            loadEvents();
-            loadTeamwork();
-            loadUserDecks(); // Load user decks for Add to Deck functionality
-            loadAllyUniverse();
-            loadTraining();
-            loadBasicUniverse();
-            loadPowerCards();
-            setupSearch();
+                // Set initial view state
+                document.getElementById('database-view').style.display = 'block';
+                document.getElementById('deck-builder').style.display = 'none';
+                document.getElementById('databaseViewBtn').classList.add('active');
+                document.getElementById('deckBuilderBtn').classList.remove('active');
+                
+                loadAspects();
+                loadEvents();
+                loadTeamwork();
+                loadUserDecks(); // Load user decks for Add to Deck functionality
+                loadAllyUniverse();
+                loadTraining();
+                loadBasicUniverse();
+                loadPowerCards();
+                setupSearch();
             }
             
             // Add location filter event listeners
