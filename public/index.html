@@ -7898,7 +7898,7 @@
                                 ${deck.metadata.description ? `<div class="deck-description">${deck.metadata.description}</div>` : ''}
                                 ${characterList}
                                 <div class="deck-meta">
-                                    <span>📊 ${deck.metadata.cardCount} cards</span>
+                                    <span>📊 ${calculateTotalCardCount(deck.cards || [])} cards</span>
                                     <span>📅 Created: ${new Date(deck.metadata.created).toLocaleDateString()}</span>
                                     <span>✏️ Modified: ${new Date(deck.metadata.lastModified).toLocaleDateString()}</span>
                                 </div>
@@ -8209,7 +8209,7 @@
                     document.getElementById('viewDeckDescription').textContent = deck.metadata.description || 'No description';
                     document.getElementById('viewDeckCreated').textContent = new Date(deck.metadata.created).toLocaleDateString();
                     document.getElementById('viewDeckModified').textContent = new Date(deck.metadata.lastModified).toLocaleDateString();
-                    document.getElementById('viewDeckCardCount').textContent = deck.metadata.cardCount;
+                    document.getElementById('viewDeckCardCount').textContent = calculateTotalCardCount(deck.cards || []);
                     
                     // Display deck cards
                     displayDeckCards(deck.cards);
@@ -9148,12 +9148,17 @@
             return { errors, warnings, isValid: errors.length === 0 };
         }
 
-        // Function to update deck summary with stats and validation
-        async function updateDeckSummary(deckCards) {
-            // Update total card count - exclude mission, character, and location cards
-            const totalCards = deckCards
+        // Shared function to calculate total card count (excluding mission, character, and location cards)
+        function calculateTotalCardCount(deckCards) {
+            return deckCards
                 .filter(card => !['mission', 'character', 'location'].includes(card.type))
                 .reduce((sum, card) => sum + card.quantity, 0);
+        }
+
+        // Function to update deck summary with stats and validation
+        async function updateDeckSummary(deckCards) {
+            // Update total card count using shared function
+            const totalCards = calculateTotalCardCount(deckCards);
             
             // Check if deck size is invalid to determine display format
             const eventCards = deckCards.filter(card => card.type === 'event');
@@ -10739,6 +10744,9 @@
             currentDeckId = null;
             currentDeckData = null;
             deckEditorCards = [];
+            
+            // Return to deck builder selection screen
+            switchToDeckBuilder();
         }
 
         // Resizable divider functionality
@@ -10837,7 +10845,7 @@
             
             const deckPercentage = (deckWidth / totalWidth) * 100;
             
-            if (deckPercentage >= 50) {
+            if (deckPercentage >= 33) {
                 deckCardsEditor.classList.add('two-column');
                 createTwoColumnLayout();
             } else {
@@ -11633,7 +11641,7 @@
                 const deckWidth = deckPane.offsetWidth;
                 const deckPercentage = (deckWidth / layoutWidth) * 100;
                 
-                if (deckPercentage > 58) {
+                if (deckPercentage >= 33) {
                     // Only create two-column layout if it doesn't already exist
                     const deckCardsEditor = document.querySelector('.deck-cards-editor');
                     if (!deckCardsEditor.querySelector('.deck-column')) {
