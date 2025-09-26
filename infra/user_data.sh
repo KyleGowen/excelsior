@@ -39,6 +39,12 @@ rm -rf aws awscliv2.zip
 echo "Installing jq..."
 dnf install -y jq
 
+# Install nginx
+echo "Installing nginx..."
+dnf install -y nginx
+systemctl enable nginx
+systemctl start nginx
+
 # Login to ECR
 echo "Logging into ECR..."
 aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${ecr_repository_url}
@@ -62,16 +68,56 @@ echo "Stopping any existing application container..."
 docker stop overpower-app || true
 docker rm overpower-app || true
 
+# Configure nginx for excelsior.cards
+echo "Configuring nginx for excelsior.cards..."
+cat > /etc/nginx/conf.d/excelsior.cards.conf << 'EOF'
+server {
+    listen 80;
+    server_name excelsior.cards www.excelsior.cards;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        
+        # Increase timeout for long-running requests
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+
+    # Health check endpoint
+    location /health {
+        access_log off;
+        return 200 "healthy\n";
+        add_header Content-Type text/plain;
+    }
+}
+EOF
+
+# Test nginx configuration
+echo "Testing nginx configuration..."
+nginx -t
+
+# Reload nginx to apply new configuration
+echo "Reloading nginx..."
+systemctl reload nginx
+
 # Run the application container
 echo "Starting application container..."
 docker run -d \
   --name overpower-app \
   --restart unless-stopped \
-  -p 80:3000 \
-  -p 443:3000 \
   -p 3000:3000 \
   -e NODE_ENV=$APP_ENV \
   -e DATABASE_URL="$DB_URL" \
+  -e NODE_TLS_REJECT_UNAUTHORIZED=0 \
   -e PORT=3000 \
   ${ecr_repository_url}:latest
 
@@ -83,8 +129,9 @@ echo "Checking application status..."
 if docker ps | grep -q overpower-app; then
     echo "✅ Application container is running successfully!"
     echo "Application should be accessible at:"
-    echo "  - http://$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4):3000"
-    echo "  - http://$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4):80"
+    echo "  - http://$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4):3000 (direct)"
+    echo "  - http://$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4) (via nginx)"
+    echo "  - http://excelsior.cards (via domain)"
 else
     echo "❌ Application container failed to start"
     echo "Container logs:"
@@ -92,7 +139,7 @@ else
     exit 1
 fi
 
-# Set up log rotation for Docker containers
+# Set up log rotation for Docker containers and nginx
 echo "Setting up log rotation..."
 cat > /etc/logrotate.d/docker-containers << EOF
 /var/lib/docker/containers/*/*.log {
@@ -103,6 +150,24 @@ cat > /etc/logrotate.d/docker-containers << EOF
     missingok
     delaycompress
     copytruncate
+}
+EOF
+
+cat > /etc/logrotate.d/nginx << EOF
+/var/log/nginx/*.log {
+    daily
+    missingok
+    rotate 52
+    compress
+    delaycompress
+    notifempty
+    create 640 nginx adm
+    sharedscripts
+    postrotate
+        if [ -f /var/run/nginx.pid ]; then
+            kill -USR1 \`cat /var/run/nginx.pid\`
+        fi
+    endscript
 }
 EOF
 
