@@ -10998,6 +10998,7 @@
         // Display search results
         function displayDeckEditorSearchResults(results) {
             console.log('🔍 Displaying search results:', results.length);
+            console.log('🔍 Results details:', results.map(r => ({ name: r.name, type: r.type, character: r.character })));
             const searchResults = document.getElementById('deckEditorSearchResults');
             
             if (results.length === 0) {
@@ -11005,7 +11006,7 @@
                 searchResults.innerHTML = '<div class="deck-editor-search-result">No cards found</div>';
             } else {
                 console.log('🔍 Rendering', results.length, 'results');
-                searchResults.innerHTML = results.map(card => `
+                const htmlContent = results.map(card => `
                     <div class="deck-editor-search-result" onclick="addCardToDeckFromSearch('${card.id}', '${card.type}')">
                         <div class="deck-editor-search-result-image" style="background-image: url('${card.image}')"></div>
                         <div class="deck-editor-search-result-info">
@@ -11015,6 +11016,10 @@
                         </div>
                     </div>
                 `).join('');
+                
+                console.log('🔍 Generated HTML length:', htmlContent.length);
+                searchResults.innerHTML = htmlContent;
+                console.log('🔍 Search results container children count:', searchResults.children.length);
             }
             
             console.log('🔍 Showing search results');
