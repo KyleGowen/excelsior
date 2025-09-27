@@ -11077,7 +11077,10 @@
             } else {
                 console.log('🔍 Rendering', results.length, 'results');
                 const htmlContent = results.map(card => `
-                    <div class="deck-editor-search-result" onclick="addCardToDeckFromSearch('${card.id}', '${card.type}')">
+                    <div class="deck-editor-search-result" 
+                         onclick="addCardToDeckFromSearch('${card.id}', '${card.type}')"
+                         onmouseenter="showCardHoverModal('${card.image}', '${card.name.replace(/'/g, "\\'")}')"
+                         onmouseleave="hideCardHoverModal()">
                         <div class="deck-editor-search-result-image" style="background-image: url('${card.image}')"></div>
                         <div class="deck-editor-search-result-info">
                             <div class="deck-editor-search-result-name">${card.name}</div>
