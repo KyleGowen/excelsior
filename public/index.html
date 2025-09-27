@@ -3096,6 +3096,9 @@
         .deck-cards-editor.list-view {
             padding: 20px;
             background: rgba(0, 0, 0, 0.3);
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
         }
 
         .deck-list-section {
@@ -3128,6 +3131,9 @@
             background: rgba(255, 255, 255, 0.02);
             border-radius: 6px;
             padding: 8px 0;
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
         }
 
         .deck-list-item {
@@ -3137,6 +3143,9 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             cursor: pointer;
             transition: all 0.2s ease;
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
         }
 
         .deck-list-item:last-child {
@@ -3189,6 +3198,12 @@
             border-color: rgba(78, 205, 196, 0.6);
         }
 
+        /* Force list view to always be horizontal */
+        .deck-cards-editor.list-view .deck-list-item {
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+        }
+        
         .deck-list-item-quantity-control {
             display: flex;
             align-items: center;
@@ -9296,6 +9311,20 @@
                 deckCardsEditor.classList.add('list-view');
                 listViewBtn.textContent = 'Tile View';
                 renderDeckCardsListView(); // Render in list view
+                
+                // Force immediate layout fix for list view
+                setTimeout(() => {
+                    const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
+                    listItems.forEach(item => {
+                        item.style.display = 'flex';
+                        item.style.flexDirection = 'row';
+                        item.style.flexWrap = 'nowrap';
+                        item.style.width = '100%';
+                        item.style.minWidth = '100%';
+                        item.style.boxSizing = 'border-box';
+                    });
+                    deckCardsEditor.offsetHeight; // Trigger reflow
+                }, 0);
             }
             
             // Save UI preferences when view mode changes
@@ -9410,6 +9439,23 @@
             });
 
             deckCardsEditor.innerHTML = html;
+            
+            // Force layout recalculation to ensure horizontal orientation
+            requestAnimationFrame(() => {
+                const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
+                listItems.forEach(item => {
+                    // Force flex layout to be horizontal
+                    item.style.display = 'flex';
+                    item.style.flexDirection = 'row';
+                    item.style.flexWrap = 'nowrap';
+                    item.style.width = '100%';
+                    item.style.minWidth = '100%';
+                    item.style.boxSizing = 'border-box';
+                });
+                
+                // Trigger a reflow to ensure the layout is applied
+                deckCardsEditor.offsetHeight;
+            });
         }
 
         function drawHand() {
