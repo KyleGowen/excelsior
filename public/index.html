@@ -10930,7 +10930,7 @@
                 // Search ally universe
                 const allyResponse = await fetch('/api/ally-universe');
                 const allyCards = await allyResponse.json();
-                if (allyResponse.success) {
+                if (allyCards.success) {
                     allyCards.data.forEach(card => {
                         const nameMatch = card.card_name && card.card_name.toLowerCase().includes(searchTerm);
                         
@@ -10992,10 +10992,10 @@
                 const powerCards = await powerResponse.json();
                 if (powerCards.success) {
                     powerCards.data.forEach(card => {
-                        if (card.name && card.name.toLowerCase().includes(searchTerm) || searchTerm === 'power card') {
+                        if (card.power_type && card.power_type.toLowerCase().includes(searchTerm) || searchTerm === 'power card') {
                             results.push({
                                 id: card.id,
-                                name: card.name,
+                                name: card.power_type,
                                 type: 'power',
                                 image: `/src/resources/cards/images/${card.image}`,
                                 character: null
@@ -11004,6 +11004,25 @@
                     });
                 }
 
+                // Search locations
+                const locationResponse = await fetch('/api/locations');
+                const locationCards = await locationResponse.json();
+                if (locationCards.success) {
+                    locationCards.data.forEach(card => {
+                        const nameMatch = card.name && card.name.toLowerCase().includes(searchTerm);
+                        const typeMatch = searchTerm === 'location';
+                        
+                        if (nameMatch || typeMatch) {
+                            results.push({
+                                id: card.id,
+                                name: card.name,
+                                type: 'location',
+                                image: `/src/resources/cards/images/${card.image}`,
+                                character: null
+                            });
+                        }
+                    });
+                }
             } catch (error) {
                 console.error('Error searching cards:', error);
             }
