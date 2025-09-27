@@ -3297,6 +3297,33 @@
             padding: 20px !important;
         }
         
+        /* Organize cards in 4 columns in read-only mode - apply to individual card sections */
+        .read-only-mode .deck-cards-editor,
+        .read-only-mode .deck-cards-editor.two-column {
+            display: block !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+        }
+        
+        /* Override two-column layout in read-only mode */
+        .read-only-mode .deck-cards-editor.two-column .deck-column {
+            display: block !important;
+        }
+        
+        /* Apply 4-column grid to individual card tiles within each section */
+        .read-only-mode .deck-type-cards {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 16px !important;
+        }
+        
+        /* Make list view also use 4 columns in read-only mode */
+        .read-only-mode .deck-list-view {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 16px !important;
+        }
+        
         /* Debug: Add a visible border to see if read-only-mode is applied */
         /* .read-only-mode {
             border: 3px solid red !important;
