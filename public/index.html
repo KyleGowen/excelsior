@@ -3168,19 +3168,24 @@
         }
 
         .deck-list-item-remove {
-            background: rgba(255, 0, 0, 0.2);
-            border: 1px solid rgba(255, 0, 0, 0.4);
-            color: #ff6b6b;
-            padding: 4px 8px;
+            background: rgba(78, 205, 196, 0.2);
+            border: 1px solid rgba(78, 205, 196, 0.4);
+            color: #4ecdc4;
+            width: 24px;
+            height: 24px;
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 1.0rem;
+            font-weight: bold;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.2s ease;
         }
 
         .deck-list-item-remove:hover {
-            background: rgba(255, 0, 0, 0.3);
-            border-color: rgba(255, 0, 0, 0.6);
+            background: rgba(78, 205, 196, 0.3);
+            border-color: rgba(78, 205, 196, 0.6);
         }
 
         .deck-list-item-quantity-control {
@@ -9136,7 +9141,7 @@
             } else {
                 // Switch to list view
                 deckCardsEditor.classList.add('list-view');
-                listViewBtn.textContent = 'Back to Tiles';
+                listViewBtn.textContent = 'Tile View';
                 renderDeckCardsListView(); // Render in list view
             }
         }
@@ -9219,7 +9224,7 @@
                                         <button class="deck-list-item-quantity-btn" onclick="removeOneCardFromEditor(${deckEditorCards.indexOf(card)})">-1</button>
                                     </div>
                                 ` : ''}
-                                <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">Remove</button>
+                                <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
                             </div>
                         </div>
                     `;
