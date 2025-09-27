@@ -3092,6 +3092,123 @@
             background: rgba(78, 205, 196, 0.1);
         }
 
+        /* List View Styles */
+        .deck-cards-editor.list-view {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .deck-list-section {
+            margin-bottom: 30px;
+        }
+
+        .deck-list-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(78, 205, 196, 0.1);
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .deck-list-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4ecdc4;
+        }
+
+        .deck-list-section-count {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .deck-list-items {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            padding: 8px 0;
+        }
+
+        .deck-list-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .deck-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .deck-list-item:hover {
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .deck-list-item-quantity {
+            font-weight: 600;
+            color: #4ecdc4;
+            margin-right: 12px;
+            min-width: 20px;
+        }
+
+        .deck-list-item-name {
+            flex: 1;
+            font-size: 1.0rem;
+            font-weight: 400;
+            color: #ffffff;
+        }
+
+        .deck-list-item-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .deck-list-item-remove {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.4);
+            color: #ff6b6b;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .deck-list-item-remove:hover {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: rgba(255, 0, 0, 0.6);
+        }
+
+        .deck-list-item-quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .deck-list-item-quantity-btn {
+            background: rgba(78, 205, 196, 0.2);
+            border: 1px solid rgba(78, 205, 196, 0.4);
+            color: #4ecdc4;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .deck-list-item-quantity-btn:hover {
+            background: rgba(78, 205, 196, 0.3);
+            border-color: rgba(78, 205, 196, 0.6);
+        }
+
         .deck-card-editor-item {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -5433,6 +5550,7 @@
                     </div>
                     <div class="summary-stat">
                         <button class="remove-all-btn" id="drawHandBtn" onclick="toggleDrawHand()" disabled>Draw Hand</button>
+                        <button class="remove-all-btn" id="listViewBtn" onclick="toggleListView()">List View</button>
                         <button class="remove-all-btn" id="screenshotViewBtn" onclick="toggleScreenshotView()" style="display: none;">Screenshot View</button>
                     </div>
                     <div class="deck-summary-validation" id="deckSummaryValidation">
@@ -9004,6 +9122,118 @@
         // Attach drag listeners to any existing cards
         attachDragListeners();
     }
+
+        // List View functionality
+        function toggleListView() {
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            const listViewBtn = document.getElementById('listViewBtn');
+            
+            if (deckCardsEditor.classList.contains('list-view')) {
+                // Switch back to tile view
+                deckCardsEditor.classList.remove('list-view');
+                listViewBtn.textContent = 'List View';
+                renderDeckCards(); // Re-render in tile view
+            } else {
+                // Switch to list view
+                deckCardsEditor.classList.add('list-view');
+                listViewBtn.textContent = 'Back to Tiles';
+                renderDeckCardsListView(); // Render in list view
+            }
+        }
+
+        function renderDeckCardsListView() {
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            if (!deckCardsEditor) return;
+
+            // Group cards by type
+            const cardsByType = {};
+            deckEditorCards.forEach(card => {
+                const type = card.type;
+                if (!cardsByType[type]) {
+                    cardsByType[type] = [];
+                }
+                cardsByType[type].push(card);
+            });
+
+            // Define type order and display names
+            const typeOrder = ['character', 'location', 'special', 'power', 'teamwork', 'ally-universe', 'basic-universe', 'advanced-universe', 'training', 'mission', 'event', 'aspect'];
+            const typeDisplayNames = {
+                'character': 'Characters',
+                'location': 'Locations', 
+                'special': 'Special Cards',
+                'power': 'Power Cards',
+                'teamwork': 'Teamwork Cards',
+                'ally-universe': 'Ally Universe',
+                'basic-universe': 'Basic Universe',
+                'advanced-universe': 'Advanced Universe',
+                'training': 'Training Cards',
+                'mission': 'Missions',
+                'event': 'Events',
+                'aspect': 'Aspects'
+            };
+
+            let html = '';
+            
+            // Render each type section
+            typeOrder.forEach(type => {
+                const cards = cardsByType[type];
+                if (!cards || cards.length === 0) return;
+
+                const totalCards = cards.reduce((sum, card) => sum + card.quantity, 0);
+                const displayName = typeDisplayNames[type] || type;
+                
+                html += `
+                    <div class="deck-list-section">
+                        <div class="deck-list-section-header">
+                            <div class="deck-list-section-title">${displayName}</div>
+                            <div class="deck-list-section-count">${totalCards} card${totalCards !== 1 ? 's' : ''}</div>
+                        </div>
+                        <div class="deck-list-items">
+                `;
+
+                // Sort cards by name for consistent display
+                cards.sort((a, b) => {
+                    const availableCardA = availableCardsMap.get(a.cardId);
+                    const availableCardB = availableCardsMap.get(b.cardId);
+                    const nameA = availableCardA?.name || availableCardA?.card_name || 'Unknown';
+                    const nameB = availableCardB?.name || availableCardB?.card_name || 'Unknown';
+                    return nameA.localeCompare(nameB);
+                });
+
+                cards.forEach((card, index) => {
+                    const availableCard = availableCardsMap.get(card.cardId);
+                    if (!availableCard) return;
+
+                    const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+                    const imagePath = getCardImagePath(availableCard, card.type, card.selectedAlternateImage);
+                    
+                    html += `
+                        <div class="deck-list-item" 
+                             onmouseenter="showCardHoverModal('${imagePath}', '${cardName.replace(/'/g, "\\'")}')"
+                             onmouseleave="hideCardHoverModal()">
+                            <div class="deck-list-item-quantity">${card.quantity}</div>
+                            <div class="deck-list-item-name">${cardName}</div>
+                            <div class="deck-list-item-actions">
+                                ${card.quantity > 1 ? `
+                                    <div class="deck-list-item-quantity-control">
+                                        <button class="deck-list-item-quantity-btn" onclick="removeOneCardFromEditor(${deckEditorCards.indexOf(card)})">-1</button>
+                                    </div>
+                                ` : ''}
+                                <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">Remove</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            deckCardsEditor.innerHTML = html;
+        }
+
         function drawHand() {
             console.log("DEBUG: drawHand function called");
             const deckCards = deckEditorCards;
@@ -12295,6 +12525,12 @@
             });
             
             deckCardsEditor.innerHTML = cardsHtml;
+            
+            // Check if we're in list view mode and re-render accordingly
+            if (deckCardsEditor.classList.contains('list-view')) {
+                renderDeckCardsListView();
+                return; // Skip the rest of the function since we're in list view
+            }
             
             // Check if we should maintain two-column layout
             const layout = document.querySelector('.deck-editor-layout');
