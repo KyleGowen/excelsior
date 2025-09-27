@@ -104,6 +104,7 @@ export interface AdvancedUniverse {
 
 export interface Teamwork {
   id: string;
+  name: string;
   card_type: string;
   to_use: string;
   acts_as: string;

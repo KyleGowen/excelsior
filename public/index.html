@@ -10768,11 +10768,10 @@
                 if (specialCards.success) {
                     console.log('🔍 Searching through', specialCards.data.length, 'special cards for:', searchTerm);
                     specialCards.data.forEach(card => {
-                        console.log('🔍 Special card data:', { id: card.id, card_name: card.card_name, name: card.name, character: card.character });
+                        console.log('🔍 Special card data:', { id: card.id, name: card.name, character: card.character });
                         
                         // Check if card name contains search term
-                        const nameMatch = (card.card_name && card.card_name.toLowerCase().includes(searchTerm)) || 
-                                        (card.name && card.name.toLowerCase().includes(searchTerm));
+                        const nameMatch = card.name && card.name.toLowerCase().includes(searchTerm);
                         
                         // Check if character field contains search term
                         const characterMatch = card.character && card.character.toLowerCase().includes(searchTerm);
@@ -10781,10 +10780,10 @@
                         const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm.toLowerCase();
                         
                         if (nameMatch || characterMatch || exactCharacterMatch) {
-                            console.log('🔍 Found special card match:', card.card_name || card.name, 'for character:', card.character);
+                            console.log('🔍 Found special card match:', card.name, 'for character:', card.character);
                             results.push({
                                 id: card.id,
-                                name: card.card_name || card.name,
+                                name: card.name,
                                 type: 'special',
                                 image: `/src/resources/cards/images/${card.image}`,
                                 character: card.character
@@ -10908,17 +10907,15 @@
                 const allyCards = await allyResponse.json();
                 if (allyResponse.success) {
                     allyCards.data.forEach(card => {
-                        const nameMatch = card.name && card.name.toLowerCase().includes(searchTerm);
-                        const characterMatch = card.character && card.character.toLowerCase().includes(searchTerm);
-                        const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm.toLowerCase();
+                        const nameMatch = card.card_name && card.card_name.toLowerCase().includes(searchTerm);
                         
-                        if (nameMatch || characterMatch || exactCharacterMatch) {
+                        if (nameMatch) {
                             results.push({
                                 id: card.id,
-                                name: card.name,
+                                name: card.card_name,
                                 type: 'ally-universe',
                                 image: `/src/resources/cards/images/${card.image}`,
-                                character: card.character
+                                character: null
                             });
                         }
                     });
@@ -10929,17 +10926,15 @@
                 const trainingCards = await trainingResponse.json();
                 if (trainingCards.success) {
                     trainingCards.data.forEach(card => {
-                        const nameMatch = card.name && card.name.toLowerCase().includes(searchTerm);
-                        const characterMatch = card.character && card.character.toLowerCase().includes(searchTerm);
-                        const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm.toLowerCase();
+                        const nameMatch = card.card_name && card.card_name.toLowerCase().includes(searchTerm);
                         
-                        if (nameMatch || characterMatch || exactCharacterMatch) {
+                        if (nameMatch) {
                             results.push({
                                 id: card.id,
-                                name: card.name,
+                                name: card.card_name,
                                 type: 'training',
                                 image: `/src/resources/cards/images/${card.image}`,
-                                character: card.character
+                                character: null
                             });
                         }
                     });
@@ -10950,17 +10945,15 @@
                 const basicCards = await basicResponse.json();
                 if (basicCards.success) {
                     basicCards.data.forEach(card => {
-                        const nameMatch = card.name && card.name.toLowerCase().includes(searchTerm);
-                        const characterMatch = card.character && card.character.toLowerCase().includes(searchTerm);
-                        const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm.toLowerCase();
+                        const nameMatch = card.card_name && card.card_name.toLowerCase().includes(searchTerm);
                         
-                        if (nameMatch || characterMatch || exactCharacterMatch) {
+                        if (nameMatch) {
                             results.push({
                                 id: card.id,
-                                name: card.name,
+                                name: card.card_name,
                                 type: 'basic-universe',
                                 image: `/src/resources/cards/images/${card.image}`,
-                                character: card.character
+                                character: null
                             });
                         }
                     });
