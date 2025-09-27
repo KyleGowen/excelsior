@@ -10802,7 +10802,8 @@
                         // Check if character field exactly matches search term (for character-specific searches)
                         const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm.toLowerCase();
                         
-                        if (nameMatch || characterMatch || exactCharacterMatch) {
+                        const typeMatch = searchTerm === 'special';
+                        if (nameMatch || characterMatch || exactCharacterMatch || typeMatch) {
                             console.log('🔍 Found special card match:', card.name, 'for character:', card.character);
                             results.push({
                                 id: card.id,
@@ -10892,7 +10893,8 @@
                         const characterMatch = card.character && card.character.toLowerCase().includes(searchTerm);
                         const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm.toLowerCase();
                         
-                        if (nameMatch || characterMatch || exactCharacterMatch) {
+                        const typeMatch = searchTerm === 'advanced';
+                        if (nameMatch || characterMatch || exactCharacterMatch || typeMatch) {
                             results.push({
                                 id: card.id,
                                 name: card.name,
@@ -10912,11 +10914,11 @@
                         const nameMatch = card.name && card.name.toLowerCase().includes(searchTerm);
                         const characterMatch = card.character && card.character.toLowerCase().includes(searchTerm);
                         const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm.toLowerCase();
-                        
-                        if (nameMatch || characterMatch || exactCharacterMatch) {
+                        const typeMatch = searchTerm === 'teamwork';                        
+                        if (nameMatch || characterMatch || exactCharacterMatch || typeMatch) {
                             results.push({
                                 id: card.id,
-                                name: card.name,
+                                name: card.to_use,
                                 type: 'teamwork',
                                 image: `/src/resources/cards/images/${card.image}`,
                                 character: card.character
@@ -10932,7 +10934,8 @@
                     allyCards.data.forEach(card => {
                         const nameMatch = card.card_name && card.card_name.toLowerCase().includes(searchTerm);
                         
-                        if (nameMatch) {
+                        const typeMatch = searchTerm === 'ally';
+                        if (nameMatch || typeMatch) {
                             results.push({
                                 id: card.id,
                                 name: card.card_name,
@@ -10951,7 +10954,8 @@
                     trainingCards.data.forEach(card => {
                         const nameMatch = card.card_name && card.card_name.toLowerCase().includes(searchTerm);
                         
-                        if (nameMatch) {
+                        const typeMatch = searchTerm === 'training';
+                        if (nameMatch || typeMatch) {
                             results.push({
                                 id: card.id,
                                 name: card.card_name,
@@ -10970,7 +10974,8 @@
                     basicCards.data.forEach(card => {
                         const nameMatch = card.card_name && card.card_name.toLowerCase().includes(searchTerm);
                         
-                        if (nameMatch) {
+                        const typeMatch = searchTerm === 'basic';
+                        if (nameMatch || typeMatch) {
                             results.push({
                                 id: card.id,
                                 name: card.card_name,
@@ -10987,7 +10992,7 @@
                 const powerCards = await powerResponse.json();
                 if (powerCards.success) {
                     powerCards.data.forEach(card => {
-                        if (card.name && card.name.toLowerCase().includes(searchTerm)) {
+                        if (card.name && card.name.toLowerCase().includes(searchTerm) || searchTerm === 'power card') {
                             results.push({
                                 id: card.id,
                                 name: card.name,
