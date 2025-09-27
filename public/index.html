@@ -2736,11 +2736,15 @@
             padding: 10px 15px;
             cursor: pointer;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
         }
 
         .deck-editor-search-result:hover {
             background: rgba(78, 205, 196, 0.1);
+            transform: translateY(-8px) scale(1.05);
+            z-index: 10;
+            box-shadow: 0 8px 20px rgba(78, 205, 196, 0.4);
+            border-color: rgba(78, 205, 196, 0.8);
         }
 
         .deck-editor-search-result:last-child {
