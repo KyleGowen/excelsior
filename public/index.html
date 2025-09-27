@@ -3252,6 +3252,11 @@
             display: none !important;
         }
         
+        /* Hide search bar in read-only mode */
+        .read-only-mode .deck-editor-search-container {
+            display: none !important;
+        }
+        
         /* Hide Available Cards pane in read-only mode and make deck content full width */
         .read-only-mode .card-selector-pane {
             display: none !important;
@@ -12177,8 +12182,8 @@
             // Define type order and display names
             const typeOrder = [
                 'character', 'location', 'mission', 'event', 'special', 
-                'aspect', 'advanced-universe', 'teamwork', 'ally-universe', 
-                'training', 'basic-universe', 'power'
+                'aspect', 'advanced_universe', 'teamwork', 'ally_universe', 
+                'training', 'basic_universe', 'power'
             ];
             
             const typeDisplayNames = {
@@ -12188,11 +12193,11 @@
                 'event': 'Events',
                 'special': 'Special Cards',
                 'aspect': 'Aspects',
-                'advanced-universe': 'Advanced Universe',
+                'advanced_universe': 'Advanced Universe',
                 'teamwork': 'Universe: Teamwork',
-                'ally-universe': 'Universe: Ally',
+                'ally_universe': 'Universe: Ally',
                 'training': 'Universe: Training',
-                'basic-universe': 'Universe: Basic',
+                'basic_universe': 'Universe: Basic',
                 'power': 'Power Cards'
             };
             
