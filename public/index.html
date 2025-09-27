@@ -2690,6 +2690,22 @@
             background: rgba(255, 255, 255, 0.2);
             box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
             outline: none !important;
+            border-bottom: none !important;
+        }
+
+        /* Force remove any blue lines under search container */
+        .deck-editor-search-container:focus-within::after,
+        .deck-editor-search-container:focus-within::before,
+        .deck-editor-search-container::after,
+        .deck-editor-search-container::before {
+            display: none !important;
+        }
+
+        .deck-editor-search-input:focus::after,
+        .deck-editor-search-input:focus::before,
+        .deck-editor-search-input::after,
+        .deck-editor-search-input::before {
+            display: none !important;
         }
 
         .deck-editor-search-results {
