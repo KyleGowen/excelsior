@@ -91,7 +91,6 @@ const authenticateUser = (req: any, res: any, next: any) => {
   }
   
   if (!sessionId) {
-    console.log('Authentication failed: No session found for user', userId, 'at', req.originalUrl);
     // Return JSON error for API calls, redirect for page requests
     if (req.originalUrl.startsWith('/api/')) {
       return res.status(401).json({ success: false, error: 'Authentication required' });
@@ -100,8 +99,8 @@ const authenticateUser = (req: any, res: any, next: any) => {
   }
   
   const session = userService.validateSession(sessionId);
+  
   if (!session) {
-    console.log('Authentication failed: Invalid or expired session for user', userId, 'at', req.originalUrl);
     // Return JSON error for API calls, redirect for page requests
     if (req.originalUrl.startsWith('/api/')) {
       return res.status(401).json({ success: false, error: 'Invalid or expired session' });
@@ -402,31 +401,38 @@ app.post('/api/decks', authenticateUser, async (req: any, res) => {
   }
 });
 
-app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
+app.get('/api/decks/:id', async (req: any, res) => {
   try {
+    console.log(`🔍 DEBUG: API deck route accessed - deckId: ${req.params.id}, user: ${req.user ? req.user.userId : 'none'}`);
     const deck = await deckRepository.getDeckById(req.params.id);
     if (!deck) {
+      console.log(`🔍 DEBUG: Deck not found - deckId: ${req.params.id}`);
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }
     
-    // Check if user owns this deck
-    if (deck.user_id !== req.user.userId) {
-      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
-    }
+    // Check if user owns this deck (if user is authenticated)
+    const isOwner = req.user ? deck.user_id === req.user.userId : false;
+    
+    // Add ownership flag to response for frontend to use
+    const deckData = {
+      ...deck,
+      isOwner: isOwner
+    };
     
     // Transform deck data to match frontend expectations
     const transformedDeck = {
       metadata: {
-        id: deck.id,
-        name: deck.name,
-        description: deck.description,
-        created: deck.created_at,
-        lastModified: deck.updated_at,
-        cardCount: deck.cards?.length || 0,
-        userId: deck.user_id,
-        uiPreferences: deck.ui_preferences
+        id: deckData.id,
+        name: deckData.name,
+        description: deckData.description,
+        created: deckData.created_at,
+        lastModified: deckData.updated_at,
+        cardCount: deckData.cards?.length || 0,
+        userId: deckData.user_id,
+        uiPreferences: deckData.ui_preferences,
+        isOwner: deckData.isOwner
       },
-      cards: deck.cards || []
+      cards: deckData.cards || []
     };
     
     res.json({ success: true, data: transformedDeck });
@@ -585,12 +591,19 @@ app.put('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res)
 // Main page route - displays characters table
 // Main application route - serves the app with login modal
 app.get('/', (req, res) => {
+  // Add cache-busting headers to prevent HTML caching during development
+  res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
   res.sendFile(path.join(process.cwd(), 'public/index.html'));
 });
 
 // Deck Builder route (Image 2)
 app.get('/users/:userId/decks', authenticateUser, (req: any, res) => {
   const { userId } = req.params;
+  console.log(`🔍 DEBUG: Deck builder route accessed - userId: ${userId}, user: ${req.user ? req.user.userId : 'none'}`);
   
   // Verify user is accessing their own decks
   // Handle both userId (from session) and id (from direct user lookup)
@@ -601,27 +614,26 @@ app.get('/users/:userId/decks', authenticateUser, (req: any, res) => {
                        (userIdentifier === userId);
   
   if (!isGuestAccess) {
+    console.log(`🔍 DEBUG: Access denied for deck builder - userId: ${userId}, userIdentifier: ${userIdentifier}`);
     return res.status(403).json({ success: false, error: 'Access denied' });
   }
   
   res.sendFile(path.join(process.cwd(), 'public/index.html'));
 });
 
-// Deck Editor route - serve deck editor for specific deck
-app.get('/users/:userId/decks/:deckId', authenticateUser, (req: any, res) => {
+// Deck Editor route - serve deck editor for specific deck (no auth required for read-only viewing)
+app.get('/users/:userId/decks/:deckId', (req: any, res) => {
   const { userId, deckId } = req.params;
+  console.log(`🔍 DEBUG: Deck editor route accessed - userId: ${userId}, deckId: ${deckId}`);
   
-  // Verify user is accessing their own decks
-  // Handle both userId (from session) and id (from direct user lookup)
-  const userIdentifier = req.user.userId || req.user.id;
-  
-  // Special case for guest user - allow both 'guest' and 'guest-001' URLs
-  const isGuestAccess = (userId === 'guest' && userIdentifier === 'guest-001') || 
-                       (userIdentifier === userId);
-  
-  if (!isGuestAccess) {
-    return res.status(403).json({ success: false, error: 'Access denied' });
-  }
+  // Add cache-busting headers to prevent HTML caching during development
+  res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0',
+    'Last-Modified': new Date().toUTCString(),
+    'ETag': `"${Date.now()}"`
+  });
   
   res.sendFile(path.join(process.cwd(), 'public/index.html'));
 });

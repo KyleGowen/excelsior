@@ -1,11 +1,5 @@
 [
   {
-    "sessionId": "sess_hu1u3dgzg_mf95wxja",
-    "userId": "kyle-001",
-    "username": "kyle",
-    "expiresAt": "2025-09-07T05:57:55.270Z"
-  },
-  {
     "sessionId": "sess_eg2hcq73a_mf9spmwp",
     "userId": "kyle-001",
     "username": "kyle",
@@ -376,5 +370,65 @@
     "userId": "c567175f-a07b-41b7-b274-e82901d1b4f1",
     "username": "kyle",
     "expiresAt": "2025-09-27T03:51:03.944Z"
+  },
+  {
+    "sessionId": "sess_52atl5drf_mg1qhvn6",
+    "userId": "c567175f-a07b-41b7-b274-e82901d1b4f1",
+    "username": "kyle",
+    "expiresAt": "2025-09-27T05:51:37.842Z"
+  },
+  {
+    "sessionId": "sess_b1lcbkzs6_mg1tpte0",
+    "userId": "6a089193-7fd7-4b13-9243-cf3aa4bc03ee",
+    "username": "guest",
+    "expiresAt": "2025-09-27T07:21:47.016Z"
+  },
+  {
+    "sessionId": "sess_t3exze918_mg1tu5uh",
+    "userId": "6a089193-7fd7-4b13-9243-cf3aa4bc03ee",
+    "username": "guest",
+    "expiresAt": "2025-09-27T07:25:09.785Z"
+  },
+  {
+    "sessionId": "sess_vgobzpya4_mg1ty9eu",
+    "userId": "6a089193-7fd7-4b13-9243-cf3aa4bc03ee",
+    "username": "guest",
+    "expiresAt": "2025-09-27T07:28:21.030Z"
+  },
+  {
+    "sessionId": "sess_xkuoqfly0_mg1tyt8n",
+    "userId": "6a089193-7fd7-4b13-9243-cf3aa4bc03ee",
+    "username": "guest",
+    "expiresAt": "2025-09-27T07:28:46.727Z"
+  },
+  {
+    "sessionId": "sess_5wkq06cq2_mg1u3dvm",
+    "userId": "6a089193-7fd7-4b13-9243-cf3aa4bc03ee",
+    "username": "guest",
+    "expiresAt": "2025-09-27T07:32:20.098Z"
+  },
+  {
+    "sessionId": "sess_e57bj0l61_mg1u7t5x",
+    "userId": "6a089193-7fd7-4b13-9243-cf3aa4bc03ee",
+    "username": "guest",
+    "expiresAt": "2025-09-27T07:35:46.533Z"
+  },
+  {
+    "sessionId": "sess_2slpahvjj_mg1u8drs",
+    "userId": "6a089193-7fd7-4b13-9243-cf3aa4bc03ee",
+    "username": "guest",
+    "expiresAt": "2025-09-27T07:36:13.240Z"
+  },
+  {
+    "sessionId": "sess_hyn0lzhm5_mg1vnzps",
+    "userId": "6a089193-7fd7-4b13-9243-cf3aa4bc03ee",
+    "username": "guest",
+    "expiresAt": "2025-09-27T08:16:21.136Z"
+  },
+  {
+    "sessionId": "sess_29n72iov6_mg1xc5ua",
+    "userId": "c567175f-a07b-41b7-b274-e82901d1b4f1",
+    "username": "kyle",
+    "expiresAt": "2025-09-27T09:03:08.434Z"
   }
 ]

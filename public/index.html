@@ -3215,6 +3215,93 @@
             border-color: rgba(78, 205, 196, 0.6);
         }
 
+        /* Read-Only Mode Indicator */
+        .read-only-indicator {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.1));
+            border: 1px solid rgba(255, 193, 7, 0.4);
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .read-only-text {
+            color: #ffc107;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        /* Hide editing buttons in read-only mode (but keep List View and Draw Hand buttons) */
+        .read-only-mode .deck-card-editor-remove,
+        .read-only-mode .deck-card-editor-change-art {
+            display: none !important;
+        }
+        
+        /* Hide Remove All and Remove Unusables buttons specifically (but keep Draw Hand and List View) */
+        .read-only-mode .remove-all-btn:not(#drawHandBtn):not(#listViewBtn),
+        .read-only-mode .remove-unusables-btn {
+            display: none !important;
+        }
+        
+        /* Hide "-" buttons in list view when in read-only mode */
+        .read-only-mode .deck-list-item-remove {
+            display: none !important;
+        }
+        
+        /* Hide Available Cards pane in read-only mode and make deck content full width */
+        .read-only-mode .card-selector-pane {
+            display: none !important;
+        }
+        
+        .read-only-mode .deck-editor-content {
+            width: 100% !important;
+            max-width: none !important;
+        }
+        
+        /* Make the deck pane take full width when card selector is hidden */
+        .read-only-mode .deck-pane {
+            flex: 1 1 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        
+        /* Hide the resizable divider in read-only mode */
+        .read-only-mode .resizable-divider {
+            display: none !important;
+        }
+        
+        /* Make the modal content take up full width in read-only mode */
+        .read-only-mode .modal-content {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            margin: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Force the modal itself to take full width in read-only mode */
+        .read-only-mode.modal {
+            padding: 0 !important;
+        }
+        
+        /* Debug: Add a visible border to see if read-only-mode is applied */
+        /* .read-only-mode {
+            border: 3px solid red !important;
+        } */
+        
+        /* Debug: Make hidden elements visible with a different color to see what's being hidden */
+        .read-only-mode .card-selector-pane {
+            display: none !important;
+            background: yellow !important;
+        }
+
         .deck-card-editor-item {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -5512,6 +5599,9 @@
                 <div class="deck-editor-title-section">
                     <h3 id="deckEditorTitle" class="editable-title" onclick="startEditingTitle()">Edit Deck</h3>
                     <p id="deckEditorDescription" class="deck-description editable-description" onclick="startEditingDescription()"></p>
+                    <div id="readOnlyIndicator" class="read-only-indicator" style="display: none;">
+                        <span class="read-only-text">📖 Read-Only Mode - Viewing Another User's Deck</span>
+                    </div>
                 </div>
                 <div class="deck-editor-search-container">
                     <input type="text" id="deckEditorSearchInput" class="deck-editor-search-input" placeholder="Search by card name, character, or type...">
@@ -5924,6 +6014,12 @@
         
         async function addCardToDatabaseDeck(deckId, cardType, cardId, cardName) {
             console.log('addCardToDeck called with:', { deckId, cardType, cardId, cardName });
+            
+            // Check if in read-only mode
+            if (isReadOnlyMode) {
+                alert('Cannot add cards in read-only mode. You are viewing another user\'s deck.');
+                return;
+            }
             
             // Check if user is authenticated - try both methods
             let currentUser = getCurrentUser();
@@ -7783,6 +7879,7 @@
         // Initialize page
         // Authentication functions
         let currentUser = null;
+        let isReadOnlyMode = false; // Track if we're viewing another user's deck
         
         // Check for stored user immediately to prevent any flash
         (function() {
@@ -7975,10 +8072,32 @@
                 loadDatabaseViewData();
             } else if (window.location.pathname.match(/\/users\/[^\/]+\/decks\/[^\/]+/)) {
                 // Check if we're on a deck editor route
-                const pathMatch = window.location.pathname.match(/\/users\/[^\/]+\/decks\/([^\/]+)/);
+                const pathMatch = window.location.pathname.match(/\/users\/([^\/]+)\/decks\/([^\/]+)/);
                 if (pathMatch) {
-                    const deckId = pathMatch[1];
-                    console.log('Detected deck editor route for deck:', deckId);
+                    const urlUserId = pathMatch[1];
+                    const deckId = pathMatch[2];
+                    console.log('Detected deck editor route for deck:', deckId, 'user:', urlUserId);
+                    
+                    // Check if this is another user's deck (read-only mode)
+                    const currentUser = getCurrentUser();
+                    
+                    // Check if currentUser was created from URL fallback (testing mode)
+                    const isUrlFallbackUser = currentUser && !localStorage.getItem('currentUser');
+                    
+                    if (currentUser && currentUser.userId !== urlUserId) {
+                        isReadOnlyMode = true;
+                        console.log('Read-only mode: viewing another user\'s deck');
+                    } else if (!currentUser || isUrlFallbackUser) {
+                        // No authentication or URL fallback user - assume read-only mode for testing
+                        isReadOnlyMode = true;
+                        console.log('Read-only mode: no authentication (testing mode)');
+                    } else {
+                        isReadOnlyMode = false;
+                        console.log('Edit mode: viewing own deck');
+                    }
+                    
+                    // Note: We'll also check the isOwner flag from the API response
+                    // when the deck data is loaded to ensure accuracy
                     
                     // Show deck builder (which contains the deck editor)
                     document.getElementById('database-view').style.display = 'none';
@@ -11447,6 +11566,12 @@
         async function addCardToDeckFromSearch(cardId, cardType) {
             console.log('🔍 Adding card to deck:', { cardId, cardType, currentDeckId });
             
+            // Check if in read-only mode
+            if (isReadOnlyMode) {
+                alert('Cannot add cards in read-only mode. You are viewing another user\'s deck.');
+                return;
+            }
+            
             if (!currentDeckId) {
                 console.error('No current deck selected');
                 return;
@@ -11495,6 +11620,12 @@
 
         // Inline editing functions for deck title and description
         function startEditingTitle() {
+            // Check if in read-only mode
+            if (isReadOnlyMode) {
+                alert('Cannot edit deck title in read-only mode. You are viewing another user\'s deck.');
+                return;
+            }
+            
             const titleElement = document.getElementById('deckEditorTitle');
             const currentTitle = titleElement.textContent;
             
@@ -11528,6 +11659,12 @@
         }
 
         function startEditingDescription() {
+            // Check if in read-only mode
+            if (isReadOnlyMode) {
+                alert('Cannot edit deck description in read-only mode. You are viewing another user\'s deck.');
+                return;
+            }
+            
             const descElement = document.getElementById('deckEditorDescription');
             const currentDescription = descElement.textContent;
             
@@ -11639,8 +11776,46 @@
                     return;
                 }
                 modal.style.display = 'flex';
+                
+                // Add/remove read-only-mode class to modal
+                if (isReadOnlyMode) {
+                    modal.classList.add('read-only-mode');
+                    console.log('🔍 Added read-only-mode class to modal');
+                    
+                    // Debug: Check if card-selector-pane exists and is being hidden
+                    const cardSelectorPane = document.querySelector('.card-selector-pane');
+                    if (cardSelectorPane) {
+                        console.log('🔍 Found card-selector-pane element:', cardSelectorPane);
+                        console.log('🔍 card-selector-pane display style:', window.getComputedStyle(cardSelectorPane).display);
+                    } else {
+                        console.log('🔍 No card-selector-pane element found!');
+                    }
+                } else {
+                    modal.classList.remove('read-only-mode');
+                    console.log('🔍 Removed read-only-mode class from modal');
+                }
+                
+                // Show/hide read-only indicator
+                const readOnlyIndicator = document.getElementById('readOnlyIndicator');
+                if (readOnlyIndicator) {
+                    readOnlyIndicator.style.display = isReadOnlyMode ? 'block' : 'none';
+                }
+                
+                // Update title based on mode
+                const title = document.getElementById('deckEditorTitle');
+                if (title) {
+                    title.textContent = isReadOnlyMode ? 'View Deck' : 'Edit Deck';
+                }
+                
+                // Hide/show Save button based on mode
+                const saveButton = document.querySelector('.deck-editor-actions .btn-primary');
+                if (saveButton) {
+                    saveButton.style.display = isReadOnlyMode ? 'none' : 'block';
+                }
+                
                 console.log('Modal displayed, setting up drag and drop');
-                setupDragAndDrop();
+                // Don't set up drag and drop immediately - wait for API response to determine read-only mode
+                // setupDragAndDrop() will be called after loadDeckForEditing() completes
                 
                 // Initialize deck editor search
                 initializeDeckEditorSearch();
@@ -11902,6 +12077,15 @@
                     currentDeckData = data.data;
                     deckEditorCards = [...data.data.cards]; // Create working copy
                     console.log('Working copy created:', deckEditorCards);
+                    
+                    // Update read-only mode based on API response
+                    if (data.data.metadata && data.data.metadata.isOwner !== undefined) {
+                        isReadOnlyMode = !data.data.metadata.isOwner;
+                        console.log('Updated read-only mode from API:', isReadOnlyMode, 'isOwner:', data.data.metadata.isOwner);
+                        
+                        // Now set up drag and drop based on the correct read-only mode
+                        setupDragAndDrop();
+                    }
                     
                     // Validate and fix location count (max 1 location allowed)
                     const locationCards = deckEditorCards.filter(card => card.type === 'location');
@@ -13421,6 +13605,12 @@
             }
         }
         async function removeCardFromEditor(index) {
+            // Check if in read-only mode
+            if (isReadOnlyMode) {
+                alert('Cannot remove cards in read-only mode. You are viewing another user\'s deck.');
+                return;
+            }
+            
             // Capture current expansion state before re-rendering
             const currentExpansionState = getExpansionState();
             
@@ -14613,6 +14803,13 @@
         }
         function setupDragAndDrop() {
             console.log('setupDragAndDrop called');
+            
+            // Skip drag and drop setup in read-only mode
+            if (isReadOnlyMode) {
+                console.log('Skipping drag and drop setup - read-only mode');
+                return;
+            }
+            
             try {
                 const deckCardsEditor = document.getElementById('deckCardsEditor');
                 if (!deckCardsEditor) {
@@ -15309,6 +15506,12 @@
 
         async function saveDeckChanges() {
             if (!currentDeckId || !currentDeckData) return;
+            
+            // Check if in read-only mode
+            if (isReadOnlyMode) {
+                alert('Cannot save changes in read-only mode. You are viewing another user\'s deck.');
+                return;
+            }
             
             try {
                 // Clear existing cards
