@@ -12698,12 +12698,12 @@
                             const isAspect = card.type === 'aspect';
                             const isTeamwork = card.type === 'teamwork';
                             const isAllyUniverse = card.type === 'ally_universe';
-                            const isBasicUniverse = card.type === 'basic-universe';
+                            const isBasicUniverse = card.type === 'basic_universe';
                             const isAdvancedUniverse = card.type === 'advanced_universe';
                             const isTraining = card.type === 'training';
                             
                             // Debug logging for card types
-                            if (card.type === 'basic-universe' || availableCard?.card_name?.includes('Advanced Technology')) {
+                            if (card.type === 'basic_universe' || availableCard?.card_name?.includes('Advanced Technology')) {
                                 console.log('🔍 DEBUG: Processing card with type:', card.type, 'name:', availableCard?.card_name);
                                 console.log('🔍 DEBUG: isBasicUniverse:', isBasicUniverse);
                             }
@@ -12720,12 +12720,12 @@
                             const trainingClass = isTraining ? 'training-card' : '';
                             
                             // Debug logging for CSS classes
-                            if (card.type === 'basic-universe' || availableCard?.card_name?.includes('Advanced Technology')) {
+                            if (card.type === 'basic_universe' || availableCard?.card_name?.includes('Advanced Technology')) {
                                 console.log('🔍 DEBUG: basicUniverseClass:', basicUniverseClass);
                                 console.log('🔍 DEBUG: All classes:', `${characterClass} ${powerClass} ${locationClass} ${missionClass} ${eventClass} ${aspectClass} ${teamworkClass} ${allyUniverseClass} ${basicUniverseClass} ${advancedUniverseClass} ${trainingClass}`);
                             }
                             const selectedAlternateImage = card.selectedAlternateImage;
-                            const bgImageData = (isCharacter || isPower || isLocation || isMission || isEvent || isAspect || isTeamwork || card.type === 'ally_universe' || card.type === 'basic-universe' || card.type === 'advanced_universe' || card.type === 'training') ? `data-bg-image="${getCardImagePath(availableCard, card.type, selectedAlternateImage)}"` : '';
+                            const bgImageData = (isCharacter || isPower || isLocation || isMission || isEvent || isAspect || isTeamwork || card.type === 'ally_universe' || card.type === 'basic_universe' || card.type === 'advanced_universe' || card.type === 'training') ? `data-bg-image="${getCardImagePath(availableCard, card.type, selectedAlternateImage)}"` : '';
                             
                             // Add alternate art button for characters, special cards, and power cards with alternate images
                             let alternateArtButton = '';
