@@ -1,7 +1,9 @@
 import fs from 'fs';
 import path from 'path';
+import { User } from '../types';
 
-export interface User {
+// Legacy User interface for backward compatibility
+export interface LegacyUser {
   id: string;
   username: string;
   password: string; // Plain text for now, will be hashed later
@@ -16,7 +18,7 @@ export interface UserSession {
 }
 
 export class UserPersistenceService {
-  private users: Map<string, User> = new Map();
+  private users: Map<string, LegacyUser> = new Map();
   private sessions: Map<string, UserSession> = new Map();
   private usersFilePath: string;
   private sessionsFilePath: string;
@@ -93,7 +95,7 @@ export class UserPersistenceService {
   }
 
   private createInitialUser(): void {
-    const initialUser: User = {
+    const initialUser: LegacyUser = {
       id: 'kyle-001',
       username: 'kyle',
       password: 'test',
@@ -109,7 +111,12 @@ export class UserPersistenceService {
       if (user.username === username && user.password === password) {
         user.lastLoginAt = new Date();
         this.saveUsers();
-        return user;
+        return {
+          id: user.id,
+          name: user.username,
+          email: '', // Legacy users don't have email
+          role: 'USER' as any // Default role for legacy users
+        };
       }
     }
     return null;
@@ -121,7 +128,7 @@ export class UserPersistenceService {
     
     const session: UserSession = {
       userId: user.id,
-      username: user.username,
+      username: user.name,
       expiresAt
     };
     
@@ -149,13 +156,26 @@ export class UserPersistenceService {
   }
 
   public getUserById(userId: string): User | null {
-    return this.users.get(userId) || null;
+    const legacyUser = this.users.get(userId);
+    if (!legacyUser) return null;
+    
+    return {
+      id: legacyUser.id,
+      name: legacyUser.username,
+      email: '', // Legacy users don't have email
+      role: 'USER' as any // Default role for legacy users
+    };
   }
 
   public getUserByUsername(username: string): User | null {
     for (const user of this.users.values()) {
       if (user.username === username) {
-        return user;
+        return {
+          id: user.id,
+          name: user.username,
+          email: '', // Legacy users don't have email
+          role: 'USER' as any // Default role for legacy users
+        };
       }
     }
     return null;
@@ -171,7 +191,12 @@ export class UserPersistenceService {
   }
 
   public getAllUsers(): User[] {
-    return Array.from(this.users.values());
+    return Array.from(this.users.values()).map(legacyUser => ({
+      id: legacyUser.id,
+      name: legacyUser.username,
+      email: '', // Legacy users don't have email
+      role: 'USER' as any // Default role for legacy users
+    }));
   }
 
   public getActiveSessions(): UserSession[] {

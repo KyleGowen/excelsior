@@ -77,13 +77,13 @@ async function initializeServer() {
 initializeServer();
 
 // Authentication middleware
-const authenticateUser = (req: any, res: any, next: any) => {
+const authenticateUser = async (req: any, res: any, next: any) => {
   const sessionId = req.cookies?.sessionId;
   const { userId } = req.params;
   
   // Special handling for guest user - allow access without session
   if (userId === 'guest') {
-    const guestUser = userService.getUserById('guest-001');
+    const guestUser = await userRepository.getUserById('00000000-0000-0000-0000-000000000001');
     if (guestUser) {
       req.user = guestUser;
       return next();
@@ -108,7 +108,16 @@ const authenticateUser = (req: any, res: any, next: any) => {
     return res.redirect('/');
   }
   
-  req.user = session;
+  // Get the full user object from the database
+  const user = await userRepository.getUserById(session.userId);
+  if (!user) {
+    if (req.originalUrl.startsWith('/api/')) {
+      return res.status(401).json({ success: false, error: 'User not found' });
+    }
+    return res.redirect('/');
+  }
+  
+  req.user = user;
   next();
 };
 
@@ -124,12 +133,7 @@ app.post('/api/auth/login', async (req, res) => {
     // Use database authentication
     const user = await userRepository.authenticateUser(username, password);
     if (user) {
-      const sessionId = userService.createSession({
-        id: user.id,
-        username: user.name,
-        password: '', // Not needed for session
-        createdAt: new Date()
-      });
+      const sessionId = userService.createSession(user);
       
       res.cookie('sessionId', sessionId, {
         httpOnly: true,
@@ -175,8 +179,8 @@ app.get('/api/auth/me', authenticateUser, (req: any, res) => {
     res.json({ 
       success: true, 
       data: { 
-        userId: req.user.userId, 
-        username: req.user.username 
+        userId: req.user.id, 
+        username: req.user.name 
       } 
     });
   } catch (error) {
@@ -356,7 +360,7 @@ app.get('/api/users', (req, res) => {
 
 app.get('/api/decks', authenticateUser, async (req: any, res) => {
   try {
-    const decks = await deckRepository.getDecksByUserId(req.user.userId);
+    const decks = await deckRepository.getDecksByUserId(req.user.id);
     
     // Load cards for each deck
     const decksWithCards = await Promise.all(decks.map(async (deck) => {
@@ -394,24 +398,27 @@ app.post('/api/decks', authenticateUser, async (req: any, res) => {
       return res.status(400).json({ success: false, error: 'Deck name is required' });
     }
     
-    const deck = await deckRepository.createDeck(req.user.userId, name, description, characters);
+    const deck = await deckRepository.createDeck(req.user.id, name, description, characters);
     res.json({ success: true, data: deck });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to create deck' });
   }
 });
 
-app.get('/api/decks/:id', async (req: any, res) => {
+app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
   try {
-    console.log(`🔍 DEBUG: API deck route accessed - deckId: ${req.params.id}, user: ${req.user ? req.user.userId : 'none'}`);
     const deck = await deckRepository.getDeckById(req.params.id);
     if (!deck) {
-      console.log(`🔍 DEBUG: Deck not found - deckId: ${req.params.id}`);
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }
     
-    // Check if user owns this deck (if user is authenticated)
-    const isOwner = req.user ? deck.user_id === req.user.userId : false;
+    // Check if user owns this deck
+    if (deck.user_id !== req.user.id) {
+      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
+    }
+    
+    // User owns this deck
+    const isOwner = true;
     
     // Add ownership flag to response for frontend to use
     const deckData = {
@@ -448,7 +455,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
     
     // Check if user owns this deck
     const deck = await deckRepository.getDeckById(req.params.id);
-    if (!deck || deck.user_id !== req.user.userId) {
+    if (!deck || deck.user_id !== req.user.id) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
@@ -466,7 +473,7 @@ app.delete('/api/decks/:id', authenticateUser, async (req: any, res) => {
   try {
     // Check if user owns this deck
     const deck = await deckRepository.getDeckById(req.params.id);
-    if (!deck || deck.user_id !== req.user.userId) {
+    if (!deck || deck.user_id !== req.user.id) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
@@ -488,7 +495,7 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
     }
     
     // Check if user owns this deck
-    if (!await deckRepository.userOwnsDeck(req.params.id, req.user.userId)) {
+    if (!await deckRepository.userOwnsDeck(req.params.id, req.user.id)) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
@@ -513,7 +520,7 @@ app.delete('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
     }
     
     // Check if user owns this deck
-    if (!await deckRepository.userOwnsDeck(req.params.id, req.user.userId)) {
+    if (!await deckRepository.userOwnsDeck(req.params.id, req.user.id)) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
@@ -540,7 +547,7 @@ app.delete('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
 
 app.get('/api/deck-stats', authenticateUser, async (req: any, res) => {
   try {
-    const userDecks = await deckRepository.getDecksByUserId(req.user.userId);
+    const userDecks = await deckRepository.getDecksByUserId(req.user.id);
     const totalCards = userDecks.reduce((total, deck) => total + (deck.cards?.length || 0), 0);
     const stats = { totalDecks: userDecks.length, totalCards };
     res.json({ success: true, data: stats });
@@ -556,7 +563,7 @@ app.get('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res)
     const { id } = req.params;
     
     // Check if user owns this deck
-    if (!await deckRepository.userOwnsDeck(id, req.user.userId)) {
+    if (!await deckRepository.userOwnsDeck(id, req.user.id)) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
@@ -573,7 +580,7 @@ app.put('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res)
     const preferences = req.body;
     
     // Check if user owns this deck
-    if (!await deckRepository.userOwnsDeck(id, req.user.userId)) {
+    if (!await deckRepository.userOwnsDeck(id, req.user.id)) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
@@ -603,11 +610,9 @@ app.get('/', (req, res) => {
 // Deck Builder route (Image 2)
 app.get('/users/:userId/decks', authenticateUser, (req: any, res) => {
   const { userId } = req.params;
-  console.log(`🔍 DEBUG: Deck builder route accessed - userId: ${userId}, user: ${req.user ? req.user.userId : 'none'}`);
-  
   // Verify user is accessing their own decks
   // Handle both userId (from session) and id (from direct user lookup)
-  const userIdentifier = req.user.userId || req.user.id;
+  const userIdentifier = req.user.id || req.user.id;
   
   // Special case for guest user - allow both 'guest' and 'guest-001' URLs
   const isGuestAccess = (userId === 'guest' && userIdentifier === 'guest-001') || 
