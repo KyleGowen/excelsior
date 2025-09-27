@@ -98,6 +98,8 @@ if## Git Workflow - CRITICAL RULE
 - Use parameterized queries for database operations
 - Implement proper authentication and authorization
 - Sanitize data before displaying in HTML
+- **🚨 NEVER include passwords, API keys, session tokens, or any sensitive authentication credentials in debug statements, console.log outputs, or any other logging 🚨**
+- **This is a CRITICAL security rule that must be followed at all times**
 
 ## OverPower Game Rules
 
