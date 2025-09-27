@@ -8635,7 +8635,7 @@
 
         // Draw Hand functionality
         function toggleDrawHand() {
-            const drawHandSection = document.getElementById('drawHandSection');
+            console.log("DEBUG: toggleDrawHand called - button clicked");            console.log("DEBUG: toggleDrawHand called");            const drawHandSection = document.getElementById('drawHandSection');
             const drawHandBtn = document.getElementById('drawHandBtn');
             
             if (drawHandSection.style.display === 'none') {
@@ -8966,15 +8966,11 @@
         attachDragListeners();
     }
         function drawHand() {
+            console.log("DEBUG: drawHand function called");
             const deckCards = deckEditorCards;
-            const totalCards = deckCards.reduce((sum, card) => sum + card.quantity, 0);
+            console.log("DEBUG: drawHand called. deckCards:", deckCards);
+            console.log("DEBUG: Total cards in deck:", deckCards.reduce((sum, card) => sum + card.quantity, 0));            const totalCards = deckCards.reduce((sum, card) => sum + card.quantity, 0);
             
-            // Check if we have at least 8 cards
-            if (totalCards < 8) {
-                showNotification('Deck must have at least 8 cards to draw a hand', 'error');
-                return;
-            }
-
             // Filter out characters, locations, and missions to create draw pile
             const drawPile = [];
             deckCards.forEach(card => {
@@ -8986,10 +8982,6 @@
                 }
             });
 
-            if (drawPile.length < 8) {
-                showNotification('Draw pile must have at least 8 cards (excluding characters, locations, missions)', 'error');
-                return;
-            }
 
             // Draw 8 random cards, then check for event cards to determine if we need a 9th
             const drawnCards = [];
@@ -9284,7 +9276,7 @@
 
         // Function to update deck summary with stats and validation
         async function updateDeckSummary(deckCards) {
-            // Update total card count using shared function
+            console.log("DEBUG: updateDeckSummary called with deckCards:", deckCards);            // Update total card count using shared function
             const totalCards = calculateTotalCardCount(deckCards);
             
             // Check if deck size is invalid to determine display format
@@ -9301,17 +9293,25 @@
             
             document.getElementById('deckTotalCards').textContent = totalCardsDisplay;
             
-            // Enable/disable Draw Hand button based on total cards
+            // Enable/disable Draw Hand button based on playable cards
             const drawHandBtn = document.getElementById('drawHandBtn');
-            if (drawHandBtn) {
-                const totalCardsForDraw = deckCards.reduce((sum, card) => sum + card.quantity, 0);
-                if (totalCardsForDraw >= 8) {
+                console.log("DEBUG: Found drawHandBtn element:", drawHandBtn);            if (drawHandBtn) {
+                // Count playable cards (excluding characters, locations, missions)
+                const playableCardsCount = deckCards
+                    .filter(card => card.type !== 'character' && card.type !== 'location' && card.type !== 'mission')
+                    .reduce((sum, card) => sum + card.quantity, 0);
+                
+                console.log("DEBUG: Updating drawHandBtn state. playableCardsCount:", playableCardsCount);
+                if (playableCardsCount >= 8) {
                     drawHandBtn.disabled = false;
+                    drawHandBtn.style.opacity = "1";
+                    drawHandBtn.style.cursor = "pointer";                    console.log("DEBUG: Enabling drawHandBtn");
                 } else {
                     drawHandBtn.disabled = true;
+                    drawHandBtn.style.opacity = "0.5";
+                    drawHandBtn.style.cursor = "not-allowed";                    console.log("DEBUG: Disabling drawHandBtn");
                 }
-            }
-            
+            }            
             // Calculate maximum character stats and total threat level
             const characterCards = deckCards.filter(card => card.type === 'character');
             const locationCards = deckCards.filter(card => card.type === 'location');
