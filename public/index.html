@@ -2693,33 +2693,7 @@
             border-bottom: none !important;
         }
 
-        /* Force remove any blue lines under search container */
-        .deck-editor-search-container:focus-within::after,
-        .deck-editor-search-container:focus-within::before,
-        .deck-editor-search-container::after,
-        .deck-editor-search-container::before {
-            display: none !important;
-        }
 
-        .deck-editor-search-input:focus::after,
-        .deck-editor-search-input:focus::before,
-        .deck-editor-search-input::after,
-        .deck-editor-search-input::before {
-            display: none !important;
-        }
-
-        /* Remove any blue box-shadows or backgrounds */
-        .deck-editor-search-input:focus {
-            box-shadow: none !important;
-        }
-        
-        .deck-editor-search-container:focus-within {
-            box-shadow: none !important;
-        }
-        
-        .deck-editor-search-container:focus-within * {
-            box-shadow: none !important;
-        }
 
         .deck-editor-search-results {
             position: absolute;
@@ -2727,7 +2701,7 @@
             left: 0;
             right: 0;
             background: rgba(20, 20, 20, 0.95);
-            border: 1px solid rgba(78, 205, 196, 0.3);
+            border: none;
             border-radius: 8px;
             max-height: 300px;
             overflow-y: auto;
