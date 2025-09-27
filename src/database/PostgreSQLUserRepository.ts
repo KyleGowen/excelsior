@@ -1,5 +1,5 @@
 import { Pool, PoolClient } from 'pg';
-import { User } from '../types';
+import { User, UserRole } from '../types';
 import { UserRepository } from '../repository/UserRepository';
 
 export class PostgreSQLUserRepository implements UserRepository {
@@ -15,19 +15,20 @@ export class PostgreSQLUserRepository implements UserRepository {
     console.log('✅ PostgreSQL UserRepository initialized');
   }
 
-  async createUser(name: string, email: string, passwordHash: string): Promise<User> {
+  async createUser(name: string, email: string, passwordHash: string, role: UserRole = 'USER'): Promise<User> {
     const client = await this.pool.connect();
     try {
       const result = await client.query(
-        'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING *',
-        [name, email, passwordHash]
+        'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING *',
+        [name, email, passwordHash, role]
       );
       
       const user = result.rows[0];
       return {
         id: user.id,
         name: user.username, // Map username to name for compatibility
-        email: user.email
+        email: user.email,
+        role: user.role
       };
     } finally {
       client.release();
@@ -50,7 +51,8 @@ export class PostgreSQLUserRepository implements UserRepository {
       return {
         id: user.id,
         name: user.username, // Map username to name for compatibility
-        email: user.email
+        email: user.email,
+        role: user.role
       };
     } finally {
       client.release();
@@ -73,7 +75,8 @@ export class PostgreSQLUserRepository implements UserRepository {
       return {
         id: user.id,
         name: user.username, // Map username to name for compatibility
-        email: user.email
+        email: user.email,
+        role: user.role
       };
     } finally {
       client.release();
@@ -96,7 +99,8 @@ export class PostgreSQLUserRepository implements UserRepository {
       return {
         id: user.id,
         name: user.username, // Map username to name for compatibility
-        email: user.email
+        email: user.email,
+        role: user.role
       };
     } finally {
       client.release();
@@ -111,7 +115,8 @@ export class PostgreSQLUserRepository implements UserRepository {
       return result.rows.map(user => ({
         id: user.id,
         name: user.username, // Map username to name for compatibility
-        email: user.email
+        email: user.email,
+        role: user.role
       }));
     } finally {
       client.release();
@@ -132,6 +137,10 @@ export class PostgreSQLUserRepository implements UserRepository {
       if (updates.email !== undefined) {
         setClause.push(`email = $${paramCount++}`);
         values.push(updates.email);
+      }
+      if (updates.role !== undefined) {
+        setClause.push(`role = $${paramCount++}`);
+        values.push(updates.role);
       }
 
       if (setClause.length === 0) {
@@ -154,7 +163,8 @@ export class PostgreSQLUserRepository implements UserRepository {
       return {
         id: user.id,
         name: user.username, // Map username to name for compatibility
-        email: user.email
+        email: user.email,
+        role: user.role
       };
     } finally {
       client.release();

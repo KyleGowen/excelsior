@@ -4857,6 +4857,25 @@
             transform: translateY(0);
         }
 
+        .guest-btn {
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .guest-btn:hover {
+            background: rgba(78, 205, 196, 0.3);
+            border-color: rgba(78, 205, 196, 0.4);
+        }
+
         .error-message {
             color: #ff6b6b;
             background: rgba(255, 107, 107, 0.1);
@@ -4906,7 +4925,6 @@
         <div class="login-modal-content">
             <div class="login-header">
                 <img src="/src/resources/images/logo/logo3.png" alt="Overpower Deckbuilder" style="max-width: 300px; height: auto; display: block; margin: 0 auto;">
-                <p>Please log in to access your decks</p>
             </div>
             <form id="loginForm" class="login-form">
                 <div class="form-group">
@@ -4920,6 +4938,7 @@
                 <div id="loginError" class="error-message" style="display: none;"></div>
                 <button type="submit" class="login-btn">Log In</button>
             </form>
+            <button type="button" id="guestLoginBtn" class="guest-btn">Continue as Guest</button>
         </div>
     </div>
 
@@ -8205,6 +8224,12 @@
                 }
                 
                 await login(username, password);
+            });
+            
+            // Guest login button event listener
+            document.getElementById('guestLoginBtn').addEventListener('click', async () => {
+                hideLoginError();
+                await login('guest', 'guest');
             });
             
             // Logout button event listener

@@ -1,10 +1,14 @@
 // Clean, simple database schema
 
+// User roles enum
+export type UserRole = 'GUEST' | 'USER' | 'ADMIN';
+
 // User table
 export interface User {
   id: string;
   name: string;
   email: string;
+  role: UserRole;
 }
 
 // Deck table
