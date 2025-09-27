@@ -4885,6 +4885,13 @@
             font-size: 0.9rem;
         }
 
+        /* Prevent logo images from being clickable */
+        .login-header img,
+        .header img {
+            cursor: default !important;
+            pointer-events: none !important;
+        }
+
         .user-info {
             position: absolute;
             top: 15px;
@@ -4924,7 +4931,7 @@
     <div id="loginModal" class="login-modal">
         <div class="login-modal-content">
             <div class="login-header">
-                <img src="/src/resources/images/logo/logo3.png" alt="Overpower Deckbuilder" style="max-width: 300px; height: auto; display: block; margin: 0 auto;">
+                <img src="/src/resources/images/logo/logo3.png" alt="Overpower Deckbuilder" style="max-width: 300px; height: auto; display: block; margin: 0 auto;" onclick="console.log('Login logo clicked'); event.preventDefault(); event.stopPropagation(); return false;">
             </div>
             <form id="loginForm" class="login-form">
                 <div class="form-group">
@@ -4944,7 +4951,7 @@
 
     <div class="container" id="mainContainer" style="display: block; opacity: 1;">
         <div class="header">
-            <img src="/src/resources/images/logo/logo3.png" alt="Overpower Deckbuilder" style="max-width: 400px; height: auto; display: block; margin: 0 auto;">
+            <img src="/src/resources/images/logo/logo3.png" alt="Overpower Deckbuilder" style="max-width: 400px; height: auto; display: block; margin: 0 auto;" onclick="console.log('Main header logo clicked'); event.preventDefault(); event.stopPropagation(); return false;">
             <div class="user-info">
                 <span id="userWelcome">Welcome, <span id="currentUsername"></span>!</span>
                 <button id="logoutBtn" class="logout-btn">Log Out</button>
