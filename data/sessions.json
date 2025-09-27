@@ -360,9 +360,21 @@
     "expiresAt": "2025-09-25T08:49:57.293Z"
   },
   {
-    "sessionId": "sess_u519olwp2_mfzr12po",
-    "userId": "6a089193-7fd7-4b13-9243-cf3aa4bc03ee",
-    "username": "guest",
-    "expiresAt": "2025-09-25T20:31:01.116Z"
+    "sessionId": "sess_ybewl5s7a_mfzr19ln",
+    "userId": "66c259ee-1f6c-4413-9b82-2ff6ee144383",
+    "username": "kyle",
+    "expiresAt": "2025-09-25T20:31:10.043Z"
+  },
+  {
+    "sessionId": "sess_qyaj871po_mg1er026",
+    "userId": "66c259ee-1f6c-4413-9b82-2ff6ee144383",
+    "username": "kyle",
+    "expiresAt": "2025-09-27T00:22:48.078Z"
+  },
+  {
+    "sessionId": "sess_m3ckqys4y_mg1m6txk",
+    "userId": "c567175f-a07b-41b7-b274-e82901d1b4f1",
+    "username": "kyle",
+    "expiresAt": "2025-09-27T03:51:03.944Z"
   }
 ]

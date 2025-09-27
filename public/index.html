@@ -2662,6 +2662,104 @@
             gap: 20px;
         }
 
+        /* Deck Editor Search Bar */
+        .deck-editor-search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+
+        .deck-editor-search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .deck-editor-search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .deck-editor-search-input:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #4ecdc4;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+        }
+
+        .deck-editor-search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            margin-top: 5px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .deck-editor-search-result {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.2s ease;
+        }
+
+        .deck-editor-search-result:hover {
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .deck-editor-search-result:last-child {
+            border-bottom: none;
+        }
+
+        .deck-editor-search-result-image {
+            width: 40px;
+            height: 56px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 4px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .deck-editor-search-result-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .deck-editor-search-result-name {
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .deck-editor-search-result-type {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+        }
+
+        .deck-editor-search-result-character {
+            color: #4ecdc4;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
         .deck-editor-layout {
             display: flex;
             height: 100%;
@@ -5230,6 +5328,12 @@
                     <h3 id="deckEditorTitle" class="editable-title" onclick="startEditingTitle()">Edit Deck</h3>
                     <p id="deckEditorDescription" class="deck-description editable-description" onclick="startEditingDescription()"></p>
                 </div>
+                <div class="deck-editor-search-container">
+                    <input type="text" id="deckEditorSearchInput" class="deck-editor-search-input" placeholder="Search by card name, character, or type...">
+                    <div id="deckEditorSearchResults" class="deck-editor-search-results" style="display: none;">
+                        <!-- Search results will appear here -->
+                    </div>
+                </div>
                 <div class="deck-editor-actions">
                     <button class="btn-secondary" onclick="closeDeckEditor()">Cancel</button>
                     <button class="btn-primary" onclick="saveDeckChanges()">Save</button>
@@ -5267,7 +5371,7 @@
                     </div>
                     <div class="summary-stat">
                         <button class="remove-all-btn" id="drawHandBtn" onclick="toggleDrawHand()" disabled>Draw Hand</button>
-                        <button class="remove-all-btn" id="screenshotViewBtn" onclick="toggleScreenshotView()">Screenshot View</button>
+                        <button class="remove-all-btn" id="screenshotViewBtn" onclick="toggleScreenshotView()" style="display: none;">Screenshot View</button>
                     </div>
                     <div class="deck-summary-validation" id="deckSummaryValidation">
                         <!-- Validation content will be displayed here -->
@@ -10565,6 +10669,479 @@
 
         // ===== DECK EDITOR FUNCTIONS =====
 
+        // Deck Editor Search Functionality
+        let deckEditorSearchTimeout;
+        let allCardsCache = null;
+
+        // Initialize deck editor search
+        function initializeDeckEditorSearch() {
+            console.log('🔍 Initializing deck editor search...');
+            const searchInput = document.getElementById('deckEditorSearchInput');
+            const searchResults = document.getElementById('deckEditorSearchResults');
+            
+            if (!searchInput) {
+                console.error('🔍 Deck editor search input not found!');
+                return;
+            }
+            
+            console.log('🔍 Search input found, setting up event listeners...');
+
+            searchInput.addEventListener('input', handleDeckEditorSearch);
+            searchInput.addEventListener('focus', showDeckEditorSearchResults);
+            searchInput.addEventListener('blur', () => {
+                // Delay hiding to allow clicks on results
+                setTimeout(() => {
+                    hideDeckEditorSearchResults();
+                }, 200);
+            });
+
+            // Hide results when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.deck-editor-search-container')) {
+                    hideDeckEditorSearchResults();
+                }
+            });
+            
+            console.log('🔍 Deck editor search initialization complete!');
+        }
+
+        // Handle search input
+        async function handleDeckEditorSearch(e) {
+            const searchTerm = e.target.value.trim().toLowerCase();
+            console.log('🔍 Search term:', searchTerm);
+            const searchResults = document.getElementById('deckEditorSearchResults');
+            
+            if (searchTerm.length < 2) {
+                console.log('🔍 Search term too short, hiding results');
+                hideDeckEditorSearchResults();
+                return;
+            }
+
+            // Clear previous timeout
+            if (deckEditorSearchTimeout) {
+                clearTimeout(deckEditorSearchTimeout);
+            }
+
+            // Debounce search
+            deckEditorSearchTimeout = setTimeout(async () => {
+                console.log('🔍 Starting search for:', searchTerm);
+                try {
+                    const results = await searchAllCards(searchTerm);
+                    console.log('🔍 Search results:', results.length, 'cards found');
+                    displayDeckEditorSearchResults(results);
+                } catch (error) {
+                    console.error('🔍 Search error:', error);
+                    hideDeckEditorSearchResults();
+                }
+            }, 300);
+        }
+
+        // Search all card types
+        async function searchAllCards(searchTerm) {
+            const results = [];
+            
+            try {
+                // Search characters
+                const charactersResponse = await fetch('/api/characters');
+                const characters = await charactersResponse.json();
+                console.log('🔍 Characters API response:', characters);
+                if (characters.success) {
+                    console.log('🔍 Searching through', characters.data.length, 'characters for:', searchTerm);
+                    characters.data.forEach(char => {
+                        if (char.name && char.name.toLowerCase().includes(searchTerm)) {
+                            console.log('🔍 Found character match:', char.name);
+                            results.push({
+                                id: char.id,
+                                name: char.name,
+                                type: 'character',
+                                image: `/src/resources/cards/images/${char.image}`,
+                                character: null
+                            });
+                        }
+                    });
+                }
+
+                // Search special cards
+                const specialResponse = await fetch('/api/special-cards');
+                const specialCards = await specialResponse.json();
+                console.log('🔍 Special cards API response:', specialCards);
+                if (specialCards.success) {
+                    console.log('🔍 Searching through', specialCards.data.length, 'special cards for:', searchTerm);
+                    specialCards.data.forEach(card => {
+                        console.log('🔍 Special card data:', { id: card.id, card_name: card.card_name, name: card.name, character: card.character });
+                        
+                        // Check if card name contains search term
+                        const nameMatch = (card.card_name && card.card_name.toLowerCase().includes(searchTerm)) || 
+                                        (card.name && card.name.toLowerCase().includes(searchTerm));
+                        
+                        // Check if character field contains search term
+                        const characterMatch = card.character && card.character.toLowerCase().includes(searchTerm);
+                        
+                        // Check if character field exactly matches search term (for character-specific searches)
+                        const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm.toLowerCase();
+                        
+                        if (nameMatch || characterMatch || exactCharacterMatch) {
+                            console.log('🔍 Found special card match:', card.card_name || card.name, 'for character:', card.character);
+                            results.push({
+                                id: card.id,
+                                name: card.card_name || card.name,
+                                type: 'special',
+                                image: `/src/resources/cards/images/${card.image}`,
+                                character: card.character
+                            });
+                        }
+                    });
+                }
+
+                // Search locations
+                const locationsResponse = await fetch('/api/locations');
+                const locations = await locationsResponse.json();
+                if (locations.success) {
+                    locations.data.forEach(location => {
+                        if (location.name && location.name.toLowerCase().includes(searchTerm)) {
+                            results.push({
+                                id: location.id,
+                                name: location.name,
+                                type: 'location',
+                                image: `/src/resources/cards/images/${location.image}`,
+                                character: null
+                            });
+                        }
+                    });
+                }
+
+                // Search missions
+                const missionsResponse = await fetch('/api/missions');
+                const missions = await missionsResponse.json();
+                if (missions.success) {
+                    missions.data.forEach(mission => {
+                        if (mission.name && mission.name.toLowerCase().includes(searchTerm)) {
+                            results.push({
+                                id: mission.id,
+                                name: mission.name,
+                                type: 'mission',
+                                image: `/src/resources/cards/images/${mission.image}`,
+                                character: null
+                            });
+                        }
+                    });
+                }
+
+                // Search events
+                const eventsResponse = await fetch('/api/events');
+                const events = await eventsResponse.json();
+                if (events.success) {
+                    events.data.forEach(event => {
+                        if (event.name && event.name.toLowerCase().includes(searchTerm)) {
+                            results.push({
+                                id: event.id,
+                                name: event.name,
+                                type: 'event',
+                                image: `/src/resources/cards/images/${event.image}`,
+                                character: null
+                            });
+                        }
+                    });
+                }
+
+                // Search aspects
+                const aspectsResponse = await fetch('/api/aspects');
+                const aspects = await aspectsResponse.json();
+                if (aspects.success) {
+                    aspects.data.forEach(aspect => {
+                        if (aspect.card_name && aspect.card_name.toLowerCase().includes(searchTerm)) {
+                            results.push({
+                                id: aspect.id,
+                                name: aspect.card_name,
+                                type: 'aspect',
+                                image: `/src/resources/cards/images/${aspect.image}`,
+                                character: null
+                            });
+                        }
+                    });
+                }
+
+                // Search advanced universe
+                const advancedResponse = await fetch('/api/advanced-universe');
+                const advancedCards = await advancedResponse.json();
+                if (advancedCards.success) {
+                    advancedCards.data.forEach(card => {
+                        const nameMatch = card.name && card.name.toLowerCase().includes(searchTerm);
+                        const characterMatch = card.character && card.character.toLowerCase().includes(searchTerm);
+                        const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm.toLowerCase();
+                        
+                        if (nameMatch || characterMatch || exactCharacterMatch) {
+                            results.push({
+                                id: card.id,
+                                name: card.name,
+                                type: 'advanced-universe',
+                                image: `/src/resources/cards/images/${card.image}`,
+                                character: card.character
+                            });
+                        }
+                    });
+                }
+
+                // Search teamwork
+                const teamworkResponse = await fetch('/api/teamwork');
+                const teamworkCards = await teamworkResponse.json();
+                if (teamworkCards.success) {
+                    teamworkCards.data.forEach(card => {
+                        const nameMatch = card.name && card.name.toLowerCase().includes(searchTerm);
+                        const characterMatch = card.character && card.character.toLowerCase().includes(searchTerm);
+                        const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm.toLowerCase();
+                        
+                        if (nameMatch || characterMatch || exactCharacterMatch) {
+                            results.push({
+                                id: card.id,
+                                name: card.name,
+                                type: 'teamwork',
+                                image: `/src/resources/cards/images/${card.image}`,
+                                character: card.character
+                            });
+                        }
+                    });
+                }
+
+                // Search ally universe
+                const allyResponse = await fetch('/api/ally-universe');
+                const allyCards = await allyResponse.json();
+                if (allyResponse.success) {
+                    allyCards.data.forEach(card => {
+                        const nameMatch = card.name && card.name.toLowerCase().includes(searchTerm);
+                        const characterMatch = card.character && card.character.toLowerCase().includes(searchTerm);
+                        const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm.toLowerCase();
+                        
+                        if (nameMatch || characterMatch || exactCharacterMatch) {
+                            results.push({
+                                id: card.id,
+                                name: card.name,
+                                type: 'ally-universe',
+                                image: `/src/resources/cards/images/${card.image}`,
+                                character: card.character
+                            });
+                        }
+                    });
+                }
+
+                // Search training
+                const trainingResponse = await fetch('/api/training');
+                const trainingCards = await trainingResponse.json();
+                if (trainingCards.success) {
+                    trainingCards.data.forEach(card => {
+                        const nameMatch = card.name && card.name.toLowerCase().includes(searchTerm);
+                        const characterMatch = card.character && card.character.toLowerCase().includes(searchTerm);
+                        const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm.toLowerCase();
+                        
+                        if (nameMatch || characterMatch || exactCharacterMatch) {
+                            results.push({
+                                id: card.id,
+                                name: card.name,
+                                type: 'training',
+                                image: `/src/resources/cards/images/${card.image}`,
+                                character: card.character
+                            });
+                        }
+                    });
+                }
+
+                // Search basic universe
+                const basicResponse = await fetch('/api/basic-universe');
+                const basicCards = await basicResponse.json();
+                if (basicCards.success) {
+                    basicCards.data.forEach(card => {
+                        const nameMatch = card.name && card.name.toLowerCase().includes(searchTerm);
+                        const characterMatch = card.character && card.character.toLowerCase().includes(searchTerm);
+                        const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm.toLowerCase();
+                        
+                        if (nameMatch || characterMatch || exactCharacterMatch) {
+                            results.push({
+                                id: card.id,
+                                name: card.name,
+                                type: 'basic-universe',
+                                image: `/src/resources/cards/images/${card.image}`,
+                                character: card.character
+                            });
+                        }
+                    });
+                }
+
+                // Search power cards
+                const powerResponse = await fetch('/api/power-cards');
+                const powerCards = await powerResponse.json();
+                if (powerCards.success) {
+                    powerCards.data.forEach(card => {
+                        if (card.name && card.name.toLowerCase().includes(searchTerm)) {
+                            results.push({
+                                id: card.id,
+                                name: card.name,
+                                type: 'power',
+                                image: `/src/resources/cards/images/${card.image}`,
+                                character: null
+                            });
+                        }
+                    });
+                }
+
+            } catch (error) {
+                console.error('Error searching cards:', error);
+            }
+
+            console.log('🔍 Raw search results before filtering:', results.length);
+            results.forEach((result, index) => {
+                console.log(`🔍 Result ${index}:`, { name: result.name, type: result.type, id: result.id });
+            });
+            
+            // Sort results by name and limit to 20
+            const filteredResults = results
+                .filter(result => result.name && result.name.trim()) // Filter out results with empty names
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .slice(0, 20);
+                
+            console.log('🔍 Filtered search results:', filteredResults.length, filteredResults);
+            return filteredResults;
+        }
+
+        // Display search results
+        function displayDeckEditorSearchResults(results) {
+            console.log('🔍 Displaying search results:', results.length);
+            const searchResults = document.getElementById('deckEditorSearchResults');
+            
+            if (results.length === 0) {
+                console.log('🔍 No results, showing "No cards found"');
+                searchResults.innerHTML = '<div class="deck-editor-search-result">No cards found</div>';
+            } else {
+                console.log('🔍 Rendering', results.length, 'results');
+                searchResults.innerHTML = results.map(card => `
+                    <div class="deck-editor-search-result" onclick="addCardToDeckFromSearch('${card.id}', '${card.type}')">
+                        <div class="deck-editor-search-result-image" style="background-image: url('${card.image}')"></div>
+                        <div class="deck-editor-search-result-info">
+                            <div class="deck-editor-search-result-name">${card.name}</div>
+                            <div class="deck-editor-search-result-type">${formatCardType(card.type)}</div>
+                            ${card.character ? `<div class="deck-editor-search-result-character">${card.character}</div>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            console.log('🔍 Showing search results');
+            showDeckEditorSearchResults();
+        }
+
+        // Show search results
+        function showDeckEditorSearchResults() {
+            console.log('🔍 Showing search results dropdown');
+            const searchResults = document.getElementById('deckEditorSearchResults');
+            if (searchResults) {
+                searchResults.style.display = 'block';
+                console.log('🔍 Search results dropdown displayed');
+            } else {
+                console.error('🔍 Search results element not found!');
+            }
+        }
+
+        // Hide search results
+        function hideDeckEditorSearchResults() {
+            const searchResults = document.getElementById('deckEditorSearchResults');
+            if (searchResults) {
+                searchResults.style.display = 'none';
+            }
+        }
+
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            
+            // Style the toast
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#4ecdc4' : type === 'error' ? '#ff6b6b' : '#333'};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 4px;
+                z-index: 10000;
+                font-size: 14px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => {
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Add card to deck from search
+        async function addCardToDeckFromSearch(cardId, cardType) {
+            console.log('🔍 Adding card to deck:', { cardId, cardType, currentDeckId });
+            
+            if (!currentDeckId) {
+                console.error('No current deck selected');
+                return;
+            }
+
+            try {
+                const requestBody = {
+                    cardId: cardId,
+                    cardType: cardType
+                };
+                console.log('🔍 Sending request body:', requestBody);
+                
+                // Add the card to the deck
+                const response = await fetch(`/api/decks/${currentDeckId}/cards`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (response.ok) {
+                    // Clear search and hide results
+                    const searchInput = document.getElementById('deckEditorSearchInput');
+                    if (searchInput) {
+                        searchInput.value = '';
+                    }
+                    hideDeckEditorSearchResults();
+                    
+                    // Reload deck cards
+                    await loadDeckForEditing(currentDeckId);
+                    
+                    // Show success message
+                    showToast('Card added to deck!', 'success');
+                } else {
+                    console.error('🔍 API Error Response:', response.status, response.statusText);
+                    const error = await response.json();
+                    console.error('🔍 API Error Details:', error);
+                    showToast(error.error || 'Failed to add card to deck', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding card to deck:', error);
+                showToast('Failed to add card to deck', 'error');
+            }
+        }
+
         // Inline editing functions for deck title and description
         function startEditingTitle() {
             const titleElement = document.getElementById('deckEditorTitle');
@@ -10713,6 +11290,9 @@
                 modal.style.display = 'flex';
                 console.log('Modal displayed, setting up drag and drop');
                 setupDragAndDrop();
+                
+                // Initialize deck editor search
+                initializeDeckEditorSearch();
                 
                 // Initialize the resizable divider after the modal is shown
                 setTimeout(() => {
