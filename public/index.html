@@ -3163,8 +3163,9 @@
 
         .deck-list-item-actions {
             display: flex;
-            gap: 8px;
+            gap: 12px;
             align-items: center;
+            margin-left: 16px;
         }
 
         .deck-list-item-remove {
@@ -9209,7 +9210,21 @@
                     const availableCard = availableCardsMap.get(card.cardId);
                     if (!availableCard) return;
 
-                    const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+                    // Use the same naming logic as tile view
+                    let cardName;
+                    if (card.type === 'power') {
+                        cardName = `${availableCard.value} - ${availableCard.power_type}`;
+                    } else if (card.type === 'teamwork') {
+                        cardName = `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})`;
+                    } else if (card.type === 'ally-universe') {
+                        cardName = `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}`;
+                    } else if (card.type === 'basic-universe') {
+                        cardName = `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})`;
+                    } else if (card.type === 'training') {
+                        cardName = `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})`;
+                    } else {
+                        cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+                    }
                     const imagePath = getCardImagePath(availableCard, card.type, card.selectedAlternateImage);
                     
                     html += `
