@@ -2689,8 +2689,20 @@
         .deck-editor-search-input:focus {
             background: rgba(255, 255, 255, 0.2);
             border-color: #4ecdc4;
-            box-shadow: 0 0 10px rgba(78, 205, 196, 0.3), 0 2px 0 0 #4ecdc4;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
             outline: none; /* Remove default browser outline */
+        }
+
+        /* Add focus indicator to the container that extends full width */
+        .deck-editor-search-container:focus-within::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #4ecdc4;
+            border-radius: 1px;
         }
 
         .deck-editor-search-results {
