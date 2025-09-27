@@ -3342,7 +3342,7 @@
         }
         
         /* Apply 4-column grid to individual card tiles within each section */
-        .read-only-mode .deck-type-cards {
+        .read-only-mode .deck-type-cards:not([style*="display: none"]) {
             display: grid !important;
             grid-template-columns: repeat(4, 1fr) !important;
             gap: 16px !important;
