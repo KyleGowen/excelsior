@@ -12305,8 +12305,11 @@
             
             // Apply character background images
             setTimeout(() => {
+                console.log('🔍 About to apply background images, checking for basic universe cards...');
+                const basicCards = document.querySelectorAll('.deck-card-editor-item.basic-universe-card');
+                console.log('🔍 Found', basicCards.length, 'basic universe cards before applying backgrounds');
                 applyCharacterBackgroundsToEditor();
-            }, 100);
+            }, 500);
             
             // Force layout recalculation to fix any rendering issues
             requestAnimationFrame(() => {
