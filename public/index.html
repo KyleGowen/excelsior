@@ -3857,8 +3857,8 @@
         }
 
         .deck-card-editor-item.basic-universe-card .deck-card-editor-name {
-            font-size: 1.0rem;
-            font-weight: 400;
+            font-size: 1.0rem !important;
+            font-weight: 400 !important;
         }
         
         /* Advanced universe cards in deck editor - match teamwork card styling */
@@ -12481,21 +12481,27 @@
             
             // Apply to basic-universe cards
             const basicUniverseCards = document.querySelectorAll('.deck-card-editor-item.basic-universe-card');
+            console.log('🔍 Found', basicUniverseCards.length, 'basic universe cards');
             basicUniverseCards.forEach(card => {
                 const bgImage = card.getAttribute('data-bg-image');
+                console.log('🔍 Basic universe card bgImage:', bgImage);
                 if (bgImage) {
                     // Test if image loads successfully
                     const img = new Image();
                     img.onload = function() {
                         // URL encode the path for CSS
                         const encodedPath = encodeURI(bgImage);
+                        console.log('🔍 Setting --bg-image for basic universe card:', encodedPath);
                         card.style.setProperty('--bg-image', `url(${encodedPath})`);
                     };
                     img.onerror = function() {
+                        console.log('🔍 Failed to load basic universe card image:', bgImage);
                         // Fallback: use default gradient without background image
                         card.style.setProperty('--bg-image', 'none');
                     };
                     img.src = bgImage;
+                } else {
+                    console.log('🔍 No data-bg-image attribute found for basic universe card');
                 }
             });
             
