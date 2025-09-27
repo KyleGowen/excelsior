@@ -9138,7 +9138,7 @@
                 // Switch back to tile view
                 deckCardsEditor.classList.remove('list-view');
                 listViewBtn.textContent = 'List View';
-                renderDeckCards(); // Re-render in tile view
+                displayDeckCardsForEditing(); // Re-render in tile view
             } else {
                 // Switch to list view
                 deckCardsEditor.classList.add('list-view');
@@ -11003,7 +11003,7 @@
                         deckCardsEditor.classList.remove('list-view');
                         listViewBtn.textContent = 'List View';
                         // Re-render in tile view
-                        renderDeckCards();
+                        displayDeckCardsForEditing();
                     }
                 }
             }
