@@ -3114,6 +3114,22 @@
             border: 1px solid rgba(78, 205, 196, 0.3);
             border-radius: 6px;
             margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .deck-list-section-header:hover {
+            background: rgba(78, 205, 196, 0.2);
+        }
+        
+        .deck-list-section-toggle {
+            font-size: 1.0rem;
+            color: #4ecdc4;
+            transition: transform 0.2s ease;
+        }
+        
+        .deck-list-section-header.collapsed .deck-list-section-toggle {
+            transform: rotate(-90deg);
         }
 
         .deck-list-section-title {
@@ -9377,11 +9393,12 @@
                 
                 html += `
                     <div class="deck-list-section">
-                        <div class="deck-list-section-header">
+                        <div class="deck-list-section-header" onclick="toggleDeckListSection('${type}')">
                             <div class="deck-list-section-title">${displayName}</div>
                             <div class="deck-list-section-count">${totalCards} card${totalCards !== 1 ? 's' : ''}</div>
+                            <div class="deck-list-section-toggle">▼</div>
                         </div>
-                        <div class="deck-list-items">
+                        <div class="deck-list-items" id="deck-list-items-${type}">
                 `;
 
                 // Sort cards by name for consistent display
@@ -9439,6 +9456,25 @@
             });
 
             deckCardsEditor.innerHTML = html;
+            
+            // Apply saved expansion state to list view sections
+            typeOrder.forEach(type => {
+                const cards = cardsByType[type];
+                if (!cards || cards.length === 0) return;
+                
+                const itemsContainer = document.getElementById(`deck-list-items-${type}`);
+                const header = itemsContainer?.previousElementSibling;
+                const toggle = header?.querySelector('.deck-list-section-toggle');
+                
+                if (itemsContainer && header && toggle) {
+                    const isExpanded = deckEditorExpansionState[type] !== false; // Default to expanded
+                    if (!isExpanded) {
+                        itemsContainer.style.display = 'none';
+                        toggle.textContent = '▶';
+                        header.classList.add('collapsed');
+                    }
+                }
+            });
             
             // Force layout recalculation to ensure horizontal orientation
             requestAnimationFrame(() => {
@@ -13388,6 +13424,27 @@
                 deckEditorExpansionState[type] = true; // Update global state
             } else {
                 section.style.display = 'none';
+                toggle.textContent = '▶';
+                header.classList.add('collapsed');
+                deckEditorExpansionState[type] = false; // Update global state
+            }
+            
+            // Save expansion state to localStorage
+            saveDeckExpansionState();
+        }
+        
+        function toggleDeckListSection(type) {
+            const itemsContainer = document.getElementById(`deck-list-items-${type}`);
+            const header = itemsContainer.previousElementSibling;
+            const toggle = header.querySelector('.deck-list-section-toggle');
+            
+            if (itemsContainer.style.display === 'none') {
+                itemsContainer.style.display = 'block';
+                toggle.textContent = '▼';
+                header.classList.remove('collapsed');
+                deckEditorExpansionState[type] = true; // Update global state
+            } else {
+                itemsContainer.style.display = 'none';
                 toggle.textContent = '▶';
                 header.classList.add('collapsed');
                 deckEditorExpansionState[type] = false; // Update global state
