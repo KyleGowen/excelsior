@@ -9145,6 +9145,12 @@
                 listViewBtn.textContent = 'Tile View';
                 renderDeckCardsListView(); // Render in list view
             }
+            
+            // Save UI preferences when view mode changes
+            if (currentDeckId) {
+                const preferences = getCurrentUIPreferences();
+                saveUIPreferences(currentDeckId, preferences);
+            }
         }
 
         function renderDeckCardsListView() {
@@ -10875,10 +10881,14 @@
 
         // Get current UI preferences object
         function getCurrentUIPreferences() {
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            const isListView = deckCardsEditor && deckCardsEditor.classList.contains('list-view');
+            
             return {
                 dividerPosition: getDividerPosition(),
                 expansionState: getExpansionState(),
                 powerCardsSortMode: powerCardsSortMode,
+                viewMode: isListView ? 'list' : 'tile',
                 characterGroupExpansionState: characterGroupExpansionState
             };
         }
@@ -10976,6 +10986,26 @@
             // Apply character group expansion state
             if (preferences.characterGroupExpansionState) {
                 Object.assign(characterGroupExpansionState, preferences.characterGroupExpansionState);
+            }
+
+            // Apply view mode (list or tile)
+            if (preferences.viewMode) {
+                const deckCardsEditor = document.getElementById('deckCardsEditor');
+                const listViewBtn = document.getElementById('listViewBtn');
+                
+                if (deckCardsEditor && listViewBtn) {
+                    if (preferences.viewMode === 'list') {
+                        deckCardsEditor.classList.add('list-view');
+                        listViewBtn.textContent = 'Tile View';
+                        // Re-render in list view
+                        renderDeckCardsListView();
+                    } else {
+                        deckCardsEditor.classList.remove('list-view');
+                        listViewBtn.textContent = 'List View';
+                        // Re-render in tile view
+                        renderDeckCards();
+                    }
+                }
             }
         }
 
