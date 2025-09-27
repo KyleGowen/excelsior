@@ -10816,22 +10816,6 @@
                     });
                 }
 
-                // Search locations
-                const locationsResponse = await fetch('/api/locations');
-                const locations = await locationsResponse.json();
-                if (locations.success) {
-                    locations.data.forEach(location => {
-                        if (location.name && location.name.toLowerCase().includes(searchTerm)) {
-                            results.push({
-                                id: location.id,
-                                name: location.name,
-                                type: 'location',
-                                image: `/src/resources/cards/images/${location.image}`,
-                                character: null
-                            });
-                        }
-                    });
-                }
 
                 // Search missions
                 const missionsResponse = await fetch('/api/missions');
