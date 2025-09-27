@@ -2688,7 +2688,7 @@
 
         .deck-editor-search-input:focus {
             background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+            box-shadow: none !important;
             outline: none !important;
             border-bottom: none !important;
         }
@@ -2708,14 +2708,17 @@
             display: none !important;
         }
 
-        /* DEBUG: Make any blue elements very obvious */
-        * {
-            border-color: red !important;
+        /* Remove any blue box-shadows or backgrounds */
+        .deck-editor-search-input:focus {
+            box-shadow: none !important;
         }
         
-        /* Override the debug for search input */
-        .deck-editor-search-input {
-            border-color: rgba(255, 255, 255, 0.2) !important;
+        .deck-editor-search-container:focus-within {
+            box-shadow: none !important;
+        }
+        
+        .deck-editor-search-container:focus-within * {
+            box-shadow: none !important;
         }
 
         .deck-editor-search-results {
