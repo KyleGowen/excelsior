@@ -552,9 +552,15 @@
     "expiresAt": "2025-09-27T22:50:50.404Z"
   },
   {
-    "sessionId": "sess_fckff8hrn_mg39merz",
+    "sessionId": "sess_qncwrcq3t_mg39tv7m",
     "userId": "6a089193-7fd7-4b13-9243-cf3aa4bc03ee",
     "username": "guest",
-    "expiresAt": "2025-09-28T07:34:48.143Z"
+    "expiresAt": "2025-09-28T07:40:36.034Z"
+  },
+  {
+    "sessionId": "sess_aj2d1zp1b_mg3a582y",
+    "userId": "6a089193-7fd7-4b13-9243-cf3aa4bc03ee",
+    "username": "guest",
+    "expiresAt": "2025-09-28T07:49:25.930Z"
   }
 ]

@@ -645,7 +645,16 @@ app.get('/data', (req, res) => {
 
 // Static file serving for non-conflicting paths
 app.use('/public', express.static('public'));
-app.use(express.static('public'));
+// Serve static files with cache-busting for JS files
+app.use(express.static('public', {
+    setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Expires', '0');
+        }
+    }
+}));
 app.use('/src/resources', express.static('src/resources'));
 
 // Health check endpoint

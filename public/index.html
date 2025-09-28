@@ -7990,12 +7990,29 @@
         })();
 
         async function checkAuthentication() {
-            // First check if we have a user in localStorage to prevent flash
-            const storedUser = getCurrentUser();
-            if (storedUser) {
-                currentUser = storedUser;
-                showMainApp();
-                
+            let authResult = {
+                isAuthenticated: false,
+                currentUser: null,
+                deckId: null,
+                urlUserId: null,
+                isReadOnlyMode: false
+            };
+
+            // Check if we're on a deck editor route early
+            const deckUrlMatch = window.location.pathname.match(/\/users\/([^\/]+)\/decks\/([^\/]+)/);
+            if (deckUrlMatch) {
+                authResult.urlUserId = deckUrlMatch[1];
+                authResult.deckId = deckUrlMatch[2];
+                console.log('Detected deck editor route for deck:', authResult.deckId, 'user:', authResult.urlUserId);
+            }
+
+            // First check if we have a user in localStorage
+            const storedUserData = localStorage.getItem('currentUser');
+            if (storedUserData) {
+                const storedUser = JSON.parse(storedUserData);
+                currentUser = storedUser; // Update global currentUser
+                authResult.currentUser = currentUser;
+
                 // Verify the session is still valid in the background
                 try {
                     const response = await fetch('/api/auth/me', {
@@ -8003,37 +8020,66 @@
                     });
                     if (response.ok) {
                         const data = await response.json();
-                        // Update currentUser with fresh data from server
-                        currentUser = data.data;
+                        currentUser = data.data; // Update global currentUser with fresh data from server
                         localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        authResult.isAuthenticated = true;
+                        authResult.currentUser = currentUser;
                     } else {
-                        // Session expired, clear stored user and show login
+                        // Session expired, clear stored user
+                        console.warn('Session expired or invalid. Clearing stored user.');
                         localStorage.removeItem('currentUser');
                         currentUser = null;
-                        showLoginModal();
+                        authResult.currentUser = null;
                     }
                 } catch (error) {
-                    console.error('Background auth verification failed:', error);
-                    // Don't show login modal for background verification failures
+                    console.error('Error verifying session:', error);
+                    localStorage.removeItem('currentUser');
+                    currentUser = null;
+                    authResult.currentUser = null;
                 }
-                return;
             }
-            
-            try {
-                const response = await fetch('/api/auth/me', {
-                    credentials: 'include'
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    currentUser = data.data;
-                    showMainApp();
+
+            // If no user is authenticated and we are on a deck URL, attempt auto guest login
+            if (!authResult.isAuthenticated && authResult.deckId) {
+                console.log('✅ Detected deck URL - attempting auto guest login for deck:', authResult.deckId, 'user:', authResult.urlUserId);
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: 'guest', password: 'guest' })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        currentUser = data.data; // Set global currentUser to guest
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        authResult.isAuthenticated = true;
+                        authResult.currentUser = currentUser;
+                        console.log('Auto guest login successful');
+                    } else {
+                        console.error('Auto guest login failed:', await response.json());
+                    }
+                } catch (error) {
+                    console.error('Error during auto guest login:', error);
+                }
+            }
+
+            // Determine read-only mode if a deck is being viewed
+            if (authResult.deckId) {
+                if (authResult.isAuthenticated && authResult.currentUser && authResult.currentUser.id !== authResult.urlUserId) {
+                    authResult.isReadOnlyMode = true;
+                    console.log('Read-only mode: viewing another user\'s deck');
+                } else if (!authResult.isAuthenticated) {
+                    // If not authenticated at all, it's read-only (e.g., if guest login failed)
+                    authResult.isReadOnlyMode = true;
+                    console.log('Read-only mode: no authentication (or guest login failed)');
                 } else {
-                    showLoginModal();
+                    authResult.isReadOnlyMode = false;
+                    console.log('Edit mode: viewing own deck');
                 }
-            } catch (error) {
-                console.error('Auth check failed:', error);
-                showLoginModal();
             }
+
+            return authResult;
         }
 
         function showLoginModal() {
@@ -8137,88 +8183,22 @@
             loadDecks();
             updateStats();
         }
-        document.addEventListener('DOMContentLoaded', () => {
-            // Load current user from localStorage
-            const storedUser = localStorage.getItem('currentUser');
-            if (storedUser) {
-                try {
-                    currentUser = JSON.parse(storedUser);
-                } catch (error) {
-                    console.error('Error parsing stored user data:', error);
-                    localStorage.removeItem('currentUser');
-                }
-            }
-            
-            // Check if we're on the database view route
-            if (window.location.pathname === '/data') {
-                // Show database view and hide deck builder
-                document.getElementById('database-view').style.display = 'block';
-                document.getElementById('deck-builder').style.display = 'none';
-                
-                // Update tab buttons
-                document.querySelectorAll('.app-tab-button').forEach(btn => btn.classList.remove('active'));
-                const dbViewBtn = document.querySelector('.app-tab-button[onclick*="/data"]');
-                if (dbViewBtn) dbViewBtn.classList.add('active');
-                
-                // Load database view data immediately
-                console.log('Loading database view data...');
-                loadDatabaseViewData();
-            } else if (window.location.pathname.match(/\/users\/[^\/]+\/decks\/[^\/]+/)) {
-                // Check if we're on a deck editor route
-                const pathMatch = window.location.pathname.match(/\/users\/([^\/]+)\/decks\/([^\/]+)/);
-                if (pathMatch) {
-                    const urlUserId = pathMatch[1];
-                    const deckId = pathMatch[2];
-                    console.log('Detected deck editor route for deck:', deckId, 'user:', urlUserId);
-                    
-                    // Check if this is another user's deck (read-only mode)
-                    const currentUser = getCurrentUser();
-                    
-                    // Check if currentUser was created from URL fallback (testing mode)
-                    const isUrlFallbackUser = currentUser && !localStorage.getItem('currentUser');
-                    
-                    if (currentUser && currentUser.userId !== urlUserId) {
-                        isReadOnlyMode = true;
-                        console.log('Read-only mode: viewing another user\'s deck');
-                    } else if (!currentUser || isUrlFallbackUser) {
-                        // No authentication or URL fallback user - assume read-only mode for testing
-                        isReadOnlyMode = true;
-                        console.log('Read-only mode: no authentication (testing mode)');
-                    } else {
-                        isReadOnlyMode = false;
-                        console.log('Edit mode: viewing own deck');
-                    }
-                    
-                    // Note: We'll also check the isOwner flag from the API response
-                    // when the deck data is loaded to ensure accuracy
-                    
-                    // Show deck builder (which contains the deck editor)
-                    document.getElementById('database-view').style.display = 'none';
-                    document.getElementById('deck-builder').style.display = 'block';
-                    
-                    // Update tab buttons
-                    document.querySelectorAll('.app-tab-button').forEach(btn => btn.classList.remove('active'));
-                    const deckBuilderBtn = document.getElementById('deckBuilderBtn');
-                    if (deckBuilderBtn) deckBuilderBtn.classList.add('active');
-                    
-                    // Load the deck for editing
-                    currentDeckId = deckId;
+        document.addEventListener('DOMContentLoaded', async () => {
+            const authResult = await checkAuthentication();
+            currentUser = authResult.currentUser; // Update global currentUser after checkAuthentication
+
+            if (authResult.isAuthenticated) {
+                showMainApp(); // This will load general app data (characters, etc.)
+                if (authResult.deckId) {
+                    // Now load the specific deck after authentication is resolved
+                    isReadOnlyMode = authResult.isReadOnlyMode; // Update global flag
+                    document.body.classList.toggle('read-only-mode', isReadOnlyMode);
+                    await loadDeckForEditing(authResult.deckId, authResult.urlUserId, isReadOnlyMode);
                     showDeckEditor();
-                    loadDeckForEditing(deckId);
                 }
             } else {
-                // Show deck builder and hide database view
-                document.getElementById('database-view').style.display = 'none';
-                document.getElementById('deck-builder').style.display = 'block';
-                
-                // Update tab buttons
-                document.querySelectorAll('.app-tab-button').forEach(btn => btn.classList.remove('active'));
-                const deckBuilderBtn = document.getElementById('deckBuilderBtn');
-                if (deckBuilderBtn) deckBuilderBtn.classList.add('active');
+                showLoginModal();
             }
-            
-            // Check authentication first
-            checkAuthentication();
             
             // Login form event listener
             document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -12214,7 +12194,7 @@
             }
         }
 
-        async function loadDeckForEditing(deckId) {
+        async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) {
             console.log('loadDeckForEditing called with deckId:', deckId);
             try {
                 const response = await fetch(`/api/decks/${deckId}`, {
