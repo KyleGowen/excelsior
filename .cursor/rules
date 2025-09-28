@@ -364,8 +364,10 @@ OverPower is a card game where players control teams of legendary heroes and vil
 
 #### 2. Docker Image Build Process
 - **ALWAYS use `docker buildx build --platform linux/amd64 --no-cache` for production builds**
+- **NEVER use cached builds for production deployments**
 - **ALWAYS tag images as `overpower-deckbuilder:latest` locally first**
 - **ALWAYS verify the image builds successfully before pushing**
+- **ALWAYS rebuild the image when deploying code changes**
 
 #### 3. ECR Authentication & Push
 - **ALWAYS get ECR URL from Terraform: `cd infra/ && terraform output -raw ecr_repository_url`**
@@ -374,16 +376,36 @@ OverPower is a card game where players control teams of legendary heroes and vil
 - **ALWAYS push to ECR: `docker push $ECR_URL:latest`**
 
 #### 4. EC2 Deployment Process
-- **ALWAYS get instance ID: `cd infra/ && terraform output -raw ecr_repository_url`**
-- **ALWAYS use SSM to deploy: `aws ssm send-command --region us-west-2 --instance-ids $INSTANCE_ID`**
-- **ALWAYS include these commands in the SSM deployment:**
-  1. `docker stop overpower-app || true`
-  2. `docker rm overpower-app || true`
-  3. `docker pull $ECR_URL:latest`
-  4. `docker run -d --name overpower-app --restart unless-stopped -p 3000:3000 -e NODE_ENV=production -e DATABASE_URL="$(aws ssm get-parameter --name "/op-deckbuilder/dev/database/url" --with-decryption --region us-west-2 --query "Parameter.Value" --output text)" -e NODE_TLS_REJECT_UNAUTHORIZED=0 -e PORT=3000 $ECR_URL:latest`
-  5. `sleep 20`
-  6. `docker ps | grep overpower-app`
-  7. `docker logs overpower-app --tail 10`
+- **ALWAYS get instance ID: `cd infra/ && terraform output -raw ec2_instance_id`**
+- **ALWAYS get ECR URL: `cd infra/ && terraform output -raw ecr_repository_url`**
+- **ALWAYS use SSM to deploy with proper environment variables:**
+  ```bash
+  aws ssm send-command --region us-west-2 --instance-ids $INSTANCE_ID --document-name "AWS-RunShellScript" --parameters 'commands=[
+    "export aws_region=us-west-2",
+    "export ecr_repository_url=$ECR_URL",
+    "export project_name=op-deckbuilder", 
+    "export environment=dev",
+    "docker stop overpower-app || true",
+    "docker rm overpower-app || true", 
+    "docker pull $ECR_URL:latest",
+    "docker run -d --name overpower-app --restart unless-stopped -p 3000:3000 -e NODE_ENV=production -e DATABASE_URL=\"$(aws ssm get-parameter --name \"/op-deckbuilder/dev/database/url\" --with-decryption --region us-west-2 --query \"Parameter.Value\" --output text)\" -e NODE_TLS_REJECT_UNAUTHORIZED=0 -e PORT=3000 $ECR_URL:latest",
+    "sleep 20",
+    "docker ps | grep overpower-app",
+    "docker logs overpower-app --tail 10"
+  ]'
+  ```
+- **ALWAYS use the user_data.sh script approach when possible for full deployment**
+
+#### 4a. User Data Script Deployment (Preferred Method)
+- **ALWAYS use `infra/user_data.sh` for complete deployments including nginx configuration**
+- **ALWAYS upload the script to the EC2 instance or reference it properly**
+- **ALWAYS set required environment variables before running the script:**
+  - `aws_region=us-west-2`
+  - `ecr_repository_url=474120878015.dkr.ecr.us-west-2.amazonaws.com/op-deckbuilder-repo`
+  - `project_name=op-deckbuilder`
+  - `environment=dev`
+- **ALWAYS verify the script configures nginx properly for excelsior.cards domain**
+- **ALWAYS check that the script pulls the latest image and restarts the container**
 
 #### 5. Post-Deployment Verification
 - **ALWAYS verify deployment success by checking SSM command output**
