@@ -23,13 +23,110 @@
         }
 
         .header {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: 0;
-            padding: 5px 0;
+            padding: 15px 20px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 5px;
             backdrop-filter: blur(10px);
             position: relative;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            flex: 1;
+            max-width: calc(100% - 200px);
+        }
+
+        .header-logo {
+            max-width: 200px;
+            height: auto;
+            cursor: default !important;
+            pointer-events: none !important;
+        }
+
+        .header-stats {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+            align-items: center;
+            max-width: 800px;
+            margin-right: 20px;
+        }
+
+        .header-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-width: 0;
+        }
+
+        .header-stat-number {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #4ecdc4;
+            line-height: 1;
+            margin-bottom: 1px;
+        }
+
+        .header-stat-label {
+            font-size: 0.65rem;
+            color: #bdc3c7;
+            line-height: 1;
+            text-align: center;
+            word-wrap: break-word;
+            hyphens: auto;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 1400px) {
+            .header-stats {
+                grid-template-columns: repeat(6, 1fr);
+                gap: 10px;
+                max-width: 700px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .header-stats {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 8px;
+                max-width: 600px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .header-stats {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 6px;
+                max-width: 500px;
+            }
+            
+            .header-left {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .header-stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 5px;
+                max-width: 400px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .header-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 4px;
+                max-width: 300px;
+            }
         }
 
         .header h1 {
@@ -47,41 +144,6 @@
             color: #bdc3c7;
         }
 
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .stat-info {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #4ecdc4;
-        }
-
-        .stat-label {
-            color: #bdc3c7;
-            margin-top: 5px;
-        }
 
         .characters-section {
             background: rgba(255, 255, 255, 0.1);
@@ -4953,6 +5015,8 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            min-width: 200px;
+            justify-content: flex-end;
         }
 
         .user-info span {
@@ -5005,7 +5069,67 @@
 
     <div class="container" id="mainContainer" style="display: block; opacity: 1;">
         <div class="header">
-            <img src="/src/resources/images/logo/logo3.png" alt="Overpower Deckbuilder" style="max-width: 400px; height: auto; display: block; margin: 0 auto;" onclick="console.log('Main header logo clicked'); event.preventDefault(); event.stopPropagation(); return false;">
+            <div class="header-left">
+                <img src="/src/resources/images/logo/logo3.png" alt="Overpower Deckbuilder" class="header-logo" onclick="console.log('Main header logo clicked'); event.preventDefault(); event.stopPropagation(); return false;">
+                <div class="header-stats">
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-characters">-</div>
+                        <div class="header-stat-label">Characters</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-special-cards">-</div>
+                        <div class="header-stat-label">Special Cards</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-advanced-universe">-</div>
+                        <div class="header-stat-label">Advanced Universe</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-locations">-</div>
+                        <div class="header-stat-label">Locations</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-aspects">-</div>
+                        <div class="header-stat-label">Aspects</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-missions">-</div>
+                        <div class="header-stat-label">Missions</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-events">-</div>
+                        <div class="header-stat-label">Events</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-teamwork">-</div>
+                        <div class="header-stat-label">Teamwork</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-ally-universe">-</div>
+                        <div class="header-stat-label">Ally Universe</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-training">-</div>
+                        <div class="header-stat-label">Training</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-basic-universe">-</div>
+                        <div class="header-stat-label">Basic Universe</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-power-cards">-</div>
+                        <div class="header-stat-label">Power Cards</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-character-alternates">-</div>
+                        <div class="header-stat-label">Alternate Character Images</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-number" id="total-power-alternates">-</div>
+                        <div class="header-stat-label">Alternate Power Card Images</div>
+                    </div>
+                </div>
+            </div>
             <div class="user-info">
                 <span id="userWelcome">Welcome, <span id="currentUsername"></span>!</span>
                 <button id="logoutBtn" class="logout-btn">Log Out</button>
@@ -5021,28 +5145,6 @@
         </div>
 
         <div id="database-view" class="database-section" style="display: block;">
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-number" id="total-characters">-</div>
-                    <div class="stat-label">Characters</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="total-special-cards">-</div>
-                    <div class="stat-label">Special Cards</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="total-missions">-</div>
-                    <div class="stat-label">Missions</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="total-events">-</div>
-                    <div class="stat-label">Events</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="total-locations">-</div>
-                    <div class="stat-label">Locations</div>
-                </div>
-            </div>
             <div class="section-header">
             </div>
             
@@ -5815,8 +5917,8 @@
            <button class="screenshot-view-close" onclick="closeScreenshotView()">×</button>
            <div class="screenshot-view-content" id="screenshotViewContent">
                <!-- Deck cards will be displayed here in tabletop layout -->
-           </div>
-       </div>
+                </div>
+            </div>
             
             <div class="modal-body">
                 <div class="deck-editor-layout">
@@ -6287,6 +6389,10 @@
                     loadPowerCards(),
                     loadUserDecks()
                 ]);
+                
+                // Update all statistics after loading all data
+                await updateAllStats();
+                
                 console.log('✅ Database view data loaded successfully');
             } catch (error) {
                 console.error('❌ Error loading database view data:', error);
@@ -6392,39 +6498,75 @@
             
         }
 
-        function updateAllStats() {
-            // This will be called after loading all data types
-            fetch('/api/special-cards')
-                .then(response => response.json())
-                .then(data => {
+        async function updateAllStats() {
+            // Update all statistics for every card type
+            const statUpdates = [
+                { endpoint: '/api/special-cards', elementId: 'total-special-cards' },
+                { endpoint: '/api/advanced-universe', elementId: 'total-advanced-universe' },
+                { endpoint: '/api/locations', elementId: 'total-locations' },
+                { endpoint: '/api/aspects', elementId: 'total-aspects' },
+                { endpoint: '/api/missions', elementId: 'total-missions' },
+                { endpoint: '/api/events', elementId: 'total-events' },
+                { endpoint: '/api/teamwork', elementId: 'total-teamwork' },
+                { endpoint: '/api/ally-universe', elementId: 'total-ally-universe' },
+                { endpoint: '/api/training', elementId: 'total-training' },
+                { endpoint: '/api/basic-universe', elementId: 'total-basic-universe' },
+                { endpoint: '/api/power-cards', elementId: 'total-power-cards' }
+            ];
+
+            // Update all stats in parallel
+            const promises = statUpdates.map(async ({ endpoint, elementId }) => {
+                try {
+                    const response = await fetch(endpoint);
+                    const data = await response.json();
                     if (data.success) {
-                        document.getElementById('total-special-cards').textContent = data.data.length;
+                        const element = document.getElementById(elementId);
+                        if (element) {
+                            element.textContent = data.data.length;
+                        }
                     }
-                });
-            
-            fetch('/api/missions')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('total-missions').textContent = data.data.length;
-                    }
-                });
-            
-            fetch('/api/events')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('total-events').textContent = data.data.length;
-                    }
-                });
-            
-            fetch('/api/locations')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('total-locations').textContent = data.data.length;
-                    }
-                });
+                } catch (error) {
+                    console.error(`Error loading stats for ${elementId}:`, error);
+                }
+            });
+
+            // Calculate alternate image counts
+            const alternatePromises = [
+                // Character alternates
+                fetch('/api/characters')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const totalCharacterAlternates = data.data.reduce((sum, char) => {
+                                return sum + (char.alternateImages ? char.alternateImages.length : 0);
+                            }, 0);
+                            const element = document.getElementById('total-character-alternates');
+                            if (element) {
+                                element.textContent = totalCharacterAlternates;
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error loading character alternates:', error)),
+                
+                // Power card alternates
+                fetch('/api/power-cards')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const totalPowerAlternates = data.data.reduce((sum, card) => {
+                                return sum + (card.alternateImages ? card.alternateImages.length : 0);
+                            }, 0);
+                            const element = document.getElementById('total-power-alternates');
+                            if (element) {
+                                element.textContent = totalPowerAlternates;
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error loading power card alternates:', error))
+            ];
+
+            await Promise.all([...promises, ...alternatePromises]);
+            console.log('✅ All statistics updated including alternate image counts');
         }
 
         function formatSpecialCardEffect(effectText) {
@@ -6538,7 +6680,7 @@
             
             // Setup clear filters button
             if (clearFiltersBtn) {
-                clearFiltersBtn.addEventListener('click', clearAllFilters);
+            clearFiltersBtn.addEventListener('click', clearAllFilters);
             }
         }
 
@@ -6635,7 +6777,7 @@
                     // Only apply filtering if there are active filters, otherwise show all characters
                     if (hasActiveFilters) {
                         console.log('🔍 Applying filters, showing', filteredCharacters.length, 'filtered characters');
-                        displayCharacters(filteredCharacters);
+                    displayCharacters(filteredCharacters);
                     } else {
                         // No filters active, show all characters
                         console.log('🔍 No active filters, showing all', data.data.length, 'characters');
@@ -8073,22 +8215,22 @@
                         credentials: 'include'
                     });
                     console.log('🔍 DEBUG: /api/auth/me response status:', response.status);
-                    if (response.ok) {
-                        const data = await response.json();
+                if (response.ok) {
+                    const data = await response.json();
                         console.log('🔍 DEBUG: /api/auth/me response data:', data);
                         currentUser = data.data; // Update global currentUser with fresh data from server
                         localStorage.setItem('currentUser', JSON.stringify(currentUser));
                         authResult.isAuthenticated = true;
                         authResult.currentUser = currentUser;
                         console.log('🔍 DEBUG: Session verified successfully, currentUser:', currentUser);
-                    } else {
+                } else {
                         // Session expired, clear stored user
                         console.warn('Session expired or invalid. Clearing stored user. Status:', response.status);
                         localStorage.removeItem('currentUser');
                         currentUser = null;
                         authResult.currentUser = null;
-                    }
-                } catch (error) {
+                }
+            } catch (error) {
                     console.error('Error verifying session:', error);
                     localStorage.removeItem('currentUser');
                     currentUser = null;
@@ -8298,15 +8440,15 @@
                 document.getElementById('databaseViewBtn').classList.add('active');
                 document.getElementById('deckBuilderBtn').classList.remove('active');
                 
-                loadAspects();
-                loadEvents();
-                loadTeamwork();
+            loadAspects();
+            loadEvents();
+            loadTeamwork();
                 loadUserDecks(); // Load user decks for Add to Deck functionality
-                loadAllyUniverse();
-                loadTraining();
-                loadBasicUniverse();
-                loadPowerCards();
-                setupSearch();
+            loadAllyUniverse();
+            loadTraining();
+            loadBasicUniverse();
+            loadPowerCards();
+            setupSearch();
             }
             
             // Add location filter event listeners
@@ -11230,8 +11372,8 @@
                     const section = cardsDiv.closest('.deck-type-section');
                     const header = section ? section.querySelector('.deck-type-header') : null;
                     
-                    if (header) {
-                        state[category] = !header.classList.contains('collapsed');
+                if (header) {
+                    state[category] = !header.classList.contains('collapsed');
                     } else {
                         // Fallback: check if cards div is visible
                         state[category] = cardsDiv.style.display !== 'none';
@@ -11274,14 +11416,14 @@
                         const toggle = header ? header.querySelector('.deck-type-toggle') : null;
                         
                         if (cardsDiv && header && toggle) {
-                            if (isExpanded) {
+                        if (isExpanded) {
                                 cardsDiv.style.display = 'block';
                                 toggle.textContent = '▼';
-                                header.classList.remove('collapsed');
-                            } else {
+                            header.classList.remove('collapsed');
+                        } else {
                                 cardsDiv.style.display = 'none';
                                 toggle.textContent = '▶';
-                                header.classList.add('collapsed');
+                            header.classList.add('collapsed');
                             }
                         }
                     }
@@ -13639,7 +13781,7 @@
             const filename = imagePath.split('/').pop();
             return filename;
         }
-
+        
         // Helper function to get card image path
         function getCardImagePath(card, cardType, selectedAlternateImage = null) {
             try {
@@ -13650,7 +13792,7 @@
                         if (selectedAlternateImage.includes('/')) {
                             return `/src/resources/cards/images/${selectedAlternateImage}`;
                         } else {
-                            return `/src/resources/cards/images/characters/alternate/${selectedAlternateImage}`;
+                        return `/src/resources/cards/images/characters/alternate/${selectedAlternateImage}`;
                         }
                     }
                     
@@ -13691,7 +13833,7 @@
                         if (selectedAlternateImage.includes('/')) {
                             return `/src/resources/cards/images/${selectedAlternateImage}`;
                         } else {
-                            return `/src/resources/cards/images/specials/alternate/${selectedAlternateImage}`;
+                        return `/src/resources/cards/images/specials/alternate/${selectedAlternateImage}`;
                         }
                     }
                     
@@ -13719,7 +13861,7 @@
                         if (selectedAlternateImage.includes('/')) {
                             return `/src/resources/cards/images/${selectedAlternateImage}`;
                         } else {
-                            return `/src/resources/cards/images/power-cards/alternate/${selectedAlternateImage}`;
+                        return `/src/resources/cards/images/power-cards/alternate/${selectedAlternateImage}`;
                         }
                     }
                     
@@ -14218,10 +14360,10 @@
                 const isExistingCharacter = deckEditorCards.some(deckCard => 
                     deckCard.type === 'character' && deckCard.cardId === cardId
                 );
-                
+            
                 // Disable if we have 4 different characters OR if this character is already in the deck
                 const shouldDisable = uniqueCharacterCount >= 4 || isExistingCharacter;
-                
+            
                 if (shouldDisable) {
                     card.classList.add('disabled');
                     card.setAttribute('draggable', 'false');
@@ -15647,7 +15789,7 @@
                     deckEditorCards[existingCardIndex].selectedAlternateImage = selectedAlternateImage;
                 }
                 // Show notification for adding additional copies
-                showNotification(`Added another copy of ${cardName}`, 'success');
+                    showNotification(`Added another copy of ${cardName}`, 'success');
             } else {
                 // Add new card
                 const newCard = {
