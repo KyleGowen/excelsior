@@ -4,6 +4,7 @@ import { DataSourceConfig } from './config/DataSourceConfig';
 import { DeckPersistenceService } from './services/deckPersistence';
 import { UserPersistenceService } from './persistence/userPersistence';
 import { DatabaseInitializationService } from './services/databaseInitialization';
+import { DeckService } from './services/deckService';
 import { Character } from './types';
 import path from 'path';
 
@@ -18,6 +19,9 @@ const dataSource = DataSourceConfig.getInstance();
 const userRepository = dataSource.getUserRepository();
 const deckRepository = dataSource.getDeckRepository();
 const cardRepository = dataSource.getCardRepository();
+
+// Initialize business logic service
+const deckBusinessService = new DeckService(deckRepository);
 
 // Middleware
 app.use(express.json());
@@ -398,9 +402,15 @@ app.post('/api/decks', authenticateUser, async (req: any, res) => {
       return res.status(400).json({ success: false, error: 'Deck name is required' });
     }
     
-    const deck = await deckRepository.createDeck(req.user.id, name, description, characters);
+    const deck = await deckBusinessService.createDeck(req.user.id, name, description, characters);
     res.json({ success: true, data: deck });
   } catch (error) {
+    if (error instanceof Error && error.message.includes('Maximum 4 characters allowed')) {
+      return res.status(400).json({ 
+        success: false, 
+        error: error.message 
+      });
+    }
     res.status(500).json({ success: false, error: 'Failed to create deck' });
   }
 });
@@ -689,4 +699,7 @@ app.get('/api/database/status', async (req, res) => {
 });
 
 // Server startup is now handled in initializeServer() function
+
+// Export app for testing
+export default app;
 

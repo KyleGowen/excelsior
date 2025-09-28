@@ -1,7 +1,15 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { v4 as uuidv4 } from 'uuid';
 import { DeckData, DeckMetadata, DeckCard, CardTypeOrAll } from '../types';
+
+// Simple UUID v4 generator to avoid Jest import issues
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
 
 export class DeckPersistenceService {
   private readonly decksFilePath: string;
@@ -60,7 +68,7 @@ export class DeckPersistenceService {
 
   // Create a new deck
   createDeck(name: string, userId: string, description?: string, characterIds?: string[]): DeckData {
-    const id = uuidv4();
+    const id = generateUUID();
     const now = new Date().toISOString();
     
     // Create initial cards array with selected characters
@@ -153,7 +161,7 @@ export class DeckPersistenceService {
     } else {
       // Add new card
       const newCard: DeckCard = {
-        id: uuidv4(),
+        id: generateUUID(),
         type: cardType,
         cardId,
         quantity,

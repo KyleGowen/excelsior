@@ -107,6 +107,25 @@ This is a Node.js/TypeScript deck building application for the Overpower card ga
 - **If I find placeholder tests, I MUST replace them with real tests immediately**
 - **Tests that don't test anything are worse than no tests at all**
 
+### 📊 MANDATORY Test Output Reporting
+- **🚨 ALWAYS report test run statistics in a clear, structured format 🚨**
+- **This is a MANDATORY rule that must be followed at all times**
+- **When running tests, I MUST always provide:**
+  1. **Total tests run**: "X tests passed, Y total"
+  2. **New tests added**: "Added Z new tests since last run"
+  3. **Test coverage summary**: Brief description of what was tested
+  4. **Any failures or issues**: Clear explanation of problems found
+- **Format for test output summary:**
+  ```
+  ## 📊 Test Results Summary
+  - **Total Tests**: X passed, Y total
+  - **New Tests Added**: Z tests
+  - **Coverage**: [Brief description of test areas]
+  - **Status**: ✅ All tests passing / ⚠️ Issues found
+  ```
+- **This helps track testing progress and ensures comprehensive coverage**
+- **Always highlight the number of new tests added in each test run**
+
 ## Git & Version Control
 - **🚨 NEVER commit or push to git without explicit user permission 🚨**
 - **This is a MANDATORY rule that must be followed at all times**
