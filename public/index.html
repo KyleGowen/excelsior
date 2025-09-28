@@ -15643,7 +15643,7 @@
                 
                 // For other card types, increase quantity and update alternate image if provided
                 deckEditorCards[existingCardIndex].quantity += 1;
-                if (selectedAlternateImage && (cardType === 'special')) {
+                if (selectedAlternateImage && (cardType === 'special' || cardType === 'power')) {
                     deckEditorCards[existingCardIndex].selectedAlternateImage = selectedAlternateImage;
                 }
                 // Show notification for adding additional copies
@@ -15657,7 +15657,7 @@
                     quantity: 1
                 };
                 // Add selected alternate image if provided
-                if (selectedAlternateImage && (cardType === 'character' || cardType === 'special')) {
+                if (selectedAlternateImage && (cardType === 'character' || cardType === 'special' || cardType === 'power')) {
                     newCard.selectedAlternateImage = selectedAlternateImage;
                 }
                 deckEditorCards.push(newCard);

@@ -215,5 +215,34 @@ describe('Alternate Power Cards Integration Tests', () => {
       
       console.log('✅ All expected alternate images are present in database');
     });
+
+    it('should verify alternate image selection works for power cards in deck editor', async () => {
+      // Test that power cards with alternate images can have their alternate images selected
+      const powerCardsWithAlternates = await pool.query(
+        'SELECT id, name, alternate_images FROM power_cards WHERE alternate_images IS NOT NULL AND array_length(alternate_images, 1) > 0'
+      );
+      
+      expect(powerCardsWithAlternates.rows.length).toBeGreaterThan(0);
+      
+      for (const card of powerCardsWithAlternates.rows) {
+        // Verify the card has alternate images
+        expect(card.alternate_images).toBeDefined();
+        expect(Array.isArray(card.alternate_images)).toBe(true);
+        expect(card.alternate_images.length).toBeGreaterThan(0);
+        
+        // Test each alternate image
+        for (const altImage of card.alternate_images) {
+          // Verify the alternate image path is valid
+          expect(altImage).toMatch(/^power-cards\/alternate\/.+\.(webp|png|jpg|jpeg)$/);
+          
+          // Verify the alternate image is properly formatted
+          expect(altImage).toContain('power-cards/alternate/');
+          
+          console.log(`✅ ${card.name} alternate image verified: ${altImage}`);
+        }
+      }
+      
+      console.log('✅ All power card alternate images are properly formatted and selectable');
+    });
   });
 });

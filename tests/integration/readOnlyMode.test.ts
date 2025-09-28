@@ -84,7 +84,7 @@ describe('Read-Only Mode Integration Tests', () => {
       if (deckResult.rows.length > 0) {
         const deck = deckResult.rows[0];
         
-        // Verify deck owner has USER role (can edit)
+        // Verify deck owner has ADMIN role (can edit)
         expect(deck.owner_role).toBe('ADMIN');
         
         // Verify guest user exists and has GUEST role (read-only)
