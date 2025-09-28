@@ -390,6 +390,30 @@ OverPower is a card game where players control teams of legendary heroes and vil
 - **ALWAYS test application accessibility: `curl -I http://excelsior.cards`**
 - **ALWAYS check container logs for any errors**
 - **ALWAYS confirm HTTP 200 response from the application**
+- **ALWAYS verify login functionality works by testing the login endpoint**
+- **ALWAYS confirm the application is using the correct RDS database, not a local Docker database**
+- **NEVER consider deployment complete until the application is fully functional and accessible**
+
+#### 6. Database Connection Rules
+- **ALWAYS use the existing RDS database for production deployments**
+- **NEVER create new local PostgreSQL containers for production**
+- **ALWAYS use the correct SSM parameter: `/op-deckbuilder/dev/database/url`**
+- **ALWAYS verify database connection string points to RDS endpoint, not localhost**
+- **NEVER use Docker networks for production database connections**
+- **ALWAYS confirm database migrations run successfully against RDS**
+
+#### 7. Deployment Verification Checklist
+- [ ] All tests pass (npm test)
+- [ ] Build succeeds (npm run build)
+- [ ] Docker image builds without cache
+- [ ] ECR push successful
+- [ ] SSM deployment command succeeds
+- [ ] Container is running (docker ps shows Up status)
+- [ ] Application responds with HTTP 200
+- [ ] Database connection successful (logs show "Database initialization completed")
+- [ ] Login functionality works
+- [ ] No 401/403 errors in browser console
+- [ ] Application is accessible at http://excelsior.cards
 
 ### 🚫 PROHIBITED Deployment Practices
 - **NEVER deploy without running tests first**
@@ -397,14 +421,27 @@ OverPower is a card game where players control teams of legendary heroes and vil
 - **NEVER use cached Docker builds for production (`--no-cache` is mandatory)**
 - **NEVER build for wrong architecture (must be `linux/amd64`)**
 - **NEVER skip ECR authentication before pushing**
+- **NEVER create new databases or PostgreSQL containers for production**
+- **NEVER use localhost database connections in production**
+- **NEVER modify existing RDS infrastructure without explicit user permission**
+- **NEVER consider deployment complete without full functionality verification**
 - **NEVER deploy without proper environment variables**
 - **NEVER skip post-deployment verification**
 
 ### 🔧 Deployment Environment Variables
 - **NODE_ENV**: Always `production` for deployments
-- **DATABASE_URL**: Always retrieved from SSM Parameter Store
-- **PORT**: Always `3000`
-- **NODE_TLS_REJECT_UNAUTHORIZED**: Always `0` (for development)
+- **DATABASE_URL**: Always use SSM parameter `/op-deckbuilder/dev/database/url` for RDS connection
+- **NODE_TLS_REJECT_UNAUTHORIZED**: Set to `0` for RDS SSL connections
+- **PORT**: Always `3000` for production
+
+### 🚨 CRITICAL: What NOT to Do (Based on Past Mistakes)
+- **NEVER create new PostgreSQL Docker containers for production**
+- **NEVER use `localhost:5432` for production database connections**
+- **NEVER create Docker networks for production database connectivity**
+- **NEVER assume deployment is complete without testing login functionality**
+- **NEVER ignore 401/403 errors - they indicate authentication/database issues**
+- **ALWAYS verify the application is using the existing RDS database**
+- **ALWAYS check that database connection string contains the RDS endpoint, not localhost**
 
 ### 📋 Required AWS Resources
 - **ECR Repository**: `overpower-deckbuilder` in `us-west-2`
