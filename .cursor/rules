@@ -91,10 +91,33 @@ This is a Node.js/TypeScript deck building application for the Overpower card ga
 - **Use `npm run test:watch` during development for continuous feedback**
 - **Use `npm run test:coverage` to ensure adequate test coverage**
 
-if## Git Workflow - CRITICAL RULE
-- **🚨 NEVER COMMIT OR PUSH TO GIT WITHOUT EXPLICIT USER INSTRUCTION 🚨**
+### 🚫 PROHIBITED Testing Practices
+- **🚨 COMMENTED OUT PLACEHOLDER TESTS ARE NOT ACCEPTABLE 🚨**
 - **This is a MANDATORY rule that must be followed at all times**
-- **Even if I think changes are ready, I must wait for explicit "commit and push" instruction**
+- **NEVER create tests that:**
+  1. Are commented out with `/* */` blocks
+  2. Only contain placeholder assertions like `expect(true).toBe(true)`
+  3. Don't actually test any real functionality
+  4. Are just empty or meaningless test stubs
+- **ALL TESTS MUST:**
+  1. Test actual functionality (database queries, API calls, business logic)
+  2. Have meaningful assertions that verify real behavior
+  3. Be uncommented and executable
+  4. Provide value by catching real bugs or regressions
+- **If I find placeholder tests, I MUST replace them with real tests immediately**
+- **Tests that don't test anything are worse than no tests at all**
+
+## Git & Version Control
+- **🚨 NEVER commit or push to git without explicit user permission 🚨**
+- **This is a MANDATORY rule that must be followed at all times**
+- **I must ALWAYS ask the user before:**
+  1. Running `git add` commands
+  2. Running `git commit` commands  
+  3. Running `git push` commands
+  4. Any other git operations that modify the repository
+- **I can only suggest git commands but must wait for user approval**
+- **The user has full control over when and what gets committed/pushed**
+- **This rule takes precedence over all other rules**
 - **Write descriptive commit messages when instructed to commit**
 - **Ask for permission before any git operations**
 - Test changes before committing

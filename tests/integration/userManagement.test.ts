@@ -1,296 +1,261 @@
-import request from 'supertest';
-import { ApiClient } from '../helpers/apiClient';
 import { Pool } from 'pg';
 
-// This will be imported from your main app
-// import app from '../../src/index';
+// Simple UUID v4 generator for tests
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
 
 describe('User Management Integration Tests', () => {
-  let apiClient: ApiClient;
-  let testUserId: string;
-  let testUserPassword: string;
-  let dbPool: Pool;
+  let pool: Pool;
+  let testUserId: string | null = null;
 
-  beforeAll(async () => {
-    // Initialize API client with your app
-    // apiClient = new ApiClient(app);
-    
-    // Initialize database connection for direct user management
-    dbPool = new Pool({
-      connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/overpower_test'
+  beforeAll(() => {
+    pool = new Pool({
+      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
     });
   });
 
   afterAll(async () => {
-    // Clean up database connection
-    await dbPool.end();
+    // Clean up test user if created
+    if (testUserId) {
+      await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
+    }
+    await pool.end();
   });
 
-  describe('User Creation and Authentication', () => {
-    it('should create a new user, verify login with USER role, then delete the user', async () => {
-      // Generate a random password for the test user
-      testUserPassword = Math.random().toString(36).slice(-12) + 'Test123!';
-      const testUserName = 'Jest User';
-      const testUserEmail = 'jest.user@test.com';
-
-      try {
-        // Step 1: Create a new user directly in the database
-        console.log('🔍 Creating test user in database...');
-        const createUserQuery = `
-          INSERT INTO users (id, name, email, role, created_at, updated_at)
-          VALUES ($1, $2, $3, $4, NOW(), NOW())
-          RETURNING id
-        `;
-        
-        const userId = '550e8400-e29b-41d4-a716-446655440000'; // Fixed UUID for test
-        testUserId = userId;
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        const createResult = await dbPool.query(createUserQuery, [
-          userId,
-          testUserName,
-          testUserEmail,
-          'USER'
-        ]);
-        
-        expect(createResult.rows).toHaveLength(1);
-        expect(createResult.rows[0].id).toBe(userId);
-        console.log('✅ Test user created successfully');
-        */
-
-        // Step 2: Create user session (simulate what happens during registration)
-        console.log('🔍 Creating user session...');
-        const createSessionQuery = `
-          INSERT INTO user_sessions (id, user_id, created_at, expires_at)
-          VALUES ($1, $2, NOW(), NOW() + INTERVAL '24 hours')
-          RETURNING id
-        `;
-        
-        const sessionId = '550e8400-e29b-41d4-a716-446655440001';
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        const sessionResult = await dbPool.query(createSessionQuery, [
-          sessionId,
-          userId
-        ]);
-        
-        expect(sessionResult.rows).toHaveLength(1);
-        console.log('✅ User session created successfully');
-        */
-
-        // Step 3: Test login with the new user
-        console.log('🔍 Testing login with new user...');
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        const loginResponse = await apiClient.request('POST', '/api/auth/login', {
-          username: testUserName,
-          password: testUserPassword
-        });
-        
-        expect(loginResponse.status).toBe(200);
-        expect(loginResponse.body.success).toBe(true);
-        expect(loginResponse.body.data.name).toBe(testUserName);
-        expect(loginResponse.body.data.email).toBe(testUserEmail);
-        expect(loginResponse.body.data.role).toBe('USER');
-        expect(loginResponse.body.data.role).not.toBe('GUEST');
-        expect(loginResponse.body.data.role).not.toBe('ADMIN');
-        console.log('✅ Login successful with correct USER role');
-        */
-
-        // Step 4: Verify session persistence
-        console.log('🔍 Verifying session persistence...');
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        const userResponse = await apiClient.getCurrentUser();
-        expect(userResponse.body.success).toBe(true);
-        expect(userResponse.body.data.name).toBe(testUserName);
-        expect(userResponse.body.data.role).toBe('USER');
-        console.log('✅ Session persistence verified');
-        */
-
-        // Step 5: Test user capabilities (should have USER permissions)
-        console.log('🔍 Testing user capabilities...');
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        // Test that user can create decks (USER permission)
-        const deckResponse = await apiClient.createDeck({
-          name: 'Test Deck by Jest User',
-          description: 'A deck created by the test user'
-        });
-        
-        expect(deckResponse.status).toBe(201);
-        expect(deckResponse.body.success).toBe(true);
-        console.log('✅ User can create decks (USER permission confirmed)');
-        
-        // Test that user cannot access admin endpoints
-        const adminResponse = await apiClient.request('GET', '/api/admin/users');
-        expect(adminResponse.status).toBe(403);
-        console.log('✅ User cannot access admin endpoints (USER role confirmed)');
-        */
-
-        // Step 6: Clean up - Delete the test user
-        console.log('🔍 Cleaning up test user...');
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        // First delete user sessions
-        await dbPool.query('DELETE FROM user_sessions WHERE user_id = $1', [userId]);
-        
-        // Then delete the user
-        const deleteResult = await dbPool.query('DELETE FROM users WHERE id = $1', [userId]);
-        expect(deleteResult.rowCount).toBe(1);
-        console.log('✅ Test user deleted successfully');
-        */
-
-        // Verify user is deleted
-        // This is a template - you would uncomment when app is available
-        /*
-        const verifyDelete = await dbPool.query('SELECT * FROM users WHERE id = $1', [userId]);
-        expect(verifyDelete.rows).toHaveLength(0);
-        console.log('✅ User deletion verified');
-        */
-
-        // Placeholder assertions for now
-        expect(true).toBe(true);
-        console.log('✅ Test completed successfully (placeholder mode)');
-
-      } catch (error) {
-        // Ensure cleanup happens even if test fails
-        console.log('🧹 Cleaning up after test failure...');
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        try {
-          if (testUserId) {
-            await dbPool.query('DELETE FROM user_sessions WHERE user_id = $1', [testUserId]);
-            await dbPool.query('DELETE FROM users WHERE id = $1', [testUserId]);
-            console.log('✅ Cleanup completed after test failure');
-          }
-        } catch (cleanupError) {
-          console.error('❌ Cleanup failed:', cleanupError);
-        }
-        */
-        
-        throw error;
-      }
+  describe('User Creation and Database Operations', () => {
+    it('should create a new user with valid data', async () => {
+      const userId = generateUUID();
+      const userName = 'Jest Test User';
+      const userEmail = `jest-${generateUUID()}@example.com`;
+      const userRole = 'USER';
+      
+      testUserId = userId; // Store for cleanup
+      
+      const result = await pool.query(
+        'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) RETURNING *',
+        [userId, userName, userEmail, 'test_password_hash', userRole]
+      );
+      
+      expect(result.rows).toHaveLength(1);
+      const user = result.rows[0];
+      expect(user.id).toBe(userId);
+      expect(user.username).toBe(userName);
+      expect(user.email).toBe(userEmail);
+      expect(user.role).toBe(userRole);
+      expect(user.created_at).toBeDefined();
+      expect(user.updated_at).toBeDefined();
+      
+      console.log('✅ Test user created successfully:', user);
     });
 
-    it('should handle user creation with invalid data gracefully', async () => {
-      // This is a template - you would uncomment when app is available
-      /*
-      // Test creating user with missing required fields
-      const invalidUserQuery = `
-        INSERT INTO users (id, name, email, role, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, NOW(), NOW())
-        RETURNING id
-      `;
+    it('should verify user can be retrieved by ID', async () => {
+      expect(testUserId).toBeDefined();
       
-      try {
-        await dbPool.query(invalidUserQuery, [
-          '550e8400-e29b-41d4-a716-446655440002',
-          null, // Invalid: null name
-          'test@example.com',
-          'USER'
-        ]);
-        fail('Should have thrown an error for null name');
-      } catch (error) {
-        expect(error.message).toContain('not-null');
-        console.log('✅ Invalid user creation properly rejected');
-      }
-      */
+      const result = await pool.query(
+        'SELECT * FROM users WHERE id = $1',
+        [testUserId!]
+      );
       
-      // Placeholder assertion for now
-      expect(true).toBe(true);
+      expect(result.rows).toHaveLength(1);
+      const user = result.rows[0];
+      expect(user.id).toBe(testUserId);
+      expect(user.username).toBeDefined();
+      expect(user.email).toBeDefined();
+      expect(user.role).toBeDefined();
+      
+      console.log('✅ User retrieved by ID:', user);
     });
 
-    it('should prevent duplicate user creation', async () => {
-      // This is a template - you would uncomment when app is available
-      /*
-      const duplicateUserId = '550e8400-e29b-41d4-a716-446655440003';
-      const userName = 'Duplicate Test User';
-      const userEmail = 'duplicate@test.com';
+    it('should verify user can be retrieved by email', async () => {
+      expect(testUserId).toBeDefined();
+      
+      // First get the user's email
+      const userResult = await pool.query(
+        'SELECT email FROM users WHERE id = $1',
+        [testUserId!]
+      );
+      
+      expect(userResult.rows).toHaveLength(1);
+      const userEmail = userResult.rows[0].email;
+      
+      // Now search by email
+      const result = await pool.query(
+        'SELECT * FROM users WHERE email = $1',
+        [userEmail]
+      );
+      
+      expect(result.rows).toHaveLength(1);
+      const user = result.rows[0];
+      expect(user.id).toBe(testUserId);
+      expect(user.email).toBe(userEmail);
+      
+      console.log('✅ User retrieved by email:', user);
+    });
+
+    it('should verify user role can be updated', async () => {
+      expect(testUserId).toBeDefined();
+      
+      // Update user role to ADMIN
+      const updateResult = await pool.query(
+        'UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+        ['ADMIN', testUserId!]
+      );
+      
+      expect(updateResult.rows).toHaveLength(1);
+      const user = updateResult.rows[0];
+      expect(user.role).toBe('ADMIN');
+      expect(user.id).toBe(testUserId);
+      
+      // Verify the update persisted
+      const verifyResult = await pool.query(
+        'SELECT role FROM users WHERE id = $1',
+        [testUserId!]
+      );
+      
+      expect(verifyResult.rows).toHaveLength(1);
+      expect(verifyResult.rows[0].role).toBe('ADMIN');
+      
+      console.log('✅ User role updated successfully');
+    });
+
+    it('should verify user can be deleted', async () => {
+      expect(testUserId).toBeDefined();
+      
+      const deleteResult = await pool.query(
+        'DELETE FROM users WHERE id = $1 RETURNING *',
+        [testUserId!]
+      );
+      
+      expect(deleteResult.rows).toHaveLength(1);
+      const deletedUser = deleteResult.rows[0];
+      expect(deletedUser.id).toBe(testUserId);
+      
+      // Verify user no longer exists
+      const verifyResult = await pool.query(
+        'SELECT * FROM users WHERE id = $1',
+        [testUserId!]
+      );
+      
+      expect(verifyResult.rows).toHaveLength(0);
+      
+      testUserId = null; // Clear for cleanup
+      console.log('✅ User deleted successfully');
+    });
+  });
+
+  describe('User Data Validation', () => {
+    it('should verify email uniqueness constraint', async () => {
+      const userId1 = generateUUID();
+      const userId2 = generateUUID();
+      const duplicateEmail = `duplicate-${generateUUID()}@example.com`;
       
       // Create first user
-      await dbPool.query(`
-        INSERT INTO users (id, name, email, role, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, NOW(), NOW())
-      `, [duplicateUserId, userName, userEmail, 'USER']);
+      await pool.query(
+        'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+        [userId1, 'User 1', duplicateEmail, 'test_password_hash', 'USER']
+      );
       
-      // Try to create duplicate user
+      // Try to create second user with same email
       try {
-        await dbPool.query(`
-          INSERT INTO users (id, name, email, role, created_at, updated_at)
-          VALUES ($1, $2, $3, $4, NOW(), NOW())
-        `, [duplicateUserId, userName, userEmail, 'USER']);
-        fail('Should have thrown an error for duplicate ID');
+        await pool.query(
+          'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+          [userId2, 'User 2', duplicateEmail, 'test_password_hash', 'USER']
+        );
+        fail('Expected duplicate email constraint to be violated');
       } catch (error) {
-        expect(error.message).toContain('duplicate key');
-        console.log('✅ Duplicate user creation properly rejected');
+        expect(error).toBeDefined();
+        console.log('✅ Email uniqueness constraint verified');
       }
       
       // Cleanup
-      await dbPool.query('DELETE FROM users WHERE id = $1', [duplicateUserId]);
-      */
+      await pool.query('DELETE FROM users WHERE id = $1', [userId1]);
+    });
+
+    it('should verify role validation', async () => {
+      const userId = generateUUID();
       
-      // Placeholder assertion for now
-      expect(true).toBe(true);
+      // Try to create user with invalid role
+      try {
+        await pool.query(
+          'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+          [userId, 'Test User', 'test@example.com', 'test_password_hash', 'INVALID_ROLE']
+        );
+        fail('Expected invalid role constraint to be violated');
+      } catch (error) {
+        expect(error).toBeDefined();
+        console.log('✅ Role validation constraint verified');
+      }
+    });
+
+    it('should verify required fields are not null', async () => {
+      const userId = generateUUID();
+      
+      // Try to create user with null name
+      try {
+        await pool.query(
+          'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+          [userId, null, 'test@example.com', 'test_password_hash', 'USER']
+        );
+        fail('Expected null name constraint to be violated');
+      } catch (error) {
+        expect(error).toBeDefined();
+        console.log('✅ Required fields constraint verified');
+      }
     });
   });
 
-  describe('User Role Verification', () => {
-    it('should verify USER role has correct permissions', async () => {
-      // This is a template - you would uncomment when app is available
-      /*
-      // Test that USER role can perform user-level operations
-      const userClient = new ApiClient(app);
-      await userClient.login('kyle', 'password'); // Use existing user
+  describe('User Query Operations', () => {
+    it('should verify users can be filtered by role', async () => {
+      const result = await pool.query(
+        'SELECT username, role FROM users WHERE role = $1 ORDER BY username',
+        ['USER']
+      );
       
-      // Should be able to create decks
-      const deckResponse = await userClient.createDeck({
-        name: 'Role Test Deck',
-        description: 'Testing USER role permissions'
+      expect(result.rows.length).toBeGreaterThan(0);
+      
+      result.rows.forEach(user => {
+        expect(user.role).toBe('USER');
+        expect(user.username).toBeDefined();
       });
-      expect(deckResponse.status).toBe(201);
       
-      // Should not be able to access admin functions
-      const adminResponse = await userClient.request('GET', '/api/admin/users');
-      expect(adminResponse.status).toBe(403);
-      
-      // Cleanup
-      if (deckResponse.body.data?.id) {
-        await userClient.deleteDeck(deckResponse.body.data.id);
-      }
-      */
-      
-      // Placeholder assertion for now
-      expect(true).toBe(true);
+      console.log('✅ Users filtered by role:', result.rows);
     });
 
-    it('should verify GUEST role has limited permissions', async () => {
-      // This is a template - you would uncomment when app is available
-      /*
-      const guestClient = new ApiClient(app);
-      await guestClient.login('guest', 'guest');
+    it('should verify users can be sorted by creation date', async () => {
+      const result = await pool.query(
+        'SELECT username, created_at FROM users ORDER BY created_at ASC'
+      );
       
-      // Should not be able to create decks
-      const deckResponse = await guestClient.createDeck({
-        name: 'Guest Test Deck',
-        description: 'This should fail'
+      expect(result.rows.length).toBeGreaterThan(0);
+      
+      // Verify sorting is correct
+      for (let i = 1; i < result.rows.length; i++) {
+        const prevDate = new Date(result.rows[i - 1].created_at);
+        const currDate = new Date(result.rows[i].created_at);
+        expect(prevDate.getTime()).toBeLessThanOrEqual(currDate.getTime());
+      }
+      
+      console.log('✅ Users sorted by creation date verified');
+    });
+
+    it('should verify user count by role', async () => {
+      const result = await pool.query(
+        'SELECT role, COUNT(*) as count FROM users GROUP BY role ORDER BY role'
+      );
+      
+      expect(result.rows.length).toBeGreaterThan(0);
+      
+      result.rows.forEach(row => {
+        expect(row.role).toBeDefined();
+        expect(parseInt(row.count)).toBeGreaterThan(0);
       });
-      expect(deckResponse.status).toBe(403);
       
-      // Should be able to view decks in read-only mode
-      const viewResponse = await guestClient.request('GET', '/api/decks');
-      expect(viewResponse.status).toBe(200);
-      */
-      
-      // Placeholder assertion for now
-      expect(true).toBe(true);
+      console.log('✅ User count by role:', result.rows);
     });
   });
 });

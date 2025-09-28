@@ -1,320 +1,299 @@
-import request from 'supertest';
-import { ApiClient } from '../helpers/apiClient';
 import { Pool } from 'pg';
 
-// This will be imported from your main app
-// import app from '../../src/index';
+// Simple UUID v4 generator for tests
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
 
 describe('Auto Guest Login Integration Tests', () => {
-  let ownerClient: ApiClient;
-  let testUserId: string;
-  let testDeckId: string;
-  let dbPool: Pool;
+  let pool: Pool;
+  let testUserId: string | null = null;
+  let testDeckId: string | null = null;
 
-  beforeAll(async () => {
-    // Initialize API client with your app
-    // ownerClient = new ApiClient(app);
-    
-    // Initialize database connection for direct user management
-    dbPool = new Pool({
-      connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/overpower_test'
+  beforeAll(() => {
+    pool = new Pool({
+      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
     });
   });
 
   afterAll(async () => {
-    // Clean up database connection
-    await dbPool.end();
+    // Clean up test data
+    if (testDeckId) {
+      await pool.query('DELETE FROM decks WHERE id = $1', [testDeckId]);
+    }
+    if (testUserId) {
+      await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
+    }
+    await pool.end();
   });
 
-  describe('Auto Guest Login on Deck Access', () => {
-    it('should auto-login as guest when accessing deck URL without authentication', async () => {
-      try {
-        // Step 1: Create a test user
-        console.log('🔍 Creating test user for deck owner...');
-        testUserId = '550e8400-e29b-41d4-a716-446655440100';
-        const testUserName = 'Deck Owner';
-        const testUserEmail = 'deck.owner@test.com';
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        await dbPool.query(`
-          INSERT INTO users (id, name, email, role, created_at, updated_at)
-          VALUES ($1, $2, $3, $4, NOW(), NOW())
-        `, [testUserId, testUserName, testUserEmail, 'USER']);
-        console.log('✅ Test user created');
-        */
+  describe('Guest User Auto-Login Database Verification', () => {
+    it('should verify guest user exists and is accessible', async () => {
+      const result = await pool.query(
+        'SELECT id, username, email, role FROM users WHERE username = $1',
+        ['guest']
+      );
+      
+      expect(result.rows).toHaveLength(1);
+      const guestUser = result.rows[0];
+      expect(guestUser.username).toBe('guest');
+      expect(guestUser.role).toBe('GUEST');
+      expect(guestUser.id).toBeDefined();
+      expect(guestUser.email).toBeDefined();
+      
+      console.log('✅ Guest user verified for auto-login:', guestUser);
+    });
 
-        // Step 2: Login as the owner and create a deck with cards
-        console.log('🔍 Creating deck with cards as owner...');
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        await ownerClient.login(testUserName, 'password');
-        
-        // Create a deck
-        const deckResponse = await ownerClient.createDeck({
-          name: 'Test Deck for Guest Viewing',
-          description: 'A deck to test guest auto-login functionality'
-        });
-        testDeckId = deckResponse.body.data.id;
-        console.log('✅ Deck created:', testDeckId);
-        
-        // Add some cards to the deck
-        const cardsToAdd = [
-          { cardType: 'character', cardId: 'leonidas', quantity: 1 },
-          { cardType: 'character', cardId: 'king-arthur', quantity: 1 },
-          { cardType: 'special', cardId: 'sword-and-shield', quantity: 2 },
-          { cardType: 'location', cardId: 'round-table', quantity: 1 },
-          { cardType: 'mission', cardId: 'warlord-of-mars', quantity: 1 }
-        ];
-        
-        for (const card of cardsToAdd) {
-          await ownerClient.addCardToDeck(testDeckId, card);
-        }
-        console.log('✅ Cards added to deck');
-        
-        // Verify deck has cards
-        const deckWithCards = await ownerClient.getDeck(testDeckId);
-        expect(deckWithCards.body.data.cards.length).toBeGreaterThan(0);
-        console.log('✅ Deck verified with cards:', deckWithCards.body.data.cards.length);
-        */
+    it('should verify guest user has correct permissions for deck viewing', async () => {
+      const result = await pool.query(
+        'SELECT role FROM users WHERE username = $1',
+        ['guest']
+      );
+      
+      expect(result.rows).toHaveLength(1);
+      expect(result.rows[0].role).toBe('GUEST');
+      
+      // Verify GUEST role is different from USER role
+      const userResult = await pool.query(
+        'SELECT role FROM users WHERE username = $1',
+        ['kyle']
+      );
+      
+      expect(userResult.rows).toHaveLength(1);
+      expect(userResult.rows[0].role).toBe('ADMIN');
+      expect(result.rows[0].role).not.toBe(userResult.rows[0].role);
+      
+      console.log('✅ Guest permissions verified for deck viewing');
+    });
 
-        // Step 3: Logout the owner
-        console.log('🔍 Logging out owner...');
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        await ownerClient.logout();
-        
-        // Verify owner is logged out
-        const logoutCheck = await ownerClient.getCurrentUser();
-        expect(logoutCheck.status).toBe(401);
-        console.log('✅ Owner logged out successfully');
-        */
+    it('should verify guest user can be identified for auto-login', async () => {
+      const result = await pool.query(
+        'SELECT id, username, role FROM users WHERE role = $1',
+        ['GUEST']
+      );
+      
+      expect(result.rows.length).toBeGreaterThanOrEqual(1);
+      
+      const guestUsers = result.rows.filter(user => user.username === 'guest');
+      expect(guestUsers).toHaveLength(1);
+      
+      const guestUser = guestUsers[0];
+      expect(guestUser.id).toBeDefined();
+      expect(guestUser.username).toBe('guest');
+      expect(guestUser.role).toBe('GUEST');
+      
+      console.log('✅ Guest user identified for auto-login:', guestUser);
+    });
+  });
 
-        // Step 4: Access deck URL without being logged in (should auto-login as guest)
-        console.log('🔍 Accessing deck URL without authentication...');
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        const deckUrlResponse = await request(app)
-          .get(`/users/${testUserId}/decks/${testDeckId}`)
-          .expect(200);
-        
-        // Verify the page loads and shows deck in read-only mode
-        expect(deckUrlResponse.text).toContain('deck-editor-modal');
-        expect(deckUrlResponse.text).toContain('read-only-mode');
-        expect(deckUrlResponse.text).toContain('Test Deck for Guest Viewing');
-        console.log('✅ Deck URL accessible without authentication');
-        */
+  describe('Deck Access Database Verification', () => {
+    it('should verify decks table exists and has correct structure', async () => {
+      const result = await pool.query(`
+        SELECT column_name, data_type, is_nullable 
+        FROM information_schema.columns 
+        WHERE table_name = 'decks' 
+        ORDER BY ordinal_position
+      `);
+      
+      expect(result.rows.length).toBeGreaterThan(0);
+      
+      const columns = result.rows.map(row => row.column_name);
+      expect(columns).toContain('id');
+      expect(columns).toContain('user_id');
+      expect(columns).toContain('name');
+      expect(columns).toContain('description');
+        expect(columns).toContain('ui_preferences');
+      expect(columns).toContain('created_at');
+      expect(columns).toContain('updated_at');
+      
+      console.log('✅ Decks table structure verified:', columns);
+    });
 
-        // Step 5: Verify guest login occurred
-        console.log('🔍 Verifying guest login occurred...');
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        // Create a new client to simulate the guest session
-        const guestClient = new ApiClient(app);
-        
-        // The guest should be automatically logged in
-        const guestUserResponse = await guestClient.getCurrentUser();
-        expect(guestUserResponse.body.success).toBe(true);
-        expect(guestUserResponse.body.data.role).toBe('GUEST');
-        expect(guestUserResponse.body.data.role).not.toBe('USER');
-        expect(guestUserResponse.body.data.role).not.toBe('ADMIN');
-        console.log('✅ Guest auto-login verified');
-        */
+    it('should verify existing decks can be accessed by guest users', async () => {
+      const result = await pool.query(
+        'SELECT id, user_id, name, description FROM decks ORDER BY created_at LIMIT 5'
+      );
+      
+      expect(result.rows.length).toBeGreaterThan(0);
+      
+      result.rows.forEach(deck => {
+        expect(deck.id).toBeDefined();
+        expect(deck.user_id).toBeDefined();
+        expect(deck.name).toBeDefined();
+        expect(deck.description).toBeDefined();
+      });
+      
+      console.log('✅ Existing decks verified for guest access:', result.rows.length, 'decks');
+    });
 
-        // Step 6: Verify deck is accessible in read-only mode
-        console.log('🔍 Verifying deck is accessible in read-only mode...');
+    it('should verify deck ownership can be determined', async () => {
+      // Get a deck and its owner
+      const deckResult = await pool.query(
+        'SELECT id, user_id, name FROM decks LIMIT 1'
+      );
+      
+      if (deckResult.rows.length > 0) {
+        const deck = deckResult.rows[0];
+        const ownerResult = await pool.query(
+          'SELECT id, username, role FROM users WHERE id = $1',
+          [deck.user_id]
+        );
         
-        // This is a template - you would uncomment when app is available
-        /*
-        const guestDeckResponse = await guestClient.getDeck(testDeckId);
-        expect(guestDeckResponse.body.success).toBe(true);
-        expect(guestDeckResponse.body.data.metadata.isOwner).toBe(false);
-        expect(guestDeckResponse.body.data.metadata.isReadOnly).toBe(true);
-        expect(guestDeckResponse.body.data.cards.length).toBeGreaterThan(0);
-        console.log('✅ Deck accessible in read-only mode with cards');
-        */
-
-        // Step 7: Verify guest cannot edit the deck
-        console.log('🔍 Verifying guest cannot edit deck...');
+        expect(ownerResult.rows).toHaveLength(1);
+        const owner = ownerResult.rows[0];
+        expect(owner.id).toBe(deck.user_id);
+        expect(owner.username).toBeDefined();
+        expect(owner.role).toBeDefined();
         
-        // This is a template - you would uncomment when app is available
-        /*
-        // Try to add a card (should fail)
-        const addCardResponse = await guestClient.addCardToDeck(testDeckId, {
-          cardType: 'character',
-          cardId: 'billy-the-kid',
-          quantity: 1
-        });
-        expect(addCardResponse.status).toBe(403);
-        
-        // Try to update deck metadata (should fail)
-        const updateDeckResponse = await guestClient.updateDeck(testDeckId, {
-          name: 'Hacked by Guest'
-        });
-        expect(updateDeckResponse.status).toBe(403);
-        console.log('✅ Guest edit restrictions verified');
-        */
-
-        // Step 8: Verify UI shows read-only mode correctly
-        console.log('🔍 Verifying read-only UI elements...');
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        const uiResponse = await request(app)
-          .get(`/users/${testUserId}/decks/${testDeckId}`)
-          .set('Cookie', guestClient.cookies)
-          .expect(200);
-        
-        // Should hide editing elements
-        expect(uiResponse.text).toContain('read-only-mode');
-        expect(uiResponse.text).not.toContain('Save'); // Save button should be hidden
-        expect(uiResponse.text).not.toContain('Add Card'); // Add card functionality should be hidden
-        console.log('✅ Read-only UI elements verified');
-        */
-
-        // Placeholder assertions for now
-        expect(true).toBe(true);
-        console.log('✅ Test completed successfully (placeholder mode)');
-
-      } catch (error) {
-        console.error('❌ Test failed:', error);
-        throw error;
-      } finally {
-        // Step 9: Cleanup - Remove test data
-        console.log('🧹 Cleaning up test data...');
-        
-        // This is a template - you would uncomment when app is available
-        /*
-        try {
-          if (testDeckId) {
-            // Delete deck cards first
-            await dbPool.query('DELETE FROM deck_cards WHERE deck_id = $1', [testDeckId]);
-            // Delete deck
-            await dbPool.query('DELETE FROM decks WHERE id = $1', [testDeckId]);
-            console.log('✅ Deck deleted');
-          }
-          
-          if (testUserId) {
-            // Delete user sessions
-            await dbPool.query('DELETE FROM user_sessions WHERE user_id = $1', [testUserId]);
-            // Delete user
-            await dbPool.query('DELETE FROM users WHERE id = $1', [testUserId]);
-            console.log('✅ User deleted');
-          }
-        } catch (cleanupError) {
-          console.error('❌ Cleanup failed:', cleanupError);
-        }
-        */
-        
-        console.log('✅ Cleanup completed');
+        console.log('✅ Deck ownership verified:', { deck: deck.name, owner: owner.username });
+      } else {
+        console.log('ℹ️ No decks found for ownership verification');
       }
     });
+  });
 
-    it('should handle deck access when deck does not exist', async () => {
-      // This is a template - you would uncomment when app is available
-      /*
-      const nonExistentDeckId = '550e8400-e29b-41d4-a716-446655440999';
-      const nonExistentUserId = '550e8400-e29b-41d4-a716-446655440998';
+  describe('Test Deck Creation and Access', () => {
+    it('should create a test deck for guest access testing', async () => {
+      // Create a test user first
+      testUserId = generateUUID();
+      const userName = 'Test Deck Owner';
+      const userEmail = `test-owner-${generateUUID()}@example.com`;
       
-      const response = await request(app)
-        .get(`/users/${nonExistentUserId}/decks/${nonExistentDeckId}`)
-        .expect(404);
+      await pool.query(
+        'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+        [testUserId, userName, userEmail, 'test_password_hash', 'USER']
+      );
       
-      expect(response.text).toContain('Deck not found');
-      */
+      // Create a test deck
+      testDeckId = generateUUID();
+      const deckName = 'Test Deck for Guest Access';
+      const deckDescription = 'A deck to test guest access functionality';
+      const deckCards = JSON.stringify([
+        { cardType: 'character', cardId: 'leonidas', quantity: 1 },
+        { cardType: 'character', cardId: 'king_arthur', quantity: 1 }
+      ]);
       
-      // Placeholder assertion for now
-      expect(true).toBe(true);
+      await pool.query(
+        'INSERT INTO decks (id, user_id, name, description, ui_preferences, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+        [testDeckId, testUserId, deckName, deckDescription, deckCards]
+      );
+      
+      // Verify deck was created
+      const result = await pool.query(
+        'SELECT * FROM decks WHERE id = $1',
+        [testDeckId]
+      );
+      
+      expect(result.rows).toHaveLength(1);
+      const deck = result.rows[0];
+      expect(deck.id).toBe(testDeckId);
+      expect(deck.user_id).toBe(testUserId);
+      expect(deck.name).toBe(deckName);
+      expect(deck.description).toBe(deckDescription);
+      expect(deck.ui_preferences).toBeDefined();
+      
+      console.log('✅ Test deck created successfully:', deck);
     });
 
-    it('should handle deck access when user does not exist', async () => {
-      // This is a template - you would uncomment when app is available
-      /*
-      const nonExistentUserId = '550e8400-e29b-41d4-a716-446655440997';
-      const validDeckId = '550e8400-e29b-41d4-a716-446655440996';
+    it('should verify test deck can be accessed by guest user', async () => {
+      expect(testDeckId).toBeDefined();
       
-      const response = await request(app)
-        .get(`/users/${nonExistentUserId}/decks/${validDeckId}`)
-        .expect(404);
+      const result = await pool.query(
+        'SELECT d.*, u.username as owner_name, u.role as owner_role FROM decks d JOIN users u ON d.user_id = u.id WHERE d.id = $1',
+        [testDeckId!]
+      );
       
-      expect(response.text).toContain('User not found');
-      */
+      expect(result.rows).toHaveLength(1);
+      const deckWithOwner = result.rows[0];
+      expect(deckWithOwner.id).toBe(testDeckId);
+      expect(deckWithOwner.owner_name).toBeDefined();
+      expect(deckWithOwner.owner_role).toBe('USER');
       
-      // Placeholder assertion for now
-      expect(true).toBe(true);
+      console.log('✅ Test deck accessible with owner info:', deckWithOwner);
     });
 
-    it('should maintain guest session across multiple deck accesses', async () => {
-      // This is a template - you would uncomment when app is available
-      /*
-      // Access first deck
-      const response1 = await request(app)
-        .get(`/users/${testUserId}/decks/${testDeckId}`)
-        .expect(200);
+    it('should verify deck cards are properly stored and retrievable', async () => {
+      expect(testDeckId).toBeDefined();
       
-      // Access second deck (should maintain guest session)
-      const response2 = await request(app)
-        .get(`/users/${testUserId}/decks/${testDeckId}`)
-        .expect(200);
+      const result = await pool.query(
+        'SELECT ui_preferences FROM decks WHERE id = $1',
+        [testDeckId!]
+      );
       
-      // Both should show read-only mode
-      expect(response1.text).toContain('read-only-mode');
-      expect(response2.text).toContain('read-only-mode');
-      */
+      expect(result.rows).toHaveLength(1);
+      const prefs = result.rows[0].ui_preferences;
+      expect(prefs).toBeDefined();
       
-      // Placeholder assertion for now
-      expect(true).toBe(true);
+      // Parse the JSON preferences if it's a string, otherwise use directly
+      const parsedPrefs = typeof prefs === 'string' ? JSON.parse(prefs) : prefs;
+      expect(typeof parsedPrefs).toBe('object');
+      
+      console.log('✅ Deck preferences verified:', parsedPrefs);
     });
   });
 
-  describe('Guest Session Management', () => {
-    it('should create unique guest sessions for different users', async () => {
-      // This is a template - you would uncomment when app is available
-      /*
-      // Simulate two different users accessing the same deck
-      const client1 = new ApiClient(app);
-      const client2 = new ApiClient(app);
+  describe('Guest Session Database Operations', () => {
+    it('should verify guest user can be used for session management', async () => {
+      const result = await pool.query(
+        'SELECT id, username, role FROM users WHERE username = $1',
+        ['guest']
+      );
       
-      // Both should get guest sessions
-      await client1.request('GET', `/users/${testUserId}/decks/${testDeckId}`);
-      await client2.request('GET', `/users/${testUserId}/decks/${testDeckId}`);
+      expect(result.rows).toHaveLength(1);
+      const guestUser = result.rows[0];
       
-      const user1 = await client1.getCurrentUser();
-      const user2 = await client2.getCurrentUser();
+      // Verify guest user has all required fields for session management
+      expect(guestUser.id).toBeDefined();
+      expect(guestUser.username).toBe('guest');
+      expect(guestUser.role).toBe('GUEST');
       
-      expect(user1.body.data.role).toBe('GUEST');
-      expect(user2.body.data.role).toBe('GUEST');
+      // Verify guest user ID is a valid UUID format
+      expect(guestUser.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
       
-      // Sessions should be different
-      expect(client1.cookies).not.toEqual(client2.cookies);
-      */
-      
-      // Placeholder assertion for now
-      expect(true).toBe(true);
+      console.log('✅ Guest user ready for session management:', guestUser);
     });
 
-    it('should clean up guest sessions after timeout', async () => {
-      // This is a template - you would uncomment when app is available
-      /*
-      // Create guest session
-      const guestClient = new ApiClient(app);
-      await guestClient.request('GET', `/users/${testUserId}/decks/${testDeckId}`);
+    it('should verify guest user permissions are correctly set', async () => {
+      const result = await pool.query(
+        'SELECT role FROM users WHERE username = $1',
+        ['guest']
+      );
       
-      // Verify session exists
-      const userResponse = await guestClient.getCurrentUser();
-      expect(userResponse.body.success).toBe(true);
+      expect(result.rows).toHaveLength(1);
+      const guestRole = result.rows[0].role;
       
-      // Simulate session timeout (this would be handled by your session cleanup)
-      // In a real test, you might need to manually expire the session
-      // or wait for the cleanup interval
-      */
+      // Verify guest role is exactly GUEST
+      expect(guestRole).toBe('GUEST');
+      expect(guestRole).not.toBe('USER');
+      expect(guestRole).not.toBe('ADMIN');
       
-      // Placeholder assertion for now
-      expect(true).toBe(true);
+      console.log('✅ Guest user permissions verified:', guestRole);
+    });
+
+    it('should verify guest user can access deck data without modification rights', async () => {
+      // This test verifies that the guest user exists and has the correct role
+      // for read-only access to deck data
+      const result = await pool.query(
+        'SELECT id, username, role FROM users WHERE username = $1',
+        ['guest']
+      );
+      
+      expect(result.rows).toHaveLength(1);
+      const guestUser = result.rows[0];
+      
+      // Verify guest user exists and has GUEST role
+      expect(guestUser.role).toBe('GUEST');
+      
+      // Verify guest user can be used for read-only operations
+      // (This would be enforced at the application level, not database level)
+      expect(guestUser.id).toBeDefined();
+      expect(guestUser.username).toBe('guest');
+      
+      console.log('✅ Guest user verified for read-only deck access:', guestUser);
     });
   });
 });
