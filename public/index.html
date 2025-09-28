@@ -2872,6 +2872,33 @@
                 rgba(78, 205, 196, 0.3) calc(100% - 20px),
                 rgba(78, 205, 196, 0.1) calc(100% - 6px),
                 transparent 100%);
+            position: relative;
+        }
+
+        /* Add subtle accent lines to indicate resizability */
+        .resizable-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 2px;
+            height: 20px;
+            background: rgba(78, 205, 196, 0.8);
+            border-radius: 1px;
+        }
+
+        .resizable-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 2px;
+            height: 8px;
+            background: rgba(78, 205, 196, 0.6);
+            border-radius: 1px;
+            margin-top: -16px;
         }
 
 
@@ -2886,6 +2913,17 @@
                 transparent 100%);
         }
 
+        /* Make accent lines more prominent on hover */
+        .resizable-divider:hover::before {
+            background: rgba(78, 205, 196, 1);
+            height: 24px;
+        }
+
+        .resizable-divider:hover::after {
+            background: rgba(78, 205, 196, 0.9);
+            height: 10px;
+        }
+
 
         .resizable-divider:active {
             background: linear-gradient(to bottom, 
@@ -2896,6 +2934,19 @@
                 rgba(78, 205, 196, 0.6) calc(100% - 20px),
                 rgba(78, 205, 196, 0.3) calc(100% - 6px),
                 transparent 100%);
+        }
+
+        /* Make accent lines most prominent when actively dragging */
+        .resizable-divider:active::before {
+            background: rgba(78, 205, 196, 1);
+            height: 28px;
+            width: 3px;
+        }
+
+        .resizable-divider:active::after {
+            background: rgba(78, 205, 196, 1);
+            height: 12px;
+            width: 3px;
         }
 
 
@@ -8008,25 +8059,31 @@
 
             // First check if we have a user in localStorage
             const storedUserData = localStorage.getItem('currentUser');
+            console.log('🔍 DEBUG: Stored user data from localStorage:', storedUserData);
             if (storedUserData) {
                 const storedUser = JSON.parse(storedUserData);
+                console.log('🔍 DEBUG: Parsed stored user:', storedUser);
                 currentUser = storedUser; // Update global currentUser
                 authResult.currentUser = currentUser;
 
                 // Verify the session is still valid in the background
                 try {
+                    console.log('🔍 DEBUG: Verifying session with /api/auth/me...');
                     const response = await fetch('/api/auth/me', {
                         credentials: 'include'
                     });
+                    console.log('🔍 DEBUG: /api/auth/me response status:', response.status);
                     if (response.ok) {
                         const data = await response.json();
+                        console.log('🔍 DEBUG: /api/auth/me response data:', data);
                         currentUser = data.data; // Update global currentUser with fresh data from server
                         localStorage.setItem('currentUser', JSON.stringify(currentUser));
                         authResult.isAuthenticated = true;
                         authResult.currentUser = currentUser;
+                        console.log('🔍 DEBUG: Session verified successfully, currentUser:', currentUser);
                     } else {
                         // Session expired, clear stored user
-                        console.warn('Session expired or invalid. Clearing stored user.');
+                        console.warn('Session expired or invalid. Clearing stored user. Status:', response.status);
                         localStorage.removeItem('currentUser');
                         currentUser = null;
                         authResult.currentUser = null;
@@ -8066,7 +8123,15 @@
 
             // Determine read-only mode if a deck is being viewed
             if (authResult.deckId) {
-                if (authResult.isAuthenticated && authResult.currentUser && authResult.currentUser.id !== authResult.urlUserId) {
+                console.log('🔍 DEBUG: Current User ID:', authResult.currentUser ? authResult.currentUser.userId : 'N/A');
+                console.log('🔍 DEBUG: Current User ID type:', authResult.currentUser ? typeof authResult.currentUser.userId : 'N/A');
+                console.log('🔍 DEBUG: URL User ID:', authResult.urlUserId);
+                console.log('🔍 DEBUG: URL User ID type:', typeof authResult.urlUserId);
+                console.log('🔍 DEBUG: IDs match?', authResult.currentUser && authResult.currentUser.userId === authResult.urlUserId);
+                console.log('🔍 DEBUG: Strict equality check:', authResult.currentUser && authResult.currentUser.userId === authResult.urlUserId);
+                console.log('🔍 DEBUG: Loose equality check:', authResult.currentUser && authResult.currentUser.userId == authResult.urlUserId);
+                
+                if (authResult.isAuthenticated && authResult.currentUser && authResult.currentUser.userId !== authResult.urlUserId) {
                     authResult.isReadOnlyMode = true;
                     console.log('Read-only mode: viewing another user\'s deck');
                 } else if (!authResult.isAuthenticated) {
@@ -12196,6 +12261,7 @@
 
         async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) {
             console.log('loadDeckForEditing called with deckId:', deckId);
+            currentDeckId = deckId; // Set the current deck ID
             try {
                 const response = await fetch(`/api/decks/${deckId}`, {
                     credentials: 'include'
@@ -15656,13 +15722,21 @@
         }
 
         async function saveDeckChanges() {
+            console.log('🔍 DEBUG: saveDeckChanges called');
+            console.log('🔍 DEBUG: currentDeckId:', currentDeckId);
+            console.log('🔍 DEBUG: currentDeckData:', currentDeckData);
+            console.log('🔍 DEBUG: isReadOnlyMode:', isReadOnlyMode);
+            
             if (!currentDeckId || !currentDeckData) return;
             
             // Check if in read-only mode
             if (isReadOnlyMode) {
+                console.log('🔍 DEBUG: Blocking save - in read-only mode');
                 alert('Cannot save changes in read-only mode. You are viewing another user\'s deck.');
                 return;
             }
+            
+            console.log('🔍 DEBUG: Proceeding with save...');
             
             try {
                 // Clear existing cards
