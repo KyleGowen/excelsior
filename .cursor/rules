@@ -93,6 +93,8 @@ This is a Node.js/TypeScript deck building application for the Overpower card ga
 
 ### 🚫 PROHIBITED Testing Practices
 - **🚨 COMMENTED OUT PLACEHOLDER TESTS ARE NOT ACCEPTABLE 🚨**
+- **🚨 IF OLD TESTS FAIL AFTER CHANGES, ASSUME YOU BROKE SOMETHING FIRST 🚨**
+- **🚨 ONLY UPDATE TESTS SECOND - FIRST INVESTIGATE IF THE CODE IS BROKEN 🚨**
 - **This is a MANDATORY rule that must be followed at all times**
 - **NEVER create tests that:**
   1. Are commented out with `/* */` blocks

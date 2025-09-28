@@ -553,8 +553,40 @@ app.delete('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
 app.get('/api/deck-stats', authenticateUser, async (req: any, res) => {
   try {
     const userDecks = await deckRepository.getDecksByUserId(req.user.id);
-    const totalCards = userDecks.reduce((total, deck) => total + (deck.cards?.length || 0), 0);
-    const stats = { totalDecks: userDecks.length, totalCards };
+    const totalDecks = userDecks.length;
+    
+    // Load full deck data including cards for each deck
+    const decksWithCards = await Promise.all(userDecks.map(async (deck) => {
+      const fullDeck = await deckRepository.getDeckById(deck.id);
+      return fullDeck || deck;
+    }));
+    
+    // Calculate total cards across all decks
+    const totalCards = decksWithCards.reduce((total, deck) => {
+      if (deck.cards) {
+        return total + deck.cards.reduce((deckTotal, card) => deckTotal + (card.quantity || 1), 0);
+      }
+      return total;
+    }, 0);
+    
+    // Calculate average cards per deck
+    const averageCardsPerDeck = totalDecks > 0 ? Math.round(totalCards / totalDecks) : 0;
+    
+    // Find largest deck size
+    const largestDeckSize = decksWithCards.reduce((max, deck) => {
+      if (deck.cards) {
+        const deckSize = deck.cards.reduce((deckTotal, card) => deckTotal + (card.quantity || 1), 0);
+        return Math.max(max, deckSize);
+      }
+      return max;
+    }, 0);
+    
+    const stats = { 
+      totalDecks, 
+      totalCards, 
+      averageCardsPerDeck, 
+      largestDeckSize 
+    };
     res.json({ success: true, data: stats });
   } catch (error) {
     console.error('Error fetching deck stats:', error);
