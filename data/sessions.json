@@ -550,5 +550,11 @@
     "userId": "6a089193-7fd7-4b13-9243-cf3aa4bc03ee",
     "username": "guest",
     "expiresAt": "2025-09-27T22:50:50.404Z"
+  },
+  {
+    "sessionId": "sess_fckff8hrn_mg39merz",
+    "userId": "6a089193-7fd7-4b13-9243-cf3aa4bc03ee",
+    "username": "guest",
+    "expiresAt": "2025-09-28T07:34:48.143Z"
   }
 ]
