@@ -328,3 +328,118 @@ OverPower is a card game where players control teams of legendary heroes and vil
 - **Always display full text content with proper wrapping**
 - **Use CSS text wrapping to ensure all content is visible**
 - **Text should wrap within cells/containers rather than being cut off**
+
+## 🚀 MANDATORY Deployment Protocol
+
+### 🚨 DEPLOYMENT WORKFLOW RULES 🚨
+- **This is a MANDATORY rule that must be followed at all times**
+- **I must ALWAYS follow this exact sequence for any deployment:**
+
+#### 1. Pre-Deployment Validation
+- **ALWAYS run `npm test` and ensure ALL tests pass (95/95)**
+- **ALWAYS run `npm run build` to verify TypeScript compilation**
+- **NEVER deploy with failing tests or build errors**
+- **If tests fail, I MUST fix them before proceeding with deployment**
+
+#### 2. Docker Image Build Process
+- **ALWAYS use `docker buildx build --platform linux/amd64 --no-cache` for production builds**
+- **ALWAYS tag images as `overpower-deckbuilder:latest` locally first**
+- **ALWAYS verify the image builds successfully before pushing**
+
+#### 3. ECR Authentication & Push
+- **ALWAYS get ECR URL from Terraform: `cd infra/ && terraform output -raw ecr_repository_url`**
+- **ALWAYS login to ECR: `aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin $ECR_URL`**
+- **ALWAYS tag for ECR: `docker tag overpower-deckbuilder:latest $ECR_URL:latest`**
+- **ALWAYS push to ECR: `docker push $ECR_URL:latest`**
+
+#### 4. EC2 Deployment Process
+- **ALWAYS get instance ID: `cd infra/ && terraform output -raw ecr_repository_url`**
+- **ALWAYS use SSM to deploy: `aws ssm send-command --region us-west-2 --instance-ids $INSTANCE_ID`**
+- **ALWAYS include these commands in the SSM deployment:**
+  1. `docker stop overpower-app || true`
+  2. `docker rm overpower-app || true`
+  3. `docker pull $ECR_URL:latest`
+  4. `docker run -d --name overpower-app --restart unless-stopped -p 3000:3000 -e NODE_ENV=production -e DATABASE_URL="$(aws ssm get-parameter --name "/op-deckbuilder/dev/database/url" --with-decryption --region us-west-2 --query "Parameter.Value" --output text)" -e NODE_TLS_REJECT_UNAUTHORIZED=0 -e PORT=3000 $ECR_URL:latest`
+  5. `sleep 20`
+  6. `docker ps | grep overpower-app`
+  7. `docker logs overpower-app --tail 10`
+
+#### 5. Post-Deployment Verification
+- **ALWAYS verify deployment success by checking SSM command output**
+- **ALWAYS test application accessibility: `curl -I http://excelsior.cards`**
+- **ALWAYS check container logs for any errors**
+- **ALWAYS confirm HTTP 200 response from the application**
+
+### 🚫 PROHIBITED Deployment Practices
+- **NEVER deploy without running tests first**
+- **NEVER deploy with build errors or TypeScript compilation failures**
+- **NEVER use cached Docker builds for production (`--no-cache` is mandatory)**
+- **NEVER build for wrong architecture (must be `linux/amd64`)**
+- **NEVER skip ECR authentication before pushing**
+- **NEVER deploy without proper environment variables**
+- **NEVER skip post-deployment verification**
+
+### 🔧 Deployment Environment Variables
+- **NODE_ENV**: Always `production` for deployments
+- **DATABASE_URL**: Always retrieved from SSM Parameter Store
+- **PORT**: Always `3000`
+- **NODE_TLS_REJECT_UNAUTHORIZED**: Always `0` (for development)
+
+### 📋 Required AWS Resources
+- **ECR Repository**: `overpower-deckbuilder` in `us-west-2`
+- **EC2 Instance**: `i-0dee560af076c0f9d` (or get from Terraform output)
+- **RDS Database**: PostgreSQL instance with proper security groups
+- **SSM Parameters**: All database and app configuration stored in Parameter Store
+- **Route 53**: Domain configuration for `excelsior.cards`
+
+### 🚨 Emergency Deployment Commands
+If standard deployment fails, use these commands in order:
+
+1. **Check EC2 status:**
+   ```bash
+   aws ec2 describe-instances --instance-ids $INSTANCE_ID --region us-west-2
+   ```
+
+2. **Check container status:**
+   ```bash
+   aws ssm send-command --region us-west-2 --instance-ids $INSTANCE_ID --document-name "AWS-RunShellScript" --parameters 'commands=["docker ps -a"]'
+   ```
+
+3. **Check application logs:**
+   ```bash
+   aws ssm send-command --region us-west-2 --instance-ids $INSTANCE_ID --document-name "AWS-RunShellScript" --parameters 'commands=["docker logs overpower-app --tail 50"]'
+   ```
+
+4. **Restart application:**
+   ```bash
+   aws ssm send-command --region us-west-2 --instance-ids $INSTANCE_ID --document-name "AWS-RunShellScript" --parameters 'commands=["docker restart overpower-app"]'
+   ```
+
+### 📊 Deployment Success Criteria
+- **All tests pass (95/95)**
+- **Docker image builds successfully for AMD64**
+- **Image pushes to ECR without errors**
+- **SSM deployment command returns success status**
+- **Container runs and shows "Up" status**
+- **Application responds with HTTP 200**
+- **No error logs in container output**
+
+### 🔄 Rollback Procedure
+If deployment fails:
+1. **Stop current container: `docker stop overpower-app`**
+2. **Remove failed container: `docker rm overpower-app`**
+3. **Pull previous working image: `docker pull $ECR_URL:previous-tag`**
+4. **Run previous version: `docker run -d --name overpower-app [previous-command]`**
+5. **Verify rollback success**
+
+### 📝 Deployment Checklist
+Before any deployment, I must verify:
+- [ ] All tests pass (`npm test`)
+- [ ] Build succeeds (`npm run build`)
+- [ ] Docker image builds for AMD64
+- [ ] ECR authentication successful
+- [ ] Image pushed to ECR
+- [ ] SSM deployment command sent
+- [ ] Container running successfully
+- [ ] Application accessible via HTTP
+- [ ] No critical errors in logs

@@ -78,7 +78,8 @@ describe('Read-Only Mode Integration Tests', () => {
     it('should verify deck access permissions can be determined', async () => {
       // Get a deck and its owner
       const deckResult = await pool.query(
-        'SELECT d.id, d.user_id, d.name, u.username as owner_name, u.role as owner_role FROM decks d JOIN users u ON d.user_id = u.id LIMIT 1'
+        'SELECT d.id, d.user_id, d.name, u.username as owner_name, u.role as owner_role FROM decks d JOIN users u ON d.user_id = u.id WHERE u.username = $1 LIMIT 1',
+        ['kyle']
       );
       
       if (deckResult.rows.length > 0) {
