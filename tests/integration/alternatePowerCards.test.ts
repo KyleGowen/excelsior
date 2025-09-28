@@ -44,7 +44,22 @@ describe('Alternate Power Cards Integration Tests', () => {
       console.log('✅ 7 - Combat has alternate image:', card.alternate_images);
     });
 
-    it('should have alternate image for 8 - Any-Power', async () => {
+    it('should have alternate image for 7 - Any-Power', async () => {
+      const result = await pool.query(
+        'SELECT name, alternate_images FROM power_cards WHERE name = $1',
+        ['7 - Any-Power']
+      );
+      
+      expect(result.rows).toHaveLength(1);
+      const card = result.rows[0];
+      expect(card.name).toBe('7 - Any-Power');
+      expect(card.alternate_images).toContain('power-cards/alternate/7_anypower.webp');
+      expect(card.alternate_images.length).toBeGreaterThan(0);
+      
+      console.log('✅ 7 - Any-Power has alternate image:', card.alternate_images);
+    });
+
+    it('should verify 8 - Any-Power has no alternate images', async () => {
       const result = await pool.query(
         'SELECT name, alternate_images FROM power_cards WHERE name = $1',
         ['8 - Any-Power']
@@ -53,10 +68,10 @@ describe('Alternate Power Cards Integration Tests', () => {
       expect(result.rows).toHaveLength(1);
       const card = result.rows[0];
       expect(card.name).toBe('8 - Any-Power');
-      expect(card.alternate_images).toContain('power-cards/alternate/7_anypower.webp');
-      expect(card.alternate_images.length).toBeGreaterThan(0);
+      expect(card.alternate_images).not.toContain('power-cards/alternate/7_anypower.webp');
+      expect(card.alternate_images === null || card.alternate_images.length === 0).toBe(true);
       
-      console.log('✅ 8 - Any-Power has alternate image:', card.alternate_images);
+      console.log('✅ 8 - Any-Power has no alternate images:', card.alternate_images);
     });
 
     it('should have alternate image for 8 - Brute Force', async () => {
