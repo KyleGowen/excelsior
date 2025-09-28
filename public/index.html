@@ -2349,6 +2349,29 @@
             font-style: italic;
         }
 
+        /* Read-only mode styles */
+        .read-only-mode #deckEditorTitle {
+            cursor: default !important;
+            background: transparent !important;
+            border: 1px solid transparent !important;
+        }
+
+        .read-only-mode #deckEditorTitle:hover {
+            background: transparent !important;
+            border-color: transparent !important;
+        }
+
+        .read-only-mode #deckEditorDescription {
+            cursor: default !important;
+            background: transparent !important;
+            border: 1px solid transparent !important;
+        }
+
+        .read-only-mode #deckEditorDescription:hover {
+            background: transparent !important;
+            border-color: transparent !important;
+        }
+
         .edit-input {
             background: transparent;
             border: none;
@@ -6534,9 +6557,9 @@
             const alternatePromises = [
                 // Character alternates
                 fetch('/api/characters')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
                             const totalCharacterAlternates = data.data.reduce((sum, char) => {
                                 return sum + (char.alternateImages ? char.alternateImages.length : 0);
                             }, 0);
@@ -6550,9 +6573,9 @@
                 
                 // Power card alternates
                 fetch('/api/power-cards')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
                             const totalPowerAlternates = data.data.reduce((sum, card) => {
                                 return sum + (card.alternateImages ? card.alternateImages.length : 0);
                             }, 0);
@@ -12138,11 +12161,37 @@
                     readOnlyIndicator.style.display = isReadOnlyMode ? 'block' : 'none';
                 }
                 
-                // Update title based on mode
-                const title = document.getElementById('deckEditorTitle');
-                if (title) {
-                    title.textContent = isReadOnlyMode ? 'View Deck' : 'Edit Deck';
+                // Make title and description non-editable in read-only mode
+                const titleElement = document.getElementById('deckEditorTitle');
+                const descriptionElement = document.getElementById('deckEditorDescription');
+                
+                if (isReadOnlyMode) {
+                    // Remove editable classes and click handlers
+                    if (titleElement) {
+                        titleElement.classList.remove('editable-title');
+                        titleElement.style.cursor = 'default';
+                        titleElement.onclick = null;
+                    }
+                    if (descriptionElement) {
+                        descriptionElement.classList.remove('editable-description');
+                        descriptionElement.style.cursor = 'default';
+                        descriptionElement.onclick = null;
+                    }
+                } else {
+                    // Restore editable classes and click handlers
+                    if (titleElement) {
+                        titleElement.classList.add('editable-title');
+                        titleElement.style.cursor = 'pointer';
+                        titleElement.onclick = startEditingTitle;
+                    }
+                    if (descriptionElement) {
+                        descriptionElement.classList.add('editable-description');
+                        descriptionElement.style.cursor = 'pointer';
+                        descriptionElement.onclick = startEditingDescription;
+                    }
                 }
+                
+                // Title is already set to the deck name, no need to override it
                 
                 // Hide/show Save button based on mode
                 const saveButton = document.querySelector('.deck-editor-actions .btn-primary');

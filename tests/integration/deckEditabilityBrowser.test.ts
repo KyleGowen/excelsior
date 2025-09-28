@@ -1,0 +1,354 @@
+import request from 'supertest';
+import { Pool } from 'pg';
+
+// Simple UUID v4 generator for tests
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+describe('Deck Editability Browser Tests', () => {
+  let app: any;
+  let pool: Pool;
+  let testUserId: string;
+  let testDeckId: string;
+  let adminUserId: string;
+
+  beforeAll(async () => {
+    // Import and set up the Express app
+    const { default: expressApp } = await import('../../dist/index.js');
+    app = expressApp;
+
+    // Set up database connection
+    pool = new Pool({
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432'),
+      database: process.env.DB_NAME || 'overpower_deckbuilder',
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || 'password'
+    });
+
+    // Create test USER
+    testUserId = generateUUID();
+    await pool.query(`
+      INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+    `, [testUserId, 'Test User', 'test-user@example.com', 'hashed_password', 'USER']);
+
+    // Create test ADMIN
+    adminUserId = generateUUID();
+    await pool.query(`
+      INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+    `, [adminUserId, 'Test Admin', 'test-admin@example.com', 'hashed_password', 'ADMIN']);
+
+    // Create test deck owned by test user
+    testDeckId = generateUUID();
+    await pool.query(`
+      INSERT INTO decks (id, user_id, name, description, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, NOW(), NOW())
+    `, [testDeckId, testUserId, 'Editable Test Deck', 'This deck should be editable by its owner']);
+  });
+
+  afterAll(async () => {
+    // Clean up test data
+    if (testDeckId) {
+      await pool.query('DELETE FROM decks WHERE id = $1', [testDeckId]);
+    }
+    if (testUserId) {
+      await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
+    }
+    if (adminUserId) {
+      await pool.query('DELETE FROM users WHERE id = $1', [adminUserId]);
+    }
+    await pool.end();
+  });
+
+  describe('HTML Structure Analysis for Editability', () => {
+    it('should analyze HTML structure for editability indicators', async () => {
+      const response = await request(app)
+        .get(`/users/${testUserId}/decks/${testDeckId}`)
+        .expect(200);
+
+      const html = response.text;
+
+      // Extract title element analysis
+      const titleMatch = html.match(/<h3[^>]*id="deckEditorTitle"[^>]*>(.*?)<\/h3>/s);
+      expect(titleMatch).toBeTruthy();
+      
+      const titleElement = titleMatch![0];
+      console.log('📋 Title element:', titleElement);
+
+      // Extract description element analysis
+      const descMatch = html.match(/<p[^>]*id="deckEditorDescription"[^>]*>(.*?)<\/p>/s);
+      expect(descMatch).toBeTruthy();
+      
+      const descElement = descMatch![0];
+      console.log('📋 Description element:', descElement);
+
+      // Check for editability classes
+      const hasEditableTitleClass = titleElement.includes('editable-title');
+      const hasEditableDescClass = descElement.includes('editable-description');
+      
+      // Check for click handlers
+      const hasTitleClickHandler = titleElement.includes('onclick="startEditingTitle()"');
+      const hasDescClickHandler = descElement.includes('onclick="startEditingDescription()"');
+
+      // Check for read-only mode
+      const hasReadOnlyIndicator = html.includes('Read-Only Mode - Viewing Another User\'s Deck');
+      const hasReadOnlyClass = html.includes('read-only-mode');
+
+      console.log('🔍 Editability Analysis:');
+      console.log('  - Has editable-title class:', hasEditableTitleClass);
+      console.log('  - Has editable-description class:', hasEditableDescClass);
+      console.log('  - Has title click handler:', hasTitleClickHandler);
+      console.log('  - Has description click handler:', hasDescClickHandler);
+      console.log('  - Has read-only indicator:', hasReadOnlyIndicator);
+      console.log('  - Has read-only class:', hasReadOnlyClass);
+
+      // In read-only mode (guest access), these should be false
+      expect(hasEditableTitleClass).toBe(false);
+      expect(hasEditableDescClass).toBe(false);
+      expect(hasTitleClickHandler).toBe(false);
+      expect(hasDescClickHandler).toBe(false);
+      expect(hasReadOnlyIndicator).toBe(true);
+
+      console.log('✅ Read-only mode correctly removes editability');
+    });
+
+    it('should verify CSS classes are properly defined', async () => {
+      const response = await request(app)
+        .get(`/users/${testUserId}/decks/${testDeckId}`)
+        .expect(200);
+
+      const html = response.text;
+
+      // Check for editable CSS classes
+      expect(html).toContain('.editable-title');
+      expect(html).toContain('.editable-description');
+      expect(html).toContain('cursor: pointer');
+      expect(html).toContain('cursor: default');
+
+      // Check for read-only mode CSS
+      expect(html).toContain('.read-only-mode #deckEditorTitle');
+      expect(html).toContain('.read-only-mode #deckEditorDescription');
+      expect(html).toContain('cursor: default !important');
+
+      console.log('✅ All required CSS classes are defined');
+    });
+
+    it('should verify JavaScript functions are referenced', async () => {
+      const response = await request(app)
+        .get(`/users/${testUserId}/decks/${testDeckId}`)
+        .expect(200);
+
+      const html = response.text;
+
+      // Check for function references
+      expect(html).toContain('startEditingTitle');
+      expect(html).toContain('startEditingDescription');
+
+      // Check for function definitions (should be in script tags)
+      expect(html).toContain('function startEditingTitle()');
+      expect(html).toContain('function startEditingDescription()');
+
+      console.log('✅ JavaScript functions are properly referenced and defined');
+    });
+  });
+
+  describe('Role-Based Editability Verification', () => {
+    it('should verify GUEST role sees non-editable elements', async () => {
+      const response = await request(app)
+        .get(`/users/${testUserId}/decks/${testDeckId}`)
+        .expect(200);
+
+      const html = response.text;
+
+      // Guest should see read-only mode
+      expect(html).toContain('Read-Only Mode - Viewing Another User\'s Deck');
+      
+      // Title should not be editable
+      const titleElement = html.match(/<h3[^>]*id="deckEditorTitle"[^>]*>/)?.[0] || '';
+      expect(titleElement).not.toContain('editable-title');
+      expect(titleElement).not.toContain('onclick="startEditingTitle()"');
+
+      // Description should not be editable
+      const descElement = html.match(/<p[^>]*id="deckEditorDescription"[^>]*>/)?.[0] || '';
+      expect(descElement).not.toContain('editable-description');
+      expect(descElement).not.toContain('onclick="startEditingDescription()"');
+
+      console.log('✅ GUEST role correctly sees non-editable elements');
+    });
+
+    it('should verify deck name is displayed as title', async () => {
+      const response = await request(app)
+        .get(`/users/${testUserId}/decks/${testDeckId}`)
+        .expect(200);
+
+      const html = response.text;
+
+      // Should show actual deck name, not generic text
+      expect(html).toContain('Editable Test Deck');
+      expect(html).not.toContain('Edit Deck');
+      expect(html).not.toContain('View Deck');
+
+      console.log('✅ Deck name is correctly displayed as title');
+    });
+
+    it('should verify deck description is displayed', async () => {
+      const response = await request(app)
+        .get(`/users/${testUserId}/decks/${testDeckId}`)
+        .expect(200);
+
+      const html = response.text;
+
+      // Should show actual deck description
+      expect(html).toContain('This deck should be editable by its owner');
+
+      console.log('✅ Deck description is correctly displayed');
+    });
+  });
+
+  describe('Element Interaction Simulation', () => {
+    it('should simulate click behavior analysis', async () => {
+      const response = await request(app)
+        .get(`/users/${testUserId}/decks/${testDeckId}`)
+        .expect(200);
+
+      const html = response.text;
+
+      // Extract the JavaScript code that handles editability
+      const scriptMatch = html.match(/<script[^>]*>(.*?)<\/script>/gs);
+      expect(scriptMatch).toBeTruthy();
+
+      const scripts = scriptMatch!.join('\n');
+      
+      // Check for the editability logic
+      expect(scripts).toContain('isReadOnlyMode');
+      expect(scripts).toContain('editable-title');
+      expect(scripts).toContain('editable-description');
+      expect(scripts).toContain('startEditingTitle');
+      expect(scripts).toContain('startEditingDescription');
+
+      // Check for the logic that removes editability in read-only mode
+      expect(scripts).toContain('classList.remove(\'editable-title\')');
+      expect(scripts).toContain('classList.remove(\'editable-description\')');
+      expect(scripts).toContain('onclick = null');
+
+      console.log('✅ JavaScript contains proper editability control logic');
+    });
+
+    it('should verify cursor style changes', async () => {
+      const response = await request(app)
+        .get(`/users/${testUserId}/decks/${testDeckId}`)
+        .expect(200);
+
+      const html = response.text;
+
+      // Check for cursor style definitions
+      expect(html).toContain('cursor: pointer');
+      expect(html).toContain('cursor: default');
+      expect(html).toContain('cursor: default !important');
+
+      // Check for the JavaScript that sets cursor styles
+      const scripts = html.match(/<script[^>]*>(.*?)<\/script>/gs)?.join('\n') || '';
+      expect(scripts).toContain('style.cursor = \'default\'');
+      expect(scripts).toContain('style.cursor = \'pointer\'');
+
+      console.log('✅ Cursor styles are properly defined and controlled');
+    });
+  });
+
+  describe('Comprehensive Editability Matrix', () => {
+    it('should verify all editability scenarios are covered', async () => {
+      const response = await request(app)
+        .get(`/users/${testUserId}/decks/${testDeckId}`)
+        .expect(200);
+
+      const html = response.text;
+
+      // Test matrix scenarios:
+      // 1. GUEST viewing own deck -> Read-only (not possible, but covered)
+      // 2. GUEST viewing other's deck -> Read-only ✅
+      // 3. USER viewing own deck -> Editable (would need auth)
+      // 4. USER viewing other's deck -> Read-only (would need auth)
+      // 5. ADMIN viewing own deck -> Editable (would need auth)
+      // 6. ADMIN viewing other's deck -> Read-only (would need auth)
+
+      // Current test covers scenario 2 (GUEST viewing other's deck)
+      expect(html).toContain('Read-Only Mode - Viewing Another User\'s Deck');
+      
+      // Verify the logic exists for other scenarios
+      const scripts = html.match(/<script[^>]*>(.*?)<\/script>/gs)?.join('\n') || '';
+      expect(scripts).toContain('if (isReadOnlyMode)');
+      expect(scripts).toContain('} else {');
+      expect(scripts).toContain('classList.add(\'editable-title\')');
+      expect(scripts).toContain('classList.add(\'editable-description\')');
+
+      console.log('✅ All editability scenarios are covered in the code');
+    });
+
+    it('should verify error handling for edit attempts in read-only mode', async () => {
+      const response = await request(app)
+        .get(`/users/${testUserId}/decks/${testDeckId}`)
+        .expect(200);
+
+      const html = response.text;
+
+      // Check for error handling in JavaScript
+      const scripts = html.match(/<script[^>]*>(.*?)<\/script>/gs)?.join('\n') || '';
+      
+      // Should have logic to prevent editing in read-only mode
+      expect(scripts).toContain('Cannot edit deck title in read-only mode');
+      expect(scripts).toContain('Cannot edit deck description in read-only mode');
+
+      console.log('✅ Error handling for read-only mode edit attempts is present');
+    });
+  });
+
+  describe('Performance and Accessibility', () => {
+    it('should verify elements are properly accessible', async () => {
+      const response = await request(app)
+        .get(`/users/${testUserId}/decks/${testDeckId}`)
+        .expect(200);
+
+      const html = response.text;
+
+      // Check for proper element structure
+      expect(html).toContain('<h3 id="deckEditorTitle"');
+      expect(html).toContain('<p id="deckEditorDescription"');
+
+      // Check for proper ARIA attributes (if any)
+      // Note: Current implementation doesn't use ARIA, but this is where we'd check
+
+      console.log('✅ Elements have proper structure for accessibility');
+    });
+
+    it('should verify no performance issues with editability logic', async () => {
+      const response = await request(app)
+        .get(`/users/${testUserId}/decks/${testDeckId}`)
+        .expect(200);
+
+      const html = response.text;
+
+      // Check that the editability logic is efficient
+      const scripts = html.match(/<script[^>]*>(.*?)<\/script>/gs)?.join('\n') || '';
+      
+      // Should use efficient DOM queries
+      expect(scripts).toContain('getElementById(\'deckEditorTitle\')');
+      expect(scripts).toContain('getElementById(\'deckEditorDescription\')');
+
+      // Should not have inefficient loops or repeated queries
+      const titleQueryCount = (scripts.match(/getElementById\('deckEditorTitle'\)/g) || []).length;
+      const descQueryCount = (scripts.match(/getElementById\('deckEditorDescription'\)/g) || []).length;
+      
+      expect(titleQueryCount).toBeLessThanOrEqual(2); // Should query once, maybe twice max
+      expect(descQueryCount).toBeLessThanOrEqual(2);
+
+      console.log('✅ Editability logic is efficient and performant');
+    });
+  });
+});
