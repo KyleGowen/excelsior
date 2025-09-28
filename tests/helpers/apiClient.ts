@@ -1,0 +1,102 @@
+import request from 'supertest';
+import { Express } from 'express';
+
+export class ApiClient {
+  private app: Express;
+  private cookies: string[] = [];
+
+  constructor(app: Express) {
+    this.app = app;
+  }
+
+  // Authentication helpers
+  async login(username: string, password: string) {
+    const response = await request(this.app)
+      .post('/api/auth/login')
+      .send({ username, password })
+      .expect(200);
+
+    // Extract cookies from response
+    const setCookieHeaders = response.headers['set-cookie'];
+    if (setCookieHeaders) {
+      this.cookies = setCookieHeaders.map(cookie => cookie.split(';')[0]);
+    }
+
+    return response.body;
+  }
+
+  async logout() {
+    const response = await request(this.app)
+      .post('/api/auth/logout')
+      .set('Cookie', this.cookies)
+      .expect(200);
+
+    this.cookies = [];
+    return response.body;
+  }
+
+  async getCurrentUser() {
+    return request(this.app)
+      .get('/api/auth/me')
+      .set('Cookie', this.cookies)
+      .expect(200);
+  }
+
+  // Deck management helpers
+  async createDeck(deckData: { name: string; description?: string }) {
+    return request(this.app)
+      .post('/api/decks')
+      .set('Cookie', this.cookies)
+      .send(deckData)
+      .expect(201);
+  }
+
+  async getDeck(deckId: string) {
+    return request(this.app)
+      .get(`/api/decks/${deckId}`)
+      .set('Cookie', this.cookies)
+      .expect(200);
+  }
+
+  async updateDeck(deckId: string, deckData: { name?: string; description?: string }) {
+    return request(this.app)
+      .put(`/api/decks/${deckId}`)
+      .set('Cookie', this.cookies)
+      .send(deckData)
+      .expect(200);
+  }
+
+  async deleteDeck(deckId: string) {
+    return request(this.app)
+      .delete(`/api/decks/${deckId}`)
+      .set('Cookie', this.cookies)
+      .expect(200);
+  }
+
+  async addCardToDeck(deckId: string, cardData: { cardType: string; cardId: string; quantity: number }) {
+    return request(this.app)
+      .post(`/api/decks/${deckId}/cards`)
+      .set('Cookie', this.cookies)
+      .send(cardData)
+      .expect(200);
+  }
+
+  async removeCardFromDeck(deckId: string, cardData: { cardType: string; cardId: string; quantity: number }) {
+    return request(this.app)
+      .delete(`/api/decks/${deckId}/cards`)
+      .set('Cookie', this.cookies)
+      .send(cardData)
+      .expect(200);
+  }
+
+  // Generic request helper
+  async request(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, data?: any) {
+    let req = request(this.app)[method.toLowerCase()](path).set('Cookie', this.cookies);
+    
+    if (data) {
+      req = req.send(data);
+    }
+    
+    return req;
+  }
+}

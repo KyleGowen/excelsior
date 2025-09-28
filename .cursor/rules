@@ -78,6 +78,19 @@ This is a Node.js/TypeScript deck building application for the Overpower card ga
 - Verify database changes with queries
 - Check browser console for errors
 
+### 🧪 MANDATORY Testing Protocol
+- **🚨 ALWAYS run all tests after fixing bugs or creating new features 🚨**
+- **This is a MANDATORY rule that must be followed at all times**
+- **Before calling any bug fix or feature complete, I MUST:**
+  1. Run `npm test` to execute the full test suite
+  2. If any tests fail, investigate and fix the root cause
+  3. Re-run tests until all pass
+  4. Only then consider the work complete
+- **Never mark work as done if tests are failing**
+- **If tests fail due to my changes, I must fix them before proceeding**
+- **Use `npm run test:watch` during development for continuous feedback**
+- **Use `npm run test:coverage` to ensure adequate test coverage**
+
 if## Git Workflow - CRITICAL RULE
 - **🚨 NEVER COMMIT OR PUSH TO GIT WITHOUT EXPLICIT USER INSTRUCTION 🚨**
 - **This is a MANDATORY rule that must be followed at all times**
