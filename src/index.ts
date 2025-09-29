@@ -5,10 +5,11 @@ import { DeckPersistenceService } from './services/deckPersistence';
 import { UserPersistenceService } from './persistence/userPersistence';
 import { DatabaseInitializationService } from './services/databaseInitialization';
 import { DeckService } from './services/deckService';
+import { AuthenticationService } from './services/AuthenticationService';
 import { Character } from './types';
 import path from 'path';
 
-const app = express();
+export const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Initialize services
@@ -22,6 +23,9 @@ const cardRepository = dataSource.getCardRepository();
 
 // Initialize business logic service
 const deckBusinessService = new DeckService(deckRepository);
+
+// Initialize authentication service
+const authService = new AuthenticationService(userRepository, userService);
 
 // Middleware
 app.use(express.json());
@@ -81,116 +85,12 @@ async function initializeServer() {
 initializeServer();
 
 // Authentication middleware
-const authenticateUser = async (req: any, res: any, next: any) => {
-  const sessionId = req.cookies?.sessionId;
-  const { userId } = req.params;
-  
-  // Special handling for guest user - allow access without session
-  if (userId === 'guest') {
-    const guestUser = await userRepository.getUserById('00000000-0000-0000-0000-000000000001');
-    if (guestUser) {
-      req.user = guestUser;
-      return next();
-    }
-  }
-  
-  if (!sessionId) {
-    // Return JSON error for API calls, redirect for page requests
-    if (req.originalUrl.startsWith('/api/')) {
-      return res.status(401).json({ success: false, error: 'Authentication required' });
-    }
-    return res.redirect('/');
-  }
-  
-  const session = userService.validateSession(sessionId);
-  
-  if (!session) {
-    // Return JSON error for API calls, redirect for page requests
-    if (req.originalUrl.startsWith('/api/')) {
-      return res.status(401).json({ success: false, error: 'Invalid or expired session' });
-    }
-    return res.redirect('/');
-  }
-  
-  // Get the full user object from the database
-  const user = await userRepository.getUserById(session.userId);
-  if (!user) {
-    if (req.originalUrl.startsWith('/api/')) {
-      return res.status(401).json({ success: false, error: 'User not found' });
-    }
-    return res.redirect('/');
-  }
-  
-  req.user = user;
-  next();
-};
+const authenticateUser = authService.createAuthMiddleware();
 
 // User authentication endpoints
-app.post('/api/auth/login', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    
-    if (!username || !password) {
-      return res.status(400).json({ success: false, error: 'Username and password are required' });
-    }
-    
-    // Use database authentication
-    const user = await userRepository.authenticateUser(username, password);
-    if (user) {
-      const sessionId = userService.createSession(user);
-      
-      res.cookie('sessionId', sessionId, {
-        httpOnly: true,
-        secure: false,
-        maxAge: 2 * 60 * 60 * 1000,
-        sameSite: 'lax'
-      });
-      
-      return res.json({ 
-        success: true, 
-        data: { 
-          userId: user.id, 
-          username: user.name 
-        } 
-      });
-    }
-    
-    res.status(401).json({ success: false, error: 'Invalid username or password' });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ success: false, error: 'Login failed' });
-  }
-});
-
-app.post('/api/auth/logout', (req, res) => {
-  try {
-    const sessionId = req.cookies?.sessionId;
-    
-    if (sessionId) {
-      userService.logout(sessionId);
-    }
-    
-    res.clearCookie('sessionId');
-    res.json({ success: true, message: 'Logged out successfully' });
-  } catch (error) {
-    console.error('Logout error:', error);
-    res.status(500).json({ success: false, error: 'Logout failed' });
-  }
-});
-
-app.get('/api/auth/me', authenticateUser, (req: any, res) => {
-  try {
-    res.json({ 
-      success: true, 
-      data: { 
-        userId: req.user.id, 
-        username: req.user.name 
-      } 
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to get user info' });
-  }
-});
+app.post('/api/auth/login', (req, res) => authService.handleLogin(req, res));
+app.post('/api/auth/logout', (req, res) => authService.handleLogout(req, res));
+app.get('/api/auth/me', (req, res) => authService.handleSessionValidation(req, res));
 
 // API Routes
 app.get('/api/characters', async (req, res) => {

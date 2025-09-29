@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { app } from '../setup-integration';
 
 // Simple UUID v4 generator for tests
 function generateUUID(): string {
@@ -10,14 +11,11 @@ function generateUUID(): string {
 }
 
 describe('Character Limit Validation API Tests', () => {
-  let app: any;
   let testUserId: string | null = null;
   let authCookie: string = '';
 
   beforeAll(async () => {
-    // Import and set up the Express app
-    const { default: expressApp } = await import('../../dist/index.js');
-    app = expressApp;
+    // app is imported from setup-integration
 
     // Use the existing guest user for testing
     const loginResponse = await request(app)

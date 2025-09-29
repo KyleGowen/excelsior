@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { Pool } from 'pg';
+import { app } from '../setup-integration';
 
 // Simple UUID v4 generator for tests
 function generateUUID(): string {
@@ -11,16 +12,13 @@ function generateUUID(): string {
 }
 
 describe('Deck Statistics Tests', () => {
-  let app: any;
   let pool: Pool;
   let testUserId: string;
   let testDeckIds: string[] = [];
   let authCookie: string = '';
 
   beforeAll(async () => {
-    // Import and set up the Express app
-    const { default: expressApp } = await import('../../dist/index.js');
-    app = expressApp;
+    // app is imported from setup-integration
 
     // Set up database connection
     pool = new Pool({

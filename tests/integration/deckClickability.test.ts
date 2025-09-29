@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { app } from '../setup-integration';
 import { Pool } from 'pg';
 
 // Simple UUID v4 generator for tests
@@ -36,15 +37,12 @@ const mockDOM = {
 };
 
 describe('Deck Clickability Tests', () => {
-  let app: any;
   let pool: Pool;
   let testUserId: string;
   let testDeckId: string;
 
   beforeAll(async () => {
-    // Import and set up the Express app
-    const { default: expressApp } = await import('../../dist/index.js');
-    app = expressApp;
+    // app is imported from setup-integration
 
     // Set up database connection
     pool = new Pool({

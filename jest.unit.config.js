@@ -3,8 +3,8 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   testMatch: [
-    '**/__tests__/**/*.ts',
-    '**/?(*.)+(spec|test).ts'
+    '**/tests/unit/**/*.test.ts',
+    '**/tests/unit/**/*.spec.ts'
   ],
   transform: {
     '^.+\\.ts$': 'ts-jest',
@@ -14,12 +14,12 @@ module.exports = {
     '!src/**/*.d.ts',
     '!src/index.ts', // Exclude main entry point from coverage
   ],
-  coverageDirectory: 'coverage',
+  coverageDirectory: 'coverage/unit',
   coverageReporters: ['text', 'lcov', 'html'],
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   testTimeout: 10000,
   verbose: true,
-  // Default to unit tests (mocked)
+  // Environment variables for unit tests
   testEnvironmentOptions: {
     NODE_ENV: 'test',
     PORT: '3001'

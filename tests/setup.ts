@@ -1,68 +1,98 @@
-import { execSync } from 'child_process';
-import { Pool } from 'pg';
+import { mockUserRepository, mockDeckRepository, mockCardRepository } from './mocks/DatabaseMocks';
 
-// Global test setup
-beforeAll(async () => {
-  // Set test environment variables
-  process.env.NODE_ENV = 'test';
-  process.env.PORT = '3001'; // Use different port for tests
-  process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/overpower_test';
-  
-  const databaseUrl = process.env.DATABASE_URL;
-  
-  // Create test database if it doesn't exist
-  try {
-    const pool = new Pool({
-      connectionString: databaseUrl.replace('/overpower_test', '/postgres')
-    });
-    
-    await pool.query('CREATE DATABASE overpower_test');
-    await pool.end();
-  } catch (error) {
-    // Database might already exist, that's fine
-    console.log('Test database setup:', error instanceof Error ? error.message : String(error));
+// Mock the DataSourceConfig to use our mocked repositories
+jest.mock('../src/config/DataSourceConfig', () => ({
+  DataSourceConfig: {
+    getInstance: () => ({
+      getUserRepository: () => mockUserRepository,
+      getDeckRepository: () => mockDeckRepository,
+      getCardRepository: () => mockCardRepository,
+      getDataSourceType: () => 'postgresql',
+      getPool: () => null, // Not needed for mocked tests
+      close: () => Promise.resolve(),
+      resetDatabase: () => Promise.resolve()
+    })
   }
-  
-  // Run migrations on test database
-  try {
-    execSync('npm run migrate', { 
-      env: { ...process.env, DATABASE_URL: databaseUrl },
-      stdio: 'pipe'
-    });
-  } catch (error) {
-    console.log('Migration setup:', error instanceof Error ? error.message : String(error));
-  }
-});
+}));
 
-afterAll(async () => {
-  // Cleanup test database
-  try {
-    const databaseUrl = process.env.DATABASE_URL;
-    const pool = new Pool({
-      connectionString: databaseUrl?.replace('/overpower_test', '/postgres') || 'postgresql://postgres:password@localhost:5432/postgres'
-    });
-    
-    await pool.query('DROP DATABASE IF EXISTS overpower_test');
-    await pool.end();
-  } catch (error) {
-    console.log('Test database cleanup:', error instanceof Error ? error.message : String(error));
-  }
-});
+// Mock the PostgreSQL repositories directly
+jest.mock('../src/database/PostgreSQLUserRepository', () => ({
+  PostgreSQLUserRepository: jest.fn().mockImplementation(() => mockUserRepository)
+}));
+
+jest.mock('../src/database/PostgreSQLDeckRepository', () => ({
+  PostgreSQLDeckRepository: jest.fn().mockImplementation(() => mockDeckRepository)
+}));
+
+jest.mock('../src/database/PostgreSQLCardRepository', () => ({
+  PostgreSQLCardRepository: jest.fn().mockImplementation(() => mockCardRepository)
+}));
+
+// Mock the UserPersistenceService
+jest.mock('../src/persistence/userPersistence', () => ({
+  UserPersistenceService: jest.fn().mockImplementation(() => ({
+    authenticateUser: jest.fn().mockImplementation((username: string, password: string) => {
+      if (username === 'kyle' && password === 'test') {
+        return {
+          id: '00000000-0000-0000-0000-000000000002',
+          name: 'kyle',
+          email: 'kyle@example.com',
+          role: 'USER'
+        };
+      }
+      if (username === 'guest' && password === 'guest') {
+        return {
+          id: '00000000-0000-0000-0000-000000000001',
+          name: 'guest',
+          email: 'guest@example.com',
+          role: 'GUEST'
+        };
+      }
+      return undefined;
+    }),
+    createSession: jest.fn(),
+    validateSession: jest.fn(),
+    logout: jest.fn(),
+    loadUsers: jest.fn(),
+    loadSessions: jest.fn(),
+    saveUsers: jest.fn(),
+    saveSessions: jest.fn(),
+    getUserById: jest.fn(),
+    getUserByUsername: jest.fn(),
+    getAllUsers: jest.fn(),
+    getActiveSessions: jest.fn(),
+    cleanupExpiredSessions: jest.fn(),
+    initialize: jest.fn()
+  }))
+}));
 
 // Global test utilities
 export const testUtils = {
-  // Helper to create test user
+  getTestDataSource: () => ({
+    getUserRepository: () => mockUserRepository,
+    getDeckRepository: () => mockDeckRepository,
+    getCardRepository: () => mockCardRepository,
+    getDataSourceType: () => 'postgresql',
+    getPool: () => null,
+    close: () => Promise.resolve(),
+    resetDatabase: () => Promise.resolve()
+  }),
+  
+  resetTestDatabase: async () => {
+    // Reset all mocks
+    jest.clearAllMocks();
+  },
+  
   createTestUser: async (userData: { name: string; email: string; role?: string }) => {
-    // Implementation will be added as needed
+    return await mockUserRepository.createUser(userData.name, userData.email, 'hashed_password', userData.role as any);
   },
   
-  // Helper to create test deck
   createTestDeck: async (userId: string, deckData: any) => {
-    // Implementation will be added as needed
+    return await mockDeckRepository.createDeck(userId, deckData.name, deckData.description);
   },
   
-  // Helper to clean up test data
   cleanupTestData: async () => {
-    // Implementation will be added as needed
+    // Reset all mocks
+    jest.clearAllMocks();
   }
 };

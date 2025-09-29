@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { app } from '../setup-integration';
 
 // Simple UUID v4 generator for tests
 function generateUUID(): string {
@@ -10,12 +11,9 @@ function generateUUID(): string {
 }
 
 describe('Database View Statistics Tests', () => {
-  let app: any;
 
   beforeAll(async () => {
-    // Import and set up the Express app
-    const { default: expressApp } = await import('../../dist/index.js');
-    app = expressApp;
+    // app is imported from setup-integration
   });
 
   describe('Database View Statistics Display', () => {

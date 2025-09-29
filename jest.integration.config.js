@@ -3,8 +3,8 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   testMatch: [
-    '**/__tests__/**/*.ts',
-    '**/?(*.)+(spec|test).ts'
+    '**/tests/integration/**/*.test.ts',
+    '**/tests/integration/**/*.spec.ts'
   ],
   transform: {
     '^.+\\.ts$': 'ts-jest',
@@ -14,14 +14,16 @@ module.exports = {
     '!src/**/*.d.ts',
     '!src/index.ts', // Exclude main entry point from coverage
   ],
-  coverageDirectory: 'coverage',
+  coverageDirectory: 'coverage/integration',
   coverageReporters: ['text', 'lcov', 'html'],
-  setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
-  testTimeout: 10000,
+  setupFilesAfterEnv: ['<rootDir>/tests/setup-integration.ts'],
+  testTimeout: 30000, // Longer timeout for integration tests
   verbose: true,
-  // Default to unit tests (mocked)
+  // Environment variables for integration tests
   testEnvironmentOptions: {
     NODE_ENV: 'test',
-    PORT: '3001'
-  }
+    PORT: '3000'
+  },
+  // Run integration tests sequentially to avoid port conflicts
+  maxWorkers: 1
 };

@@ -2160,7 +2160,7 @@
             width: 140px;  /* Rotated dimensions: height becomes width */
             height: 200px; /* Rotated dimensions: width becomes height */
             border-radius: 8px;
-            border: 2px solid red; /* TEMP: visualize bounds for grid snapping */
+            border: 2px solid transparent; /* Clean border for grid snapping */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             cursor: move;
             /* No rotation on the container - only the inner image */
@@ -3539,9 +3539,9 @@
             gap: 16px !important;
         }
         
-        /* Debug: Add a visible border to see if read-only-mode is applied */
+        /* Read-only mode styling */
         .read-only-mode {
-            border: 3px solid red !important;
+            /* Read-only mode styling can be added here if needed */
         }
         
         /* Debug: Make hidden elements visible with a different color to see what's being hidden */
@@ -5111,6 +5111,9 @@
             transform: translateY(-1px);
         }
     </style>
+    
+    <!-- Authentication Service -->
+    <script src="/js/auth-service.js"></script>
 </head>
 <body>
     <!-- Login Modal -->
@@ -6167,23 +6170,9 @@
             }
         }
 
-        // Get current user from localStorage or session
+        // Get current user from authentication service
         function getCurrentUser() {
-            try {
-                const userData = localStorage.getItem('currentUser');
-                if (userData) {
-                    return JSON.parse(userData);
-                }
-                // Fallback: check if we're on a user-specific route
-                const pathMatch = window.location.pathname.match(/\/users\/([^\/]+)/);
-                if (pathMatch) {
-                    return { userId: pathMatch[1] };
-                }
-                return null;
-            } catch (error) {
-                console.error('Error getting current user:', error);
-                return null;
-            }
+            return window.authService.getCurrentUser();
         }
 
         // Add to Deck functionality
@@ -8283,7 +8272,7 @@
         // Initialize page
         // Authentication functions
         let currentUser = null;
-        let isReadOnlyMode = false; // Track if we're viewing another user's deck
+        let isReadOnlyMode = false; // Track if we're viewing another user's deck - managed by auth service
         
         // Check for stored user immediately to prevent any flash
         (function() {
@@ -8300,110 +8289,11 @@
             }
         })();
 
+        // Use authentication service for authentication
         async function checkAuthentication() {
-            let authResult = {
-                isAuthenticated: false,
-                currentUser: null,
-                deckId: null,
-                urlUserId: null,
-                isReadOnlyMode: false
-            };
-
-            // Check if we're on a deck editor route early
-            const deckUrlMatch = window.location.pathname.match(/\/users\/([^\/]+)\/decks\/([^\/]+)/);
-            if (deckUrlMatch) {
-                authResult.urlUserId = deckUrlMatch[1];
-                authResult.deckId = deckUrlMatch[2];
-                console.log('Detected deck editor route for deck:', authResult.deckId, 'user:', authResult.urlUserId);
-            }
-
-            // First check if we have a user in localStorage
-            const storedUserData = localStorage.getItem('currentUser');
-            console.log('🔍 DEBUG: Stored user data from localStorage:', storedUserData);
-            if (storedUserData) {
-                const storedUser = JSON.parse(storedUserData);
-                console.log('🔍 DEBUG: Parsed stored user:', storedUser);
-                currentUser = storedUser; // Update global currentUser
-                authResult.currentUser = currentUser;
-
-                // Verify the session is still valid in the background
-                try {
-                    console.log('🔍 DEBUG: Verifying session with /api/auth/me...');
-                    const response = await fetch('/api/auth/me', {
-                        credentials: 'include'
-                    });
-                    console.log('🔍 DEBUG: /api/auth/me response status:', response.status);
-                if (response.ok) {
-                    const data = await response.json();
-                        console.log('🔍 DEBUG: /api/auth/me response data:', data);
-                        currentUser = data.data; // Update global currentUser with fresh data from server
-                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                        authResult.isAuthenticated = true;
-                        authResult.currentUser = currentUser;
-                        console.log('🔍 DEBUG: Session verified successfully, currentUser:', currentUser);
-                } else {
-                        // Session expired, clear stored user
-                        console.warn('Session expired or invalid. Clearing stored user. Status:', response.status);
-                        localStorage.removeItem('currentUser');
-                        currentUser = null;
-                        authResult.currentUser = null;
-                }
-            } catch (error) {
-                    console.error('Error verifying session:', error);
-                    localStorage.removeItem('currentUser');
-                    currentUser = null;
-                    authResult.currentUser = null;
-                }
-            }
-
-            // If no user is authenticated and we are on a deck URL, attempt auto guest login
-            if (!authResult.isAuthenticated && authResult.deckId) {
-                console.log('✅ Detected deck URL - attempting auto guest login for deck:', authResult.deckId, 'user:', authResult.urlUserId);
-                try {
-                    const response = await fetch('/api/auth/login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: 'guest', password: 'guest' })
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        currentUser = data.data; // Set global currentUser to guest
-                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                        authResult.isAuthenticated = true;
-                        authResult.currentUser = currentUser;
-                        console.log('Auto guest login successful');
-                    } else {
-                        console.error('Auto guest login failed:', await response.json());
-                    }
-                } catch (error) {
-                    console.error('Error during auto guest login:', error);
-                }
-            }
-
-            // Determine read-only mode if a deck is being viewed
-            if (authResult.deckId) {
-                console.log('🔍 DEBUG: Current User ID:', authResult.currentUser ? authResult.currentUser.userId : 'N/A');
-                console.log('🔍 DEBUG: Current User ID type:', authResult.currentUser ? typeof authResult.currentUser.userId : 'N/A');
-                console.log('🔍 DEBUG: URL User ID:', authResult.urlUserId);
-                console.log('🔍 DEBUG: URL User ID type:', typeof authResult.urlUserId);
-                console.log('🔍 DEBUG: IDs match?', authResult.currentUser && authResult.currentUser.userId === authResult.urlUserId);
-                console.log('🔍 DEBUG: Strict equality check:', authResult.currentUser && authResult.currentUser.userId === authResult.urlUserId);
-                console.log('🔍 DEBUG: Loose equality check:', authResult.currentUser && authResult.currentUser.userId == authResult.urlUserId);
-                
-                if (authResult.isAuthenticated && authResult.currentUser && authResult.currentUser.userId !== authResult.urlUserId) {
-                    authResult.isReadOnlyMode = true;
-                    console.log('Read-only mode: viewing another user\'s deck');
-                } else if (!authResult.isAuthenticated) {
-                    // If not authenticated at all, it's read-only (e.g., if guest login failed)
-                    authResult.isReadOnlyMode = true;
-                    console.log('Read-only mode: no authentication (or guest login failed)');
-                } else {
-                    authResult.isReadOnlyMode = false;
-                    console.log('Edit mode: viewing own deck');
-                }
-            }
-
+            const authResult = await window.authService.checkAuthentication();
+            currentUser = authResult.currentUser;
+            isReadOnlyMode = authResult.isReadOnlyMode;
             return authResult;
         }
 
@@ -8440,45 +8330,24 @@
             }
         }
 
+        // Use authentication service for login
         async function login(username, password) {
-            try {
-                const response = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    currentUser = data.data;
-                    // Store user data in localStorage for navigation
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    
-                    // Redirect to user's deck page
-                    window.location.href = `/users/${currentUser.userId}/decks`;
-                } else {
-                    showLoginError(data.error || 'Login failed');
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                showLoginError('Login failed. Please try again.');
+            const result = await window.authService.login({ username, password });
+            if (result.success) {
+                currentUser = result.data;
+                // Redirect to user's deck page
+                window.location.href = `/users/${currentUser.userId}/decks`;
+            } else {
+                showLoginError(result.error || 'Login failed');
             }
         }
 
+        // Use authentication service for logout
         async function logout() {
-            try {
-                await fetch('/api/auth/logout', { method: 'POST' });
-                currentUser = null;
-                // Clear stored user data
-                localStorage.removeItem('currentUser');
-                // Redirect to root page
-                window.location.href = '/';
-            } catch (error) {
-                console.error('Logout error:', error);
-            }
+            await window.authService.logout();
+            currentUser = null;
+            // Redirect to root page
+            window.location.href = '/';
         }
 
         function showLoginError(message) {
@@ -12882,10 +12751,19 @@
                     deckEditorCards = [...data.data.cards]; // Create working copy
                     console.log('Working copy created:', deckEditorCards);
                     
-                    // Update read-only mode based on API response
+                    // Update read-only mode based on API response (this takes precedence over URL-based determination)
                     if (data.data.metadata && data.data.metadata.isOwner !== undefined) {
                         isReadOnlyMode = !data.data.metadata.isOwner;
                         console.log('Updated read-only mode from API:', isReadOnlyMode, 'isOwner:', data.data.metadata.isOwner);
+                        
+                        // Update the body class to reflect the correct read-only mode
+                        document.body.classList.toggle('read-only-mode', isReadOnlyMode);
+                        
+                        // Update the modal class as well
+                        const modal = document.getElementById('deckEditorModal');
+                        if (modal) {
+                            modal.classList.toggle('read-only-mode', isReadOnlyMode);
+                        }
                         
                         // Now set up drag and drop based on the correct read-only mode
                         setupDragAndDrop();
