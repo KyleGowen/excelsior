@@ -9816,6 +9816,10 @@
             // Immediately enforce horizontal layout after rendering
             enforceListViewHorizontalLayout();
             
+            // Force immediate reflow and re-enforcement
+            deckCardsEditor.offsetHeight;
+            enforceListViewHorizontalLayout();
+            
             // Apply saved expansion state to list view sections
             typeOrder.forEach(type => {
                 const cards = cardsByType[type];
@@ -9879,15 +9883,15 @@
             
             const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
             listItems.forEach(item => {
-                // Force all layout properties
-                item.style.display = 'flex';
-                item.style.flexDirection = 'row';
-                item.style.flexWrap = 'nowrap';
-                item.style.width = '100%';
-                item.style.minWidth = '100%';
-                item.style.boxSizing = 'border-box';
-                item.style.alignItems = 'center';
-                item.style.justifyContent = 'flex-start';
+                // Force all layout properties with !important
+                item.style.setProperty('display', 'flex', 'important');
+                item.style.setProperty('flex-direction', 'row', 'important');
+                item.style.setProperty('flex-wrap', 'nowrap', 'important');
+                item.style.setProperty('width', '100%', 'important');
+                item.style.setProperty('min-width', '100%', 'important');
+                item.style.setProperty('box-sizing', 'border-box', 'important');
+                item.style.setProperty('align-items', 'center', 'important');
+                item.style.setProperty('justify-content', 'flex-start', 'important');
                 
                 // Force child elements to maintain horizontal layout
                 const quantity = item.querySelector('.deck-list-item-quantity');
@@ -9895,24 +9899,26 @@
                 const actions = item.querySelector('.deck-list-item-actions');
                 
                 if (quantity) {
-                    quantity.style.display = 'inline-block';
-                    quantity.style.whiteSpace = 'nowrap';
+                    quantity.style.setProperty('display', 'inline-block', 'important');
+                    quantity.style.setProperty('white-space', 'nowrap', 'important');
                 }
                 if (name) {
-                    name.style.display = 'inline-block';
-                    name.style.whiteSpace = 'nowrap';
-                    name.style.flex = '1';
+                    name.style.setProperty('display', 'inline-block', 'important');
+                    name.style.setProperty('white-space', 'nowrap', 'important');
+                    name.style.setProperty('flex', '1', 'important');
                 }
                 if (actions) {
-                    actions.style.display = 'flex';
-                    actions.style.flexDirection = 'row';
-                    actions.style.flexWrap = 'nowrap';
-                    actions.style.alignItems = 'center';
+                    actions.style.setProperty('display', 'flex', 'important');
+                    actions.style.setProperty('flex-direction', 'row', 'important');
+                    actions.style.setProperty('flex-wrap', 'nowrap', 'important');
+                    actions.style.setProperty('align-items', 'center', 'important');
                 }
             });
             
-            // Force a reflow to ensure the layout is applied
+            // Force multiple reflows to ensure the layout is applied
             deckCardsEditor.offsetHeight;
+            deckCardsEditor.offsetWidth;
+            deckCardsEditor.scrollHeight;
         }
         
         // Set up MutationObserver to watch for layout changes
@@ -13366,7 +13372,18 @@
             if (deckCardsEditor.classList.contains('list-view')) {
                 renderDeckCardsListView();
                 
+                // Immediate enforcement after render
+                enforceListViewHorizontalLayout();
+                
                 // Additional enforcement to ensure horizontal layout after re-render
+                setTimeout(() => {
+                    enforceListViewHorizontalLayout();
+                }, 1);
+                
+                setTimeout(() => {
+                    enforceListViewHorizontalLayout();
+                }, 10);
+                
                 setTimeout(() => {
                     enforceListViewHorizontalLayout();
                 }, 50);
@@ -14255,15 +14272,31 @@
             deckEditorCards.splice(index, 1);
             await displayDeckCardsForEditing();
             
+            // Immediate enforcement before any async operations
+            enforceListViewHorizontalLayout();
+            
+            // Force immediate reflow and re-enforcement
+            requestAnimationFrame(() => {
+                enforceListViewHorizontalLayout();
+            });
+            
             // Enforce horizontal layout in list view after removing card
             setTimeout(() => {
                 enforceListViewHorizontalLayout();
-            }, 10);
+            }, 1);
             
             // Additional enforcement with longer delay to catch any late layout changes
             setTimeout(() => {
                 enforceListViewHorizontalLayout();
+            }, 50);
+            
+            setTimeout(() => {
+                enforceListViewHorizontalLayout();
             }, 100);
+            
+            setTimeout(() => {
+                enforceListViewHorizontalLayout();
+            }, 200);
             
             // Restore the expansion state after re-rendering
             applyUIPreferences({ expansionState: currentExpansionState });
@@ -14309,15 +14342,31 @@
                 deckEditorCards[index].quantity -= 1;
                 await displayDeckCardsForEditing();
                 
+                // Immediate enforcement before any async operations
+                enforceListViewHorizontalLayout();
+                
+                // Force immediate reflow and re-enforcement
+                requestAnimationFrame(() => {
+                    enforceListViewHorizontalLayout();
+                });
+                
                 // Enforce horizontal layout in list view after removing one card
                 setTimeout(() => {
                     enforceListViewHorizontalLayout();
-                }, 10);
+                }, 1);
                 
                 // Additional enforcement with longer delay to catch any late layout changes
                 setTimeout(() => {
                     enforceListViewHorizontalLayout();
+                }, 50);
+                
+                setTimeout(() => {
+                    enforceListViewHorizontalLayout();
                 }, 100);
+                
+                setTimeout(() => {
+                    enforceListViewHorizontalLayout();
+                }, 200);
                 
                 // Restore the expansion state after re-rendering
                 applyUIPreferences({ expansionState: currentExpansionState });
