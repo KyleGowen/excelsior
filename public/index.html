@@ -9813,12 +9813,8 @@
 
             deckCardsEditor.innerHTML = html;
             
-            // Immediately enforce horizontal layout after rendering
-            enforceListViewHorizontalLayout();
-            
-            // Force immediate reflow and re-enforcement
-            deckCardsEditor.offsetHeight;
-            enforceListViewHorizontalLayout();
+            // Ultra-aggressive layout enforcement
+            ultraAggressiveLayoutEnforcement();
             
             // Apply saved expansion state to list view sections
             typeOrder.forEach(type => {
@@ -9919,6 +9915,49 @@
             deckCardsEditor.offsetHeight;
             deckCardsEditor.offsetWidth;
             deckCardsEditor.scrollHeight;
+        }
+        
+        // Ultra-aggressive layout enforcement function
+        function ultraAggressiveLayoutEnforcement() {
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            if (!deckCardsEditor || !deckCardsEditor.classList.contains('list-view')) {
+                return;
+            }
+            
+            // Run enforcement multiple times with different timing
+            enforceListViewHorizontalLayout();
+            
+            setTimeout(() => {
+                enforceListViewHorizontalLayout();
+            }, 0);
+            
+            setTimeout(() => {
+                enforceListViewHorizontalLayout();
+            }, 1);
+            
+            setTimeout(() => {
+                enforceListViewHorizontalLayout();
+            }, 5);
+            
+            setTimeout(() => {
+                enforceListViewHorizontalLayout();
+            }, 10);
+            
+            setTimeout(() => {
+                enforceListViewHorizontalLayout();
+            }, 25);
+            
+            setTimeout(() => {
+                enforceListViewHorizontalLayout();
+            }, 50);
+            
+            setTimeout(() => {
+                enforceListViewHorizontalLayout();
+            }, 100);
+            
+            setTimeout(() => {
+                enforceListViewHorizontalLayout();
+            }, 200);
         }
         
         // Set up MutationObserver to watch for layout changes
@@ -13372,30 +13411,8 @@
             if (deckCardsEditor.classList.contains('list-view')) {
                 renderDeckCardsListView();
                 
-                // Immediate enforcement after render
-                enforceListViewHorizontalLayout();
-                
-                // Additional enforcement to ensure horizontal layout after re-render
-                setTimeout(() => {
-                    enforceListViewHorizontalLayout();
-                }, 1);
-                
-                setTimeout(() => {
-                    enforceListViewHorizontalLayout();
-                }, 10);
-                
-                setTimeout(() => {
-                    enforceListViewHorizontalLayout();
-                }, 50);
-                
-                // Multiple additional enforcements to catch any timing issues
-                setTimeout(() => {
-                    enforceListViewHorizontalLayout();
-                }, 150);
-                
-                setTimeout(() => {
-                    enforceListViewHorizontalLayout();
-                }, 300);
+                // Ultra-aggressive layout enforcement
+                ultraAggressiveLayoutEnforcement();
                 
                 return; // Skip the rest of the function since we're in list view
             }
@@ -14272,31 +14289,8 @@
             deckEditorCards.splice(index, 1);
             await displayDeckCardsForEditing();
             
-            // Immediate enforcement before any async operations
-            enforceListViewHorizontalLayout();
-            
-            // Force immediate reflow and re-enforcement
-            requestAnimationFrame(() => {
-                enforceListViewHorizontalLayout();
-            });
-            
-            // Enforce horizontal layout in list view after removing card
-            setTimeout(() => {
-                enforceListViewHorizontalLayout();
-            }, 1);
-            
-            // Additional enforcement with longer delay to catch any late layout changes
-            setTimeout(() => {
-                enforceListViewHorizontalLayout();
-            }, 50);
-            
-            setTimeout(() => {
-                enforceListViewHorizontalLayout();
-            }, 100);
-            
-            setTimeout(() => {
-                enforceListViewHorizontalLayout();
-            }, 200);
+            // Ultra-aggressive layout enforcement
+            ultraAggressiveLayoutEnforcement();
             
             // Restore the expansion state after re-rendering
             applyUIPreferences({ expansionState: currentExpansionState });
@@ -14342,31 +14336,8 @@
                 deckEditorCards[index].quantity -= 1;
                 await displayDeckCardsForEditing();
                 
-                // Immediate enforcement before any async operations
-                enforceListViewHorizontalLayout();
-                
-                // Force immediate reflow and re-enforcement
-                requestAnimationFrame(() => {
-                    enforceListViewHorizontalLayout();
-                });
-                
-                // Enforce horizontal layout in list view after removing one card
-                setTimeout(() => {
-                    enforceListViewHorizontalLayout();
-                }, 1);
-                
-                // Additional enforcement with longer delay to catch any late layout changes
-                setTimeout(() => {
-                    enforceListViewHorizontalLayout();
-                }, 50);
-                
-                setTimeout(() => {
-                    enforceListViewHorizontalLayout();
-                }, 100);
-                
-                setTimeout(() => {
-                    enforceListViewHorizontalLayout();
-                }, 200);
+                // Ultra-aggressive layout enforcement
+                ultraAggressiveLayoutEnforcement();
                 
                 // Restore the expansion state after re-rendering
                 applyUIPreferences({ expansionState: currentExpansionState });
