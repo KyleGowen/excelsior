@@ -8330,6 +8330,15 @@
             }
         }
 
+        // Load main app data in background without showing the UI
+        function loadMainAppDataInBackground() {
+            console.log('🔍 loadMainAppDataInBackground() called - loading data without showing UI');
+            // Load user decks
+            loadUserDecks();
+            // Load database view data (this will populate the global variables)
+            loadDatabaseViewData();
+        }
+
         // Use authentication service for login
         async function login(username, password) {
             const result = await window.authService.login({ username, password });
@@ -8382,13 +8391,28 @@
             currentUser = authResult.currentUser; // Update global currentUser after checkAuthentication
 
             if (authResult.isAuthenticated) {
-                showMainApp(); // This will load general app data (characters, etc.)
                 if (authResult.deckId) {
-                    // Now load the specific deck after authentication is resolved
+                    // Going directly to deck editor - skip showing main app to avoid flash
+                    console.log('🔍 Going directly to deck editor, skipping main app display');
+                    
+                    // Ensure database view is hidden to prevent flash
+                    const databaseView = document.getElementById('database-view');
+                    if (databaseView) {
+                        console.log('🔍 Hiding database view to prevent flash');
+                        databaseView.style.display = 'none';
+                    }
+                    
                     isReadOnlyMode = authResult.isReadOnlyMode; // Update global flag
                     document.body.classList.toggle('read-only-mode', isReadOnlyMode);
+                    
+                    // Load main app data in background (without showing the UI) for when user navigates back
+                    loadMainAppDataInBackground();
+                    
                     await loadDeckForEditing(authResult.deckId, authResult.urlUserId, isReadOnlyMode);
                     showDeckEditor();
+                } else {
+                    // No deck ID - show main app normally
+                    showMainApp(); // This will load general app data (characters, etc.)
                 }
             } else {
                 showLoginModal();
