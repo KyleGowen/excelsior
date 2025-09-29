@@ -2913,6 +2913,23 @@
             overflow: hidden;
             flex: 1;
         }
+        
+        /* Force consistent two-pane layout - less aggressive approach */
+        .deck-editor-layout.force-two-pane {
+            display: flex;
+            flex-direction: row;
+        }
+        
+        .deck-editor-layout.force-two-pane .deck-pane {
+            min-width: 23%;
+            max-width: 77%;
+        }
+        
+        .deck-editor-layout.force-two-pane .card-selector-pane {
+            min-width: 23%;
+            max-width: 77%;
+            display: flex;
+        }
 
         .deck-pane, .card-selector-pane {
             display: flex;
@@ -3221,6 +3238,9 @@
         .deck-type-cards {
             padding: 16px;
             background: rgba(255, 255, 255, 0.02);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
         }
 
         .deck-cards-editor.drag-over {
@@ -3520,9 +3540,9 @@
         }
         
         /* Debug: Add a visible border to see if read-only-mode is applied */
-        /* .read-only-mode {
+        .read-only-mode {
             border: 3px solid red !important;
-        } */
+        }
         
         /* Debug: Make hidden elements visible with a different color to see what's being hidden */
         .read-only-mode .card-selector-pane {
@@ -6008,6 +6028,9 @@
     </div> <!-- Close mainContainer -->
 
     <script>
+        // CACHE BUST TEST - If you see this, the new code is loaded
+        console.log('🔍 CACHE BUST TEST - New code loaded at:', new Date().toISOString());
+        
         // Cache busting: 2024-12-19 15:45:00 - Power card sorting fix
         // Utility function
         function debounce(func, wait) {
@@ -8994,9 +9017,72 @@
         function closeAddCardsModal() {
             document.getElementById('addCardsModal').style.display = 'none';
         }
+        
+        // Ensure consistent two-pane layout
+        function ensureTwoPaneLayout() {
+            console.log('🔍 DEBUG: ensureTwoPaneLayout called - CACHE BUST TEST');
+            const layout = document.querySelector('.deck-editor-layout');
+            if (layout) {
+                // Only add the class if we're not in read-only mode
+                if (!isReadOnlyMode) {
+                    layout.classList.add('force-two-pane');
+                    console.log('🔍 DEBUG: Added force-two-pane class to deck-editor-layout');
+                } else {
+                    layout.classList.remove('force-two-pane');
+                    console.log('🔍 DEBUG: Removed force-two-pane class (read-only mode)');
+                }
+                console.log('🔍 DEBUG: Layout classes after update:', layout.className);
+                console.log('🔍 DEBUG: Layout computed style:', window.getComputedStyle(layout).display);
+            } else {
+                console.log('🔍 DEBUG: deck-editor-layout not found');
+            }
+        }
+        
+        // Add window resize listener for layout maintenance (throttled)
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            console.log('🔍 DEBUG: Window resize detected - width:', window.innerWidth);
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                // Only fix layout if it appears broken
+                const layout = document.querySelector('.deck-editor-layout');
+                if (layout && window.getComputedStyle(layout).flexDirection !== 'row') {
+                    console.log('🔍 DEBUG: Layout appears broken on resize, fixing...');
+                    ensureTwoPaneLayout();
+                }
+            }, 250);
+        });
+        
+        // Test function call immediately
+        console.log('🔍 DEBUG: Testing ensureTwoPaneLayout function exists:', typeof ensureTwoPaneLayout);
+        if (typeof ensureTwoPaneLayout === 'function') {
+            console.log('🔍 DEBUG: Calling ensureTwoPaneLayout immediately for test');
+            ensureTwoPaneLayout();
+        }
 
         // Load deck details and display cards
         async function loadDeckDetails(deckId) {
+            console.log('🔍 DEBUG: loadDeckDetails called with deckId:', deckId);
+            console.log('🔍 DEBUG: Current window width:', window.innerWidth);
+            
+            const layout = document.querySelector('.deck-editor-layout');
+            const deckPane = document.querySelector('.deck-pane');
+            const cardSelectorPane = document.querySelector('.card-selector-pane');
+            
+            console.log('🔍 DEBUG: Layout elements before loadDeckDetails:');
+            if (layout) {
+                console.log('🔍 DEBUG: - layout display:', window.getComputedStyle(layout).display);
+                console.log('🔍 DEBUG: - layout flexDirection:', window.getComputedStyle(layout).flexDirection);
+            }
+            if (deckPane) {
+                console.log('🔍 DEBUG: - deckPane flex:', window.getComputedStyle(deckPane).flex);
+                console.log('🔍 DEBUG: - deckPane width:', window.getComputedStyle(deckPane).width);
+            }
+            if (cardSelectorPane) {
+                console.log('🔍 DEBUG: - cardSelectorPane display:', window.getComputedStyle(cardSelectorPane).display);
+                console.log('🔍 DEBUG: - cardSelectorPane flex:', window.getComputedStyle(cardSelectorPane).flex);
+            }
+            
             try {
                 const response = await fetch(`/api/decks/${deckId}`, {
                     credentials: 'include'
@@ -9134,6 +9220,32 @@
         }
 
         async function removeCardFromDeck(cardId) {
+            console.log('🔍 DEBUG: removeCardFromDeck called with cardId:', cardId);
+            console.log('🔍 DEBUG: Current window width:', window.innerWidth);
+            console.log('🔍 DEBUG: CACHE BUST TEST - removeCardFromDeck function is working');
+            
+            const layout = document.querySelector('.deck-editor-layout');
+            const deckPane = document.querySelector('.deck-pane');
+            const cardSelectorPane = document.querySelector('.card-selector-pane');
+            
+            console.log('🔍 DEBUG: Layout elements before removal:');
+            console.log('🔍 DEBUG: - layout:', layout);
+            console.log('🔍 DEBUG: - deckPane:', deckPane);
+            console.log('🔍 DEBUG: - cardSelectorPane:', cardSelectorPane);
+            
+            if (layout) {
+                console.log('🔍 DEBUG: - layout display:', window.getComputedStyle(layout).display);
+                console.log('🔍 DEBUG: - layout flexDirection:', window.getComputedStyle(layout).flexDirection);
+            }
+            if (deckPane) {
+                console.log('🔍 DEBUG: - deckPane flex:', window.getComputedStyle(deckPane).flex);
+                console.log('🔍 DEBUG: - deckPane width:', window.getComputedStyle(deckPane).width);
+            }
+            if (cardSelectorPane) {
+                console.log('🔍 DEBUG: - cardSelectorPane display:', window.getComputedStyle(cardSelectorPane).display);
+                console.log('🔍 DEBUG: - cardSelectorPane flex:', window.getComputedStyle(cardSelectorPane).flex);
+            }
+            
             if (!currentDeckId) return;
             
             if (confirm('Are you sure you want to remove this card from the deck?')) {
@@ -9158,6 +9270,29 @@
                         // Refresh deck list
                         loadDecks();
                         showNotification('Card removed from deck', 'success');
+                        
+                        // Check layout after removal
+                        setTimeout(() => {
+                            console.log('🔍 DEBUG: Layout elements after removal:');
+                            if (layout) {
+                                console.log('🔍 DEBUG: - layout display:', window.getComputedStyle(layout).display);
+                                console.log('🔍 DEBUG: - layout flexDirection:', window.getComputedStyle(layout).flexDirection);
+                            }
+                            if (deckPane) {
+                                console.log('🔍 DEBUG: - deckPane flex:', window.getComputedStyle(deckPane).flex);
+                                console.log('🔍 DEBUG: - deckPane width:', window.getComputedStyle(deckPane).width);
+                            }
+                            if (cardSelectorPane) {
+                                console.log('🔍 DEBUG: - cardSelectorPane display:', window.getComputedStyle(cardSelectorPane).display);
+                                console.log('🔍 DEBUG: - cardSelectorPane flex:', window.getComputedStyle(cardSelectorPane).flex);
+                            }
+                            // Only ensure layout if we detect it's broken
+                            const currentLayout = document.querySelector('.deck-editor-layout');
+                            if (currentLayout && window.getComputedStyle(currentLayout).flexDirection !== 'row') {
+                                console.log('🔍 DEBUG: Layout appears broken, fixing...');
+                                ensureTwoPaneLayout();
+                            }
+                        }, 100);
                     } else {
                         showNotification('Failed to remove card: ' + data.error, 'error');
                     }
@@ -12392,6 +12527,7 @@
                 modal.style.display = 'flex';
                 
                 // Add/remove read-only-mode class to modal
+                console.log('🔍 DEBUG: isReadOnlyMode:', isReadOnlyMode);
                 if (isReadOnlyMode) {
                     modal.classList.add('read-only-mode');
                     console.log('🔍 Added read-only-mode class to modal');
@@ -12472,6 +12608,11 @@
                         if (layout && deckPane) {
                             updateDeckLayout(deckPane.offsetWidth, layout.offsetWidth);
                         }
+                        // Only ensure layout if it appears broken
+                        if (layout && window.getComputedStyle(layout).flexDirection !== 'row') {
+                            console.log('🔍 DEBUG: Initial layout appears broken, fixing...');
+                            ensureTwoPaneLayout();
+                        }
                     }, 200);
                 }, 100);
             } catch (error) {
@@ -12497,23 +12638,45 @@
 
         // Resizable divider functionality
         function initializeResizableDivider() {
+            console.log('🔍 DEBUG: initializeResizableDivider called');
             const divider = document.getElementById('resizableDivider');
             const deckPane = document.querySelector('.deck-pane');
             const cardSelectorPane = document.querySelector('.card-selector-pane');
             const layout = document.querySelector('.deck-editor-layout');
             
+            console.log('🔍 DEBUG: Divider elements found:');
+            console.log('🔍 DEBUG: - divider:', divider);
+            console.log('🔍 DEBUG: - deckPane:', deckPane);
+            console.log('🔍 DEBUG: - cardSelectorPane:', cardSelectorPane);
+            console.log('🔍 DEBUG: - layout:', layout);
+            
             if (!divider || !deckPane || !cardSelectorPane || !layout) {
+                console.log('🔍 DEBUG: Missing elements, returning early');
                 return;
             }
+            
+            console.log('🔍 DEBUG: All elements found, setting up divider');
+            
+            // Test if divider is clickable
+            divider.addEventListener('click', (e) => {
+                console.log('🔍 DEBUG: Divider clicked!', e);
+            });
+            
+            divider.addEventListener('mouseenter', (e) => {
+                console.log('🔍 DEBUG: Divider mouseenter!', e);
+            });
 
             let isResizing = false;
             let startX = 0;
             let startDeckWidth = 0;
 
             divider.addEventListener('mousedown', (e) => {
+                console.log('🔍 DEBUG: Divider mousedown event triggered');
                 isResizing = true;
                 startX = e.clientX;
                 startDeckWidth = deckPane.offsetWidth;
+                
+                console.log('🔍 DEBUG: Starting resize - startX:', startX, 'startDeckWidth:', startDeckWidth);
                 
                 document.addEventListener('mousemove', handleMouseMove);
                 document.addEventListener('mouseup', handleMouseUp);
@@ -14277,6 +14440,32 @@
             }
         }
         async function removeCardFromEditor(index) {
+            console.log('🔍 DEBUG: removeCardFromEditor called with index:', index);
+            console.log('🔍 DEBUG: CACHE BUST TEST - removeCardFromEditor function is working');
+            console.log('🔍 DEBUG: Current window width:', window.innerWidth);
+            
+            const layout = document.querySelector('.deck-editor-layout');
+            const deckPane = document.querySelector('.deck-pane');
+            const cardSelectorPane = document.querySelector('.card-selector-pane');
+            
+            console.log('🔍 DEBUG: Layout elements before removal:');
+            console.log('🔍 DEBUG: - layout:', layout);
+            console.log('🔍 DEBUG: - deckPane:', deckPane);
+            console.log('🔍 DEBUG: - cardSelectorPane:', cardSelectorPane);
+            
+            if (layout) {
+                console.log('🔍 DEBUG: - layout display:', window.getComputedStyle(layout).display);
+                console.log('🔍 DEBUG: - layout flexDirection:', window.getComputedStyle(layout).flexDirection);
+            }
+            if (deckPane) {
+                console.log('🔍 DEBUG: - deckPane flex:', window.getComputedStyle(deckPane).flex);
+                console.log('🔍 DEBUG: - deckPane width:', window.getComputedStyle(deckPane).width);
+            }
+            if (cardSelectorPane) {
+                console.log('🔍 DEBUG: - cardSelectorPane display:', window.getComputedStyle(cardSelectorPane).display);
+                console.log('🔍 DEBUG: - cardSelectorPane flex:', window.getComputedStyle(cardSelectorPane).flex);
+            }
+            
             // Check if in read-only mode
             if (isReadOnlyMode) {
                 alert('Cannot remove cards in read-only mode. You are viewing another user\'s deck.');
@@ -14291,6 +14480,31 @@
             
             // Ultra-aggressive layout enforcement
             ultraAggressiveLayoutEnforcement();
+            
+            // Check layout after removal and enforcement
+            setTimeout(() => {
+                console.log('🔍 DEBUG: Layout elements after removal and enforcement:');
+                const currentLayout = document.querySelector('.deck-editor-layout');
+                const currentDeckPane = document.querySelector('.deck-pane');
+                const currentCardSelectorPane = document.querySelector('.card-selector-pane');
+                
+                if (currentLayout) {
+                    console.log('🔍 DEBUG: - layout display:', window.getComputedStyle(currentLayout).display);
+                    console.log('🔍 DEBUG: - layout flexDirection:', window.getComputedStyle(currentLayout).flexDirection);
+                    console.log('🔍 DEBUG: - layout classes:', currentLayout.className);
+                }
+                if (currentDeckPane) {
+                    console.log('🔍 DEBUG: - deckPane flex:', window.getComputedStyle(currentDeckPane).flex);
+                    console.log('🔍 DEBUG: - deckPane width:', window.getComputedStyle(currentDeckPane).width);
+                }
+                if (currentCardSelectorPane) {
+                    console.log('🔍 DEBUG: - cardSelectorPane display:', window.getComputedStyle(currentCardSelectorPane).display);
+                    console.log('🔍 DEBUG: - cardSelectorPane flex:', window.getComputedStyle(currentCardSelectorPane).flex);
+                }
+                
+                // Force layout enforcement if needed
+                ensureTwoPaneLayout();
+            }, 100);
             
             // Restore the expansion state after re-rendering
             applyUIPreferences({ expansionState: currentExpansionState });
