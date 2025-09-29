@@ -3362,6 +3362,25 @@
             box-sizing: border-box !important;
         }
         
+        /* Force child elements to be horizontal as well */
+        .deck-cards-editor.list-view .deck-list-item .deck-list-item-quantity,
+        .deck-cards-editor.list-view .deck-list-item .deck-list-item-name,
+        .deck-cards-editor.list-view .deck-list-item .deck-list-item-actions {
+            display: inline-block !important;
+            white-space: nowrap !important;
+        }
+        
+        .deck-cards-editor.list-view .deck-list-item .deck-list-item-name {
+            flex: 1 !important;
+        }
+        
+        .deck-cards-editor.list-view .deck-list-item .deck-list-item-actions {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+        }
+        
         .deck-list-item-quantity-control {
             display: flex;
             align-items: center;
@@ -9631,12 +9650,22 @@
                 // Switch back to tile view
                 deckCardsEditor.classList.remove('list-view');
                 listViewBtn.textContent = 'List View';
+                
+                // Disconnect layout observer when switching to tile view
+                if (layoutObserver) {
+                    layoutObserver.disconnect();
+                    layoutObserver = null;
+                }
+                
                 displayDeckCardsForEditing(); // Re-render in tile view
             } else {
                 // Switch to list view
                 deckCardsEditor.classList.add('list-view');
                 listViewBtn.textContent = 'Tile View';
                 renderDeckCardsListView(); // Render in list view
+                
+                // Set up layout observer for list view
+                setupLayoutObserver();
                 
                 // Force immediate layout fix for list view
                 setTimeout(() => {
@@ -9784,6 +9813,9 @@
 
             deckCardsEditor.innerHTML = html;
             
+            // Immediately enforce horizontal layout after rendering
+            enforceListViewHorizontalLayout();
+            
             // Apply saved expansion state to list view sections
             typeOrder.forEach(type => {
                 const cards = cardsByType[type];
@@ -9847,6 +9879,7 @@
             
             const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
             listItems.forEach(item => {
+                // Force all layout properties
                 item.style.display = 'flex';
                 item.style.flexDirection = 'row';
                 item.style.flexWrap = 'nowrap';
@@ -9855,6 +9888,63 @@
                 item.style.boxSizing = 'border-box';
                 item.style.alignItems = 'center';
                 item.style.justifyContent = 'flex-start';
+                
+                // Force child elements to maintain horizontal layout
+                const quantity = item.querySelector('.deck-list-item-quantity');
+                const name = item.querySelector('.deck-list-item-name');
+                const actions = item.querySelector('.deck-list-item-actions');
+                
+                if (quantity) {
+                    quantity.style.display = 'inline-block';
+                    quantity.style.whiteSpace = 'nowrap';
+                }
+                if (name) {
+                    name.style.display = 'inline-block';
+                    name.style.whiteSpace = 'nowrap';
+                    name.style.flex = '1';
+                }
+                if (actions) {
+                    actions.style.display = 'flex';
+                    actions.style.flexDirection = 'row';
+                    actions.style.flexWrap = 'nowrap';
+                    actions.style.alignItems = 'center';
+                }
+            });
+            
+            // Force a reflow to ensure the layout is applied
+            deckCardsEditor.offsetHeight;
+        }
+        
+        // Set up MutationObserver to watch for layout changes
+        let layoutObserver = null;
+        function setupLayoutObserver() {
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            if (!deckCardsEditor) return;
+            
+            if (layoutObserver) {
+                layoutObserver.disconnect();
+            }
+            
+            layoutObserver = new MutationObserver((mutations) => {
+                let shouldEnforce = false;
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                        shouldEnforce = true;
+                    }
+                });
+                
+                if (shouldEnforce && deckCardsEditor.classList.contains('list-view')) {
+                    setTimeout(() => {
+                        enforceListViewHorizontalLayout();
+                    }, 10);
+                }
+            });
+            
+            layoutObserver.observe(deckCardsEditor, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['style', 'class']
             });
         }
 
@@ -12628,6 +12718,12 @@
                     const uiPreferences = await loadUIPreferences(deckId);
                     applyUIPreferences(uiPreferences);
                     
+                    // Set up layout observer if in list view
+                    const deckCardsEditor = document.getElementById('deckCardsEditor');
+                    if (deckCardsEditor && deckCardsEditor.classList.contains('list-view')) {
+                        setupLayoutObserver();
+                    }
+                    
                     // Update card count
 
                     
@@ -13272,18 +13368,17 @@
                 
                 // Additional enforcement to ensure horizontal layout after re-render
                 setTimeout(() => {
-                    const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
-                    listItems.forEach(item => {
-                        item.style.display = 'flex';
-                        item.style.flexDirection = 'row';
-                        item.style.flexWrap = 'nowrap';
-                        item.style.width = '100%';
-                        item.style.minWidth = '100%';
-                        item.style.boxSizing = 'border-box';
-                        item.style.alignItems = 'center';
-                        item.style.justifyContent = 'flex-start';
-                    });
+                    enforceListViewHorizontalLayout();
                 }, 50);
+                
+                // Multiple additional enforcements to catch any timing issues
+                setTimeout(() => {
+                    enforceListViewHorizontalLayout();
+                }, 150);
+                
+                setTimeout(() => {
+                    enforceListViewHorizontalLayout();
+                }, 300);
                 
                 return; // Skip the rest of the function since we're in list view
             }
@@ -14165,6 +14260,11 @@
                 enforceListViewHorizontalLayout();
             }, 10);
             
+            // Additional enforcement with longer delay to catch any late layout changes
+            setTimeout(() => {
+                enforceListViewHorizontalLayout();
+            }, 100);
+            
             // Restore the expansion state after re-rendering
             applyUIPreferences({ expansionState: currentExpansionState });
             updateDeckEditorCardCount();
@@ -14213,6 +14313,11 @@
                 setTimeout(() => {
                     enforceListViewHorizontalLayout();
                 }, 10);
+                
+                // Additional enforcement with longer delay to catch any late layout changes
+                setTimeout(() => {
+                    enforceListViewHorizontalLayout();
+                }, 100);
                 
                 // Restore the expansion state after re-rendering
                 applyUIPreferences({ expansionState: currentExpansionState });
