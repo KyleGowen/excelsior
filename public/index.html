@@ -3243,6 +3243,45 @@
             gap: 16px;
         }
 
+        /* Character cards should always be in single column */
+        #deck-type-character .deck-type-cards {
+            grid-template-columns: 1fr !important;
+        }
+        
+        /* Override read-only mode for character cards to keep single column */
+        .read-only-mode #deck-type-character .deck-type-cards {
+            grid-template-columns: 1fr !important;
+        }
+        
+        /* Debug: Force single column for all character sections */
+        .deck-type-section[data-type="character"] .deck-type-cards {
+            grid-template-columns: 1fr !important;
+        }
+        
+        /* Debug: Force single column for character cards regardless of container */
+        .deck-type-cards:has(.character-card) {
+            grid-template-columns: 1fr !important;
+        }
+        
+        /* More aggressive: Target any container with character cards */
+        .deck-type-cards:has(.deck-card-editor-item.character-card) {
+            grid-template-columns: 1fr !important;
+        }
+        
+        /* Even more aggressive: Target the specific character section by ID */
+        #deck-type-character {
+            grid-template-columns: 1fr !important;
+        }
+        
+        #deck-type-character .deck-type-cards {
+            grid-template-columns: 1fr !important;
+        }
+        
+        /* Force single column class for JavaScript override */
+        .force-single-column {
+            grid-template-columns: 1fr !important;
+        }
+
         .deck-cards-editor.drag-over {
             border-color: #4ecdc4;
             background: rgba(78, 205, 196, 0.1);
@@ -12246,6 +12285,11 @@
                     // Reload deck cards
                     await loadDeckForEditing(currentDeckId);
                     
+                    // Force character single column layout after reload
+                    setTimeout(() => {
+                        forceCharacterSingleColumnLayout();
+                    }, 100);
+                    
                     // Show success message
                     showToast('Card added to deck!', 'success');
                 } else {
@@ -12713,6 +12757,47 @@
             });
         }
 
+        // Force character cards to single column layout
+        function forceCharacterSingleColumnLayout() {
+            console.log('🔍 DEBUG: forceCharacterSingleColumnLayout called');
+            
+            // Find all character sections
+            const characterSections = document.querySelectorAll('#deck-type-character, .deck-type-section[data-type="character"]');
+            console.log('🔍 DEBUG: Found', characterSections.length, 'character sections');
+            
+            characterSections.forEach((section, index) => {
+                console.log('🔍 DEBUG: Processing character section', index, section);
+                
+                // Find the cards container within this section
+                const cardsContainer = section.querySelector('.deck-type-cards');
+                if (cardsContainer) {
+                    console.log('🔍 DEBUG: Found cards container in section', index, cardsContainer);
+                    
+                    // Force single column layout
+                    cardsContainer.style.setProperty('grid-template-columns', '1fr', 'important');
+                    cardsContainer.style.gridTemplateColumns = '1fr';
+                    
+                    // Also add a class to make it more specific
+                    cardsContainer.classList.add('force-single-column');
+                    
+                    console.log('🔍 DEBUG: Applied single column layout to section', index);
+                } else {
+                    console.log('🔍 DEBUG: No cards container found in section', index);
+                }
+            });
+            
+            // Also check for any containers with character cards
+            const containersWithCharacterCards = document.querySelectorAll('.deck-type-cards:has(.character-card), .deck-type-cards:has(.deck-card-editor-item.character-card)');
+            console.log('🔍 DEBUG: Found', containersWithCharacterCards.length, 'containers with character cards');
+            
+            containersWithCharacterCards.forEach((container, index) => {
+                console.log('🔍 DEBUG: Forcing single column on container', index, container);
+                container.style.setProperty('grid-template-columns', '1fr', 'important');
+                container.style.gridTemplateColumns = '1fr';
+                container.classList.add('force-single-column');
+            });
+        }
+
         // Store slider position for persistence
         function storeSliderPosition(deckWidth, totalWidth) {
             if (currentDeckId) {
@@ -12827,6 +12912,14 @@
                     // Load UI preferences from database AFTER deck cards are displayed
                     const uiPreferences = await loadUIPreferences(deckId);
                     applyUIPreferences(uiPreferences);
+                    
+                    // Force character cards to single column layout
+                    setTimeout(() => {
+                        forceCharacterSingleColumnLayout();
+                    }, 200);
+                    
+                    // Also run it immediately as a backup
+                    forceCharacterSingleColumnLayout();
                     
                     // Set up layout observer if in list view
                     const deckCardsEditor = document.getElementById('deckCardsEditor');
@@ -12971,7 +13064,7 @@
                     }
                     
                     cardsHtml += `
-                        <div class="deck-type-section" ondragover="handleDeckCardDragOver(event)" ondrop="handleDeckCardDrop(event)">
+                        <div class="deck-type-section" data-type="${type}" ondragover="handleDeckCardDragOver(event)" ondrop="handleDeckCardDrop(event)">
                             <div class="deck-type-header" onclick="toggleDeckTypeSection('${type}')">
                                 <div class="deck-type-left">
                                     <span class="deck-type-name">${typeName}</span>
@@ -12985,6 +13078,11 @@
                             </div>
                             <div class="deck-type-cards" id="deck-type-${type}">
                     `;
+                    
+                    // Debug: Log character section creation
+                    if (type === 'character') {
+                        console.log('🔍 DEBUG: Creating character section with id="deck-type-character"');
+                    }
                     
                     if (type === 'special') {
                         // Special handling for special cards - group by character
@@ -13471,6 +13569,39 @@
             });
             
             deckCardsEditor.innerHTML = cardsHtml;
+            
+            // Debug: Check character section layout
+            setTimeout(() => {
+                const characterSection = document.getElementById('deck-type-character');
+                if (characterSection) {
+                    console.log('🔍 DEBUG: Character section found:', characterSection);
+                    const characterCards = characterSection.querySelector('.deck-type-cards');
+                    if (characterCards) {
+                        console.log('🔍 DEBUG: Character cards container found:', characterCards);
+                        const computedStyle = window.getComputedStyle(characterCards);
+                        console.log('🔍 DEBUG: Character cards grid-template-columns:', computedStyle.gridTemplateColumns);
+                        console.log('🔍 DEBUG: Character cards display:', computedStyle.display);
+                        console.log('🔍 DEBUG: Character cards classes:', characterCards.className);
+                        
+                        // Force single column if not already set
+                        if (computedStyle.gridTemplateColumns !== '1fr') {
+                            console.log('🔍 DEBUG: Forcing single column for character cards');
+                            characterCards.style.gridTemplateColumns = '1fr';
+                        }
+                        
+                        // Also check for character cards within the container
+                        const characterCardElements = characterCards.querySelectorAll('.character-card');
+                        console.log('🔍 DEBUG: Found', characterCardElements.length, 'character card elements');
+                        
+                        // Force single column layout with JavaScript as backup
+                        characterCards.style.setProperty('grid-template-columns', '1fr', 'important');
+                    } else {
+                        console.log('🔍 DEBUG: No character cards container found');
+                    }
+                } else {
+                    console.log('🔍 DEBUG: No character section found');
+                }
+            }, 100);
             
             // Check if we're in list view mode and re-render accordingly
             if (deckCardsEditor.classList.contains('list-view')) {
