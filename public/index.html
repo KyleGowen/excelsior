@@ -6174,6 +6174,17 @@
             
             if (databaseStats) databaseStats.style.display = 'none';
             if (deckStats) deckStats.style.display = 'grid';
+            
+            // Ensure username is displayed when switching back to deck builder
+            if (currentUser) {
+                const displayName = (currentUser.username === 'guest' || currentUser.name === 'guest') 
+                    ? 'Guest' 
+                    : (currentUser.username || currentUser.name || 'User');
+                const usernameElement = document.getElementById('currentUsername');
+                if (usernameElement) {
+                    usernameElement.textContent = displayName;
+                }
+            }
             if (createDeckBtn) createDeckBtn.style.display = 'inline-block';
             
             // Load deck builder data if not already loaded

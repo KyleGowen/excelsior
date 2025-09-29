@@ -13,6 +13,7 @@ export const integrationTestUtils = {
   // Helper to create test user in database
   createTestUser: async (userData: { name: string; email: string; role?: string }) => {
     const { Pool } = require('pg');
+    const crypto = require('crypto');
     const pool = new Pool({
       connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
     });
@@ -21,7 +22,7 @@ export const integrationTestUtils = {
       const result = await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role) VALUES ($1, $2, $3, $4, $5) RETURNING *',
         [
-          userData.name + '_' + Date.now(), // Unique ID
+          crypto.randomUUID(), // Generate proper UUID
           userData.name,
           userData.email,
           'hashed_password',
@@ -37,6 +38,7 @@ export const integrationTestUtils = {
   // Helper to create test deck in database
   createTestDeck: async (userId: string, deckData: any) => {
     const { Pool } = require('pg');
+    const crypto = require('crypto');
     const pool = new Pool({
       connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
     });
@@ -45,7 +47,7 @@ export const integrationTestUtils = {
       const result = await pool.query(
         'INSERT INTO decks (id, user_id, name, description) VALUES ($1, $2, $3, $4) RETURNING *',
         [
-          'deck_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          crypto.randomUUID(), // Generate proper UUID
           userId,
           deckData.name,
           deckData.description || ''
