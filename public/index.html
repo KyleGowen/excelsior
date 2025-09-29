@@ -3352,8 +3352,14 @@
 
         /* Force list view to always be horizontal */
         .deck-cards-editor.list-view .deck-list-item {
+            display: flex !important;
             flex-direction: row !important;
             flex-wrap: nowrap !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            width: 100% !important;
+            min-width: 100% !important;
+            box-sizing: border-box !important;
         }
         
         .deck-list-item-quantity-control {
@@ -9642,8 +9648,25 @@
                         item.style.width = '100%';
                         item.style.minWidth = '100%';
                         item.style.boxSizing = 'border-box';
+                        item.style.alignItems = 'center';
+                        item.style.justifyContent = 'flex-start';
                     });
                     deckCardsEditor.offsetHeight; // Trigger reflow
+                    
+                    // Additional enforcement after a short delay
+                    setTimeout(() => {
+                        const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
+                        listItems.forEach(item => {
+                            item.style.display = 'flex';
+                            item.style.flexDirection = 'row';
+                            item.style.flexWrap = 'nowrap';
+                            item.style.width = '100%';
+                            item.style.minWidth = '100%';
+                            item.style.boxSizing = 'border-box';
+                            item.style.alignItems = 'center';
+                            item.style.justifyContent = 'flex-start';
+                        });
+                    }, 10);
                 }, 0);
             }
             
@@ -9791,10 +9814,47 @@
                     item.style.width = '100%';
                     item.style.minWidth = '100%';
                     item.style.boxSizing = 'border-box';
+                    item.style.alignItems = 'center';
+                    item.style.justifyContent = 'flex-start';
                 });
                 
                 // Trigger a reflow to ensure the layout is applied
                 deckCardsEditor.offsetHeight;
+                
+                // Additional enforcement after a short delay
+                setTimeout(() => {
+                    const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
+                    listItems.forEach(item => {
+                        item.style.display = 'flex';
+                        item.style.flexDirection = 'row';
+                        item.style.flexWrap = 'nowrap';
+                        item.style.width = '100%';
+                        item.style.minWidth = '100%';
+                        item.style.boxSizing = 'border-box';
+                        item.style.alignItems = 'center';
+                        item.style.justifyContent = 'flex-start';
+                    });
+                }, 10);
+            });
+        }
+
+        // Function to enforce horizontal layout in list view
+        function enforceListViewHorizontalLayout() {
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            if (!deckCardsEditor || !deckCardsEditor.classList.contains('list-view')) {
+                return;
+            }
+            
+            const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
+            listItems.forEach(item => {
+                item.style.display = 'flex';
+                item.style.flexDirection = 'row';
+                item.style.flexWrap = 'nowrap';
+                item.style.width = '100%';
+                item.style.minWidth = '100%';
+                item.style.boxSizing = 'border-box';
+                item.style.alignItems = 'center';
+                item.style.justifyContent = 'flex-start';
             });
         }
 
@@ -13209,6 +13269,22 @@
             // Check if we're in list view mode and re-render accordingly
             if (deckCardsEditor.classList.contains('list-view')) {
                 renderDeckCardsListView();
+                
+                // Additional enforcement to ensure horizontal layout after re-render
+                setTimeout(() => {
+                    const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
+                    listItems.forEach(item => {
+                        item.style.display = 'flex';
+                        item.style.flexDirection = 'row';
+                        item.style.flexWrap = 'nowrap';
+                        item.style.width = '100%';
+                        item.style.minWidth = '100%';
+                        item.style.boxSizing = 'border-box';
+                        item.style.alignItems = 'center';
+                        item.style.justifyContent = 'flex-start';
+                    });
+                }, 50);
+                
                 return; // Skip the rest of the function since we're in list view
             }
             
@@ -14084,6 +14160,11 @@
             deckEditorCards.splice(index, 1);
             await displayDeckCardsForEditing();
             
+            // Enforce horizontal layout in list view after removing card
+            setTimeout(() => {
+                enforceListViewHorizontalLayout();
+            }, 10);
+            
             // Restore the expansion state after re-rendering
             applyUIPreferences({ expansionState: currentExpansionState });
             updateDeckEditorCardCount();
@@ -14127,6 +14208,11 @@
                 
                 deckEditorCards[index].quantity -= 1;
                 await displayDeckCardsForEditing();
+                
+                // Enforce horizontal layout in list view after removing one card
+                setTimeout(() => {
+                    enforceListViewHorizontalLayout();
+                }, 10);
                 
                 // Restore the expansion state after re-rendering
                 applyUIPreferences({ expansionState: currentExpansionState });
@@ -15925,6 +16011,11 @@
             const currentExpansionState = getExpansionState();
             
             await displayDeckCardsForEditing();
+            
+            // Enforce horizontal layout in list view after adding card
+            setTimeout(() => {
+                enforceListViewHorizontalLayout();
+            }, 10);
             
             // Restore the expansion state after re-rendering
             applyUIPreferences({ expansionState: currentExpansionState });
