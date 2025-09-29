@@ -8344,7 +8344,11 @@
         function showMainApp() {
             console.log('🔍 showMainApp() called');
             document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('currentUsername').textContent = currentUser.username || currentUser.name || 'User';
+            // Display "Guest" with capital G for guest users, otherwise use the username/name
+            const displayName = (currentUser.username === 'guest' || currentUser.name === 'guest') 
+                ? 'Guest' 
+                : (currentUser.username || currentUser.name || 'User');
+            document.getElementById('currentUsername').textContent = displayName;
             
             // Load user decks after successful login
             loadUserDecks();
