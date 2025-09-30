@@ -975,22 +975,6 @@
         }
 
         /* Deck Builder Styles */
-        .create-deck-btn {
-            background: linear-gradient(135deg, #4ecdc4, #2cb1a6);
-            color: #1a1a2e;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .create-deck-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(78, 205, 196, 0.4);
-        }
 
         .deck-list-container {
             padding: 20px 0;
@@ -4956,33 +4940,6 @@
         }
 
 
-        /* Create Deck Section - positioned below header */
-        .create-deck-section {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            min-height: 50px; /* Ensure it has some height */
-            width: 100%; /* Ensure it takes full width */
-        }
-
-        .create-deck-btn {
-            background: linear-gradient(135deg, #4ecdc4, #2cb1a6);
-            color: #1a1a2e;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
-        }
-
-        .create-deck-btn:hover {
-            background: linear-gradient(135deg, #5dd5cc, #3bc1b6);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
-        }
     </style>
     
     <!-- Authentication Service -->
@@ -5019,10 +4976,6 @@
         <!-- Global Navigation Component -->
         <div id="globalNav"></div>
 
-        <!-- Create New Deck Button - positioned below header -->
-        <div class="create-deck-section" id="createDeckSection" style="display: none;">
-            <button id="createDeckBtn" class="create-deck-btn" onclick="showCreateDeckModal()">Create New Deck</button>
-        </div>
 
         <div id="database-view" class="database-section" style="display: block;">
             <div class="section-header">
@@ -5840,8 +5793,6 @@
             const deckBuilder = document.getElementById('deck-builder');
             const databaseStats = document.getElementById('database-stats');
             const deckStats = document.getElementById('deck-stats');
-            const createDeckBtn = document.getElementById('createDeckBtn');
-
             // Hide both, then show selected
             databaseView.style.display = 'none';
             deckBuilder.style.display = 'none';
@@ -5849,15 +5800,13 @@
 
             // Show/hide appropriate statistics and controls based on view
             if (tabId === 'deck-builder') {
-                // Show deck statistics and create deck button in deck builder view
+                // Show deck statistics in deck builder view
                 if (databaseStats) databaseStats.style.display = 'none';
                 if (deckStats) deckStats.style.display = 'grid';
-                if (createDeckBtn) createDeckBtn.style.display = 'inline-block';
             } else {
-                // Show database statistics and hide create deck button in database view
+                // Show database statistics in database view
                 if (databaseStats) databaseStats.style.display = 'grid';
                 if (deckStats) deckStats.style.display = 'none';
-                if (createDeckBtn) createDeckBtn.style.display = 'none';
             }
 
             // Update active styles
@@ -8166,11 +8115,6 @@
                     document.getElementById('databaseViewBtn').classList.remove('active');
                     document.getElementById('deckBuilderBtn').classList.add('active');
                     
-                    // Show create deck section
-                    const createDeckSection = document.getElementById('createDeckSection');
-                    if (createDeckSection) {
-                        createDeckSection.style.display = 'flex';
-                    }
                 } else {
                     // Start in database view
                     document.getElementById('database-view').style.display = 'block';
@@ -8182,11 +8126,8 @@
                 // Show database statistics in initial database view
                 const databaseStats = document.getElementById('database-stats');
                 const deckStats = document.getElementById('deck-stats');
-                const createDeckBtn = document.getElementById('createDeckBtn');
-                
                 if (databaseStats) databaseStats.style.display = 'grid';
                 if (deckStats) deckStats.style.display = 'none';
-                if (createDeckBtn) createDeckBtn.style.display = 'none';
                 
             loadAspects();
             loadEvents();
