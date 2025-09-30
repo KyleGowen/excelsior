@@ -1,3 +1,4 @@
+export {};
 /**
  * Unit tests for database view loading functionality
  * Tests the showMainApp function and switchTab function changes
