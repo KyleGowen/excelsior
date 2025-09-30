@@ -106,54 +106,65 @@ jobs:
     - name: Install Flyway
       run: |
         echo "Installing Flyway..."
-        # Try multiple download methods for reliability
-        FLYWAY_VERSION="9.22.3"
-        FLYWAY_URL="https://download.red-gate.com/maven/release/org/flywaydb/flyway-commandline/${FLYWAY_VERSION}/flyway-commandline-${FLYWAY_VERSION}-linux-x64.tar.gz"
         
-        # Method 1: Try direct download
-        echo "Attempting direct download from Red Gate..."
-        if wget -O flyway.tar.gz "$FLYWAY_URL"; then
-          echo "✅ Direct download successful"
+        # Method 1: Try using apt package manager (most reliable)
+        echo "Attempting to install Flyway via apt..."
+        if sudo apt-get update && sudo apt-get install -y flyway; then
+          echo "✅ Flyway installed via apt"
+          flyway --version
+          echo "✅ Flyway installation successful!"
         else
-          echo "❌ Direct download failed, trying alternative method..."
-          # Method 2: Try with curl as fallback
-          if curl -L -o flyway.tar.gz "$FLYWAY_URL"; then
-            echo "✅ Curl download successful"
-          else
-            echo "❌ Both download methods failed"
-            echo "Trying GitHub releases as fallback..."
-            # Method 3: Try GitHub releases
-            GITHUB_URL="https://github.com/flyway/flyway/releases/download/${FLYWAY_VERSION}/flyway-commandline-${FLYWAY_VERSION}-linux-x64.tar.gz"
-            if curl -L -o flyway.tar.gz "$GITHUB_URL"; then
-              echo "✅ GitHub download successful"
+          echo "❌ Apt installation failed, trying manual download..."
+          
+          # Method 2: Try manual download with correct URL
+          FLYWAY_VERSION="9.22.3"
+          
+          # Try different URL patterns that might work
+          URLS=(
+            "https://github.com/flyway/flyway/releases/download/${FLYWAY_VERSION}/flyway-commandline-${FLYWAY_VERSION}-linux-x64.tar.gz"
+            "https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/${FLYWAY_VERSION}/flyway-commandline-${FLYWAY_VERSION}-linux-x64.tar.gz"
+            "https://download.red-gate.com/maven/release/org/flywaydb/flyway-commandline/${FLYWAY_VERSION}/flyway-commandline-${FLYWAY_VERSION}-linux-x64.tar.gz"
+          )
+          
+          for url in "${URLS[@]}"; do
+            echo "Trying URL: $url"
+            if wget -O flyway.tar.gz "$url" 2>/dev/null; then
+              # Check if it's actually a tar.gz file (not HTML error page)
+              if file flyway.tar.gz | grep -q "gzip compressed"; then
+                echo "✅ Valid download from: $url"
+                break
+              else
+                echo "❌ Downloaded file is not a valid tar.gz (likely error page)"
+                rm -f flyway.tar.gz
+              fi
             else
-              echo "❌ All download methods failed"
-              exit 1
+              echo "❌ Download failed from: $url"
             fi
+          done
+          
+          # Verify we have a valid download
+          if [ ! -f flyway.tar.gz ] || [ ! -s flyway.tar.gz ]; then
+            echo "❌ All download attempts failed"
+            exit 1
           fi
+          
+          echo "Downloaded file size: $(ls -lh flyway.tar.gz | awk '{print $5}')"
+          echo "File type: $(file flyway.tar.gz)"
+          
+          # Extract with verbose output for debugging
+          tar -xzf flyway.tar.gz
+          # Verify extraction was successful
+          if [ ! -d flyway-${FLYWAY_VERSION} ]; then
+            echo "❌ Flyway extraction failed"
+            ls -la
+            exit 1
+          fi
+          # Create symlink
+          sudo ln -sf $(pwd)/flyway-${FLYWAY_VERSION}/flyway /usr/local/bin/flyway
+          # Verify installation
+          flyway --version
+          echo "✅ Flyway installed successfully!"
         fi
-        
-        # Verify download was successful
-        if [ ! -f flyway.tar.gz ] || [ ! -s flyway.tar.gz ]; then
-          echo "❌ Flyway download failed - file missing or empty"
-          exit 1
-        fi
-        
-        echo "Downloaded file size: $(ls -lh flyway.tar.gz | awk '{print $5}')"
-        
-        # Extract with verbose output for debugging
-        tar -xzf flyway.tar.gz
-        # Verify extraction was successful
-        if [ ! -d flyway-${FLYWAY_VERSION} ]; then
-          echo "❌ Flyway extraction failed"
-          ls -la
-          exit 1
-        fi
-        # Create symlink
-        sudo ln -sf $(pwd)/flyway-${FLYWAY_VERSION}/flyway /usr/local/bin/flyway
-        # Verify installation
-        flyway --version
-        echo "✅ Flyway installed successfully!"
       
     - name: Run database migrations
       run: |
