@@ -77,8 +77,11 @@ jobs:
         
         # Verify critical files are present in the image
         echo "🔍 Verifying critical files in Docker image..."
+        echo "Testing js directory..."
         docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ls -la /app/public/js/ || echo "❌ js directory missing"
-        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG test -f /app/public/js/auth-service.js || echo "❌ auth-service.js missing"
+        echo "Testing auth-service.js file..."
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG test -f /app/public/js/auth-service.js && echo "✅ auth-service.js found" || echo "❌ auth-service.js missing"
+        echo "Listing public directory..."
         docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ls -la /app/public/ || echo "❌ public directory listing"
         
         # Push both tagged versions
