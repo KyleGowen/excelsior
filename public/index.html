@@ -6817,6 +6817,13 @@
             // Remove active class from all buttons
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             
+            // Add active class to the selected tab button
+            const selectedButton = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
+            if (selectedButton) {
+                selectedButton.classList.add('active');
+                console.log('🔍 Added active class to button:', selectedButton.textContent);
+            }
+            
             // Show selected tab
             document.getElementById(tabName + '-tab').style.display = 'block';
             console.log('🔍 Showing tab:', tabName + '-tab');
