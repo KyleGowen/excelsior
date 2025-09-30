@@ -3235,48 +3235,15 @@
             transform: rotate(-90deg);
         }
         
+        /* Unified deck content tiles styling - always single column */
         .deck-type-cards {
             padding: 16px;
             background: rgba(255, 255, 255, 0.02);
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr; /* Single column for all deck content tiles */
             gap: 16px;
         }
 
-        /* Character cards should always be in single column */
-        #deck-type-character .deck-type-cards {
-            grid-template-columns: 1fr !important;
-        }
-        
-        /* Override read-only mode for character cards to keep single column */
-        .read-only-mode #deck-type-character .deck-type-cards {
-            grid-template-columns: 1fr !important;
-        }
-        
-        /* Debug: Force single column for all character sections */
-        .deck-type-section[data-type="character"] .deck-type-cards {
-            grid-template-columns: 1fr !important;
-        }
-        
-        /* Debug: Force single column for character cards regardless of container */
-        .deck-type-cards:has(.character-card) {
-            grid-template-columns: 1fr !important;
-        }
-        
-        /* More aggressive: Target any container with character cards */
-        .deck-type-cards:has(.deck-card-editor-item.character-card) {
-            grid-template-columns: 1fr !important;
-        }
-        
-        /* Even more aggressive: Target the specific character section by ID */
-        #deck-type-character {
-            grid-template-columns: 1fr !important;
-        }
-        
-        #deck-type-character .deck-type-cards {
-            grid-template-columns: 1fr !important;
-        }
-        
         /* Force single column class for JavaScript override */
         .force-single-column {
             grid-template-columns: 1fr !important;
@@ -3564,17 +3531,17 @@
             display: block !important;
         }
         
-        /* Apply 4-column grid to individual card tiles within each section */
+        /* Apply single column grid to individual card tiles within each section */
         .read-only-mode .deck-type-cards:not([style*="display: none"]) {
             display: grid !important;
-            grid-template-columns: repeat(4, 1fr) !important;
+            grid-template-columns: 1fr !important; /* Single column for all deck content tiles */
             gap: 16px !important;
         }
         
-        /* Make list view also use 4 columns in read-only mode */
+        /* Make list view also use single column in read-only mode */
         .read-only-mode .deck-list-view {
             display: grid !important;
-            grid-template-columns: repeat(4, 1fr) !important;
+            grid-template-columns: 1fr !important; /* Single column for all deck content tiles */
             gap: 16px !important;
         }
         

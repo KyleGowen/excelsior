@@ -2002,9 +2002,13 @@
             transform: rotate(-90deg);
         }
         
+        /* Unified deck content tiles styling - always single column */
         .deck-type-cards {
             padding: 16px;
             background: rgba(255, 255, 255, 0.02);
+            display: grid;
+            grid-template-columns: 1fr; /* Single column for all deck content tiles */
+            gap: 16px;
         }
 
         .deck-cards-editor.drag-over {
