@@ -1,0 +1,42 @@
+# Cursor AI Assistant Rules for Overpower Deckbuilder
+
+## Testing Requirements
+- **ALWAYS run all unit tests before committing to git**
+- **NEVER commit to git if any unit tests fail**
+- Use `npm run test:unit` to run all unit tests
+- If tests fail, fix the issues before committing
+- If tests pass, proceed with git commit
+
+## Code Quality Standards
+- Follow existing code patterns and conventions
+- Maintain consistent styling and formatting
+- Add appropriate error handling
+- Include helpful debug logging when needed
+- Write comprehensive unit tests for new functionality
+
+## Git Workflow
+1. Make code changes
+2. Run `npm run test:unit` to verify all tests pass
+3. If tests fail, fix issues and re-run tests
+4. Only commit when all tests are passing
+5. Use descriptive commit messages
+
+## Project-Specific Guidelines
+- This is a TypeScript/Node.js project with Jest testing
+- Frontend uses vanilla JavaScript (no frameworks)
+- Backend uses Express.js with PostgreSQL
+- All changes should maintain backward compatibility
+- Follow the existing component structure (globalNav, etc.)
+
+## Testing Commands
+- `npm run test:unit` - Run all unit tests
+- `npm run test:integration` - Run integration tests  
+- `npm run test:all` - Run both unit and integration tests
+- `npm run build` - Build the project
+- `npm run dev` - Start development server
+
+## Remember
+- Quality over speed
+- Test-driven development approach
+- Always verify functionality before committing
+- Ask for clarification if requirements are unclear
