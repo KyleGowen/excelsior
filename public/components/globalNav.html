@@ -1,0 +1,16 @@
+<!-- Global Navigation Component -->
+<div class="unified-header">
+    <div class="header-left">
+        <img src="/src/resources/images/logo/logo5.png" alt="Overpower Deckbuilder" class="header-logo" onclick="console.log('Main header logo clicked'); event.preventDefault(); event.stopPropagation(); return false;">
+    </div>
+    <div class="header-center">
+        <div class="app-tabs">
+            <button class="app-tab-button" id="databaseViewBtn" onclick="switchToDatabaseView()">Database View</button>
+            <button class="app-tab-button active" id="deckBuilderBtn" onclick="switchToDeckBuilder()">Deck Builder</button>
+        </div>
+    </div>
+    <div class="header-right">
+        <span id="userWelcome">Welcome, <span id="currentUsername"></span>!</span>
+        <button id="logoutBtn" class="logout-btn">Log Out</button>
+    </div>
+</div>

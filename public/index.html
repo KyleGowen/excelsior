@@ -22,112 +22,6 @@
             margin: 0 auto;
         }
 
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0;
-            padding: 15px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            backdrop-filter: blur(10px);
-            position: relative;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-            flex: 1;
-            max-width: calc(100% - 200px);
-        }
-
-        .header-logo {
-            max-width: 200px;
-            height: auto;
-            cursor: default !important;
-            pointer-events: none !important;
-        }
-
-        .header-stats {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 12px;
-            align-items: center;
-            max-width: 800px;
-            margin-right: 20px;
-        }
-
-        .header-stat {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            min-width: 0;
-        }
-
-        .header-stat-number {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #4ecdc4;
-            line-height: 1;
-            margin-bottom: 1px;
-        }
-
-        .header-stat-label {
-            font-size: 0.65rem;
-            color: #bdc3c7;
-            line-height: 1;
-            text-align: center;
-            word-wrap: break-word;
-            hyphens: auto;
-        }
-
-        /* Responsive adjustments for smaller screens */
-        @media (max-width: 1400px) {
-            .header-stats {
-                grid-template-columns: repeat(6, 1fr);
-                gap: 10px;
-                max-width: 700px;
-            }
-        }
-
-        @media (max-width: 1200px) {
-            .header-stats {
-                grid-template-columns: repeat(5, 1fr);
-                gap: 8px;
-                max-width: 600px;
-            }
-        }
-
-        @media (max-width: 900px) {
-            .header-stats {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 6px;
-                max-width: 500px;
-            }
-            
-            .header-left {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
-
-        @media (max-width: 700px) {
-            .header-stats {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 5px;
-                max-width: 400px;
-            }
-        }
-
-        @media (max-width: 500px) {
-            .header-stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 4px;
-                max-width: 300px;
-            }
-        }
 
         .header h1 {
             margin: 0;
@@ -207,43 +101,6 @@
             color: #1a1a2e;
         }
 
-        /* Top-level app tabs (Database View / Deck Builder) */
-        .app-tabs {
-            display: flex;
-            gap: 14px;
-            justify-content: center;
-            margin: 10px 0 24px 0;
-            padding: 14px;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 14px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        }
-        .app-tab-button {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
-            border: 2px solid rgba(255, 255, 255, 0.28);
-            color: #ffffff;
-            padding: 12px 22px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
-        }
-        .app-tab-button.active {
-            background: linear-gradient(135deg, #4ecdc4, #2cb1a6);
-            border-color: #4ecdc4;
-            color: #1a1a2e;
-            box-shadow: 0 6px 18px rgba(78, 205, 196, 0.45);
-        }
-        .app-tab-button:hover {
-            transform: translateY(-1px);
-            border-color: rgba(255, 255, 255, 0.45);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-        }
 
         .table-container {
             overflow-x: auto;
@@ -5098,28 +4955,42 @@
             font-size: 1rem;
         }
 
-        .logout-btn {
-            background: rgba(255, 255, 255, 0.05);
-            color: #bdc3c7;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
+
+        /* Create Deck Section - positioned below header */
+        .create-deck-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            min-height: 50px; /* Ensure it has some height */
+            width: 100%; /* Ensure it takes full width */
         }
 
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            transform: translateY(-1px);
+        .create-deck-btn {
+            background: linear-gradient(135deg, #4ecdc4, #2cb1a6);
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .create-deck-btn:hover {
+            background: linear-gradient(135deg, #5dd5cc, #3bc1b6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
         }
     </style>
     
     <!-- Authentication Service -->
     <script src="/js/auth-service.js"></script>
+    
+    <!-- Global Navigation Component -->
+    <link rel="stylesheet" href="/components/globalNav.css">
+    <script src="/components/globalNav.js"></script>
 </head>
 <body>
     <!-- Login Modal -->
@@ -5145,103 +5016,12 @@
     </div>
 
     <div class="container" id="mainContainer" style="display: block; opacity: 1;">
-        <div class="header">
-            <div class="header-left">
-                <img src="/src/resources/images/logo/logo5.png" alt="Overpower Deckbuilder" class="header-logo" onclick="console.log('Main header logo clicked'); event.preventDefault(); event.stopPropagation(); return false;">
-                <!-- Database Statistics (shown in database view) -->
-                <div class="header-stats" id="database-stats">
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-characters">-</div>
-                        <div class="header-stat-label">Characters</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-special-cards">-</div>
-                        <div class="header-stat-label">Special Cards</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-advanced-universe">-</div>
-                        <div class="header-stat-label">Advanced Universe</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-locations">-</div>
-                        <div class="header-stat-label">Locations</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-aspects">-</div>
-                        <div class="header-stat-label">Aspects</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-missions">-</div>
-                        <div class="header-stat-label">Missions</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-events">-</div>
-                        <div class="header-stat-label">Events</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-teamwork">-</div>
-                        <div class="header-stat-label">Teamwork</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-ally-universe">-</div>
-                        <div class="header-stat-label">Ally Universe</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-training">-</div>
-                        <div class="header-stat-label">Training</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-basic-universe">-</div>
-                        <div class="header-stat-label">Basic Universe</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-power-cards">-</div>
-                        <div class="header-stat-label">Power Cards</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-character-alternates">-</div>
-                        <div class="header-stat-label">Alternate Character Images</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-power-alternates">-</div>
-                        <div class="header-stat-label">Alternate Power Card Images</div>
-                    </div>
-                </div>
-                
-                <!-- Deck Statistics (shown in deck builder view) -->
-                <div class="header-stats" id="deck-stats" style="display: none;">
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-decks">-</div>
-                        <div class="header-stat-label">Total Decks</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="total-cards-in-decks">-</div>
-                        <div class="header-stat-label">Total Playable Cards</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="average-cards-per-deck">-</div>
-                        <div class="header-stat-label">Avg Cards/Deck</div>
-                    </div>
-                    <div class="header-stat">
-                        <div class="header-stat-number" id="largest-deck-size">-</div>
-                        <div class="header-stat-label">Largest Deck</div>
-                    </div>
-                </div>
-                
-            </div>
-            <div class="user-info">
-                <span id="userWelcome">Welcome, <span id="currentUsername"></span>!</span>
-                <button id="createDeckBtn" class="create-deck-btn" onclick="showCreateDeckModal()" style="display: none;">Create New Deck</button>
-                <button id="logoutBtn" class="logout-btn">Log Out</button>
-            </div>
-        </div>
+        <!-- Global Navigation Component -->
+        <div id="globalNav"></div>
 
-        
-
-        <!-- Top-level application tabs -->
-        <div class="app-tabs">
-            <button class="app-tab-button" id="databaseViewBtn" onclick="switchToDatabaseView()">Database View</button>
-            <button class="app-tab-button active" id="deckBuilderBtn" onclick="switchToDeckBuilder()">Deck Builder</button>
+        <!-- Create New Deck Button - positioned below header -->
+        <div class="create-deck-section" id="createDeckSection" style="display: none;">
+            <button id="createDeckBtn" class="create-deck-btn" onclick="showCreateDeckModal()">Create New Deck</button>
         </div>
 
         <div id="database-view" class="database-section" style="display: block;">
@@ -6090,82 +5870,6 @@
             }
         }
 
-        // Client-side navigation functions
-        function switchToDatabaseView() {
-            // Update URL without page reload
-            const currentUser = getCurrentUser();
-            const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
-            history.pushState({view: 'database'}, '', `/users/${userId}/decks`);
-            
-            // Update button states
-            document.getElementById('databaseViewBtn').classList.add('active');
-            document.getElementById('deckBuilderBtn').classList.remove('active');
-            
-            // Show database view, hide deck builder
-            document.getElementById('database-view').style.display = 'block';
-            document.getElementById('deck-builder').style.display = 'none';
-            
-            // Show database statistics and hide deck statistics
-            const databaseStats = document.getElementById('database-stats');
-            const deckStats = document.getElementById('deck-stats');
-            const createDeckBtn = document.getElementById('createDeckBtn');
-            
-            if (databaseStats) databaseStats.style.display = 'grid';
-            if (deckStats) deckStats.style.display = 'none';
-            if (createDeckBtn) createDeckBtn.style.display = 'none';
-            
-            // Load database data if not already loaded
-            if (document.getElementById('total-characters').textContent === '-') {
-                loadDatabaseViewData();
-            }
-        }
-        
-        function switchToDeckBuilder() {
-            // Update URL without page reload
-            const currentUser = getCurrentUser();
-            const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
-            history.pushState({view: 'deckbuilder'}, '', `/users/${userId}/decks`);
-            
-            // Update button states
-            document.getElementById('deckBuilderBtn').classList.add('active');
-            document.getElementById('databaseViewBtn').classList.remove('active');
-            
-            // Show deck builder, hide database view
-            document.getElementById('deck-builder').style.display = 'block';
-            document.getElementById('database-view').style.display = 'none';
-            
-            // Show deck statistics and hide database statistics
-            const databaseStats = document.getElementById('database-stats');
-            const deckStats = document.getElementById('deck-stats');
-            const createDeckBtn = document.getElementById('createDeckBtn');
-            
-            if (databaseStats) databaseStats.style.display = 'none';
-            if (deckStats) deckStats.style.display = 'grid';
-            
-            // Ensure username is displayed when switching back to deck builder
-            if (currentUser) {
-                const displayName = (currentUser.username === 'guest' || currentUser.name === 'guest') 
-                    ? 'Guest' 
-                    : (currentUser.username || currentUser.name || 'User');
-                const usernameElement = document.getElementById('currentUsername');
-                if (usernameElement) {
-                    usernameElement.textContent = displayName;
-                }
-            }
-            if (createDeckBtn) createDeckBtn.style.display = 'inline-block';
-            
-            // Load deck builder data if not already loaded
-            loadDecks();
-        }
-        
-        // Handle browser back/forward buttons
-        window.addEventListener('popstate', function(event) {
-            if (event.state && event.state.view === 'database') {
-                switchToDatabaseView();
-            } else {
-                switchToDeckBuilder();
-            }
-        });
         
         // Load database view data
         async function loadDatabaseViewData() {
@@ -8320,7 +8024,6 @@
         }
 
         function showMainApp() {
-            console.log('🔍 showMainApp() called');
             document.getElementById('loginModal').style.display = 'none';
             // Display "Guest" with capital G for guest users, otherwise use the username/name
             const displayName = (currentUser.username === 'guest' || currentUser.name === 'guest') 
@@ -8331,23 +8034,69 @@
             // Load user decks after successful login
             loadUserDecks();
             
-            // Ensure database view is visible before loading data if it's the active view
-            const databaseView = document.getElementById('database-view');
-            if (databaseView) {
-                console.log('🔍 database-view element:', databaseView);
-                console.log('🔍 database-view display style (before check):', databaseView.style.display);
-                if (databaseView.style.display === 'none') {
-                    console.log('🔍 showMainApp() - database view was hidden, setting to block');
-                    databaseView.style.display = 'block'; // Explicitly make it visible
+            // Check if we're on the deck builder route and set the appropriate view
+            const isDeckBuilderRoute = window.location.pathname.includes('/users/') && window.location.pathname.includes('/decks');
+            
+            if (isDeckBuilderRoute) {
+                // Start in deck builder view
+                document.getElementById('database-view').style.display = 'none';
+                document.getElementById('deck-builder').style.display = 'block';
+                document.getElementById('databaseViewBtn').classList.remove('active');
+                document.getElementById('deckBuilderBtn').classList.add('active');
+                
+                // Show create deck section
+                const createDeckSection = document.getElementById('createDeckSection');
+                if (createDeckSection) {
+                    createDeckSection.style.display = 'flex';
+                    
+                    // Make the button visible
+                    const createDeckBtn = createDeckSection.querySelector('button');
+                    if (createDeckBtn) {
+                        // Remove the display: none completely and set new styles
+                        createDeckBtn.removeAttribute('style');
+                        createDeckBtn.style.display = 'inline-block';
+                        createDeckBtn.style.visibility = 'visible';
+                        createDeckBtn.style.opacity = '1';
+                        
+                        // Force visibility with a timeout to override any other code
+                        setTimeout(() => {
+                            if (createDeckBtn.style.display === 'none' || window.getComputedStyle(createDeckBtn).display === 'none') {
+                                createDeckBtn.removeAttribute('style');
+                                createDeckBtn.style.display = 'inline-block';
+                                createDeckBtn.style.visibility = 'visible';
+                                createDeckBtn.style.opacity = '1';
+                            }
+                        }, 50);
+                        
+                        // Also try again after a longer delay
+                        setTimeout(() => {
+                            if (createDeckBtn.style.display === 'none' || window.getComputedStyle(createDeckBtn).display === 'none') {
+                                createDeckBtn.removeAttribute('style');
+                                createDeckBtn.style.display = 'inline-block';
+                                createDeckBtn.style.visibility = 'visible';
+                                createDeckBtn.style.opacity = '1';
+                            }
+                        }, 200);
+                    }
                 }
-            }
-
-            // Load database view data if we're on the database view
-            if (databaseView && databaseView.style.display !== 'none') {
-                console.log('🔍 showMainApp() - loading database view data...');
-                loadDatabaseViewData();
+                
+                // Load deck builder data
+                if (typeof loadDecks === 'function') {
+                    loadDecks();
+                }
             } else {
-                console.log('🔍 showMainApp() - database view not visible, skipping data load');
+                // Start in database view
+                const databaseView = document.getElementById('database-view');
+                if (databaseView) {
+                    if (databaseView.style.display === 'none') {
+                        databaseView.style.display = 'block'; // Explicitly make it visible
+                    }
+                }
+
+                // Load database view data if we're on the database view
+                if (databaseView && databaseView.style.display !== 'none') {
+                    loadDatabaseViewData();
+                }
             }
         }
 
@@ -8407,7 +8156,24 @@
             loadDecks();
             updateStats();
         }
+        // Load and initialize global navigation component
+        async function loadGlobalNav() {
+            try {
+                const response = await fetch('/components/globalNav.html');
+                const html = await response.text();
+                document.getElementById('globalNav').innerHTML = html;
+                
+                // Initialize the global navigation
+                initializeGlobalNav();
+            } catch (error) {
+                console.error('Failed to load global navigation:', error);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
+            // Load global navigation first
+            await loadGlobalNav();
+            
             const authResult = await checkAuthentication();
             currentUser = authResult.currentUser; // Update global currentUser after checkAuthentication
 
@@ -8466,11 +8232,28 @@
             
             // Load data only if authenticated
             if (currentUser) {
-                // Set initial view state
-                document.getElementById('database-view').style.display = 'block';
-                document.getElementById('deck-builder').style.display = 'none';
-                document.getElementById('databaseViewBtn').classList.add('active');
-                document.getElementById('deckBuilderBtn').classList.remove('active');
+                // Check if we're on the deck builder route
+                const isDeckBuilderRoute = window.location.pathname.includes('/users/') && window.location.pathname.includes('/decks');
+                
+                if (isDeckBuilderRoute) {
+                    // Start in deck builder view
+                    document.getElementById('database-view').style.display = 'none';
+                    document.getElementById('deck-builder').style.display = 'block';
+                    document.getElementById('databaseViewBtn').classList.remove('active');
+                    document.getElementById('deckBuilderBtn').classList.add('active');
+                    
+                    // Show create deck section
+                    const createDeckSection = document.getElementById('createDeckSection');
+                    if (createDeckSection) {
+                        createDeckSection.style.display = 'flex';
+                    }
+                } else {
+                    // Start in database view
+                    document.getElementById('database-view').style.display = 'block';
+                    document.getElementById('deck-builder').style.display = 'none';
+                    document.getElementById('databaseViewBtn').classList.add('active');
+                    document.getElementById('deckBuilderBtn').classList.remove('active');
+                }
                 
                 // Show database statistics in initial database view
                 const databaseStats = document.getElementById('database-stats');

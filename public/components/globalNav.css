@@ -1,0 +1,122 @@
+/* Global Navigation Component Styles */
+
+/* Unified header bar styling */
+.unified-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 15px;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    height: 50px;
+    position: relative;
+}
+
+.header-left {
+    flex: 0 0 auto;
+}
+
+.header-logo {
+    max-width: 120px; /* Smaller to fit compact header */
+    height: auto;
+    cursor: default !important;
+    pointer-events: none !important;
+    margin-top: 15px; /* Fine-tuned positioning for optimal buffer room */
+}
+
+.header-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-right {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Top-level app tabs (Database View / Deck Builder) - now in unified header */
+.app-tabs {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+.app-tab-button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+}
+.app-tab-button.active {
+    background: linear-gradient(135deg, #4ecdc4, #2cb1a6);
+    border-color: #4ecdc4;
+    color: #1a1a2e;
+    box-shadow: 0 6px 18px rgba(78, 205, 196, 0.45);
+}
+
+.logout-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+}
+
+/* Responsive adjustments for unified header */
+@media (max-width: 900px) {
+    .unified-header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .header-left,
+    .header-center,
+    .header-right {
+        flex: none;
+    }
+    
+    .header-logo {
+        max-width: 120px;
+    }
+}
+
+@media (max-width: 600px) {
+    .unified-header {
+        padding: 6px 12px;
+    }
+    
+    .header-logo {
+        max-width: 100px;
+    }
+    
+    .header-right {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
