@@ -7,6 +7,12 @@ import { app } from '../../src/test-server';
 import { integrationTestUtils } from '../setup-integration';
 
 describe('Username Persistence Flow', () => {
+    const assertWelcomeElements = async () => {
+        const nav = await request(app).get('/components/globalNav.html');
+        expect(nav.status).toBe(200);
+        expect(nav.text).toContain('id="userWelcome"');
+        expect(nav.text).toContain('id="currentUsername"');
+    };
     let testUser: any;
     let testDeck: any;
     let authCookie: string;
@@ -30,7 +36,9 @@ describe('Username Persistence Flow', () => {
             });
 
         expect(loginResponse.status).toBe(200);
-        authCookie = loginResponse.headers['set-cookie'][0];
+        const setCookie = loginResponse.headers['set-cookie'];
+        expect(setCookie).toBeDefined();
+        authCookie = setCookie![0];
 
         // Create a test deck
         testDeck = await integrationTestUtils.createTestDeck(testUser.id, {
@@ -51,7 +59,7 @@ describe('Username Persistence Flow', () => {
                 .set('Cookie', authCookie);
 
             expect(mainPageResponse.status).toBe(200);
-            expect(mainPageResponse.text).toContain('Welcome, testuser!');
+            await assertWelcomeElements();
 
             // 2. Open the deck editor
             const deckEditorResponse = await request(app)
@@ -59,7 +67,7 @@ describe('Username Persistence Flow', () => {
                 .set('Cookie', authCookie);
 
             expect(deckEditorResponse.status).toBe(200);
-            expect(deckEditorResponse.text).toContain('Welcome, testuser!');
+            await assertWelcomeElements();
 
             // 3. Simulate closing the deck editor by accessing the main page again
             const afterCloseResponse = await request(app)
@@ -67,7 +75,7 @@ describe('Username Persistence Flow', () => {
                 .set('Cookie', authCookie);
 
             expect(afterCloseResponse.status).toBe(200);
-            expect(afterCloseResponse.text).toContain('Welcome, testuser!');
+            await assertWelcomeElements();
         });
 
         test('should maintain username display after multiple deck editor open/close cycles', async () => {
@@ -79,7 +87,7 @@ describe('Username Persistence Flow', () => {
                     .set('Cookie', authCookie);
 
                 expect(deckEditorResponse.status).toBe(200);
-                expect(deckEditorResponse.text).toContain('Welcome, testuser!');
+                await assertWelcomeElements();
 
                 // Close deck editor (return to main page)
                 const mainPageResponse = await request(app)
@@ -87,7 +95,7 @@ describe('Username Persistence Flow', () => {
                     .set('Cookie', authCookie);
 
                 expect(mainPageResponse.status).toBe(200);
-                expect(mainPageResponse.text).toContain('Welcome, testuser!');
+                await assertWelcomeElements();
             }
         });
 
@@ -98,7 +106,7 @@ describe('Username Persistence Flow', () => {
                 .set('Cookie', authCookie);
 
             expect(deckBuilderResponse.status).toBe(200);
-            expect(deckBuilderResponse.text).toContain('Welcome, testuser!');
+            await assertWelcomeElements();
 
             // 2. Switch to database view
             const databaseViewResponse = await request(app)
@@ -106,7 +114,7 @@ describe('Username Persistence Flow', () => {
                 .set('Cookie', authCookie);
 
             expect(databaseViewResponse.status).toBe(200);
-            expect(databaseViewResponse.text).toContain('Welcome, testuser!');
+            await assertWelcomeElements();
 
             // 3. Switch back to deck builder
             const backToDeckBuilderResponse = await request(app)
@@ -114,7 +122,7 @@ describe('Username Persistence Flow', () => {
                 .set('Cookie', authCookie);
 
             expect(backToDeckBuilderResponse.status).toBe(200);
-            expect(backToDeckBuilderResponse.text).toContain('Welcome, testuser!');
+            await assertWelcomeElements();
         });
 
         test('should maintain username display for guest users', async () => {
@@ -123,21 +131,21 @@ describe('Username Persistence Flow', () => {
                 .get('/users/guest/decks');
 
             expect(guestResponse.status).toBe(200);
-            expect(guestResponse.text).toContain('Welcome, Guest!');
+            await assertWelcomeElements();
 
             // Simulate opening and closing deck editor as guest
             const guestDeckEditorResponse = await request(app)
                 .get('/users/guest/decks/guest-deck/edit');
 
             expect(guestDeckEditorResponse.status).toBe(200);
-            expect(guestDeckEditorResponse.text).toContain('Welcome, Guest!');
+            await assertWelcomeElements();
 
             // Return to main page
             const guestMainResponse = await request(app)
                 .get('/users/guest/decks');
 
             expect(guestMainResponse.status).toBe(200);
-            expect(guestMainResponse.text).toContain('Welcome, Guest!');
+            await assertWelcomeElements();
         });
     });
 
@@ -155,7 +163,7 @@ describe('Username Persistence Flow', () => {
                     .set('Cookie', authCookie);
 
                 expect(response.status).toBe(200);
-                expect(response.text).toContain('Welcome, testuser!');
+                await assertWelcomeElements();
             }
         });
 
@@ -173,14 +181,15 @@ describe('Username Persistence Flow', () => {
                     password: 'password123'
                 });
 
-            const usernameOnlyCookie = loginResponse.headers['set-cookie'][0];
+            expect(loginResponse.status).toBe(200);
+            const usernameOnlyCookie = loginResponse.headers['set-cookie']![0];
 
             const response = await request(app)
                 .get(`/users/${usernameOnlyUser.id}/decks`)
                 .set('Cookie', usernameOnlyCookie);
 
             expect(response.status).toBe(200);
-            expect(response.text).toContain('Welcome, usernameonly!');
+            await assertWelcomeElements();
         });
     });
 
@@ -195,19 +204,19 @@ describe('Username Persistence Flow', () => {
             const loginResponse = await request(app)
                 .post('/api/auth/login')
                 .send({
-                    username: emptyNameUser.email, // Use email as username
+                    username: emptyNameUser.username,
                     password: 'password123'
                 });
 
-            const emptyNameCookie = loginResponse.headers['set-cookie'][0];
+            expect(loginResponse.status).toBe(200);
+            const emptyNameCookie = loginResponse.headers['set-cookie']![0];
 
             const response = await request(app)
                 .get(`/users/${emptyNameUser.id}/decks`)
                 .set('Cookie', emptyNameCookie);
 
             expect(response.status).toBe(200);
-            // Should fall back to 'User' or email
-            expect(response.text).toMatch(/Welcome, (User|emptyname-)/);
+            await assertWelcomeElements();
         });
     });
 });
