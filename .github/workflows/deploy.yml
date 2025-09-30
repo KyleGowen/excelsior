@@ -148,3 +148,4 @@ jobs:
         echo "✅ Deployment completed successfully!"
         echo "🌐 Application URL: http://excelsior.cards"
         echo "🔍 Image deployed: ${{ steps.build-image.outputs.image }}"
+# Trigger new deployment
