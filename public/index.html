@@ -5055,7 +5055,7 @@
 
 
 
-            <div class="table-container" id="characters-tab">
+            <div class="table-container" id="characters-tab" style="display: block;">
                 <table id="characters-table">
                     <thead>
                         <tr>
@@ -6200,6 +6200,18 @@
             console.log('🔍 Clearing all filters globally...');
             clearAllFiltersGlobally();
             
+            // Ensure characters tab is visible before loading data
+            console.log('🔍 Making characters tab visible...');
+            const charactersTab = document.getElementById('characters-tab');
+            charactersTab.style.display = 'block';
+            console.log('🔍 Characters tab display style:', charactersTab.style.display);
+            
+            // Set characters tab as active
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            const charactersButton = document.querySelector('[onclick="switchTab(\'characters\')"]');
+            charactersButton.classList.add('active');
+            console.log('🔍 Characters button active class:', charactersButton.classList.contains('active'));
+            
             try {
                 console.log('🔍 About to load all data in parallel...');
                 await Promise.all([
@@ -6237,6 +6249,10 @@
                 
                 if (data.success) {
                     console.log('🔍 About to display', data.data.length, 'characters');
+                    
+                    // Small delay to ensure DOM is ready
+                    await new Promise(resolve => setTimeout(resolve, 10));
+                    
                     displayCharacters(data.data);
                     updateStats(data.data);
                     console.log('✅ Characters loaded and displayed successfully:', data.data.length);
@@ -6275,8 +6291,20 @@
                 console.error('❌ characters-tbody element not found!');
                 return;
             }
+            
+            // Ensure the characters tab is visible before populating
+            const charactersTab = document.getElementById('characters-tab');
+            console.log('🔍 Characters tab display style before check:', charactersTab.style.display);
+            if (charactersTab && charactersTab.style.display === 'none') {
+                console.log('🔍 Making characters tab visible before populating...');
+                charactersTab.style.display = 'block';
+            }
+            
             tbody.innerHTML = '';
             console.log('🔍 Cleared tbody, about to render', characters.length, 'characters');
+            
+            // Verify tbody is ready
+            console.log('🔍 Tbody element ready:', tbody.offsetParent !== null);
 
             characters.forEach(character => {
                 const row = document.createElement('tr');
