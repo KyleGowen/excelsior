@@ -75,6 +75,12 @@ jobs:
         docker build --platform linux/amd64 --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
         
+        # Verify critical files are present in the image
+        echo "🔍 Verifying critical files in Docker image..."
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ls -la /app/public/js/ || echo "❌ js directory missing"
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG test -f /app/public/js/auth-service.js || echo "❌ auth-service.js missing"
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ls -la /app/public/ || echo "❌ public directory listing"
+        
         # Push both tagged versions
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
@@ -136,7 +142,9 @@ jobs:
           --document-name "AWS-RunShellScript" \
           --parameters 'commands=[
             "docker ps",
-            "docker logs overpower-deckbuilder --tail 20"
+            "docker logs overpower-deckbuilder --tail 20",
+            "ls -la /app/public/js/",
+            "test -f /app/public/js/auth-service.js && echo \"✅ auth-service.js found\" || echo \"❌ auth-service.js missing\""
           ]' \
           --output text --query 'Command.CommandId'
           
