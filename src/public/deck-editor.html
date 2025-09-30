@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deck Editor - Overpower Deckbuilder</title>
+    <link rel="stylesheet" href="/src/public/styles/common.css">
+    <link rel="stylesheet" href="/src/public/styles/deck-editor.css">
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1 id="deckTitle">Loading Deck...</h1>
+            <div class="header-actions">
+                <a href="/" class="btn btn-secondary">← Back to Decks</a>
+                <button id="saveDeckBtn" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="deck-stats-bar">
+            <div class="stat-item">
+                <span class="stat-label">TOTAL CARDS:</span>
+                <span class="stat-value" id="totalCards">0/51</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">MAX ENERGY:</span>
+                <span class="stat-value" id="maxEnergy">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">MAX COMBAT:</span>
+                <span class="stat-value" id="maxCombat">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">MAX BRUTE FORCE:</span>
+                <span class="stat-value" id="maxBruteForce">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">MAX INTELLIGENCE:</span>
+                <span class="stat-value" id="maxIntelligence">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">TOTAL THREAT:</span>
+                <span class="stat-value" id="totalThreat">0/76</span>
+            </div>
+        </div>
+
+        <div class="deckbuilder-container">
+            <div class="deck-viewer">
+                <div class="section-header">
+                    <h2 class="section-title">Current Deck</h2>
+                    <button id="clearAllBtn" class="btn btn-danger">Remove All</button>
+                </div>
+                <div id="deckCardsEditor" class="deck-cards">
+                    <div class="loading">Loading deck cards...</div>
+                </div>
+            </div>
+
+            <div class="card-browser">
+                <div class="section-header">
+                    <h2 class="section-title">Available Cards</h2>
+                    <div class="search-controls">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search cards...">
+                        <select id="filterSelect" class="filter-select">
+                            <option value="">All Categories</option>
+                            <option value="character">Characters</option>
+                            <option value="location">Locations</option>
+                            <option value="special">Special Cards</option>
+                            <option value="mission">Missions</option>
+                            <option value="event">Events</option>
+                            <option value="aspect">Aspects</option>
+                            <option value="advanced-universe">Advanced Universe</option>
+                            <option value="teamwork">Teamwork</option>
+                            <option value="ally-universe">Ally Universe</option>
+                            <option value="training">Training</option>
+                            <option value="basic-universe">Basic Universe</option>
+                            <option value="power">Power Cards</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="cardCategories" class="card-categories">
+                    <div class="loading">Loading available cards...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Hover Modal -->
+    <div id="cardHoverModal" class="card-hover-modal">
+        <div class="card-hover-content">
+            <img id="cardHoverImage" src="">
+        </div>
+    </div>
+
+    <!-- Alternate Art Selection Modal -->
+    <div id="alternateArtModal" class="alternate-art-modal" style="display: none;">
+        <div class="alternate-art-content">
+            <h3 id="alternateArtTitle">Select Art</h3>
+            <div id="alternateArtOptions" class="alternate-art-options"></div>
+            <div class="alternate-art-actions">
+                <button id="cancelAlternateArt" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <!-- Scripts -->
+    <script src="/src/public/js/api.js"></script>
+    <script src="/src/public/js/deck-manager.js"></script>
+    <script src="/src/public/js/card-browser.js"></script>
+    <script src="/src/public/js/drag-drop.js"></script>
+    <script src="/src/public/js/deck-editor.js"></script>
+</body>
+</html>
