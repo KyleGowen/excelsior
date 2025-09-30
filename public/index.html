@@ -6190,6 +6190,9 @@
                 console.log('🔍 Ensuring characters tab is shown after data load...');
                 switchTab('characters');
                 
+                // Disable "Add to Deck" buttons for guest users
+                disableAddToDeckButtons();
+                
                 console.log('✅ Database view data loaded successfully');
             } catch (error) {
                 console.error('❌ Error loading database view data:', error);
@@ -6241,6 +6244,29 @@
             }
         }
 
+        // Check if current user is guest
+        function isGuestUser() {
+            const currentUser = getCurrentUser();
+            const isGuest = currentUser && (currentUser.role === 'GUEST' || currentUser.name === 'guest' || currentUser.username === 'guest');
+            console.log('🔍 isGuestUser() called - currentUser:', currentUser, 'isGuest:', isGuest);
+            return isGuest;
+        }
+
+        // Disable "Add to Deck" buttons for guest users
+        function disableAddToDeckButtons() {
+            if (isGuestUser()) {
+                const addToDeckButtons = document.querySelectorAll('.add-to-deck-btn');
+                addToDeckButtons.forEach(button => {
+                    button.disabled = true;
+                    button.style.opacity = '0.5';
+                    button.style.cursor = 'not-allowed';
+                    button.title = 'Log in to add to decks...';
+                    // Also add a data attribute for debugging
+                    button.setAttribute('data-guest-disabled', 'true');
+                });
+                console.log('🔍 Disabled', addToDeckButtons.length, 'Add to Deck buttons for guest user');
+            }
+        }
 
         function displayCharacters(characters) {
             console.log('🔍 displayCharacters() called with', characters.length, 'characters');
@@ -6856,6 +6882,9 @@
                 setupPowerCardsSearch();
                 loadPowerCards();
             }
+            
+            // Disable "Add to Deck" buttons for guest users after loading tab data
+            setTimeout(() => disableAddToDeckButtons(), 50);
         }
 
         // Location search functionality
@@ -7973,6 +8002,9 @@
             // Load database view data (this will load characters)
             console.log('🔍 showMainApp() - loading database view data...');
             loadDatabaseViewData();
+            
+            // Disable "Add to Deck" buttons for guest users
+            setTimeout(() => disableAddToDeckButtons(), 100);
         }
 
         // Load main app data in background without showing the UI
