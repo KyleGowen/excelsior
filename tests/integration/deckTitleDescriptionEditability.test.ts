@@ -23,8 +23,8 @@ describe('Deck Title and Description Editability Tests', () => {
     // Set up database connection
     pool = new Pool({
       host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432'),
-      database: process.env.DB_NAME || 'overpower_deckbuilder',
+      port: parseInt(process.env.DB_PORT || '1337'),
+      database: process.env.DB_NAME || 'overpower',
       user: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASSWORD || 'password'
     });
