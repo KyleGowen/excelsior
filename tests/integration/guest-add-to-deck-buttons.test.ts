@@ -119,33 +119,130 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
             expect(response.text).toContain('disableAddToDeckButtons');
         });
 
-        it('should have disabled Add to Deck buttons on all card type tabs', async () => {
-            const tabs = [
-                'special-cards',
-                'locations',
-                'aspects',
-                'missions',
-                'events',
-                'teamwork',
-                'ally-universe',
-                'training',
-                'basic-universe',
-                'power-cards'
-            ];
+        it('should have disabled Add to Deck buttons on special cards tab', async () => {
+            const response = await request(app)
+                .get('/users/guest/decks')
+                .set('Cookie', guestAuthCookie)
+                .expect(200);
 
-            for (const tab of tabs) {
-                const response = await request(app)
-                    .get('/users/guest/decks')
-                    .set('Cookie', guestAuthCookie)
-                    .expect(200);
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
 
-                // Check that the page loads
-                expect(response.text).toContain('database-view');
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
 
-                // Check that the JavaScript functions are present
-                expect(response.text).toContain('isGuestUser');
-                expect(response.text).toContain('disableAddToDeckButtons');
-            }
+        it('should have disabled Add to Deck buttons on locations tab', async () => {
+            const response = await request(app)
+                .get('/users/guest/decks')
+                .set('Cookie', guestAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have disabled Add to Deck buttons on aspects tab', async () => {
+            const response = await request(app)
+                .get('/users/guest/decks')
+                .set('Cookie', guestAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have disabled Add to Deck buttons on missions tab', async () => {
+            const response = await request(app)
+                .get('/users/guest/decks')
+                .set('Cookie', guestAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have disabled Add to Deck buttons on events tab', async () => {
+            const response = await request(app)
+                .get('/users/guest/decks')
+                .set('Cookie', guestAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have disabled Add to Deck buttons on teamwork tab', async () => {
+            const response = await request(app)
+                .get('/users/guest/decks')
+                .set('Cookie', guestAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have disabled Add to Deck buttons on ally universe tab', async () => {
+            const response = await request(app)
+                .get('/users/guest/decks')
+                .set('Cookie', guestAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have disabled Add to Deck buttons on training tab', async () => {
+            const response = await request(app)
+                .get('/users/guest/decks')
+                .set('Cookie', guestAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have disabled Add to Deck buttons on power cards tab', async () => {
+            const response = await request(app)
+                .get('/users/guest/decks')
+                .set('Cookie', guestAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
         });
     });
 
@@ -179,34 +276,144 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
             expect(response.text).toContain('disableAddToDeckButtons');
         });
 
-        it('should have enabled Add to Deck buttons on all card type tabs', async () => {
-            const tabs = [
-                'special-cards',
-                'advanced-universe',
-                'locations',
-                'aspects',
-                'missions',
-                'events',
-                'teamwork',
-                'ally-universe',
-                'training',
-                'basic-universe',
-                'power-cards'
-            ];
+        it('should have enabled Add to Deck buttons on special cards tab', async () => {
+            const response = await request(app)
+                .get('/users/testuser/decks')
+                .set('Cookie', userAuthCookie)
+                .expect(200);
 
-            for (const tab of tabs) {
-                const response = await request(app)
-                    .get('/users/testuser/decks')
-                    .set('Cookie', userAuthCookie)
-                    .expect(200);
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
 
-                // Check that the page loads
-                expect(response.text).toContain('database-view');
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
 
-                // Check that the JavaScript functions are present
-                expect(response.text).toContain('isGuestUser');
-                expect(response.text).toContain('disableAddToDeckButtons');
-            }
+        it('should have enabled Add to Deck buttons on advanced universe tab', async () => {
+            const response = await request(app)
+                .get('/users/testuser/decks')
+                .set('Cookie', userAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on locations tab', async () => {
+            const response = await request(app)
+                .get('/users/testuser/decks')
+                .set('Cookie', userAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on aspects tab', async () => {
+            const response = await request(app)
+                .get('/users/testuser/decks')
+                .set('Cookie', userAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on missions tab', async () => {
+            const response = await request(app)
+                .get('/users/testuser/decks')
+                .set('Cookie', userAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on events tab', async () => {
+            const response = await request(app)
+                .get('/users/testuser/decks')
+                .set('Cookie', userAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on teamwork tab', async () => {
+            const response = await request(app)
+                .get('/users/testuser/decks')
+                .set('Cookie', userAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on ally universe tab', async () => {
+            const response = await request(app)
+                .get('/users/testuser/decks')
+                .set('Cookie', userAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on training tab', async () => {
+            const response = await request(app)
+                .get('/users/testuser/decks')
+                .set('Cookie', userAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on power cards tab', async () => {
+            const response = await request(app)
+                .get('/users/testuser/decks')
+                .set('Cookie', userAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
         });
     });
 
@@ -240,34 +447,144 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
             expect(response.text).toContain('disableAddToDeckButtons');
         });
 
-        it('should have enabled Add to Deck buttons on all card type tabs', async () => {
-            const tabs = [
-                'special-cards',
-                'advanced-universe',
-                'locations',
-                'aspects',
-                'missions',
-                'events',
-                'teamwork',
-                'ally-universe',
-                'training',
-                'basic-universe',
-                'power-cards'
-            ];
+        it('should have enabled Add to Deck buttons on special cards tab', async () => {
+            const response = await request(app)
+                .get('/users/admin/decks')
+                .set('Cookie', adminAuthCookie)
+                .expect(200);
 
-            for (const tab of tabs) {
-                const response = await request(app)
-                    .get('/users/admin/decks')
-                    .set('Cookie', adminAuthCookie)
-                    .expect(200);
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
 
-                // Check that the page loads
-                expect(response.text).toContain('database-view');
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
 
-                // Check that the JavaScript functions are present
-                expect(response.text).toContain('isGuestUser');
-                expect(response.text).toContain('disableAddToDeckButtons');
-            }
+        it('should have enabled Add to Deck buttons on advanced universe tab', async () => {
+            const response = await request(app)
+                .get('/users/admin/decks')
+                .set('Cookie', adminAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on locations tab', async () => {
+            const response = await request(app)
+                .get('/users/admin/decks')
+                .set('Cookie', adminAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on aspects tab', async () => {
+            const response = await request(app)
+                .get('/users/admin/decks')
+                .set('Cookie', adminAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on missions tab', async () => {
+            const response = await request(app)
+                .get('/users/admin/decks')
+                .set('Cookie', adminAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on events tab', async () => {
+            const response = await request(app)
+                .get('/users/admin/decks')
+                .set('Cookie', adminAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on teamwork tab', async () => {
+            const response = await request(app)
+                .get('/users/admin/decks')
+                .set('Cookie', adminAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on ally universe tab', async () => {
+            const response = await request(app)
+                .get('/users/admin/decks')
+                .set('Cookie', adminAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on training tab', async () => {
+            const response = await request(app)
+                .get('/users/admin/decks')
+                .set('Cookie', adminAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
+        });
+
+        it('should have enabled Add to Deck buttons on power cards tab', async () => {
+            const response = await request(app)
+                .get('/users/admin/decks')
+                .set('Cookie', adminAuthCookie)
+                .expect(200);
+
+            // Check that the page loads
+            expect(response.text).toContain('database-view');
+
+            // Check that the JavaScript functions are present
+            expect(response.text).toContain('isGuestUser');
+            expect(response.text).toContain('disableAddToDeckButtons');
         });
     });
 
