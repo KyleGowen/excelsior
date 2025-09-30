@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overpower Deckbuilder - Characters Database</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            margin: 0;
+            padding: 20px;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            min-height: 80px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2rem;
+            color: #bdc3c7;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+
+        .stat-label {
+            color: #bdc3c7;
+            margin-top: 5px;
+        }
+
+        .characters-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #4ecdc4;
+        }
+
+        .tab-container {
+            margin-bottom: 20px;
+        }
+
+        .tab-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-button.active {
+            background: #4ecdc4;
+            color: #1a1a2e;
+        }
+
+        .app-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .app-tab-button { 
+            padding: 10px 20px; 
+            margin: 0 10px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+        }
+
+        .app-tab-button.active { background: #28a745; }
+        .app-tab-button:hover { background: #0056b3; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            table-layout: fixed;
+        }
+
+        .data-table th {
+            background: rgba(78, 205, 196, 0.2);
+            color: #ffffff;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Column width adjustments */
+        .data-table th:nth-child(1), .data-table td:nth-child(1) { width: 25%; } /* Name - more space for text */
+        .data-table th:nth-child(2), .data-table td:nth-child(2) { width: 8%; }  /* Energy - less space for numbers */
+        .data-table th:nth-child(3), .data-table td:nth-child(3) { width: 8%; }  /* Combat - less space for numbers */
+        .data-table th:nth-child(4), .data-table td:nth-child(4) { width: 8%; }  /* Brute Force - less space for numbers */
+        .data-table th:nth-child(5), .data-table td:nth-child(5) { width: 8%; }  /* Intelligence - less space for numbers */
+        .data-table th:nth-child(6), .data-table td:nth-child(6) { width: 8%; }  /* Threat Level - less space for numbers */
+        .data-table th:nth-child(7), .data-table td:nth-child(7) { width: 35%; } /* Special Abilities - more space for text */
+
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .threat-high { color: #ff6b6b; font-weight: bold; }
+        .threat-medium { color: #ffa726; font-weight: bold; }
+        .threat-low { color: #66bb6a; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation tabs -->
+        <div class="app-tabs">
+            <button class="app-tab-button active" onclick="window.location.href='/data'">Database View</button>
+            <button class="app-tab-button" onclick="window.location.href='/users/kyle-001/decks'">Deck Builder</button>
+        </div>
+
+        <div class="header">
+            <h1>🗄️ Overpower Database</h1>
+            <p>Database with <span id="total-characters-count">43</span> characters and <span id="total-locations-count">8</span> locations</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-info">
+                    <div class="stat-number" id="total-characters">43</div>
+                    <div class="stat-label">Characters</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <div class="stat-number" id="total-locations">8</div>
+                    <div class="stat-label">Locations</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <div class="stat-number" id="total-users">0</div>
+                    <div class="stat-label">Users</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <div class="stat-number" id="total-decks">3</div>
+                    <div class="stat-label">Decks</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="characters-section">
+            <div class="section-header">
+                <h2>📊 Characters (43)</h2>
+            </div>
+            
+            <div class="tab-container">
+                <div class="tab-row">
+                    <button class="tab-button active" onclick="switchTab('characters')">Characters</button>
+                    <button class="tab-button" onclick="switchTab('special-cards')">Special Cards</button>
+                    <button class="tab-button" onclick="switchTab('advanced-universe')">Advanced Universe</button>
+                    <button class="tab-button" onclick="switchTab('locations')">Locations</button>
+                    <button class="tab-button" onclick="switchTab('aspects')">Aspects</button>
+                    <button class="tab-button" onclick="switchTab('missions')">Missions</button>
+                </div>
+                <div class="tab-row">
+                    <button class="tab-button" onclick="switchTab('events')">Events</button>
+                    <button class="tab-button" onclick="switchTab('teamwork')">Universe: Teamwork</button>
+                    <button class="tab-button" onclick="switchTab('ally-universe')">Universe: Ally</button>
+                    <button class="tab-button" onclick="switchTab('training')">Universe: Training</button>
+                    <button class="tab-button" onclick="switchTab('basic-universe')">Universe: Basic</button>
+                    <button class="tab-button" onclick="switchTab('power-cards')">Power Cards</button>
+                </div>
+            </div>
+            
+            <div id="characters-tab" class="tab-content">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Energy</th>
+                            <th>Combat</th>
+                            <th>Brute Force</th>
+                            <th>Intelligence</th>
+                            <th>Threat Level</th>
+                            <th>Special Abilities</th>
+                        </tr>
+                    </thead>
+                    <tbody id="characters-table-body">
+                        <tr>
+                            <td><strong>Loading...</strong></td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load characters data
+        async function loadCharacters() {
+            try {
+                const response = await fetch('/api/characters');
+                const result = await response.json();
+                
+                if (result.success) {
+                    const tbody = document.getElementById('characters-table-body');
+                    tbody.innerHTML = result.data.map(char => `
+                        <tr>
+                            <td><strong>${char.name}</strong></td>
+                            <td>${char.energy}</td>
+                            <td>${char.combat}</td>
+                            <td>${char.brute_force}</td>
+                            <td>${char.intelligence}</td>
+                            <td class="${char.threat_level >= 20 ? 'threat-high' : char.threat_level >= 15 ? 'threat-medium' : 'threat-low'}">
+                                ${char.threat_level}
+                            </td>
+                            <td>${char.special_abilities}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading characters:', error);
+            }
+        }
+
+        // Tab switching function
+        function switchTab(tabName) {
+            // Update active tab button
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // For now, just show characters
+            // In a full implementation, you'd load different data based on tabName
+            console.log('Switched to tab:', tabName);
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadCharacters);
+    </script>
+</body>
+</html>
