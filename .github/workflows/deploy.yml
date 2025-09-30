@@ -106,10 +106,25 @@ jobs:
     - name: Install Flyway
       run: |
         echo "Installing Flyway..."
-        wget -qO- https://download.red-gate.com/maven/release/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz | tar xvz
-        sudo ln -s $(pwd)/flyway-9.22.3/flyway /usr/local/bin/flyway
+        # Download Flyway with proper error handling
+        wget -O flyway.tar.gz https://download.red-gate.com/maven/release/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz
+        # Verify download was successful
+        if [ ! -f flyway.tar.gz ] || [ ! -s flyway.tar.gz ]; then
+          echo "❌ Flyway download failed"
+          exit 1
+        fi
+        # Extract with verbose output for debugging
+        tar -xzf flyway.tar.gz
+        # Verify extraction was successful
+        if [ ! -d flyway-9.22.3 ]; then
+          echo "❌ Flyway extraction failed"
+          exit 1
+        fi
+        # Create symlink
+        sudo ln -sf $(pwd)/flyway-9.22.3/flyway /usr/local/bin/flyway
+        # Verify installation
         flyway --version
-        echo "Flyway installed successfully!"
+        echo "✅ Flyway installed successfully!"
       
     - name: Run database migrations
       run: |
