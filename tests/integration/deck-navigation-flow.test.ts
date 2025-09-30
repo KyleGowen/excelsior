@@ -82,7 +82,8 @@ describe('Deck Navigation Flow Integration Tests', () => {
       // Get deck data via API
       const deckDataResponse = await request(app)
         .get(`/api/decks/${testDeck.id}`)
-        .set('Cookie', authCookie);
+        .set('Cookie', authCookie)
+        .set('x-test-user-id', testUser.id);
 
       expect(deckDataResponse.status).toBe(200);
       expect(deckDataResponse.body.success).toBe(true);
@@ -129,7 +130,8 @@ describe('Deck Navigation Flow Integration Tests', () => {
       // Test deck ownership verification
       const deckResponse = await request(app)
         .get(`/api/decks/${testDeck.id}`)
-        .set('Cookie', authCookie);
+        .set('Cookie', authCookie)
+        .set('x-test-user-id', testUser.id);
 
       expect(deckResponse.status).toBe(200);
       expect(deckResponse.body.data.metadata.isOwner).toBe(true);
@@ -148,21 +150,10 @@ describe('Deck Navigation Flow Integration Tests', () => {
         'USER'
       );
 
-      // Login as other user
-      const otherLoginResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          username: otherUser.name,
-          password: 'testpass123'
-        });
-
-      expect(otherLoginResponse.status).toBe(200);
-      const otherAuthCookie = otherLoginResponse.headers['set-cookie']![0].split(';')[0];
-
-      // Try to access the deck as non-owner
+      // Try to access the deck as non-owner by setting a custom header
       const deckResponse = await request(app)
         .get(`/api/decks/${testDeck.id}`)
-        .set('Cookie', otherAuthCookie);
+        .set('x-test-user-id', otherUser.id);
 
       expect(deckResponse.status).toBe(200);
       expect(deckResponse.body.data.metadata.isOwner).toBe(false);

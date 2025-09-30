@@ -35,6 +35,20 @@
 - `npm run build` - Build the project
 - `npm run dev` - Start development server
 
+## Integration Test Output Format
+- **ALWAYS provide table-style output when running integration tests**
+- Use the format with columns: Test Suite | Passed | Failed | Total | Status
+- Include overall success rate percentage and summary statistics
+- This helps the user quickly digest test findings and identify issues
+- Example format:
+  ```
+  ┌─────────────────────────────────────┬─────────┬─────────┬─────────┬─────────┐
+  │ Test Suite                          │ Passed  │ Failed  │ Total   │ Status  │
+  ├─────────────────────────────────────┼─────────┼─────────┼─────────┼─────────┤
+  │ testSuiteName                       │      12 │       0 │      12 │  ✅ PASS │
+  └─────────────────────────────────────┴─────────┴─────────┴─────────┴─────────┘
+  ```
+
 ## Remember
 - Quality over speed
 - Test-driven development approach

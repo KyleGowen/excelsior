@@ -30,8 +30,8 @@ describe('User Management Integration Tests', () => {
   describe('User Creation and Database Operations', () => {
     it('should create a new user with valid data', async () => {
       const userId = generateUUID();
-      const userName = 'Jest Test User';
-      const userEmail = `jest-${generateUUID()}@example.com`;
+      const userName = `um_it_user_${generateUUID()}`;
+      const userEmail = `jest-${generateUUID()}@it.local`;
       const userRole = 'USER';
       
       testUserId = userId; // Store for cleanup
@@ -54,34 +54,44 @@ describe('User Management Integration Tests', () => {
     });
 
     it('should verify user can be retrieved by ID', async () => {
-      expect(testUserId).toBeDefined();
+      // Create a fresh test user for this test
+      const userId = generateUUID();
+      const userName = `um_it_user_${generateUUID()}`;
+      const userEmail = `jest-${generateUUID()}@it.local`;
+      
+      await pool.query(
+        'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+        [userId, userName, userEmail, 'test_password_hash', 'USER']
+      );
       
       const result = await pool.query(
         'SELECT * FROM users WHERE id = $1',
-        [testUserId!]
+        [userId]
       );
       
       expect(result.rows).toHaveLength(1);
       const user = result.rows[0];
-      expect(user.id).toBe(testUserId);
-      expect(user.username).toBeDefined();
-      expect(user.email).toBeDefined();
-      expect(user.role).toBeDefined();
+      expect(user.id).toBe(userId);
+      expect(user.username).toBe(userName);
+      expect(user.email).toBe(userEmail);
+      expect(user.role).toBe('USER');
       
       console.log('✅ User retrieved by ID:', user);
+      
+      // Clean up
+      await pool.query('DELETE FROM users WHERE id = $1', [userId]);
     });
 
     it('should verify user can be retrieved by email', async () => {
-      expect(testUserId).toBeDefined();
+      // Create a fresh test user for this test
+      const userId = generateUUID();
+      const userName = `um_it_user_${generateUUID()}`;
+      const userEmail = `jest-${generateUUID()}@it.local`;
       
-      // First get the user's email
-      const userResult = await pool.query(
-        'SELECT email FROM users WHERE id = $1',
-        [testUserId!]
+      await pool.query(
+        'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+        [userId, userName, userEmail, 'test_password_hash', 'USER']
       );
-      
-      expect(userResult.rows).toHaveLength(1);
-      const userEmail = userResult.rows[0].email;
       
       // Now search by email
       const result = await pool.query(
@@ -91,59 +101,84 @@ describe('User Management Integration Tests', () => {
       
       expect(result.rows).toHaveLength(1);
       const user = result.rows[0];
-      expect(user.id).toBe(testUserId);
+      expect(user.id).toBe(userId);
       expect(user.email).toBe(userEmail);
+      expect(user.username).toBe(userName);
+      expect(user.role).toBe('USER');
       
       console.log('✅ User retrieved by email:', user);
+      
+      // Clean up
+      await pool.query('DELETE FROM users WHERE id = $1', [userId]);
     });
 
     it('should verify user role can be updated', async () => {
-      expect(testUserId).toBeDefined();
+      // Create a fresh test user for this test
+      const userId = generateUUID();
+      const userName = `um_it_user_${generateUUID()}`;
+      const userEmail = `jest-${generateUUID()}@it.local`;
+      
+      await pool.query(
+        'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+        [userId, userName, userEmail, 'test_password_hash', 'USER']
+      );
       
       // Update user role to ADMIN
       const updateResult = await pool.query(
         'UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
-        ['ADMIN', testUserId!]
+        ['ADMIN', userId]
       );
       
       expect(updateResult.rows).toHaveLength(1);
       const user = updateResult.rows[0];
       expect(user.role).toBe('ADMIN');
-      expect(user.id).toBe(testUserId);
+      expect(user.id).toBe(userId);
       
       // Verify the update persisted
       const verifyResult = await pool.query(
         'SELECT role FROM users WHERE id = $1',
-        [testUserId!]
+        [userId]
       );
       
       expect(verifyResult.rows).toHaveLength(1);
       expect(verifyResult.rows[0].role).toBe('ADMIN');
       
       console.log('✅ User role updated successfully');
+      
+      // Clean up
+      await pool.query('DELETE FROM users WHERE id = $1', [userId]);
     });
 
     it('should verify user can be deleted', async () => {
-      expect(testUserId).toBeDefined();
+      // Create a fresh test user for this test
+      const userId = generateUUID();
+      const userName = `um_it_user_${generateUUID()}`;
+      const userEmail = `jest-${generateUUID()}@it.local`;
+      
+      await pool.query(
+        'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+        [userId, userName, userEmail, 'test_password_hash', 'USER']
+      );
       
       const deleteResult = await pool.query(
         'DELETE FROM users WHERE id = $1 RETURNING *',
-        [testUserId!]
+        [userId]
       );
       
       expect(deleteResult.rows).toHaveLength(1);
       const deletedUser = deleteResult.rows[0];
-      expect(deletedUser.id).toBe(testUserId);
+      expect(deletedUser.id).toBe(userId);
+      expect(deletedUser.username).toBe(userName);
+      expect(deletedUser.email).toBe(userEmail);
       
       // Verify user no longer exists
       const verifyResult = await pool.query(
         'SELECT * FROM users WHERE id = $1',
-        [testUserId!]
+        [userId]
       );
       
       expect(verifyResult.rows).toHaveLength(0);
       
-      testUserId = null; // Clear for cleanup
       console.log('✅ User deleted successfully');
     });
   });
@@ -152,7 +187,7 @@ describe('User Management Integration Tests', () => {
     it('should verify email uniqueness constraint', async () => {
       const userId1 = generateUUID();
       const userId2 = generateUUID();
-      const duplicateEmail = `duplicate-${generateUUID()}@example.com`;
+      const duplicateEmail = `duplicate-${generateUUID()}@it.local`;
       
       // Create first user
       await pool.query(
@@ -183,7 +218,7 @@ describe('User Management Integration Tests', () => {
       try {
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-          [userId, 'Test User', 'test@example.com', 'test_password_hash', 'INVALID_ROLE']
+        [userId, 'um_it_invalid', 'test@it.local', 'test_password_hash', 'INVALID_ROLE']
         );
         fail('Expected invalid role constraint to be violated');
       } catch (error) {
@@ -199,7 +234,7 @@ describe('User Management Integration Tests', () => {
       try {
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-          [userId, null, 'test@example.com', 'test_password_hash', 'USER']
+        [userId, null, 'test@it.local', 'test_password_hash', 'USER']
         );
         fail('Expected null name constraint to be violated');
       } catch (error) {

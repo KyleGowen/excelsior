@@ -72,9 +72,10 @@ export const integrationTestUtils = {
     
     try {
       // Clean up test users and decks created by integration tests
-      await pool.query("DELETE FROM decks WHERE name LIKE 'Test%' OR name LIKE 'Jest%' OR name LIKE 'Character Layout Test Deck' OR name LIKE 'Test Navigation Deck'");
+      // Be more specific to avoid interfering with deckBuilding.test.ts
+      await pool.query("DELETE FROM decks WHERE name LIKE 'Character Layout Test Deck' OR name LIKE 'Test Navigation Deck' OR name LIKE 'RO Deck%' OR name LIKE 'AGL Deck%' OR name LIKE 'um_it_%'");
       // Delete ONLY users created by tests; preserve core seeded users like 'guest' and 'kyle'
-      await pool.query("DELETE FROM users WHERE (username ILIKE 'test%' OR username ILIKE 'jest%' OR username ILIKE 'charlayout_%' OR username ILIKE 'decknavtest_%' OR username IN ('usernameonly', 'middlewareuser', 'sessionuser') OR email LIKE 'testuser_%@example.com' OR email LIKE 'usernameonly_%@example.com' OR email LIKE 'decknavtest_%@example.com' OR email LIKE 'charlayout_%@example.com') AND username NOT IN ('guest','kyle')");
+      await pool.query("DELETE FROM users WHERE (username ILIKE 'charlayout_%' OR username ILIKE 'decknavtest_%' OR username ILIKE 'ro_%' OR username ILIKE 'agl_%' OR username ILIKE 'um_it_%' OR username IN ('usernameonly', 'middlewareuser', 'sessionuser', 'crosstestuser') OR email LIKE 'testuser_%@example.com' OR email LIKE 'usernameonly_%@example.com' OR email LIKE 'decknavtest_%@example.com' OR email LIKE 'charlayout_%@example.com' OR email LIKE 'ro-%@it.local' OR email LIKE 'agl-%@it.local' OR email LIKE 'crosstest_%@example.com') AND username NOT IN ('guest','kyle')");
     } finally {
       await pool.end();
     }

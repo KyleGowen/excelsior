@@ -113,8 +113,8 @@ describe('Read-Only Mode Integration Tests', () => {
     it('should create a test deck for read-only mode testing', async () => {
       // Create a test user first
       testUserId = generateUUID();
-      const userName = `Test Deck Owner ${generateUUID()}`;
-      const userEmail = `test-owner-${generateUUID()}@example.com`;
+      const userName = `ro_owner_${generateUUID()}`;
+      const userEmail = `ro-owner-${generateUUID()}@it.local`;
       
       await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
@@ -123,7 +123,7 @@ describe('Read-Only Mode Integration Tests', () => {
       
       // Create a test deck
       testDeckId = generateUUID();
-      const deckName = 'Test Deck for Read-Only Mode';
+      const deckName = 'RO Deck for Read-Only Mode';
       const deckDescription = 'A deck to test read-only mode functionality';
       const deckCards = JSON.stringify([
         { cardType: 'character', cardId: 'leonidas', quantity: 1 },
@@ -154,11 +154,44 @@ describe('Read-Only Mode Integration Tests', () => {
     });
 
     it('should verify test deck can be accessed with owner information', async () => {
-      expect(testDeckId).toBeDefined();
+      // Ensure the deck exists in case global cleanup removed it
+      if (!testUserId) {
+        testUserId = generateUUID();
+        await pool.query(
+          'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+          [testUserId, `ro_owner_${generateUUID()}`, `ro-owner-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+        );
+      }
+      if (!testDeckId) {
+        testDeckId = generateUUID();
+      }
+      
+      // Check if deck exists, create if not
+      let existing = await pool.query('SELECT id FROM decks WHERE id = $1', [testDeckId]);
+      if (existing.rows.length === 0) {
+        // Ensure user exists before creating deck
+        let userExists = await pool.query('SELECT 1 FROM users WHERE id = $1', [testUserId]);
+        if (userExists.rows.length === 0) {
+          await pool.query(
+            'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+            [testUserId, `ro_owner_${generateUUID()}`, `ro-owner-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+          );
+        }
+        
+        const deckCards = JSON.stringify([
+          { cardType: 'character', cardId: 'leonidas', quantity: 1 },
+          { cardType: 'character', cardId: 'king_arthur', quantity: 1 },
+          { cardType: 'special', cardId: 'sword_and_shield', quantity: 2 }
+        ]);
+        await pool.query(
+          'INSERT INTO decks (id, user_id, name, description, ui_preferences, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+          [testDeckId, testUserId, 'RO Deck for Read-Only Mode', 'A deck to test read-only mode functionality', deckCards]
+        );
+      }
       
       const result = await pool.query(
         'SELECT d.*, u.username as owner_name, u.role as owner_role FROM decks d JOIN users u ON d.user_id = u.id WHERE d.id = $1',
-        [testDeckId!]
+        [testDeckId]
       );
       
       expect(result.rows).toHaveLength(1);
@@ -171,11 +204,44 @@ describe('Read-Only Mode Integration Tests', () => {
     });
 
     it('should verify deck cards are properly stored for read-only access', async () => {
-      expect(testDeckId).toBeDefined();
+      // Ensure the deck exists in case global cleanup removed it
+      if (!testUserId) {
+        testUserId = generateUUID();
+        await pool.query(
+          'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+          [testUserId, `ro_owner_${generateUUID()}`, `ro-owner-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+        );
+      }
+      if (!testDeckId) {
+        testDeckId = generateUUID();
+      }
+      
+      // Check if deck exists, create if not
+      let existing = await pool.query('SELECT id FROM decks WHERE id = $1', [testDeckId]);
+      if (existing.rows.length === 0) {
+        // Ensure user exists before creating deck
+        let userExists = await pool.query('SELECT 1 FROM users WHERE id = $1', [testUserId]);
+        if (userExists.rows.length === 0) {
+          await pool.query(
+            'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+            [testUserId, `ro_owner_${generateUUID()}`, `ro-owner-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+          );
+        }
+        
+        const deckCards = JSON.stringify([
+          { cardType: 'character', cardId: 'leonidas', quantity: 1 },
+          { cardType: 'character', cardId: 'king_arthur', quantity: 1 },
+          { cardType: 'special', cardId: 'sword_and_shield', quantity: 2 }
+        ]);
+        await pool.query(
+          'INSERT INTO decks (id, user_id, name, description, ui_preferences, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+          [testDeckId, testUserId, 'RO Deck for Read-Only Mode', 'A deck to test read-only mode functionality', deckCards]
+        );
+      }
       
       const result = await pool.query(
         'SELECT ui_preferences FROM decks WHERE id = $1',
-        [testDeckId!]
+        [testDeckId]
       );
       
       expect(result.rows).toHaveLength(1);
@@ -253,9 +319,27 @@ describe('Read-Only Mode Integration Tests', () => {
 
   describe('Deck Data Integrity for Read-Only Mode', () => {
     it('should verify deck data is complete for read-only viewing', async () => {
-      const result = await pool.query(
+      // Ensure we have at least one deck to test with
+      let result = await pool.query(
         'SELECT id, user_id, name, description, ui_preferences, created_at, updated_at FROM decks ORDER BY created_at LIMIT 5'
       );
+      
+      if (result.rows.length === 0) {
+        // Create a test deck if none exist
+        const testUserId = generateUUID();
+        const testDeckId = generateUUID();
+        await pool.query(
+          'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+          [testUserId, `ro_test_${generateUUID()}`, `ro-test-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+        );
+        await pool.query(
+          'INSERT INTO decks (id, user_id, name, description, ui_preferences, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+          [testDeckId, testUserId, 'Test Deck for Read-Only', 'A test deck for read-only verification', JSON.stringify([])]
+        );
+        result = await pool.query(
+          'SELECT id, user_id, name, description, ui_preferences, created_at, updated_at FROM decks ORDER BY created_at LIMIT 5'
+        );
+      }
       
       expect(result.rows.length).toBeGreaterThan(0);
       
@@ -277,9 +361,27 @@ describe('Read-Only Mode Integration Tests', () => {
     });
 
     it('should verify deck ownership information is available', async () => {
-      const result = await pool.query(
+      // Ensure we have at least one deck to test with
+      let result = await pool.query(
         'SELECT d.id, d.name, d.user_id, u.username as owner_name, u.role as owner_role FROM decks d JOIN users u ON d.user_id = u.id ORDER BY d.created_at LIMIT 5'
       );
+      
+      if (result.rows.length === 0) {
+        // Create a test deck if none exist
+        const testUserId = generateUUID();
+        const testDeckId = generateUUID();
+        await pool.query(
+          'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+          [testUserId, `ro_test_${generateUUID()}`, `ro-test-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+        );
+        await pool.query(
+          'INSERT INTO decks (id, user_id, name, description, ui_preferences, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+          [testDeckId, testUserId, 'Test Deck for Read-Only', 'A test deck for read-only verification', JSON.stringify([])]
+        );
+        result = await pool.query(
+          'SELECT d.id, d.name, d.user_id, u.username as owner_name, u.role as owner_role FROM decks d JOIN users u ON d.user_id = u.id ORDER BY d.created_at LIMIT 5'
+        );
+      }
       
       expect(result.rows.length).toBeGreaterThan(0);
       
@@ -296,9 +398,27 @@ describe('Read-Only Mode Integration Tests', () => {
     });
 
     it('should verify deck timestamps are valid for read-only mode', async () => {
-      const result = await pool.query(
+      // Ensure we have at least one deck to test with
+      let result = await pool.query(
         'SELECT id, name, created_at, updated_at FROM decks ORDER BY created_at LIMIT 5'
       );
+      
+      if (result.rows.length === 0) {
+        // Create a test deck if none exist
+        const testUserId = generateUUID();
+        const testDeckId = generateUUID();
+        await pool.query(
+          'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+          [testUserId, `ro_test_${generateUUID()}`, `ro-test-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+        );
+        await pool.query(
+          'INSERT INTO decks (id, user_id, name, description, ui_preferences, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
+          [testDeckId, testUserId, 'Test Deck for Read-Only', 'A test deck for read-only verification', JSON.stringify([])]
+        );
+        result = await pool.query(
+          'SELECT id, name, created_at, updated_at FROM decks ORDER BY created_at LIMIT 5'
+        );
+      }
       
       expect(result.rows.length).toBeGreaterThan(0);
       

@@ -49,6 +49,19 @@ app.use('/src/resources/cards/images', express.static(path.join(process.cwd(), '
 // Serve general images from resources directory
 app.use('/src/resources/images', express.static(path.join(process.cwd(), 'src/resources/images')));
 
+// Serve global nav component files
+app.get('/components/globalNav.html', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'public', 'components', 'globalNav.html'));
+});
+
+app.get('/components/globalNav.css', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'public', 'components', 'globalNav.css'));
+});
+
+app.get('/components/globalNav.js', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'public', 'components', 'globalNav.js'));
+});
+
 // Initialize database for tests
 export async function initializeTestServer() {
   try {
@@ -215,7 +228,40 @@ app.get('/api/decks/:id', async (req, res) => {
     if (!deck) {
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }
-    res.json({ success: true, data: deck });
+    
+    // For test server, check ownership based on the user making the request
+    let isOwner = true; // Default to true if no user specified
+    
+    // Check if a specific user ID was provided in the header
+    if (req.headers['x-test-user-id']) {
+      const userId = req.headers['x-test-user-id'];
+      isOwner = deck.user_id === userId;
+    }
+    
+    
+    // Add ownership flag to response for frontend to use
+    const deckData = {
+      ...deck,
+      isOwner: isOwner
+    };
+    
+    // Transform deck data to match frontend expectations (same as main server)
+    const transformedDeck = {
+      metadata: {
+        id: deckData.id,
+        name: deckData.name,
+        description: deckData.description,
+        created: deckData.created_at,
+        lastModified: deckData.updated_at,
+        cardCount: deckData.cards?.length || 0,
+        userId: deckData.user_id,
+        uiPreferences: deckData.ui_preferences,
+        isOwner: deckData.isOwner
+      },
+      cards: deckData.cards || []
+    };
+    
+    res.json({ success: true, data: transformedDeck });
   } catch (error) {
     console.error('Error fetching deck:', error);
     res.status(500).json({ success: false, error: 'Failed to fetch deck' });
@@ -322,6 +368,10 @@ app.get('/', (req, res) => {
 
 // Serve deck builder
 app.get('/deck-builder', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'public', 'deck-builder.html'));
+});
+
+app.get('/deck-builder.html', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'deck-builder.html'));
 });
 

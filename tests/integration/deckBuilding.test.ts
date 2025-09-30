@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import { integrationTestUtils } from '../setup-integration';
 
 // Simple UUID v4 generator for tests
 function generateUUID(): string {
@@ -15,11 +16,15 @@ describe('Deck Building Integration Tests', () => {
   let testUserPassword: string = 'test_password_123';
   let createdDeckIds: string[] = [];
 
-  beforeAll(() => {
-    // Set up database connection
+  beforeAll(async () => {
+    // Set up database connection - use shared connection
     pool = new Pool({
       connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
     });
+    
+    // Ensure test server is initialized
+    await integrationTestUtils.ensureGuestUser();
+    await integrationTestUtils.ensureAdminUser();
   });
 
   afterAll(async () => {
@@ -33,6 +38,9 @@ describe('Deck Building Integration Tests', () => {
     }
     await pool.end();
   });
+
+  // Note: We don't use afterEach cleanup here because this test suite
+  // manages its own test data lifecycle and needs to preserve data between tests
 
   describe('User Management', () => {
     it('should create a fresh user', async () => {

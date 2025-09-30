@@ -1300,5 +1300,215 @@
     "userId": "test-user-id",
     "username": "test-user",
     "expiresAt": "2025-09-30T09:55:50.684Z"
+  },
+  {
+    "sessionId": "sess_v4rwk2m1y_mg6roh4g",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T18:23:36.112Z"
+  },
+  {
+    "sessionId": "sess_qkq5qbfv5_mg6roj6j",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T18:23:38.779Z"
+  },
+  {
+    "sessionId": "sess_a9t5p8vl0_mg6roj6p",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T18:23:38.785Z"
+  },
+  {
+    "sessionId": "sess_nw82u9xxb_mg6sbv5c",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T18:41:47.376Z"
+  },
+  {
+    "sessionId": "sess_k239zx3sg_mg6sbx42",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T18:41:49.922Z"
+  },
+  {
+    "sessionId": "sess_61tut6vpv_mg6sbx47",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T18:41:49.927Z"
+  },
+  {
+    "sessionId": "sess_ncsap49in_mg6sejdg",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T18:43:52.084Z"
+  },
+  {
+    "sessionId": "sess_5inovxcfy_mg6seldq",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T18:43:54.686Z"
+  },
+  {
+    "sessionId": "sess_et9djlj1i_mg6seldw",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T18:43:54.692Z"
+  },
+  {
+    "sessionId": "sess_kzht2lq1t_mg6ssyvw",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T18:55:05.372Z"
+  },
+  {
+    "sessionId": "sess_127hqlekn_mg6t67ln",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T19:05:23.195Z"
+  },
+  {
+    "sessionId": "sess_7q1tgkb16_mg6t698f",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T19:05:25.311Z"
+  },
+  {
+    "sessionId": "sess_8mgpvikxe_mg6t698k",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T19:05:25.316Z"
+  },
+  {
+    "sessionId": "sess_q0ideurwq_mg6tf118",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T19:12:14.588Z"
+  },
+  {
+    "sessionId": "sess_3aqgx463z_mg6tf36g",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T19:12:17.368Z"
+  },
+  {
+    "sessionId": "sess_d634i2o4u_mg6tf36n",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T19:12:17.375Z"
+  },
+  {
+    "sessionId": "sess_syogdh8bl_mg6tisoc",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T19:15:10.380Z"
+  },
+  {
+    "sessionId": "sess_tbapjc4jw_mg6tkm6y",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T19:16:35.290Z"
+  },
+  {
+    "sessionId": "sess_guh4do1vy_mg6tlwxi",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T19:17:35.862Z"
+  },
+  {
+    "sessionId": "sess_jocwxfkkr_mg6tmzbp",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T19:18:25.621Z"
+  },
+  {
+    "sessionId": "sess_2qz771vtb_mg6tp9ra",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T19:20:12.454Z"
+  },
+  {
+    "sessionId": "sess_36t0e7ph0_mg6tpc32",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T19:20:15.470Z"
+  },
+  {
+    "sessionId": "sess_fz5951m13_mg6tpc38",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T19:20:15.476Z"
+  },
+  {
+    "sessionId": "sess_jgf8o4fmq_mg6utxoh",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T19:51:49.697Z"
+  },
+  {
+    "sessionId": "sess_vw16gprnx_mg6utzyj",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T19:51:52.651Z"
+  },
+  {
+    "sessionId": "sess_qqiro92k7_mg6utzyp",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T19:51:52.657Z"
+  },
+  {
+    "sessionId": "sess_hoyw3ugcd_mg6uzdau",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T19:56:03.222Z"
+  },
+  {
+    "sessionId": "sess_ppi7qabc0_mg6uzf9k",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T19:56:05.768Z"
+  },
+  {
+    "sessionId": "sess_ydbi9mjiq_mg6uzf9q",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T19:56:05.774Z"
+  },
+  {
+    "sessionId": "sess_b6ujoi4iv_mg6vhsnr",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T20:10:22.935Z"
+  },
+  {
+    "sessionId": "sess_o33bm0rkg_mg6vhuge",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T20:10:25.262Z"
+  },
+  {
+    "sessionId": "sess_oc6bh19ft_mg6vhugk",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T20:10:25.268Z"
+  },
+  {
+    "sessionId": "sess_9je9qkiez_mg6vlsof",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-09-30T20:13:29.583Z"
+  },
+  {
+    "sessionId": "sess_tqew27dkl_mg6vlu2r",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T20:13:31.395Z"
+  },
+  {
+    "sessionId": "sess_fwui35qny_mg6vlu2w",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-09-30T20:13:31.400Z"
   }
 ]
