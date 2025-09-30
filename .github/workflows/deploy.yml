@@ -72,8 +72,13 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         # Build Docker image without cache for latest resources
+        echo "🚀 Starting Docker build..."
         docker build --platform linux/amd64 --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        echo "✅ Docker build completed"
+        
+        echo "🏷️ Tagging image..."
         docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        echo "✅ Image tagged"
         
         # Verify critical files are present in the image
         echo "🔍 Verifying critical files in Docker image..."
@@ -101,8 +106,10 @@ jobs:
         fi
         
         # Push both tagged versions
+        echo "📤 Pushing images..."
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        echo "✅ Images pushed"
         
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
         
