@@ -6233,6 +6233,10 @@
                 // Update all statistics after loading all data
                 await updateAllStats();
                 
+                // Ensure characters tab is properly shown after loading data
+                console.log('🔍 Ensuring characters tab is shown after data load...');
+                switchTab('characters');
+                
                 console.log('✅ Database view data loaded successfully');
             } catch (error) {
                 console.error('❌ Error loading database view data:', error);
@@ -6344,84 +6348,13 @@
 
         function updateStats(characters) {
             console.log('Updating stats with', characters.length, 'characters');
-            const totalCharactersEl = document.getElementById('total-characters');
-            if (totalCharactersEl) {
-                totalCharactersEl.textContent = characters.length;
-                console.log('Updated total-characters to:', characters.length);
-            } else {
-                console.error('total-characters element not found');
-            }
-            
+            // Statistics elements were removed as requested, so this function is now a no-op
+            // but we keep it to avoid breaking the loadCharacters function
         }
 
         async function updateAllStats() {
-            // Update all statistics for every card type
-            const statUpdates = [
-                { endpoint: '/api/special-cards', elementId: 'total-special-cards' },
-                { endpoint: '/api/advanced-universe', elementId: 'total-advanced-universe' },
-                { endpoint: '/api/locations', elementId: 'total-locations' },
-                { endpoint: '/api/aspects', elementId: 'total-aspects' },
-                { endpoint: '/api/missions', elementId: 'total-missions' },
-                { endpoint: '/api/events', elementId: 'total-events' },
-                { endpoint: '/api/teamwork', elementId: 'total-teamwork' },
-                { endpoint: '/api/ally-universe', elementId: 'total-ally-universe' },
-                { endpoint: '/api/training', elementId: 'total-training' },
-                { endpoint: '/api/basic-universe', elementId: 'total-basic-universe' },
-                { endpoint: '/api/power-cards', elementId: 'total-power-cards' }
-            ];
-
-            // Update all stats in parallel
-            const promises = statUpdates.map(async ({ endpoint, elementId }) => {
-                try {
-                    const response = await fetch(endpoint);
-                    const data = await response.json();
-                    if (data.success) {
-                        const element = document.getElementById(elementId);
-                        if (element) {
-                            element.textContent = data.data.length;
-                        }
-                    }
-                } catch (error) {
-                    console.error(`Error loading stats for ${elementId}:`, error);
-                }
-            });
-
-            // Calculate alternate image counts
-            const alternatePromises = [
-                // Character alternates
-                fetch('/api/characters')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                            const totalCharacterAlternates = data.data.reduce((sum, char) => {
-                                return sum + (char.alternateImages ? char.alternateImages.length : 0);
-                            }, 0);
-                            const element = document.getElementById('total-character-alternates');
-                            if (element) {
-                                element.textContent = totalCharacterAlternates;
-                            }
-                        }
-                    })
-                    .catch(error => console.error('Error loading character alternates:', error)),
-                
-                // Power card alternates
-                fetch('/api/power-cards')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                            const totalPowerAlternates = data.data.reduce((sum, card) => {
-                                return sum + (card.alternateImages ? card.alternateImages.length : 0);
-                            }, 0);
-                            const element = document.getElementById('total-power-alternates');
-                            if (element) {
-                                element.textContent = totalPowerAlternates;
-                            }
-                        }
-                    })
-                    .catch(error => console.error('Error loading power card alternates:', error))
-            ];
-
-            await Promise.all([...promises, ...alternatePromises]);
+            // Statistics elements were removed as requested, so this function is now a no-op
+            // but we keep it to avoid breaking the loadDatabaseViewData function
             console.log('✅ All statistics updated including alternate image counts');
         }
 
@@ -6859,6 +6792,8 @@
 
         // Tab switching functionality
         function switchTab(tabName) {
+            console.log('🔍 switchTab called with:', tabName);
+            
             // Clear all filters when switching tabs
             clearAllFiltersGlobally();
             
@@ -6884,6 +6819,7 @@
             
             // Show selected tab
             document.getElementById(tabName + '-tab').style.display = 'block';
+            console.log('🔍 Showing tab:', tabName + '-tab');
             
             // Show search container for non-character tabs
             if (tabName !== 'characters') {
@@ -8463,19 +8399,8 @@
         }
 
         function updateDeckStats() {
-            fetch('/api/deck-stats')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('total-decks').textContent = data.data.totalDecks;
-                        document.getElementById('total-cards-in-decks').textContent = data.data.totalCards;
-                        document.getElementById('average-cards-per-deck').textContent = data.data.averageCardsPerDeck;
-                        document.getElementById('largest-deck-size').textContent = data.data.largestDeckSize;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading deck stats:', error);
-                });
+            // Statistics elements were removed as requested, so this function is now a no-op
+            // but we keep it to avoid breaking other functions that call it
         }
 
         // Modal functions
