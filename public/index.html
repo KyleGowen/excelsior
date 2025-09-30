@@ -4988,7 +4988,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
-            display: flex;
+            display: none; /* Hidden by default to prevent flash */
             justify-content: center;
             align-items: center;
             z-index: 10000;
@@ -8840,15 +8840,38 @@
 
         // Deck actions
         function editDeck(deckId) {
-            // Get current user to construct the URL
+            console.log('🔍 editDeck called for deckId:', deckId);
+            
+            // Get current user to determine read-only mode
             const currentUser = getCurrentUser();
-            if (currentUser) {
-                // Navigate to the deck editor URL
-                window.location.href = `/users/${currentUser.userId}/decks/${deckId}`;
-            } else {
-                // Fallback to guest if no user found
-                window.location.href = `/users/guest/decks/${deckId}`;
+            const isReadOnly = false; // User is editing their own deck
+            
+            // Hide login modal immediately to prevent flash
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) {
+                loginModal.style.display = 'none';
             }
+            
+            // Show main container if it's hidden
+            const mainContainer = document.getElementById('mainContainer');
+            if (mainContainer) {
+                mainContainer.style.display = 'block';
+            }
+            
+            // Load and show the deck editor directly without page reload
+            loadDeckForEditing(deckId, currentUser ? currentUser.userId : 'guest', isReadOnly)
+                .then(() => {
+                    showDeckEditor();
+                })
+                .catch(error => {
+                    console.error('Error loading deck for editing:', error);
+                    // Fallback to URL navigation if direct loading fails
+                    if (currentUser) {
+                        window.location.href = `/users/${currentUser.userId}/decks/${deckId}`;
+                    } else {
+                        window.location.href = `/users/guest/decks/${deckId}`;
+                    }
+                });
         }
 
         function viewDeck(deckId) {
