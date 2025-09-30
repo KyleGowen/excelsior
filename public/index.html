@@ -13597,13 +13597,13 @@
         
         // Show card hover modal
         function showCardHoverModal(imagePath, cardName) {
-            // Don't show hover modal while dragging
-            if (isDragging) {
-                console.log('Hover modal blocked - isDragging:', isDragging);
-                return;
-            }
-            
             console.log('showCardHoverModal called with:', imagePath, cardName);
+            
+            // Clear any existing hide timeout
+            if (window.hoverHideTimeout) {
+                clearTimeout(window.hoverHideTimeout);
+                window.hoverHideTimeout = null;
+            }
             
             const modal = document.getElementById('cardHoverModal');
             const image = document.getElementById('cardHoverImage');
@@ -13762,6 +13762,7 @@
                 };
                 document.addEventListener('mousemove', modal._mouseMoveHandler);
                 
+                // Show modal immediately
                 modal.style.display = 'block';
             }
         }
@@ -13771,18 +13772,25 @@
             // Always hide the modal, regardless of drag state
             console.log('hideCardHoverModal called');
             
-            const modal = document.getElementById('cardHoverModal');
-            if (modal) {
-                console.log('Modal found, hiding it');
-                // Remove mousemove listener
-                if (modal._mouseMoveHandler) {
-                    document.removeEventListener('mousemove', modal._mouseMoveHandler);
-                    modal._mouseMoveHandler = null;
-                }
-                modal.style.display = 'none';
-            } else {
-                console.log('Modal not found!');
+            // Add a small delay to prevent rapid show/hide cycles
+            if (window.hoverHideTimeout) {
+                clearTimeout(window.hoverHideTimeout);
             }
+            
+            window.hoverHideTimeout = setTimeout(() => {
+                const modal = document.getElementById('cardHoverModal');
+                if (modal) {
+                    console.log('Modal found, hiding it');
+                    // Remove mousemove listener
+                    if (modal._mouseMoveHandler) {
+                        document.removeEventListener('mousemove', modal._mouseMoveHandler);
+                        modal._mouseMoveHandler = null;
+                    }
+                    modal.style.display = 'none';
+                } else {
+                    console.log('Modal not found!');
+                }
+            }, 100);
         }
 
         // Toggle deck type section visibility
@@ -15011,16 +15019,18 @@
                             // Special handling for basic universe cards - show summary with type, value, and bonus
                             cardsHtml = data.data.map(card => {
                                 const summary = `${card.card_name} - ${card.type} (${card.value_to_use} → ${card.bonus})`;
+                                const escapedSummary = summary.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                                const escapedImagePath = getCardImagePath(card, category.type).replace(/'/g, "\\'").replace(/"/g, '\\"');
                                 return `
                                     <div class="card-item" 
                                          draggable="true" 
                                          data-type="${category.type}" 
                                          data-id="${card.id}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${summary}')"
+                                         onmouseenter="showCardHoverModal('${escapedImagePath}', '${escapedSummary}')"
                                          onmouseleave="hideCardHoverModal()"
                                          data-name="${summary}">
                                         <div class="card-item-content">${summary}</div>
-                                        <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${summary}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
+                                        <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${escapedSummary}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
                                     </div>
                                 `;
                             }).join('');
