@@ -7998,70 +7998,17 @@
             // Load user decks after successful login
             loadUserDecks();
             
-            // Check if we're on the deck builder route and set the appropriate view
-            const isDeckBuilderRoute = window.location.pathname.includes('/users/') && window.location.pathname.includes('/decks');
-            
-            if (isDeckBuilderRoute) {
-                // Start in deck builder view
-                document.getElementById('database-view').style.display = 'none';
-                document.getElementById('deck-builder').style.display = 'block';
-                document.getElementById('databaseViewBtn').classList.remove('active');
-                document.getElementById('deckBuilderBtn').classList.add('active');
-                
-                // Show create deck section
-                const createDeckSection = document.getElementById('createDeckSection');
-                if (createDeckSection) {
-                    createDeckSection.style.display = 'flex';
-                    
-                    // Make the button visible
-                    const createDeckBtn = createDeckSection.querySelector('button');
-                    if (createDeckBtn) {
-                        // Remove the display: none completely and set new styles
-                        createDeckBtn.removeAttribute('style');
-                        createDeckBtn.style.display = 'inline-block';
-                        createDeckBtn.style.visibility = 'visible';
-                        createDeckBtn.style.opacity = '1';
-                        
-                        // Force visibility with a timeout to override any other code
-                        setTimeout(() => {
-                            if (createDeckBtn.style.display === 'none' || window.getComputedStyle(createDeckBtn).display === 'none') {
-                                createDeckBtn.removeAttribute('style');
-                                createDeckBtn.style.display = 'inline-block';
-                                createDeckBtn.style.visibility = 'visible';
-                                createDeckBtn.style.opacity = '1';
-                            }
-                        }, 50);
-                        
-                        // Also try again after a longer delay
-                        setTimeout(() => {
-                            if (createDeckBtn.style.display === 'none' || window.getComputedStyle(createDeckBtn).display === 'none') {
-                                createDeckBtn.removeAttribute('style');
-                                createDeckBtn.style.display = 'inline-block';
-                                createDeckBtn.style.visibility = 'visible';
-                                createDeckBtn.style.opacity = '1';
-                            }
-                        }, 200);
-                    }
-                }
-                
-                // Load deck builder data
-                if (typeof loadDecks === 'function') {
-                    loadDecks();
-                }
-            } else {
-                // Start in database view
-                const databaseView = document.getElementById('database-view');
-                if (databaseView) {
-                    if (databaseView.style.display === 'none') {
-                        databaseView.style.display = 'block'; // Explicitly make it visible
-                    }
-                }
-
-                // Load database view data if we're on the database view
-                if (databaseView && databaseView.style.display !== 'none') {
-                    loadDatabaseViewData();
-                }
+            // Always start in database view and load characters
+            console.log('🔍 showMainApp() - setting up database view');
+            const databaseView = document.getElementById('database-view');
+            if (databaseView) {
+                databaseView.style.display = 'block';
+                console.log('🔍 showMainApp() - database view is now visible');
             }
+
+            // Load database view data (this will load characters)
+            console.log('🔍 showMainApp() - loading database view data...');
+            loadDatabaseViewData();
         }
 
         // Load main app data in background without showing the UI
