@@ -5862,7 +5862,10 @@
 
             // Update active styles
             document.querySelectorAll('.app-tab-button').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            const clickedAppTabButton = document.querySelector(`[onclick="${tabId === 'deck-builder' ? 'switchToDeckBuilder()' : 'switchToDatabaseView()'}"]`);
+            if (clickedAppTabButton) {
+                clickedAppTabButton.classList.add('active');
+            }
 
             // Load decks when switching to deck builder tab
             if (tabId === 'deck-builder') {
@@ -6858,8 +6861,11 @@
                 }
             }
             
-            // Add active class to clicked button
-            event.target.classList.add('active');
+            // Add active class to selected tab button programmatically-safe
+            const selectedTabButton = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
+            if (selectedTabButton) {
+                selectedTabButton.classList.add('active');
+            }
             
             // Update search functionality and reload data based on tab
             if (tabName === 'characters') {
