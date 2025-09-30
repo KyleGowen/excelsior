@@ -12,8 +12,8 @@ env:
   EC2_INSTANCE_ID: i-0dee560af076c0f9d
 
 jobs:
-  build-and-test:
-    name: Build and Test
+  build:
+    name: Build
     runs-on: ubuntu-latest
     
     steps:
@@ -32,9 +32,6 @@ jobs:
     - name: Build project
       run: npm run build
       
-    - name: Run unit tests
-      run: npm run test:unit
-      
     - name: Run linting (if available)
       run: |
         if [ -f "package.json" ] && npm run lint --dry-run 2>/dev/null; then
@@ -44,9 +41,29 @@ jobs:
         fi
       continue-on-error: true
 
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run unit tests
+      run: npm run test:unit
+
   deploy:
     name: Deploy to Production
-    needs: build-and-test
+    needs: [build, unit-tests]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
