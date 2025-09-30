@@ -1,13 +1,15 @@
 import request from 'supertest';
 import { app } from '../../src/test-server';
 import { initializeTestServer } from '../../src/test-server';
+import { integrationTestUtils } from '../setup-integration';
 
 describe('Global Nav Integration Tests', () => {
   let server: any;
   let agent: any;
 
   beforeAll(async () => {
-    // Initialize test server
+    // Ensure required seed users exist and initialize test server
+    await integrationTestUtils.ensureGuestUser();
     const testApp = await initializeTestServer();
     server = testApp.listen(0); // Use random available port
     agent = request(server);

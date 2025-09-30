@@ -3,7 +3,7 @@
  */
 
 import request from 'supertest';
-import { app } from '../../src/index';
+import { app } from '../../src/test-server';
 import { integrationTestUtils } from '../setup-integration';
 
 describe('Username Persistence Flow', () => {

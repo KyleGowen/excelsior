@@ -9,7 +9,7 @@ process.env.PORT = '3000';
 
 // Import test server
 import request from 'supertest';
-import { app } from '../../src/index';
+import { app } from '../../src/test-server';
 import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 import { integrationTestUtils } from '../setup-integration';
 

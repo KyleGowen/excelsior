@@ -330,6 +330,35 @@ app.get('/database-view', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'database-view.html'));
 });
 
+// Legacy/alternate database route used in some tests
+app.get('/database', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'public', 'database-view.html'));
+});
+
+// Deck Builder route for specific user - serve app HTML (no auth required in test server)
+app.get('/users/:userId/decks', (req, res) => {
+  res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
+  res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
+});
+
+// Deck Editor route with explicit /edit suffix used by some tests
+app.get('/users/:userId/decks/:deckId/edit', (req, res) => {
+  const { userId, deckId } = req.params;
+  console.log(`🔍 DEBUG: Deck editor edit route accessed - userId: ${userId}, deckId: ${deckId}`);
+  res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0',
+    'Last-Modified': new Date().toUTCString(),
+    'ETag': `"${Date.now()}"`
+  });
+  res.sendFile(path.join(process.cwd(), 'public/index.html'));
+});
+
 // Deck editor route for HTML tests
 app.get('/users/:userId/decks/:deckId', (req: any, res) => {
   const { userId, deckId } = req.params;
