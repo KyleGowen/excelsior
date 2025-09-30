@@ -103,6 +103,14 @@ jobs:
         timeout 60s bash -c 'until pg_isready -h localhost -p 1337 -U postgres; do sleep 1; done'
         echo "PostgreSQL is ready!"
       
+    - name: Install Flyway
+      run: |
+        echo "Installing Flyway..."
+        wget -qO- https://download.red-gate.com/maven/release/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz | tar xvz
+        sudo ln -s $(pwd)/flyway-9.22.3/flyway /usr/local/bin/flyway
+        flyway --version
+        echo "Flyway installed successfully!"
+      
     - name: Run database migrations
       run: |
         export DATABASE_URL="postgresql://postgres:password@localhost:1337/overpower"
