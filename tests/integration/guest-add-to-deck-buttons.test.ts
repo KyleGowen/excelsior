@@ -660,6 +660,7 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
 
     describe('Guest Role Add to Deck Functionality Verification', () => {
         let testDeckId: string;
+        let createdDeckIds: string[] = [];
 
         beforeAll(async () => {
             // Create a test deck for the guest user
@@ -673,15 +674,33 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
 
             if (createDeckResponse.status === 200) {
                 testDeckId = createDeckResponse.body.data.metadata.id;
+                createdDeckIds.push(testDeckId);
             }
         });
 
         afterAll(async () => {
-            // Clean up test deck
-            if (testDeckId) {
-                await request(app)
-                    .delete(`/api/decks/${testDeckId}`)
-                    .set('Cookie', guestAuthCookie);
+            // Clean up all test decks
+            for (const deckId of createdDeckIds) {
+                try {
+                    await request(app)
+                        .delete(`/api/decks/${deckId}`)
+                        .set('Cookie', guestAuthCookie);
+                } catch (error) {
+                    console.warn(`Failed to delete test deck ${deckId}:`, error);
+                }
+            }
+            
+            // Additional cleanup: remove any remaining test decks by name pattern
+            try {
+                const { Pool } = require('pg');
+                const pool = new Pool({
+                    connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+                });
+                
+                await pool.query("DELETE FROM decks WHERE name IN ('Guest Test Deck', 'Guest Attempted Deck') AND user_id = (SELECT id FROM users WHERE username = 'guest' LIMIT 1)");
+                await pool.end();
+            } catch (error) {
+                console.warn('Failed to clean up test decks by name pattern:', error);
             }
         });
 
@@ -753,6 +772,11 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
             // In production, this should be blocked
             expect(createDeckResponse.status).toBe(201);
             expect(createDeckResponse.body.success).toBe(true);
+            
+            // Track this deck for cleanup
+            if (createDeckResponse.body.data && createDeckResponse.body.data.metadata) {
+                createdDeckIds.push(createDeckResponse.body.data.metadata.id);
+            }
         });
 
         it('should prevent guest users from modifying existing decks', async () => {
