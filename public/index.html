@@ -1180,6 +1180,20 @@
             border-color: rgba(255, 107, 107, 0.4);
         }
 
+        .deck-action-btn:disabled {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .deck-action-btn.danger:disabled {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: rgba(255, 107, 107, 0.2);
+            color: rgba(255, 107, 107, 0.3);
+        }
+
         /* Form Styles */
         .form-group {
             margin-bottom: 20px;
@@ -8296,6 +8310,10 @@
                 return;
             }
 
+            // Check if current user is guest
+            const isGuest = isGuestUser();
+            console.log('🔍 displayDecks (index.html) - isGuest:', isGuest);
+
             // Fetch character data to get character names
             let characterMap = {};
             try {
@@ -8402,7 +8420,10 @@
                             <div class="deck-actions" onclick="event.stopPropagation()">
                                 <button class="deck-action-btn" onclick="editDeck('${deck.metadata.id}')">Edit</button>
                                 <button class="deck-action-btn" onclick="viewDeck('${deck.metadata.id}')">View</button>
-                                <button class="deck-action-btn danger" onclick="deleteDeck('${deck.metadata.id}')">Delete</button>
+                                ${isGuest ? 
+                                    '<button class="deck-action-btn danger" disabled title="Log in to delete decks...">Delete</button>' : 
+                                    '<button class="deck-action-btn danger" onclick="deleteDeck(\'' + deck.metadata.id + '\')">Delete</button>'
+                                }
                         </div>
                     </div>
                 `;
