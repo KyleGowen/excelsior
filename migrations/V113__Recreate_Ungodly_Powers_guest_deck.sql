@@ -9,10 +9,14 @@ DECLARE
     new_deck_id UUID;
     card_id_var UUID;
 BEGIN
-    -- Get guest user ID
+    -- Get or create guest user ID
     SELECT id INTO guest_user_id FROM users WHERE username = 'guest';
     IF guest_user_id IS NULL THEN
-        RAISE EXCEPTION 'Guest user not found';
+        -- Create guest user if they don't exist
+        INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at)
+        VALUES ('00000000-0000-0000-0000-000000000001', 'guest', 'guest@example.com', '$2b$10$rQZ8K9L2mN3oP4qR5sT6uO7vW8xY9zA0bC1dE2fG3hI4jK5lM6nO7pQ8rS9tU', 'GUEST', NOW(), NOW())
+        RETURNING id INTO guest_user_id;
+        RAISE NOTICE 'Guest user created with ID: %', guest_user_id;
     END IF;
 
     -- Create the deck
