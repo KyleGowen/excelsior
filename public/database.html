@@ -3976,7 +3976,7 @@
                 </div>
                 <div class="deck-editor-actions">
                     <button class="btn-secondary" onclick="closeDeckEditor()">Cancel</button>
-                    <button class="btn-primary" onclick="saveDeckChanges()">Save Changes</button>
+                    <button id="saveDeckButton" class="btn-primary" onclick="saveDeckChanges()">Save Changes</button>
                 </div>
             </div>
             
@@ -7822,6 +7822,24 @@
                     return;
                 }
                 modal.style.display = 'flex';
+                
+                // Disable Save button for guest users
+                const saveButton = document.getElementById('saveDeckButton');
+                if (saveButton) {
+                    if (isGuestUser()) {
+                        saveButton.disabled = true;
+                        saveButton.style.opacity = '0.5';
+                        saveButton.style.cursor = 'not-allowed';
+                        saveButton.title = 'Guests cannot save edits..';
+                        console.log('🔍 Disabled Save button for guest user');
+                    } else {
+                        saveButton.disabled = false;
+                        saveButton.style.opacity = '1';
+                        saveButton.style.cursor = 'pointer';
+                        saveButton.title = '';
+                    }
+                }
+                
                 console.log('Modal displayed, setting up drag and drop');
                 setupDragAndDrop();
                 
@@ -10288,6 +10306,13 @@
 
         async function saveDeckChanges() {
             if (!currentDeckId || !currentDeckData) return;
+            
+            // Check if user is guest - guests cannot save any changes
+            if (isGuestUser()) {
+                console.log('🔍 DEBUG: Blocking save - guest user');
+                alert('Guests cannot save edits. Please log in to save deck changes.');
+                return;
+            }
             
             try {
                 // Clear existing cards

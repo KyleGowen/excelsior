@@ -5724,7 +5724,7 @@
                 </div>
                 <div class="deck-editor-actions">
                     <button class="btn-secondary" onclick="closeDeckEditor()">Cancel</button>
-                    <button class="btn-primary" onclick="saveDeckChanges()">Save</button>
+                    <button id="saveDeckButton" class="btn-primary" onclick="saveDeckChanges()">Save</button>
                 </div>
             </div>
             
@@ -12330,10 +12330,27 @@
                 
                 // Title is already set to the deck name, no need to override it
                 
-                // Hide/show Save button based on mode
-                const saveButton = document.querySelector('.deck-editor-actions .btn-primary');
+                // Hide/show Save button based on mode and guest status
+                const saveButton = document.getElementById('saveDeckButton');
                 if (saveButton) {
-                    saveButton.style.display = isReadOnlyMode ? 'none' : 'block';
+                    if (isReadOnlyMode) {
+                        saveButton.style.display = 'none';
+                    } else if (isGuestUser()) {
+                        // Disable Save button for guest users
+                        saveButton.disabled = true;
+                        saveButton.style.opacity = '0.5';
+                        saveButton.style.cursor = 'not-allowed';
+                        saveButton.title = 'Guests cannot save edits..';
+                        saveButton.style.display = 'block';
+                        console.log('🔍 Disabled Save button for guest user');
+                    } else {
+                        // Enable Save button for regular users
+                        saveButton.disabled = false;
+                        saveButton.style.opacity = '1';
+                        saveButton.style.cursor = 'pointer';
+                        saveButton.title = '';
+                        saveButton.style.display = 'block';
+                    }
                 }
                 
                 console.log('Modal displayed, setting up drag and drop');
@@ -16261,6 +16278,13 @@
             console.log('🔍 DEBUG: isReadOnlyMode:', isReadOnlyMode);
             
             if (!currentDeckId || !currentDeckData) return;
+            
+            // Check if user is guest - guests cannot save any changes
+            if (isGuestUser()) {
+                console.log('🔍 DEBUG: Blocking save - guest user');
+                alert('Guests cannot save edits. Please log in to save deck changes.');
+                return;
+            }
             
             // Check if in read-only mode
             if (isReadOnlyMode) {
