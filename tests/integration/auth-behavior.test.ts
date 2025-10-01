@@ -32,10 +32,10 @@ describe('Authentication Behavior Tests', () => {
     });
 
     it('should authenticate guest user with database repository', async () => {
-      const user = await userRepository.authenticateUser('guest', 'guest');
+      const user = await userRepository.authenticateUser('Test-Guest', 'test-guest');
       
       expect(user).toBeDefined();
-      expect(user?.name).toBe('guest');
+      expect(user?.name).toBe('Test-Guest');
       expect(user?.id).toBeDefined();
       expect(user?.role).toBe('GUEST');
     });
@@ -136,26 +136,26 @@ describe('Authentication Behavior Tests', () => {
   describe('Guest User Handling', () => {
     it('should have guest user in database', async () => {
       // First authenticate to get the actual guest user ID
-      const guestUser = await userRepository.authenticateUser('guest', 'guest');
+      const guestUser = await userRepository.authenticateUser('Test-Guest', 'test-guest');
       
       expect(guestUser).toBeDefined();
-      expect(guestUser?.name).toBe('guest');
+      expect(guestUser?.name).toBe('Test-Guest');
       expect(guestUser?.role).toBe('GUEST');
       
       // Now test getting by ID
       if (guestUser) {
         const userById = await userRepository.getUserById(guestUser.id);
         expect(userById).toBeDefined();
-        expect(userById?.name).toBe('guest');
+        expect(userById?.name).toBe('Test-Guest');
         expect(userById?.role).toBe('GUEST');
       }
     });
 
     it('should authenticate guest user', async () => {
-      const user = await userRepository.authenticateUser('guest', 'guest');
+      const user = await userRepository.authenticateUser('Test-Guest', 'test-guest');
       
       expect(user).toBeDefined();
-      expect(user?.name).toBe('guest');
+      expect(user?.name).toBe('Test-Guest');
       expect(user?.role).toBe('GUEST');
     });
   });

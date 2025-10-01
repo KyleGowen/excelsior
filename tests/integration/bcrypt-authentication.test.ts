@@ -143,17 +143,17 @@ describe('Bcrypt Authentication Integration Tests', () => {
 
   describe('Guest User Authentication', () => {
     it('should authenticate guest user with correct password', async () => {
-      const authenticatedUser = await userRepository.authenticateUser('guest', 'guest');
+      const authenticatedUser = await userRepository.authenticateUser('Test-Guest', 'test-guest');
       
       expect(authenticatedUser).toBeDefined();
-      expect(authenticatedUser?.name).toBe('guest');
+      expect(authenticatedUser?.name).toBe('Test-Guest');
       expect(authenticatedUser?.role).toBe('GUEST');
       
       console.log('✅ Guest user authentication successful');
     });
 
     it('should reject guest authentication with incorrect password', async () => {
-      const authenticatedUser = await userRepository.authenticateUser('guest', 'wrongpassword');
+      const authenticatedUser = await userRepository.authenticateUser('Test-Guest', 'wrongpassword');
       
       expect(authenticatedUser).toBeUndefined();
       
