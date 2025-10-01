@@ -8421,7 +8421,7 @@
                                 <button class="deck-action-btn" onclick="editDeck('${deck.metadata.id}')">Edit</button>
                                 <button class="deck-action-btn" onclick="viewDeck('${deck.metadata.id}')">View</button>
                                 ${isGuest ? 
-                                    '<button class="deck-action-btn danger" disabled title="Log in to delete decks...">Delete</button>' : 
+                                    '<button class="deck-action-btn danger" disabled title="Guests may not delete decks">Delete</button>' : 
                                     '<button class="deck-action-btn danger" onclick="deleteDeck(\'' + deck.metadata.id + '\')">Delete</button>'
                                 }
                         </div>
