@@ -31,6 +31,9 @@ export class PasswordUtils {
    * @returns boolean - True if already hashed, false otherwise
    */
   static isHashed(password: string): boolean {
+    if (!password || typeof password !== 'string') {
+      return false;
+    }
     return password.startsWith('$2a$') || password.startsWith('$2b$');
   }
 }
