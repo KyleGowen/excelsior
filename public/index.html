@@ -909,6 +909,17 @@
             transform: translateY(-1px);
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
+
+        /* Prevent flash for guest users - buttons appear disabled by default */
+        .add-to-deck-btn {
+            transition: opacity 0.1s ease-in-out;
+        }
+        
+        .add-to-deck-btn[data-guest-disabled="true"] {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
         
         .add-to-deck-btn:active {
             transform: translateY(0);
@@ -6190,8 +6201,8 @@
                 console.log('🔍 Ensuring characters tab is shown after data load...');
                 switchTab('characters');
                 
-                // Disable "Add to Deck" buttons for guest users
-                disableAddToDeckButtons();
+            // Disable "Add to Deck" buttons for guest users immediately
+            disableAddToDeckButtonsImmediate();
                 
                 console.log('✅ Database view data loaded successfully');
             } catch (error) {
@@ -6265,6 +6276,49 @@
                     button.setAttribute('data-guest-disabled', 'true');
                 });
                 console.log('🔍 Disabled', addToDeckButtons.length, 'Add to Deck buttons for guest user');
+            }
+        }
+
+        // Enhanced function to disable buttons immediately and prevent flash
+        function disableAddToDeckButtonsImmediate() {
+            if (isGuestUser()) {
+                // Use a more aggressive approach to catch buttons as they're created
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.type === 'childList') {
+                            mutation.addedNodes.forEach((node) => {
+                                if (node.nodeType === 1) { // Element node
+                                    const buttons = node.querySelectorAll ? node.querySelectorAll('.add-to-deck-btn') : [];
+                                    buttons.forEach(button => {
+                                        button.disabled = true;
+                                        button.style.opacity = '0.5';
+                                        button.style.cursor = 'not-allowed';
+                                        button.title = 'Log in to add to decks...';
+                                        button.setAttribute('data-guest-disabled', 'true');
+                                    });
+                                    
+                                    // Also check if the node itself is a button
+                                    if (node.classList && node.classList.contains('add-to-deck-btn')) {
+                                        node.disabled = true;
+                                        node.style.opacity = '0.5';
+                                        node.style.cursor = 'not-allowed';
+                                        node.title = 'Log in to add to decks...';
+                                        node.setAttribute('data-guest-disabled', 'true');
+                                    }
+                                }
+                            });
+                        }
+                    });
+                });
+                
+                // Start observing
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+                
+                // Also disable existing buttons immediately
+                disableAddToDeckButtons();
             }
         }
 
@@ -6883,8 +6937,8 @@
                 loadPowerCards();
             }
             
-            // Disable "Add to Deck" buttons for guest users after loading tab data
-            setTimeout(() => disableAddToDeckButtons(), 50);
+            // Disable "Add to Deck" buttons for guest users immediately
+            disableAddToDeckButtonsImmediate();
         }
 
         // Location search functionality
@@ -8003,8 +8057,8 @@
             console.log('🔍 showMainApp() - loading database view data...');
             loadDatabaseViewData();
             
-            // Disable "Add to Deck" buttons for guest users
-            setTimeout(() => disableAddToDeckButtons(), 100);
+            // Disable "Add to Deck" buttons for guest users immediately
+            disableAddToDeckButtonsImmediate();
         }
 
         // Load main app data in background without showing the UI

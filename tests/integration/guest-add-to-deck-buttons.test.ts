@@ -646,14 +646,14 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
             expect(response.text).toContain('Log in to add to decks...');
         });
 
-        it('should call disableAddToDeckButtons after data loads', async () => {
+        it('should call disableAddToDeckButtonsImmediate after data loads', async () => {
             const response = await request(app)
                 .get('/users/guest/decks')
                 .set('Cookie', guestAuthCookie)
                 .expect(200);
 
             // Check that the function is called after data loads
-            expect(response.text).toContain('setTimeout(() => disableAddToDeckButtons()');
+            expect(response.text).toContain('disableAddToDeckButtonsImmediate()');
             expect(response.text).toContain('loadDatabaseViewData()');
         });
     });
