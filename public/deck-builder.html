@@ -5551,6 +5551,10 @@
                     const data = await response.json();
                     currentUser = data.data;
                     showMainApp();
+                    // Load user's data after user is set
+                    setTimeout(() => {
+                        loadUserData();
+                    }, 100);
                 } else {
                     showLoginModal();
                 }
@@ -5577,7 +5581,9 @@
 
         // Check if current user is guest
         function isGuestUser() {
-            return currentUser && (currentUser.role === 'GUEST' || currentUser.username === 'guest' || currentUser.name === 'guest');
+            const isGuest = currentUser && (currentUser.role === 'GUEST' || currentUser.username === 'guest' || currentUser.name === 'guest');
+            console.log('🔍 isGuestUser() - currentUser:', currentUser, 'isGuest:', isGuest);
+            return isGuest;
         }
 
         async function login(username, password) {
@@ -5595,8 +5601,10 @@
                 if (data.success) {
                     currentUser = data.data;
                     showMainApp();
-                    // Load user's data
-                    loadUserData();
+                    // Load user's data after user is set
+                    setTimeout(() => {
+                        loadUserData();
+                    }, 100);
                 } else {
                     showLoginError(data.error || 'Login failed');
                 }
@@ -5716,6 +5724,13 @@
         // Load decks when switching to deck builder tab
         async function loadDecks() {
             try {
+                // Ensure we have current user data before proceeding
+                if (!currentUser) {
+                    console.log('🔍 loadDecks - No currentUser, skipping deck load');
+                    return;
+                }
+                
+                console.log('🔍 loadDecks - Loading decks for user:', currentUser);
                 const response = await fetch('/api/decks');
                 const data = await response.json();
                     if (data.success) {
@@ -5740,6 +5755,10 @@
                 `;
                 return;
             }
+
+            // Check if current user is guest
+            const isGuest = isGuestUser();
+            console.log('🔍 displayDecks - currentUser:', currentUser, 'isGuest:', isGuest);
 
             // Fetch character data to get character names
             let characterMap = {};
@@ -5842,7 +5861,7 @@
                             <div class="deck-actions" onclick="event.stopPropagation()">
                                 <button class="deck-action-btn" onclick="editDeck('${deck.id}')">Edit</button>
                                 <button class="deck-action-btn" onclick="viewDeck('${deck.id}')">View</button>
-                                ${isGuestUser() ? 
+                                ${isGuest ? 
                                     '<button class="deck-action-btn danger" disabled title="Log in to delete decks...">Delete</button>' : 
                                     '<button class="deck-action-btn danger" onclick="deleteDeck(\'' + deck.id + '\')">Delete</button>'
                                 }
