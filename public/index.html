@@ -918,29 +918,6 @@
         .add-to-deck-btn[data-guest-disabled="true"] {
             opacity: 0.5 !important;
             cursor: not-allowed !important;
-            position: relative;
-        }
-        
-        /* Custom tooltip positioning for disabled buttons */
-        .add-to-deck-btn[data-guest-disabled="true"]:hover::after {
-            content: attr(title);
-            position: absolute;
-            bottom: 100%;
-            right: 0;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            z-index: 1000;
-            pointer-events: none;
-            margin-bottom: 4px;
-        }
-        
-        /* Hide the default browser tooltip for disabled buttons */
-        .add-to-deck-btn[data-guest-disabled="true"]:hover {
-            position: relative;
         }
         
         .add-to-deck-btn:active {
