@@ -917,6 +917,30 @@
         
         .add-to-deck-btn[data-guest-disabled="true"] {
             opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            position: relative;
+        }
+        
+        /* Custom tooltip positioning for disabled buttons */
+        .add-to-deck-btn[data-guest-disabled="true"]:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            margin-bottom: 4px;
+        }
+        
+        /* Hide the default browser tooltip for disabled buttons */
+        .add-to-deck-btn[data-guest-disabled="true"]:hover {
+            position: relative;
         }
         
         .add-to-deck-btn:active {
@@ -6268,6 +6292,7 @@
                 addToDeckButtons.forEach(button => {
                     button.disabled = true;
                     button.style.opacity = '0.5';
+                    button.style.cursor = 'not-allowed';
                     button.title = 'Log in to add to decks...';
                     // Also add a data attribute for debugging
                     button.setAttribute('data-guest-disabled', 'true');
@@ -6289,6 +6314,7 @@
                                     buttons.forEach(button => {
                                         button.disabled = true;
                                         button.style.opacity = '0.5';
+                                        button.style.cursor = 'not-allowed';
                                         button.title = 'Log in to add to decks...';
                                         button.setAttribute('data-guest-disabled', 'true');
                                     });
@@ -6297,6 +6323,7 @@
                                     if (node.classList && node.classList.contains('add-to-deck-btn')) {
                                         node.disabled = true;
                                         node.style.opacity = '0.5';
+                                        node.style.cursor = 'not-allowed';
                                         node.title = 'Log in to add to decks...';
                                         node.setAttribute('data-guest-disabled', 'true');
                                     }
