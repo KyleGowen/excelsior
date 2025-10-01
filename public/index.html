@@ -5739,10 +5739,7 @@
                             <span class="stat-value" id="deckMaxIntelligence">0</span>
                         </div>
                         <div class="summary-stat">
-                            <span class="stat-label">
-                                <img src="resources/images/icons/threat.png" alt="Threat" class="stat-icon">
-                                Total Threat:
-                            </span>
+                            <span class="stat-label">Total Threat:</span>
                             <span class="stat-value" id="deckTotalThreat">0</span>
                         </div>
                     </div>
@@ -8395,7 +8392,7 @@
                                 ${characterList}
                                 <div class="deck-meta">
                                     <span>📊 ${calculateTotalCardCount(deck.cards || [])} cards</span>
-                                    <span><img src="resources/images/icons/threat.png" alt="Threat" class="stat-icon-small"> ${calculateTotalThreat(deck.cards || [])}</span>
+                                    <span><img src="resources/images/icons/threat.png" alt="Threat" class="stat-icon-small" onerror="console.error('Threat icon failed to load')"> ${calculateTotalThreat(deck.cards || [])}</span>
                                     <span>📅 Created: ${new Date(deck.metadata.created).toLocaleDateString()}</span>
                                     <span>✏️ Modified: ${new Date(deck.metadata.lastModified).toLocaleDateString()}</span>
                                 </div>
@@ -10128,24 +10125,36 @@
         function calculateTotalThreat(deckCards) {
             let totalThreat = 0;
             
+            console.log('🔍 calculateTotalThreat called with deckCards:', deckCards);
+            console.log('🔍 availableCardsMap size:', availableCardsMap.size);
+            
             // Calculate threat from character cards
             const characterCards = deckCards.filter(card => card.type === 'character');
+            console.log('🔍 Character cards found:', characterCards.length);
+            
             characterCards.forEach(card => {
                 const character = availableCardsMap.get(card.cardId);
+                console.log('🔍 Looking for character cardId:', card.cardId, 'found:', character);
                 if (character && character.threat_level) {
                     totalThreat += character.threat_level * card.quantity;
+                    console.log('🔍 Added threat:', character.threat_level * card.quantity, 'total now:', totalThreat);
                 }
             });
             
             // Calculate threat from location cards
             const locationCards = deckCards.filter(card => card.type === 'location');
+            console.log('🔍 Location cards found:', locationCards.length);
+            
             locationCards.forEach(card => {
                 const location = availableCardsMap.get(card.cardId);
+                console.log('🔍 Looking for location cardId:', card.cardId, 'found:', location);
                 if (location && location.threat_level) {
                     totalThreat += location.threat_level * card.quantity;
+                    console.log('🔍 Added location threat:', location.threat_level * card.quantity, 'total now:', totalThreat);
                 }
             });
             
+            console.log('🔍 Final total threat:', totalThreat);
             return totalThreat;
         }
 
