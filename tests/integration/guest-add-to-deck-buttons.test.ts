@@ -11,13 +11,14 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
     let adminAuthCookie: string;
 
     beforeAll(async () => {
-        // Create test users
-        guestUser = await integrationTestUtils.createTestUser({
-            name: 'guest',
-            email: 'guest@example.com',
+        // Use the Test-Guest user instead of creating a new one
+        guestUser = {
+            id: '00000000-0000-0000-0000-000000000002',
+            name: 'Test-Guest',
+            email: 'test-guest@example.com',
             role: 'GUEST',
-            password: 'guest'
-        });
+            username: 'Test-Guest'
+        };
 
         regularUser = await integrationTestUtils.createTestUser({
             name: 'testuser',
@@ -37,8 +38,8 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
         const guestLoginResponse = await request(app)
             .post('/api/auth/login')
             .send({
-                username: guestUser.username,
-                password: 'guest'
+                username: 'Test-Guest',
+                password: 'test-guest'
             });
         
         if (guestLoginResponse.headers['set-cookie']) {
@@ -71,8 +72,8 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
     });
 
     afterAll(async () => {
-        // Clean up test users
-        await integrationTestUtils.cleanupTestData();
+        // Cleanup is handled by global afterAll in setup-integration.ts
+        // No need for individual cleanup here
     });
 
     describe('Guest User - Disabled Add to Deck Buttons', () => {
@@ -675,6 +676,8 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
             if (createDeckResponse.status === 200) {
                 testDeckId = createDeckResponse.body.data.metadata.id;
                 createdDeckIds.push(testDeckId);
+                // Track this deck for cleanup
+                integrationTestUtils.trackTestDeck(testDeckId);
             }
         });
 
@@ -690,18 +693,8 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
                 }
             }
             
-            // Additional cleanup: remove any remaining test decks by name pattern
-            try {
-                const { Pool } = require('pg');
-                const pool = new Pool({
-                    connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
-                });
-                
-                await pool.query("DELETE FROM decks WHERE name IN ('Guest Test Deck', 'Guest Attempted Deck') AND user_id = (SELECT id FROM users WHERE username = 'guest' LIMIT 1)");
-                await pool.end();
-            } catch (error) {
-                console.warn('Failed to clean up test decks by name pattern:', error);
-            }
+            // Cleanup is now handled by the tracking system
+            // No pattern-based deletion needed here
         });
 
         it('should prevent guest users from adding character cards to deck', async () => {
@@ -828,7 +821,7 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
             // Verify the user is actually a guest
             expect(meResponse.body.success).toBe(true);
             expect(meResponse.body.data.role).toBe('GUEST');
-            expect(meResponse.body.data.name).toContain('guest');
+            expect(meResponse.body.data.name).toMatch(/Test-Guest|guest/);
         });
     });
 });

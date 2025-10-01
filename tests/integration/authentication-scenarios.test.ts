@@ -39,8 +39,8 @@ describe('Authentication Scenarios Integration Tests', () => {
       });
     }
     
-    // Clean up test data
-    await integrationTestUtils.cleanupTestData();
+    // Cleanup is handled by global afterAll in setup-integration.ts
+    // No need for individual cleanup here
   });
 
   describe('USER Role Authentication', () => {

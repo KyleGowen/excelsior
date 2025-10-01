@@ -33,7 +33,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     // Login to get cookies
     const guestResponse = await request(app)
       .post('/api/auth/login')
-      .send({ username: 'guest', password: 'guest' });
+      .send({ username: 'Test-Guest', password: 'test-guest' });
     
     if (guestResponse.headers['set-cookie']) {
       guestCookie = guestResponse.headers['set-cookie'][0].split(';')[0];
@@ -79,6 +79,9 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     expect(createDeckResponse.body.success).toBe(true);
     testDeckId = createDeckResponse.body.data.id;
     expect(testDeckId).toBeDefined();
+    
+    // Track this deck for cleanup
+    integrationTestUtils.trackTestDeck(testDeckId);
     
     console.log('🔍 Created test deck with ID:', testDeckId);
   });
@@ -137,6 +140,9 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.data.name).toBe('Admin Deck');
+      
+      // Track this deck for cleanup
+      integrationTestUtils.trackTestDeck(response.body.data.id);
     });
   });
 

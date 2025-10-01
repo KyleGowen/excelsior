@@ -19,8 +19,8 @@ describe('Deck Navigation Flow Integration Tests', () => {
   });
 
   afterAll(async () => {
-    // Clean up test data
-    await integrationTestUtils.cleanupTestData();
+    // Cleanup is handled by global afterAll in setup-integration.ts
+    // No need for individual cleanup here
   });
 
   beforeEach(async () => {

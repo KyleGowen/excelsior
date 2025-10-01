@@ -30,8 +30,8 @@ describe('Deck Building Integration Tests', () => {
   afterAll(async () => {
     // Clean up test data
     for (const deckId of createdDeckIds) {
-      await pool.query('DELETE FROM deck_cards WHERE deck_id = $1', [deckId]);
-      await pool.query('DELETE FROM decks WHERE id = $1', [deckId]);
+      // Track these decks for cleanup
+      integrationTestUtils.trackTestDeck(deckId);
     }
     if (testUserId) {
       await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
@@ -377,6 +377,7 @@ describe('Deck Building Integration Tests', () => {
         await pool.query('DELETE FROM deck_cards WHERE deck_id = $1', [deckId]);
         
         // Delete the deck
+        console.log(`🔍 DEBUG: deckBuilding.test.ts - Deleting deck: ${deckId}`);
         const result = await pool.query('DELETE FROM decks WHERE id = $1', [deckId]);
         expect(result.rowCount).toBe(1);
 
@@ -423,6 +424,7 @@ describe('Deck Building Integration Tests', () => {
 
       // Delete any remaining decks
       for (const deckId of createdDeckIds) {
+        console.log(`🔍 DEBUG: deckBuilding.test.ts afterAll() - Deleting remaining deck: ${deckId}`);
         await pool.query('DELETE FROM decks WHERE id = $1', [deckId]);
       }
 

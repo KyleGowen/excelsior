@@ -28,6 +28,7 @@
     "migrate:info": "ts-node src/scripts/flywayRunner.ts info",
     "migrate:validate": "ts-node src/scripts/flywayRunner.ts validate",
     "migrate:repair": "ts-node src/scripts/flywayRunner.ts repair",
+    "cleanup:test-data": "node scripts/cleanup-test-data.js",
     "migrate:data": "ts-node src/scripts/migrateCardData.ts",
     "generate:sql-migrations": "ts-node src/scripts/generateSqlDataMigrations.ts",
     "start:full": "./scripts/start-server.sh"

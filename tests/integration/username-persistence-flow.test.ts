@@ -18,8 +18,8 @@ describe('Username Persistence Flow', () => {
     let authCookie: string;
 
     beforeEach(async () => {
-        // Clean up any existing test data
-        await integrationTestUtils.cleanupTestData();
+        // Cleanup is handled by global afterAll in setup-integration.ts
+        // No need for individual cleanup here
 
         // Create a test user
         testUser = await integrationTestUtils.createTestUser({
@@ -48,7 +48,8 @@ describe('Username Persistence Flow', () => {
     });
 
     afterEach(async () => {
-        await integrationTestUtils.cleanupTestData();
+        // Cleanup is handled by global afterAll in setup-integration.ts
+        // No need for individual cleanup here
     });
 
     describe('Username persistence after deck editor interactions', () => {

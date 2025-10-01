@@ -1,5 +1,6 @@
 import { Pool } from 'pg';
 import bcrypt from 'bcrypt';
+import { integrationTestUtils, logDeckDeletion } from '../setup-integration';
 
 // Simple UUID v4 generator for tests
 function generateUUID(): string {
@@ -24,17 +25,20 @@ describe('Deck Management Integration Tests', () => {
   afterAll(async () => {
     // Clean up test data
     if (testDeckId) {
+      console.log(`🔍 DEBUG: deckManagement.test.ts afterAll() - Deleting deck: ${testDeckId}`);
+      logDeckDeletion('deckManagement.test.ts afterAll', testDeckId, 'test cleanup');
       await pool.query('DELETE FROM decks WHERE id = $1', [testDeckId]);
     }
     if (testUserId) {
+      console.log(`🔍 DEBUG: deckManagement.test.ts afterAll() - Deleting user: ${testUserId}`);
       await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
     }
     await pool.end();
   });
 
   describe('Deck Creation Database Operations', () => {
-    it('should create a new deck with valid data', async () => {
-      // Create a test user first
+    beforeEach(async () => {
+      // Create a test user and deck for each test
       testUserId = generateUUID();
       const userName = `Test Deck Creator ${generateUUID()}`;
       const userEmail = `test-creator-${generateUUID()}@example.com`;
@@ -50,17 +54,27 @@ describe('Deck Management Integration Tests', () => {
       const deckDescription = 'A test deck for integration testing';
       const deckCards = JSON.stringify([]);
       
-      const result = await pool.query(
-        'INSERT INTO decks (id, user_id, name, description, ui_preferences, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) RETURNING *',
+      await pool.query(
+        'INSERT INTO decks (id, user_id, name, description, ui_preferences, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
         [testDeckId, testUserId, deckName, deckDescription, deckCards]
+      );
+      
+      // Track this deck for cleanup
+      integrationTestUtils.trackTestDeck(testDeckId);
+    });
+
+    it('should create a new deck with valid data', async () => {
+      const result = await pool.query(
+        'SELECT * FROM decks WHERE id = $1',
+        [testDeckId!]
       );
       
       expect(result.rows).toHaveLength(1);
       const deck = result.rows[0];
       expect(deck.id).toBe(testDeckId);
       expect(deck.user_id).toBe(testUserId);
-      expect(deck.name).toBe(deckName);
-      expect(deck.description).toBe(deckDescription);
+      expect(deck.name).toBe('Test Deck');
+      expect(deck.description).toBe('A test deck for integration testing');
       expect(deck.ui_preferences).toBeDefined();
       expect(deck.created_at).toBeDefined();
       expect(deck.updated_at).toBeDefined();
@@ -128,6 +142,7 @@ describe('Deck Management Integration Tests', () => {
     it('should verify deck can be deleted', async () => {
       expect(testDeckId).toBeDefined();
       
+      console.log(`🔍 DEBUG: deckManagement.test.ts - Deleting deck for test: ${testDeckId!}`);
       const result = await pool.query(
         'DELETE FROM decks WHERE id = $1 RETURNING *',
         [testDeckId!]
@@ -170,6 +185,9 @@ describe('Deck Management Integration Tests', () => {
         'INSERT INTO decks (id, user_id, name, description, ui_preferences, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
         [testDeckId, testUserId, deckName, deckDescription, JSON.stringify([])]
       );
+      
+      // Track this deck for cleanup
+      integrationTestUtils.trackTestDeck(testDeckId);
     });
 
     it('should add cards to deck', async () => {
@@ -315,13 +333,18 @@ describe('Deck Management Integration Tests', () => {
         [testDeckId, testUserId, 'Test JSON Deck', 'Test description', JSON.stringify(validCards)]
       );
       
+      // Track this deck for cleanup
+      integrationTestUtils.trackTestDeck(testDeckId);
+      
       expect(result.rows).toHaveLength(1);
       const cards = typeof result.rows[0].ui_preferences === 'string' ? JSON.parse(result.rows[0].ui_preferences) : result.rows[0].ui_preferences;
       expect(Array.isArray(cards)).toBe(true);
       expect(cards).toHaveLength(2);
       
       // Cleanup
+      console.log(`🔍 DEBUG: deckManagement.test.ts - Cleanup deleting deck: ${testDeckId}`);
       await pool.query('DELETE FROM decks WHERE id = $1', [testDeckId]);
+      console.log(`🔍 DEBUG: deckManagement.test.ts - Cleanup deleting user: ${testUserId}`);
       await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
       
       console.log('✅ Deck cards JSON format verified:', cards);

@@ -6,6 +6,7 @@
 // Set test environment variables
 process.env.NODE_ENV = 'test';
 process.env.PORT = '3000';
+process.env.SKIP_MIGRATIONS = 'true';
 
 // Import test server
 import request from 'supertest';
@@ -44,8 +45,8 @@ describe('Character Column Layout Integration Tests', () => {
   });
 
   afterAll(async () => {
-    // Clean up test data
-    await integrationTestUtils.cleanupTestData();
+    // Cleanup is handled by global afterAll in setup-integration.ts
+    // No need for individual cleanup here
   });
 
   beforeEach(async () => {

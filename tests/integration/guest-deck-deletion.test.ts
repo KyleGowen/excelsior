@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app } from '../setup-integration';
+import { app, integrationTestUtils } from '../setup-integration';
 import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 import { UserRepository } from '../../src/repository/UserRepository';
 import { DeckRepository } from '../../src/repository/DeckRepository';
@@ -18,8 +18,17 @@ describe('Guest Deck Deletion Integration Tests', () => {
     userRepository = dataSourceConfig.getUserRepository();
     deckRepository = dataSourceConfig.getDeckRepository();
 
-    // Use existing users from the test setup
-    guestUserId = '00000000-0000-0000-0000-000000000001'; // Guest user ID
+    // Use Test-Guest user for testing (not production guest user)
+    let testGuestUser = await userRepository.getUserByUsername('Test-Guest');
+    if (!testGuestUser) {
+      testGuestUser = await userRepository.createUser(
+        'Test-Guest',
+        'test-guest@example.com',
+        'test-guest',
+        'GUEST'
+      );
+    }
+    guestUserId = testGuestUser.id;
     
     // Get or create regular user
     let regularUser = await userRepository.getUserByUsername('testuser');
@@ -52,6 +61,9 @@ describe('Guest Deck Deletion Integration Tests', () => {
       'A test deck for deletion testing'
     );
     testDeckId = testDeck.id;
+    
+    // Track this deck for cleanup
+    integrationTestUtils.trackTestDeck(testDeckId);
   });
 
   afterAll(async () => {
@@ -82,8 +94,8 @@ describe('Guest Deck Deletion Integration Tests', () => {
       const loginResponse = await request(app)
         .post('/api/auth/login')
         .send({
-          username: 'guest',
-          password: 'guest'
+          username: 'Test-Guest',
+          password: 'test-guest'
         });
 
       expect(loginResponse.status).toBe(200);
@@ -204,6 +216,9 @@ describe('Guest Deck Deletion Integration Tests', () => {
       expect(createDeckResponse.status).toBe(201);
       expect(createDeckResponse.body.success).toBe(true);
       regularUserDeckId = createDeckResponse.body.data.id;
+      
+      // Track this deck for cleanup
+      integrationTestUtils.trackTestDeck(regularUserDeckId);
     });
 
     afterAll(async () => {
@@ -219,7 +234,7 @@ describe('Guest Deck Deletion Integration Tests', () => {
 
     it('should allow regular user to delete their own deck', async () => {
       const deleteResponse = await request(app)
-        .delete(`/api/decks/${testDeckId}`)
+        .delete(`/api/decks/${regularUserDeckId}`)
         .set('Cookie', regularUserSessionCookie);
 
       expect(deleteResponse.status).toBe(200);
@@ -228,7 +243,7 @@ describe('Guest Deck Deletion Integration Tests', () => {
 
       // Verify deck is actually deleted
       const getDeckResponse = await request(app)
-        .get(`/api/decks/${testDeckId}`)
+        .get(`/api/decks/${regularUserDeckId}`)
         .set('Cookie', regularUserSessionCookie);
 
       expect(getDeckResponse.status).toBe(404);
@@ -343,6 +358,9 @@ describe('Guest Deck Deletion Integration Tests', () => {
       expect(createDeckResponse.status).toBe(201);
       expect(createDeckResponse.body.success).toBe(true);
       adminDeckId = createDeckResponse.body.data.id;
+      
+      // Track this deck for cleanup
+      integrationTestUtils.trackTestDeck(adminDeckId);
     });
 
     afterAll(async () => {
@@ -429,6 +447,9 @@ describe('Guest Deck Deletion Integration Tests', () => {
 
       expect(createDeckResponse.status).toBe(201);
       const deckId = createDeckResponse.body.data.id;
+      
+      // Track this deck for cleanup
+      integrationTestUtils.trackTestDeck(deckId);
 
       // Modify the deck
       const modifyResponse = await request(app)
