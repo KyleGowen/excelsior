@@ -1528,5 +1528,23 @@
     "userId": "test-user-id",
     "username": "test-user",
     "expiresAt": "2025-09-30T21:19:18.143Z"
+  },
+  {
+    "sessionId": "sess_7yqn3lxqe_mg7ho9q4",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-01T06:31:16.540Z"
+  },
+  {
+    "sessionId": "sess_d83mqc762_mg7hofdq",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-01T06:31:23.870Z"
+  },
+  {
+    "sessionId": "sess_sbkvsvl17_mg7hofdw",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-01T06:31:23.876Z"
   }
 ]

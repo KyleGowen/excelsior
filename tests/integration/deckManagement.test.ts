@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import bcrypt from 'bcrypt';
 
 // Simple UUID v4 generator for tests
 function generateUUID(): string {
@@ -40,7 +41,7 @@ describe('Deck Management Integration Tests', () => {
       
       await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-        [testUserId, userName, userEmail, 'test_password_hash', 'USER']
+        [testUserId, userName, userEmail, await bcrypt.hash('test_password_hash', 10), 'USER']
       );
       
       // Create a test deck
@@ -158,7 +159,7 @@ describe('Deck Management Integration Tests', () => {
       
       await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-        [testUserId, userName, userEmail, 'test_password_hash', 'USER']
+        [testUserId, userName, userEmail, await bcrypt.hash('test_password_hash', 10), 'USER']
       );
       
       testDeckId = generateUUID();
@@ -261,7 +262,7 @@ describe('Deck Management Integration Tests', () => {
       
       await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-        [testUserId, userName, userEmail, 'test_password_hash', 'USER']
+        [testUserId, userName, userEmail, await bcrypt.hash('test_password_hash', 10), 'USER']
       );
       
       // Try to create deck with null name
@@ -300,7 +301,7 @@ describe('Deck Management Integration Tests', () => {
       
       await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-        [testUserId, userName, userEmail, 'test_password_hash', 'USER']
+        [testUserId, userName, userEmail, await bcrypt.hash('test_password_hash', 10), 'USER']
       );
       
       const testDeckId = generateUUID();

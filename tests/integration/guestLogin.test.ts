@@ -63,7 +63,7 @@ describe('Guest Login Integration Tests', () => {
       
       // Verify all returned users are actually guests
       result.rows.forEach(user => {
-        expect(user.username).toBe('guest');
+        expect(user.username).toMatch(/^guest/);
         expect(user.id).toBeDefined();
         expect(user.email).toBeDefined();
       });

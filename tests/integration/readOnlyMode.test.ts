@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import bcrypt from 'bcrypt';
 
 // Simple UUID v4 generator for tests
 function generateUUID(): string {
@@ -118,7 +119,7 @@ describe('Read-Only Mode Integration Tests', () => {
       
       await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-        [testUserId, userName, userEmail, 'test_password_hash', 'USER']
+        [testUserId, userName, userEmail, await bcrypt.hash(await bcrypt.hash('test_password_hash', 10), 10), 'USER']
       );
       
       // Create a test deck
@@ -159,7 +160,7 @@ describe('Read-Only Mode Integration Tests', () => {
         testUserId = generateUUID();
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-          [testUserId, `ro_owner_${generateUUID()}`, `ro-owner-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+          [testUserId, `ro_owner_${generateUUID()}`, `ro-owner-${generateUUID()}@it.local`, await bcrypt.hash('test_password_hash', 10), 'USER']
         );
       }
       if (!testDeckId) {
@@ -174,7 +175,7 @@ describe('Read-Only Mode Integration Tests', () => {
         if (userExists.rows.length === 0) {
           await pool.query(
             'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-            [testUserId, `ro_owner_${generateUUID()}`, `ro-owner-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+            [testUserId, `ro_owner_${generateUUID()}`, `ro-owner-${generateUUID()}@it.local`, await bcrypt.hash('test_password_hash', 10), 'USER']
           );
         }
         
@@ -209,7 +210,7 @@ describe('Read-Only Mode Integration Tests', () => {
         testUserId = generateUUID();
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-          [testUserId, `ro_owner_${generateUUID()}`, `ro-owner-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+          [testUserId, `ro_owner_${generateUUID()}`, `ro-owner-${generateUUID()}@it.local`, await bcrypt.hash('test_password_hash', 10), 'USER']
         );
       }
       if (!testDeckId) {
@@ -224,7 +225,7 @@ describe('Read-Only Mode Integration Tests', () => {
         if (userExists.rows.length === 0) {
           await pool.query(
             'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-            [testUserId, `ro_owner_${generateUUID()}`, `ro-owner-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+            [testUserId, `ro_owner_${generateUUID()}`, `ro-owner-${generateUUID()}@it.local`, await bcrypt.hash('test_password_hash', 10), 'USER']
           );
         }
         
@@ -330,7 +331,7 @@ describe('Read-Only Mode Integration Tests', () => {
         const testDeckId = generateUUID();
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-          [testUserId, `ro_test_${generateUUID()}`, `ro-test-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+          [testUserId, `ro_test_${generateUUID()}`, `ro-test-${generateUUID()}@it.local`, await bcrypt.hash('test_password_hash', 10), 'USER']
         );
         await pool.query(
           'INSERT INTO decks (id, user_id, name, description, ui_preferences, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
@@ -372,7 +373,7 @@ describe('Read-Only Mode Integration Tests', () => {
         const testDeckId = generateUUID();
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-          [testUserId, `ro_test_${generateUUID()}`, `ro-test-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+          [testUserId, `ro_test_${generateUUID()}`, `ro-test-${generateUUID()}@it.local`, await bcrypt.hash('test_password_hash', 10), 'USER']
         );
         await pool.query(
           'INSERT INTO decks (id, user_id, name, description, ui_preferences, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
@@ -409,7 +410,7 @@ describe('Read-Only Mode Integration Tests', () => {
         const testDeckId = generateUUID();
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-          [testUserId, `ro_test_${generateUUID()}`, `ro-test-${generateUUID()}@it.local`, 'test_password_hash', 'USER']
+          [testUserId, `ro_test_${generateUUID()}`, `ro-test-${generateUUID()}@it.local`, await bcrypt.hash('test_password_hash', 10), 'USER']
         );
         await pool.query(
           'INSERT INTO decks (id, user_id, name, description, ui_preferences, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',

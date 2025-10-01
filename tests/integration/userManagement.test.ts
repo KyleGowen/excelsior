@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import bcrypt from 'bcrypt';
 
 // Simple UUID v4 generator for tests
 function generateUUID(): string {
@@ -38,7 +39,7 @@ describe('User Management Integration Tests', () => {
       
       const result = await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) RETURNING *',
-        [userId, userName, userEmail, 'test_password_hash', userRole]
+        [userId, userName, userEmail, await bcrypt.hash('test_password_hash', 10), userRole]
       );
       
       expect(result.rows).toHaveLength(1);
@@ -61,7 +62,7 @@ describe('User Management Integration Tests', () => {
       
       await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-        [userId, userName, userEmail, 'test_password_hash', 'USER']
+        [userId, userName, userEmail, await bcrypt.hash('test_password_hash', 10), 'USER']
       );
       
       const result = await pool.query(
@@ -90,7 +91,7 @@ describe('User Management Integration Tests', () => {
       
       await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-        [userId, userName, userEmail, 'test_password_hash', 'USER']
+        [userId, userName, userEmail, await bcrypt.hash('test_password_hash', 10), 'USER']
       );
       
       // Now search by email
@@ -120,7 +121,7 @@ describe('User Management Integration Tests', () => {
       
       await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-        [userId, userName, userEmail, 'test_password_hash', 'USER']
+        [userId, userName, userEmail, await bcrypt.hash('test_password_hash', 10), 'USER']
       );
       
       // Update user role to ADMIN
@@ -157,7 +158,7 @@ describe('User Management Integration Tests', () => {
       
       await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-        [userId, userName, userEmail, 'test_password_hash', 'USER']
+        [userId, userName, userEmail, await bcrypt.hash('test_password_hash', 10), 'USER']
       );
       
       const deleteResult = await pool.query(
@@ -192,14 +193,14 @@ describe('User Management Integration Tests', () => {
       // Create first user
       await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-        [userId1, 'User 1', duplicateEmail, 'test_password_hash', 'USER']
+        [userId1, 'User 1', duplicateEmail, await bcrypt.hash('test_password_hash', 10), 'USER']
       );
       
       // Try to create second user with same email
       try {
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-          [userId2, 'User 2', duplicateEmail, 'test_password_hash', 'USER']
+          [userId2, 'User 2', duplicateEmail, await bcrypt.hash('test_password_hash', 10), 'USER']
         );
         fail('Expected duplicate email constraint to be violated');
       } catch (error) {
@@ -218,7 +219,7 @@ describe('User Management Integration Tests', () => {
       try {
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-        [userId, 'um_it_invalid', 'test@it.local', 'test_password_hash', 'INVALID_ROLE']
+        [userId, 'um_it_invalid', 'test@it.local', await bcrypt.hash('test_password_hash', 10), 'INVALID_ROLE']
         );
         fail('Expected invalid role constraint to be violated');
       } catch (error) {
@@ -234,7 +235,7 @@ describe('User Management Integration Tests', () => {
       try {
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
-        [userId, null, 'test@it.local', 'test_password_hash', 'USER']
+        [userId, null, 'test@it.local', await bcrypt.hash('test_password_hash', 10), 'USER']
         );
         fail('Expected null name constraint to be violated');
       } catch (error) {
