@@ -17,6 +17,7 @@ module.exports = {
   coverageDirectory: 'coverage/integration',
   coverageReporters: ['text', 'lcov', 'html'],
   setupFilesAfterEnv: ['<rootDir>/tests/setup-integration.ts'],
+  globalTeardown: '<rootDir>/tests/teardown-integration.ts',
   testTimeout: 30000, // Longer timeout for integration tests
   verbose: true,
   // Environment variables for integration tests

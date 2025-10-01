@@ -169,5 +169,19 @@ afterEach(async () => {
   await integrationTestUtils.cleanupTestData();
 });
 
+// Global cleanup after all tests
+afterAll(async () => {
+  console.log('🧹 Global test cleanup...');
+  try {
+    // Close any remaining database connections
+    const { DataSourceConfig } = require('../src/config/DataSourceConfig');
+    const dataSourceConfig = DataSourceConfig.getInstance();
+    await dataSourceConfig.close();
+    console.log('✅ All database connections closed');
+  } catch (error) {
+    console.error('❌ Error during global cleanup:', error);
+  }
+});
+
 // Export the app for use in tests
 export { app };
