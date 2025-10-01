@@ -19,14 +19,65 @@ This is a deck building application for the Overpower card game, featuring:
 - **Deck Statistics**: Real-time deck analysis and validation
 - **Sandbox Mode**: Experiment with cards without saving
 - **Deck Persistence**: Save and load custom deck configurations
+- **User Authentication**: Secure login with bcrypt password hashing
+- **Role-Based Access**: Guest, User, and Admin roles with different permissions
+- **Database Security**: PostgreSQL with encrypted password storage
 
 ## Technology Stack
 
 - **Backend**: Node.js with Express.js
 - **Language**: TypeScript
-- **Database**: In-memory database with file persistence
+- **Database**: PostgreSQL with Flyway migrations
 - **Frontend**: HTML, CSS, JavaScript
 - **Build Tool**: TypeScript compiler
+- **Security**: bcrypt password hashing
+
+## Security Features
+
+### Password Hashing with bcrypt
+
+This application uses **bcrypt** for secure password hashing and verification, ensuring that passwords are never stored in plain text.
+
+#### Implementation Details
+
+- **Algorithm**: bcrypt with 10 salt rounds
+- **Performance**: ~100ms per hash operation
+- **Security**: Resistant to rainbow tables and brute force attacks
+- **Format**: `$2b$10$[salt][hash]` (60 characters)
+
+#### Key Components
+
+- **`PasswordUtils`** (`src/utils/passwordUtils.ts`): Core utility class for password operations
+- **`PostgreSQLUserRepository`**: Handles password hashing during user creation and verification during login
+- **Database Schema**: `password_hash` column stores bcrypt hashes
+
+#### Security Benefits
+
+- ✅ **No plain text storage** - Passwords never stored in readable format
+- ✅ **Unique salts** - Each password gets a unique salt (prevents rainbow tables)
+- ✅ **Slow hashing** - 10 rounds = ~100ms per hash (prevents brute force)
+- ✅ **Memory-hard algorithm** - Resistant to ASIC/GPU attacks
+- ✅ **Timing attack protection** - Constant-time comparison
+
+#### Usage Examples
+
+```typescript
+// Hash a password during registration
+const hashedPassword = await PasswordUtils.hashPassword('userpassword');
+
+// Verify password during login
+const isValid = await PasswordUtils.comparePassword('userpassword', storedHash);
+
+// Check if password is already hashed
+const isHashed = PasswordUtils.isHashed('$2b$10$...');
+```
+
+#### Migration Status
+
+- ✅ **Local Database**: All passwords migrated to bcrypt
+- ✅ **Production Database**: Manually migrated via script
+- ✅ **Test Data**: All test passwords use bcrypt
+- ✅ **Integration Tests**: 331 tests passing with bcrypt authentication
 
 ## Getting Started
 
@@ -55,36 +106,72 @@ npm start
 
 ## API Endpoints
 
+### Card Management
 - `GET /api/cards` - Get all character cards
 - `GET /api/power-cards` - Get all power cards
 - `GET /api/special-cards` - Get all special cards
+
+### Deck Management
 - `GET /api/decks/sandbox` - Get current sandbox deck
 - `POST /api/decks` - Create a new deck
 - `PUT /api/decks/:id` - Update an existing deck
+- `DELETE /api/decks/:id` - Delete a deck
+- `POST /api/decks/:id/cards` - Add card to deck
+- `DELETE /api/decks/:id/cards` - Remove card from deck
+
+### Authentication
+- `POST /api/auth/login` - User login
+- `POST /api/auth/logout` - User logout
+- `GET /api/auth/me` - Get current user info
 
 ## Project Structure
 
 ```
 src/
-├── database/          # Database logic and data loading
-├── routes/            # API route handlers
+├── config/            # Database configuration
+├── database/          # PostgreSQL repositories
+├── persistence/       # Legacy data persistence
+├── repository/        # Repository interfaces
+├── services/          # Business logic services
 ├── types/             # TypeScript type definitions
+├── utils/             # Utility functions (password hashing)
+├── public/            # Frontend assets
 └── index.ts           # Server entry point
 
 public/
-├── index.html         # Landing page
-└── deckbuilder.html   # Advanced deckbuilder interface
+├── index.html         # Main application interface
+├── deck-builder.html  # Deck builder interface
+├── database-view.html # Card database interface
+└── components/        # Reusable UI components
 
+migrations/            # Database migration scripts
+tests/                 # Unit and integration tests
 dist/                  # Compiled JavaScript output
 ```
 
 ## Data Sources
 
-The application loads card data from markdown files:
-- `overpower-erb-characters.md` - Character cards
-- `overpower-erb-powercards.md` - Power cards
-- `overpower-erb-aspects.md` - Special cards
-- `overpower-erb-locations.md` - Location data
+The application uses a PostgreSQL database with card data populated via Flyway migrations:
+
+### Database Tables
+- **characters** - Character cards with stats and abilities
+- **power_cards** - Power cards (Energy, Combat, Brute Force, Intelligence)
+- **special_cards** - Special ability cards
+- **missions** - Mission cards
+- **events** - Event cards
+- **aspects** - Aspect cards
+- **ally_universe_cards** - Ally universe cards
+- **basic_universe_cards** - Basic universe cards
+- **advanced_universe_cards** - Advanced universe cards
+- **teamwork_cards** - Teamwork cards
+- **training_cards** - Training cards
+- **locations** - Location cards
+
+### Migration System
+- **Flyway** manages database schema and data migrations
+- **Versioned migrations** ensure consistent database state
+- **Data population** from markdown files in `src/resources/`
+- **Automatic migration** on application startup
 
 ## Learning Goals
 
@@ -92,8 +179,47 @@ This project serves as a learning exercise for:
 - TypeScript development
 - Express.js API design
 - Frontend-backend integration
-- Database design patterns
+- PostgreSQL database design
+- Flyway database migrations
+- bcrypt password security
+- User authentication and authorization
+- Role-based access control
 - Card game mechanics implementation
+- AWS deployment and infrastructure
+
+## Testing
+
+This project includes comprehensive testing with both unit and integration tests:
+
+### Test Coverage
+- **331 Integration Tests** - Full end-to-end testing with PostgreSQL
+- **Unit Tests** - Individual component testing with mocks
+- **Authentication Tests** - bcrypt password hashing and verification
+- **API Tests** - All endpoints tested with different user roles
+- **Database Tests** - Repository and migration testing
+
+### Test Commands
+```bash
+# Run all unit tests
+npm run test:unit
+
+# Run all integration tests
+npm run test:integration
+
+# Run all tests
+npm run test:all
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+### Test Categories
+- **Authentication** - Login, logout, password hashing
+- **User Management** - User creation, role management
+- **Deck Management** - Deck CRUD operations
+- **Card Management** - Card database operations
+- **Guest Restrictions** - Guest user limitations
+- **API Security** - Endpoint protection and validation
 
 ## License
 
