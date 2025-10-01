@@ -14,6 +14,7 @@ export const integrationTestUtils = {
   createTestUser: async (userData: { name: string; email: string; role?: string; password?: string }) => {
     const { Pool } = require('pg');
     const crypto = require('crypto');
+    const bcrypt = require('bcrypt');
     const pool = new Pool({
       connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
     });
@@ -23,13 +24,18 @@ export const integrationTestUtils = {
       const uniqueSuffix = `_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
       const username = (userData.name && userData.name.length > 0) ? `${userData.name}${uniqueSuffix}` : `testuser${uniqueSuffix}`;
       const email = userData.email ? userData.email.replace('@', `${uniqueSuffix}@`) : `testuser${uniqueSuffix}@example.com`;
+      
+      // Hash the password
+      const passwordToHash = userData.password || 'password123';
+      const hashedPassword = await bcrypt.hash(passwordToHash, 10);
+      
       const result = await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role) VALUES ($1, $2, $3, $4, $5) RETURNING *',
         [
           crypto.randomUUID(), // Generate proper UUID
           username,
           email,
-          userData.password || 'password123',
+          hashedPassword,
           userData.role || 'USER'
         ]
       );
@@ -84,6 +90,7 @@ export const integrationTestUtils = {
   // Helper to ensure guest user exists
   ensureGuestUser: async () => {
     const { Pool } = require('pg');
+    const bcrypt = require('bcrypt');
     const pool = new Pool({
       connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
     });
@@ -93,6 +100,9 @@ export const integrationTestUtils = {
       const result = await pool.query('SELECT * FROM users WHERE username = $1', ['guest']);
       
       if (result.rows.length === 0) {
+        // Hash the guest password
+        const hashedPassword = await bcrypt.hash('guest', 10);
+        
         // Create guest user if it doesn't exist
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role) VALUES ($1, $2, $3, $4, $5)',
@@ -100,7 +110,7 @@ export const integrationTestUtils = {
             '00000000-0000-0000-0000-000000000001',
             'guest',
             'guest@example.com',
-            'guest',
+            hashedPassword,
             'GUEST'
           ]
         );
@@ -116,19 +126,23 @@ export const integrationTestUtils = {
   // Helper to ensure admin user (kyle) exists
   ensureAdminUser: async () => {
     const { Pool } = require('pg');
+    const bcrypt = require('bcrypt');
     const pool = new Pool({
       connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
     });
     try {
       const result = await pool.query('SELECT * FROM users WHERE username = $1', ['kyle']);
       if (result.rows.length === 0) {
+        // Hash the admin password
+        const hashedPassword = await bcrypt.hash('test', 10);
+        
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role) VALUES ($1, $2, $3, $4, $5)',
           [
             'c567175f-a07b-41b7-b274-e82901d1b4f1',
             'kyle',
             'kyle@example.com',
-            'test',
+            hashedPassword,
             'ADMIN'
           ]
         );

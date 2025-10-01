@@ -48,9 +48,13 @@ describe('Deck Building Integration Tests', () => {
       const userName = `Deck Builder Test User ${generateUUID()}`;
       const userEmail = `deck-builder-${generateUUID()}@example.com`;
       
+      // Hash the password
+      const bcrypt = require('bcrypt');
+      const hashedPassword = await bcrypt.hash('test_password_hash', 10);
+      
       const result = await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) RETURNING *',
-        [testUserId, userName, userEmail, 'test_password_hash', 'USER']
+        [testUserId, userName, userEmail, hashedPassword, 'USER']
       );
 
       expect(result.rows[0]).toBeDefined();

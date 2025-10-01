@@ -1,6 +1,7 @@
 #!/usr/bin/env ts-node
 
 import { Pool } from 'pg';
+import bcrypt from 'bcrypt';
 
 const pool = new Pool({
   connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
@@ -17,13 +18,16 @@ async function setupTestData() {
     );
     
     if (guestUserResult.rows.length === 0) {
+      // Hash the guest password
+      const guestHashedPassword = await bcrypt.hash('guest', 10);
+      
       await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role) VALUES ($1, $2, $3, $4, $5)',
         [
           '00000000-0000-0000-0000-000000000001',
           'guest',
           'guest@example.com',
-          'guest',
+          guestHashedPassword,
           'GUEST'
         ]
       );
@@ -39,13 +43,16 @@ async function setupTestData() {
     );
     
     if (kyleUserResult.rows.length === 0) {
+      // Hash the kyle password
+      const kyleHashedPassword = await bcrypt.hash('test', 10);
+      
       await pool.query(
         'INSERT INTO users (id, username, email, password_hash, role) VALUES ($1, $2, $3, $4, $5)',
         [
           'c567175f-a07b-41b7-b274-e82901d1b4f1',
           'kyle',
           'kyle@example.com',
-          'kyle',
+          kyleHashedPassword,
           'ADMIN'
         ]
       );

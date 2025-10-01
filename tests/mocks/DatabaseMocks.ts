@@ -257,7 +257,7 @@ export const mockCardRepository = mock<CardRepository>();
 
 // Setup UserRepository mocks
 mockUserRepository.initialize.mockResolvedValue();
-mockUserRepository.createUser.mockImplementation(async (name: string, email: string, passwordHash: string, role: UserRole = 'USER') => {
+mockUserRepository.createUser.mockImplementation(async (name: string, email: string, password: string, role: UserRole = 'USER') => {
   const newUser: User = {
     id: `user-${Date.now()}`,
     name,

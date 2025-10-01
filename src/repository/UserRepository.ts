@@ -5,7 +5,7 @@ export interface UserRepository {
   initialize(): Promise<void>;
 
   // User management
-  createUser(name: string, email: string, passwordHash: string, role?: UserRole): Promise<User>;
+  createUser(name: string, email: string, password: string, role?: UserRole): Promise<User>;
   getUserById(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   authenticateUser(username: string, password: string): Promise<User | undefined>;
