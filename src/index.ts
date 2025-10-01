@@ -390,13 +390,18 @@ app.delete('/api/decks/:id', authenticateUser, async (req: any, res) => {
     if (req.user.role === 'GUEST' || req.user.username === 'guest' || req.user.name === 'guest') {
       return res.status(403).json({ success: false, error: 'Guests may not delete decks' });
     }
-    
-    // Check if user owns this deck
+
+    // Check if deck exists
     const deck = await deckRepository.getDeckById(req.params.id);
-    if (!deck || deck.user_id !== req.user.id) {
+    if (!deck) {
+      return res.status(404).json({ success: false, error: 'Deck not found' });
+    }
+
+    // Check if user owns this deck
+    if (deck.user_id !== req.user.id) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
-    
+
     const success = await deckRepository.deleteDeck(req.params.id);
     if (!success) {
       return res.status(404).json({ success: false, error: 'Deck not found' });

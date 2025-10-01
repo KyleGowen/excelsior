@@ -30,6 +30,9 @@ const authService = new AuthenticationService(userRepository, userService);
 // Middleware
 app.use(express.json());
 
+// Authentication middleware
+const authenticateUser = authService.createAuthMiddleware();
+
 // Cookie parser middleware
 app.use((req: any, res: any, next: any) => {
   const cookieHeader = req.headers.cookie;
@@ -212,9 +215,9 @@ app.post('/api/auth/logout', authService.handleLogout.bind(authService));
 app.get('/api/auth/me', authService.handleSessionValidation.bind(authService));
 
 // Deck routes
-app.get('/api/decks', async (req, res) => {
+app.get('/api/decks', authenticateUser, async (req: any, res) => {
   try {
-    const decks = await deckRepository.getAllDecks();
+    const decks = await deckRepository.getDecksByUserId(req.user.id);
     res.json({ success: true, data: decks });
   } catch (error) {
     console.error('Error fetching decks:', error);
@@ -268,10 +271,15 @@ app.get('/api/decks/:id', async (req, res) => {
   }
 });
 
-app.post('/api/decks', async (req, res) => {
+app.post('/api/decks', authenticateUser, async (req: any, res) => {
   try {
+    // Check if user is guest - guests cannot create decks
+    if (req.user.role === 'GUEST' || req.user.username === 'guest' || req.user.name === 'guest') {
+      return res.status(403).json({ success: false, error: 'Guests may not create decks' });
+    }
+    
     const { name, description, characterIds, characters } = req.body;
-    const userId = req.body.userId || '00000000-0000-0000-0000-000000000001'; // Default to guest user
+    const userId = req.user.id; // Use authenticated user's ID
     
     // Check both characterIds and characters fields for validation
     const characterArray = characterIds || characters;
@@ -292,9 +300,21 @@ app.post('/api/decks', async (req, res) => {
   }
 });
 
-app.put('/api/decks/:id', async (req, res) => {
+app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
   try {
+    // Check if user is guest - guests cannot modify decks
+    if (req.user.role === 'GUEST' || req.user.username === 'guest' || req.user.name === 'guest') {
+      return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
+    }
+    
     const { name, description } = req.body;
+    
+    // Check if user owns this deck
+    const existingDeck = await deckRepository.getDeckById(req.params.id);
+    if (!existingDeck || existingDeck.user_id !== req.user.id) {
+      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
+    }
+    
     const deck = await deckRepository.updateDeck(req.params.id, { name, description });
     if (!deck) {
       return res.status(404).json({ success: false, error: 'Deck not found' });
@@ -306,8 +326,24 @@ app.put('/api/decks/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/decks/:id', async (req, res) => {
+app.delete('/api/decks/:id', authenticateUser, async (req: any, res) => {
   try {
+    // Check if user is guest - guests cannot delete decks
+    if (req.user.role === 'GUEST' || req.user.username === 'guest' || req.user.name === 'guest') {
+      return res.status(403).json({ success: false, error: 'Guests may not delete decks' });
+    }
+    
+    // Check if deck exists
+    const deck = await deckRepository.getDeckById(req.params.id);
+    if (!deck) {
+      return res.status(404).json({ success: false, error: 'Deck not found' });
+    }
+    
+    // Check if user owns this deck
+    if (deck.user_id !== req.user.id) {
+      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
+    }
+    
     const success = await deckRepository.deleteDeck(req.params.id);
     if (!success) {
       return res.status(404).json({ success: false, error: 'Deck not found' });
@@ -330,8 +366,19 @@ app.get('/api/decks/:id/cards', async (req, res) => {
   }
 });
 
-app.post('/api/decks/:id/cards', async (req, res) => {
+app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
+    // Check if user is guest - guests cannot modify decks
+    if (req.user.role === 'GUEST' || req.user.username === 'guest' || req.user.name === 'guest') {
+      return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
+    }
+    
+    // Check if user owns this deck
+    const deck = await deckRepository.getDeckById(req.params.id);
+    if (!deck || deck.user_id !== req.user.id) {
+      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
+    }
+    
     const { cardType, cardId, quantity, selectedAlternateImage } = req.body;
     const success = await deckRepository.addCardToDeck(req.params.id, cardType, cardId, quantity, selectedAlternateImage);
     if (!success) {
@@ -344,8 +391,19 @@ app.post('/api/decks/:id/cards', async (req, res) => {
   }
 });
 
-app.delete('/api/decks/:id/cards', async (req, res) => {
+app.delete('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
+    // Check if user is guest - guests cannot modify decks
+    if (req.user.role === 'GUEST' || req.user.username === 'guest' || req.user.name === 'guest') {
+      return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
+    }
+    
+    // Check if user owns this deck
+    const deck = await deckRepository.getDeckById(req.params.id);
+    if (!deck || deck.user_id !== req.user.id) {
+      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
+    }
+    
     const { cardType, cardId, quantity } = req.body;
     const success = await deckRepository.removeCardFromDeck(req.params.id, cardType, cardId, quantity);
     if (!success) {
