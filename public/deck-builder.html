@@ -5573,7 +5573,7 @@
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'block';
             // Display "Guest" with capital G for guest users, otherwise use the username
-            const displayName = (currentUser.username === 'guest' || currentUser.name === 'guest') 
+            const displayName = (currentUser.role === 'GUEST') 
                 ? 'Guest' 
                 : (currentUser.username || currentUser.name || 'User');
             document.getElementById('currentUsername').textContent = displayName;
@@ -5586,16 +5586,10 @@
                 return false;
             }
             
-            const isGuest = currentUser.role === 'GUEST' || 
-                           currentUser.username === 'guest' || 
-                           currentUser.name === 'guest' ||
-                           currentUser.id === '00000000-0000-0000-0000-000000000001';
+            const isGuest = currentUser.role === 'GUEST';
             
             console.log('🔍 isGuestUser() - currentUser:', currentUser, 'isGuest:', isGuest);
             console.log('🔍 isGuestUser() - role check:', currentUser.role === 'GUEST');
-            console.log('🔍 isGuestUser() - username check:', currentUser.username === 'guest');
-            console.log('🔍 isGuestUser() - name check:', currentUser.name === 'guest');
-            console.log('🔍 isGuestUser() - id check:', currentUser.id === '00000000-0000-0000-0000-000000000001');
             
             return isGuest;
         }

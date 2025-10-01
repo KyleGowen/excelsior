@@ -66,7 +66,7 @@ function switchToDeckBuilder() {
     
     // Ensure username is displayed when switching back to deck builder
     if (currentUser) {
-        const displayName = (currentUser.username === 'guest' || currentUser.name === 'guest') 
+        const displayName = (currentUser.role === 'GUEST') 
             ? 'Guest' 
             : (currentUser.username || currentUser.name || 'User');
         const usernameElement = document.getElementById('currentUsername');
@@ -130,7 +130,7 @@ function initializeGlobalNav() {
 function updateUserWelcome() {
     const currentUser = getCurrentUser();
     if (currentUser) {
-        const displayName = (currentUser.username === 'guest' || currentUser.name === 'guest') 
+        const displayName = (currentUser.role === 'GUEST') 
             ? 'Guest' 
             : (currentUser.username || currentUser.name || 'User');
         const usernameElement = document.getElementById('currentUsername');

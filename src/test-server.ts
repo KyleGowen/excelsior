@@ -416,6 +416,52 @@ app.delete('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   }
 });
 
+// UI Preferences API routes
+app.get('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Check if deck exists
+    const deck = await deckRepository.getDeckById(id);
+    if (!deck) {
+      return res.status(404).json({ success: false, error: 'Deck not found' });
+    }
+    
+    // Allow guests to view UI preferences (read-only access)
+    // Only check ownership for non-guests
+    if (req.user.role !== 'GUEST' && !await deckRepository.userOwnsDeck(id, req.user.id)) {
+      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
+    }
+    
+    const preferences = await deckRepository.getUIPreferences(id);
+    res.json({ success: true, data: preferences || {} });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to fetch UI preferences' });
+  }
+});
+
+app.put('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res) => {
+  try {
+    // Check if user is guest - guests cannot modify decks
+    if (req.user.role === 'GUEST' || req.user.username === 'guest' || req.user.name === 'guest') {
+      return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
+    }
+    
+    const { id } = req.params;
+    const preferences = req.body;
+    
+    // Check if user owns this deck
+    if (!await deckRepository.userOwnsDeck(id, req.user.id)) {
+      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
+    }
+    
+    await deckRepository.updateUIPreferences(id, preferences);
+    res.json({ success: true, message: 'UI preferences updated successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to update UI preferences' });
+  }
+});
+
 // Serve static files
 app.use(express.static('public'));
 

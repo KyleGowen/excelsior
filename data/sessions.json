@@ -1780,5 +1780,77 @@
     "userId": "test-user-id",
     "username": "test-user",
     "expiresAt": "2025-10-01T18:20:05.787Z"
+  },
+  {
+    "sessionId": "sess_mt9d3by76_mg87fxi4",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-01T18:32:37.468Z"
+  },
+  {
+    "sessionId": "sess_lbt8l30ac_mg87g12s",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-01T18:32:42.100Z"
+  },
+  {
+    "sessionId": "sess_7nqemnkas_mg87g130",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-01T18:32:42.108Z"
+  },
+  {
+    "sessionId": "sess_r2brzu932_mg87gs0m",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-01T18:33:17.014Z"
+  },
+  {
+    "sessionId": "sess_t8fcphq19_mg87gzu8",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-01T18:33:27.152Z"
+  },
+  {
+    "sessionId": "sess_hornszo8w_mg87gzug",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-01T18:33:27.160Z"
+  },
+  {
+    "sessionId": "sess_97pd7xgy0_mg87pqla",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-01T18:40:15.070Z"
+  },
+  {
+    "sessionId": "sess_znto78m38_mg87puuj",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-01T18:40:20.587Z"
+  },
+  {
+    "sessionId": "sess_m0urrthds_mg87puur",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-01T18:40:20.595Z"
+  },
+  {
+    "sessionId": "sess_vflmk0ns9_mg87t4u0",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-01T18:42:53.496Z"
+  },
+  {
+    "sessionId": "sess_lnalns5sn_mg87t8se",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-01T18:42:58.622Z"
+  },
+  {
+    "sessionId": "sess_w0r6514wd_mg87t8sm",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-01T18:42:58.630Z"
   }
 ]

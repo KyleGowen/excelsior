@@ -5656,7 +5656,7 @@
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'block';
             // Display "Guest" with capital G for guest users, otherwise use the username
-            const displayName = (currentUser.username === 'guest' || currentUser.name === 'guest') 
+            const displayName = (currentUser.role === 'GUEST') 
                 ? 'Guest' 
                 : (currentUser.username || currentUser.name || 'User');
             document.getElementById('currentUsername').textContent = displayName;

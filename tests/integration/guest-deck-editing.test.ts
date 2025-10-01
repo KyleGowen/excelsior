@@ -8,20 +8,22 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
   let userCookie: string;
   let adminCookie: string;
   let testDeckId: string;
+  let testUser: any;
+  let testAdmin: any;
 
   beforeAll(async () => {
     // Database initialization is handled by the test setup
   });
 
   beforeEach(async () => {
-    // Create test users first, then login to get cookies
-    const testUser = await integrationTestUtils.createTestUser({
+    // Create fresh test users for each test
+    testUser = await integrationTestUtils.createTestUser({
       name: `testuser_${Date.now()}`,
       email: `testuser_${Date.now()}@example.com`,
       password: 'testpassword'
     });
 
-    const testAdmin = await integrationTestUtils.createTestUser({
+    testAdmin = await integrationTestUtils.createTestUser({
       name: `admin_${Date.now()}`,
       email: `admin_${Date.now()}@example.com`,
       password: 'adminpassword',
@@ -64,12 +66,12 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     expect(userCookie).toBeDefined();
     expect(adminCookie).toBeDefined();
 
-    // Create a test deck for the regular user
+    // Create a fresh test deck for each test
     const createDeckResponse = await request(app)
       .post('/api/decks')
       .set('Cookie', userCookie)
       .send({
-        name: 'Test Deck for Guest Restrictions',
+        name: `Test Deck for Guest Restrictions ${Date.now()}`,
         description: 'A deck to test guest editing restrictions'
       });
     
@@ -77,6 +79,8 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     expect(createDeckResponse.body.success).toBe(true);
     testDeckId = createDeckResponse.body.data.id;
     expect(testDeckId).toBeDefined();
+    
+    console.log('🔍 Created test deck with ID:', testDeckId);
   });
 
   afterAll(async () => {
@@ -335,15 +339,6 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
       expect(response.body.error).toBe('Guests may not delete decks');
     });
 
-    it('should allow deck owner to delete their own deck', async () => {
-      const response = await request(app)
-        .delete(`/api/decks/${testDeckId}`)
-        .set('Cookie', userCookie);
-
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
-    });
-
     it('should block non-owner from deleting deck', async () => {
       const response = await request(app)
         .delete(`/api/decks/${testDeckId}`)
@@ -353,17 +348,22 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe('Access denied. You do not own this deck.');
     });
+
+    // Note: We don't test actual deletion here to avoid breaking subsequent tests
+    // The deck deletion is tested in the comprehensive test below
   });
 
   describe('Read-Only Access Verification', () => {
     it('should allow guest to view deck details', async () => {
+      console.log('🔍 Attempting to view deck with ID:', testDeckId);
       const response = await request(app)
         .get(`/api/decks/${testDeckId}`)
         .set('Cookie', guestCookie);
 
+      console.log('🔍 Deck details response:', response.status, response.body);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
-      expect(response.body.data.name).toBe('Test Deck for Guest Restrictions');
+      expect(response.body.data.metadata.name).toContain('Test Deck for Guest Restrictions');
     });
 
     it('should allow guest to view deck cards', async () => {
@@ -390,7 +390,6 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
       const modificationEndpoints = [
         { method: 'POST', path: '/api/decks', data: { name: 'Test Deck' } },
         { method: 'PUT', path: `/api/decks/${testDeckId}`, data: { name: 'Updated Deck' } },
-        { method: 'DELETE', path: `/api/decks/${testDeckId}` },
         { method: 'POST', path: `/api/decks/${testDeckId}/cards`, data: { cardType: 'character', cardId: 'leonidas' } },
         { method: 'DELETE', path: `/api/decks/${testDeckId}/cards`, data: { cardType: 'character', cardId: 'leonidas' } },
         { method: 'PUT', path: `/api/decks/${testDeckId}/ui-preferences`, data: { expansionState: {} } }
@@ -437,6 +436,37 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
       }
+    });
+
+    it('should test deck deletion with a separate deck', async () => {
+      // Create a separate deck for deletion testing
+      const createDeckResponse = await request(app)
+        .post('/api/decks')
+        .set('Cookie', userCookie)
+        .send({
+          name: 'Deletion Test Deck',
+          description: 'A deck specifically for testing deletion'
+        });
+      
+      expect(createDeckResponse.status).toBe(201);
+      const deletionTestDeckId = createDeckResponse.body.data.id;
+
+      // Test that guest cannot delete
+      const guestDeleteResponse = await request(app)
+        .delete(`/api/decks/${deletionTestDeckId}`)
+        .set('Cookie', guestCookie);
+
+      expect(guestDeleteResponse.status).toBe(403);
+      expect(guestDeleteResponse.body.success).toBe(false);
+      expect(guestDeleteResponse.body.error).toBe('Guests may not delete decks');
+
+      // Test that owner can delete
+      const ownerDeleteResponse = await request(app)
+        .delete(`/api/decks/${deletionTestDeckId}`)
+        .set('Cookie', userCookie);
+
+      expect(ownerDeleteResponse.status).toBe(200);
+      expect(ownerDeleteResponse.body.success).toBe(true);
     });
   });
 });

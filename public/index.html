@@ -6290,7 +6290,7 @@
         // Check if current user is guest
         function isGuestUser() {
             const currentUser = getCurrentUser();
-            const isGuest = currentUser && (currentUser.role === 'GUEST' || currentUser.name === 'guest' || currentUser.username === 'guest');
+            const isGuest = currentUser && currentUser.role === 'GUEST';
             console.log('🔍 isGuestUser() called - currentUser:', currentUser, 'isGuest:', isGuest);
             return isGuest;
         }
@@ -8069,7 +8069,7 @@
         function showMainApp() {
             document.getElementById('loginModal').style.display = 'none';
             // Display "Guest" with capital G for guest users, otherwise use the username/name
-            const displayName = (currentUser.username === 'guest' || currentUser.name === 'guest') 
+            const displayName = (currentUser.role === 'GUEST') 
                 ? 'Guest' 
                 : (currentUser.username || currentUser.name || 'User');
             document.getElementById('currentUsername').textContent = displayName;
