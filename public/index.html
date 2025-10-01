@@ -917,7 +917,6 @@
         
         .add-to-deck-btn[data-guest-disabled="true"] {
             opacity: 0.5 !important;
-            cursor: not-allowed !important;
         }
         
         .add-to-deck-btn:active {
@@ -6269,7 +6268,6 @@
                 addToDeckButtons.forEach(button => {
                     button.disabled = true;
                     button.style.opacity = '0.5';
-                    button.style.cursor = 'not-allowed';
                     button.title = 'Log in to add to decks...';
                     // Also add a data attribute for debugging
                     button.setAttribute('data-guest-disabled', 'true');
@@ -6291,7 +6289,6 @@
                                     buttons.forEach(button => {
                                         button.disabled = true;
                                         button.style.opacity = '0.5';
-                                        button.style.cursor = 'not-allowed';
                                         button.title = 'Log in to add to decks...';
                                         button.setAttribute('data-guest-disabled', 'true');
                                     });
@@ -6300,7 +6297,6 @@
                                     if (node.classList && node.classList.contains('add-to-deck-btn')) {
                                         node.disabled = true;
                                         node.style.opacity = '0.5';
-                                        node.style.cursor = 'not-allowed';
                                         node.title = 'Log in to add to decks...';
                                         node.setAttribute('data-guest-disabled', 'true');
                                     }
