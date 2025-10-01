@@ -5581,8 +5581,22 @@
 
         // Check if current user is guest
         function isGuestUser() {
-            const isGuest = currentUser && (currentUser.role === 'GUEST' || currentUser.username === 'guest' || currentUser.name === 'guest');
+            if (!currentUser) {
+                console.log('🔍 isGuestUser() - No currentUser, returning false');
+                return false;
+            }
+            
+            const isGuest = currentUser.role === 'GUEST' || 
+                           currentUser.username === 'guest' || 
+                           currentUser.name === 'guest' ||
+                           currentUser.id === '00000000-0000-0000-0000-000000000001';
+            
             console.log('🔍 isGuestUser() - currentUser:', currentUser, 'isGuest:', isGuest);
+            console.log('🔍 isGuestUser() - role check:', currentUser.role === 'GUEST');
+            console.log('🔍 isGuestUser() - username check:', currentUser.username === 'guest');
+            console.log('🔍 isGuestUser() - name check:', currentUser.name === 'guest');
+            console.log('🔍 isGuestUser() - id check:', currentUser.id === '00000000-0000-0000-0000-000000000001');
+            
             return isGuest;
         }
 
@@ -5759,6 +5773,12 @@
             // Check if current user is guest
             const isGuest = isGuestUser();
             console.log('🔍 displayDecks - currentUser:', currentUser, 'isGuest:', isGuest);
+            console.log('🔍 displayDecks - currentUser details:', {
+                id: currentUser?.id,
+                username: currentUser?.username,
+                name: currentUser?.name,
+                role: currentUser?.role
+            });
 
             // Fetch character data to get character names
             let characterMap = {};
@@ -5861,10 +5881,13 @@
                             <div class="deck-actions" onclick="event.stopPropagation()">
                                 <button class="deck-action-btn" onclick="editDeck('${deck.id}')">Edit</button>
                                 <button class="deck-action-btn" onclick="viewDeck('${deck.id}')">View</button>
-                                ${isGuest ? 
-                                    '<button class="deck-action-btn danger" disabled title="Log in to delete decks...">Delete</button>' : 
-                                    '<button class="deck-action-btn danger" onclick="deleteDeck(\'' + deck.id + '\')">Delete</button>'
-                                }
+                                ${(() => {
+                                    const buttonHtml = isGuest ? 
+                                        '<button class="deck-action-btn danger" disabled title="Log in to delete decks...">Delete</button>' : 
+                                        '<button class="deck-action-btn danger" onclick="deleteDeck(\'' + deck.id + '\')">Delete</button>';
+                                    console.log('🔍 Button HTML for deck', deck.id, 'isGuest:', isGuest, 'button:', buttonHtml);
+                                    return buttonHtml;
+                                })()}
                         </div>
                     </div>
                 `;
