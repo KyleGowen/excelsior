@@ -715,8 +715,8 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
                     quantity: 1
                 });
 
-            // Guest users should not be able to add cards (test server returns 400 for invalid UUID)
-            expect(addCardResponse.status).toBe(400);
+            // Guest users should not be able to add cards (returns 403 for guest restrictions)
+            expect(addCardResponse.status).toBe(403);
             expect(addCardResponse.body.success).toBe(false);
         });
 
@@ -731,8 +731,8 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
                     quantity: 1
                 });
 
-            // Guest users should not be able to add cards (test server returns 400 for invalid UUID)
-            expect(addCardResponse.status).toBe(400);
+            // Guest users should not be able to add cards (returns 403 for guest restrictions)
+            expect(addCardResponse.status).toBe(403);
             expect(addCardResponse.body.success).toBe(false);
         });
 
@@ -753,13 +753,13 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
                         quantity: 1
                     });
 
-                // Guest users should not be able to add any card type (test server returns 400 for invalid UUID)
-                expect(addCardResponse.status).toBe(400);
+                // Guest users should not be able to add any card type (returns 403 for guest restrictions)
+                expect(addCardResponse.status).toBe(403);
                 expect(addCardResponse.body.success).toBe(false);
             }
         });
 
-        it('should allow guest users to create decks (test server limitation)', async () => {
+        it('should block guest users from creating decks', async () => {
             const createDeckResponse = await request(app)
                 .post('/api/decks')
                 .set('Cookie', guestAuthCookie)
@@ -768,10 +768,9 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
                     description: 'This should fail for guest users'
                 });
 
-            // Note: Test server doesn't implement proper auth middleware, so this succeeds
-            // In production, this should be blocked
-            expect(createDeckResponse.status).toBe(201);
-            expect(createDeckResponse.body.success).toBe(true);
+            // Guest users should not be able to create decks (returns 403 for guest restrictions)
+            expect(createDeckResponse.status).toBe(403);
+            expect(createDeckResponse.body.success).toBe(false);
             
             // Track this deck for cleanup
             if (createDeckResponse.body.data && createDeckResponse.body.data.metadata) {

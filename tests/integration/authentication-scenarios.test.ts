@@ -323,8 +323,8 @@ describe('Authentication Scenarios Integration Tests', () => {
       const response = await request(app)
         .get('/api/decks');
 
-      // Test server doesn't have authentication middleware, so it returns 200
-      expect(response.status).toBe(200);
+      // Test server now has authentication middleware, so it returns 401
+      expect(response.status).toBe(401);
     });
 
     it('should return 401 for API routes with invalid session', async () => {
@@ -332,8 +332,8 @@ describe('Authentication Scenarios Integration Tests', () => {
         .get('/api/decks')
         .set('Cookie', 'sessionId=invalid-session-id');
 
-      // Test server doesn't have authentication middleware, so it returns 200
-      expect(response.status).toBe(200);
+      // Test server now has authentication middleware, so it returns 401
+      expect(response.status).toBe(401);
     });
 
     it('should return 401 for API routes when user not found', async () => {
@@ -349,8 +349,8 @@ describe('Authentication Scenarios Integration Tests', () => {
         .get('/api/decks')
         .set('Cookie', `sessionId=${fakeSession}`);
 
-      // Test server doesn't have authentication middleware, so it returns 200
-      expect(response.status).toBe(200);
+      // Test server now has authentication middleware, so it returns 401
+      expect(response.status).toBe(401);
     });
   });
 

@@ -17,10 +17,10 @@ describe('Character Limit Validation API Tests', () => {
   beforeAll(async () => {
     // app is imported from setup-integration
 
-    // Use the existing guest user for testing
+    // Use the existing admin user for testing (guests can't create decks)
     const loginResponse = await request(app)
       .post('/api/auth/login')
-      .send({ username: 'guest', password: 'guest' });
+      .send({ username: 'kyle', password: 'test' });
 
     if (loginResponse.status === 200) {
       testUserId = loginResponse.body.data.userId;
@@ -28,9 +28,9 @@ describe('Character Limit Validation API Tests', () => {
       if (loginResponse.headers['set-cookie']) {
         authCookie = loginResponse.headers['set-cookie'][0].split(';')[0];
       }
-      console.log('✅ Guest user authenticated for character limit tests');
+      console.log('✅ Admin user authenticated for character limit tests');
     } else {
-      console.log('Failed to authenticate guest user:', loginResponse.body);
+      console.log('Failed to authenticate admin user:', loginResponse.body);
     }
   });
 

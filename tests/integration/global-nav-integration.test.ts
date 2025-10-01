@@ -6,13 +6,30 @@ import { integrationTestUtils } from '../setup-integration';
 describe('Global Nav Integration Tests', () => {
   let server: any;
   let agent: any;
+  let userSessionCookie: string;
 
   beforeAll(async () => {
     // Ensure required seed users exist and initialize test server
     await integrationTestUtils.ensureGuestUser();
+    await integrationTestUtils.ensureAdminUser();
     const testApp = await initializeTestServer();
     server = testApp.listen(0); // Use random available port
     agent = request(server);
+
+    // Login as admin user to get session cookie
+    const loginResponse = await agent
+      .post('/api/auth/login')
+      .send({
+        username: 'kyle',
+        password: 'test'
+      });
+
+    expect(loginResponse.status).toBe(200);
+    expect(loginResponse.body.success).toBe(true);
+    
+    // Extract session cookie
+    const cookies = loginResponse.headers['set-cookie'];
+    userSessionCookie = cookies[0].split(';')[0];
   });
 
   afterAll(async () => {
@@ -114,6 +131,7 @@ describe('Global Nav Integration Tests', () => {
       // Test that the create deck API endpoint exists and is accessible
       const response = await agent
         .post('/api/decks')
+        .set('Cookie', userSessionCookie)
         .send({
           name: 'Test Deck',
           description: 'Test deck description',
@@ -130,6 +148,7 @@ describe('Global Nav Integration Tests', () => {
       // Test valid deck creation (0-4 characters)
       const validResponse = await agent
         .post('/api/decks')
+        .set('Cookie', userSessionCookie)
         .send({
           name: 'Valid Deck',
           description: 'Valid deck with 2 characters',
@@ -145,6 +164,7 @@ describe('Global Nav Integration Tests', () => {
       // Test invalid deck creation (5+ characters)
       const invalidResponse = await agent
         .post('/api/decks')
+        .set('Cookie', userSessionCookie)
         .send({
           name: 'Invalid Deck',
           description: 'Invalid deck with 5 characters',
