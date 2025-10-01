@@ -2287,6 +2287,15 @@
             filter: brightness(0.7);
         }
 
+        .stat-icon-small {
+            width: 12px;
+            height: 12px;
+            object-fit: contain;
+            filter: brightness(0.7);
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
         .stat-value {
             font-size: 2.93rem;
             color: #4ecdc4;
@@ -8260,6 +8269,9 @@
         // Load decks when switching to deck builder tab
         async function loadDecks() {
             try {
+                // Ensure available cards data is loaded first for threat calculation
+                await loadAvailableCardsData();
+                
                 const response = await fetch('/api/decks', {
                     credentials: 'include'
                 });
@@ -8383,6 +8395,7 @@
                                 ${characterList}
                                 <div class="deck-meta">
                                     <span>📊 ${calculateTotalCardCount(deck.cards || [])} cards</span>
+                                    <span><img src="resources/images/icons/threat.png" alt="Threat" class="stat-icon-small"> ${calculateTotalThreat(deck.cards || [])}</span>
                                     <span>📅 Created: ${new Date(deck.metadata.created).toLocaleDateString()}</span>
                                     <span>✏️ Modified: ${new Date(deck.metadata.lastModified).toLocaleDateString()}</span>
                                 </div>
@@ -10109,6 +10122,31 @@
             return deckCards
                 .filter(card => !['mission', 'character', 'location'].includes(card.type))
                 .reduce((sum, card) => sum + card.quantity, 0);
+        }
+
+        // Function to calculate total threat level for a deck
+        function calculateTotalThreat(deckCards) {
+            let totalThreat = 0;
+            
+            // Calculate threat from character cards
+            const characterCards = deckCards.filter(card => card.type === 'character');
+            characterCards.forEach(card => {
+                const character = availableCardsMap.get(card.cardId);
+                if (character && character.threat_level) {
+                    totalThreat += character.threat_level * card.quantity;
+                }
+            });
+            
+            // Calculate threat from location cards
+            const locationCards = deckCards.filter(card => card.type === 'location');
+            locationCards.forEach(card => {
+                const location = availableCardsMap.get(card.cardId);
+                if (location && location.threat_level) {
+                    totalThreat += location.threat_level * card.quantity;
+                }
+            });
+            
+            return totalThreat;
         }
 
         // Function to update deck summary with stats and validation
