@@ -8392,7 +8392,7 @@
                                 ${characterList}
                                 <div class="deck-meta">
                                     <span>📊 ${calculateTotalCardCount(deck.cards || [])} cards</span>
-                                    <span><img src="/resources/images/icons/threat.png" alt="Threat" class="stat-icon-small" onerror="console.error('Threat icon failed to load')"> ${calculateTotalThreat(deck.cards || [])}</span>
+                                    <span><img src="/resources/images/icons/threat.png" alt="Threat" class="stat-icon-small" onerror="console.error('Threat icon failed to load')"> Threat: ${calculateTotalThreat(deck.cards || [])}</span>
                                     <span>📅 Created: ${new Date(deck.metadata.created).toLocaleDateString()}</span>
                                     <span>✏️ Modified: ${new Date(deck.metadata.lastModified).toLocaleDateString()}</span>
                                 </div>
