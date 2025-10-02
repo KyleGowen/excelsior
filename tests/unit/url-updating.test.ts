@@ -196,7 +196,7 @@ describe('URL Updating Functionality', () => {
       const editDeck = (deckId: string) => {
         try {
           const currentUser = (window as any).getCurrentUser();
-          const userId = currentUser ? currentUser.userId : 'guest';
+          const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
           const newUrl = `/users/${userId}/decks/${deckId}`;
           window.history.pushState({ deckId, userId }, '', newUrl);
         } catch (error) {
@@ -215,13 +215,135 @@ describe('URL Updating Functionality', () => {
 
       const editDeck = (deckId: string) => {
         const currentUser = (window as any).getCurrentUser();
-        const userId = currentUser ? currentUser.userId : 'guest';
+        const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
         const newUrl = `/users/${userId}/decks/${deckId}`;
         window.history.pushState({ deckId, userId }, '', newUrl);
       };
 
       editDeck('test-deck');
       expect(window.location.pathname).toBe('/users/guest/decks/test-deck');
+    });
+  });
+
+  describe('UserId fallback logic', () => {
+    it('should use userId when available', () => {
+      (window as any).getCurrentUser = () => ({
+        userId: 'user-123',
+        id: 'fallback-456'
+      });
+
+      const editDeck = (deckId: string) => {
+        const currentUser = (window as any).getCurrentUser();
+        const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
+        const newUrl = `/users/${userId}/decks/${deckId}`;
+        window.history.pushState({ deckId, userId }, '', newUrl);
+      };
+
+      editDeck('test-deck');
+      expect(window.location.pathname).toBe('/users/user-123/decks/test-deck');
+    });
+
+    it('should fallback to id when userId is missing', () => {
+      (window as any).getCurrentUser = () => ({
+        id: 'fallback-456'
+        // No userId property
+      });
+
+      const editDeck = (deckId: string) => {
+        const currentUser = (window as any).getCurrentUser();
+        const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
+        const newUrl = `/users/${userId}/decks/${deckId}`;
+        window.history.pushState({ deckId, userId }, '', newUrl);
+      };
+
+      editDeck('test-deck');
+      expect(window.location.pathname).toBe('/users/fallback-456/decks/test-deck');
+    });
+
+    it('should fallback to id when userId is null', () => {
+      (window as any).getCurrentUser = () => ({
+        userId: null,
+        id: 'fallback-456'
+      });
+
+      const editDeck = (deckId: string) => {
+        const currentUser = (window as any).getCurrentUser();
+        const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
+        const newUrl = `/users/${userId}/decks/${deckId}`;
+        window.history.pushState({ deckId, userId }, '', newUrl);
+      };
+
+      editDeck('test-deck');
+      expect(window.location.pathname).toBe('/users/fallback-456/decks/test-deck');
+    });
+
+    it('should fallback to id when userId is empty string', () => {
+      (window as any).getCurrentUser = () => ({
+        userId: '',
+        id: 'fallback-456'
+      });
+
+      const editDeck = (deckId: string) => {
+        const currentUser = (window as any).getCurrentUser();
+        const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
+        const newUrl = `/users/${userId}/decks/${deckId}`;
+        window.history.pushState({ deckId, userId }, '', newUrl);
+      };
+
+      editDeck('test-deck');
+      expect(window.location.pathname).toBe('/users/fallback-456/decks/test-deck');
+    });
+
+    it('should fallback to guest when both userId and id are missing', () => {
+      (window as any).getCurrentUser = () => ({
+        name: 'Test User'
+        // No userId or id properties
+      });
+
+      const editDeck = (deckId: string) => {
+        const currentUser = (window as any).getCurrentUser();
+        const userId = currentUser ? (currentUser.userId || currentUser.id || 'guest') : 'guest';
+        const newUrl = `/users/${userId}/decks/${deckId}`;
+        window.history.pushState({ deckId, userId }, '', newUrl);
+      };
+
+      editDeck('test-deck');
+      expect(window.location.pathname).toBe('/users/guest/decks/test-deck');
+    });
+
+    it('should work for viewDeck function with userId fallback', () => {
+      (window as any).getCurrentUser = () => ({
+        id: 'view-fallback-789'
+        // No userId property
+      });
+
+      const viewDeck = (deckId: string) => {
+        const currentUser = (window as any).getCurrentUser();
+        const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
+        const newUrl = `/users/${userId}/decks/${deckId}?readonly=true`;
+        window.history.pushState({ deckId, userId, readonly: true }, '', newUrl);
+      };
+
+      viewDeck('view-deck');
+      expect(window.location.pathname).toBe('/users/view-fallback-789/decks/view-deck');
+      expect(window.location.search).toBe('?readonly=true');
+    });
+
+    it('should work for createNewDeck function with userId fallback', () => {
+      (window as any).getCurrentUser = () => ({
+        id: 'create-fallback-999'
+        // No userId property
+      });
+
+      const createNewDeck = () => {
+        const currentUser = (window as any).getCurrentUser();
+        const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
+        const newUrl = `/users/${userId}/decks/new`;
+        window.history.pushState({ newDeck: true, userId }, '', newUrl);
+      };
+
+      createNewDeck();
+      expect(window.location.pathname).toBe('/users/create-fallback-999/decks/new');
     });
   });
 });

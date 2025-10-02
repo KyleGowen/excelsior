@@ -6078,7 +6078,7 @@
             
             // Update URL to include the deck ID for sharing
             const currentUser = getCurrentUser();
-            const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
+            const userId = currentUser ? (currentUser.userId || currentUser.id || 'guest') : 'guest';
             const newUrl = `/users/${userId}/decks/${deckId}`;
             window.history.pushState({ deckId, userId }, '', newUrl);
             console.log('🔍 Updated URL to:', newUrl);
@@ -6092,7 +6092,7 @@
             
             // Get current user to determine the user ID for the URL
             const currentUser = getCurrentUser();
-            const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
+            const userId = currentUser ? (currentUser.userId || currentUser.id || 'guest') : 'guest';
             
             // Update URL to include the deck ID for sharing
             const newUrl = `/users/${userId}/decks/${deckId}?readonly=true`;
