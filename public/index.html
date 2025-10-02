@@ -12818,23 +12818,31 @@
                     deckEditorCards = [...data.data.cards]; // Create working copy
                     console.log('Working copy created:', deckEditorCards);
                     
-                    // Update read-only mode based on API response (this takes precedence over URL-based determination)
-                    if (data.data.metadata && data.data.metadata.isOwner !== undefined) {
+                    // Check if readonly=true query parameter is set - this takes precedence
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const isReadOnlyFromQuery = urlParams.get('readonly') === 'true';
+                    
+                    if (isReadOnlyFromQuery) {
+                        // Force read-only mode when readonly=true query parameter is present
+                        isReadOnlyMode = true;
+                        console.log('Forcing read-only mode due to readonly=true query parameter');
+                    } else if (data.data.metadata && data.data.metadata.isOwner !== undefined) {
+                        // Only use API response if no readonly query parameter is set
                         isReadOnlyMode = !data.data.metadata.isOwner;
                         console.log('Updated read-only mode from API:', isReadOnlyMode, 'isOwner:', data.data.metadata.isOwner);
-                        
-                        // Update the body class to reflect the correct read-only mode
-                        document.body.classList.toggle('read-only-mode', isReadOnlyMode);
-                        
-                        // Update the modal class as well
-                        const modal = document.getElementById('deckEditorModal');
-                        if (modal) {
-                            modal.classList.toggle('read-only-mode', isReadOnlyMode);
-                        }
-                        
-                        // Now set up drag and drop based on the correct read-only mode
-                        setupDragAndDrop();
                     }
+                    
+                    // Update the body class to reflect the correct read-only mode
+                    document.body.classList.toggle('read-only-mode', isReadOnlyMode);
+                    
+                    // Update the modal class as well
+                    const modal = document.getElementById('deckEditorModal');
+                    if (modal) {
+                        modal.classList.toggle('read-only-mode', isReadOnlyMode);
+                    }
+                    
+                    // Now set up drag and drop based on the correct read-only mode
+                    setupDragAndDrop();
                     
                     // Validate and fix location count (max 1 location allowed)
                     const locationCards = deckEditorCards.filter(card => card.type === 'location');
