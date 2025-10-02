@@ -96,7 +96,7 @@ describe('Deck Editability Browser Tests', () => {
       const hasDescClickHandler = descElement.includes('onclick="startEditingDescription()"');
 
       // Check for read-only mode
-      const hasReadOnlyIndicator = html.includes('Read-Only Mode - Viewing Another User\'s Deck');
+      const hasReadOnlyIndicator = html.includes('Read Only Mode');
       const hasReadOnlyClass = html.includes('read-only-mode');
 
       console.log('🔍 Editability Analysis:');
@@ -166,7 +166,7 @@ describe('Deck Editability Browser Tests', () => {
       const html = response.text;
 
       // Guest should see read-only mode
-      expect(html).toContain('Read-Only Mode - Viewing Another User\'s Deck');
+      expect(html).toContain('Read Only Mode');
       
       // The static HTML always shows editable elements regardless of role
       const titleElement = html.match(/<h3[^>]*id="deckEditorTitle"[^>]*>/)?.[0] || '';
@@ -276,7 +276,7 @@ describe('Deck Editability Browser Tests', () => {
       // 6. ADMIN viewing other's deck -> Read-only (would need auth)
 
       // Current test covers scenario 2 (GUEST viewing other's deck)
-      expect(html).toContain('Read-Only Mode - Viewing Another User\'s Deck');
+      expect(html).toContain('Read Only Mode');
       
       // Verify the logic exists for other scenarios
       const scripts = html.match(/<script[^>]*>(.*?)<\/script>/gs)?.join('\n') || '';

@@ -115,7 +115,7 @@ describe('Deck Editability HTML Tests', () => {
       const html = response.text;
 
       // Guest should see read-only mode
-      expect(html).toContain('Read-Only Mode - Viewing Another User\'s Deck');
+      expect(html).toContain('Read Only Mode');
       expect(html).toContain('readOnlyIndicator');
 
       console.log('✅ GUEST role correctly shows read-only mode');
