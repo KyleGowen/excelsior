@@ -53,7 +53,7 @@ describe('Alternate Power Cards Integration Tests', () => {
       expect(result.rows).toHaveLength(1);
       const card = result.rows[0];
       expect(card.name).toBe('7 - Any-Power');
-      expect(card.alternate_images).toContain('power-cards/alternate/7_anypower.webp');
+      expect(card.alternate_images).toContain('power-cards/alternate/7_anypower.png');
       expect(card.alternate_images.length).toBeGreaterThan(0);
       
       console.log('✅ 7 - Any-Power has alternate image:', card.alternate_images);
@@ -195,7 +195,7 @@ describe('Alternate Power Cards Integration Tests', () => {
       const expectedImages = [
         'power-cards/alternate/5_multipower.webp',
         'power-cards/alternate/7_combat.png',
-        'power-cards/alternate/7_anypower.webp',
+        'power-cards/alternate/7_anypower.png',
         'power-cards/alternate/8_brute_force.webp',
         'power-cards/alternate/8_combat.webp',
         'power-cards/alternate/8_energy.webp',
