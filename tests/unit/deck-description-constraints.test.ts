@@ -25,8 +25,9 @@ describe('Deck Description Field Constraints', () => {
               text-align: left;
               padding-left: 20px;
               flex: 0 0 auto;
-              max-width: 300px;
-              min-width: 200px;
+              max-width: 400px;
+              min-width: 300px;
+              width: 400px;
             }
             .deck-description {
               color: #bdc3c7;
@@ -99,8 +100,8 @@ describe('Deck Description Field Constraints', () => {
       expect(titleSection).toBeTruthy();
       
       const computedStyle = window.getComputedStyle(titleSection);
-      expect(computedStyle.maxWidth).toBe('300px');
-      expect(computedStyle.minWidth).toBe('200px');
+      expect(computedStyle.maxWidth).toBe('400px');
+      expect(computedStyle.minWidth).toBe('300px');
       expect(computedStyle.flex).toBe('0 0 auto');
     });
 
@@ -125,7 +126,7 @@ describe('Deck Description Field Constraints', () => {
   });
 
   describe('Character Limit Functionality', () => {
-    it('should create textarea with 140 character limit', () => {
+    it('should create textarea with 280 character limit', () => {
       const descElement = document.getElementById('deckEditorDescription');
       expect(descElement).toBeTruthy();
       const currentDescription = descElement!.textContent;
@@ -134,13 +135,13 @@ describe('Deck Description Field Constraints', () => {
       const textarea = document.createElement('textarea');
       textarea.className = 'edit-input';
       textarea.value = currentDescription;
-      textarea.placeholder = 'Enter deck description (max 140 characters)';
+      textarea.placeholder = 'Enter deck description (max 280 characters)';
       textarea.rows = 2;
       textarea.style.resize = 'none';
-      textarea.maxLength = 140;
+      textarea.maxLength = 280;
 
-      expect(textarea.maxLength).toBe(140);
-      expect(textarea.placeholder).toBe('Enter deck description (max 140 characters)');
+      expect(textarea.maxLength).toBe(280);
+      expect(textarea.placeholder).toBe('Enter deck description (max 280 characters)');
     });
 
     it('should create character counter', () => {
@@ -151,15 +152,15 @@ describe('Deck Description Field Constraints', () => {
       // Create textarea element
       const textarea = document.createElement('textarea');
       textarea.value = currentDescription;
-      textarea.maxLength = 140;
+      textarea.maxLength = 280;
 
       // Create character counter
       const counter = document.createElement('div');
       counter.className = 'character-counter';
       counter.style.cssText = 'font-size: 0.8rem; color: #bdc3c7; text-align: right; margin-top: 4px;';
-      counter.textContent = `${currentDescription.length}/140`;
+      counter.textContent = `${currentDescription.length}/280`;
 
-      expect(counter.textContent).toBe(`${currentDescription.length}/140`);
+      expect(counter.textContent).toBe(`${currentDescription.length}/280`);
       expect(counter.className).toBe('character-counter');
     });
 
@@ -171,13 +172,13 @@ describe('Deck Description Field Constraints', () => {
       // Create textarea element
       const textarea = document.createElement('textarea');
       textarea.value = currentDescription;
-      textarea.maxLength = 140;
+      textarea.maxLength = 280;
 
       // Create character counter
       const counter = document.createElement('div');
       counter.className = 'character-counter';
       counter.style.cssText = 'font-size: 0.8rem; color: #bdc3c7; text-align: right; margin-top: 4px;';
-      counter.textContent = `${currentDescription.length}/140`;
+      counter.textContent = `${currentDescription.length}/280`;
 
       // Simulate input event
       textarea.value = 'This is a test description';
@@ -185,9 +186,9 @@ describe('Deck Description Field Constraints', () => {
       textarea.dispatchEvent(inputEvent);
 
       // Update counter (simulating the event listener)
-      counter.textContent = `${textarea.value.length}/140`;
+      counter.textContent = `${textarea.value.length}/280`;
 
-      expect(counter.textContent).toBe(`${textarea.value.length}/140`);
+      expect(counter.textContent).toBe(`${textarea.value.length}/280`);
     });
 
     it('should change counter color based on character count', () => {
@@ -198,16 +199,16 @@ describe('Deck Description Field Constraints', () => {
       // Test different character counts
       const testCases = [
         { length: 50, expectedColor: 'rgb(189, 195, 199)' }, // #bdc3c7
-        { length: 110, expectedColor: 'rgb(243, 156, 18)' }, // #f39c12
-        { length: 130, expectedColor: 'rgb(231, 76, 60)' }   // #e74c3c
+        { length: 210, expectedColor: 'rgb(243, 156, 18)' }, // #f39c12
+        { length: 250, expectedColor: 'rgb(231, 76, 60)' }   // #e74c3c
       ];
 
       testCases.forEach(({ length, expectedColor }) => {
-        counter.textContent = `${length}/140`;
+        counter.textContent = `${length}/280`;
         
-        if (length > 120) {
+        if (length > 240) {
           counter.style.color = '#e74c3c';
-        } else if (length > 100) {
+        } else if (length > 200) {
           counter.style.color = '#f39c12';
         } else {
           counter.style.color = '#bdc3c7';
@@ -219,26 +220,26 @@ describe('Deck Description Field Constraints', () => {
   });
 
   describe('Description Truncation', () => {
-    it('should truncate description to 140 characters', () => {
-      const longDescription = 'A'.repeat(200);
+    it('should truncate description to 280 characters', () => {
+      const longDescription = 'A'.repeat(350);
       let newDescription = longDescription.trim();
       
-      // Truncate to 140 characters if needed
-      if (newDescription.length > 140) {
-        newDescription = newDescription.substring(0, 140);
+      // Truncate to 280 characters if needed
+      if (newDescription.length > 280) {
+        newDescription = newDescription.substring(0, 280);
       }
 
-      expect(newDescription.length).toBe(140);
-      expect(newDescription).toBe('A'.repeat(140));
+      expect(newDescription.length).toBe(280);
+      expect(newDescription).toBe('A'.repeat(280));
     });
 
-    it('should not truncate description under 140 characters', () => {
+    it('should not truncate description under 280 characters', () => {
       const shortDescription = 'This is a short description';
       let newDescription = shortDescription.trim();
       
-      // Truncate to 140 characters if needed
-      if (newDescription.length > 140) {
-        newDescription = newDescription.substring(0, 140);
+      // Truncate to 280 characters if needed
+      if (newDescription.length > 280) {
+        newDescription = newDescription.substring(0, 280);
       }
 
       expect(newDescription).toBe(shortDescription);
@@ -249,9 +250,9 @@ describe('Deck Description Field Constraints', () => {
       const emptyDescription = '';
       let newDescription = emptyDescription.trim();
       
-      // Truncate to 140 characters if needed
-      if (newDescription.length > 140) {
-        newDescription = newDescription.substring(0, 140);
+      // Truncate to 280 characters if needed
+      if (newDescription.length > 280) {
+        newDescription = newDescription.substring(0, 280);
       }
 
       expect(newDescription).toBe('');
@@ -329,8 +330,8 @@ describe('Deck Description Field Constraints', () => {
       const descStyle = window.getComputedStyle(description);
       
       // Title section should have width constraints
-      expect(titleStyle.maxWidth).toBe('300px');
-      expect(titleStyle.minWidth).toBe('200px');
+      expect(titleStyle.maxWidth).toBe('400px');
+      expect(titleStyle.minWidth).toBe('300px');
       
       // Description should not exceed parent width
       expect(descStyle.maxWidth).toBe('100%');

@@ -2186,8 +2186,9 @@
             text-align: left;
             padding-left: 20px;
             flex: 0 0 auto;
-            max-width: 300px;
-            min-width: 200px;
+            max-width: 400px;
+            min-width: 300px;
+            width: 400px;
         }
 
         /* Inline editing styles */
@@ -2224,6 +2225,8 @@
             white-space: pre-wrap;
             max-width: 100%;
             line-height: 1.4;
+            box-sizing: border-box;
+            overflow: hidden;
         }
 
         .editable-description:hover {
@@ -2246,6 +2249,9 @@
             resize: vertical;
             min-height: 40px;
             max-height: 120px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         .editable-description.placeholder {
@@ -12253,16 +12259,16 @@
             const textarea = document.createElement('textarea');
             textarea.className = 'edit-input';
             textarea.value = currentDescription;
-            textarea.placeholder = 'Enter deck description (max 140 characters)';
+            textarea.placeholder = 'Enter deck description (max 280 characters)';
             textarea.rows = 2;
             textarea.style.resize = 'none';
-            textarea.maxLength = 140;
+            textarea.maxLength = 280;
             
             // Create character counter
             const counter = document.createElement('div');
             counter.className = 'character-counter';
             counter.style.cssText = 'font-size: 0.8rem; color: #bdc3c7; text-align: right; margin-top: 4px;';
-            counter.textContent = `${currentDescription.length}/140`;
+            counter.textContent = `${currentDescription.length}/280`;
             
             // Replace content with textarea and counter
             descElement.innerHTML = '';
@@ -12276,10 +12282,10 @@
             
             // Update counter on input
             textarea.addEventListener('input', () => {
-                counter.textContent = `${textarea.value.length}/140`;
-                if (textarea.value.length > 120) {
+                counter.textContent = `${textarea.value.length}/280`;
+                if (textarea.value.length > 240) {
                     counter.style.color = '#e74c3c';
-                } else if (textarea.value.length > 100) {
+                } else if (textarea.value.length > 200) {
                     counter.style.color = '#f39c12';
                 } else {
                     counter.style.color = '#bdc3c7';
@@ -12325,9 +12331,9 @@
         function saveDescriptionEdit(textarea) {
             let newDescription = textarea.value.trim();
             
-            // Truncate to 140 characters if needed
-            if (newDescription.length > 140) {
-                newDescription = newDescription.substring(0, 140);
+            // Truncate to 280 characters if needed
+            if (newDescription.length > 280) {
+                newDescription = newDescription.substring(0, 280);
             }
             
             const descElement = document.getElementById('deckEditorDescription');
