@@ -80,6 +80,16 @@ export class FrontendAuthService {
       authResult.urlUserId = deckUrlMatch[1];
       authResult.deckId = deckUrlMatch[2];
       console.log('Detected deck editor route for deck:', authResult.deckId, 'user:', authResult.urlUserId);
+      
+      // Check for readonly query parameter
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('readonly') === 'true') {
+          authResult.isReadOnlyMode = true;
+          this.isReadOnlyMode = true;
+          console.log('Read-only mode: readonly=true query parameter detected');
+        }
+      }
     }
 
     // Check if we have a user in localStorage
@@ -166,8 +176,12 @@ export class FrontendAuthService {
       console.log('🔍 DEBUG: IDs match?', authResult.currentUser && authResult.currentUser.id === authResult.urlUserId);
       console.log('🔍 DEBUG: Strict equality check:', authResult.currentUser && authResult.currentUser.id === authResult.urlUserId);
       console.log('🔍 DEBUG: Loose equality check:', authResult.currentUser && authResult.currentUser.id == authResult.urlUserId);
+      console.log('🔍 DEBUG: Read-only mode from query param:', authResult.isReadOnlyMode);
       
-      if (authResult.isAuthenticated && authResult.currentUser && authResult.currentUser.id !== authResult.urlUserId) {
+      // If readonly query parameter is set, always use read-only mode
+      if (authResult.isReadOnlyMode) {
+        console.log('Read-only mode: readonly=true query parameter detected');
+      } else if (authResult.isAuthenticated && authResult.currentUser && authResult.currentUser.id !== authResult.urlUserId) {
         authResult.isReadOnlyMode = true;
         this.isReadOnlyMode = true;
         console.log('Read-only mode: viewing another user\'s deck');

@@ -6087,9 +6087,14 @@
         }
 
         function viewDeck(deckId) {
-            currentDeckId = deckId;
-            showViewDeckModal();
-            loadDeckDetails(deckId);
+            console.log('🔍 viewDeck called for deckId:', deckId);
+            
+            // Get current user to determine the user ID for the URL
+            const currentUser = getCurrentUser();
+            const userId = currentUser ? currentUser.userId : 'guest';
+            
+            // Navigate to the deck editor in read-only mode
+            window.location.href = `/users/${userId}/decks/${deckId}?readonly=true`;
         }
 
         function deleteDeck(deckId) {
