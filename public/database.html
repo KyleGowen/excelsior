@@ -7259,15 +7259,8 @@
                     });
                     group.style.display = 'block';
                     
-                    // Calculate actual quantity count from deckEditorCards instead of unique card count
-                    const powerTypeCount = deckEditorCards
-                        .filter(card => card.type === 'power')
-                        .filter(card => {
-                            // Find the corresponding available card to get power_type
-                            const availableCard = availableCards.find(ac => ac.id === card.card_id);
-                            return availableCard && availableCard.power_type === powerType;
-                        })
-                        .reduce((total, card) => total + card.quantity, 0);
+                    // For Available Cards view, counts reflect unique available cards
+                    const powerTypeCount = cardItems.length;
                     
                     const originalText = header.textContent;
                     const newText = originalText.replace(/\(\d+\)/, `(${powerTypeCount})`);
@@ -7277,18 +7270,16 @@
                 }
             });
             
-            // Update the main Power Cards header count
+            // Update the main Power Cards header count from available items in DOM
             const mainHeader = powerCardsCategory.querySelector('.card-category-header span');
             if (mainHeader) {
-                // Calculate total power card count from deckEditorCards instead of using totalVisibleCards
-                const totalPowerCardCount = deckEditorCards
-                    .filter(card => card.type === 'power')
-                    .reduce((total, card) => total + card.quantity, 0);
-                
+                const totalPowerCardCount = Array.from(powerTypeSections).reduce((sum, section) => {
+                    return sum + section.querySelectorAll('.card-item').length;
+                }, 0);
                 const originalText = mainHeader.textContent;
                 const newText = originalText.replace(/\(\d+\)/, `(${totalPowerCardCount})`);
                 mainHeader.textContent = newText;
-                console.log(`Updated main Power Cards header count to: ${totalPowerCardCount} (was ${totalVisibleCards})`);
+                console.log(`Updated main Power Cards header count to: ${totalPowerCardCount}`);
             }
             
             console.log('=== END POWER CARDS FILTER DEBUG ===');
@@ -7318,15 +7309,8 @@
                 const powerType = header.textContent.split(' (')[0]; // Extract power type name
                 console.log('🔍 DEBUG: Processing power type:', powerType);
                 
-                // Calculate actual quantity count from deckEditorCards instead of unique card count
-                const powerTypeCount = deckEditorCards
-                    .filter(card => card.type === 'power')
-                    .filter(card => {
-                        // Find the corresponding available card to get power_type
-                        const availableCard = availableCardsMap.get(`power_${card.card_id}`);
-                        return availableCard && availableCard.power_type === powerType;
-                    })
-                    .reduce((total, card) => total + card.quantity, 0);
+                // Use DOM card items within this section so counts are correct on initial render
+                const powerTypeCount = section.querySelectorAll('.card-item').length;
                 
                 const originalText = header.textContent;
                 const newText = originalText.replace(/\(\d+\)/, `(${powerTypeCount})`);
@@ -10205,6 +10189,11 @@
                 
                 // Update power cards filter to show correct counts after categories are loaded
                 updatePowerCardsFilter();
+                
+                // Also update counts immediately for initial display
+                setTimeout(() => {
+                    updatePowerCardsFilter();
+                }, 100);
             } catch (error) {
                 console.error('Error loading available cards:', error);
                 cardCategories.innerHTML = '<div class="error">Error loading available cards</div>';
