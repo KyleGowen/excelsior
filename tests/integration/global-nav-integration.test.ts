@@ -73,7 +73,7 @@ describe('Global Nav Integration Tests', () => {
       expect(response.text).toContain('<div class="header-right">');
       expect(response.text).toContain('onclick="switchToDatabaseView()"');
       expect(response.text).toContain('onclick="switchToDeckBuilder()"');
-      expect(response.text).toContain('onclick="showCreateDeckModal()"');
+      expect(response.text).toContain('onclick="createNewDeck()"');
     });
 
     test('should serve global nav CSS component', async () => {
@@ -101,6 +101,7 @@ describe('Global Nav Integration Tests', () => {
       expect(response.text).toContain('function switchToDeckBuilder()');
       expect(response.text).toContain('function initializeGlobalNav()');
       expect(response.text).toContain('function updateUserWelcome()');
+      expect(response.text).toContain('function createNewDeck()');
     });
   });
 
@@ -113,18 +114,23 @@ describe('Global Nav Integration Tests', () => {
       // Verify create deck button is present
       expect(response.text).toContain('id="createDeckBtn"');
       expect(response.text).toContain('class="create-deck-btn"');
-      expect(response.text).toContain('onclick="showCreateDeckModal()"');
+      expect(response.text).toContain('onclick="createNewDeck()"');
       expect(response.text).toContain('+ Create Deck');
     });
 
-    test('should have create deck modal functionality', async () => {
+    test('should have create deck functionality', async () => {
       const response = await agent
         .get('/users/testuser/decks')
         .expect(200);
 
-      // Check that the main page includes create deck modal
-      expect(response.text).toContain('createDeckModal');
-      expect(response.text).toContain('showCreateDeckModal');
+      // Check that the main page includes deck editor modal
+      expect(response.text).toContain('deckEditorModal');
+      
+      // Check that the global nav JavaScript includes createNewDeck function
+      const jsResponse = await agent
+        .get('/components/globalNav.js')
+        .expect(200);
+      expect(jsResponse.text).toContain('function createNewDeck()');
     });
 
     test('should handle create deck API endpoint', async () => {

@@ -8028,6 +8028,56 @@
             }
         }
 
+        function initializeBlankDeck() {
+            console.log('initializeBlankDeck called');
+            
+            // Set up blank deck data
+            currentDeckData = {
+                metadata: {
+                    id: null,
+                    name: 'New Deck',
+                    description: '',
+                    created: new Date().toISOString(),
+                    lastModified: new Date().toISOString(),
+                    cardCount: 0,
+                    userId: getCurrentUser() ? (getCurrentUser().userId || getCurrentUser().id) : 'guest'
+                },
+                cards: []
+            };
+            
+            deckEditorCards = [];
+            currentDeckId = null;
+            
+            // Update modal title and description
+            const titleElement = document.getElementById('deckEditorTitle');
+            const descriptionElement = document.getElementById('deckEditorDescription');
+            
+            if (titleElement) {
+                titleElement.textContent = 'New Deck';
+                titleElement.contentEditable = 'true';
+            }
+            
+            if (descriptionElement) {
+                descriptionElement.textContent = 'Click to add description';
+                descriptionElement.style.display = 'block';
+                descriptionElement.classList.add('placeholder');
+            }
+            
+            // Clear any existing cards
+            const deckCardsContainer = document.getElementById('deckCardsContainer');
+            if (deckCardsContainer) {
+                deckCardsContainer.innerHTML = '<div class="no-cards-message">No cards in this deck yet. Drag cards from the right panel to add them!</div>';
+            }
+            
+            // Load available cards
+            if (typeof loadAvailableCards === 'function') {
+                loadAvailableCards();
+            }
+            
+            // Update card count
+            updateDeckCardCount();
+        }
+
         async function loadDeckForEditing(deckId) {
             console.log('loadDeckForEditing called with deckId:', deckId);
             try {

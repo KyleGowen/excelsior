@@ -85,6 +85,59 @@ function switchToDeckBuilder() {
     }
 }
 
+function createNewDeck() {
+    console.log('🔍 DEBUG: createNewDeck called');
+    
+    // Clear any existing deck data
+    if (typeof currentDeckId !== 'undefined') {
+        currentDeckId = null;
+    }
+    if (typeof currentDeckData !== 'undefined') {
+        currentDeckData = null;
+    }
+    if (typeof deckEditorCards !== 'undefined') {
+        deckEditorCards = [];
+    }
+    
+    // Show the deck editor with blank deck
+    if (typeof showDeckEditor === 'function') {
+        showDeckEditor();
+        
+        // Initialize with blank deck data
+        if (typeof initializeBlankDeck === 'function') {
+            initializeBlankDeck();
+        } else {
+            // Fallback: manually set up blank deck
+            const titleElement = document.getElementById('deckEditorTitle');
+            const descriptionElement = document.getElementById('deckEditorDescription');
+            
+            if (titleElement) {
+                titleElement.textContent = 'New Deck';
+                titleElement.contentEditable = 'true';
+            }
+            
+            if (descriptionElement) {
+                descriptionElement.textContent = 'Click to add description';
+                descriptionElement.style.display = 'block';
+                descriptionElement.classList.add('placeholder');
+            }
+            
+            // Clear any existing cards
+            const deckCardsContainer = document.getElementById('deckCardsContainer');
+            if (deckCardsContainer) {
+                deckCardsContainer.innerHTML = '<div class="no-cards-message">No cards in this deck yet. Drag cards from the right panel to add them!</div>';
+            }
+            
+            // Load available cards if function exists
+            if (typeof loadAvailableCards === 'function') {
+                loadAvailableCards();
+            }
+        }
+    } else {
+        console.error('showDeckEditor function not found');
+    }
+}
+
 // Initialize global navigation
 function initializeGlobalNav() {
     console.log('🔍 DEBUG: initializeGlobalNav called');
