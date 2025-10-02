@@ -2163,8 +2163,8 @@
         }
 
         .modal-header {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
             padding: 12px 20px 15px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -2185,7 +2185,7 @@
             gap: 4px;
             text-align: left;
             padding-left: 20px;
-            flex: 0 0 auto;
+            justify-self: start;
             max-width: 400px;
             min-width: 300px;
             width: 400px;
@@ -2673,14 +2673,14 @@
         .deck-editor-actions {
             display: flex;
             gap: 20px;
+            justify-self: end;
         }
 
         /* Deck Editor Search Bar */
         .deck-editor-search-container {
             position: relative;
-            flex: 1;
             max-width: 400px;
-            margin: 0 20px;
+            justify-self: center;
         }
 
         .deck-editor-search-input {
