@@ -7208,23 +7208,36 @@
                     });
                     group.style.display = 'block';
                     
-                    // Restore original count in header
-                    const originalCount = cardItems.length;
+                    // Calculate actual quantity count from deckEditorCards instead of unique card count
+                    const powerTypeCount = deckEditorCards
+                        .filter(card => card.type === 'power')
+                        .filter(card => {
+                            // Find the corresponding available card to get power_type
+                            const availableCard = availableCards.find(ac => ac.id === card.card_id);
+                            return availableCard && availableCard.power_type === powerType;
+                        })
+                        .reduce((total, card) => total + card.quantity, 0);
+                    
                     const originalText = header.textContent;
-                    const newText = originalText.replace(/\(\d+\)/, `(${originalCount})`);
+                    const newText = originalText.replace(/\(\d+\)/, `(${powerTypeCount})`);
                     header.textContent = newText;
-                    totalVisibleCards += originalCount;
-                    console.log(`  ${powerType}: all ${originalCount} cards shown`);
+                    totalVisibleCards += powerTypeCount;
+                    console.log(`  ${powerType}: all ${powerTypeCount} cards shown (${cardItems.length} unique cards)`);
                 }
             });
             
             // Update the main Power Cards header count
             const mainHeader = powerCardsCategory.querySelector('.card-category-header span');
             if (mainHeader) {
+                // Calculate total power card count from deckEditorCards instead of using totalVisibleCards
+                const totalPowerCardCount = deckEditorCards
+                    .filter(card => card.type === 'power')
+                    .reduce((total, card) => total + card.quantity, 0);
+                
                 const originalText = mainHeader.textContent;
-                const newText = originalText.replace(/\(\d+\)/, `(${totalVisibleCards})`);
+                const newText = originalText.replace(/\(\d+\)/, `(${totalPowerCardCount})`);
                 mainHeader.textContent = newText;
-                console.log(`Updated main header count to: ${totalVisibleCards}`);
+                console.log(`Updated main Power Cards header count to: ${totalPowerCardCount} (was ${totalVisibleCards})`);
             }
             
             console.log('=== END POWER CARDS FILTER DEBUG ===');
@@ -7232,6 +7245,64 @@
 
         // Update power cards filter when deck changes
         function updatePowerCardsFilter() {
+            console.log('🔍 DEBUG: updatePowerCardsFilter called');
+            
+            // Update power card counts in the UI
+            const powerCardsCategory = document.querySelector('.card-category[data-type="power"]');
+            if (!powerCardsCategory) {
+                console.log('🔍 DEBUG: Power cards category not found');
+                return;
+            }
+            
+            // Get all power type sections within the power cards category
+            const powerTypeSections = powerCardsCategory.querySelectorAll('.character-group');
+            let totalVisibleCards = 0;
+            
+            console.log('🔍 DEBUG: Found', powerTypeSections.length, 'power type sections');
+            
+            powerTypeSections.forEach(section => {
+                const header = section.querySelector('.character-group-header span');
+                if (!header) return;
+                
+                const powerType = header.textContent.split(' (')[0]; // Extract power type name
+                console.log('🔍 DEBUG: Processing power type:', powerType);
+                
+                // Calculate actual quantity count from deckEditorCards instead of unique card count
+                const powerTypeCount = deckEditorCards
+                    .filter(card => card.type === 'power')
+                    .filter(card => {
+                        // Find the corresponding available card to get power_type
+                        const availableCard = availableCardsMap.get(`power_${card.card_id}`);
+                        return availableCard && availableCard.power_type === powerType;
+                    })
+                    .reduce((total, card) => total + card.quantity, 0);
+                
+                const originalText = header.textContent;
+                const newText = originalText.replace(/\(\d+\)/, `(${powerTypeCount})`);
+                header.textContent = newText;
+                totalVisibleCards += powerTypeCount;
+                console.log(`  ${powerType}: all ${powerTypeCount} cards shown`);
+            });
+            
+            // Update the main Power Cards header count
+            const mainHeader = powerCardsCategory.querySelector('.card-category-header span');
+            if (mainHeader) {
+                // Calculate total power card count from deckEditorCards instead of using totalVisibleCards
+                const totalPowerCardCount = deckEditorCards
+                    .filter(card => card.type === 'power')
+                    .reduce((total, card) => total + card.quantity, 0);
+                
+                const originalText = mainHeader.textContent;
+                console.log(`🔍 DEBUG: Original header text: "${originalText}"`);
+                const newText = originalText.replace(/\(\d+\)/, `(${totalPowerCardCount})`);
+                console.log(`🔍 DEBUG: New header text: "${newText}"`);
+                mainHeader.textContent = newText;
+                console.log(`Updated main Power Cards header count to: ${totalPowerCardCount}`);
+            } else {
+                console.log('🔍 DEBUG: Main header not found');
+            }
+            
+            // Also check if character filter is active
             const filterCheckbox = document.getElementById('powerCardsCharacterFilter');
             if (filterCheckbox && filterCheckbox.checked) {
                 togglePowerCardsCharacterFilter();
@@ -8151,7 +8222,7 @@
                     await displayDeckCardsForEditing();
                     
                     // Update card count
-
+                    updateDeckEditorCardCount();
                     
                     // Auto-activate special cards character filter if deck has characters
                     const hasCharacters = deckEditorCards.some(card => card.type === 'character');
@@ -8231,7 +8302,7 @@
                 if (cardsByType[type] && cardsByType[type].length > 0) {
                     const typeCards = cardsByType[type];
                     const typeName = typeDisplayNames[type] || formatCardType(type);
-                    const cardCount = typeCards.length;
+                    const cardCount = typeCards.reduce((total, card) => total + (card.quantity || 1), 0);
                     
                     // For missions, find the most represented mission set
                     let additionalInfo = '';
@@ -8553,6 +8624,9 @@
             
             // Apply character background images
             applyCharacterBackgroundsToEditor();
+            
+            // Update power cards filter to show correct counts after deck display
+            updatePowerCardsFilter();
         }
         
         // Apply background images to character, power, location, special, mission, and aspect cards in deck editor
@@ -9954,7 +10028,7 @@
                             } else if (category.type === 'power') {
                                 // Special handling for power cards header with character filter toggle
                                 categoriesHtml += `
-                                    <div class="card-category">
+                                    <div class="card-category" data-type="power">
                                         <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
                                             <div class="category-header-content">
                                                 <span>${category.name} (${data.data.length})</span>
@@ -10077,6 +10151,9 @@
                 }
                 
                 cardCategories.innerHTML = categoriesHtml;
+                
+                // Update power cards filter to show correct counts after categories are loaded
+                updatePowerCardsFilter();
             } catch (error) {
                 console.error('Error loading available cards:', error);
                 cardCategories.innerHTML = '<div class="error">Error loading available cards</div>';

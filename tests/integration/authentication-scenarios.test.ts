@@ -203,9 +203,8 @@ describe('Authentication Scenarios Integration Tests', () => {
     let guestSessionId: string;
 
     beforeAll(async () => {
-      // Find existing guest user
-      const users = await userRepository.getAllUsers();
-      guestUser = users.find((u: User) => u.name === 'guest')!;
+      // Find existing guest user by username
+      guestUser = await userRepository.getUserByUsername('guest');
       expect(guestUser).toBeDefined();
       expect(guestUser.role).toBe('GUEST');
     });

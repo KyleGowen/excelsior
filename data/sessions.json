@@ -2230,5 +2230,29 @@
     "userId": "test-user-id",
     "username": "test-user",
     "expiresAt": "2025-10-02T06:44:09.405Z"
+  },
+  {
+    "sessionId": "sess_77jqmwidn_mg90dnpe",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-02T08:02:40.322Z"
+  },
+  {
+    "sessionId": "sess_91sv0etc8_mg90dzq6",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-02T08:02:55.902Z"
+  },
+  {
+    "sessionId": "sess_zja1kcs9z_mg90e818",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-02T08:03:06.668Z"
+  },
+  {
+    "sessionId": "sess_fau6hkx5d_mg90e819",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-02T08:03:06.669Z"
   }
 ]
