@@ -934,6 +934,22 @@
             background: rgba(255, 255, 255, 0.15);
         }
 
+        /* Special styling for "No decks yet" clickable tile */
+        .deck-card[onclick="createNewDeck()"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(78, 205, 196, 0.3);
+            border-color: rgba(78, 205, 196, 0.8);
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .deck-card[onclick="createNewDeck()"]:hover h4 {
+            color: #4ecdc4;
+        }
+
+        .deck-card[onclick="createNewDeck()"]:hover p {
+            color: #ffffff;
+        }
+
         /* Character display in deck cards */
         .deck-character-display {
             margin: 0;
@@ -5790,7 +5806,7 @@
             
             if (decks.length === 0) {
                 deckList.innerHTML = `
-                    <div class="deck-card" style="text-align: center; color: #bdc3c7;">
+                    <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
                         <h4>No decks yet</h4>
                         <p>Create your first deck to get started!</p>
                     </div>
