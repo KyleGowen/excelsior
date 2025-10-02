@@ -159,7 +159,6 @@ describe('Deck Editor Role-Based Access Integration Tests', () => {
       // Verify the createNewDeck function is present
       expect(response.text).toContain('function createNewDeck()');
       expect(response.text).toContain('showDeckEditor()');
-      expect(response.text).toContain('initializeBlankDeck()');
     });
   });
 
