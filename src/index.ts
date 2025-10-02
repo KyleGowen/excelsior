@@ -298,7 +298,7 @@ app.get('/api/decks', authenticateUser, async (req: any, res) => {
 app.post('/api/decks', authenticateUser, async (req: any, res) => {
   try {
     // Check if user is guest - guests cannot create decks
-    if (req.user.role === 'GUEST' || req.user.username === 'guest' || req.user.name === 'guest') {
+    if (req.user.role === 'GUEST') {
       return res.status(403).json({ success: false, error: 'Guests may not create decks' });
     }
     
@@ -362,7 +362,7 @@ app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
 app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
   try {
     // Check if user is guest - guests cannot modify decks
-    if (req.user.role === 'GUEST' || req.user.username === 'guest' || req.user.name === 'guest') {
+    if (req.user.role === 'GUEST') {
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
@@ -387,7 +387,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
 app.delete('/api/decks/:id', authenticateUser, async (req: any, res) => {
   try {
     // Check if user is guest - guests cannot delete decks
-    if (req.user.role === 'GUEST' || req.user.username === 'guest' || req.user.name === 'guest') {
+    if (req.user.role === 'GUEST') {
       return res.status(403).json({ success: false, error: 'Guests may not delete decks' });
     }
 
@@ -415,7 +415,7 @@ app.delete('/api/decks/:id', authenticateUser, async (req: any, res) => {
 app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
     // Check if user is guest - guests cannot modify decks
-    if (req.user.role === 'GUEST' || req.user.username === 'guest' || req.user.name === 'guest') {
+    if (req.user.role === 'GUEST') {
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
@@ -445,7 +445,7 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
 app.delete('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
     // Check if user is guest - guests cannot modify decks
-    if (req.user.role === 'GUEST' || req.user.username === 'guest' || req.user.name === 'guest') {
+    if (req.user.role === 'GUEST') {
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
@@ -544,7 +544,7 @@ app.get('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res)
 app.put('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res) => {
   try {
     // Check if user is guest - guests cannot modify decks
-    if (req.user.role === 'GUEST' || req.user.username === 'guest' || req.user.name === 'guest') {
+    if (req.user.role === 'GUEST') {
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
