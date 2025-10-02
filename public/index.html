@@ -2862,15 +2862,15 @@
             position: relative;
         }
 
-        /* Add subtle accent lines to indicate resizability */
+        /* Add small vertical lines to indicate grab handle */
         .resizable-divider::before {
             content: '';
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 2px;
-            height: 20px;
+            transform: translate(-50%, -50%) translateX(-3px);
+            width: 1px;
+            height: 24px;
             background: rgba(78, 205, 196, 0.8);
             border-radius: 1px;
         }
@@ -2880,12 +2880,11 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 2px;
-            height: 8px;
-            background: rgba(78, 205, 196, 0.6);
+            transform: translate(-50%, -50%) translateX(3px);
+            width: 1px;
+            height: 24px;
+            background: rgba(78, 205, 196, 0.8);
             border-radius: 1px;
-            margin-top: -16px;
         }
 
 
@@ -2900,15 +2899,11 @@
                 transparent 100%);
         }
 
-        /* Make accent lines more prominent on hover */
-        .resizable-divider:hover::before {
-            background: rgba(78, 205, 196, 1);
-            height: 24px;
-        }
-
+        /* Make grab handle lines more prominent on hover */
+        .resizable-divider:hover::before,
         .resizable-divider:hover::after {
-            background: rgba(78, 205, 196, 0.9);
-            height: 10px;
+            background: rgba(78, 205, 196, 1);
+            height: 30px;
         }
 
 
@@ -2923,17 +2918,12 @@
                 transparent 100%);
         }
 
-        /* Make accent lines most prominent when actively dragging */
-        .resizable-divider:active::before {
-            background: rgba(78, 205, 196, 1);
-            height: 28px;
-            width: 3px;
-        }
-
+        /* Make grab handle lines most prominent when actively dragging */
+        .resizable-divider:active::before,
         .resizable-divider:active::after {
             background: rgba(78, 205, 196, 1);
-            height: 12px;
-            width: 3px;
+            width: 2px;
+            height: 36px;
         }
 
 
