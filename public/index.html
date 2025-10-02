@@ -797,7 +797,6 @@
         #characters-table td {
             text-align: center;
         }
-        
         /* Special cards table */
         #special-cards-table th,
         #special-cards-table td {
@@ -1588,7 +1587,6 @@
             z-index: 100;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
         }
-
         .screenshot-card-quantity {
             position: absolute;
             top: 3px;
@@ -2385,7 +2383,6 @@
             flex-direction: column;
             gap: 5px;
         }
-
         .metadata-item label {
             font-weight: 600;
             color: #4ecdc4;
@@ -3179,7 +3176,6 @@
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.7);
         }
-
         .deck-list-items {
             background: rgba(255, 255, 255, 0.02);
             border-radius: 6px;
@@ -3966,7 +3962,6 @@
         .deck-card-editor-item.special-card {
             overflow: hidden;
         }
-        
         .deck-card-editor-item.special-card::before {
             content: '';
             position: absolute;
@@ -4760,7 +4755,6 @@
                padding: 0 8px;
                overflow: hidden;
            }
-
         /* Mission set groups within missions and events */
         .mission-set-group {
             margin: 8px 0;
@@ -5560,7 +5554,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Image Modal -->
@@ -6343,7 +6336,6 @@
                 disableAddToDeckButtons();
             }
         }
-
         function displayCharacters(characters) {
             console.log('🔍 displayCharacters() called with', characters.length, 'characters');
             const tbody = document.getElementById('characters-tbody');
@@ -7141,7 +7133,6 @@
                 toggleButton.innerHTML = '<span id="toggle-text">Show</span> Cataclysm Column';
             }
         }
-
         // Mission functions
         async function loadMissions() {
             try {
@@ -7929,7 +7920,6 @@
                 </tr>
             `).join('');
         }
-
         function setupPowerCardsSearch() {
             const searchInput = document.getElementById('search-input');
             searchInput.addEventListener('input', async (e) => {
@@ -8584,7 +8574,7 @@
             }
             
             // Update URL to include the deck ID for sharing
-            const userId = currentUser ? currentUser.userId : 'guest';
+            const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
             const newUrl = `/users/${userId}/decks/${deckId}`;
             window.history.pushState({ deckId, userId }, '', newUrl);
             console.log('🔍 Updated URL to:', newUrl);
@@ -8610,7 +8600,7 @@
             
             // Get current user to determine the user ID for the URL
             const currentUser = getCurrentUser();
-            const userId = currentUser ? currentUser.userId : 'guest';
+            const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
             
             // Update URL to include the deck ID for sharing
             const newUrl = `/users/${userId}/decks/${deckId}?readonly=true`;
@@ -8728,7 +8718,6 @@
         function closeAddCardsModal() {
             document.getElementById('addCardsModal').style.display = 'none';
         }
-        
         // Ensure consistent two-pane layout
         function ensureTwoPaneLayout() {
             console.log('🔍 DEBUG: ensureTwoPaneLayout called - CACHE BUST TEST');
@@ -9486,7 +9475,6 @@
         // Attach drag listeners to any existing cards
         attachDragListeners();
     }
-
         // List View functionality
         function toggleListView() {
             const deckCardsEditor = document.getElementById('deckCardsEditor');
@@ -10184,7 +10172,6 @@
             console.log('🔍 Final total threat:', totalThreat);
             return totalThreat;
         }
-
         // Function to update deck summary with stats and validation
         async function updateDeckSummary(deckCards) {
             console.log("DEBUG: updateDeckSummary called with deckCards:", deckCards);            // Update total card count using shared function
@@ -10921,7 +10908,6 @@
                 togglePowerCardsCharacterFilter();
             }
         }
-        
         // Toggle basic universe character filter
         async function toggleBasicUniverseCharacterFilter() {
             const filterCheckbox = document.getElementById('basicUniverseCharacterFilter');
@@ -11716,7 +11702,6 @@
             
             console.log('🔍 Deck editor search initialization complete!');
         }
-
         // Handle search input
         async function handleDeckEditorSearch(e) {
             const searchTerm = e.target.value.trim().toLowerCase();
@@ -12475,7 +12460,6 @@
             // Return to deck builder selection screen
             switchToDeckBuilder();
         }
-
         // Resizable divider functionality
         function initializeResizableDivider() {
             console.log('🔍 DEBUG: initializeResizableDivider called');
@@ -14397,7 +14381,6 @@
                 return `placeholder_${cardType}.webp`;
             }
         }
-        
         // Helper function to load available cards data for lookup
         async function loadAvailableCardsData() {
             try {
@@ -16428,7 +16411,6 @@
                 }
             });
         }
-
         async function saveDeckChanges() {
             console.log('🔍 DEBUG: saveDeckChanges called');
             console.log('🔍 DEBUG: currentDeckId:', currentDeckId);
@@ -16491,7 +16473,7 @@
                     
                     // Update URL to include the new deck ID for sharing
                     const currentUser = getCurrentUser();
-                    const userId = currentUser ? currentUser.userId : 'guest';
+                    const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
                     const newUrl = `/users/${userId}/decks/${currentDeckId}`;
                     window.history.pushState({ deckId: currentDeckId, userId }, '', newUrl);
                     console.log('🔍 Updated URL to:', newUrl);

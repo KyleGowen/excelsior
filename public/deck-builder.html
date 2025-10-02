@@ -789,7 +789,6 @@
         #power-cards-table {
             table-layout: fixed;
         }
-
         /* Prevent text wrapping and maintain column stability */
         #missions-table th,
         #missions-table td,
@@ -1588,7 +1587,6 @@
         .quantity-btn.danger:hover {
             background: rgba(255, 107, 107, 0.3);
         }
-
         /* Card Search Section */
         .card-search-section {
             display: flex;
@@ -2380,7 +2378,6 @@
             z-index: -1;
             border-radius: 6px;
         }
-
         /* Location card background images in deck contents */
         .deck-card-editor-item.location-card::before {
             content: '';
@@ -3181,7 +3178,6 @@
         .form-group input::placeholder {
             color: #bdc3c7;
         }
-
         .login-btn {
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
             color: white;
@@ -3950,7 +3946,6 @@
             </div>
         </div>
     </div>
-
     <!-- Add Cards Modal -->
     <div id="addCardsModal" class="modal" onclick="closeAddCardsModal()">
         <div class="modal-content large-modal" onclick="event.stopPropagation()">
@@ -4751,7 +4746,6 @@
                 }
             });
         }
-
         // Advanced Universe search functionality
         function setupAdvancedUniverseSearch() {
             const searchInput = document.getElementById('search-input');
@@ -5046,7 +5040,7 @@
                         <img src="/src/resources/cards/images/${aspect.image}" 
                              alt="${aspect.card_name}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
-                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3ZnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
                              onclick="openModal(this)">
                     </td>
                     <td><strong>${aspect.card_name}</strong></td>
@@ -5277,7 +5271,7 @@
                         <img src="/src/resources/cards/images/${card.image}" 
                              alt="${card.card_name}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
-                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
                              onclick="openModal(this)">
                     </td>
                     <td><strong>${card.card_name}</strong></td>
@@ -5532,7 +5526,6 @@
             document.getElementById('power-value-min').addEventListener('input', applyPowerCardFilters);
             document.getElementById('power-value-max').addEventListener('input', applyPowerCardFilters);
         }
-
         async function applyPowerCardFilters() {
             try {
                 const resp = await fetch('/api/power-cards');
@@ -6085,7 +6078,7 @@
             
             // Update URL to include the deck ID for sharing
             const currentUser = getCurrentUser();
-            const userId = currentUser ? currentUser.userId : 'guest';
+            const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
             const newUrl = `/users/${userId}/decks/${deckId}`;
             window.history.pushState({ deckId, userId }, '', newUrl);
             console.log('🔍 Updated URL to:', newUrl);
@@ -6099,7 +6092,7 @@
             
             // Get current user to determine the user ID for the URL
             const currentUser = getCurrentUser();
-            const userId = currentUser ? currentUser.userId : 'guest';
+            const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
             
             // Update URL to include the deck ID for sharing
             const newUrl = `/users/${userId}/decks/${deckId}?readonly=true`;
@@ -6319,7 +6312,6 @@
         function formatCardType(type) {
             return type.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         }
-
         async function changeCardQuantity(cardId, change) {
             if (!currentDeckId) return;
             
@@ -7096,7 +7088,6 @@
                 toggleAdvancedUniverseCharacterFilter();
             }
         }
-
         // Toggle power cards character filter
         async function togglePowerCardsCharacterFilter() {
             const filterCheckbox = document.getElementById('powerCardsCharacterFilter');
@@ -7878,7 +7869,6 @@
                 toggleAllyUniverseCharacterFilter();
             }
         }
-
         // ===== DECK EDITOR FUNCTIONS =====
 
         function showDeckEditor() {
@@ -8630,7 +8620,6 @@
             // Update power cards filter to show correct counts after deck display
             updatePowerCardsFilter();
         }
-        
         // Apply background images to character, power, location, special, mission, and aspect cards in deck editor
         function applyCharacterBackgroundsToEditor() {
             const characterCards = document.querySelectorAll('.deck-card-editor-item.character-card');
@@ -9412,7 +9401,6 @@
                     showNotification('Error loading special cards', 'error');
                 });
         }
-
         function addAllAdvancedUniverseCardsForCharacter(characterName) {
             console.log(`Adding all advanced universe cards for character: ${characterName}`);
             
@@ -10166,7 +10154,6 @@
                 cardCategories.innerHTML = '<div class="error">Error loading available cards</div>';
             }
         }
-
         function setupDragAndDrop() {
             console.log('setupDragAndDrop called');
             try {

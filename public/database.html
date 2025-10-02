@@ -796,7 +796,6 @@
         #events-table {
             table-layout: fixed;
         }
-
         #events-table th:nth-child(1), #events-table td:nth-child(1) { width: 15%; } /* Image */
         #events-table th:nth-child(2), #events-table td:nth-child(2) { width: 15%; } /* Name */
         #events-table th:nth-child(3), #events-table td:nth-child(3) { width: 25%; } /* Mission Set - wider for checkboxes */
@@ -1593,7 +1592,6 @@
         .quantity-btn:hover {
             background: rgba(255, 255, 255, 0.2);
         }
-
         .quantity-btn.danger {
             background: rgba(255, 107, 107, 0.2);
             border-color: rgba(255, 107, 107, 0.3);
@@ -2378,7 +2376,6 @@
             border-color: rgba(78, 205, 196, 0.5);
             color: #ffffff;
         }
-
         /* Power card background images in deck contents */
         .deck-card-editor-item.power-card::before {
             content: '';
@@ -3175,7 +3172,6 @@
             color: #4ecdc4;
             font-weight: 500;
         }
-
         .form-group input {
             width: 100%;
             padding: 12px 16px;
@@ -3963,7 +3959,6 @@
             </div>
         </div>
     </div>
-
     <!-- Add Cards Modal -->
     <div id="addCardsModal" class="modal" onclick="closeAddCardsModal()">
         <div class="modal-content large-modal" onclick="event.stopPropagation()">
@@ -4764,7 +4759,6 @@
                 setupPowerCardsSearch();
             }
         }
-
         // Location search functionality
         function setupLocationSearch() {
             const searchInput = document.getElementById('search-input');
@@ -5122,7 +5116,7 @@
                         <img src="/src/resources/cards/images/${aspect.image}" 
                              alt="${aspect.card_name}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
-                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3ZnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
                              onmouseenter="showCardHoverModal('/src/resources/cards/images/${aspect.image}', '${aspect.card_name}')"
                              onmouseleave="hideCardHoverModal()"
                              onclick="openModal(this)">
@@ -5197,7 +5191,7 @@
                         <img src="/src/resources/cards/images/${card.image}" 
                              alt="${card.name}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
-                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
                              onmouseenter="showCardHoverModal('/src/resources/cards/images/${card.image}', '${card.name}')"
                              onmouseleave="hideCardHoverModal()"
                              onclick="openModal(this)">
@@ -5254,7 +5248,7 @@
                         <img src="/src/resources/cards/images/${card.image}" 
                              alt="${card.card_type}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
-                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
                              onmouseenter="showCardHoverModal('/src/resources/cards/images/${card.image}', '${card.card_type}')"
                              onmouseleave="hideCardHoverModal()"
                              onclick="openModal(this)">
@@ -5294,7 +5288,7 @@
                         <img src="/src/resources/cards/images/${card.image}" 
                              alt="${card.card_name}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
-                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
                              onmouseenter="showCardHoverModal('/src/resources/cards/images/${card.image}', '${card.card_name}')"
                              onmouseleave="hideCardHoverModal()"
                              onclick="openModal(this)">
@@ -5358,7 +5352,7 @@
                         <img src="/src/resources/cards/images/${card.image}" 
                              alt="${card.card_name}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
-                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
                              onmouseenter="showCardHoverModal('/src/resources/cards/images/${card.image}', '${card.card_name}')"
                              onmouseleave="hideCardHoverModal()"
                              onclick="openModal(this)">
@@ -5557,7 +5551,6 @@
                 console.error('Error applying basic universe filters:', err);
             }
         }
-
         // Power Cards functions
         async function loadPowerCards() {
             try {
@@ -5579,7 +5572,7 @@
                         <img src="/src/resources/cards/images/${card.image}" 
                              alt="${card.power_type} ${card.value}" 
                              style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
-                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
                              onmouseenter="showCardHoverModal('/src/resources/cards/images/${card.image}', '${card.power_type} ${card.value}')"
                              onmouseleave="hideCardHoverModal()"
                              onclick="openModal(this)">
@@ -6128,7 +6121,7 @@
             
             // Update URL to include the deck ID for sharing
             const currentUser = getCurrentUser();
-            const userId = currentUser ? currentUser.userId : 'guest';
+            const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
             const newUrl = `/users/${userId}/decks/${deckId}`;
             window.history.pushState({ deckId, userId }, '', newUrl);
             console.log('🔍 Updated URL to:', newUrl);
@@ -6142,7 +6135,7 @@
             
             // Get current user to determine the user ID for the URL
             const currentUser = getCurrentUser();
-            const userId = currentUser ? currentUser.userId : 'guest';
+            const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
             
             // Update URL to include the deck ID for sharing
             const newUrl = `/users/${userId}/decks/${deckId}?readonly=true`;
@@ -6358,7 +6351,6 @@
             // For now, return a placeholder
             return `${formatCardType(card.type)} Card ${card.cardId}`;
         }
-
         function formatCardType(type) {
             return type.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         }
@@ -7142,7 +7134,6 @@
                 toggleAdvancedUniverseCharacterFilter();
             }
         }
-
         // Toggle power cards character filter
         async function togglePowerCardsCharacterFilter() {
             const filterCheckbox = document.getElementById('powerCardsCharacterFilter');
@@ -7924,7 +7915,6 @@
                 toggleAllyUniverseCharacterFilter();
             }
         }
-
         // ===== DECK EDITOR FUNCTIONS =====
 
         function showDeckEditor() {
@@ -8676,7 +8666,6 @@
             // Update power cards filter to show correct counts after deck display
             updatePowerCardsFilter();
         }
-        
         // Apply background images to character, power, location, special, mission, and aspect cards in deck editor
         function applyCharacterBackgroundsToEditor() {
             const characterCards = document.querySelectorAll('.deck-card-editor-item.character-card');
@@ -9458,7 +9447,6 @@
                     showNotification('Error loading special cards', 'error');
                 });
         }
-
         function addAllAdvancedUniverseCardsForCharacter(characterName) {
             console.log(`Adding all advanced universe cards for character: ${characterName}`);
             
@@ -10212,7 +10200,6 @@
                 cardCategories.innerHTML = '<div class="error">Error loading available cards</div>';
             }
         }
-
         function setupDragAndDrop() {
             console.log('setupDragAndDrop called');
             try {
