@@ -6082,6 +6082,14 @@
         // Deck actions
         function editDeck(deckId) {
             currentDeckId = deckId;
+            
+            // Update URL to include the deck ID for sharing
+            const currentUser = getCurrentUser();
+            const userId = currentUser ? currentUser.userId : 'guest';
+            const newUrl = `/users/${userId}/decks/${deckId}`;
+            window.history.pushState({ deckId, userId }, '', newUrl);
+            console.log('🔍 Updated URL to:', newUrl);
+            
             showDeckEditor();
             loadDeckForEditing(deckId);
         }
@@ -6093,8 +6101,13 @@
             const currentUser = getCurrentUser();
             const userId = currentUser ? currentUser.userId : 'guest';
             
+            // Update URL to include the deck ID for sharing
+            const newUrl = `/users/${userId}/decks/${deckId}?readonly=true`;
+            window.history.pushState({ deckId, userId, readonly: true }, '', newUrl);
+            console.log('🔍 Updated URL to:', newUrl);
+            
             // Navigate to the deck editor in read-only mode
-            window.location.href = `/users/${userId}/decks/${deckId}?readonly=true`;
+            window.location.href = newUrl;
         }
 
         function deleteDeck(deckId) {

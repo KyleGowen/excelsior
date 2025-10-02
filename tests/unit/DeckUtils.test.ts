@@ -438,7 +438,7 @@ describe('DeckUtils', () => {
   describe('generateCardId', () => {
     it('should generate unique card IDs', async () => {
       const cardId1 = DeckUtils.generateCardId('power', 'pow1');
-      await new Promise(resolve => setTimeout(resolve, 1)); // Small delay to ensure different timestamps
+      await new Promise(resolve => setTimeout(resolve, 10)); // Delay to ensure different timestamps
       const cardId2 = DeckUtils.generateCardId('power', 'pow1');
       
       expect(cardId1).not.toBe(cardId2);

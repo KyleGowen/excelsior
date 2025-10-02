@@ -125,6 +125,13 @@ function createNewDeck() {
         deckEditorCards = [];
     }
 
+    // Update URL to indicate we're creating a new deck
+    const currentUser = getCurrentUser();
+    const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
+    const newUrl = `/users/${userId}/decks/new`;
+    window.history.pushState({ newDeck: true, userId }, '', newUrl);
+    console.log('🔍 Updated URL to:', newUrl);
+
     // Show the deck editor with the blank deck
     if (typeof showDeckEditor === 'function') {
         showDeckEditor();

@@ -8583,8 +8583,14 @@
                 mainContainer.style.display = 'block';
             }
             
+            // Update URL to include the deck ID for sharing
+            const userId = currentUser ? currentUser.userId : 'guest';
+            const newUrl = `/users/${userId}/decks/${deckId}`;
+            window.history.pushState({ deckId, userId }, '', newUrl);
+            console.log('🔍 Updated URL to:', newUrl);
+            
             // Load and show the deck editor directly without page reload
-            loadDeckForEditing(deckId, currentUser ? currentUser.userId : 'guest', isReadOnly)
+            loadDeckForEditing(deckId, userId, isReadOnly)
                 .then(() => {
                     showDeckEditor();
                 })
@@ -8606,8 +8612,13 @@
             const currentUser = getCurrentUser();
             const userId = currentUser ? currentUser.userId : 'guest';
             
+            // Update URL to include the deck ID for sharing
+            const newUrl = `/users/${userId}/decks/${deckId}?readonly=true`;
+            window.history.pushState({ deckId, userId, readonly: true }, '', newUrl);
+            console.log('🔍 Updated URL to:', newUrl);
+            
             // Navigate to the deck editor in read-only mode
-            window.location.href = `/users/${userId}/decks/${deckId}?readonly=true`;
+            window.location.href = newUrl;
         }
 
         function deleteDeck(deckId) {
@@ -16477,6 +16488,13 @@
                     currentDeckData.metadata.id = deckId;
                     currentDeckData.metadata.created = createData.data.created_at;
                     currentDeckData.metadata.lastModified = createData.data.updated_at;
+                    
+                    // Update URL to include the new deck ID for sharing
+                    const currentUser = getCurrentUser();
+                    const userId = currentUser ? currentUser.userId : 'guest';
+                    const newUrl = `/users/${userId}/decks/${currentDeckId}`;
+                    window.history.pushState({ deckId: currentDeckId, userId }, '', newUrl);
+                    console.log('🔍 Updated URL to:', newUrl);
                     
                     console.log('🔍 DEBUG: Deck created with ID:', deckId);
                 }
