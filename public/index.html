@@ -8173,6 +8173,7 @@
                     }
                     
                     isReadOnlyMode = authResult.isReadOnlyMode; // Update global flag
+                    console.log('🔍 DEBUG: Setting isReadOnlyMode to:', isReadOnlyMode);
                     document.body.classList.toggle('read-only-mode', isReadOnlyMode);
                     
                     // Load main app data in background (without showing the UI) for when user navigates back

@@ -180,7 +180,10 @@ export class FrontendAuthService {
       
       // If readonly query parameter is set, always use read-only mode
       if (authResult.isReadOnlyMode) {
-        console.log('Read-only mode: readonly=true query parameter detected');
+        console.log('Read-only mode: readonly=true query parameter detected - FORCING read-only mode');
+        // Ensure read-only mode is set
+        authResult.isReadOnlyMode = true;
+        this.isReadOnlyMode = true;
       } else if (authResult.isAuthenticated && authResult.currentUser && authResult.currentUser.id !== authResult.urlUserId) {
         authResult.isReadOnlyMode = true;
         this.isReadOnlyMode = true;
