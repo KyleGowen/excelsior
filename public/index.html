@@ -11597,16 +11597,27 @@
 
         // Apply UI preferences to the interface
         function applyUIPreferences(preferences) {
+            console.log('🔍 DEBUG: applyUIPreferences called with:', preferences);
             // Apply divider position
             if (preferences.dividerPosition) {
+                console.log('🔍 DEBUG: Applying divider position:', preferences.dividerPosition);
                 const layout = document.querySelector('.deck-editor-layout');
                 if (layout) {
+                    console.log('🔍 DEBUG: Layout found, width:', layout.offsetWidth);
                     const deckPane = document.querySelector('.deck-pane');
                     if (deckPane) {
                         const newWidth = (preferences.dividerPosition / 100) * layout.offsetWidth;
+                        console.log('🔍 DEBUG: Setting deck pane width to:', newWidth);
                         deckPane.style.width = `${newWidth}px`;
+                        console.log('🔍 DEBUG: Deck pane width set to:', deckPane.style.width);
+                    } else {
+                        console.error('🔍 DEBUG: Deck pane not found');
                     }
+                } else {
+                    console.error('🔍 DEBUG: Layout not found');
                 }
+            } else {
+                console.log('🔍 DEBUG: No divider position in preferences');
             }
 
             // Apply expansion state
@@ -12327,6 +12338,22 @@
                 }
                 modal.style.display = 'flex';
                 
+                // Set initial divider position immediately to prevent 50% flash
+                if (currentDeckData && currentDeckData.ui_preferences && currentDeckData.ui_preferences.dividerPosition) {
+                    const percentage = currentDeckData.ui_preferences.dividerPosition;
+                    console.log('🔍 DEBUG: Setting initial divider position to:', percentage);
+                    // Use a small delay to ensure the modal is rendered
+                    setTimeout(() => {
+                        const layout = document.querySelector('.deck-editor-layout');
+                        const deckPane = document.querySelector('.deck-pane');
+                        if (layout && deckPane) {
+                            const newWidth = (percentage / 100) * layout.offsetWidth;
+                            deckPane.style.flex = `0 0 ${newWidth}px`;
+                            console.log('🔍 DEBUG: Initial position set to:', newWidth);
+                        }
+                    }, 10);
+                }
+                
                 // Add/remove read-only-mode class to modal
                 console.log('🔍 DEBUG: isReadOnlyMode:', isReadOnlyMode);
                 if (isReadOnlyMode) {
@@ -12694,8 +12721,26 @@
         // Restore slider position from storage
         function restoreSliderPosition() {
             if (currentDeckId) {
-                const savedPosition = localStorage.getItem(`slider_position_${currentDeckId}`);
-                const percentage = savedPosition ? parseFloat(savedPosition) : 50; // Default to 50%
+                // Check if position has already been set (to avoid overriding initial position)
+                const existingDeckPane = document.querySelector('.deck-pane');
+                if (existingDeckPane && existingDeckPane.style.flex && existingDeckPane.style.flex !== '1') {
+                    console.log('🔍 DEBUG: Divider position already set, skipping restore');
+                    return;
+                }
+                
+                // Check for UI preferences first, then localStorage, then default to 50%
+                let percentage = 50; // Default to 50%
+                
+                // Check if we have UI preferences with divider position
+                if (currentDeckData && currentDeckData.ui_preferences && currentDeckData.ui_preferences.dividerPosition) {
+                    percentage = currentDeckData.ui_preferences.dividerPosition;
+                    console.log('🔍 DEBUG: Using divider position from UI preferences:', percentage);
+                } else {
+                    // Fall back to localStorage
+                    const savedPosition = localStorage.getItem(`slider_position_${currentDeckId}`);
+                    percentage = savedPosition ? parseFloat(savedPosition) : 50;
+                    console.log('🔍 DEBUG: Using divider position from localStorage:', percentage);
+                }
                 const layout = document.querySelector('.deck-editor-layout');
                 const deckPane = document.querySelector('.deck-pane');
                 const cardSelectorPane = document.querySelector('.card-selector-pane');
@@ -16390,7 +16435,7 @@
             console.log('🔍 DEBUG: currentDeckData:', currentDeckData);
             console.log('🔍 DEBUG: isReadOnlyMode:', isReadOnlyMode);
             
-            if (!currentDeckId || !currentDeckData) return;
+            if (!currentDeckData) return;
             
             // Check if user is guest - guests cannot save any changes
             if (isGuestUser()) {
@@ -16409,8 +16454,46 @@
             console.log('🔍 DEBUG: Proceeding with save...');
             
             try {
+                let deckId = currentDeckId;
+                
+                // If this is the first save (no deckId), create the deck first
+                if (!deckId) {
+                    console.log('🔍 DEBUG: First save - creating new deck');
+                    const createResponse = await fetch('/api/decks', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            name: currentDeckData.metadata.name,
+                            description: currentDeckData.metadata.description || '',
+                            ui_preferences: currentDeckData.ui_preferences
+                        })
+                    });
+                    
+                    if (!createResponse.ok) {
+                        const errorData = await createResponse.json();
+                        throw new Error(errorData.error || 'Failed to create deck');
+                    }
+                    
+                    const createData = await createResponse.json();
+                    if (!createData.success) {
+                        throw new Error(createData.error || 'Failed to create deck');
+                    }
+                    
+                    // Update the deck ID and data with the response
+                    deckId = createData.data.id;
+                    currentDeckId = deckId;
+                    currentDeckData.metadata.id = deckId;
+                    currentDeckData.metadata.created = createData.data.created_at;
+                    currentDeckData.metadata.lastModified = createData.data.updated_at;
+                    
+                    console.log('🔍 DEBUG: Deck created with ID:', deckId);
+                }
+                
                 // Clear existing cards
-                const clearResponse = await fetch(`/api/decks/${currentDeckId}/cards`, {
+                const clearResponse = await fetch(`/api/decks/${deckId}/cards`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -16436,7 +16519,7 @@
                         cardData.selectedAlternateImage = card.selectedAlternateImage;
                     }
                     
-                    await fetch(`/api/decks/${currentDeckId}/cards`, {
+                    await fetch(`/api/decks/${deckId}/cards`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

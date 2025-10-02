@@ -88,50 +88,78 @@ function switchToDeckBuilder() {
 function createNewDeck() {
     console.log('🔍 DEBUG: createNewDeck called');
     
-    // Clear any existing deck data
+    // Define default UI preferences
+    const defaultUIPreferences = {
+        "viewMode": "tile",
+        "expansionState": {
+            "event": true, "power": true, "aspect": true, "mission": true, "special": true,
+            "location": true, "teamwork": true, "training": true, "character": true,
+            "ally_universe": true, "basic_universe": true, "advanced_universe": true
+        },
+        "dividerPosition": 65.86319218241043,
+        "powerCardsSortMode": "type",
+        "characterGroupExpansionState": {}
+    };
+
+    // Clear any existing deck data and set up a new blank deck client-side
     if (typeof currentDeckId !== 'undefined') {
-        currentDeckId = null;
+        currentDeckId = null; // No ID until saved
     }
     if (typeof currentDeckData !== 'undefined') {
-        currentDeckData = null;
+        const currentUser = getCurrentUser();
+        currentDeckData = {
+            metadata: {
+                id: null, // No ID until saved
+                name: 'New Deck',
+                description: '',
+                created: new Date().toISOString(), // Client-side timestamp
+                lastModified: new Date().toISOString(), // Client-side timestamp
+                cardCount: 0,
+                userId: currentUser ? (currentUser.userId || currentUser.id) : 'guest',
+                ui_preferences: defaultUIPreferences
+            },
+            cards: []
+        };
     }
     if (typeof deckEditorCards !== 'undefined') {
         deckEditorCards = [];
     }
-    
-    // Show the deck editor with blank deck
+
+    // Show the deck editor with the blank deck
     if (typeof showDeckEditor === 'function') {
         showDeckEditor();
         
-        // Initialize with blank deck data
-        if (typeof initializeBlankDeck === 'function') {
-            initializeBlankDeck();
-        } else {
-            // Fallback: manually set up blank deck
-            const titleElement = document.getElementById('deckEditorTitle');
-            const descriptionElement = document.getElementById('deckEditorDescription');
-            
-            if (titleElement) {
-                titleElement.textContent = 'New Deck';
-                titleElement.contentEditable = 'true';
-            }
-            
-            if (descriptionElement) {
-                descriptionElement.textContent = 'Click to add description';
-                descriptionElement.style.display = 'block';
+        // Set up the deck editor with the new blank deck data
+        const titleElement = document.getElementById('deckEditorTitle');
+        const descriptionElement = document.getElementById('deckEditorDescription');
+        
+        if (titleElement) {
+            titleElement.textContent = currentDeckData.metadata.name;
+            titleElement.contentEditable = 'true';
+        }
+        
+        if (descriptionElement) {
+            descriptionElement.textContent = currentDeckData.metadata.description || 'Click to add description';
+            descriptionElement.style.display = 'block';
+            if (!currentDeckData.metadata.description) {
                 descriptionElement.classList.add('placeholder');
             }
-            
-            // Clear any existing cards
-            const deckCardsContainer = document.getElementById('deckCardsContainer');
-            if (deckCardsContainer) {
-                deckCardsContainer.innerHTML = '<div class="no-cards-message">No cards in this deck yet. Drag cards from the right panel to add them!</div>';
-            }
-            
-            // Load available cards if function exists
-            if (typeof loadAvailableCards === 'function') {
-                loadAvailableCards();
-            }
+        }
+        
+        // Clear any existing cards
+        const deckCardsContainer = document.getElementById('deckCardsContainer');
+        if (deckCardsContainer) {
+            deckCardsContainer.innerHTML = '<div class="no-cards-message">No cards in this deck yet. Drag cards from the right panel to add them!</div>';
+        }
+        
+        // Load available cards if function exists
+        if (typeof loadAvailableCards === 'function') {
+            loadAvailableCards();
+        }
+        
+        // Update card count
+        if (typeof updateDeckCardCount === 'function') {
+            updateDeckCardCount();
         }
     } else {
         console.error('showDeckEditor function not found');
