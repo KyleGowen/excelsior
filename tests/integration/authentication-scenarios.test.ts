@@ -203,25 +203,32 @@ describe('Authentication Scenarios Integration Tests', () => {
     let guestSessionId: string;
 
     beforeAll(async () => {
-      // Find existing guest user by username
-      guestUser = await userRepository.getUserByUsername('guest');
+      // Create a test user with GUEST role
+      guestUser = await userRepository.createUser('test-guest-auth', 'test-guest-auth@example.com', 'testpassword', 'GUEST');
       expect(guestUser).toBeDefined();
       expect(guestUser.role).toBe('GUEST');
+    });
+
+    afterAll(async () => {
+      // Clean up test user
+      if (guestUser) {
+        await userRepository.deleteUser(guestUser.id);
+      }
     });
 
     it('should successfully login as GUEST', async () => {
       const response = await request(app)
         .post('/api/auth/login')
         .send({
-          username: 'guest',
-          password: 'guest'
+          username: 'test-guest-auth',
+          password: 'testpassword'
         });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toBeDefined();
       expect(response.body.data.userId).toBe(guestUser.id);
-      expect(response.body.data.username).toBe('guest');
+      expect(response.body.data.username).toBe('test-guest-auth');
       expect(response.headers['set-cookie']).toBeDefined();
       
       // Extract session ID from cookie
@@ -239,7 +246,7 @@ describe('Authentication Scenarios Integration Tests', () => {
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.id).toBe(guestUser.id);
-      expect(response.body.data.name).toBe('guest');
+      expect(response.body.data.name).toBe('test-guest-auth');
     });
 
     it('should access protected GUEST routes', async () => {

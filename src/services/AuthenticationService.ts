@@ -214,9 +214,11 @@ export class AuthenticationService {
       const sessionId = req.cookies?.sessionId;
       const { userId } = req.params;
       
-      // Special handling for guest user - allow access without session
+      // Special handling for guest routes - allow access without session for any user with GUEST role
       if (userId === 'guest') {
-        const guestUser = await this.getUserById('00000000-0000-0000-0000-000000000001');
+        // Find any user with GUEST role
+        const allUsers = await this.userRepository.getAllUsers();
+        const guestUser = allUsers.find(user => user.role === 'GUEST');
         if (guestUser) {
           (req as any).user = guestUser;
           return next();

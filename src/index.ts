@@ -582,16 +582,14 @@ app.get('/', (req, res) => {
 // Deck Builder route (Image 2)
 app.get('/users/:userId/decks', authenticateUser, (req: any, res) => {
   const { userId } = req.params;
-  // Verify user is accessing their own decks
-  // Handle both userId (from session) and id (from direct user lookup)
-  const userIdentifier = req.user.id || req.user.id;
+  const user = req.user;
   
-  // Special case for guest user - allow both 'guest' and 'guest-001' URLs
-  const isGuestAccess = (userId === 'guest' && userIdentifier === 'guest-001') || 
-                       (userIdentifier === userId);
+  // Check if user has access to this route
+  const isGuestAccess = userId === 'guest' && user.role === 'GUEST';
+  const isOwnAccess = user.id === userId;
   
-  if (!isGuestAccess) {
-    console.log(`🔍 DEBUG: Access denied for deck builder - userId: ${userId}, userIdentifier: ${userIdentifier}`);
+  if (!isGuestAccess && !isOwnAccess) {
+    console.log(`🔍 DEBUG: Access denied for deck builder - userId: ${userId}, userRole: ${user.role}, userIdentifier: ${user.id}`);
     return res.status(403).json({ success: false, error: 'Access denied' });
   }
   

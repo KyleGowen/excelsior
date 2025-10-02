@@ -82,12 +82,12 @@ describe('AuthenticationService', () => {
       };
 
       mockRequest.params = { userId: 'guest' };
-      mockUserRepository.getUserById.mockResolvedValue(guestUser);
+      mockUserRepository.getAllUsers.mockResolvedValue([guestUser]);
 
       const middleware = authService.createAuthMiddleware();
       await middleware(mockRequest as Request, mockResponse as Response, mockNext);
 
-      expect(mockUserRepository.getUserById).toHaveBeenCalledWith('00000000-0000-0000-0000-000000000001');
+      expect(mockUserRepository.getAllUsers).toHaveBeenCalled();
       expect((mockRequest as any).user).toEqual(guestUser);
       expect(mockNext).toHaveBeenCalled();
     });
