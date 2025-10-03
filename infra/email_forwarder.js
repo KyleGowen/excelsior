@@ -1,3 +1,4 @@
+// Use the built-in AWS SDK that's available in Node.js 18.x runtime
 const AWS = require('aws-sdk');
 
 // Configure AWS SDK

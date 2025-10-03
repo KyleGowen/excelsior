@@ -115,7 +115,7 @@ resource "aws_lambda_function" "email_forwarder" {
   role            = aws_iam_role.lambda_email_forwarder.arn
   handler         = "index.handler"
   source_code_hash = data.archive_file.email_forwarder_zip.output_base64sha256
-  runtime         = "nodejs18.x"
+      runtime         = "nodejs16.x"
   timeout         = 30
   memory_size     = 256
 
@@ -131,15 +131,15 @@ resource "aws_lambda_function" "email_forwarder" {
   })
 }
 
-# Create the Lambda function code
-data "archive_file" "email_forwarder_zip" {
-  type        = "zip"
-  output_path = "email_forwarder.zip"
-  source {
-    content = file("${path.module}/email_forwarder.js")
-    filename = "index.js"
-  }
-}
+    # Create the Lambda function code
+    data "archive_file" "email_forwarder_zip" {
+      type        = "zip"
+      output_path = "email_forwarder.zip"
+      source {
+        content = file("${path.module}/email_forwarder.js")
+        filename = "index.js"
+      }
+    }
 
 # IAM role for Lambda function
 resource "aws_iam_role" "lambda_email_forwarder" {
