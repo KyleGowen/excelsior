@@ -95,6 +95,19 @@ variable "ecr_repository_name" {
   default     = "op-deckbuilder-repo"
 }
 
+# Email Forwarding Configuration
+variable "forward_from_email" {
+  description = "Email address to forward from"
+  type        = string
+  default     = "kyle@excelsior.cards"
+}
+
+variable "forward_to_email" {
+  description = "Email address to forward to"
+  type        = string
+  default     = "kyle.gowen@gmail.com"
+}
+
 # Tags
 variable "common_tags" {
   description = "Common tags to apply to all resources"
