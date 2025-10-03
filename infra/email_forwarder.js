@@ -51,8 +51,8 @@ exports.handler = async (event) => {
                             modifiedEmail += line + '\n';
                         } else if (line.toLowerCase().startsWith('from:')) {
                             originalFrom = line.substring(5).trim();
-                            // Keep original From header
-                            modifiedEmail += line + '\n';
+                            // Change From header to use verified Gmail address
+                            modifiedEmail += `From: ${process.env.FORWARD_TO_EMAIL}\n`;
                         } else if (line.toLowerCase().startsWith('to:')) {
                             originalTo = line.substring(3).trim();
                             // Change To header to forward address
