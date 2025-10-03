@@ -34,6 +34,42 @@ resource "aws_route53_record" "www" {
   records = ["excelsior.cards"]
 }
 
+# Email forwarding DNS records for Amazon SES
+
+# DKIM CNAME records for email authentication
+resource "aws_route53_record" "dkim_1" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = "xonnbcs2hhr4stwsl7jnwtjf4auqxews._domainkey.excelsior.cards"
+  type    = "CNAME"
+  ttl     = 300
+  records = ["xonnbcs2hhr4stwsl7jnwtjf4auqxews.dkim.amazonses.com"]
+}
+
+resource "aws_route53_record" "dkim_2" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = "o6afnxv46ggqws4xxexivbm4bd4dwcuq._domainkey.excelsior.cards"
+  type    = "CNAME"
+  ttl     = 300
+  records = ["o6afnxv46ggqws4xxexivbm4bd4dwcuq.dkim.amazonses.com"]
+}
+
+resource "aws_route53_record" "dkim_3" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = "o2ygfccjz4c6s7zfxqbo3tfr7vlu7s3u._domainkey.excelsior.cards"
+  type    = "CNAME"
+  ttl     = 300
+  records = ["o2ygfccjz4c6s7zfxqbo3tfr7vlu7s3u.dkim.amazonses.com"]
+}
+
+# DMARC TXT record for email policy
+resource "aws_route53_record" "dmarc" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = "_dmarc.excelsior.cards"
+  type    = "TXT"
+  ttl     = 300
+  records = ["v=DMARC1; p=none;"]
+}
+
 # Optional: AAAA record for IPv6 (if you have IPv6 support)
 # resource "aws_route53_record" "main_ipv6" {
 #   zone_id = data.aws_route53_zone.main.zone_id
