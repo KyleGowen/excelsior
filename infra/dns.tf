@@ -70,6 +70,15 @@ resource "aws_route53_record" "dmarc" {
   records = ["v=DMARC1; p=none;"]
 }
 
+# MX record to route mail to Amazon SES
+resource "aws_route53_record" "mx" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = "excelsior.cards"
+  type    = "MX"
+  ttl     = 3600
+  records = ["10 inbound-smtp.us-west-2.amazonaws.com"]
+}
+
 # Optional: AAAA record for IPv6 (if you have IPv6 support)
 # resource "aws_route53_record" "main_ipv6" {
 #   zone_id = data.aws_route53_zone.main.zone_id
