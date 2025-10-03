@@ -5170,11 +5170,6 @@
             </div>
 
             <div class="table-container" id="special-cards-tab" style="display: none;">
-                <div class="special-cards-controls">
-                    <button id="toggle-cataclysm" class="toggle-button" onclick="toggleCataclysmColumn()">
-                        <span id="toggle-text">Show</span> Cataclysm Column
-                    </button>
-                </div>
                 <table id="special-cards-table">
                     <thead>
                         <tr>
@@ -5183,7 +5178,6 @@
                             <th>Name</th>
                             <th>Card Type</th>
                             <th>Character</th>
-                            <th class="cataclysm-column hidden">Cataclysm</th>
                             <th>Card Effect</th>
                         </tr>
                         <tr class="filter-row">
@@ -5194,7 +5188,6 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th class="cataclysm-column hidden"></th>
                             <th></th>
                         </tr>
                     </thead>
@@ -6511,11 +6504,6 @@
             specialCards.forEach(card => {
                 const row = document.createElement('tr');
                 
-                // Determine if this is a cataclysm card
-                const isCataclysm = card.is_cataclysm;
-                const cataclysmDisplay = isCataclysm ? '🔥 YES' : 'No';
-                const cataclysmClass = isCataclysm ? 'cataclysm-yes' : 'cataclysm-no';
-                
                 row.innerHTML = `
                     <td>
                         <img src="/src/resources/cards/images/specials/${mapImagePathToActualFile(card.image)}" 
@@ -6534,7 +6522,6 @@
                     <td><strong>${card.name}</strong></td>
                     <td>${card.card_type}</td>
                     <td>${card.character}</td>
-                    <td class="${cataclysmClass} cataclysm-cell hidden">${cataclysmDisplay}</td>
                     <td>${formatSpecialCardEffect(card.card_effect)}</td>
                 `;
                 
@@ -7165,27 +7152,6 @@
             });
         }
 
-        // Toggle cataclysm column visibility
-        function toggleCataclysmColumn() {
-            const cataclysmHeader = document.querySelector('.cataclysm-column');
-            const cataclysmCells = document.querySelectorAll('.cataclysm-cell');
-            const toggleText = document.getElementById('toggle-text');
-            const toggleButton = document.getElementById('toggle-cataclysm');
-            
-            if (cataclysmHeader.classList.contains('hidden')) {
-                // Show the column
-                cataclysmHeader.classList.remove('hidden');
-                cataclysmCells.forEach(cell => cell.classList.remove('hidden'));
-                toggleText.textContent = 'Hide';
-                toggleButton.innerHTML = '<span id="toggle-text">Hide</span> Cataclysm Column';
-            } else {
-                // Hide the column
-                cataclysmHeader.classList.add('hidden');
-                cataclysmCells.forEach(cell => cell.classList.add('hidden'));
-                toggleText.textContent = 'Show';
-                toggleButton.innerHTML = '<span id="toggle-text">Show</span> Cataclysm Column';
-            }
-        }
         // Mission functions
         async function loadMissions() {
             try {
