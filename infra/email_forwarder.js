@@ -29,13 +29,51 @@ exports.handler = async (event) => {
                     const rawEmail = await data.Body.transformToString();
                 console.log('Raw email retrieved from S3');
                 
-                // Forward the raw email using SES
+                // Parse and modify the email headers for proper forwarding
+                const lines = rawEmail.split('\n');
+                let modifiedEmail = '';
+                let inHeaders = true;
+                let originalFrom = '';
+                let originalTo = '';
+                
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    
+                    if (inHeaders) {
+                        if (line.trim() === '') {
+                            // End of headers
+                            inHeaders = false;
+                            // Add forwarding headers before the body
+                            modifiedEmail += `X-Forwarded-For: ${process.env.FROM_EMAIL}\n`;
+                            modifiedEmail += `X-Original-From: ${originalFrom}\n`;
+                            modifiedEmail += `X-Original-To: ${originalTo}\n`;
+                            modifiedEmail += `Reply-To: ${process.env.FROM_EMAIL}\n`;
+                            modifiedEmail += line + '\n';
+                        } else if (line.toLowerCase().startsWith('from:')) {
+                            originalFrom = line.substring(5).trim();
+                            // Keep original From header
+                            modifiedEmail += line + '\n';
+                        } else if (line.toLowerCase().startsWith('to:')) {
+                            originalTo = line.substring(3).trim();
+                            // Change To header to forward address
+                            modifiedEmail += `To: ${process.env.FORWARD_TO_EMAIL}\n`;
+                        } else {
+                            // Keep other headers as-is
+                            modifiedEmail += line + '\n';
+                        }
+                    } else {
+                        // Body content - keep as-is
+                        modifiedEmail += line + '\n';
+                    }
+                }
+                
+                // Forward the modified email using SES
                 const sendRawEmailCommand = new SendRawEmailCommand({
                     Destinations: [process.env.FORWARD_TO_EMAIL],
                     RawMessage: { 
-                        Data: Buffer.from(rawEmail, 'utf8')
+                        Data: Buffer.from(modifiedEmail, 'utf8')
                     },
-                    Source: process.env.FROM_EMAIL // must be verified in SES
+                    Source: process.env.FORWARD_TO_EMAIL // Use Gmail as source since it's verified for sending
                 });
                 
                 const result = await sesClient.send(sendRawEmailCommand);
