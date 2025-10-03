@@ -6446,7 +6446,7 @@
             console.log('✅ All statistics updated including alternate image counts');
         }
 
-        function formatSpecialCardEffect(effectText) {
+        function formatSpecialCardEffect(effectText, cardData = null) {
             if (!effectText) return '';
             
             // Decode HTML entities in the text
@@ -6470,10 +6470,15 @@
                 }
             }
             
+            // Check if card has one_per_deck=true and add the label if not already present
+            if (cardData && cardData.one_per_deck === true && !foundKeywords.includes('**One Per Deck**')) {
+                foundKeywords.push('**One Per Deck**');
+            }
+            
             if (foundKeywords.length > 0) {
                 // Remove all special keywords from the main text
                 let mainText = decodedText;
-                for (const keyword of foundKeywords) {
+                for (const keyword of orderedKeywords) {
                     mainText = mainText.replace(new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '');
                 }
                 
@@ -6519,7 +6524,7 @@
                     <td><strong>${card.name}</strong></td>
                     <td>${card.card_type}</td>
                     <td>${card.character}</td>
-                    <td>${formatSpecialCardEffect(card.card_effect)}</td>
+                    <td>${formatSpecialCardEffect(card.card_effect, card)}</td>
                 `;
                 
                 tbody.appendChild(row);
