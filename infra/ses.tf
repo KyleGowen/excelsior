@@ -117,6 +117,7 @@ resource "aws_lambda_function" "email_forwarder" {
   source_code_hash = data.archive_file.email_forwarder_zip.output_base64sha256
   runtime         = "nodejs18.x"
   timeout         = 30
+  memory_size     = 256
 
   environment {
     variables = {
@@ -214,6 +215,16 @@ resource "aws_lambda_permission" "ses_lambda_permission" {
   principal     = "ses.amazonaws.com"
   # Use rule set ARN initially, will be updated after rule creation
   source_arn    = "arn:aws:ses:${var.aws_region}:${data.aws_caller_identity.current.account_id}:receipt-rule-set/${aws_ses_receipt_rule_set.email_forwarding.rule_set_name}"
+}
+
+# Additional permission for SES to invoke Lambda (more permissive)
+resource "aws_lambda_permission" "ses_lambda_permission_wide" {
+  statement_id  = "AllowExecutionFromSESWide"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.email_forwarder.function_name
+  principal     = "ses.amazonaws.com"
+  # Allow from any SES source in this region
+  source_arn    = "arn:aws:ses:${var.aws_region}:${data.aws_caller_identity.current.account_id}:*"
 }
 
 # Additional permission with specific rule ARN (created after rule exists)

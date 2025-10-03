@@ -1,6 +1,9 @@
-const AWS = require('aws-sdk');
-const s3 = new AWS.S3();
-const ses = new AWS.SES({ region: process.env.AWS_REGION });
+// Use the built-in AWS SDK v3 that's available in Node.js 18.x runtime
+const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
+const { SESClient, SendRawEmailCommand } = require('@aws-sdk/client-ses');
+
+const s3Client = new S3Client({ region: process.env.AWS_REGION || 'us-west-2' });
+const sesClient = new SESClient({ region: process.env.AWS_REGION || 'us-west-2' });
 
 exports.handler = async (event) => {
     console.log('Received event:', JSON.stringify(event, null, 2));
@@ -16,25 +19,26 @@ exports.handler = async (event) => {
                 
                 console.log(`Processing email from S3: ${bucket}/${key}`);
                 
-                // Get the raw email from S3
-                const data = await s3.getObject({ 
-                    Bucket: bucket, 
-                    Key: key 
-                }).promise();
-                
-                const rawEmail = data.Body.toString();
+                    // Get the raw email from S3
+                    const getObjectCommand = new GetObjectCommand({ 
+                        Bucket: bucket, 
+                        Key: key 
+                    });
+                    const data = await s3Client.send(getObjectCommand);
+                    
+                    const rawEmail = await data.Body.transformToString();
                 console.log('Raw email retrieved from S3');
                 
                 // Forward the raw email using SES
-                const forwardParams = {
+                const sendRawEmailCommand = new SendRawEmailCommand({
                     Destinations: [process.env.FORWARD_TO_EMAIL],
                     RawMessage: { 
-                        Data: rawEmail 
+                        Data: Buffer.from(rawEmail, 'utf8')
                     },
                     Source: process.env.FROM_EMAIL // must be verified in SES
-                };
+                });
                 
-                const result = await ses.sendRawEmail(forwardParams).promise();
+                const result = await sesClient.send(sendRawEmailCommand);
                 console.log('Email forwarded successfully:', result.MessageId);
                 
                 // Optional: Delete the email from S3 after forwarding
