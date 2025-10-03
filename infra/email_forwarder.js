@@ -1,4 +1,4 @@
-// Use the built-in AWS SDK that's available in Node.js 18.x runtime
+// Use the built-in AWS SDK that's available in Node.js 16.x runtime
 const AWS = require('aws-sdk');
 
 // Configure AWS SDK
@@ -36,6 +36,11 @@ exports.handler = async (event) => {
                 let originalFrom = '';
                 let originalTo = '';
                 
+                console.log('Environment variables:', {
+                    FORWARD_TO_EMAIL: process.env.FORWARD_TO_EMAIL,
+                    FROM_EMAIL: process.env.FROM_EMAIL
+                });
+                
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i];
                     
@@ -51,12 +56,26 @@ exports.handler = async (event) => {
                             modifiedEmail += line + '\n';
                         } else if (line.toLowerCase().startsWith('from:')) {
                             originalFrom = line.substring(5).trim();
+                            console.log('Original From header:', originalFrom);
                             // Change From header to use verified Gmail address
                             modifiedEmail += `From: ${process.env.FORWARD_TO_EMAIL}\n`;
+                            console.log('Modified From header to:', process.env.FORWARD_TO_EMAIL);
                         } else if (line.toLowerCase().startsWith('to:')) {
                             originalTo = line.substring(3).trim();
+                            console.log('Original To header:', originalTo);
                             // Change To header to forward address
                             modifiedEmail += `To: ${process.env.FORWARD_TO_EMAIL}\n`;
+                            console.log('Modified To header to:', process.env.FORWARD_TO_EMAIL);
+                        } else if (line.toLowerCase().startsWith('return-path:')) {
+                            console.log('Original Return-Path header:', line);
+                            // Change Return-Path header to use verified Gmail address
+                            modifiedEmail += `Return-Path: <${process.env.FORWARD_TO_EMAIL}>\n`;
+                            console.log('Modified Return-Path header to:', process.env.FORWARD_TO_EMAIL);
+                        } else if (line.toLowerCase().startsWith('reply-to:')) {
+                            console.log('Original Reply-To header:', line);
+                            // Change Reply-To header to use the original sender
+                            modifiedEmail += `Reply-To: ${originalFrom}\n`;
+                            console.log('Modified Reply-To header to:', originalFrom);
                         } else {
                             // Keep other headers as-is
                             modifiedEmail += line + '\n';
@@ -66,6 +85,8 @@ exports.handler = async (event) => {
                         modifiedEmail += line + '\n';
                     }
                 }
+                
+                console.log('Modified email preview (first 500 chars):', modifiedEmail.substring(0, 500));
                 
                 // Forward the modified email using SES
                 const result = await ses.sendRawEmail({
