@@ -6,6 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <link rel="icon" href="/public/resources/images/icons/threat.png" type="image/png">
     <title>Overpower Deckbuilder - Characters Database</title>
     <style>
         body {
@@ -1597,7 +1598,6 @@
             background-position: center;
             background-repeat: no-repeat;
         }
-
         .screenshot-card.landscape {
             width: 150px;
             height: 100px;
@@ -2387,7 +2387,6 @@
             font-style: italic;
             opacity: 0.8;
         }
-
         .close-btn {
             background: none;
             border: none;
@@ -3187,7 +3186,6 @@
             min-width: 100%;
             box-sizing: border-box;
         }
-
         .deck-list-section {
             margin-bottom: 30px;
         }
@@ -3977,7 +3975,6 @@
             z-index: -1;
             border-radius: 6px;
         }
-
         .deck-card-editor-item.power-card::after {
             content: '';
             position: absolute;
@@ -4778,7 +4775,6 @@
             border-radius: 6px;
             background: rgba(255, 255, 255, 0.02);
         }
-
         .character-group-header {
             display: flex;
             justify-content: space-between;
@@ -5538,7 +5534,6 @@
                     </tbody>
                 </table>
             </div>
-
             <div class="table-container" id="power-cards-tab" style="display: none;">
                 <table id="power-cards-table">
                     <thead>
@@ -5841,7 +5836,6 @@
         </div>
     </div>
     </div> <!-- Close mainContainer -->
-
     <script>
         // CACHE BUST TEST - If you see this, the new code is loaded
         console.log('🔍 CACHE BUST TEST - New code loaded at:', new Date().toISOString());
@@ -6457,20 +6451,20 @@
             
             // Decode HTML entities in the text
             let decodedText = effectText
-                .replace(/\\'93/g, "'")  // Left single quotation mark
-                .replace(/\\'94/g, "'")  // Right single quotation mark
+                .replace(/\'93/g, "'")  // Left single quotation mark
+                .replace(/\'94/g, "'")  // Right single quotation mark
                 .replace(/&quot;/g, '"') // Double quotes
                 .replace(/&amp;/g, '&')  // Ampersands
                 .replace(/&lt;/g, '<')   // Less than
                 .replace(/&gt;/g, '>')   // Greater than
                 .replace(/&nbsp;/g, ' '); // Non-breaking spaces
             
-            // Define special keywords that should be on their own lines
-            const specialKeywords = ['**Fortifications!**', '**Cataclysm!**', '**Assist!**', '**!Ambush**', '**One Per Deck**'];
+            // Define special keywords and desired display order (One Per Deck last)
+            const orderedKeywords = ['**Fortifications!**', '**Cataclysm!**', '**Assist!**', '**Ambush!**', '**One Per Deck**'];
             const foundKeywords = [];
             
             // Find all special keywords in the text
-            for (const keyword of specialKeywords) {
+            for (const keyword of orderedKeywords) {
                 if (decodedText.includes(keyword)) {
                     foundKeywords.push(keyword);
                 }
@@ -6486,11 +6480,14 @@
                 // Clean up extra spaces and trim
                 mainText = mainText.replace(/\s+/g, ' ').trim();
                 
+                // Sort keywords in the desired order (ensures One Per Deck is last)
+                const sortedKeywords = foundKeywords.sort((a, b) => orderedKeywords.indexOf(a) - orderedKeywords.indexOf(b));
+                
                 // Create keyword lines (convert ** to <strong> tags)
-                const keywordLines = foundKeywords.map(keyword => keyword.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'));
+                const keywordLines = sortedKeywords.map(keyword => keyword.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'));
                 
                 // Format: main text + keywords on separate lines
-                return mainText + '<br><br>' + keywordLines.join('<br>');
+                return (mainText ? mainText + '<br><br>' : '') + keywordLines.join('<br>');
             }
             
             // If no special keywords found, return the decoded text
@@ -6560,7 +6557,6 @@
             clearFiltersBtn.addEventListener('click', clearAllFilters);
             }
         }
-
         // Apply all active filters
         async function applyFilters() {
             console.log('🔍 applyFilters() called');
@@ -6749,7 +6745,7 @@
                         <img src="/src/resources/cards/images/locations/${mapImagePathToActualFile(location.image)}" 
                              alt="${location.name}" 
                              style="width: 80px; height: auto; max-height: 120px; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
-                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iMTIwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iMTIwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iMTIwIiBmaWxsPSIjMzMzIi8+Cjx0ZXh0IHg9IjQwIiB5PSI2MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0iblkZGxlIiBkeT0iLjNlbSI+Tm8gSW1hZ2U8L3R0eHQ+Cjwvc3ZnPg=='; this.style.cursor='default'; this.onclick=null;"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iMTIwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iMTIwIiBmaWxsPSIjMzMzIi8+Cjx0ZXh0IHg9IjQwIiB5PSI2MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0iblkZGxlIiBkeT0iLjNlbSI+Tm8gSW1hZ2U8L3R0eHQ+Cjwvc3ZnPg=='; this.style.cursor='default'; this.onclick=null;"
                              onmouseenter="showCardHoverModal('/src/resources/cards/images/locations/${mapImagePathToActualFile(location.image)}', '${location.name.replace(/'/g, "\\'")}')"
                              onmouseleave="hideCardHoverModal()"
                              onclick="openModal(this)">
@@ -7342,7 +7338,6 @@
                 console.error('Error loading aspects:', error);
             }
         }
-
         function displayAspects(aspects) {
             const tbody = document.getElementById('aspects-tbody');
             
@@ -8130,7 +8125,6 @@
         function hideLoginError() {
             document.getElementById('loginError').style.display = 'none';
         }
-
         async function loadUserData() {
             // Load user-specific data
             loadCharacters();
@@ -8905,7 +8899,6 @@
         function formatCardType(type) {
             return type.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         }
-
         async function changeCardQuantity(cardId, change) {
             if (!currentDeckId) return;
             
@@ -10881,6 +10874,11 @@
                 mainHeader.textContent = newText;
             }
             
+            // Also check if character filter is active
+            const powerFilterCheckbox2 = document.getElementById('powerCardsCharacterFilter');
+            if (powerFilterCheckbox2 && powerFilterCheckbox2.checked) {
+                togglePowerCardsCharacterFilter();
+            }
         }
 
             // Update power cards filter when deck changes
@@ -10922,8 +10920,8 @@
             }
             
             // Also check if character filter is active
-            const filterCheckbox = document.getElementById('powerCardsCharacterFilter');
-            if (filterCheckbox && filterCheckbox.checked) {
+            const powerFilterCheckbox2 = document.getElementById('powerCardsCharacterFilter');
+            if (powerFilterCheckbox2 && powerFilterCheckbox2.checked) {
                 togglePowerCardsCharacterFilter();
             }
         }
@@ -14453,7 +14451,6 @@
                 ];
                 
                 for (const category of categories) {
-                    try {
                         const response = await fetch(category.api);
                         const data = await response.json();
                         
@@ -14485,9 +14482,6 @@
                                 }
                             });
                         }
-                    } catch (error) {
-                        console.error(`Error loading ${category.name} data:`, error);
-                    }
                 }
             } catch (error) {
                 console.error('Error loading available cards data:', error);
@@ -15022,7 +15016,6 @@
                 let categoriesHtml = '';
                 
                 for (const category of categories) {
-                    try {
                         const response = await fetch(category.api);
                         const data = await response.json();
                         
@@ -15700,12 +15693,8 @@
                                     </div>
                                 `;
                             }
-                        }
-                    } catch (error) {
-                        console.error(`Error loading ${category.name}:`, error);
-                    }
                 }
-                
+                }                
                 cardCategories.innerHTML = categoriesHtml;
                 
                 // Update power cards filter to show correct counts after categories are loaded
