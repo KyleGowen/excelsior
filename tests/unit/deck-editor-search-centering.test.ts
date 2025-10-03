@@ -20,7 +20,7 @@ describe('Deck Editor Search Bar Centering', () => {
           <style>
             .modal-header {
               display: grid;
-              grid-template-columns: 1fr auto 1fr;
+              grid-template-columns: auto 1fr auto;
               align-items: center;
               padding: 12px 20px 15px 20px;
               border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -33,19 +33,20 @@ describe('Deck Editor Search Bar Centering', () => {
               text-align: left;
               padding-left: 20px;
               justify-self: start;
-              max-width: 400px;
-              min-width: 300px;
-              width: 400px;
+              max-width: 300px;
+              min-width: 200px;
             }
             .deck-editor-search-container {
               position: relative;
               max-width: 400px;
               justify-self: center;
+              margin: 0 auto;
             }
             .deck-editor-actions {
               display: flex;
               gap: 20px;
               justify-self: end;
+              padding-right: 20px;
             }
             .deck-editor-search-input {
               width: 100%;
@@ -98,7 +99,7 @@ describe('Deck Editor Search Bar Centering', () => {
       
       const computedStyle = window.getComputedStyle(modalHeader);
       expect(computedStyle.display).toBe('grid');
-      expect(computedStyle.gridTemplateColumns).toBe('1fr auto 1fr');
+      expect(computedStyle.gridTemplateColumns).toBe('auto 1fr auto');
     });
 
     it('should have three grid columns for title, search, and actions', () => {
@@ -152,9 +153,8 @@ describe('Deck Editor Search Bar Centering', () => {
       expect(titleSection).toBeTruthy();
       
       const computedStyle = window.getComputedStyle(titleSection);
-      expect(computedStyle.maxWidth).toBe('400px');
-      expect(computedStyle.minWidth).toBe('300px');
-      expect(computedStyle.width).toBe('400px');
+      expect(computedStyle.maxWidth).toBe('300px');
+      expect(computedStyle.minWidth).toBe('200px');
     });
   });
 
@@ -241,11 +241,11 @@ describe('Deck Editor Search Bar Centering', () => {
   });
 
   describe('Grid Column Distribution', () => {
-    it('should distribute space evenly with 1fr auto 1fr', () => {
+    it('should distribute space with auto 1fr auto for true centering', () => {
       const modalHeader = document.querySelector('.modal-header') as HTMLElement;
       const computedStyle = window.getComputedStyle(modalHeader);
       
-      expect(computedStyle.gridTemplateColumns).toBe('1fr auto 1fr');
+      expect(computedStyle.gridTemplateColumns).toBe('auto 1fr auto');
     });
 
     it('should give equal space to title and actions sections', () => {
