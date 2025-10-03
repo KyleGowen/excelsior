@@ -33,20 +33,22 @@ describe('Deck Editor Search Bar Centering', () => {
               text-align: left;
               padding-left: 20px;
               justify-self: start;
-              max-width: 300px;
-              min-width: 200px;
+              max-width: 250px;
+              min-width: 150px;
             }
             .deck-editor-search-container {
               position: relative;
-              max-width: 400px;
+              max-width: 500px;
+              width: 100%;
               justify-self: center;
               margin: 0 auto;
             }
             .deck-editor-actions {
               display: flex;
-              gap: 20px;
+              gap: 15px;
               justify-self: end;
               padding-right: 20px;
+              max-width: 200px;
             }
             .deck-editor-search-input {
               width: 100%;
@@ -127,7 +129,7 @@ describe('Deck Editor Search Bar Centering', () => {
       expect(searchContainer).toBeTruthy();
       
       const computedStyle = window.getComputedStyle(searchContainer);
-      expect(computedStyle.maxWidth).toBe('400px');
+      expect(computedStyle.maxWidth).toBe('500px');
     });
 
     it('should be positioned relatively for dropdown results', () => {
@@ -153,8 +155,8 @@ describe('Deck Editor Search Bar Centering', () => {
       expect(titleSection).toBeTruthy();
       
       const computedStyle = window.getComputedStyle(titleSection);
-      expect(computedStyle.maxWidth).toBe('300px');
-      expect(computedStyle.minWidth).toBe('200px');
+      expect(computedStyle.maxWidth).toBe('250px');
+      expect(computedStyle.minWidth).toBe('150px');
     });
   });
 
@@ -173,7 +175,7 @@ describe('Deck Editor Search Bar Centering', () => {
       
       const computedStyle = window.getComputedStyle(actionsSection);
       expect(computedStyle.display).toBe('flex');
-      expect(computedStyle.gap).toBe('20px');
+      expect(computedStyle.gap).toBe('15px');
     });
   });
 
