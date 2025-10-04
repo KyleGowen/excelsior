@@ -38,19 +38,9 @@ export class AuthenticationService {
    */
   public async authenticateUser(credentials: LoginCredentials): Promise<User | null> {
     try {
-      // Try database authentication first
+      // Use database authentication only
       const dbUser = await this.userRepository.authenticateUser(credentials.username, credentials.password);
-      if (dbUser) {
-        return dbUser;
-      }
-
-      // Fallback to persistence service for legacy users
-      const legacyUser = this.userPersistence.authenticateUser(credentials.username, credentials.password);
-      if (legacyUser) {
-        return legacyUser;
-      }
-
-      return null;
+      return dbUser || null;
     } catch (error) {
       console.error('Authentication error:', error);
       return null;
@@ -102,21 +92,11 @@ export class AuthenticationService {
    */
   public async getUserById(userId: string): Promise<User | null> {
     try {
-      // Try database first
+      // Use database only
       const user = await this.userRepository.getUserById(userId);
-      if (user) {
-        return user;
-      }
+      return user || null;
     } catch (error) {
       console.error('Error getting user by ID from database:', error);
-    }
-
-    // Fallback to in-memory persistence
-    try {
-      const legacyUser = this.userPersistence.getUserById(userId);
-      return legacyUser;
-    } catch (error) {
-      console.error('Error getting user by ID from persistence:', error);
       return null;
     }
   }
