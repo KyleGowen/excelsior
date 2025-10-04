@@ -2,6 +2,8 @@
 // This file provides the same authentication functionality as the original embedded code
 // but uses a service-based approach
 
+console.log('🚨🚨🚨 NEW AUTH-SERVICE.JS VERSION LOADED! 🚨🚨🚨');
+
 class FrontendAuthService {
   constructor() {
     this.currentUser = null;
