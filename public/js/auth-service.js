@@ -97,6 +97,7 @@ class FrontendAuthService {
         const response = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ username: 'guest', password: 'guest' })
         });
 
@@ -166,6 +167,7 @@ class FrontendAuthService {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(credentials)
       });
       
