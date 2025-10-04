@@ -156,6 +156,7 @@ class FrontendAuthService {
 
   async login(credentials) {
     try {
+      console.log('🚨 NEW DEBUG LOGGING IS WORKING! 🚨');
       console.log('🔍 DEBUG: Frontend login attempt:', {
         username: credentials.username,
         passwordLength: credentials.password?.length,
