@@ -61,12 +61,12 @@ exports.handler = async (event) => {
                                 const nameMatch = originalFrom.match(/^(.+?)\s*<(.+?)>$/);
                                 if (nameMatch) {
                                     const name = nameMatch[1];
-                                    modifiedEmail += `From: ${name} <noreply@excelsior.cards>\n`;
-                                    console.log('Modified From header to:', `${name} <noreply@excelsior.cards>`);
+                                    modifiedEmail += `From: ${name} <kyle@excelsior.cards>\n`;
+                                    console.log('Modified From header to:', `${name} <kyle@excelsior.cards>`);
                                 } else {
                                     // Fallback to using the verified excelsior.cards address
-                                    modifiedEmail += `From: noreply@excelsior.cards\n`;
-                                    console.log('Modified From header to:', 'noreply@excelsior.cards');
+                                    modifiedEmail += `From: kyle@excelsior.cards\n`;
+                                    console.log('Modified From header to:', 'kyle@excelsior.cards');
                                 }
                         } else if (line.toLowerCase().startsWith('to:')) {
                             originalTo = line.substring(3).trim();
@@ -111,7 +111,7 @@ exports.handler = async (event) => {
                         RawMessage: { 
                             Data: modifiedEmail
                         },
-                        Source: "noreply@excelsior.cards" // Use a simple address from verified domain
+                        Source: "kyle@excelsior.cards" // Use kyle@excelsior.cards as source
                     }).promise();
                 console.log('Email forwarded successfully:', result.MessageId);
                 
