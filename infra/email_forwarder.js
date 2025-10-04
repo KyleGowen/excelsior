@@ -57,9 +57,17 @@ exports.handler = async (event) => {
                         } else if (line.toLowerCase().startsWith('from:')) {
                             originalFrom = line.substring(5).trim();
                             console.log('Original From header:', originalFrom);
-                            // Use verified Gmail address but make it clear who the original sender was
-                            modifiedEmail += `From: ${process.env.FORWARD_TO_EMAIL}\n`;
-                            console.log('Modified From header to:', process.env.FORWARD_TO_EMAIL);
+                            // Use verified excelsior.cards domain but preserve original sender's name
+                            const nameMatch = originalFrom.match(/^(.+?)\s*<(.+?)>$/);
+                            if (nameMatch) {
+                                const name = nameMatch[1];
+                                modifiedEmail += `From: ${name} <${process.env.FROM_EMAIL}>\n`;
+                                console.log('Modified From header to:', `${name} <${process.env.FROM_EMAIL}>`);
+                            } else {
+                                // Fallback to using the verified excelsior.cards address
+                                modifiedEmail += `From: ${process.env.FROM_EMAIL}\n`;
+                                console.log('Modified From header to:', process.env.FROM_EMAIL);
+                            }
                         } else if (line.toLowerCase().startsWith('to:')) {
                             originalTo = line.substring(3).trim();
                             console.log('Original To header:', originalTo);
