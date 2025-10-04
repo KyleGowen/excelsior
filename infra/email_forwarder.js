@@ -57,20 +57,9 @@ exports.handler = async (event) => {
                         } else if (line.toLowerCase().startsWith('from:')) {
                             originalFrom = line.substring(5).trim();
                             console.log('Original From header:', originalFrom);
-                            // Extract name from original sender and create a valid email
-                            const nameMatch = originalFrom.match(/^(.+?)\s*<(.+?)>$/);
-                            if (nameMatch) {
-                                const name = nameMatch[1];
-                                const email = nameMatch[2];
-                                // Create a valid email using the original sender's name and a clean email format
-                                const cleanEmail = email.replace('@', '-at-');
-                                modifiedEmail += `From: ${name} <${cleanEmail}@excelsior.cards>\n`;
-                                console.log('Modified From header to:', `${name} <${cleanEmail}@excelsior.cards>`);
-                            } else {
-                                // Fallback to using the verified Gmail address
-                                modifiedEmail += `From: ${process.env.FORWARD_TO_EMAIL}\n`;
-                                console.log('Modified From header to:', process.env.FORWARD_TO_EMAIL);
-                            }
+                            // Use verified Gmail address but make it clear who the original sender was
+                            modifiedEmail += `From: ${process.env.FORWARD_TO_EMAIL}\n`;
+                            console.log('Modified From header to:', process.env.FORWARD_TO_EMAIL);
                         } else if (line.toLowerCase().startsWith('to:')) {
                             originalTo = line.substring(3).trim();
                             console.log('Original To header:', originalTo);
@@ -91,13 +80,18 @@ exports.handler = async (event) => {
                             modifiedEmail += line + '\n';
                         }
                     } else {
-                        // Body content - add forwarding notice at the beginning
+                        // Body content - add prominent forwarding notice at the beginning
                         if (line.trim() === '' && !modifiedEmail.includes('--- FORWARDED EMAIL ---')) {
-                            modifiedEmail += `\n--- FORWARDED EMAIL ---\n`;
+                            modifiedEmail += `\n`;
+                            modifiedEmail += `========================================\n`;
+                            modifiedEmail += `📧 FORWARDED EMAIL - IMPORTANT REPLY INFO 📧\n`;
+                            modifiedEmail += `========================================\n`;
                             modifiedEmail += `Original sender: ${originalFrom}\n`;
                             modifiedEmail += `Original recipient: ${originalTo}\n`;
                             modifiedEmail += `Forwarded to: ${process.env.FORWARD_TO_EMAIL}\n`;
-                            modifiedEmail += `--- END FORWARDING INFO ---\n\n`;
+                            modifiedEmail += `\n⚠️  TO REPLY: Change the "To" field to: ${originalFrom}\n`;
+                            modifiedEmail += `⚠️  DO NOT reply to this Gmail address!\n`;
+                            modifiedEmail += `========================================\n\n`;
                         }
                         modifiedEmail += line + '\n';
                     }
