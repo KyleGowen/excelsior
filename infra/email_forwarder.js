@@ -89,7 +89,7 @@ exports.handler = async (event) => {
                         }
                     } else {
                         // Body content - add subtle forwarding notice at the beginning
-                        if (line.trim() === '' && !modifiedEmail.includes('--- FORWARDED EMAIL ---')) {
+                        if (line.trim() === '' && !modifiedEmail.includes('--- Forwarded message ---')) {
                             modifiedEmail += `\n`;
                             modifiedEmail += `--- Forwarded message ---\n`;
                             modifiedEmail += `From: ${originalFrom}\n`;

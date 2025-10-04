@@ -99,7 +99,7 @@ variable "ecr_repository_name" {
 variable "forward_from_email" {
   description = "Email address to forward from"
   type        = string
-  default     = "admin@excelsior.cards"
+  default     = "kyle@excelsior.cards"
 }
 
 variable "forward_to_email" {
