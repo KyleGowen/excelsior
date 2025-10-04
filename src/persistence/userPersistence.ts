@@ -98,7 +98,7 @@ export class UserPersistenceService {
     const initialUser: LegacyUser = {
       id: 'kyle-001',
       username: 'kyle',
-      password: 'test',
+      password: 'Overpower2025!',
       createdAt: new Date()
     };
     this.users.set(initialUser.id, initialUser);
@@ -106,7 +106,7 @@ export class UserPersistenceService {
     const guestUser: LegacyUser = {
       id: '00000000-0000-0000-0000-000000000001',
       username: 'guest',
-      password: 'guest',
+      password: 'GuestAccess2025!',
       createdAt: new Date()
     };
     this.users.set(guestUser.id, guestUser);
