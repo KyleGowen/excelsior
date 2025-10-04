@@ -10501,6 +10501,77 @@
             }
         }
         
+        // Toggle events mission filter
+        async function toggleEventsMissionFilter() {
+            const filterCheckbox = document.getElementById('eventsMissionFilter');
+            if (!filterCheckbox) {
+                console.error('Events mission filter checkbox not found');
+                return;
+            }
+            
+            const isChecked = filterCheckbox.checked;
+            
+            // Find the events category
+            const allCategories = document.querySelectorAll('.card-category');
+            let eventsCategory = null;
+            
+            for (const category of allCategories) {
+                const categoryName = category.querySelector('.category-header-content span');
+                if (categoryName && categoryName.textContent.includes('Events')) {
+                    eventsCategory = category;
+                    break;
+                }
+            }
+            
+            if (!eventsCategory) {
+                console.error('Events category not found');
+                return;
+            }
+            
+            // Get mission set names from current deck missions
+            const deckMissionCards = deckEditorCards.filter(card => card.type === 'mission');
+            const deckMissionSets = new Set();
+            
+            deckMissionCards.forEach(card => {
+                const mission = availableCardsMap.get(card.cardId);
+                if (mission && mission.mission_set) {
+                    deckMissionSets.add(mission.mission_set);
+                }
+            });
+            
+            // If no missions selected, show all events
+            if (deckMissionSets.size === 0) {
+                if (isChecked) {
+                    showNotification('No missions selected - all events are considered usable', 'info');
+                }
+                return;
+            }
+            
+            // Find all mission set groups in the events category
+            const missionSetGroups = eventsCategory.querySelectorAll('.mission-set-group');
+            
+            missionSetGroups.forEach(group => {
+                const groupHeader = group.querySelector('.mission-set-group-header span');
+                if (!groupHeader) return;
+                
+                const groupName = groupHeader.textContent.split(' (')[0]; // Remove count
+                const isUsable = deckMissionSets.has(groupName);
+                
+                if (isChecked) {
+                    // Hide unusable groups
+                    group.style.display = isUsable ? 'block' : 'none';
+                } else {
+                    // Show all groups
+                    group.style.display = 'block';
+                }
+            });
+            
+            if (isChecked) {
+                const visibleGroups = Array.from(missionSetGroups).filter(group => group.style.display !== 'none');
+                showNotification(`Showing events for ${visibleGroups.length} selected mission set(s)`, 'info');
+            }
+        }
+
         // Toggle special cards character filter
         async function toggleSpecialCardsCharacterFilter() {
             const filterCheckbox = document.getElementById('specialCardsCharacterFilter');
@@ -15668,6 +15739,30 @@
                                                        onselect="preventCategoryCollapse(event)"
                                                        onfocus="preventCategoryCollapse(event)"
                                                        onblur="preventCategoryCollapse(event)">
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}" 
+                                             ondragover="handleAvailableCardDragOver(event)" 
+                                             ondragleave="handleAvailableCardDragLeave(event)"
+                                             ondrop="handleAvailableCardDrop(event)">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'event') {
+                                // Events category - with mission filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${data.data.length})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="eventsMissionFilter" onchange="toggleEventsMissionFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
                                             </div>
                                             <div class="category-header-controls">
                                                 <span class="collapse-icon">${collapseIcon}</span>
