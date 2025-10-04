@@ -57,9 +57,19 @@ exports.handler = async (event) => {
                         } else if (line.toLowerCase().startsWith('from:')) {
                             originalFrom = line.substring(5).trim();
                             console.log('Original From header:', originalFrom);
-                            // Use verified Gmail address but show it's forwarded
-                            modifiedEmail += `From: ${process.env.FORWARD_TO_EMAIL}\n`;
-                            console.log('Modified From header to:', process.env.FORWARD_TO_EMAIL);
+                            // Extract name from original sender and use verified domain
+                            const nameMatch = originalFrom.match(/^(.+?)\s*<(.+?)>$/);
+                            if (nameMatch) {
+                                const name = nameMatch[1];
+                                const email = nameMatch[2];
+                                // Use original sender's name but with verified domain
+                                modifiedEmail += `From: ${name} <${email}@excelsior.cards>\n`;
+                                console.log('Modified From header to:', `${name} <${email}@excelsior.cards>`);
+                            } else {
+                                // Fallback to using the verified Gmail address
+                                modifiedEmail += `From: ${process.env.FORWARD_TO_EMAIL}\n`;
+                                console.log('Modified From header to:', process.env.FORWARD_TO_EMAIL);
+                            }
                         } else if (line.toLowerCase().startsWith('to:')) {
                             originalTo = line.substring(3).trim();
                             console.log('Original To header:', originalTo);
