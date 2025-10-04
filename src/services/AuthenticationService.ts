@@ -102,10 +102,21 @@ export class AuthenticationService {
    */
   public async getUserById(userId: string): Promise<User | null> {
     try {
+      // Try database first
       const user = await this.userRepository.getUserById(userId);
-      return user || null;
+      if (user) {
+        return user;
+      }
     } catch (error) {
-      console.error('Error getting user by ID:', error);
+      console.error('Error getting user by ID from database:', error);
+    }
+
+    // Fallback to in-memory persistence
+    try {
+      const legacyUser = this.userPersistence.getUserById(userId);
+      return legacyUser;
+    } catch (error) {
+      console.error('Error getting user by ID from persistence:', error);
       return null;
     }
   }

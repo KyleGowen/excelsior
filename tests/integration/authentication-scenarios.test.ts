@@ -146,6 +146,25 @@ describe('Authentication Scenarios Integration Tests', () => {
       expect(adminUser.role).toBe('ADMIN');
     });
 
+    beforeEach(async () => {
+      // Login as admin before each test to ensure we have a valid session
+      const response = await request(app)
+        .post('/api/auth/login')
+        .send({
+          username: 'kyle',
+          password: 'test'
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      
+      // Extract session ID from cookie
+      const cookieHeader = response.headers['set-cookie'][0];
+      const sessionMatch = cookieHeader.match(/sessionId=([^;]+)/);
+      expect(sessionMatch).toBeDefined();
+      adminSessionId = sessionMatch![1];
+    });
+
     it('should successfully login as ADMIN', async () => {
       const response = await request(app)
         .post('/api/auth/login')
