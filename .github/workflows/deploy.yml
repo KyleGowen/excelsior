@@ -9,7 +9,7 @@ on:
 env:
   AWS_REGION: us-west-2
   ECR_REPOSITORY: overpower-deckbuilder
-  EC2_INSTANCE_ID: i-0dee560af076c0f9d
+  EC2_INSTANCE_ID: i-04493611b99785f28
 
 jobs:
   build:
