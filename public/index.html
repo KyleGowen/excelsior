@@ -3453,33 +3453,24 @@
             display: block !important;
         }
         
-        /* Apply single column grid to individual card tiles within each section */
+        /* Two-column layout for individual card tiles within each section in read-only mode */
         .read-only-mode .deck-type-cards:not([style*="display: none"]) {
             display: grid !important;
-            grid-template-columns: 1fr !important; /* Single column for all deck content tiles */
+            grid-template-columns: 1fr 1fr !important; /* Two columns for individual cards */
             gap: 16px !important;
         }
         
-        /* Two-column layout for deck type sections in read-only mode */
-        .read-only-mode .deck-cards-editor {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important; /* Two columns for deck type sections */
-            gap: 20px !important;
-            align-items: start !important;
-        }
-        
-        /* Ensure deck type sections take full width in their grid cell */
+        /* Ensure deck type sections take full width */
         .read-only-mode .deck-type-section {
             width: 100% !important;
-            margin-bottom: 0 !important;
+            margin-bottom: 20px !important;
         }
         
         /* Make list view also use two columns in read-only mode */
         .read-only-mode .deck-list-view {
             display: grid !important;
-            grid-template-columns: 1fr 1fr !important; /* Two columns for deck type sections */
-            gap: 20px !important;
-            align-items: start !important;
+            grid-template-columns: 1fr 1fr !important; /* Two columns for individual cards */
+            gap: 16px !important;
         }
         
         /* Read-only mode styling */
