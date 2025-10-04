@@ -44,6 +44,9 @@ export class UserPersistenceService {
           });
         });
         console.log(`✅ Loaded ${this.users.size} users`);
+        
+        // Always ensure we have the correct users with updated passwords
+        this.ensureCorrectUsers();
       } else {
         // Create initial user if no users file exists
         this.createInitialUser();
@@ -113,6 +116,43 @@ export class UserPersistenceService {
 
     this.saveUsers();
     console.log('✅ Created initial users: kyle and guest');
+  }
+
+  private ensureCorrectUsers(): void {
+    let updated = false;
+
+    // Ensure kyle user exists with correct password
+    const kyleUser = this.users.get('kyle-001');
+    if (!kyleUser || kyleUser.password !== 'Overpower2025!') {
+      this.users.set('kyle-001', {
+        id: 'kyle-001',
+        username: 'kyle',
+        password: 'Overpower2025!',
+        createdAt: kyleUser?.createdAt || new Date(),
+        lastLoginAt: kyleUser?.lastLoginAt
+      });
+      updated = true;
+      console.log('✅ Updated kyle user with correct password');
+    }
+
+    // Ensure guest user exists with correct password
+    const guestUser = this.users.get('00000000-0000-0000-0000-000000000001');
+    if (!guestUser || guestUser.password !== 'GuestAccess2025!') {
+      this.users.set('00000000-0000-0000-0000-000000000001', {
+        id: '00000000-0000-0000-0000-000000000001',
+        username: 'guest',
+        password: 'GuestAccess2025!',
+        createdAt: guestUser?.createdAt || new Date(),
+        lastLoginAt: guestUser?.lastLoginAt
+      });
+      updated = true;
+      console.log('✅ Updated guest user with correct password');
+    }
+
+    if (updated) {
+      this.saveUsers();
+      console.log('✅ User passwords updated successfully');
+    }
   }
 
   public authenticateUser(username: string, password: string): User | null {
