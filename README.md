@@ -465,3 +465,4 @@ Terraform creates these SSM parameters for configuration:
 
 This is a personal project for learning purposes. No contributions needed.
 # Deployment trigger Sat Oct  4 23:16:32 UTC 2025
+# Force fresh build Sat Oct  4 23:27:45 UTC 2025
