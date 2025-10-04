@@ -35,11 +35,25 @@ export class AuthenticationService {
    */
   public async authenticateUser(credentials: LoginCredentials): Promise<User | null> {
     try {
+      console.log('🔍 DEBUG: Authentication attempt:', {
+        username: credentials.username,
+        passwordLength: credentials.password.length,
+        timestamp: new Date().toISOString()
+      });
+      
       // Use database authentication only
       const dbUser = await this.userRepository.authenticateUser(credentials.username, credentials.password);
+      
+      console.log('🔍 DEBUG: Database authentication result:', {
+        username: credentials.username,
+        found: !!dbUser,
+        userId: dbUser?.id,
+        role: dbUser?.role
+      });
+      
       return dbUser || null;
     } catch (error) {
-      console.error('Authentication error:', error);
+      console.error('❌ Authentication error:', error);
       return null;
     }
   }
@@ -105,7 +119,16 @@ export class AuthenticationService {
     try {
       const { username, password } = req.body;
       
+      console.log('🔍 DEBUG: Login request received:', {
+        username,
+        passwordLength: password?.length,
+        userAgent: req.headers['user-agent'],
+        ip: req.ip,
+        timestamp: new Date().toISOString()
+      });
+      
       if (!username || !password) {
+        console.log('❌ DEBUG: Missing credentials:', { username: !!username, password: !!password });
         res.status(400).json({ success: false, error: 'Username and password are required' });
         return;
       }
@@ -113,6 +136,12 @@ export class AuthenticationService {
       const user = await this.authenticateUser({ username, password });
       
       if (user) {
+        console.log('✅ DEBUG: User authenticated successfully:', {
+          userId: user.id,
+          username: user.name,
+          role: user.role
+        });
+        
         const sessionId = this.createSession(user);
         
         res.cookie('sessionId', sessionId, {
@@ -130,6 +159,11 @@ export class AuthenticationService {
           } 
         });
       } else {
+        console.log('❌ DEBUG: Authentication failed:', {
+          username,
+          passwordLength: password?.length,
+          timestamp: new Date().toISOString()
+        });
         res.status(401).json({ success: false, error: 'Invalid username or password' });
       }
     } catch (error) {

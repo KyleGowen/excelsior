@@ -90,24 +90,57 @@ export class PostgreSQLUserRepository implements UserRepository {
   async authenticateUser(username: string, password: string): Promise<User | undefined> {
     const client = await this.pool.connect();
     try {
+      console.log('🔍 DEBUG: PostgreSQL authenticateUser called:', {
+        username,
+        passwordLength: password?.length,
+        timestamp: new Date().toISOString()
+      });
+      
       // First, get the user by username to retrieve the stored hash
       const result = await client.query(
         'SELECT * FROM users WHERE username = $1',
         [username]
       );
       
+      console.log('🔍 DEBUG: Database query result:', {
+        username,
+        rowsFound: result.rows.length,
+        timestamp: new Date().toISOString()
+      });
+      
       if (result.rows.length === 0) {
+        console.log('❌ DEBUG: User not found in database:', { username });
         return undefined;
       }
       
       const user = result.rows[0];
+      console.log('🔍 DEBUG: User found in database:', {
+        username,
+        userId: user.id,
+        role: user.role,
+        passwordHashPrefix: user.password_hash?.substring(0, 20) + '...',
+        timestamp: new Date().toISOString()
+      });
       
       // Compare the provided password with the stored hash using bcrypt
       const isPasswordValid = await PasswordUtils.comparePassword(password, user.password_hash);
       
+      console.log('🔍 DEBUG: Password comparison result:', {
+        username,
+        isPasswordValid,
+        timestamp: new Date().toISOString()
+      });
+      
       if (!isPasswordValid) {
+        console.log('❌ DEBUG: Password validation failed:', { username });
         return undefined;
       }
+      
+      console.log('✅ DEBUG: User authenticated successfully:', {
+        username,
+        userId: user.id,
+        role: user.role
+      });
       
       return {
         id: user.id,
