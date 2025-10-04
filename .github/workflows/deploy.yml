@@ -369,9 +369,9 @@ jobs:
           --parameters "commands=[
             \"aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_URI\",
             \"docker pull $ECR_URI:latest\",
-            \"docker stop overpower-deckbuilder || true\",
-            \"docker rm overpower-deckbuilder || true\",
-            \"docker run -d --name overpower-deckbuilder --restart unless-stopped -p 3000:3000 --env-file /opt/app/.env $ECR_URI:latest\"
+            \"docker stop overpower-app || true\",
+            \"docker rm overpower-app || true\",
+            \"docker run -d --name overpower-app --restart unless-stopped -p 3000:3000 --env-file /opt/app/.env $ECR_URI:latest\"
           ]" \
           --output text --query 'Command.CommandId'
           
@@ -385,7 +385,7 @@ jobs:
           --document-name "AWS-RunShellScript" \
           --parameters 'commands=[
             "docker ps",
-            "docker logs overpower-deckbuilder --tail 20",
+            "docker logs overpower-app --tail 20",
             "ls -la /app/public/js/",
             "test -f /app/public/js/auth-service.js && echo \"✅ auth-service.js found\" || echo \"❌ auth-service.js missing\""
           ]' \
