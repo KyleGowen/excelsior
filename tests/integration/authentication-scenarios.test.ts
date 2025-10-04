@@ -515,7 +515,7 @@ describe('Authentication Scenarios Integration Tests', () => {
 
       const adminResponse = await request(app)
         .post('/api/auth/login')
-        .send({ username: 'kyle', password: 'test' });
+        .send({ username: 'kyle', password: 'Overpower2025!' });
       
       if (adminResponse.headers['set-cookie']) {
         adminSessionId = adminResponse.headers['set-cookie'][0].match(/sessionId=([^;]+)/)![1];

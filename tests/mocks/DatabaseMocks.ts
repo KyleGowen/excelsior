@@ -274,10 +274,10 @@ mockUserRepository.getUserByUsername.mockImplementation(async (username: string)
 });
 mockUserRepository.authenticateUser.mockImplementation(async (username: string, password: string) => {
   // Mock authentication logic
-  if (username === 'kyle' && password === 'test') {
+  if (username === 'kyle' && password === 'Overpower2025!') {
     return mockUsers.find(user => user.name === 'kyle');
   }
-  if (username === 'guest' && password === 'guest') {
+  if (username === 'guest' && password === 'GuestAccess2025!') {
     return mockUsers.find(user => user.name === 'guest');
   }
   if (username === 'testuser' && password === 'password') {

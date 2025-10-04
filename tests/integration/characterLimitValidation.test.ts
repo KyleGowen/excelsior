@@ -20,7 +20,7 @@ describe('Character Limit Validation API Tests', () => {
     // Use the existing admin user for testing (guests can't create decks)
     const loginResponse = await request(app)
       .post('/api/auth/login')
-      .send({ username: 'kyle', password: 'test' });
+      .send({ username: 'kyle', password: 'Overpower2025!' });
 
     if (loginResponse.status === 200) {
       testUserId = loginResponse.body.data.userId;

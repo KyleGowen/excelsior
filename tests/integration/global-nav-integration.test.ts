@@ -21,7 +21,7 @@ describe('Global Nav Integration Tests', () => {
       .post('/api/auth/login')
       .send({
         username: 'kyle',
-        password: 'test'
+        password: 'Overpower2025!'
       });
 
     expect(loginResponse.status).toBe(200);
