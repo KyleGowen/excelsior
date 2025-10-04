@@ -57,7 +57,7 @@ exports.handler = async (event) => {
                         } else if (line.toLowerCase().startsWith('from:')) {
                             originalFrom = line.substring(5).trim();
                             console.log('Original From header:', originalFrom);
-                            // Change From header to use verified Gmail address
+                            // Use verified Gmail address but show it's forwarded
                             modifiedEmail += `From: ${process.env.FORWARD_TO_EMAIL}\n`;
                             console.log('Modified From header to:', process.env.FORWARD_TO_EMAIL);
                         } else if (line.toLowerCase().startsWith('to:')) {
@@ -80,7 +80,14 @@ exports.handler = async (event) => {
                             modifiedEmail += line + '\n';
                         }
                     } else {
-                        // Body content - keep as-is
+                        // Body content - add forwarding notice at the beginning
+                        if (line.trim() === '' && !modifiedEmail.includes('--- FORWARDED EMAIL ---')) {
+                            modifiedEmail += `\n--- FORWARDED EMAIL ---\n`;
+                            modifiedEmail += `Original sender: ${originalFrom}\n`;
+                            modifiedEmail += `Original recipient: ${originalTo}\n`;
+                            modifiedEmail += `Forwarded to: ${process.env.FORWARD_TO_EMAIL}\n`;
+                            modifiedEmail += `--- END FORWARDING INFO ---\n\n`;
+                        }
                         modifiedEmail += line + '\n';
                     }
                 }
