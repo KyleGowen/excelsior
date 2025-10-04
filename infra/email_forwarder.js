@@ -105,14 +105,14 @@ exports.handler = async (event) => {
                 
                 console.log('Modified email preview (first 500 chars):', modifiedEmail.substring(0, 500));
                 
-                // Forward the modified email using SES
-                const result = await ses.sendRawEmail({
-                    Destinations: [process.env.FORWARD_TO_EMAIL],
-                    RawMessage: { 
-                        Data: modifiedEmail
-                    },
-                    Source: process.env.FORWARD_TO_EMAIL // Use Gmail as source since it's verified for sending
-                }).promise();
+                    // Forward the modified email using SES
+                    const result = await ses.sendRawEmail({
+                        Destinations: [process.env.FORWARD_TO_EMAIL],
+                        RawMessage: { 
+                            Data: modifiedEmail
+                        },
+                        Source: process.env.FROM_EMAIL // Use excelsior.cards as source
+                    }).promise();
                 console.log('Email forwarded successfully:', result.MessageId);
                 
                 // Optional: Delete the email from S3 after forwarding
