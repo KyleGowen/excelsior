@@ -1,4 +1,4 @@
--- V123: Update all "Any Character" special cards to one_per_deck=true except "Preternatural Healing"
+-- Update all "Any Character" special cards to one_per_deck=true except "Preternatural Healing"
 -- This migration fixes the database data to match the expected behavior
 
 UPDATE special_cards 
