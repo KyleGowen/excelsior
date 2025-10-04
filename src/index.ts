@@ -2,7 +2,6 @@ import 'dotenv/config';
 import express from 'express';
 import { DataSourceConfig } from './config/DataSourceConfig';
 import { DeckPersistenceService } from './services/deckPersistence';
-import { UserPersistenceService } from './persistence/userPersistence';
 import { DatabaseInitializationService } from './services/databaseInitialization';
 import { DeckService } from './services/deckService';
 import { AuthenticationService } from './services/AuthenticationService';
@@ -14,7 +13,6 @@ const PORT = process.env.PORT || 3000;
 
 // Initialize services
 const deckService = new DeckPersistenceService();
-const userService = new UserPersistenceService();
 const databaseInit = new DatabaseInitializationService();
 const dataSource = DataSourceConfig.getInstance();
 const userRepository = dataSource.getUserRepository();
