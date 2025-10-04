@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { UserRepository } from '../repository/UserRepository';
-import { UserPersistenceService } from '../persistence/userPersistence';
 import { User, UserRole } from '../types';
 
 export interface LoginCredentials {
@@ -24,17 +23,15 @@ export interface SessionData {
 
 export class AuthenticationService {
   private userRepository: UserRepository;
-  private userPersistence: UserPersistenceService;
   private sessions: Map<string, SessionData> = new Map();
 
-  constructor(userRepository: UserRepository, userPersistence: UserPersistenceService) {
+  constructor(userRepository: UserRepository) {
     this.userRepository = userRepository;
-    this.userPersistence = userPersistence;
   }
 
   /**
    * Authenticate user with username and password
-   * Tries database authentication first, then falls back to persistence service
+   * Uses database authentication only
    */
   public async authenticateUser(credentials: LoginCredentials): Promise<User | null> {
     try {

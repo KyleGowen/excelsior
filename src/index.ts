@@ -25,7 +25,7 @@ const cardRepository = dataSource.getCardRepository();
 const deckBusinessService = new DeckService(deckRepository);
 
 // Initialize authentication service
-const authService = new AuthenticationService(userRepository, userService);
+const authService = new AuthenticationService(userRepository);
 
 // Middleware
 app.use(express.json());
