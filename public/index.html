@@ -12366,8 +12366,10 @@
                 titleElement.textContent = newTitle;
                 titleElement.classList.remove('editing');
                 
-                // Show save indicator
-                showNotification('Title updated - remember to save changes', 'info');
+                // Show save indicator only for non-guest users
+                if (!isGuestUser()) {
+                    showNotification('Title updated - remember to save changes', 'info');
+                }
             } else {
                 // Revert to original
                 titleElement.textContent = currentDeckData?.metadata?.name || 'Edit Deck';
@@ -12403,8 +12405,10 @@
             
             descElement.classList.remove('editing');
             
-            // Show save indicator
-            showNotification('Description updated - remember to save changes', 'info');
+            // Show save indicator only for non-guest users
+            if (!isGuestUser()) {
+                showNotification('Description updated - remember to save changes', 'info');
+            }
         }
 
         function cancelTitleEdit(input, originalTitle) {
