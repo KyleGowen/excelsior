@@ -123,14 +123,24 @@ export class UserPersistenceService {
 
     // Ensure kyle user exists with correct password
     const kyleUser = this.users.get('kyle-001');
-    if (!kyleUser || kyleUser.password !== 'test') {
+    if (!kyleUser) {
       const newKyleUser: LegacyUser = {
         id: 'kyle-001',
         username: 'kyle',
         password: 'test',
-        createdAt: kyleUser?.createdAt || new Date()
+        createdAt: new Date()
       };
-      if (kyleUser?.lastLoginAt) {
+      this.users.set('kyle-001', newKyleUser);
+      updated = true;
+      console.log('✅ Created kyle user');
+    } else if (kyleUser.password !== 'test') {
+      const newKyleUser: LegacyUser = {
+        id: 'kyle-001',
+        username: 'kyle',
+        password: 'test',
+        createdAt: kyleUser.createdAt
+      };
+      if (kyleUser.lastLoginAt) {
         newKyleUser.lastLoginAt = kyleUser.lastLoginAt;
       }
       this.users.set('kyle-001', newKyleUser);
@@ -140,14 +150,24 @@ export class UserPersistenceService {
 
     // Ensure guest user exists with correct password
     const guestUser = this.users.get('00000000-0000-0000-0000-000000000001');
-    if (!guestUser || guestUser.password !== 'guest') {
+    if (!guestUser) {
       const newGuestUser: LegacyUser = {
         id: '00000000-0000-0000-0000-000000000001',
         username: 'guest',
         password: 'guest',
-        createdAt: guestUser?.createdAt || new Date()
+        createdAt: new Date()
       };
-      if (guestUser?.lastLoginAt) {
+      this.users.set('00000000-0000-0000-0000-000000000001', newGuestUser);
+      updated = true;
+      console.log('✅ Created guest user');
+    } else if (guestUser.password !== 'guest') {
+      const newGuestUser: LegacyUser = {
+        id: '00000000-0000-0000-0000-000000000001',
+        username: 'guest',
+        password: 'guest',
+        createdAt: guestUser.createdAt
+      };
+      if (guestUser.lastLoginAt) {
         newGuestUser.lastLoginAt = guestUser.lastLoginAt;
       }
       this.users.set('00000000-0000-0000-0000-000000000001', newGuestUser);
