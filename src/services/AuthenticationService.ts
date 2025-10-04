@@ -122,8 +122,8 @@ export class AuthenticationService {
       console.log('🔍 DEBUG: Login request received:', {
         username,
         passwordLength: password?.length,
-        userAgent: req.headers['user-agent'],
-        ip: req.ip,
+        userAgent: req.headers?.['user-agent'] || 'unknown',
+        ip: req.ip || 'unknown',
         timestamp: new Date().toISOString()
       });
       
