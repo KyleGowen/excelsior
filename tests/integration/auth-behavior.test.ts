@@ -23,7 +23,7 @@ describe('Authentication Behavior Tests', () => {
 
   describe('User Authentication', () => {
     it('should authenticate valid user with database repository', async () => {
-      const user = await userRepository.authenticateUser('kyle', 'test');
+      const user = await userRepository.authenticateUser('kyle', 'Overpower2025!');
       
       expect(user).toBeDefined();
       expect(user?.name).toBe('kyle');

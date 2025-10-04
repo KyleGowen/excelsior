@@ -163,7 +163,7 @@ describe('Bcrypt Authentication Integration Tests', () => {
 
   describe('Admin User Authentication', () => {
     it('should authenticate admin user (kyle) with correct password', async () => {
-      const authenticatedUser = await userRepository.authenticateUser('kyle', 'test');
+      const authenticatedUser = await userRepository.authenticateUser('kyle', 'Overpower2025!');
       
       expect(authenticatedUser).toBeDefined();
       expect(authenticatedUser?.name).toBe('kyle');

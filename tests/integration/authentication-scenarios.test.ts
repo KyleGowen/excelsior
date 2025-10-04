@@ -151,7 +151,7 @@ describe('Authentication Scenarios Integration Tests', () => {
         .post('/api/auth/login')
         .send({
           username: 'kyle',
-          password: 'test'
+          password: 'Overpower2025!'
         });
 
       expect(response.status).toBe(200);

@@ -225,7 +225,7 @@ export const integrationTestUtils = {
       const result = await pool.query('SELECT * FROM users WHERE username = $1', ['kyle']);
       if (result.rows.length === 0) {
         // Hash the admin password
-        const hashedPassword = await bcrypt.hash('test', 10);
+        const hashedPassword = await bcrypt.hash('Overpower2025!', 10);
         
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role) VALUES ($1, $2, $3, $4, $5)',
