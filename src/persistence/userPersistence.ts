@@ -102,8 +102,17 @@ export class UserPersistenceService {
       createdAt: new Date()
     };
     this.users.set(initialUser.id, initialUser);
+
+    const guestUser: LegacyUser = {
+      id: '00000000-0000-0000-0000-000000000001',
+      username: 'guest',
+      password: 'guest',
+      createdAt: new Date()
+    };
+    this.users.set(guestUser.id, guestUser);
+
     this.saveUsers();
-    console.log('✅ Created initial user: kyle');
+    console.log('✅ Created initial users: kyle and guest');
   }
 
   public authenticateUser(username: string, password: string): User | null {
@@ -115,7 +124,7 @@ export class UserPersistenceService {
           id: user.id,
           name: user.username,
           email: '', // Legacy users don't have email
-          role: 'USER' as any // Default role for legacy users
+          role: user.username === 'guest' ? 'GUEST' as any : 'USER' as any // Guest role for guest user
         };
       }
     }
@@ -163,7 +172,7 @@ export class UserPersistenceService {
       id: legacyUser.id,
       name: legacyUser.username,
       email: '', // Legacy users don't have email
-      role: 'USER' as any // Default role for legacy users
+      role: legacyUser.username === 'guest' ? 'GUEST' as any : 'USER' as any // Guest role for guest user
     };
   }
 
@@ -174,7 +183,7 @@ export class UserPersistenceService {
           id: user.id,
           name: user.username,
           email: '', // Legacy users don't have email
-          role: 'USER' as any // Default role for legacy users
+          role: user.username === 'guest' ? 'GUEST' as any : 'USER' as any // Guest role for guest user
         };
       }
     }
@@ -195,7 +204,7 @@ export class UserPersistenceService {
       id: legacyUser.id,
       name: legacyUser.username,
       email: '', // Legacy users don't have email
-      role: 'USER' as any // Default role for legacy users
+      role: legacyUser.username === 'guest' ? 'GUEST' as any : 'USER' as any // Guest role for guest user
     }));
   }
 
