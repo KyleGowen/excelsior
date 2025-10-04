@@ -57,17 +57,17 @@ exports.handler = async (event) => {
                         } else if (line.toLowerCase().startsWith('from:')) {
                             originalFrom = line.substring(5).trim();
                             console.log('Original From header:', originalFrom);
-                            // Use verified excelsior.cards domain but preserve original sender's name
-                            const nameMatch = originalFrom.match(/^(.+?)\s*<(.+?)>$/);
-                            if (nameMatch) {
-                                const name = nameMatch[1];
-                                modifiedEmail += `From: ${name} <${process.env.FROM_EMAIL}>\n`;
-                                console.log('Modified From header to:', `${name} <${process.env.FROM_EMAIL}>`);
-                            } else {
-                                // Fallback to using the verified excelsior.cards address
-                                modifiedEmail += `From: ${process.env.FROM_EMAIL}\n`;
-                                console.log('Modified From header to:', process.env.FROM_EMAIL);
-                            }
+                                // Use verified excelsior.cards domain but preserve original sender's name
+                                const nameMatch = originalFrom.match(/^(.+?)\s*<(.+?)>$/);
+                                if (nameMatch) {
+                                    const name = nameMatch[1];
+                                    modifiedEmail += `From: ${name} <noreply@excelsior.cards>\n`;
+                                    console.log('Modified From header to:', `${name} <noreply@excelsior.cards>`);
+                                } else {
+                                    // Fallback to using the verified excelsior.cards address
+                                    modifiedEmail += `From: noreply@excelsior.cards\n`;
+                                    console.log('Modified From header to:', 'noreply@excelsior.cards');
+                                }
                         } else if (line.toLowerCase().startsWith('to:')) {
                             originalTo = line.substring(3).trim();
                             console.log('Original To header:', originalTo);
@@ -111,7 +111,7 @@ exports.handler = async (event) => {
                         RawMessage: { 
                             Data: modifiedEmail
                         },
-                        Source: process.env.FROM_EMAIL // Use excelsior.cards as source
+                        Source: "noreply@excelsior.cards" // Use a simple address from verified domain
                     }).promise();
                 console.log('Email forwarded successfully:', result.MessageId);
                 
