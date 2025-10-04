@@ -3460,11 +3460,26 @@
             gap: 16px !important;
         }
         
-        /* Make list view also use single column in read-only mode */
+        /* Two-column layout for deck type sections in read-only mode */
+        .read-only-mode .deck-cards-editor {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important; /* Two columns for deck type sections */
+            gap: 20px !important;
+            align-items: start !important;
+        }
+        
+        /* Ensure deck type sections take full width in their grid cell */
+        .read-only-mode .deck-type-section {
+            width: 100% !important;
+            margin-bottom: 0 !important;
+        }
+        
+        /* Make list view also use two columns in read-only mode */
         .read-only-mode .deck-list-view {
             display: grid !important;
-            grid-template-columns: 1fr !important; /* Single column for all deck content tiles */
-            gap: 16px !important;
+            grid-template-columns: 1fr 1fr !important; /* Two columns for deck type sections */
+            gap: 20px !important;
+            align-items: start !important;
         }
         
         /* Read-only mode styling */
