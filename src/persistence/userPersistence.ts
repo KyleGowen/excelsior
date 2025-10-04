@@ -124,13 +124,16 @@ export class UserPersistenceService {
     // Ensure kyle user exists with correct password
     const kyleUser = this.users.get('kyle-001');
     if (!kyleUser || kyleUser.password !== 'Overpower2025!') {
-      this.users.set('kyle-001', {
+      const newKyleUser: LegacyUser = {
         id: 'kyle-001',
         username: 'kyle',
         password: 'Overpower2025!',
-        createdAt: kyleUser?.createdAt || new Date(),
-        lastLoginAt: kyleUser?.lastLoginAt
-      });
+        createdAt: kyleUser?.createdAt || new Date()
+      };
+      if (kyleUser?.lastLoginAt) {
+        newKyleUser.lastLoginAt = kyleUser.lastLoginAt;
+      }
+      this.users.set('kyle-001', newKyleUser);
       updated = true;
       console.log('✅ Updated kyle user with correct password');
     }
@@ -138,13 +141,16 @@ export class UserPersistenceService {
     // Ensure guest user exists with correct password
     const guestUser = this.users.get('00000000-0000-0000-0000-000000000001');
     if (!guestUser || guestUser.password !== 'GuestAccess2025!') {
-      this.users.set('00000000-0000-0000-0000-000000000001', {
+      const newGuestUser: LegacyUser = {
         id: '00000000-0000-0000-0000-000000000001',
         username: 'guest',
         password: 'GuestAccess2025!',
-        createdAt: guestUser?.createdAt || new Date(),
-        lastLoginAt: guestUser?.lastLoginAt
-      });
+        createdAt: guestUser?.createdAt || new Date()
+      };
+      if (guestUser?.lastLoginAt) {
+        newGuestUser.lastLoginAt = guestUser.lastLoginAt;
+      }
+      this.users.set('00000000-0000-0000-0000-000000000001', newGuestUser);
       updated = true;
       console.log('✅ Updated guest user with correct password');
     }
