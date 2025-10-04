@@ -80,18 +80,16 @@ exports.handler = async (event) => {
                             modifiedEmail += line + '\n';
                         }
                     } else {
-                        // Body content - add prominent forwarding notice at the beginning
+                        // Body content - add subtle forwarding notice at the beginning
                         if (line.trim() === '' && !modifiedEmail.includes('--- FORWARDED EMAIL ---')) {
                             modifiedEmail += `\n`;
-                            modifiedEmail += `========================================\n`;
-                            modifiedEmail += `📧 FORWARDED EMAIL - IMPORTANT REPLY INFO 📧\n`;
-                            modifiedEmail += `========================================\n`;
-                            modifiedEmail += `Original sender: ${originalFrom}\n`;
-                            modifiedEmail += `Original recipient: ${originalTo}\n`;
-                            modifiedEmail += `Forwarded to: ${process.env.FORWARD_TO_EMAIL}\n`;
-                            modifiedEmail += `\n⚠️  TO REPLY: Change the "To" field to: ${originalFrom}\n`;
-                            modifiedEmail += `⚠️  DO NOT reply to this Gmail address!\n`;
-                            modifiedEmail += `========================================\n\n`;
+                            modifiedEmail += `--- Forwarded message ---\n`;
+                            modifiedEmail += `From: ${originalFrom}\n`;
+                            modifiedEmail += `Date: ${new Date().toLocaleString()}\n`;
+                            modifiedEmail += `Subject: [FORWARDED] Original email\n`;
+                            modifiedEmail += `To: ${originalTo}\n\n`;
+                            modifiedEmail += `[This email was forwarded from ${originalTo} to ${process.env.FORWARD_TO_EMAIL}]\n`;
+                            modifiedEmail += `[To reply to the original sender, use: ${originalFrom}]\n\n`;
                         }
                         modifiedEmail += line + '\n';
                     }
