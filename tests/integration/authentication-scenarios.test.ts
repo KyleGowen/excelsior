@@ -19,7 +19,7 @@ describe('Authentication Scenarios Integration Tests', () => {
     // Use the same userPersistence instance as the test server
     userPersistence = new UserPersistenceService();
     // Create authService for session validation
-    authService = new AuthenticationService(userRepository, userPersistence);
+    authService = new AuthenticationService(userRepository);
 
     // Start the server on a different port for tests
     const PORT = process.env.TEST_PORT || 3002;
@@ -176,7 +176,7 @@ describe('Authentication Scenarios Integration Tests', () => {
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toBeDefined();
-      expect(response.body.data.userId).toBe('kyle-001'); // In-memory persistence ID
+      expect(response.body.data.userId).toBe('c567175f-a07b-41b7-b274-e82901d1b4f1'); // PostgreSQL UUID
       expect(response.body.data.username).toBe('kyle');
       expect(response.headers['set-cookie']).toBeDefined();
       
@@ -194,7 +194,7 @@ describe('Authentication Scenarios Integration Tests', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
-      expect(response.body.data.id).toBe('kyle-001'); // In-memory persistence ID
+      expect(response.body.data.id).toBe('c567175f-a07b-41b7-b274-e82901d1b4f1'); // PostgreSQL UUID
       expect(response.body.data.name).toBe('kyle');
     });
 

@@ -162,18 +162,37 @@ describe('Bcrypt Authentication Integration Tests', () => {
   });
 
   describe('Admin User Authentication', () => {
-    it('should authenticate admin user (kyle) with correct password', async () => {
-      const authenticatedUser = await userRepository.authenticateUser('kyle', 'Overpower2025!');
+    let testAdminUserId: string;
+
+    beforeAll(async () => {
+      // Create a test admin user
+      const hashedPassword = await bcrypt.hash('testpassword123', 10);
+      const result = await pool.query(
+        'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id',
+        ['test-admin', 'test-admin@example.com', hashedPassword, 'ADMIN']
+      );
+      testAdminUserId = result.rows[0].id;
+    });
+
+    afterAll(async () => {
+      // Clean up test admin user
+      if (testAdminUserId) {
+        await pool.query('DELETE FROM users WHERE id = $1', [testAdminUserId]);
+      }
+    });
+
+    it('should authenticate admin user with correct password', async () => {
+      const authenticatedUser = await userRepository.authenticateUser('test-admin', 'testpassword123');
       
       expect(authenticatedUser).toBeDefined();
-      expect(authenticatedUser?.name).toBe('kyle');
+      expect(authenticatedUser?.name).toBe('test-admin');
       expect(authenticatedUser?.role).toBe('ADMIN');
       
       console.log('✅ Admin user authentication successful');
     });
 
     it('should reject admin authentication with incorrect password', async () => {
-      const authenticatedUser = await userRepository.authenticateUser('kyle', 'wrongpassword');
+      const authenticatedUser = await userRepository.authenticateUser('test-admin', 'wrongpassword');
       
       expect(authenticatedUser).toBeUndefined();
       

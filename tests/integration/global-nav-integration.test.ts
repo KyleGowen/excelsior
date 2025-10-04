@@ -7,21 +7,33 @@ describe('Global Nav Integration Tests', () => {
   let server: any;
   let agent: any;
   let userSessionCookie: string;
+  let testUserId: string;
 
   beforeAll(async () => {
-    // Ensure required seed users exist and initialize test server
-    await integrationTestUtils.ensureGuestUser();
-    await integrationTestUtils.ensureAdminUser();
+    // Initialize test server
     const testApp = await initializeTestServer();
     server = testApp.listen(0); // Use random available port
     agent = request(server);
 
-    // Login as admin user to get session cookie
+    // Create a unique test user for this test suite
+    const { DataSourceConfig } = await import('../../src/config/DataSourceConfig');
+    const dataSource = DataSourceConfig.getInstance();
+    const userRepository = dataSource.getUserRepository();
+    
+    const testUser = await userRepository.createUser(
+      'test-global-nav-user',
+      'test-global-nav-user@example.com',
+      'testpassword123',
+      'ADMIN'
+    );
+    testUserId = testUser.id;
+
+    // Login as test user to get session cookie
     const loginResponse = await agent
       .post('/api/auth/login')
       .send({
-        username: 'kyle',
-        password: 'Overpower2025!'
+        username: 'test-global-nav-user',
+        password: 'testpassword123'
       });
 
     expect(loginResponse.status).toBe(200);
@@ -33,6 +45,18 @@ describe('Global Nav Integration Tests', () => {
   });
 
   afterAll(async () => {
+    // Clean up test user
+    if (testUserId) {
+      try {
+        const { DataSourceConfig } = await import('../../src/config/DataSourceConfig');
+        const dataSource = DataSourceConfig.getInstance();
+        const userRepository = dataSource.getUserRepository();
+        await userRepository.deleteUser(testUserId);
+      } catch (error) {
+        // User might already be deleted, ignore error
+      }
+    }
+
     if (server) {
       server.close();
     }
@@ -41,7 +65,7 @@ describe('Global Nav Integration Tests', () => {
   describe('View Switching Functionality', () => {
     test('should load main page with global nav component', async () => {
       const response = await agent
-        .get('/users/testuser/decks')
+        .get('/users/${testUserId}/decks')
         .expect(200);
 
       // Check that the page contains the global nav container and loading mechanism
@@ -52,7 +76,7 @@ describe('Global Nav Integration Tests', () => {
 
     test('should include global nav JavaScript and CSS files', async () => {
       const response = await agent
-        .get('/users/testuser/decks')
+        .get('/users/${testUserId}/decks')
         .expect(200);
 
       // Check that global nav component files are referenced
@@ -120,7 +144,7 @@ describe('Global Nav Integration Tests', () => {
 
     test('should have create deck functionality', async () => {
       const response = await agent
-        .get('/users/testuser/decks')
+        .get('/users/${testUserId}/decks')
         .expect(200);
 
       // Check that the main page includes deck editor modal
@@ -251,7 +275,7 @@ describe('Global Nav Integration Tests', () => {
   describe('User Welcome Message', () => {
     test('should display username in global nav', async () => {
       const response = await agent
-        .get('/users/testuser/decks')
+        .get('/users/${testUserId}/decks')
         .expect(200);
 
       // Check that username display elements are present in the global nav component
@@ -275,7 +299,7 @@ describe('Global Nav Integration Tests', () => {
   describe('Navigation State Management', () => {
     test('should handle browser back/forward navigation', async () => {
       const response = await agent
-        .get('/users/testuser/decks')
+        .get('/users/${testUserId}/decks')
         .expect(200);
 
       // Check that popstate event listener is set up
@@ -286,7 +310,7 @@ describe('Global Nav Integration Tests', () => {
 
     test('should update URL without page reload', async () => {
       const response = await agent
-        .get('/users/testuser/decks')
+        .get('/users/${testUserId}/decks')
         .expect(200);
 
       // Check that history.pushState is used
@@ -299,7 +323,7 @@ describe('Global Nav Integration Tests', () => {
   describe('Error Handling', () => {
     test('should handle missing DOM elements gracefully', async () => {
       const response = await agent
-        .get('/users/testuser/decks')
+        .get('/users/${testUserId}/decks')
         .expect(200);
 
       // Check that null checks are in place
@@ -349,7 +373,7 @@ describe('Global Nav Integration Tests', () => {
     test('should integrate with main application pages', async () => {
       // Test database view page
       const dbResponse = await agent
-        .get('/users/testuser/decks')
+        .get('/users/${testUserId}/decks')
         .expect(200);
 
       expect(dbResponse.text).toContain('id="globalNav"');
@@ -365,7 +389,7 @@ describe('Global Nav Integration Tests', () => {
 
     test('should maintain state across view switches', async () => {
       const response = await agent
-        .get('/users/testuser/decks')
+        .get('/users/${testUserId}/decks')
         .expect(200);
 
       // Check that state management is in place

@@ -222,11 +222,13 @@ export const integrationTestUtils = {
       connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
     });
     try {
+      // Hash the admin password
+      const hashedPassword = await bcrypt.hash('test', 10);
+      
       const result = await pool.query('SELECT * FROM users WHERE username = $1', ['kyle']);
+      
       if (result.rows.length === 0) {
-        // Hash the admin password
-        const hashedPassword = await bcrypt.hash('Overpower2025!', 10);
-        
+        // Create new user
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role) VALUES ($1, $2, $3, $4, $5)',
           [
@@ -239,7 +241,12 @@ export const integrationTestUtils = {
         );
         console.log('✅ Admin user created for integration tests');
       } else {
-        console.log('✅ Admin user already exists');
+        // Update existing user's password
+        await pool.query(
+          'UPDATE users SET password_hash = $1, updated_at = NOW() WHERE username = $2',
+          [hashedPassword, 'kyle']
+        );
+        console.log('✅ Admin user password updated for integration tests');
       }
     } finally {
       await pool.end();

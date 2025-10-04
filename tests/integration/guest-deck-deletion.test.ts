@@ -18,40 +18,31 @@ describe('Guest Deck Deletion Integration Tests', () => {
     userRepository = dataSourceConfig.getUserRepository();
     deckRepository = dataSourceConfig.getDeckRepository();
 
-    // Use Test-Guest user for testing (not production guest user)
-    let testGuestUser = await userRepository.getUserByUsername('Test-Guest');
-    if (!testGuestUser) {
-      testGuestUser = await userRepository.createUser(
-        'Test-Guest',
-        'test-guest@example.com',
-        'test-guest',
-        'GUEST'
-      );
-    }
+    // Create unique test users for this test suite
+    const testGuestUser = await userRepository.createUser(
+      'test-guest-deletion-guest',
+      'test-guest-deletion-guest@example.com',
+      'testpassword123',
+      'GUEST'
+    );
     guestUserId = testGuestUser.id;
     
-    // Get or create regular user
-    let regularUser = await userRepository.getUserByUsername('testuser');
-    if (!regularUser) {
-      regularUser = await userRepository.createUser(
-        'testuser',
-        'testuser@example.com',
-        'testpassword', // Pass plain text password - createUser will hash it
-        'USER'
-      );
-    }
+    // Create regular user
+    const regularUser = await userRepository.createUser(
+      'test-guest-deletion-user',
+      'test-guest-deletion-user@example.com',
+      'testpassword123',
+      'USER'
+    );
     regularUserId = regularUser.id;
 
-    // Use existing admin user (kyle)
-    let adminUser = await userRepository.getUserByUsername('kyle');
-    if (!adminUser) {
-      adminUser = await userRepository.createUser(
-        'kyle',
-        'kyle@example.com',
-        'test', // Pass plain text password - createUser will hash it
-        'ADMIN'
-      );
-    }
+    // Create admin user
+    const adminUser = await userRepository.createUser(
+      'test-guest-deletion-admin',
+      'test-guest-deletion-admin@example.com',
+      'testpassword123',
+      'ADMIN'
+    );
     adminUserId = adminUser.id;
 
     // Create a test deck for the regular user
@@ -78,9 +69,15 @@ describe('Guest Deck Deletion Integration Tests', () => {
 
     // Clean up test users
     try {
-      await userRepository.deleteUser(guestUserId);
-      await userRepository.deleteUser(regularUserId);
-      await userRepository.deleteUser(adminUserId);
+      if (guestUserId) {
+        await userRepository.deleteUser(guestUserId);
+      }
+      if (regularUserId) {
+        await userRepository.deleteUser(regularUserId);
+      }
+      if (adminUserId) {
+        await userRepository.deleteUser(adminUserId);
+      }
     } catch (error) {
       // Users might already be deleted, ignore error
     }
@@ -94,8 +91,8 @@ describe('Guest Deck Deletion Integration Tests', () => {
       const loginResponse = await request(app)
         .post('/api/auth/login')
         .send({
-          username: 'Test-Guest',
-          password: 'test-guest'
+          username: 'test-guest-deletion-guest',
+          password: 'testpassword123'
         });
 
       expect(loginResponse.status).toBe(200);
@@ -192,8 +189,8 @@ describe('Guest Deck Deletion Integration Tests', () => {
       const loginResponse = await request(app)
         .post('/api/auth/login')
         .send({
-          username: 'testuser',
-          password: 'testpassword'
+          username: 'test-guest-deletion-user',
+          password: 'testpassword123'
         });
 
       expect(loginResponse.status).toBe(200);
@@ -334,8 +331,8 @@ describe('Guest Deck Deletion Integration Tests', () => {
       const loginResponse = await request(app)
         .post('/api/auth/login')
         .send({
-          username: 'kyle',
-          password: 'Overpower2025!'
+          username: 'test-guest-deletion-admin',
+          password: 'testpassword123'
         });
 
       expect(loginResponse.status).toBe(200);
@@ -535,8 +532,8 @@ describe('Guest Deck Deletion Integration Tests', () => {
       const loginResponse = await request(app)
         .post('/api/auth/login')
         .send({
-          username: 'testuser',
-          password: 'testpassword'
+          username: 'test-guest-deletion-user',
+          password: 'testpassword123'
         });
 
       expect(loginResponse.status).toBe(200);

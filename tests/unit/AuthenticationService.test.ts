@@ -51,7 +51,7 @@ describe('AuthenticationService', () => {
     } as any;
 
     // Create service instance
-    authService = new AuthenticationService(mockUserRepository, mockUserPersistence);
+    authService = new AuthenticationService(mockUserRepository);
 
     // Setup mock request/response
     mockRequest = {
