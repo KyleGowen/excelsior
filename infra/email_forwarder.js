@@ -52,7 +52,7 @@ exports.handler = async (event) => {
                             modifiedEmail += `X-Forwarded-For: ${process.env.FROM_EMAIL}\n`;
                             modifiedEmail += `X-Original-From: ${originalFrom}\n`;
                             modifiedEmail += `X-Original-To: ${originalTo}\n`;
-                            modifiedEmail += `Reply-To: ${process.env.FROM_EMAIL}\n`;
+                            modifiedEmail += `Reply-To: ${originalFrom}\n`;
                             modifiedEmail += line + '\n';
                         } else if (line.toLowerCase().startsWith('from:')) {
                             originalFrom = line.substring(5).trim();
@@ -73,9 +73,8 @@ exports.handler = async (event) => {
                             console.log('Modified Return-Path header to:', process.env.FORWARD_TO_EMAIL);
                         } else if (line.toLowerCase().startsWith('reply-to:')) {
                             console.log('Original Reply-To header:', line);
-                            // Change Reply-To header to use the original sender
-                            modifiedEmail += `Reply-To: ${originalFrom}\n`;
-                            console.log('Modified Reply-To header to:', originalFrom);
+                            // Skip the original Reply-To header since we'll add our own
+                            console.log('Skipping original Reply-To header, will add our own');
                         } else {
                             // Keep other headers as-is
                             modifiedEmail += line + '\n';
