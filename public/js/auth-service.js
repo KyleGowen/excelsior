@@ -156,13 +156,32 @@ class FrontendAuthService {
 
   async login(credentials) {
     try {
+      console.log('🔍 DEBUG: Frontend login attempt:', {
+        username: credentials.username,
+        passwordLength: credentials.password?.length,
+        timestamp: new Date().toISOString()
+      });
+      
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)
       });
+      
+      console.log('🔍 DEBUG: Frontend login response:', {
+        status: response.status,
+        statusText: response.statusText,
+        timestamp: new Date().toISOString()
+      });
 
       const data = await response.json();
+      
+      console.log('🔍 DEBUG: Frontend login response data:', {
+        success: data.success,
+        error: data.error,
+        data: data.data,
+        timestamp: new Date().toISOString()
+      });
 
       if (data.success && data.data) {
         this.currentUser = {
