@@ -32,7 +32,7 @@ jest.mock('../src/database/PostgreSQLCardRepository', () => ({
 jest.mock('../src/persistence/userPersistence', () => ({
   UserPersistenceService: jest.fn().mockImplementation(() => ({
     authenticateUser: jest.fn().mockImplementation((username: string, password: string) => {
-      if (username === 'kyle' && password === 'Overpower2025!') {
+      if (username === 'kyle' && password === 'test') {
         return {
           id: '00000000-0000-0000-0000-000000000002',
           name: 'kyle',

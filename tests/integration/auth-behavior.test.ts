@@ -47,7 +47,7 @@ describe('Authentication Behavior Tests', () => {
     });
 
     it('should authenticate valid user with persistence service', async () => {
-      const user = userPersistence.authenticateUser('kyle', 'Overpower2025!');
+      const user = userPersistence.authenticateUser('kyle', 'test');
       
       expect(user).toBeDefined();
       expect(user?.name).toBe('kyle');

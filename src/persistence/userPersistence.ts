@@ -101,7 +101,7 @@ export class UserPersistenceService {
     const initialUser: LegacyUser = {
       id: 'kyle-001',
       username: 'kyle',
-      password: 'Overpower2025!',
+      password: 'test',
       createdAt: new Date()
     };
     this.users.set(initialUser.id, initialUser);
@@ -109,7 +109,7 @@ export class UserPersistenceService {
     const guestUser: LegacyUser = {
       id: '00000000-0000-0000-0000-000000000001',
       username: 'guest',
-      password: 'GuestAccess2025!',
+      password: 'guest',
       createdAt: new Date()
     };
     this.users.set(guestUser.id, guestUser);
@@ -123,11 +123,11 @@ export class UserPersistenceService {
 
     // Ensure kyle user exists with correct password
     const kyleUser = this.users.get('kyle-001');
-    if (!kyleUser || kyleUser.password !== 'Overpower2025!') {
+    if (!kyleUser || kyleUser.password !== 'test') {
       const newKyleUser: LegacyUser = {
         id: 'kyle-001',
         username: 'kyle',
-        password: 'Overpower2025!',
+        password: 'test',
         createdAt: kyleUser?.createdAt || new Date()
       };
       if (kyleUser?.lastLoginAt) {
@@ -140,11 +140,11 @@ export class UserPersistenceService {
 
     // Ensure guest user exists with correct password
     const guestUser = this.users.get('00000000-0000-0000-0000-000000000001');
-    if (!guestUser || guestUser.password !== 'GuestAccess2025!') {
+    if (!guestUser || guestUser.password !== 'guest') {
       const newGuestUser: LegacyUser = {
         id: '00000000-0000-0000-0000-000000000001',
         username: 'guest',
-        password: 'GuestAccess2025!',
+        password: 'guest',
         createdAt: guestUser?.createdAt || new Date()
       };
       if (guestUser?.lastLoginAt) {
