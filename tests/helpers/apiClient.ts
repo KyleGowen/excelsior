@@ -18,8 +18,8 @@ export class ApiClient {
 
     // Extract cookies from response
     const setCookieHeaders = response.headers['set-cookie'];
-    if (setCookieHeaders) {
-      this.cookies = setCookieHeaders.map(cookie => cookie.split(';')[0]);
+    if (setCookieHeaders && Array.isArray(setCookieHeaders)) {
+      this.cookies = setCookieHeaders.map((cookie: string) => cookie.split(';')[0]);
     }
 
     return response.body;
@@ -91,7 +91,8 @@ export class ApiClient {
 
   // Generic request helper
   async request(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, data?: any) {
-    let req = request(this.app)[method.toLowerCase()](path).set('Cookie', this.cookies);
+    const methodLower = method.toLowerCase() as 'get' | 'post' | 'put' | 'delete';
+    let req = request(this.app)[methodLower](path).set('Cookie', this.cookies);
     
     if (data) {
       req = req.send(data);
