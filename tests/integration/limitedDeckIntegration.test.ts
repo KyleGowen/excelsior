@@ -7,17 +7,13 @@ describe('Limited Deck Integration Tests', () => {
   let authCookie: string;
 
   beforeAll(async () => {
-    // Create a test user using the same method as other working tests
-    const { DataSourceConfig } = await import('../../src/config/DataSourceConfig');
-    const dataSource = DataSourceConfig.getInstance();
-    const userRepository = dataSource.getUserRepository();
-    
-    testUser = await userRepository.createUser(
-      'limited-test-user',
-      'limitedtest@example.com',
-      'testpass123',
-      'USER'
-    );
+    // Create a test user using the integration test utils
+    testUser = await integrationTestUtils.createTestUser({
+      name: 'limited-test-user',
+      email: 'limitedtest@example.com',
+      password: 'testpass123',
+      role: 'USER'
+    });
     console.log('🔍 DEBUG: Created test user:', testUser);
   });
 
@@ -32,7 +28,7 @@ describe('Limited Deck Integration Tests', () => {
     const loginResponse = await request(app)
       .post('/api/auth/login')
       .send({
-        username: 'limited-test-user',
+        username: testUser.username,
         password: 'testpass123'
       });
 
@@ -162,7 +158,7 @@ describe('Limited Deck Integration Tests', () => {
 
       expect(getResponse.status).toBe(200);
       expect(getResponse.body.success).toBe(true);
-      expect(getResponse.body.data.is_limited).toBe(true);
+      expect(getResponse.body.data.metadata.is_limited).toBe(true);
       expect(getResponse.body.data.name).toBe('Retrieval Test Deck');
     });
 
@@ -321,7 +317,7 @@ describe('Limited Deck Integration Tests', () => {
         .get(`/api/decks/${deckId}`)
         .set('Cookie', authCookie);
 
-      expect(getResponse.body.data.is_limited).toBe(true);
+      expect(getResponse.body.data.metadata.is_limited).toBe(true);
 
       // Update name but keep limited flag
       await request(app)
@@ -338,7 +334,7 @@ describe('Limited Deck Integration Tests', () => {
         .get(`/api/decks/${deckId}`)
         .set('Cookie', authCookie);
 
-      expect(getResponse.body.data.is_limited).toBe(true);
+      expect(getResponse.body.data.metadata.is_limited).toBe(true);
       expect(getResponse.body.data.name).toBe('Updated Persistence Test Deck');
 
       // Update to not limited

@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../../src/index';
+import { app } from '../setup-integration';
 import { integrationTestUtils } from '../setup-integration';
 
 describe('Limited Deck Save and Load Integration Tests', () => {
@@ -52,7 +52,7 @@ describe('Limited Deck Save and Load Integration Tests', () => {
           characters: ['a9b944f2-194a-4814-b877-25db1ba784ad', '050f4873-2fa8-422c-ba32-eab3500cbdc0']
         });
 
-      expect(createResponse.status).toBe(200);
+      expect(createResponse.status).toBe(201);
       expect(createResponse.body.success).toBe(true);
       const deckId = createResponse.body.data.id;
       console.log('🔍 Created deck with ID:', deckId);
@@ -127,7 +127,7 @@ describe('Limited Deck Save and Load Integration Tests', () => {
           characters: ['60f61594-3431-4ea8-b534-50ab6642d658', '9436652b-7b7f-4fee-b2c1-df6aa69afcd4']
         });
 
-      expect(createResponse.status).toBe(200);
+      expect(createResponse.status).toBe(201);
       expect(createResponse.body.success).toBe(true);
       const deckId = createResponse.body.data.id;
       console.log('🔍 Created regular deck with ID:', deckId);
@@ -192,7 +192,7 @@ describe('Limited Deck Save and Load Integration Tests', () => {
           characters: ['a9b944f2-194a-4814-b877-25db1ba784ad']
         });
 
-      expect(createResponse.status).toBe(200);
+      expect(createResponse.status).toBe(201);
       expect(createResponse.body.success).toBe(true);
       const deckId = createResponse.body.data.id;
       console.log('🔍 Created toggle test deck with ID:', deckId);

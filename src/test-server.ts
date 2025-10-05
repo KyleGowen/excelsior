@@ -218,7 +218,25 @@ app.get('/api/auth/me', authService.handleSessionValidation.bind(authService));
 app.get('/api/decks', authenticateUser, async (req: any, res) => {
   try {
     const decks = await deckRepository.getDecksByUserId(req.user.id);
-    res.json({ success: true, data: decks });
+    
+    // Transform deck data to match frontend expectations
+    // Note: getDecksByUserId now returns decks with only character/location cards for performance
+    const transformedDecks = decks.map(deck => ({
+      metadata: {
+        id: deck.id,
+        name: deck.name,
+        description: deck.description,
+        created: deck.created_at,
+        lastModified: deck.updated_at,
+        cardCount: deck.cards?.length || 0,
+        userId: deck.user_id,
+        uiPreferences: deck.ui_preferences,
+        is_limited: deck.is_limited
+      },
+      cards: deck.cards || []
+    }));
+    
+    res.json({ success: true, data: transformedDecks });
   } catch (error) {
     console.error('Error fetching decks:', error);
     res.status(500).json({ success: false, error: 'Failed to fetch decks' });
@@ -288,7 +306,8 @@ app.get('/api/decks/:id', async (req, res) => {
         cardCount: deckData.cards?.length || 0,
         userId: deckData.user_id,
         uiPreferences: deckData.ui_preferences,
-        isOwner: deckData.isOwner
+        isOwner: deckData.isOwner,
+        is_limited: deckData.is_limited
       },
       cards: deckData.cards || []
     };
@@ -297,6 +316,47 @@ app.get('/api/decks/:id', async (req, res) => {
   } catch (error) {
     console.error('Error fetching deck:', error);
     res.status(500).json({ success: false, error: 'Failed to fetch deck' });
+  }
+});
+
+// Background loading endpoint for full deck data (including all card types)
+app.get('/api/decks/:id/full', authenticateUser, async (req: any, res) => {
+  try {
+    const deck = await deckRepository.getDeckSummaryWithAllCards(req.params.id);
+    if (!deck) {
+      return res.status(404).json({ success: false, error: 'Deck not found' });
+    }
+    
+    // Check if user owns this deck
+    const isOwner = deck.user_id === req.user.id;
+    
+    // Add ownership flag to response for frontend to use
+    const deckData = {
+      ...deck,
+      isOwner: isOwner
+    };
+    
+    // Transform deck data to match frontend expectations
+    const transformedDeck = {
+      metadata: {
+        id: deckData.id,
+        name: deckData.name,
+        description: deckData.description,
+        created: deckData.created_at,
+        lastModified: deckData.updated_at,
+        cardCount: deckData.cards?.length || 0,
+        userId: deckData.user_id,
+        uiPreferences: deckData.ui_preferences,
+        isOwner: deckData.isOwner,
+        is_limited: deckData.is_limited
+      },
+      cards: deckData.cards || []
+    };
+    
+    res.json({ success: true, data: transformedDeck });
+  } catch (error) {
+    console.error('Error fetching full deck data:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch full deck data' });
   }
 });
 
