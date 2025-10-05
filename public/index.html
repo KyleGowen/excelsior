@@ -4760,10 +4760,35 @@
         }
 
         .empty-deck-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
             color: #bdc3c7;
-            padding: 40px 20px;
+            padding: 0 20px;
             font-style: italic;
+            pointer-events: none;
+        }
+
+        /* Ensure the deck cards container/editor provide a positioning context */
+        #deckCardsContainer,
+        #deckCardsEditor {
+            position: relative;
+            min-height: 100%;
+        }
+
+        /* Center the simpler single-line empty message as well */
+        .no-cards-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #bdc3c7;
+            padding: 0 20px;
+            font-style: italic;
+            pointer-events: none;
         }
 
         .drag-instructions {
@@ -13135,8 +13160,8 @@
                     return;
                 }
                 
-                // Check for UI preferences first, then localStorage, then default to 69%
-                let percentage = 69; // Default to 69%
+                // Check for UI preferences first, then localStorage, then default to 65%
+                let percentage = 65; // Default to 65%
                 
                 // Check if we have UI preferences with divider position
                 const restorePrefs = currentDeckData
@@ -13148,7 +13173,7 @@
                 } else {
                     // Fall back to localStorage
                     const savedPosition = localStorage.getItem(`slider_position_${currentDeckId}`);
-                    percentage = savedPosition ? parseFloat(savedPosition) : 69;
+                    percentage = savedPosition ? parseFloat(savedPosition) : 65;
                     console.log('🔍 DEBUG: Using divider position from localStorage:', percentage);
                 }
                 const layout = document.querySelector('.deck-editor-layout');

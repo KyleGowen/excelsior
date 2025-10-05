@@ -3032,10 +3032,33 @@
         }
 
         .empty-deck-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
             color: #bdc3c7;
-            padding: 40px 20px;
+            padding: 0 20px;
             font-style: italic;
+            pointer-events: none;
+        }
+
+        #deckCardsContainer,
+        #deckCardsEditor {
+            position: relative;
+            min-height: 100%;
+        }
+
+        .no-cards-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #bdc3c7;
+            padding: 0 20px;
+            font-style: italic;
+            pointer-events: none;
         }
 
         .drag-instructions {
@@ -8541,7 +8564,7 @@
         function restoreSliderPosition() {
             if (currentDeckId) {
                 const savedPosition = localStorage.getItem(`slider_position_${currentDeckId}`);
-                const percentage = savedPosition ? parseFloat(savedPosition) : 69; // Default to 69%
+                const percentage = savedPosition ? parseFloat(savedPosition) : 65; // Default to 65%
                 const layout = document.querySelector('.deck-editor-layout');
                 const deckPane = document.querySelector('.deck-pane');
                 const cardSelectorPane = document.querySelector('.card-selector-pane');
