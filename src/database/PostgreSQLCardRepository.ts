@@ -17,6 +17,12 @@ import { CardRepository } from '../repository/CardRepository';
 
 export class PostgreSQLCardRepository implements CardRepository {
   private pool: Pool;
+  
+  // Caching for frequently accessed data
+  private charactersCache: Character[] | null = null;
+  private locationsCache: Location[] | null = null;
+  private cacheTime: number = 0;
+  private readonly CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
   constructor(pool: Pool) {
     this.pool = pool;
@@ -60,11 +66,17 @@ export class PostgreSQLCardRepository implements CardRepository {
   }
 
   async getAllCharacters(): Promise<Character[]> {
+    // Return cached result if still valid
+    const now = Date.now();
+    if (this.charactersCache && (now - this.cacheTime) < this.CACHE_TTL) {
+      return this.charactersCache;
+    }
+
     const client = await this.pool.connect();
     try {
       const result = await client.query('SELECT * FROM characters ORDER BY name');
       
-      return result.rows.map(char => ({
+      const characters = result.rows.map(char => ({
         id: char.id,
         name: char.name,
         energy: char.energy,
@@ -76,6 +88,12 @@ export class PostgreSQLCardRepository implements CardRepository {
         image: char.image_path,
         alternateImages: char.alternate_images || []
       }));
+      
+      // Cache the result
+      this.charactersCache = characters;
+      this.cacheTime = now;
+      
+      return characters;
     } finally {
       client.release();
     }
@@ -237,17 +255,29 @@ export class PostgreSQLCardRepository implements CardRepository {
   }
 
   async getAllLocations(): Promise<Location[]> {
+    // Return cached result if still valid
+    const now = Date.now();
+    if (this.locationsCache && (now - this.cacheTime) < this.CACHE_TTL) {
+      return this.locationsCache;
+    }
+
     const client = await this.pool.connect();
     try {
       const result = await client.query('SELECT * FROM locations ORDER BY name');
       
-      return result.rows.map(loc => ({
+      const locations = result.rows.map(loc => ({
         id: loc.id,
         name: loc.name,
         threat_level: loc.threat_level,
         special_ability: loc.special_ability,
         image: loc.image_path
       }));
+      
+      // Cache the result
+      this.locationsCache = locations;
+      this.cacheTime = now;
+      
+      return locations;
     } finally {
       client.release();
     }
@@ -549,7 +579,11 @@ export class PostgreSQLCardRepository implements CardRepository {
     }
   }
 
-  // Card stats method
+  // Card stats method - optimized with caching
+  private cardStatsCache: any = null;
+  private cardStatsCacheTime: number = 0;
+  private readonly CARD_STATS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
   async getCardStats(): Promise<{
     characters: number;
     locations: number;
@@ -564,39 +598,65 @@ export class PostgreSQLCardRepository implements CardRepository {
     basicUniverse: number;
     powerCards: number;
   }> {
+    // Return cached result if still valid
+    const now = Date.now();
+    if (this.cardStatsCache && (now - this.cardStatsCacheTime) < this.CARD_STATS_CACHE_TTL) {
+      return this.cardStatsCache;
+    }
+
     const client = await this.pool.connect();
     try {
+      // Use a more efficient query with UNION ALL instead of subqueries
       const result = await client.query(`
         SELECT 
-          (SELECT COUNT(*) FROM characters) as characters,
-          (SELECT COUNT(*) FROM locations) as locations,
-          (SELECT COUNT(*) FROM special_cards) as special_cards,
-          (SELECT COUNT(*) FROM missions) as missions,
-          (SELECT COUNT(*) FROM events) as events,
-          (SELECT COUNT(*) FROM aspects) as aspects,
-          (SELECT COUNT(*) FROM advanced_universe_cards) as advanced_universe,
-          (SELECT COUNT(*) FROM teamwork_cards) as teamwork,
-          (SELECT COUNT(*) FROM ally_universe_cards) as ally_universe,
-          (SELECT COUNT(*) FROM training_cards) as training,
-          (SELECT COUNT(*) FROM basic_universe_cards) as basic_universe,
-          (SELECT COUNT(*) FROM power_cards) as power_cards
+          'characters' as table_name, COUNT(*) as count FROM characters
+        UNION ALL
+        SELECT 'locations', COUNT(*) FROM locations
+        UNION ALL
+        SELECT 'special_cards', COUNT(*) FROM special_cards
+        UNION ALL
+        SELECT 'missions', COUNT(*) FROM missions
+        UNION ALL
+        SELECT 'events', COUNT(*) FROM events
+        UNION ALL
+        SELECT 'aspects', COUNT(*) FROM aspects
+        UNION ALL
+        SELECT 'advanced_universe_cards', COUNT(*) FROM advanced_universe_cards
+        UNION ALL
+        SELECT 'teamwork_cards', COUNT(*) FROM teamwork_cards
+        UNION ALL
+        SELECT 'ally_universe_cards', COUNT(*) FROM ally_universe_cards
+        UNION ALL
+        SELECT 'training_cards', COUNT(*) FROM training_cards
+        UNION ALL
+        SELECT 'basic_universe_cards', COUNT(*) FROM basic_universe_cards
+        UNION ALL
+        SELECT 'power_cards', COUNT(*) FROM power_cards
       `);
       
-      const stats = result.rows[0];
-      return {
-        characters: parseInt(stats.characters),
-        locations: parseInt(stats.locations),
-        specialCards: parseInt(stats.special_cards),
-        missions: parseInt(stats.missions),
-        events: parseInt(stats.events),
-        aspects: parseInt(stats.aspects),
-        advancedUniverse: parseInt(stats.advanced_universe),
-        teamwork: parseInt(stats.teamwork),
-        allyUniverse: parseInt(stats.ally_universe),
-        training: parseInt(stats.training),
-        basicUniverse: parseInt(stats.basic_universe),
-        powerCards: parseInt(stats.power_cards)
-      };
+      // Convert array result to object
+      const stats: any = {};
+      result.rows.forEach(row => {
+        const key = row.table_name.replace(/_/g, '').replace('cards', 'Cards');
+        if (key === 'characters') stats.characters = parseInt(row.count);
+        else if (key === 'locations') stats.locations = parseInt(row.count);
+        else if (key === 'specialcards') stats.specialCards = parseInt(row.count);
+        else if (key === 'missions') stats.missions = parseInt(row.count);
+        else if (key === 'events') stats.events = parseInt(row.count);
+        else if (key === 'aspects') stats.aspects = parseInt(row.count);
+        else if (key === 'advanceduniversecards') stats.advancedUniverse = parseInt(row.count);
+        else if (key === 'teamworkcards') stats.teamwork = parseInt(row.count);
+        else if (key === 'allyuniversecards') stats.allyUniverse = parseInt(row.count);
+        else if (key === 'trainingcards') stats.training = parseInt(row.count);
+        else if (key === 'basicuniversecards') stats.basicUniverse = parseInt(row.count);
+        else if (key === 'powercards') stats.powerCards = parseInt(row.count);
+      });
+      
+      // Cache the result
+      this.cardStatsCache = stats;
+      this.cardStatsCacheTime = now;
+      
+      return stats;
     } finally {
       client.release();
     }

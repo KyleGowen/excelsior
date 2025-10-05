@@ -4,6 +4,10 @@ import { DeckRepository } from '../repository/DeckRepository';
 
 export class PostgreSQLDeckRepository implements DeckRepository {
   private pool: Pool;
+  
+  // Caching for frequently accessed deck data
+  private deckCache: Map<string, { deck: Deck; timestamp: number }> = new Map();
+  private readonly DECK_CACHE_TTL = 2 * 60 * 1000; // 2 minutes
 
   constructor(pool: Pool) {
     this.pool = pool;
@@ -41,7 +45,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       
       await client.query('COMMIT');
       
-      return {
+      const newDeck = {
         id: deck.id,
         user_id: deck.user_id,
         name: deck.name,
@@ -50,6 +54,11 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         created_at: deck.created_at,
         updated_at: deck.updated_at
       };
+      
+      // Cache the new deck
+      this.deckCache.set(deck.id, { deck: newDeck, timestamp: Date.now() });
+      
+      return newDeck;
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;
@@ -59,6 +68,13 @@ export class PostgreSQLDeckRepository implements DeckRepository {
   }
 
   async getDeckById(id: string): Promise<Deck | undefined> {
+    // Check cache first
+    const cached = this.deckCache.get(id);
+    const now = Date.now();
+    if (cached && (now - cached.timestamp) < this.DECK_CACHE_TTL) {
+      return cached.deck;
+    }
+
     const client = await this.pool.connect();
     try {
       const deckResult = await client.query(
@@ -86,7 +102,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         selectedAlternateImage: card.selected_alternate_image
       }));
       
-      return {
+      const fullDeck = {
         id: deck.id,
         user_id: deck.user_id,
         name: deck.name,
@@ -96,6 +112,11 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         updated_at: deck.updated_at,
         cards: cards
       };
+      
+      // Cache the result
+      this.deckCache.set(id, { deck: fullDeck, timestamp: now });
+      
+      return fullDeck;
     } finally {
       client.release();
     }
@@ -179,7 +200,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       }
 
       const deck = result.rows[0];
-      return {
+      const updatedDeck = {
         id: deck.id,
         user_id: deck.user_id,
         name: deck.name,
@@ -188,6 +209,11 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         created_at: deck.created_at,
         updated_at: deck.updated_at
       };
+      
+      // Invalidate cache for this deck
+      this.deckCache.delete(id);
+      
+      return updatedDeck;
     } finally {
       client.release();
     }
@@ -210,6 +236,10 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         'UPDATE decks SET ui_preferences = $1, updated_at = NOW() WHERE id = $2',
         [JSON.stringify(preferences), deckId]
       );
+      
+      // Invalidate cache for this deck
+      this.deckCache.delete(deckId);
+      
       return (result.rowCount || 0) > 0;
     } finally {
       client.release();
@@ -269,6 +299,10 @@ export class PostgreSQLDeckRepository implements DeckRepository {
           [deckId, cardType, cardId, quantity, selectedAlternateImage || null]
         );
       }
+      
+      // Invalidate cache for this deck
+      this.deckCache.delete(deckId);
+      
       return true;
     } catch (error) {
       console.error('Error adding card to deck:', error);
@@ -307,6 +341,10 @@ export class PostgreSQLDeckRepository implements DeckRepository {
           [newQuantity, deckId, cardType, cardId]
         );
       }
+      
+      // Invalidate cache for this deck
+      this.deckCache.delete(deckId);
+      
       return true;
     } catch (error) {
       console.error('Error removing card from deck:', error);
@@ -344,7 +382,14 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         values
       );
 
-      return (result.rowCount || 0) > 0;
+      const success = (result.rowCount || 0) > 0;
+      
+      if (success) {
+        // Invalidate cache for this deck
+        this.deckCache.delete(deckId);
+      }
+      
+      return success;
     } catch (error) {
       console.error('Error updating card in deck:', error);
       return false;
@@ -357,6 +402,10 @@ export class PostgreSQLDeckRepository implements DeckRepository {
     const client = await this.pool.connect();
     try {
       await client.query('DELETE FROM deck_cards WHERE deck_id = $1', [deckId]);
+      
+      // Invalidate cache for this deck
+      this.deckCache.delete(deckId);
+      
       return true;
     } catch (error) {
       console.error('Error removing all cards from deck:', error);
