@@ -10230,9 +10230,13 @@
             
             deckCards.forEach(card => {
                 const availableCard = availableCardsMap.get(card.cardId);
-                if (!availableCard) return;
+                if (!availableCard) {
+                    console.log('🔍 DEBUG: Card not found in availableCardsMap:', card.cardId);
+                    return;
+                }
                 
                 const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+                console.log('🔍 DEBUG: Card name resolved:', cardName, 'for cardId:', card.cardId);
                 
                 // Check special cards for character compatibility
                 if (card.type === 'special') {
@@ -10263,6 +10267,12 @@
                 // Check power cards for character stat requirements
                 if (card.type === 'power') {
                     console.log('🔍 DEBUG: Checking power card:', card.cardId, availableCard);
+                    console.log('🔍 DEBUG: Power card name fields:', {
+                        name: availableCard.name,
+                        card_name: availableCard.card_name,
+                        power_type: availableCard.power_type,
+                        value: availableCard.value
+                    });
                     if (availableCard.power_type && availableCard.value) {
                         const requiredValue = availableCard.value;
                         const powerType = availableCard.power_type;
