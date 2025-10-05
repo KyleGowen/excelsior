@@ -223,7 +223,14 @@ export class PostgreSQLDeckRepository implements DeckRepository {
     const client = await this.pool.connect();
     try {
       const result = await client.query('DELETE FROM decks WHERE id = $1', [id]);
-      return (result.rowCount || 0) > 0;
+      const success = (result.rowCount || 0) > 0;
+      
+      if (success) {
+        // Invalidate cache for this deck
+        this.deckCache.delete(id);
+      }
+      
+      return success;
     } finally {
       client.release();
     }
