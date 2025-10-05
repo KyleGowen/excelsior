@@ -119,6 +119,7 @@ docker run -d \
   -e DATABASE_URL="$DB_URL" \
   -e NODE_TLS_REJECT_UNAUTHORIZED=0 \
   -e PORT=3000 \
+  -e SKIP_MIGRATIONS=true \
   ${ecr_repository_url}:latest
 
 # Wait a moment for the container to start
