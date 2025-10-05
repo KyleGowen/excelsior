@@ -5,6 +5,7 @@ import { DeckPersistenceService } from './services/deckPersistence';
 import { DatabaseInitializationService } from './services/databaseInitialization';
 import { DeckService } from './services/deckService';
 import { AuthenticationService } from './services/AuthenticationService';
+import { DeckValidationService } from './services/deckValidationService';
 import { Character } from './types';
 import path from 'path';
 
@@ -18,6 +19,7 @@ const dataSource = DataSourceConfig.getInstance();
 const userRepository = dataSource.getUserRepository();
 const deckRepository = dataSource.getDeckRepository();
 const cardRepository = dataSource.getCardRepository();
+const deckValidationService = new DeckValidationService(cardRepository);
 
 // Initialize business logic service
 const deckBusinessService = new DeckService(deckRepository);
@@ -313,6 +315,35 @@ app.post('/api/decks', authenticateUser, async (req: any, res) => {
   }
 });
 
+// Deck validation endpoint
+app.post('/api/decks/validate', authenticateUser, async (req: any, res) => {
+  try {
+    const { cards } = req.body;
+    
+    if (!cards || !Array.isArray(cards)) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Cards array is required' 
+      });
+    }
+
+    const validationErrors = await deckValidationService.validateDeck(cards);
+    
+    if (validationErrors.length > 0) {
+      return res.status(400).json({
+        success: false,
+        error: validationErrors.map(err => err.message).join('; '),
+        validationErrors: validationErrors
+      });
+    }
+
+    res.json({ success: true, message: 'Deck is valid' });
+  } catch (error) {
+    console.error('Error validating deck:', error);
+    res.status(500).json({ success: false, error: 'Failed to validate deck' });
+  }
+});
+
 app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
   try {
     const deck = await deckRepository.getDeckById(req.params.id);
@@ -399,7 +430,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
-    const { name, description } = req.body;
+    const { name, description, is_limited } = req.body;
     
     // Check if user owns this deck
     const deck = await deckRepository.getDeckById(req.params.id);
@@ -407,7 +438,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
-    const updatedDeck = await deckRepository.updateDeck(req.params.id, { name, description });
+    const updatedDeck = await deckRepository.updateDeck(req.params.id, { name, description, is_limited });
     if (!updatedDeck) {
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }

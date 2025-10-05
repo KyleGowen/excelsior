@@ -1357,6 +1357,18 @@
             gap: 4px;
         }
 
+        .deck-title-with-validation {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .deck-title-with-validation h3 {
+            margin: 0;
+        }
+        
+
         /* Deck Summary Section */
         .deck-summary-section {
             background: rgba(255, 255, 255, 0.05);
@@ -2851,6 +2863,13 @@
             border: 1px solid rgba(81, 207, 102, 0.3);
         }
 
+        .deck-validation-badge.limited {
+            background: rgba(210, 180, 140, 0.2);
+            color: #d2b48c;
+            border: 1px solid rgba(210, 180, 140, 0.3);
+            cursor: pointer;
+        }
+
         .card-item {
             padding: 8px 12px;
             margin: 4px 0;
@@ -4017,7 +4036,10 @@
         <div class="modal-content large-modal" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <div class="deck-editor-title-section">
-                    <h3 id="deckEditorTitle">Edit Deck</h3>
+                    <div class="deck-title-with-validation">
+                        <h3 id="deckEditorTitle">Edit Deck</h3>
+                        <span id="deckTitleValidationBadge" class="deck-validation-badge"></span>
+                    </div>
                     <p id="deckEditorDescription" class="deck-description"></p>
                 </div>
                 <div class="deck-editor-actions">
@@ -5834,7 +5856,9 @@
             deckList.innerHTML = decksWithCharacters.map(deck => {
                 // Quick validation check for display
                 let validationStatus = '';
-                if (deck.cards && deck.cards.length > 0) {
+                if (deck.is_limited) {
+                    validationStatus = '<span class="deck-validation-badge limited">Limited</span>';
+                } else if (deck.cards && deck.cards.length > 0) {
                     const validation = validateDeck(deck.cards);
                     if (validation.errors.length > 0) {
                         validationStatus = '<span class="deck-validation-badge error">Not Legal</span>';
@@ -6800,7 +6824,7 @@
                         });
                         
                         if (!canUse) {
-                            errors.push(`"${cardName}" requires a character with ${requiredValue}+ ${powerType}`);
+                            errors.push(`"${cardName}" (Power Card) requires a character with ${requiredValue}+ ${powerType}`);
                         }
                     }
                 }
@@ -6841,7 +6865,7 @@
                             });
                             
                             if (!canUse) {
-                                errors.push(`"${cardName}" requires a character with ${requiredValue}+ ${powerType}`);
+                                errors.push(`"${cardName}" (Universe Card) requires a character with ${requiredValue}+ ${powerType}`);
                             }
                         }
                     }
@@ -6946,31 +6970,12 @@
             document.getElementById('deckTotalThreat').textContent = totalThreatDisplay;
             
             // Update validation in summary
-            const validation = validateDeck(deckCards);
+            // Validation errors are now shown in tooltips on the deck title badge
+            // Clear any existing validation display in the summary
             const summaryValidationContainer = document.getElementById('deckSummaryValidation');
-            
-            if (!summaryValidationContainer) return;
-            
-            let html = '';
-            
-            if (validation.errors.length > 0) {
-                html += '<div class="validation-errors-compact">';
-                html += '<span class="validation-icon">⚠️</span>';
-                html += '<span class="validation-text">Deck has validation errors: </span>';
-                html += validation.errors.slice(0, 2).map(error => error.replace(/^Deck must have /, '')).join(', ');
-                if (validation.errors.length > 2) {
-                    html += ` (+${validation.errors.length - 2} more)`;
-                }
-                html += '</div>';
-            } else if (validation.warnings.length > 0) {
-                html += '<div class="validation-warnings-compact">';
-                html += '<span class="validation-icon">ℹ️</span>';
-                html += '<span class="validation-text">Deck has warnings</span>';
-                html += '</div>';
+            if (summaryValidationContainer) {
+                summaryValidationContainer.innerHTML = '';
             }
-            // Success message removed - no need to display when deck is valid
-            
-            summaryValidationContainer.innerHTML = html;
         }
 
         // Function to show deck validation results
@@ -6978,12 +6983,70 @@
             // Update the deck summary (this now handles all validation display)
             await updateDeckSummary(deckCards);
             
+            // Update the deck title validation badge
+            updateDeckTitleValidation(deckCards);
+            
             // Always allow saving, but show validation status
             const saveButton = document.querySelector('.deck-editor-actions .btn-primary');
             if (saveButton) {
                 saveButton.disabled = false;
                 saveButton.textContent = 'Save Changes';
             }
+        }
+
+        // Global variable to track limited state
+        let isDeckLimited = false;
+
+        // Function to update deck title validation badge
+        function updateDeckTitleValidation(deckCards) {
+            const validationBadge = document.getElementById('deckTitleValidationBadge');
+            if (!validationBadge) return;
+
+            if (!deckCards || deckCards.length === 0) {
+                validationBadge.textContent = '';
+                validationBadge.className = 'deck-validation-badge';
+                validationBadge.removeAttribute('title');
+                validationBadge.onclick = null;
+                return;
+            }
+
+            // If deck is marked as limited, show Limited state
+            if (isDeckLimited) {
+                validationBadge.textContent = 'Limited';
+                validationBadge.className = 'deck-validation-badge limited';
+                validationBadge.removeAttribute('title');
+                validationBadge.onclick = toggleLimitedState;
+                return;
+            }
+
+            const validation = validateDeck(deckCards);
+            
+            if (validation.errors.length > 0) {
+                validationBadge.textContent = 'Not Legal';
+                validationBadge.className = 'deck-validation-badge error';
+                // Add tooltip with all validation errors
+                const tooltipText = validation.errors.join('\n');
+                validationBadge.setAttribute('title', tooltipText);
+                validationBadge.onclick = toggleLimitedState;
+            } else if (validation.warnings.length > 0) {
+                validationBadge.textContent = 'Has Warnings';
+                validationBadge.className = 'deck-validation-badge warning';
+                // Add tooltip with all warnings
+                const tooltipText = validation.warnings.join('\n');
+                validationBadge.setAttribute('title', tooltipText);
+                validationBadge.onclick = toggleLimitedState;
+            } else {
+                validationBadge.textContent = 'Legal';
+                validationBadge.className = 'deck-validation-badge success';
+                validationBadge.removeAttribute('title');
+                validationBadge.onclick = toggleLimitedState;
+            }
+        }
+
+        // Function to toggle limited state
+        function toggleLimitedState() {
+            isDeckLimited = !isDeckLimited;
+            updateDeckTitleValidation(deckEditorCards);
         }
 
         // Add event listeners for card search
@@ -8497,6 +8560,9 @@
             
             // Update card count
             updateDeckCardCount();
+            
+            // Update deck title validation
+            updateDeckTitleValidation(currentDeckData.cards || []);
         }
 
         async function loadDeckForEditing(deckId) {
@@ -8511,8 +8577,14 @@
                     deckEditorCards = [...data.data.cards]; // Create working copy
                     console.log('Working copy created:', deckEditorCards);
                     
+                    // Set limited state from loaded deck
+                    isDeckLimited = currentDeckData.is_limited || false;
+                    
                     // Update modal title and description
                     document.getElementById('deckEditorTitle').textContent = currentDeckData.metadata.name;
+                    
+                    // Update deck title validation
+                    updateDeckTitleValidation(currentDeckData.cards || []);
                     const descriptionElement = document.getElementById('deckEditorDescription');
                     if (currentDeckData.metadata.description) {
                         descriptionElement.textContent = currentDeckData.metadata.description;
@@ -10803,6 +10875,20 @@
                         body: JSON.stringify(cardData)
                     });
                 }
+                
+                // Save deck metadata (name, description, and is_limited)
+                await fetch(`/api/decks/${currentDeckId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        name: currentDeckData.metadata.name,
+                        description: currentDeckData.metadata.description || '',
+                        is_limited: isDeckLimited
+                    })
+                });
                 
                 // Save expansion state
                 saveDeckExpansionState();

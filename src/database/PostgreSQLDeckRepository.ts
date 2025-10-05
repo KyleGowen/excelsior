@@ -109,6 +109,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         name: deck.name,
         description: deck.description,
         ui_preferences: deck.ui_preferences,
+        is_limited: deck.is_limited,
         created_at: deck.created_at,
         updated_at: deck.updated_at,
         cards: cards
@@ -251,6 +252,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         name: deck.name,
         description: deck.description,
         ui_preferences: deck.ui_preferences,
+        is_limited: deck.is_limited,
         created_at: deck.created_at,
         updated_at: deck.updated_at
       }));
@@ -278,6 +280,10 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         setClause.push(`ui_preferences = $${paramCount++}`);
         values.push(JSON.stringify(updates.ui_preferences));
       }
+      if (updates.is_limited !== undefined) {
+        setClause.push(`is_limited = $${paramCount++}`);
+        values.push(updates.is_limited);
+      }
 
       if (setClause.length === 0) {
         return this.getDeckById(id);
@@ -302,6 +308,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         name: deck.name,
         description: deck.description,
         ui_preferences: deck.ui_preferences,
+        is_limited: deck.is_limited,
         created_at: deck.created_at,
         updated_at: deck.updated_at
       };

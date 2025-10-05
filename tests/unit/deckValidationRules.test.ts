@@ -309,7 +309,7 @@ describe('Deck Validation Rules', () => {
           });
           
           if (!canUse) {
-            errors.push(`"${cardName}" requires a character with ${requiredValue}+ ${powerType}`);
+            errors.push(`"${cardName}" (Power Card) requires a character with ${requiredValue}+ ${powerType}`);
           }
         }
       }
@@ -351,7 +351,7 @@ describe('Deck Validation Rules', () => {
             });
             
             if (!canUse) {
-              errors.push(`"${cardName}" requires a character with ${requiredValue}+ ${powerType}`);
+              errors.push(`"${cardName}" (Universe Card) requires a character with ${requiredValue}+ ${powerType}`);
             }
           }
         }
@@ -929,7 +929,7 @@ describe('Deck Validation Rules', () => {
         console.log('Unusable power card errors:', result.errors);
       }
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('"Power 3" requires a character with 10+ Energy');
+      expect(result.errors).toContain('"Power 3" (Power Card) requires a character with 10+ Energy');
     });
 
     it('should pass with usable universe cards', () => {
@@ -964,7 +964,7 @@ describe('Deck Validation Rules', () => {
       
       const result = validateDeck(deckCards);
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('"Basic 1" requires a character with 10+ Energy');
+      expect(result.errors).toContain('"Basic 1" (Universe Card) requires a character with 10+ Energy');
     });
 
     it('should pass with events from matching mission set', () => {
