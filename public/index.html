@@ -10200,10 +10200,12 @@
             });
             
             // Rule 8: Deck cannot contain unusable cards
+            console.log('🔍 DEBUG: Starting Rule 8 validation');
             const characterNames = characterCards.map(card => {
                 const availableCard = availableCardsMap.get(card.cardId);
                 return availableCard ? availableCard.name || availableCard.card_name : 'Unknown';
             });
+            console.log('🔍 DEBUG: Character names:', characterNames);
             
             // Get character stats for power/universe card validation
             const characterStats = characterCards.map(card => {
@@ -10260,9 +10262,11 @@
                 
                 // Check power cards for character stat requirements
                 if (card.type === 'power') {
+                    console.log('🔍 DEBUG: Checking power card:', card.cardId, availableCard);
                     if (availableCard.power_type && availableCard.value) {
                         const requiredValue = availableCard.value;
                         const powerType = availableCard.power_type;
+                        console.log('🔍 DEBUG: Power card requirements:', requiredValue, powerType);
                         
                         // Check if any character can use this power card
                         const canUse = characterStats.some(char => {
@@ -10292,7 +10296,10 @@
                         });
                         
                         if (!canUse) {
+                            console.log('🔍 DEBUG: Power card is unusable, adding error');
                             errors.push(`"${cardName}" requires a character with ${requiredValue}+ ${powerType}`);
+                        } else {
+                            console.log('🔍 DEBUG: Power card is usable');
                         }
                     }
                 }
@@ -16456,7 +16463,9 @@
             
             // Add click handlers for art options
             modal.addEventListener('click', (e) => {
+                console.log('🔍 DEBUG: Modal click event:', e.target);
                 if (e.target.closest('.art-option')) {
+                    console.log('🔍 DEBUG: Art option clicked, closing modal');
                     const selectedImage = e.target.closest('.art-option').dataset.image;
                     
                     if (cardIndex !== null) {
