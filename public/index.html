@@ -10199,6 +10199,147 @@
                 }
             });
             
+            // Rule 8: Deck cannot contain unusable cards
+            const characterNames = characterCards.map(card => {
+                const availableCard = availableCardsMap.get(card.cardId);
+                return availableCard ? availableCard.name || availableCard.card_name : 'Unknown';
+            });
+            
+            // Get character stats for power/universe card validation
+            const characterStats = characterCards.map(card => {
+                const availableCard = availableCardsMap.get(card.cardId);
+                return availableCard ? {
+                    name: availableCard.name || availableCard.card_name,
+                    energy: availableCard.energy || 0,
+                    combat: availableCard.combat || 0,
+                    brute_force: availableCard.brute_force || 0,
+                    intelligence: availableCard.intelligence || 0
+                } : null;
+            }).filter(char => char);
+            
+            // Get mission sets for event validation
+            const missionSets = new Set();
+            missionCards.forEach(card => {
+                const availableCard = availableCardsMap.get(card.cardId);
+                if (availableCard && availableCard.mission_set) {
+                    missionSets.add(availableCard.mission_set);
+                }
+            });
+            
+            deckCards.forEach(card => {
+                const availableCard = availableCardsMap.get(card.cardId);
+                if (!availableCard) return;
+                
+                const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+                
+                // Check special cards for character compatibility
+                if (card.type === 'special') {
+                    if (availableCard.character && availableCard.character !== 'Any Character') {
+                        // Check if this is an Angry Mob special (already handled in Rule 2)
+                        if (availableCard.character.startsWith('Angry Mob')) {
+                            // Angry Mob validation is already handled above
+                            return;
+                        }
+                        
+                        // Regular character special validation
+                        if (!characterNames.includes(availableCard.character)) {
+                            errors.push(`"${cardName}" requires character "${availableCard.character}" in your team`);
+                        }
+                    }
+                }
+                
+                // Check events for mission set compatibility
+                if (card.type === 'event') {
+                    if (availableCard.mission_set && 
+                        availableCard.mission_set !== 'Any-Mission' && 
+                        missionSets.size > 0 && 
+                        !missionSets.has(availableCard.mission_set)) {
+                        errors.push(`"${cardName}" requires mission set "${availableCard.mission_set}" in your deck`);
+                    }
+                }
+                
+                // Check power cards for character stat requirements
+                if (card.type === 'power') {
+                    if (availableCard.power_type && availableCard.value) {
+                        const requiredValue = availableCard.value;
+                        const powerType = availableCard.power_type;
+                        
+                        // Check if any character can use this power card
+                        const canUse = characterStats.some(char => {
+                            let characterStat = 0;
+                            
+                            switch (powerType) {
+                                case 'Energy':
+                                    characterStat = char.energy;
+                                    break;
+                                case 'Combat':
+                                    characterStat = char.combat;
+                                    break;
+                                case 'Brute Force':
+                                    characterStat = char.brute_force;
+                                    break;
+                                case 'Intelligence':
+                                    characterStat = char.intelligence;
+                                    break;
+                                case 'Any-Power':
+                                case 'Multi-Power':
+                                case 'Multi Power':
+                                    characterStat = Math.max(char.energy, char.combat, char.brute_force, char.intelligence);
+                                    break;
+                            }
+                            
+                            return characterStat >= requiredValue;
+                        });
+                        
+                        if (!canUse) {
+                            errors.push(`"${cardName}" requires a character with ${requiredValue}+ ${powerType}`);
+                        }
+                    }
+                }
+                
+                // Check universe cards for character stat requirements
+                if (['advanced_universe', 'teamwork', 'ally_universe', 'training', 'basic_universe'].includes(card.type)) {
+                    // These cards typically have "to_use" requirements
+                    if (availableCard.to_use) {
+                        const toUseMatch = availableCard.to_use.match(/(\d+)\s+(Energy|Combat|Brute Force|Intelligence|Any-Power)/);
+                        if (toUseMatch) {
+                            const requiredValue = parseInt(toUseMatch[1]);
+                            const powerType = toUseMatch[2];
+                            
+                            const canUse = characterStats.some(char => {
+                                let characterStat = 0;
+                                
+                                switch (powerType) {
+                                    case 'Energy':
+                                        characterStat = char.energy;
+                                        break;
+                                    case 'Combat':
+                                        characterStat = char.combat;
+                                        break;
+                                    case 'Brute Force':
+                                        characterStat = char.brute_force;
+                                        break;
+                                    case 'Intelligence':
+                                        characterStat = char.intelligence;
+                                        break;
+                                    case 'Any-Power':
+                                    case 'Multi-Power':
+                                    case 'Multi Power':
+                                        characterStat = Math.max(char.energy, char.combat, char.brute_force, char.intelligence);
+                                        break;
+                                }
+                                
+                                return characterStat >= requiredValue;
+                            });
+                            
+                            if (!canUse) {
+                                errors.push(`"${cardName}" requires a character with ${requiredValue}+ ${powerType}`);
+                            }
+                        }
+                    }
+                }
+            });
+            
             return { errors, warnings, isValid: errors.length === 0 };
         }
 

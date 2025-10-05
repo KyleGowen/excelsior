@@ -19,13 +19,13 @@ describe('Deck Validation Rules', () => {
     availableCardsMap = new Map();
     
     // Mock character data
-    availableCardsMap.set('character_char1', { name: 'Character 1', threat_level: 15 });
-    availableCardsMap.set('character_char2', { name: 'Character 2', threat_level: 18 });
-    availableCardsMap.set('character_char3', { name: 'Character 3', threat_level: 20 });
-    availableCardsMap.set('character_char4', { name: 'Character 4', threat_level: 16 });
-    availableCardsMap.set('character_char5', { name: 'Character 5', threat_level: 25 });
-    availableCardsMap.set('character_angrymob1', { name: 'Angry Mob: Middle Ages', threat_level: 16 });
-    availableCardsMap.set('character_angrymob2', { name: 'Angry Mob: Industrial Age', threat_level: 18 });
+    availableCardsMap.set('character_char1', { name: 'Character 1', threat_level: 15, energy: 6, combat: 4, brute_force: 3, intelligence: 2 });
+    availableCardsMap.set('character_char2', { name: 'Character 2', threat_level: 18, energy: 5, combat: 6, brute_force: 4, intelligence: 3 });
+    availableCardsMap.set('character_char3', { name: 'Character 3', threat_level: 20, energy: 4, combat: 5, brute_force: 6, intelligence: 5 });
+    availableCardsMap.set('character_char4', { name: 'Character 4', threat_level: 16, energy: 3, combat: 3, brute_force: 4, intelligence: 6 });
+    availableCardsMap.set('character_char5', { name: 'Character 5', threat_level: 25, energy: 7, combat: 7, brute_force: 7, intelligence: 4 });
+    availableCardsMap.set('character_angrymob1', { name: 'Angry Mob: Middle Ages', threat_level: 16, energy: 6, combat: 4, brute_force: 6, intelligence: 1 });
+    availableCardsMap.set('character_angrymob2', { name: 'Angry Mob: Industrial Age', threat_level: 18, energy: 5, combat: 5, brute_force: 5, intelligence: 3 });
     
     // Mock special card data
     availableCardsMap.set('special_special1', { name: 'Special 1', character: 'Character 1' });
@@ -51,8 +51,16 @@ describe('Deck Validation Rules', () => {
     availableCardsMap.set('location_location2', { name: 'Location 2', threat_level: 8 });
     
     // Mock power card data
-    availableCardsMap.set('power_card_power1', { name: 'Power 1' });
-    availableCardsMap.set('power_card_power2', { name: 'Power 2' });
+    availableCardsMap.set('power_card_power1', { name: 'Power 1', power_type: 'Energy', value: 5 });
+    availableCardsMap.set('power_card_power2', { name: 'Power 2', power_type: 'Combat', value: 8 });
+    availableCardsMap.set('power_card_power3', { name: 'Power 3', power_type: 'Energy', value: 10 }); // High requirement
+    
+    // Mock universe card data
+    availableCardsMap.set('advanced_universe_adv1', { name: 'Advanced 1', to_use: '6 Energy' });
+    availableCardsMap.set('teamwork_team1', { name: 'Teamwork 1', to_use: '7 Combat' });
+    availableCardsMap.set('ally_universe_ally1', { name: 'Ally 1', to_use: '8 Brute Force' });
+    availableCardsMap.set('training_train1', { name: 'Training 1', to_use: '9 Intelligence' });
+    availableCardsMap.set('basic_universe_basic1', { name: 'Basic 1', to_use: '10 Energy' }); // High requirement
   });
 
   // Mock validateDeck function (simplified version for testing)
@@ -206,6 +214,149 @@ describe('Deck Validation Rules', () => {
     if (totalCards < requiredSize) {
       errors.push(`Deck must have at least ${requiredSize} cards in draw pile (${totalCards}/${requiredSize})`);
     }
+    
+    // Rule 8: Deck cannot contain unusable cards
+    const characterNamesForUnusable = characterCards.map(card => {
+      const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+      return availableCard ? availableCard.name : 'Unknown';
+    });
+    
+    // Get character stats for power/universe card validation
+    const characterStats = characterCards.map(card => {
+      const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+      return availableCard ? {
+        name: availableCard.name,
+        energy: availableCard.energy || 0,
+        combat: availableCard.combat || 0,
+        brute_force: availableCard.brute_force || 0,
+        intelligence: availableCard.intelligence || 0
+      } : null;
+    }).filter(char => char);
+    
+    // Get mission sets for event validation
+    const missionSets = new Set();
+    missionCards.forEach(card => {
+      const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+      if (availableCard && availableCard.mission_set) {
+        missionSets.add(availableCard.mission_set);
+      }
+    });
+    
+    deckCards.forEach(card => {
+      const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+      if (!availableCard) return;
+      
+      const cardName = availableCard.name || 'Unknown Card';
+      
+      // Check special cards for character compatibility
+      if (card.type === 'special') {
+        if (availableCard.character && availableCard.character !== 'Any Character') {
+          // Check if this is an Angry Mob special (already handled in Rule 2)
+          if (availableCard.character.startsWith('Angry Mob')) {
+            // Angry Mob validation is already handled above
+            return;
+          }
+          
+          // Regular character special validation
+          if (!characterNamesForUnusable.includes(availableCard.character)) {
+            errors.push(`"${cardName}" requires character "${availableCard.character}" in your team`);
+          }
+        }
+      }
+      
+      // Check events for mission set compatibility
+      if (card.type === 'event') {
+        if (availableCard.mission_set && 
+            availableCard.mission_set !== 'Any-Mission' && 
+            missionSets.size > 0 && 
+            !missionSets.has(availableCard.mission_set)) {
+          errors.push(`"${cardName}" requires mission set "${availableCard.mission_set}" in your deck`);
+        }
+      }
+      
+      // Check power cards for character stat requirements
+      if (card.type === 'power_card') {
+        if (availableCard.power_type && availableCard.value) {
+          const requiredValue = availableCard.value;
+          const powerType = availableCard.power_type;
+          
+          // Check if any character can use this power card
+          const canUse = characterStats.some(char => {
+            if (!char) return false;
+            let characterStat = 0;
+            
+            switch (powerType) {
+              case 'Energy':
+                characterStat = char.energy;
+                break;
+              case 'Combat':
+                characterStat = char.combat;
+                break;
+              case 'Brute Force':
+                characterStat = char.brute_force;
+                break;
+              case 'Intelligence':
+                characterStat = char.intelligence;
+                break;
+              case 'Any-Power':
+              case 'Multi-Power':
+              case 'Multi Power':
+                characterStat = Math.max(char.energy, char.combat, char.brute_force, char.intelligence);
+                break;
+            }
+            
+            return characterStat >= requiredValue;
+          });
+          
+          if (!canUse) {
+            errors.push(`"${cardName}" requires a character with ${requiredValue}+ ${powerType}`);
+          }
+        }
+      }
+      
+      // Check universe cards for character stat requirements
+      if (['advanced_universe', 'teamwork', 'ally_universe', 'training', 'basic_universe'].includes(card.type)) {
+        // These cards typically have "to_use" requirements
+        if (availableCard.to_use) {
+          const toUseMatch = availableCard.to_use.match(/(\d+)\s+(Energy|Combat|Brute Force|Intelligence|Any-Power)/);
+          if (toUseMatch) {
+            const requiredValue = parseInt(toUseMatch[1]);
+            const powerType = toUseMatch[2];
+            
+            const canUse = characterStats.some(char => {
+              if (!char) return false;
+              let characterStat = 0;
+              
+              switch (powerType) {
+                case 'Energy':
+                  characterStat = char.energy;
+                  break;
+                case 'Combat':
+                  characterStat = char.combat;
+                  break;
+                case 'Brute Force':
+                  characterStat = char.brute_force;
+                  break;
+                case 'Intelligence':
+                  characterStat = char.intelligence;
+                  break;
+                case 'Any-Power':
+                case 'Multi-Power':
+                case 'Multi Power':
+                  characterStat = Math.max(char.energy, char.combat, char.brute_force, char.intelligence);
+                  break;
+              }
+              
+              return characterStat >= requiredValue;
+            });
+            
+            if (!canUse) {
+              errors.push(`"${cardName}" requires a character with ${requiredValue}+ ${powerType}`);
+            }
+          }
+        }
+      }
+    });
     
     return { errors, warnings, isValid: errors.length === 0 };
   }
@@ -737,6 +888,134 @@ describe('Deck Validation Rules', () => {
       const result = validateDeck(deckCards);
       if (!result.isValid) {
         console.log('Legal deck errors:', result.errors);
+      }
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
+  describe('Rule 8: Deck cannot contain unusable cards', () => {
+    it('should pass with usable power cards', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'char1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 },
+        { type: 'power_card', cardId: 'power1', quantity: 1 }, // 5 Energy requirement, char1 has 6
+        { type: 'power_card', cardId: 'power1', quantity: 50 } // Use power1 again instead of power2
+      ];
+      
+      const result = validateDeck(deckCards);
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should fail with unusable power cards', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'char1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 },
+        { type: 'power_card', cardId: 'power3', quantity: 1 }, // 10 Energy requirement, no character has 10+
+        { type: 'power_card', cardId: 'power2', quantity: 50 }
+      ];
+      
+      const result = validateDeck(deckCards);
+      if (result.isValid) {
+        console.log('Power 3 test passed unexpectedly - no errors found');
+      } else {
+        console.log('Unusable power card errors:', result.errors);
+      }
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain('"Power 3" requires a character with 10+ Energy');
+    });
+
+    it('should pass with usable universe cards', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'char1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 },
+        { type: 'advanced_universe', cardId: 'adv1', quantity: 1 }, // 6 Energy requirement, char1 has 6
+        { type: 'power_card', cardId: 'power1', quantity: 50 }
+      ];
+      
+      const result = validateDeck(deckCards);
+      if (!result.isValid) {
+        console.log('Usable universe card errors:', result.errors);
+      }
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should fail with unusable universe cards', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'char1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 },
+        { type: 'basic_universe', cardId: 'basic1', quantity: 1 }, // 10 Energy requirement, no character has 10+
+        { type: 'power_card', cardId: 'power1', quantity: 50 }
+      ];
+      
+      const result = validateDeck(deckCards);
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain('"Basic 1" requires a character with 10+ Energy');
+    });
+
+    it('should pass with events from matching mission set', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'char1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 }, // Set A
+        { type: 'event', cardId: 'event1', quantity: 1 }, // Set A
+        { type: 'power_card', cardId: 'power1', quantity: 55 } // 56 total with event
+      ];
+      
+      const result = validateDeck(deckCards);
+      if (!result.isValid) {
+        console.log('Matching mission set event errors:', result.errors);
+      }
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should fail with events from non-matching mission set', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'char1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 }, // Set A
+        { type: 'event', cardId: 'event3', quantity: 1 }, // Set B
+        { type: 'power_card', cardId: 'power1', quantity: 50 }
+      ];
+      
+      const result = validateDeck(deckCards);
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain('"Event 3" requires mission set "Set B" in your deck');
+    });
+
+    it('should pass with "Any-Mission" events', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'char1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 }, // Set A
+        { type: 'event', cardId: 'event2', quantity: 1 }, // Any-Mission
+        { type: 'power_card', cardId: 'power1', quantity: 55 } // 56 total with event
+      ];
+      
+      const result = validateDeck(deckCards);
+      if (!result.isValid) {
+        console.log('Any-Mission event errors:', result.errors);
       }
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
