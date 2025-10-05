@@ -159,7 +159,7 @@ describe('Limited Deck Integration Tests', () => {
       expect(getResponse.status).toBe(200);
       expect(getResponse.body.success).toBe(true);
       expect(getResponse.body.data.metadata.is_limited).toBe(true);
-      expect(getResponse.body.data.name).toBe('Retrieval Test Deck');
+      expect(getResponse.body.data.metadata.name).toBe('Retrieval Test Deck');
     });
 
     test('should retrieve all decks with is_limited flags', async () => {
@@ -201,13 +201,13 @@ describe('Limited Deck Integration Tests', () => {
       expect(getAllResponse.body.data.length).toBeGreaterThanOrEqual(2);
 
       // Find our test decks
-      const limitedDeck = getAllResponse.body.data.find((deck: any) => deck.name === 'Limited Deck 1');
-      const regularDeck = getAllResponse.body.data.find((deck: any) => deck.name === 'Regular Deck 1');
+      const limitedDeck = getAllResponse.body.data.find((deck: any) => deck.metadata.name === 'Limited Deck 1');
+      const regularDeck = getAllResponse.body.data.find((deck: any) => deck.metadata.name === 'Regular Deck 1');
 
       expect(limitedDeck).toBeDefined();
-      expect(limitedDeck.is_limited).toBe(true);
+      expect(limitedDeck.metadata.is_limited).toBe(true);
       expect(regularDeck).toBeDefined();
-      expect(regularDeck.is_limited).toBe(false);
+      expect(regularDeck.metadata.is_limited).toBe(false);
     });
   });
 
@@ -242,12 +242,12 @@ describe('Limited Deck Integration Tests', () => {
       expect(deckListResponse.status).toBe(200);
       expect(deckListResponse.body.success).toBe(true);
 
-      const limitedDeck = deckListResponse.body.data.find((deck: any) => deck.name === 'Display Test Limited Deck');
+      const limitedDeck = deckListResponse.body.data.find((deck: any) => deck.metadata.name === 'Display Test Limited Deck');
       expect(limitedDeck).toBeDefined();
-      expect(limitedDeck.is_limited).toBe(true);
+      expect(limitedDeck.metadata.is_limited).toBe(true);
 
       // This data would be used by frontend to show Limited badge
-      expect(limitedDeck).toMatchObject({
+      expect(limitedDeck.metadata).toMatchObject({
         id: deckId,
         name: 'Display Test Limited Deck',
         description: 'A deck to test display functionality',
@@ -275,12 +275,12 @@ describe('Limited Deck Integration Tests', () => {
       expect(deckListResponse.status).toBe(200);
       expect(deckListResponse.body.success).toBe(true);
 
-      const regularDeck = deckListResponse.body.data.find((deck: any) => deck.name === 'Display Test Regular Deck');
+      const regularDeck = deckListResponse.body.data.find((deck: any) => deck.metadata.name === 'Display Test Regular Deck');
       expect(regularDeck).toBeDefined();
-      expect(regularDeck.is_limited).toBe(false);
+      expect(regularDeck.metadata.is_limited).toBe(false);
 
       // This data would be used by frontend to show Legal/Not Legal badge
-      expect(regularDeck).toMatchObject({
+      expect(regularDeck.metadata).toMatchObject({
         id: deckId,
         name: 'Display Test Regular Deck',
         description: 'A regular deck for display testing',
@@ -335,7 +335,7 @@ describe('Limited Deck Integration Tests', () => {
         .set('Cookie', authCookie);
 
       expect(getResponse.body.data.metadata.is_limited).toBe(true);
-      expect(getResponse.body.data.name).toBe('Updated Persistence Test Deck');
+      expect(getResponse.body.data.metadata.name).toBe('Updated Persistence Test Deck');
 
       // Update to not limited
       await request(app)
@@ -352,7 +352,7 @@ describe('Limited Deck Integration Tests', () => {
         .get(`/api/decks/${deckId}`)
         .set('Cookie', authCookie);
 
-      expect(getResponse.body.data.is_limited).toBe(false);
+      expect(getResponse.body.data.metadata.is_limited).toBe(false);
     });
   });
 
@@ -439,19 +439,19 @@ describe('Limited Deck Integration Tests', () => {
 
       // Simulate frontend processing
       const decks = deckListResponse.body.data;
-      const limitedDeck = decks.find((deck: any) => deck.name === 'Frontend Limited Deck');
-      const regularDeck = decks.find((deck: any) => deck.name === 'Frontend Regular Deck');
+      const limitedDeck = decks.find((deck: any) => deck.metadata.name === 'Frontend Limited Deck');
+      const regularDeck = decks.find((deck: any) => deck.metadata.name === 'Frontend Regular Deck');
 
       // Simulate frontend badge logic
-      const limitedDeckBadge = limitedDeck.is_limited ? 'Limited' : 'Legal/Not Legal';
-      const regularDeckBadge = regularDeck.is_limited ? 'Limited' : 'Legal/Not Legal';
+      const limitedDeckBadge = limitedDeck.metadata.is_limited ? 'Limited' : 'Legal/Not Legal';
+      const regularDeckBadge = regularDeck.metadata.is_limited ? 'Limited' : 'Legal/Not Legal';
 
       expect(limitedDeckBadge).toBe('Limited');
       expect(regularDeckBadge).toBe('Legal/Not Legal');
 
       // Verify the data structure that frontend would use
-      expect(limitedDeck).toHaveProperty('is_limited', true);
-      expect(regularDeck).toHaveProperty('is_limited', false);
+      expect(limitedDeck.metadata).toHaveProperty('is_limited', true);
+      expect(regularDeck.metadata).toHaveProperty('is_limited', false);
     });
   });
 });

@@ -2758,5 +2758,77 @@
     "userId": "test-user-id",
     "username": "test-user",
     "expiresAt": "2025-10-05T07:45:21.291Z"
+  },
+  {
+    "sessionId": "sess_xnal24drg_mgdbx5p5",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-05T08:36:50.585Z"
+  },
+  {
+    "sessionId": "sess_jmiiyfqp6_mgdbxcbw",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-05T08:36:59.180Z"
+  },
+  {
+    "sessionId": "sess_4a8sojru2_mgdbxcby",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-05T08:36:59.182Z"
+  },
+  {
+    "sessionId": "sess_umlj38a8e_mgdc2thz",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-05T08:41:14.711Z"
+  },
+  {
+    "sessionId": "sess_hv407hjc4_mgdc2zs0",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-05T08:41:22.848Z"
+  },
+  {
+    "sessionId": "sess_k0lipxc4q_mgdc2zs2",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-05T08:41:22.850Z"
+  },
+  {
+    "sessionId": "sess_ubzzl4lwn_mgdc4qh7",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-05T08:42:44.107Z"
+  },
+  {
+    "sessionId": "sess_vd04m6iyh_mgdc50ym",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-05T08:42:57.694Z"
+  },
+  {
+    "sessionId": "sess_dfkmf5ysy_mgdc50yo",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-05T08:42:57.696Z"
+  },
+  {
+    "sessionId": "sess_qcnz7rsnm_mgdc5zdr",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-05T08:43:42.303Z"
+  },
+  {
+    "sessionId": "sess_vp4uwnwk3_mgdc65kf",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-05T08:43:50.319Z"
+  },
+  {
+    "sessionId": "sess_fzav2ltgu_mgdc65kg",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-05T08:43:50.320Z"
   }
 ]

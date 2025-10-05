@@ -558,8 +558,8 @@ describe('Guest Deck Deletion Integration Tests', () => {
         .delete(`/api/decks/${invalidDeckId}`)
         .set('Cookie', regularUserSessionCookie);
 
-      // Should return 500 (internal server error) due to invalid UUID format
-      expect(deleteResponse.status).toBe(500);
+      // Should return 404 (deck not found) due to invalid UUID format
+      expect(deleteResponse.status).toBe(404);
       expect(deleteResponse.body.success).toBe(false);
     });
 

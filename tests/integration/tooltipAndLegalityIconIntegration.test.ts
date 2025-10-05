@@ -26,9 +26,9 @@ describe('Tooltip and Legality Icon Integration Tests', () => {
         if (decksResponse.status === 200 && decksResponse.body.success) {
             const decks = decksResponse.body.data;
             for (const deck of decks) {
-                if (deck.name.startsWith('Test Tooltip Deck')) {
+                if (deck.metadata && deck.metadata.name && deck.metadata.name.startsWith('Test Tooltip Deck')) {
                     await request(app)
-                        .delete(`/api/decks/${deck.id}`)
+                        .delete(`/api/decks/${deck.metadata.id}`)
                         .set('Cookie', authCookie);
                 }
             }

@@ -253,9 +253,9 @@ app.get('/test', async (req, res) => {
   });
 });
 
-app.get('/api/users', (req, res) => {
+app.get('/api/users', async (req, res) => {
   try {
-    const users = userRepository.getAllUsers();
+    const users = await userRepository.getAllUsers();
     res.json({ success: true, data: users });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch users' });
@@ -472,9 +472,14 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
     
     const { name, description, is_limited } = req.body;
     
-    // Check if user owns this deck
+    // Check if deck exists
     const deck = await deckRepository.getDeckById(req.params.id);
-    if (!deck || deck.user_id !== req.user.id) {
+    if (!deck) {
+      return res.status(404).json({ success: false, error: 'Deck not found' });
+    }
+    
+    // Check if user owns this deck
+    if (deck.user_id !== req.user.id) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     

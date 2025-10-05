@@ -215,9 +215,9 @@ app.post('/api/auth/logout', authService.handleLogout.bind(authService));
 app.get('/api/auth/me', authService.handleSessionValidation.bind(authService));
 
 // User management routes
-app.get('/api/users', (req, res) => {
+app.get('/api/users', async (req, res) => {
   try {
-    const users = userRepository.getAllUsers();
+    const users = await userRepository.getAllUsers();
     res.json({ success: true, data: users });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch users' });
@@ -248,7 +248,7 @@ app.post('/api/users', authenticateUser, async (req: any, res) => {
     const newUser = await userRepository.createUser(username, `${username}@example.com`, password, 'USER');
     
     // Return user data without password hash
-    const { password_hash, ...userWithoutPassword } = newUser;
+    const { password_hash, ...userWithoutPassword } = newUser as any;
     
     res.status(201).json({ 
       success: true, 
@@ -445,9 +445,14 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
     
     const { name, description, is_limited } = req.body;
     
-    // Check if user owns this deck
+    // Check if deck exists
     const existingDeck = await deckRepository.getDeckById(req.params.id);
-    if (!existingDeck || existingDeck.user_id !== req.user.id) {
+    if (!existingDeck) {
+      return res.status(404).json({ success: false, error: 'Deck not found' });
+    }
+    
+    // Check if user owns this deck
+    if (existingDeck.user_id !== req.user.id) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     

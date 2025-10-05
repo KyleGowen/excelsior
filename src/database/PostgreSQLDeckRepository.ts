@@ -70,6 +70,12 @@ export class PostgreSQLDeckRepository implements DeckRepository {
   }
 
   async getDeckById(id: string): Promise<Deck | undefined> {
+    // Validate UUID format first
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      return undefined;
+    }
+
     // Check cache first
     const cached = this.deckCache.get(id);
     const now = Date.now();
