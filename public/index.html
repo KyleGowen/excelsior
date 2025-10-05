@@ -10058,8 +10058,8 @@
             });
             
             deckCards.forEach(card => {
-                if (card.type === 'special_card' || card.type === 'advanced_universe' || card.type === 'teamwork' || 
-                    card.type === 'ally_universe' || card.type === 'training' || card.type === 'basic-universe') {
+                if (card.type === 'special' || card.type === 'advanced_universe' || card.type === 'teamwork' || 
+                    card.type === 'ally_universe' || card.type === 'training' || card.type === 'basic_universe') {
                     // Direct lookup using UUID
                     const availableCard = availableCardsMap.get(card.cardId);
                     if (availableCard && availableCard.character && 

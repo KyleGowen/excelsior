@@ -26,9 +26,9 @@ describe('Deck Validation Rules', () => {
     availableCardsMap.set('character_char5', { name: 'Character 5', threat_level: 25 });
     
     // Mock special card data
-    availableCardsMap.set('special_card_special1', { name: 'Special 1', character: 'Character 1' });
-    availableCardsMap.set('special_card_special2', { name: 'Special 2', character: 'Any Character' });
-    availableCardsMap.set('special_card_special3', { name: 'Special 3', character: 'Character 5' });
+    availableCardsMap.set('special_special1', { name: 'Special 1', character: 'Character 1' });
+    availableCardsMap.set('special_special2', { name: 'Special 2', character: 'Any Character' });
+    availableCardsMap.set('special_special3', { name: 'Special 3', character: 'Character 5' });
     
     // Mock mission card data
     availableCardsMap.set('mission_mission1', { name: 'Mission 1', mission_set: 'Set A' });
@@ -72,16 +72,16 @@ describe('Deck Validation Rules', () => {
       return availableCard ? availableCard.name : 'Unknown';
     });
     
-    deckCards.forEach(card => {
-      if (card.type === 'special_card') {
-        const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
-        if (availableCard && availableCard.character && 
-            availableCard.character !== 'Any Character' && 
-            !characterNames.includes(availableCard.character)) {
-          errors.push(`"${availableCard.name}" requires character "${availableCard.character}" in your team`);
+      deckCards.forEach(card => {
+        if (card.type === 'special') {
+          const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+          if (availableCard && availableCard.character && 
+              availableCard.character !== 'Any Character' && 
+              !characterNames.includes(availableCard.character)) {
+            errors.push(`"${availableCard.name}" requires character "${availableCard.character}" in your team`);
+          }
         }
-      }
-    });
+      });
     
     // Rule 3: Exactly 7 mission cards of the same mission set
     const missionCount = missionCards.reduce((sum, card) => sum + card.quantity, 0);
@@ -216,7 +216,7 @@ describe('Deck Validation Rules', () => {
         { type: 'character', cardId: 'char3', quantity: 1 },
         { type: 'character', cardId: 'char4', quantity: 1 },
         { type: 'mission', cardId: 'mission1', quantity: 7 },
-        { type: 'special_card', cardId: 'special1', quantity: 1 },
+        { type: 'special', cardId: 'special1', quantity: 1 },
         { type: 'power_card', cardId: 'power1', quantity: 50 }
       ];
       
@@ -232,7 +232,7 @@ describe('Deck Validation Rules', () => {
         { type: 'character', cardId: 'char3', quantity: 1 },
         { type: 'character', cardId: 'char4', quantity: 1 },
         { type: 'mission', cardId: 'mission1', quantity: 7 },
-        { type: 'special_card', cardId: 'special2', quantity: 1 },
+        { type: 'special', cardId: 'special2', quantity: 1 },
         { type: 'power_card', cardId: 'power1', quantity: 50 }
       ];
       
@@ -247,7 +247,8 @@ describe('Deck Validation Rules', () => {
         { type: 'character', cardId: 'char2', quantity: 1 },
         { type: 'character', cardId: 'char3', quantity: 1 },
         { type: 'character', cardId: 'char4', quantity: 1 },
-        { type: 'special_card', cardId: 'special3', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 },
+        { type: 'special', cardId: 'special3', quantity: 1 },
         { type: 'power_card', cardId: 'power1', quantity: 50 }
       ];
       
@@ -581,8 +582,8 @@ describe('Deck Validation Rules', () => {
         { type: 'mission', cardId: 'mission1', quantity: 7 }, // Same mission set
         { type: 'event', cardId: 'event1', quantity: 1 }, // Same mission set
         { type: 'location', cardId: 'location1', quantity: 1 }, // 5 threat
-        { type: 'special_card', cardId: 'special1', quantity: 1 }, // For Character 1
-        { type: 'special_card', cardId: 'special2', quantity: 1 }, // Any Character
+        { type: 'special', cardId: 'special1', quantity: 1 }, // For Character 1
+        { type: 'special', cardId: 'special2', quantity: 1 }, // Any Character
         { type: 'power_card', cardId: 'power1', quantity: 53 } // 56 total with event
       ];
       // Total threat: 15 + 18 + 20 + 16 + 5 = 74 (≤ 76)
