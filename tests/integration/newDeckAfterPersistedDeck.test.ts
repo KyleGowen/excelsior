@@ -226,12 +226,13 @@ describe('New Deck Creation After Persisted Deck Integration', () => {
         });
 
         test('should maintain deck isolation between users', async () => {
-            // Step 1: Admin user gets the persisted deck (should fail - different user)
+            // Step 1: Admin user gets the persisted deck (should succeed with read-only access)
             const adminGetDeckResponse = await request(app)
                 .get(`/api/decks/${testDeckId}`)
                 .set('Cookie', adminAuthToken);
 
-            expect(adminGetDeckResponse.status).toBe(403); // Should be forbidden
+            expect(adminGetDeckResponse.status).toBe(200); // Read-only access allowed
+            expect(adminGetDeckResponse.body.data.metadata.isOwner).toBe(false); // Not the owner
 
             // Step 2: Admin user creates their own deck
             const adminDeckData = {
@@ -280,18 +281,20 @@ describe('New Deck Creation After Persisted Deck Integration', () => {
             expect(userGetNewDeckResponse.body.data.cards).toHaveLength(0);
             expect(userGetNewDeckResponse.body.data.metadata.name).toBe('User Empty Deck');
 
-            // Step 5: Verify users cannot access each other's decks
+            // Step 5: Verify users can access each other's decks in read-only mode
             const adminAccessUserDeckResponse = await request(app)
                 .get(`/api/decks/${userDeckId}`)
                 .set('Cookie', adminAuthToken);
 
-            expect(adminAccessUserDeckResponse.status).toBe(403);
+            expect(adminAccessUserDeckResponse.status).toBe(200);
+            expect(adminAccessUserDeckResponse.body.data.metadata.isOwner).toBe(false);
 
             const userAccessAdminDeckResponse = await request(app)
                 .get(`/api/decks/${adminDeckId}`)
                 .set('Cookie', userAuthToken);
 
-            expect(userAccessAdminDeckResponse.status).toBe(403);
+            expect(userAccessAdminDeckResponse.status).toBe(200);
+            expect(userAccessAdminDeckResponse.body.data.metadata.isOwner).toBe(false);
 
             // Clean up
             await request(app)

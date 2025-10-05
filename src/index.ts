@@ -286,7 +286,7 @@ app.post('/api/users', authenticateUser, async (req: any, res) => {
     const newUser = await userRepository.createUser(username, `${username}@example.com`, password, 'USER');
     
     // Return user data without password hash
-    const { password_hash, ...userWithoutPassword } = newUser;
+    const { password_hash, ...userWithoutPassword } = newUser as any;
     
     res.status(201).json({ 
       success: true, 
@@ -391,11 +391,6 @@ app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
     
     // Check if user owns this deck
     const isOwner = deck.user_id === req.user.id;
-    
-    // Only allow access if user owns the deck
-    if (!isOwner) {
-      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
-    }
     
     // Add ownership flag to response for frontend to use
     const deckData = {

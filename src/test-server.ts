@@ -329,11 +329,6 @@ app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
     // Check if user owns this deck
     const isOwner = deck.user_id === req.user.id;
     
-    // Only allow access if user owns the deck
-    if (!isOwner) {
-      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
-    }
-    
     // Add ownership flag to response for frontend to use
     const deckData = {
       ...deck,

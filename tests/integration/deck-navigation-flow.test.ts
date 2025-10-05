@@ -150,14 +150,24 @@ describe('Deck Navigation Flow Integration Tests', () => {
         'USER'
       );
 
-      // Try to access the deck as non-owner by setting a custom header
+      // Login as the other user to get proper authentication
+      const loginResponse = await request(app)
+        .post('/api/auth/login')
+        .send({ username: otherUser.name, password: 'testpass123' });
+
+      expect(loginResponse.status).toBe(200);
+      const otherUserAuthCookie = Array.isArray(loginResponse.headers['set-cookie'])
+        ? loginResponse.headers['set-cookie'].find((cookie: string) => cookie.startsWith('sessionId='))
+        : loginResponse.headers['set-cookie']?.startsWith('sessionId=') ? loginResponse.headers['set-cookie'] : null;
+
+      // Try to access the deck as non-owner with proper authentication
       const deckResponse = await request(app)
         .get(`/api/decks/${testDeck.id}`)
-        .set('x-test-user-id', otherUser.id);
+        .set('Cookie', otherUserAuthCookie);
 
       expect(deckResponse.status).toBe(200);
       expect(deckResponse.body.data.metadata.isOwner).toBe(false);
-      // For non-owners, isOwner = false means read-only
+      // For non-owners, isOwner = false means read-only access is allowed
 
       // Clean up other user
       await userRepository.deleteUser(otherUser.id);
