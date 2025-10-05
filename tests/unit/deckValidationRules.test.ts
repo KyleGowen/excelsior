@@ -24,11 +24,17 @@ describe('Deck Validation Rules', () => {
     availableCardsMap.set('character_char3', { name: 'Character 3', threat_level: 20 });
     availableCardsMap.set('character_char4', { name: 'Character 4', threat_level: 16 });
     availableCardsMap.set('character_char5', { name: 'Character 5', threat_level: 25 });
+    availableCardsMap.set('character_angrymob1', { name: 'Angry Mob: Middle Ages', threat_level: 16 });
+    availableCardsMap.set('character_angrymob2', { name: 'Angry Mob: Industrial Age', threat_level: 18 });
     
     // Mock special card data
     availableCardsMap.set('special_special1', { name: 'Special 1', character: 'Character 1' });
     availableCardsMap.set('special_special2', { name: 'Special 2', character: 'Any Character' });
     availableCardsMap.set('special_special3', { name: 'Special 3', character: 'Character 5' });
+    availableCardsMap.set('special_angrymob1', { name: 'Mob Mentality', character: 'Angry Mob' });
+    availableCardsMap.set('special_angrymob2', { name: 'Don\'t Let it Get Away!', character: 'Angry Mob' });
+    availableCardsMap.set('special_angrymob3', { name: 'Medieval Riot', character: 'Angry Mob: Middle Ages' });
+    availableCardsMap.set('special_angrymob4', { name: 'Industrial Strike', character: 'Angry Mob: Industrial Age' });
     
     // Mock mission card data
     availableCardsMap.set('mission_mission1', { name: 'Mission 1', mission_set: 'Set A' });
@@ -66,22 +72,66 @@ describe('Deck Validation Rules', () => {
       errors.push(`Deck must have exactly 4 characters (${characterCount}/4)`);
     }
     
+    // Rule 1.5: Angry Mob character restrictions
+    const angryMobCharacters = characterCards.filter(card => {
+      const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+      return availableCard && (availableCard.name || '').startsWith('Angry Mob');
+    });
+    
+    if (angryMobCharacters.length > 1) {
+      errors.push(`Only one "Angry Mob" character allowed in deck (found ${angryMobCharacters.length})`);
+    }
+    
     // Rule 2: Special cards may only be for selected characters or "Any Character"
     const characterNames = characterCards.map(card => {
       const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
       return availableCard ? availableCard.name : 'Unknown';
     });
     
-      deckCards.forEach(card => {
-        if (card.type === 'special') {
-          const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
-          if (availableCard && availableCard.character && 
-              availableCard.character !== 'Any Character' && 
-              !characterNames.includes(availableCard.character)) {
-            errors.push(`"${availableCard.name}" requires character "${availableCard.character}" in your team`);
+    // Get Angry Mob character info for special validation
+    const angryMobCharacter = angryMobCharacters.length > 0 ? angryMobCharacters[0] : null;
+    const angryMobCharacterName = angryMobCharacter ? (() => {
+      const availableCard = availableCardsMap.get(`${angryMobCharacter.type}_${angryMobCharacter.cardId}`);
+      return availableCard ? availableCard.name : null;
+    })() : null;
+    
+    deckCards.forEach(card => {
+      if (card.type === 'special') {
+        const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+        if (availableCard && availableCard.character && 
+            availableCard.character !== 'Any Character') {
+          
+          const specialCharacter = availableCard.character;
+          const specialName = availableCard.name;
+          
+          // Check if this is an Angry Mob special
+          if (specialCharacter.startsWith('Angry Mob')) {
+            // Angry Mob special validation
+            if (!angryMobCharacterName) {
+              errors.push(`"${specialName}" requires an "Angry Mob" character in your team`);
+            } else {
+              // Check if the special is for a specific Angry Mob subtype
+              if (specialCharacter.includes(':')) {
+                // Special is for a specific subtype (e.g., "Angry Mob: Middle Ages")
+                const specialSubtype = specialCharacter.split(':')[1].trim();
+                const characterSubtype = angryMobCharacterName.includes(':') ? 
+                  angryMobCharacterName.split(':')[1].trim() : null;
+                
+                if (characterSubtype !== specialSubtype) {
+                  errors.push(`"${specialName}" requires "Angry Mob: ${specialSubtype}" character in your team`);
+                }
+              }
+              // If special is just "Angry Mob" (no subtype), any Angry Mob character can use it
+            }
+          } else {
+            // Regular character special validation
+            if (!characterNames.includes(specialCharacter)) {
+              errors.push(`"${specialName}" requires character "${specialCharacter}" in your team`);
+            }
           }
         }
-      });
+      }
+    });
     
     // Rule 3: Exactly 7 mission cards of the same mission set
     const missionCount = missionCards.reduce((sum, card) => sum + card.quantity, 0);
@@ -208,6 +258,38 @@ describe('Deck Validation Rules', () => {
     });
   });
 
+  describe('Rule 1.5: Angry Mob character restrictions', () => {
+    it('should pass with one Angry Mob character', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'angrymob1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 },
+        { type: 'power_card', cardId: 'power1', quantity: 51 }
+      ];
+      
+      const result = validateDeck(deckCards);
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should fail with multiple Angry Mob characters', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'angrymob1', quantity: 1 },
+        { type: 'character', cardId: 'angrymob2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 },
+        { type: 'power_card', cardId: 'power1', quantity: 51 }
+      ];
+      
+      const result = validateDeck(deckCards);
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain('Only one "Angry Mob" character allowed in deck (found 2)');
+    });
+  });
+
   describe('Rule 2: Special cards for selected characters or "Any Character"', () => {
     it('should pass with special card for selected character', () => {
       const deckCards = [
@@ -255,6 +337,70 @@ describe('Deck Validation Rules', () => {
       const result = validateDeck(deckCards);
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain('"Special 3" requires character "Character 5" in your team');
+    });
+
+    it('should pass with generic Angry Mob special when Angry Mob character is present', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'angrymob1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 },
+        { type: 'special', cardId: 'angrymob1', quantity: 1 },
+        { type: 'power_card', cardId: 'power1', quantity: 50 }
+      ];
+      
+      const result = validateDeck(deckCards);
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should pass with matching subtype Angry Mob special', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'angrymob1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 },
+        { type: 'special', cardId: 'angrymob3', quantity: 1 },
+        { type: 'power_card', cardId: 'power1', quantity: 50 }
+      ];
+      
+      const result = validateDeck(deckCards);
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should fail with non-matching subtype Angry Mob special', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'angrymob1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 },
+        { type: 'special', cardId: 'angrymob4', quantity: 1 },
+        { type: 'power_card', cardId: 'power1', quantity: 50 }
+      ];
+      
+      const result = validateDeck(deckCards);
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain('"Industrial Strike" requires "Angry Mob: Industrial Age" character in your team');
+    });
+
+    it('should fail with Angry Mob special when no Angry Mob character is present', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'char1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 },
+        { type: 'special', cardId: 'angrymob1', quantity: 1 },
+        { type: 'power_card', cardId: 'power1', quantity: 50 }
+      ];
+      
+      const result = validateDeck(deckCards);
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain('"Mob Mentality" requires an "Angry Mob" character in your team');
     });
   });
 

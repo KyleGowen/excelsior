@@ -6598,20 +6598,64 @@
                 errors.push(`Deck must have exactly ${DECK_RULES.EXACT_CHARACTERS} characters (${characterCards.length}/${DECK_RULES.EXACT_CHARACTERS})`);
             }
             
+            // Rule 1.5: Angry Mob character restrictions
+            const angryMobCharacters = characterCards.filter(card => {
+                const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+                return availableCard && (availableCard.name || availableCard.card_name || '').startsWith('Angry Mob');
+            });
+            
+            if (angryMobCharacters.length > 1) {
+                errors.push(`Only one "Angry Mob" character allowed in deck (found ${angryMobCharacters.length})`);
+            }
+            
             // Rule 2: Special cards may only be for selected characters or "Any Character"
             const characterNames = characterCards.map(card => {
                 const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
                 return availableCard ? availableCard.name || availableCard.card_name : 'Unknown';
             });
             
+            // Get Angry Mob character info for special validation
+            const angryMobCharacter = angryMobCharacters.length > 0 ? angryMobCharacters[0] : null;
+            const angryMobCharacterName = angryMobCharacter ? (() => {
+                const availableCard = availableCardsMap.get(`${angryMobCharacter.type}_${angryMobCharacter.cardId}`);
+                return availableCard ? availableCard.name || availableCard.card_name : null;
+            })() : null;
+            
             deckCards.forEach(card => {
                 if (card.type === 'special' || card.type === 'advanced_universe' || card.type === 'teamwork' || 
                     card.type === 'ally_universe' || card.type === 'training' || card.type === 'basic_universe') {
                     const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
                     if (availableCard && availableCard.character && 
-                        availableCard.character !== 'Any Character' && 
-                        !characterNames.includes(availableCard.character)) {
-                        errors.push(`"${availableCard.name || availableCard.card_name}" requires character "${availableCard.character}" in your team`);
+                        availableCard.character !== 'Any Character') {
+                        
+                        const specialCharacter = availableCard.character;
+                        const specialName = availableCard.name || availableCard.card_name;
+                        
+                        // Check if this is an Angry Mob special
+                        if (specialCharacter.startsWith('Angry Mob')) {
+                            // Angry Mob special validation
+                            if (!angryMobCharacterName) {
+                                errors.push(`"${specialName}" requires an "Angry Mob" character in your team`);
+                            } else {
+                                // Check if the special is for a specific Angry Mob subtype
+                                if (specialCharacter.includes(':')) {
+                                    // Special is for a specific subtype (e.g., "Angry Mob: Middle Ages")
+                                    const specialSubtype = specialCharacter.split(':')[1].trim();
+                                    const characterSubtype = angryMobCharacterName.includes(':') ? 
+                                        angryMobCharacterName.split(':')[1].trim() : null;
+                                    
+                                    if (characterSubtype !== specialSubtype) {
+                                        errors.push(`"${specialName}" requires "Angry Mob: ${specialSubtype}" character in your team`);
+                                    }
+                                }
+                                // If special is just "Angry Mob" (no subtype), any Angry Mob character can use it
+                            }
+                        } else {
+                            // Regular character special validation
+                            if (!characterNames.includes(specialCharacter)) {
+                                errors.push(`"${specialName}" requires character "${specialCharacter}" in your team`);
+                            }
+                        }
                     }
                 }
             });
