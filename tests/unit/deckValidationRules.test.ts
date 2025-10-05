@@ -153,8 +153,8 @@ describe('Deck Validation Rules', () => {
     const hasEvents = eventCards.length > 0;
     const requiredSize = hasEvents ? 56 : 51;
     
-    if (totalCards !== requiredSize) {
-      errors.push(`Deck must have exactly ${requiredSize} cards in draw pile (${totalCards}/${requiredSize})`);
+    if (totalCards < requiredSize) {
+      errors.push(`Deck must have at least ${requiredSize} cards in draw pile (${totalCards}/${requiredSize})`);
     }
     
     return { errors, warnings, isValid: errors.length === 0 };
@@ -457,7 +457,7 @@ describe('Deck Validation Rules', () => {
   });
 
   describe('Rule 7: Deck size requirements', () => {
-    it('should pass with exactly 51 cards when no events', () => {
+    it('should pass with at least 51 cards when no events', () => {
       const deckCards = [
         { type: 'character', cardId: 'char1', quantity: 1 },
         { type: 'character', cardId: 'char2', quantity: 1 },
@@ -472,7 +472,7 @@ describe('Deck Validation Rules', () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it('should pass with exactly 56 cards when events present', () => {
+    it('should pass with at least 56 cards when events present', () => {
       const deckCards = [
         { type: 'character', cardId: 'char1', quantity: 1 },
         { type: 'character', cardId: 'char2', quantity: 1 },
@@ -500,7 +500,7 @@ describe('Deck Validation Rules', () => {
       
       const result = validateDeck(deckCards);
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Deck must have exactly 51 cards in draw pile (45/51)');
+      expect(result.errors).toContain('Deck must have at least 51 cards in draw pile (45/51)');
     });
 
     it('should fail with fewer than 56 cards when events present', () => {
@@ -516,7 +516,38 @@ describe('Deck Validation Rules', () => {
       
       const result = validateDeck(deckCards);
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Deck must have exactly 56 cards in draw pile (50/56)');
+      expect(result.errors).toContain('Deck must have at least 56 cards in draw pile (50/56)');
+    });
+
+    it('should pass with more than 51 cards when no events', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'char1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 },
+        { type: 'power_card', cardId: 'power1', quantity: 60 } // More than 51
+      ];
+      
+      const result = validateDeck(deckCards);
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should pass with more than 56 cards when events present', () => {
+      const deckCards = [
+        { type: 'character', cardId: 'char1', quantity: 1 },
+        { type: 'character', cardId: 'char2', quantity: 1 },
+        { type: 'character', cardId: 'char3', quantity: 1 },
+        { type: 'character', cardId: 'char4', quantity: 1 },
+        { type: 'mission', cardId: 'mission1', quantity: 7 },
+        { type: 'event', cardId: 'event1', quantity: 1 },
+        { type: 'power_card', cardId: 'power1', quantity: 65 } // More than 56
+      ];
+      
+      const result = validateDeck(deckCards);
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
     });
   });
 
@@ -536,7 +567,7 @@ describe('Deck Validation Rules', () => {
       expect(result.errors).toContain('Deck must have exactly 4 characters (1/4)');
       expect(result.errors).toContain('Deck must have exactly 7 mission cards (5/7)');
       expect(result.errors).toContain('Deck can have at most 1 location (2 locations)');
-      expect(result.errors).toContain('Deck must have exactly 51 cards in draw pile (40/51)');
+      expect(result.errors).toContain('Deck must have at least 51 cards in draw pile (40/51)');
     });
   });
 

@@ -5837,7 +5837,7 @@
                 if (deck.cards && deck.cards.length > 0) {
                     const validation = validateDeck(deck.cards);
                     if (validation.errors.length > 0) {
-                        validationStatus = '<span class="deck-validation-badge error">⚠️ Not Legal</span>';
+                        validationStatus = '<span class="deck-validation-badge error">Not Legal</span>';
                     } else if (validation.warnings.length > 0) {
                         validationStatus = '<span class="deck-validation-badge warning">ℹ️ Has Warnings</span>';
                     } else {
@@ -6639,8 +6639,8 @@
             const hasEvents = eventCards.length > 0;
             const requiredSize = hasEvents ? DECK_RULES.MIN_DECK_SIZE_WITH_EVENTS : DECK_RULES.MIN_DECK_SIZE;
             
-            if (totalCards !== requiredSize) {
-                errors.push(`Deck must have exactly ${requiredSize} cards in draw pile (${totalCards}/${requiredSize})`);
+            if (totalCards < requiredSize) {
+                errors.push(`Deck must have at least ${requiredSize} cards in draw pile (${totalCards}/${requiredSize})`);
             }
             
             // Check "One Per Deck" violations
