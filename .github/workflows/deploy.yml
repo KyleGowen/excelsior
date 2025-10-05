@@ -371,7 +371,9 @@ jobs:
             \"docker pull $ECR_URI:latest\",
             \"docker stop overpower-app || true\",
             \"docker rm overpower-app || true\",
-            \"docker run -d --name overpower-app --restart unless-stopped -p 3000:3000 --env-file /opt/app/.env -e SKIP_MIGRATIONS=false $ECR_URI:latest\"
+            \"docker run -d --name overpower-app --restart unless-stopped -p 3000:3000 --env-file /opt/app/.env -e SKIP_MIGRATIONS=false $ECR_URI:latest\",
+            \"sleep 10\",
+            \"docker exec overpower-app flyway -url=jdbc:postgresql://op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require -user=postgres -password=TempPassword123! -locations=filesystem:/app/migrations repair || true\"
           ]" \
           --output text --query 'Command.CommandId'
           
