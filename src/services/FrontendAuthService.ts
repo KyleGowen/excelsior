@@ -100,15 +100,12 @@ export class FrontendAuthService {
 
       // Verify the session is still valid
       try {
-        console.log('🔍 DEBUG: Verifying session with /api/auth/me...');
         const response = await fetch('/api/auth/me', {
           credentials: 'include'
         });
-        console.log('🔍 DEBUG: /api/auth/me response status:', response.status);
         
         if (response.ok) {
           const data = await response.json() as { success: boolean; data: { userId: string; username: string } };
-          console.log('🔍 DEBUG: /api/auth/me response data:', data);
           if (data.data) {
             this.currentUser = {
               id: data.data.userId,
@@ -119,7 +116,6 @@ export class FrontendAuthService {
             this.storeUser(this.currentUser);
             authResult.isAuthenticated = true;
             authResult.currentUser = this.currentUser;
-            console.log('🔍 DEBUG: Session verified successfully, currentUser:', this.currentUser);
           }
         } else {
           // Session expired, clear stored user
@@ -169,15 +165,6 @@ export class FrontendAuthService {
 
     // Determine read-only mode if a deck is being viewed
     if (authResult.deckId) {
-      console.log('🔍 DEBUG: Current User ID:', authResult.currentUser ? authResult.currentUser.id : 'N/A');
-      console.log('🔍 DEBUG: Current User ID type:', authResult.currentUser ? typeof authResult.currentUser.id : 'N/A');
-      console.log('🔍 DEBUG: URL User ID:', authResult.urlUserId);
-      console.log('🔍 DEBUG: URL User ID type:', typeof authResult.urlUserId);
-      console.log('🔍 DEBUG: IDs match?', authResult.currentUser && authResult.currentUser.id === authResult.urlUserId);
-      console.log('🔍 DEBUG: Strict equality check:', authResult.currentUser && authResult.currentUser.id === authResult.urlUserId);
-      console.log('🔍 DEBUG: Loose equality check:', authResult.currentUser && authResult.currentUser.id == authResult.urlUserId);
-      console.log('🔍 DEBUG: Read-only mode from query param:', authResult.isReadOnlyMode);
-      
       // If readonly query parameter is set, always use read-only mode
       if (authResult.isReadOnlyMode) {
         console.log('Read-only mode: readonly=true query parameter detected - FORCING read-only mode');
@@ -205,32 +192,13 @@ export class FrontendAuthService {
 
   public async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
-      console.log('🔍 DEBUG: Frontend login attempt:', {
-        username: credentials.username,
-        passwordLength: credentials.password?.length,
-        timestamp: new Date().toISOString()
-      });
-      
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)
       });
-      
-      console.log('🔍 DEBUG: Frontend login response:', {
-        status: response.status,
-        statusText: response.statusText,
-        timestamp: new Date().toISOString()
-      });
 
       const data = await response.json() as LoginResponse;
-      
-      console.log('🔍 DEBUG: Frontend login response data:', {
-        success: data.success,
-        error: data.error,
-        data: data.data,
-        timestamp: new Date().toISOString()
-      });
 
       if (data.success && data.data) {
         this.currentUser = {

@@ -587,7 +587,6 @@ app.get('/users/:userId/decks', authenticateUser, (req: any, res) => {
   const isOwnAccess = user.id === userId;
   
   if (!isGuestAccess && !isOwnAccess) {
-    console.log(`🔍 DEBUG: Access denied for deck builder - userId: ${userId}, userRole: ${user.role}, userIdentifier: ${user.id}`);
     return res.status(403).json({ success: false, error: 'Access denied' });
   }
   
@@ -597,7 +596,6 @@ app.get('/users/:userId/decks', authenticateUser, (req: any, res) => {
 // Deck Editor route - serve deck editor for specific deck (no auth required for read-only viewing)
 app.get('/users/:userId/decks/:deckId', (req: any, res) => {
   const { userId, deckId } = req.params;
-  console.log(`🔍 DEBUG: Deck editor route accessed - userId: ${userId}, deckId: ${deckId}`);
   
   // Add cache-busting headers to prevent HTML caching during development
   res.set({
