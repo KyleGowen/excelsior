@@ -8373,7 +8373,7 @@
             deckList.innerHTML = decksWithCharacters.map(deck => {
                 // Quick validation check for display
                 let validationStatus = '';
-                if (deck.is_limited) {
+                if (deck.metadata.is_limited) {
                     validationStatus = '<span class="deck-validation-badge limited">Limited</span>';
                 } else if (deck.cards && deck.cards.length > 0) {
                     const validation = validateDeck(deck.cards);
@@ -13271,7 +13271,7 @@
                     }
                     
                     // Set limited state from loaded deck
-                    isDeckLimited = currentDeckData.is_limited || false;
+                    isDeckLimited = currentDeckData.metadata.is_limited || false;
                     
                     // Update modal title and description
                     document.getElementById('deckEditorTitle').textContent = currentDeckData.metadata.name;

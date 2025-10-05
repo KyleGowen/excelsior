@@ -277,7 +277,8 @@ app.get('/api/decks', authenticateUser, async (req: any, res) => {
         lastModified: deck.updated_at,
         cardCount: deck.cards?.length || 0,
         userId: deck.user_id,
-        uiPreferences: deck.ui_preferences
+        uiPreferences: deck.ui_preferences,
+        is_limited: deck.is_limited
       },
       cards: deck.cards || []
     }));
@@ -371,7 +372,8 @@ app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
         cardCount: deckData.cards?.length || 0,
         userId: deckData.user_id,
         uiPreferences: deckData.ui_preferences,
-        isOwner: deckData.isOwner
+        isOwner: deckData.isOwner,
+        is_limited: deckData.is_limited
       },
       cards: deckData.cards || []
     };
@@ -411,7 +413,8 @@ app.get('/api/decks/:id/full', authenticateUser, async (req: any, res) => {
         cardCount: deckData.cards?.length || 0,
         userId: deckData.user_id,
         uiPreferences: deckData.ui_preferences,
-        isOwner: deckData.isOwner
+        isOwner: deckData.isOwner,
+        is_limited: deckData.is_limited
       },
       cards: deckData.cards || []
     };

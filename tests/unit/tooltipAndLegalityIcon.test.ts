@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 import { DeckValidationService } from '../../src/services/deckValidationService';
 import { DeckCard } from '../../src/types';
 

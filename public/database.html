@@ -5905,7 +5905,7 @@
             deckList.innerHTML = decksWithCharacters.map(deck => {
                 // Quick validation check for display
                 let validationStatus = '';
-                if (deck.is_limited) {
+                if (deck.metadata.is_limited) {
                     validationStatus = '<span class="deck-validation-badge limited">Limited</span>';
                 } else if (deck.cards && deck.cards.length > 0) {
                     const validation = validateDeck(deck.cards);

@@ -51,6 +51,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         name: deck.name,
         description: deck.description,
         ui_preferences: deck.ui_preferences,
+        is_limited: deck.is_limited,
         created_at: deck.created_at,
         updated_at: deck.updated_at
       };
@@ -177,6 +178,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         name: deck.name,
         description: deck.description,
         ui_preferences: deck.ui_preferences,
+        is_limited: deck.is_limited,
         created_at: deck.created_at,
         updated_at: deck.updated_at,
         cards: cardsByDeck.get(deck.id) || [] // Only character and location cards
@@ -227,6 +229,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         name: deck.name,
         description: deck.description,
         ui_preferences: deck.ui_preferences,
+        is_limited: deck.is_limited,
         created_at: deck.created_at,
         updated_at: deck.updated_at,
         cards: cards
