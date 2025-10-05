@@ -6774,7 +6774,17 @@
                 const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
                 if (!availableCard) return;
                 
-                const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+                let cardName = availableCard.name || availableCard.card_name;
+                
+                // For power cards, construct name from value and power_type if name is missing
+                if (!cardName && card.type === 'power' && availableCard.value && availableCard.power_type) {
+                    cardName = `${availableCard.value} - ${availableCard.power_type}`;
+                }
+                
+                // Fallback to 'Unknown Card' if still no name
+                if (!cardName) {
+                    cardName = 'Unknown Card';
+                }
                 
                 // Check special cards for character compatibility
                 if (card.type === 'special') {
