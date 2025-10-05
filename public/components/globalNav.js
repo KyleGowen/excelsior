@@ -315,7 +315,7 @@ function buildUserMenuOptions(user) {
 
     // + Create Deck - available to USER and ADMIN
     if (user.role !== 'GUEST') {
-        dropdown.appendChild(createUserMenuItem('+ Create Deck', () => { closeUserMenu(); createNewDeck(); }));
+        dropdown.appendChild(createUserMenuItem('+ Create Deck', () => { closeUserMenu(); createNewDeck(); }, 'user-menu-item--primary'));
     }
     // + Create User - ADMIN only
     if (user.role === 'ADMIN') {
@@ -323,19 +323,19 @@ function buildUserMenuOptions(user) {
             // Defer opening the create-user dropdown until after the menu fully closes
             closeUserMenu();
             setTimeout(() => toggleCreateUserDropdown(), 0);
-        }));
+        }, 'user-menu-item--accent'));
     }
     // Change Password - USER and ADMIN (placeholder handler)
     if (user.role !== 'GUEST') {
         dropdown.appendChild(createUserMenuItem('Change Password', () => { closeUserMenu(); alert('Change Password coming soon'); }));
     }
     // Log Out - everyone
-    dropdown.appendChild(createUserMenuItem('Log Out', () => { closeUserMenu(); const btn = document.getElementById('logoutBtn'); if (btn) btn.click(); }));
+    dropdown.appendChild(createUserMenuItem('Log Out', () => { closeUserMenu(); const btn = document.getElementById('logoutBtn'); if (btn) btn.click(); }, 'user-menu-item--danger'));
 }
 
-function createUserMenuItem(label, onClick) {
+function createUserMenuItem(label, onClick, extraClass) {
     const btn = document.createElement('button');
-    btn.className = 'user-menu-item';
+    btn.className = 'user-menu-item' + (extraClass ? ` ${extraClass}` : '');
     btn.textContent = label;
     btn.onclick = onClick;
     return btn;
