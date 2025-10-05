@@ -80,6 +80,10 @@ class MockDeckRepository {
     return { decks: this.decks.size };
   }
 
+  async getDeckSummaryWithAllCards(deckId: string): Promise<any> {
+    return this.decks.get(deckId);
+  }
+
   async initialize(): Promise<void> {
     // Mock implementation
   }
