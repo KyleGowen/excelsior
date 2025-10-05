@@ -264,14 +264,9 @@ app.get('/api/decks', authenticateUser, async (req: any, res) => {
   try {
     const decks = await deckRepository.getDecksByUserId(req.user.id);
     
-    // Load cards for each deck
-    const decksWithCards = await Promise.all(decks.map(async (deck) => {
-      const fullDeck = await deckRepository.getDeckById(deck.id);
-      return fullDeck || deck;
-    }));
-    
     // Transform deck data to match frontend expectations
-    const transformedDecks = decksWithCards.map(deck => ({
+    // Note: getDecksByUserId now returns decks with only character/location cards for performance
+    const transformedDecks = decks.map(deck => ({
       metadata: {
         id: deck.id,
         name: deck.name,
@@ -354,6 +349,46 @@ app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
   } catch (error) {
     console.error('Error fetching deck:', error);
     res.status(500).json({ success: false, error: 'Failed to fetch deck' });
+  }
+});
+
+// Background loading endpoint for full deck data (including all card types)
+app.get('/api/decks/:id/full', authenticateUser, async (req: any, res) => {
+  try {
+    const deck = await deckRepository.getDeckSummaryWithAllCards(req.params.id);
+    if (!deck) {
+      return res.status(404).json({ success: false, error: 'Deck not found' });
+    }
+    
+    // Check if user owns this deck
+    const isOwner = deck.user_id === req.user.id;
+    
+    // Add ownership flag to response for frontend to use
+    const deckData = {
+      ...deck,
+      isOwner: isOwner
+    };
+    
+    // Transform deck data to match frontend expectations
+    const transformedDeck = {
+      metadata: {
+        id: deckData.id,
+        name: deckData.name,
+        description: deckData.description,
+        created: deckData.created_at,
+        lastModified: deckData.updated_at,
+        cardCount: deckData.cards?.length || 0,
+        userId: deckData.user_id,
+        uiPreferences: deckData.ui_preferences,
+        isOwner: deckData.isOwner
+      },
+      cards: deckData.cards || []
+    };
+    
+    res.json({ success: true, data: transformedDeck });
+  } catch (error) {
+    console.error('Error fetching full deck data:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch full deck data' });
   }
 });
 

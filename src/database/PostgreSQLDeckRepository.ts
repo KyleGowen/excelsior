@@ -134,20 +134,43 @@ export class PostgreSQLDeckRepository implements DeckRepository {
 
     const client = await this.pool.connect();
     try {
-      // Use a more efficient query with LEFT JOIN to get deck metadata and card counts
-      const result = await client.query(`
-        SELECT 
-          d.*,
-          COUNT(dc.id) as card_count,
-          COALESCE(SUM(dc.quantity), 0) as total_cards
-        FROM decks d
-        LEFT JOIN deck_cards dc ON d.id = dc.deck_id
-        WHERE d.user_id = $1
-        GROUP BY d.id, d.user_id, d.name, d.description, d.ui_preferences, d.created_at, d.updated_at
-        ORDER BY d.created_at DESC
+      // Get deck metadata first
+      const deckResult = await client.query(`
+        SELECT * FROM decks 
+        WHERE user_id = $1 
+        ORDER BY created_at DESC
       `, [userId]);
       
-      const decks = result.rows.map(deck => ({
+      if (deckResult.rows.length === 0) {
+        return [];
+      }
+      
+      const deckIds = deckResult.rows.map(deck => deck.id);
+      
+      // Load only character and location cards for deck summaries
+      const cardsResult = await client.query(`
+        SELECT * FROM deck_cards 
+        WHERE deck_id = ANY($1) 
+        AND card_type IN ('character', 'location')
+        ORDER BY deck_id, card_type, card_id
+      `, [deckIds]);
+      
+      // Group cards by deck_id
+      const cardsByDeck = new Map<string, any[]>();
+      cardsResult.rows.forEach(card => {
+        if (!cardsByDeck.has(card.deck_id)) {
+          cardsByDeck.set(card.deck_id, []);
+        }
+        cardsByDeck.get(card.deck_id)!.push({
+          id: card.id,
+          type: card.card_type,
+          cardId: card.card_id,
+          quantity: card.quantity,
+          selectedAlternateImage: card.selected_alternate_image
+        });
+      });
+      
+      const decks = deckResult.rows.map(deck => ({
         id: deck.id,
         user_id: deck.user_id,
         name: deck.name,
@@ -155,13 +178,63 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         ui_preferences: deck.ui_preferences,
         created_at: deck.created_at,
         updated_at: deck.updated_at,
-        cards: [] // Empty cards array for list view - cards loaded on demand
+        cards: cardsByDeck.get(deck.id) || [] // Only character and location cards
       }));
       
       // Cache the result
       this.deckCache.set(cacheKey, { deck: decks as any, timestamp: now });
       
       return decks;
+    } finally {
+      client.release();
+    }
+  }
+
+  async getDeckSummaryWithAllCards(deckId: string): Promise<Deck | undefined> {
+    // This method loads a deck with ALL cards (including non-character/location cards)
+    // Used for background loading after initial page load
+    const client = await this.pool.connect();
+    try {
+      const deckResult = await client.query(
+        'SELECT * FROM decks WHERE id = $1',
+        [deckId]
+      );
+      
+      if (deckResult.rows.length === 0) {
+        return undefined;
+      }
+      
+      const deck = deckResult.rows[0];
+      
+      // Fetch ALL cards for this deck
+      const cardsResult = await client.query(
+        'SELECT * FROM deck_cards WHERE deck_id = $1',
+        [deckId]
+      );
+      
+      const cards = cardsResult.rows.map(card => ({
+        id: card.id,
+        type: card.card_type,
+        cardId: card.card_id,
+        quantity: card.quantity,
+        selectedAlternateImage: card.selected_alternate_image
+      }));
+      
+      const fullDeck = {
+        id: deck.id,
+        user_id: deck.user_id,
+        name: deck.name,
+        description: deck.description,
+        ui_preferences: deck.ui_preferences,
+        created_at: deck.created_at,
+        updated_at: deck.updated_at,
+        cards: cards
+      };
+      
+      // Update cache with full deck data
+      this.deckCache.set(deckId, { deck: fullDeck, timestamp: Date.now() });
+      
+      return fullDeck;
     } finally {
       client.release();
     }

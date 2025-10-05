@@ -8,6 +8,7 @@ export interface DeckRepository {
   createDeck(userId: string, name: string, description?: string, characterIds?: string[]): Promise<Deck>;
   getDeckById(id: string): Promise<Deck | undefined>;
   getDecksByUserId(userId: string): Promise<Deck[]>;
+  getDeckSummaryWithAllCards(deckId: string): Promise<Deck | undefined>;
   getAllDecks(): Promise<Deck[]>;
   updateDeck(id: string, updates: Partial<Deck>): Promise<Deck | undefined>;
   deleteDeck(id: string): Promise<boolean>;
