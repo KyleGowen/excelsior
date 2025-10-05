@@ -28,6 +28,12 @@
 - All changes should maintain backward compatibility
 - Follow the existing component structure (globalNav, etc.)
 
+## UI/UX Guidelines
+- **All global navigation popups and tooltips must appear above main page content**
+- Use z-index: 9999 for global navigation dropdowns, popups, and tooltips
+- Ensure proper stacking context for navigation elements
+- Test that popups are visible and not hidden behind other page elements
+
 ## Testing Commands
 - `npm run test:unit` - Run all unit tests
 - `npm run test:integration` - Run integration tests  

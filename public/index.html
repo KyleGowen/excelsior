@@ -8136,6 +8136,12 @@
             const result = await window.authService.login({ username, password });
             if (result.success) {
                 currentUser = result.data;
+                
+                // Update user welcome message and show/hide Create User button based on role
+                if (typeof updateUserWelcome === 'function') {
+                    updateUserWelcome();
+                }
+                
                 // Redirect to user's deck page
                 window.location.href = `/users/${currentUser.userId}/decks`;
             } else {
@@ -8197,6 +8203,11 @@
             
             const authResult = await checkAuthentication();
             currentUser = authResult.currentUser; // Update global currentUser after checkAuthentication
+
+            // Update user welcome message and show/hide Create User button based on role
+            if (typeof updateUserWelcome === 'function') {
+                updateUserWelcome();
+            }
 
             if (authResult.isAuthenticated) {
                 if (authResult.deckId) {

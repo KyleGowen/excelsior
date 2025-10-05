@@ -106,6 +106,140 @@
     box-shadow: 0 4px 12px rgba(78, 205, 196, 0.4);
 }
 
+/* Create User Button and Dropdown */
+.create-user-container {
+    position: relative;
+    display: inline-block;
+}
+
+.create-user-btn {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: #ffffff;
+    border: 1px solid #e74c3c;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+.create-user-btn:hover {
+    background: linear-gradient(135deg, #ec7063, #d63031);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+}
+
+.create-user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #2c3e50;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 16px;
+    min-width: 250px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    display: none;
+    margin-top: 4px;
+}
+
+.create-user-dropdown.show {
+    display: block;
+}
+
+.create-user-dropdown .form-group {
+    margin-bottom: 12px;
+}
+
+.create-user-dropdown label {
+    display: block;
+    color: #ecf0f1;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.create-user-dropdown input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ecf0f1;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.create-user-dropdown input:focus {
+    outline: none;
+    border-color: #e74c3c;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.create-user-dropdown input::placeholder {
+    color: rgba(236, 240, 241, 0.6);
+}
+
+.form-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+.save-btn {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.save-btn:hover {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    transform: translateY(-1px);
+}
+
+.cancel-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ecf0f1;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Ensure all global navigation popups and tooltips appear above main content */
+.unified-header .create-user-container,
+.unified-header .create-user-dropdown,
+.unified-header [title] {
+    z-index: 9999 !important;
+}
+
+/* Ensure global navigation elements have proper stacking context */
+.unified-header {
+    z-index: 100;
+}
+
+.unified-header .create-user-container {
+    z-index: 9999;
+}
+
 /* Responsive adjustments for unified header */
 @media (max-width: 900px) {
     .unified-header {

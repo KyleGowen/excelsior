@@ -225,5 +225,93 @@ function updateUserWelcome() {
         if (usernameElement) {
             usernameElement.textContent = displayName;
         }
+        
+        // Show/hide Create User button based on role
+        const createUserContainer = document.getElementById('createUserContainer');
+        if (createUserContainer) {
+            if (currentUser.role === 'ADMIN') {
+                createUserContainer.style.display = 'inline-block';
+            } else {
+                createUserContainer.style.display = 'none';
+            }
+        }
+    }
+}
+
+// Create User functionality
+function toggleCreateUserDropdown() {
+    const dropdown = document.getElementById('createUserDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+        
+        // Close dropdown when clicking outside
+        if (dropdown.classList.contains('show')) {
+            document.addEventListener('click', closeCreateUserDropdownOnOutsideClick);
+        } else {
+            document.removeEventListener('click', closeCreateUserDropdownOnOutsideClick);
+        }
+    }
+}
+
+function closeCreateUserDropdown() {
+    const dropdown = document.getElementById('createUserDropdown');
+    if (dropdown) {
+        dropdown.classList.remove('show');
+        document.removeEventListener('click', closeCreateUserDropdownOnOutsideClick);
+        
+        // Clear form
+        const form = document.getElementById('createUserForm');
+        if (form) {
+            form.reset();
+        }
+    }
+}
+
+function closeCreateUserDropdownOnOutsideClick(event) {
+    const container = document.getElementById('createUserContainer');
+    const dropdown = document.getElementById('createUserDropdown');
+    
+    if (container && dropdown && !container.contains(event.target)) {
+        closeCreateUserDropdown();
+    }
+}
+
+async function createUser(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const username = formData.get('username');
+    const password = formData.get('password');
+    
+    if (!username || !password) {
+        alert('Please fill in all fields');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+            alert(`User "${username}" created successfully!`);
+            closeCreateUserDropdown();
+        } else {
+            alert(`Error creating user: ${data.error || 'Unknown error'}`);
+        }
+    } catch (error) {
+        console.error('Error creating user:', error);
+        alert('Error creating user. Please try again.');
     }
 }

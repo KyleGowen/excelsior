@@ -5661,6 +5661,12 @@
                 
                 if (data.success) {
                     currentUser = data.data;
+                    
+                    // Update user welcome message and show/hide Create User button based on role
+                    if (typeof updateUserWelcome === 'function') {
+                        updateUserWelcome();
+                    }
+                    
                     showMainApp();
                     // Load user's data after user is set
                     setTimeout(() => {
@@ -5732,7 +5738,13 @@
             await loadGlobalNav();
             
             // Check authentication first
-            checkAuthentication();
+            const authResult = await checkAuthentication();
+            currentUser = authResult.currentUser; // Update global currentUser after checkAuthentication
+
+            // Update user welcome message and show/hide Create User button based on role
+            if (typeof updateUserWelcome === 'function') {
+                updateUserWelcome();
+            }
             
             // Login form event listener
             document.getElementById('loginForm').addEventListener('submit', async (e) => {

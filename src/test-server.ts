@@ -214,6 +214,53 @@ app.post('/api/auth/login', authService.handleLogin.bind(authService));
 app.post('/api/auth/logout', authService.handleLogout.bind(authService));
 app.get('/api/auth/me', authService.handleSessionValidation.bind(authService));
 
+// User management routes
+app.get('/api/users', (req, res) => {
+  try {
+    const users = userRepository.getAllUsers();
+    res.json({ success: true, data: users });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to fetch users' });
+  }
+});
+
+app.post('/api/users', authenticateUser, async (req: any, res) => {
+  try {
+    // Check if the current user is an ADMIN
+    const currentUser = req.user;
+    if (currentUser.role !== 'ADMIN') {
+      return res.status(403).json({ success: false, error: 'Only ADMIN users can create new users' });
+    }
+
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ success: false, error: 'Username and password are required' });
+    }
+
+    // Check if user already exists
+    const existingUser = await userRepository.getUserByUsername(username);
+    if (existingUser) {
+      return res.status(409).json({ success: false, error: 'Username already exists' });
+    }
+
+    // Create the new user with USER role by default
+    const newUser = await userRepository.createUser(username, `${username}@example.com`, password, 'USER');
+    
+    // Return user data without password hash
+    const { password_hash, ...userWithoutPassword } = newUser;
+    
+    res.status(201).json({ 
+      success: true, 
+      data: userWithoutPassword,
+      message: `User "${username}" created successfully`
+    });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ success: false, error: 'Failed to create user' });
+  }
+});
+
 // Deck routes
 app.get('/api/decks', authenticateUser, async (req: any, res) => {
   try {
