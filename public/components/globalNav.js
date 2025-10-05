@@ -319,7 +319,11 @@ function buildUserMenuOptions(user) {
     }
     // + Create User - ADMIN only
     if (user.role === 'ADMIN') {
-        dropdown.appendChild(createUserMenuItem('+ Create User', () => { closeUserMenu(); toggleCreateUserDropdown(); }));
+        dropdown.appendChild(createUserMenuItem('+ Create User', () => {
+            // Defer opening the create-user dropdown until after the menu fully closes
+            closeUserMenu();
+            setTimeout(() => toggleCreateUserDropdown(), 0);
+        }));
     }
     // Change Password - USER and ADMIN (placeholder handler)
     if (user.role !== 'GUEST') {
@@ -356,8 +360,17 @@ window.createUser = createUser;
 // Create User functionality
 function toggleCreateUserDropdown() {
     const dropdown = document.getElementById('createUserDropdown');
+    const container = document.getElementById('createUserContainer');
     if (dropdown) {
         dropdown.classList.toggle('show');
+        if (container) {
+            // Ensure parent container is visible when showing
+            if (dropdown.classList.contains('show')) {
+                container.style.display = 'inline-block';
+            } else {
+                container.style.display = 'none';
+            }
+        }
         
         // Close dropdown when clicking outside
         if (dropdown.classList.contains('show')) {
@@ -370,6 +383,7 @@ function toggleCreateUserDropdown() {
 
 function closeCreateUserDropdown() {
     const dropdown = document.getElementById('createUserDropdown');
+    const container = document.getElementById('createUserContainer');
     if (dropdown) {
         dropdown.classList.remove('show');
         document.removeEventListener('click', closeCreateUserDropdownOnOutsideClick);
@@ -379,6 +393,9 @@ function closeCreateUserDropdown() {
         if (form) {
             form.reset();
         }
+    }
+    if (container) {
+        container.style.display = 'none';
     }
 }
 
