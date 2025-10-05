@@ -5106,7 +5106,7 @@
         <div id="globalNav"></div>
 
 
-        <div id="database-view" class="database-section" style="display: block;">
+        <div id="database-view" class="database-section" style="display: none;">
             <div class="section-header">
             </div>
             
@@ -5639,7 +5639,7 @@
 
 
         <!-- Deck Builder Section -->
-        <div id="deck-builder" class="deck-builder-section" style="display: none;">
+        <div id="deck-builder" class="deck-builder-section" style="display: none; opacity: 0; transition: opacity 120ms ease-in-out;">
             <!-- Deck List -->
             <div class="deck-list-container">
                 <div class="deck-list" id="deck-list">
@@ -8118,6 +8118,11 @@
         function showLoginModal() {
             document.getElementById('loginModal').style.display = 'flex';
             document.getElementById('mainContainer').style.display = 'none';
+            // Ensure app views are hidden to avoid flash when returning to login
+            const databaseView = document.getElementById('database-view');
+            const deckBuilder = document.getElementById('deck-builder');
+            if (databaseView) databaseView.style.display = 'none';
+            if (deckBuilder) deckBuilder.style.display = 'none';
         }
 
         function showMainApp() {
@@ -8128,21 +8133,21 @@
                 : (currentUser.username || currentUser.name || 'User');
             document.getElementById('currentUsername').textContent = displayName;
             
-            // Load user decks after successful login
-            loadUserDecks();
-            
-            // Always start in database view and load characters
-            console.log('🔍 showMainApp() - setting up database view');
+            // Hide database view by default to avoid flash and switch directly to deck builder
             const databaseView = document.getElementById('database-view');
-            if (databaseView) {
-                databaseView.style.display = 'block';
-                console.log('🔍 showMainApp() - database view is now visible');
+            if (databaseView) databaseView.style.display = 'none';
+
+            // Load core data in background to keep transition smooth
+            loadMainAppDataInBackground();
+
+            // Show deck builder smoothly
+            if (typeof switchToDeckBuilder === 'function') {
+                switchToDeckBuilder();
+            } else {
+                const deckBuilder = document.getElementById('deck-builder');
+                if (deckBuilder) deckBuilder.style.display = 'block';
             }
 
-            // Load database view data (this will load characters)
-            console.log('🔍 showMainApp() - loading database view data...');
-            loadDatabaseViewData();
-            
             // Disable "Add to Deck" buttons for guest users immediately
             disableAddToDeckButtonsImmediate();
         }
@@ -8178,6 +8183,13 @@
         async function logout() {
             await window.authService.logout();
             currentUser = null;
+            // Hide main UI immediately to prevent flash before redirect
+            const mainContainer = document.getElementById('mainContainer');
+            if (mainContainer) mainContainer.style.display = 'none';
+            const databaseView = document.getElementById('database-view');
+            const deckBuilder = document.getElementById('deck-builder');
+            if (databaseView) databaseView.style.display = 'none';
+            if (deckBuilder) deckBuilder.style.display = 'none';
             // Redirect to root page
             window.location.href = '/';
         }
@@ -8239,12 +8251,19 @@
                     // Going directly to deck editor - skip showing main app to avoid flash
                     console.log('🔍 Going directly to deck editor, skipping main app display');
                     
-                    // Ensure database view is hidden to prevent flash
+            // Ensure database view is hidden to prevent flash and fade in deck builder
                     const databaseView = document.getElementById('database-view');
                     if (databaseView) {
                         console.log('🔍 Hiding database view to prevent flash');
                         databaseView.style.display = 'none';
                     }
+            const deckBuilderEl = document.getElementById('deck-builder');
+            if (deckBuilderEl) {
+                deckBuilderEl.style.display = 'block';
+                requestAnimationFrame(() => {
+                    deckBuilderEl.style.opacity = '1';
+                });
+            }
                     
                     isReadOnlyMode = authResult.isReadOnlyMode; // Update global flag
                     document.body.classList.toggle('read-only-mode', isReadOnlyMode);

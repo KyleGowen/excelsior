@@ -57,8 +57,18 @@ function switchToDeckBuilder() {
     document.getElementById('databaseViewBtn').classList.remove('active');
     
     // Show deck builder, hide database view
-    document.getElementById('deck-builder').style.display = 'block';
-    document.getElementById('database-view').style.display = 'none';
+    const deckBuilderEl = document.getElementById('deck-builder');
+    if (deckBuilderEl) {
+        deckBuilderEl.style.display = 'block';
+        // Fade in smoothly to avoid flash
+        requestAnimationFrame(() => {
+            deckBuilderEl.style.opacity = '1';
+        });
+    }
+    const databaseViewEl = document.getElementById('database-view');
+    if (databaseViewEl) {
+        databaseViewEl.style.display = 'none';
+    }
     
     // Show deck statistics and hide database statistics
     const databaseStats = document.getElementById('database-stats');
