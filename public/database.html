@@ -6551,9 +6551,11 @@
         const DECK_RULES = {
             MIN_DECK_SIZE: 51,
             MIN_DECK_SIZE_WITH_EVENTS: 56,
-            MAX_CHARACTERS: 4,
+            EXACT_CHARACTERS: 4,
             MAX_TOTAL_THREAT: 76,
-            MAX_COPIES_ONE_PER_DECK: 1
+            MAX_COPIES_ONE_PER_DECK: 1,
+            EXACT_MISSION_CARDS: 7,
+            MAX_LOCATIONS: 1
         };
 
         // Function to validate deck according to Overpower rules
@@ -6565,6 +6567,8 @@
             const cardCounts = {};
             const characterCards = [];
             const eventCards = [];
+            const missionCards = [];
+            const locationCards = [];
             const onePerDeckCards = {};
             
             deckCards.forEach(card => {
@@ -6575,6 +6579,10 @@
                     characterCards.push(card);
                 } else if (type === 'event') {
                     eventCards.push(card);
+                } else if (type === 'mission') {
+                    missionCards.push(card);
+                } else if (type === 'location') {
+                    locationCards.push(card);
                 }
                 
                 // Track "One Per Deck" cards
@@ -6585,49 +6593,12 @@
                 }
             });
             
-            // Check deck size - removed from validation errors since it's shown in Total Cards metadata
-            const totalCards = deckCards
-                .filter(card => !['mission', 'character', 'location'].includes(card.type))
-                .reduce((sum, card) => sum + card.quantity, 0);
-            const hasEvents = eventCards.length > 0;
-            const minSize = hasEvents ? DECK_RULES.MIN_DECK_SIZE_WITH_EVENTS : DECK_RULES.MIN_DECK_SIZE;
-            
-            // Check character count - only show error if more than 4 characters
-            if (characterCards.length > DECK_RULES.MAX_CHARACTERS) {
-                errors.push(`Deck must have exactly ${DECK_RULES.MAX_CHARACTERS} characters (${characterCards.length}/${DECK_RULES.MAX_CHARACTERS})`);
+            // Rule 1: Exactly 4 characters
+            if (characterCards.length !== DECK_RULES.EXACT_CHARACTERS) {
+                errors.push(`Deck must have exactly ${DECK_RULES.EXACT_CHARACTERS} characters (${characterCards.length}/${DECK_RULES.EXACT_CHARACTERS})`);
             }
             
-            // Check threat level (characters + locations)
-            let totalThreat = 0;
-            characterCards.forEach(card => {
-                const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
-                if (availableCard && availableCard.threat_level) {
-                    totalThreat += availableCard.threat_level;
-                }
-            });
-            
-            // Add location threat levels
-            const locationCards = deckCards.filter(card => card.type === 'location');
-            locationCards.forEach(card => {
-                const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
-                if (availableCard && availableCard.threat_level) {
-                    totalThreat += availableCard.threat_level;
-                }
-            });
-            
-            // Threat level validation removed - now shown in Total Threat metadata view
-            
-            // Check "One Per Deck" violations
-            Object.entries(onePerDeckCards).forEach(([cardKey, count]) => {
-                if (count > DECK_RULES.MAX_COPIES_ONE_PER_DECK) {
-                    const [cardType, cardId] = cardKey.split('_');
-                    const availableCard = availableCardsMap.get(cardKey);
-                    const cardName = availableCard ? availableCard.name || availableCard.card_name : cardId;
-                    errors.push(`"${cardName}" can only have ${DECK_RULES.MAX_COPIES_ONE_PER_DECK} copy in deck (${count} copies)`);
-                }
-            });
-            
-            // Check character special card restrictions
+            // Rule 2: Special cards may only be for selected characters or "Any Character"
             const characterNames = characterCards.map(card => {
                 const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
                 return availableCard ? availableCard.name || availableCard.card_name : 'Unknown';
@@ -6637,9 +6608,94 @@
                 if (card.type === 'special_card' || card.type === 'advanced_universe' || card.type === 'teamwork' || 
                     card.type === 'ally_universe' || card.type === 'training' || card.type === 'basic_universe') {
                     const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
-                    if (availableCard && availableCard.character && !characterNames.includes(availableCard.character)) {
-                        warnings.push(`"${availableCard.name || availableCard.card_name}" requires character "${availableCard.character}" in your team`);
+                    if (availableCard && availableCard.character && 
+                        availableCard.character !== 'Any Character' && 
+                        !characterNames.includes(availableCard.character)) {
+                        errors.push(`"${availableCard.name || availableCard.card_name}" requires character "${availableCard.character}" in your team`);
                     }
+                }
+            });
+            
+            // Rule 3: Exactly 7 mission cards of the same mission set
+            if (missionCards.length !== DECK_RULES.EXACT_MISSION_CARDS) {
+                errors.push(`Deck must have exactly ${DECK_RULES.EXACT_MISSION_CARDS} mission cards (${missionCards.length}/${DECK_RULES.EXACT_MISSION_CARDS})`);
+            } else if (missionCards.length > 0) {
+                // Check if all mission cards are from the same mission set
+                const missionSets = new Set();
+                missionCards.forEach(card => {
+                    const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+                    if (availableCard && availableCard.mission_set) {
+                        missionSets.add(availableCard.mission_set);
+                    }
+                });
+                if (missionSets.size > 1) {
+                    errors.push(`All mission cards must be from the same mission set (found ${missionSets.size} different sets)`);
+                }
+            }
+            
+            // Rule 4: Events may only be of the selected mission set
+            if (eventCards.length > 0 && missionCards.length > 0) {
+                const missionSets = new Set();
+                missionCards.forEach(card => {
+                    const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+                    if (availableCard && availableCard.mission_set) {
+                        missionSets.add(availableCard.mission_set);
+                    }
+                });
+                
+                eventCards.forEach(card => {
+                    const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+                    if (availableCard && availableCard.mission_set && 
+                        availableCard.mission_set !== 'Any-Mission' && 
+                        !missionSets.has(availableCard.mission_set)) {
+                        errors.push(`Event "${availableCard.name || availableCard.card_name}" must be from the same mission set as your mission cards`);
+                    }
+                });
+            }
+            
+            // Rule 5: Only 0 or 1 location may be selected
+            if (locationCards.length > DECK_RULES.MAX_LOCATIONS) {
+                errors.push(`Deck can have at most ${DECK_RULES.MAX_LOCATIONS} location (${locationCards.length} locations)`);
+            }
+            
+            // Rule 6: Threat value must be less than or equal to 76
+            let totalThreat = 0;
+            characterCards.forEach(card => {
+                const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+                if (availableCard && availableCard.threat_level) {
+                    totalThreat += availableCard.threat_level;
+                }
+            });
+            
+            locationCards.forEach(card => {
+                const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+                if (availableCard && availableCard.threat_level) {
+                    totalThreat += availableCard.threat_level;
+                }
+            });
+            
+            if (totalThreat > DECK_RULES.MAX_TOTAL_THREAT) {
+                errors.push(`Total threat level must be ≤ ${DECK_RULES.MAX_TOTAL_THREAT} (current: ${totalThreat})`);
+            }
+            
+            // Rule 7: Deck's draw pile must have 51 cards unless there are events, then it must be 56
+            const totalCards = deckCards
+                .filter(card => !['mission', 'character', 'location'].includes(card.type))
+                .reduce((sum, card) => sum + card.quantity, 0);
+            const hasEvents = eventCards.length > 0;
+            const requiredSize = hasEvents ? DECK_RULES.MIN_DECK_SIZE_WITH_EVENTS : DECK_RULES.MIN_DECK_SIZE;
+            
+            if (totalCards !== requiredSize) {
+                errors.push(`Deck must have exactly ${requiredSize} cards in draw pile (${totalCards}/${requiredSize})`);
+            }
+            
+            // Check "One Per Deck" violations
+            Object.entries(onePerDeckCards).forEach(([cardKey, count]) => {
+                if (count > DECK_RULES.MAX_COPIES_ONE_PER_DECK) {
+                    const [cardType, cardId] = cardKey.split('_');
+                    const availableCard = availableCardsMap.get(cardKey);
+                    const cardName = availableCard ? availableCard.name || availableCard.card_name : cardId;
+                    errors.push(`"${cardName}" can only have ${DECK_RULES.MAX_COPIES_ONE_PER_DECK} copy in deck (${count} copies)`);
                 }
             });
             
