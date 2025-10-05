@@ -371,7 +371,7 @@ jobs:
             \"docker pull $ECR_URI:latest\",
             \"docker stop overpower-app || true\",
             \"docker rm overpower-app || true\",
-            \"docker run -d --name overpower-app --restart unless-stopped -p 3000:3000 --env-file /opt/app/.env -e SKIP_MIGRATIONS=true $ECR_URI:latest\"
+            \"docker run -d --name overpower-app --restart unless-stopped -p 3000:3000 --env-file /opt/app/.env -e SKIP_MIGRATIONS=false $ECR_URI:latest\"
           ]" \
           --output text --query 'Command.CommandId'
           
