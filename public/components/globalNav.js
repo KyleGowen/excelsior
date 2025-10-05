@@ -1,5 +1,8 @@
 // Global Navigation Component JavaScript
 
+// Global flag to prevent multiple switchToDeckBuilder calls during new deck creation
+let isCreatingNewDeck = false;
+
 // Client-side navigation functions
 function switchToDatabaseView() {
     // Update URL without page reload
@@ -35,10 +38,19 @@ function switchToDatabaseView() {
 function switchToDeckBuilder() {
     console.log('🔍 DEBUG: switchToDeckBuilder called');
     
-    // Update URL without page reload
+    // Update URL without page reload, but preserve /new if we're creating a new deck
     const currentUser = getCurrentUser();
     const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
-    history.pushState({view: 'deckbuilder'}, '', `/users/${userId}/decks`);
+    const currentUrl = window.location.pathname;
+    const isCreatingNewDeck = currentUrl.includes('/decks/new');
+    
+    let newUrl = `/users/${userId}/decks`;
+    if (isCreatingNewDeck) {
+        newUrl = `/users/${userId}/decks/new`;
+    }
+    
+    console.log('🔍 DEBUG: switchToDeckBuilder - preserving URL:', newUrl, 'isCreatingNewDeck:', isCreatingNewDeck);
+    history.pushState({view: 'deckbuilder'}, '', newUrl);
     
     // Update button states
     document.getElementById('deckBuilderBtn').classList.add('active');
@@ -75,18 +87,27 @@ function switchToDeckBuilder() {
         }
     }
     
-    // Load deck data if not already loaded
-    if (document.getElementById('total-decks') && document.getElementById('total-decks').textContent === '-') {
+    // Load deck data if not already loaded, but not if we're creating a new deck
+    const historyState = window.history.state;
+    const isCreatingNewDeckCheck = isCreatingNewDeck || currentUrl.includes('/decks/new') || (historyState && historyState.newDeck);
+    
+    console.log('🔍 DEBUG: switchToDeckBuilder - currentUrl:', currentUrl, 'historyState:', historyState, 'isCreatingNewDeck:', isCreatingNewDeckCheck);
+    
+    if (!isCreatingNewDeckCheck && document.getElementById('total-decks') && document.getElementById('total-decks').textContent === '-') {
+        console.log('🔍 DEBUG: switchToDeckBuilder - loading deck data');
         if (typeof loadDeckBuilderData === 'function') {
             loadDeckBuilderData();
         } else if (typeof loadDecks === 'function') {
             loadDecks();
         }
+    } else {
+        console.log('🔍 DEBUG: switchToDeckBuilder - skipping deck data load (new deck creation or already loaded)');
     }
 }
 
 function createNewDeck() {
     console.log('🔍 DEBUG: createNewDeck called');
+    isCreatingNewDeck = true;
     
     // Define default UI preferences
     const defaultUIPreferences = {
@@ -129,11 +150,25 @@ function createNewDeck() {
     const currentUser = getCurrentUser();
     const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
     const newUrl = `/users/${userId}/decks/new`;
-    window.history.pushState({ newDeck: true, userId }, '', newUrl);
+    window.history.pushState({ newDeck: true, userId, view: 'deckbuilder' }, '', newUrl);
     console.log('🔍 Updated URL to:', newUrl);
 
     // Show the deck editor with the blank deck
     if (typeof showDeckEditor === 'function') {
+        console.log('🔍 DEBUG: About to call showDeckEditor for new deck');
+        
+        // Clear any existing cards BEFORE showing the editor
+        const deckCardsContainer = document.getElementById('deckCardsContainer');
+        if (deckCardsContainer) {
+            deckCardsContainer.innerHTML = '<div class="no-cards-message">No cards in this deck yet. Drag cards from the right panel to add them!</div>';
+        }
+        
+        // Also clear the deckCardsEditor element if it exists
+        const deckCardsEditor = document.getElementById('deckCardsEditor');
+        if (deckCardsEditor) {
+            deckCardsEditor.innerHTML = '<div class="empty-deck-message"><p>No cards in this deck yet.</p><p>Drag cards from the right panel to add them!</p></div>';
+        }
+        
         showDeckEditor();
         
         // Set up the deck editor with the new blank deck data
@@ -153,12 +188,6 @@ function createNewDeck() {
             }
         }
         
-        // Clear any existing cards
-        const deckCardsContainer = document.getElementById('deckCardsContainer');
-        if (deckCardsContainer) {
-            deckCardsContainer.innerHTML = '<div class="no-cards-message">No cards in this deck yet. Drag cards from the right panel to add them!</div>';
-        }
-        
         // Load available cards if function exists
         if (typeof loadAvailableCards === 'function') {
             loadAvailableCards();
@@ -168,6 +197,12 @@ function createNewDeck() {
         if (typeof updateDeckCardCount === 'function') {
             updateDeckCardCount();
         }
+        
+        // Reset the flag after a short delay to allow the deck editor to fully initialize
+        setTimeout(() => {
+            isCreatingNewDeck = false;
+            console.log('🔍 DEBUG: Reset isCreatingNewDeck flag');
+        }, 1000);
     } else {
         console.error('showDeckEditor function not found');
     }
@@ -205,6 +240,9 @@ function initializeGlobalNav() {
     window.addEventListener('popstate', function(event) {
         if (event.state && event.state.view === 'database') {
             switchToDatabaseView();
+        } else if (event.state && event.state.newDeck) {
+            // Don't call switchToDeckBuilder for new deck creation
+            console.log('🔍 DEBUG: popstate for new deck, not calling switchToDeckBuilder');
         } else {
             switchToDeckBuilder();
         }

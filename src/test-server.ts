@@ -319,22 +319,20 @@ app.post('/api/decks/validate', authenticateUser, async (req: any, res) => {
   }
 });
 
-app.get('/api/decks/:id', async (req, res) => {
+app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
   try {
     const deck = await deckRepository.getDeckById(req.params.id);
     if (!deck) {
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }
     
-    // For test server, check ownership based on the user making the request
-    let isOwner = true; // Default to true if no user specified
+    // Check if user owns this deck
+    const isOwner = deck.user_id === req.user.id;
     
-    // Check if a specific user ID was provided in the header
-    if (req.headers['x-test-user-id']) {
-      const userId = req.headers['x-test-user-id'];
-      isOwner = deck.user_id === userId;
+    // Only allow access if user owns the deck
+    if (!isOwner) {
+      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
-    
     
     // Add ownership flag to response for frontend to use
     const deckData = {

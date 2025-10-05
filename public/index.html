@@ -8617,6 +8617,7 @@
         // Deck actions
         function editDeck(deckId) {
             console.log('🔍 editDeck called for deckId:', deckId);
+            console.trace('🔍 editDeck call stack:');
             
             // Get current user to determine read-only mode
             const currentUser = getCurrentUser();
