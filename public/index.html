@@ -12744,8 +12744,11 @@
                 modal.style.display = 'flex';
                 
                 // Set initial divider position immediately to prevent 50% flash
-                if (currentDeckData && currentDeckData.ui_preferences && currentDeckData.ui_preferences.dividerPosition) {
-                    const percentage = currentDeckData.ui_preferences.dividerPosition;
+                const uiPrefs = currentDeckData
+                    ? (currentDeckData.ui_preferences || (currentDeckData.metadata && currentDeckData.metadata.ui_preferences))
+                    : null;
+                if (uiPrefs && uiPrefs.dividerPosition) {
+                    const percentage = uiPrefs.dividerPosition;
                     console.log('🔍 DEBUG: Setting initial divider position to:', percentage);
                     // Use a small delay to ensure the modal is rendered
                     setTimeout(() => {
@@ -13132,17 +13135,20 @@
                     return;
                 }
                 
-                // Check for UI preferences first, then localStorage, then default to 50%
-                let percentage = 50; // Default to 50%
+                // Check for UI preferences first, then localStorage, then default to 69%
+                let percentage = 69; // Default to 69%
                 
                 // Check if we have UI preferences with divider position
-                if (currentDeckData && currentDeckData.ui_preferences && currentDeckData.ui_preferences.dividerPosition) {
-                    percentage = currentDeckData.ui_preferences.dividerPosition;
+                const restorePrefs = currentDeckData
+                    ? (currentDeckData.ui_preferences || (currentDeckData.metadata && currentDeckData.metadata.ui_preferences))
+                    : null;
+                if (restorePrefs && restorePrefs.dividerPosition) {
+                    percentage = restorePrefs.dividerPosition;
                     console.log('🔍 DEBUG: Using divider position from UI preferences:', percentage);
                 } else {
                     // Fall back to localStorage
                     const savedPosition = localStorage.getItem(`slider_position_${currentDeckId}`);
-                    percentage = savedPosition ? parseFloat(savedPosition) : 50;
+                    percentage = savedPosition ? parseFloat(savedPosition) : 69;
                     console.log('🔍 DEBUG: Using divider position from localStorage:', percentage);
                 }
                 const layout = document.querySelector('.deck-editor-layout');

@@ -117,7 +117,7 @@ function createNewDeck() {
             "location": true, "teamwork": true, "training": true, "character": true,
             "ally_universe": true, "basic_universe": true, "advanced_universe": true
         },
-        "dividerPosition": 65.86319218241043,
+        "dividerPosition": 69,
         "powerCardsSortMode": "type",
         "characterGroupExpansionState": {}
     };
