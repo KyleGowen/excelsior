@@ -222,9 +222,8 @@ function createNewDeck() {
 function initializeGlobalNav() {
     console.log('🔍 DEBUG: initializeGlobalNav called');
     
-    // Check if createDeckSection exists
-    const createDeckSection = document.getElementById('createDeckSection');
-    console.log('🔍 DEBUG: createDeckSection found during init:', createDeckSection);
+    // Initialize user menu
+    setupUserMenu();
     
     // Set up logout button functionality
     const logoutBtn = document.getElementById('logoutBtn');
@@ -266,25 +265,93 @@ function initializeGlobalNav() {
 function updateUserWelcome() {
     const currentUser = getCurrentUser();
     if (currentUser) {
-        const displayName = (currentUser.role === 'GUEST') 
-            ? 'Guest' 
-            : (currentUser.username || currentUser.name || 'User');
+        const displayName = (currentUser.role === 'GUEST') ? 'Guest' : (currentUser.username || currentUser.name || 'User');
         const usernameElement = document.getElementById('currentUsername');
-        if (usernameElement) {
-            usernameElement.textContent = displayName;
-        }
-        
-        // Show/hide Create User button based on role
-        const createUserContainer = document.getElementById('createUserContainer');
-        if (createUserContainer) {
-            if (currentUser.role === 'ADMIN') {
-                createUserContainer.style.display = 'inline-block';
-            } else {
-                createUserContainer.style.display = 'none';
-            }
-        }
+        if (usernameElement) usernameElement.textContent = displayName;
+        buildUserMenuOptions(currentUser);
     }
 }
+
+function setupUserMenu() {
+    const toggle = document.getElementById('userMenuToggle');
+    const dropdown = document.getElementById('userMenuDropdown');
+    if (!toggle || !dropdown) return;
+    // Listener not added here because inline onclick handles it.
+}
+
+function toggleUserMenu(event) {
+    if (event) {
+        if (typeof event.preventDefault === 'function') event.preventDefault();
+        if (typeof event.stopPropagation === 'function') event.stopPropagation();
+    }
+    const toggle = document.getElementById('userMenuToggle');
+    const dropdown = document.getElementById('userMenuDropdown');
+    if (!toggle || !dropdown) return;
+    const isOpen = dropdown.classList.toggle('show');
+    console.log('🔍 DEBUG: toggleUserMenu clicked, isOpen =', isOpen);
+    toggle.classList.toggle('open', isOpen);
+    if (isOpen) {
+        document.addEventListener('click', closeUserMenuOnOutsideClick);
+    } else {
+        document.removeEventListener('click', closeUserMenuOnOutsideClick);
+    }
+}
+
+function closeUserMenuOnOutsideClick(e) {
+    const menu = document.getElementById('userMenu');
+    const dropdown = document.getElementById('userMenuDropdown');
+    const toggle = document.getElementById('userMenuToggle');
+    if (menu && !menu.contains(e.target)) {
+        dropdown.classList.remove('show');
+        if (toggle) toggle.classList.remove('open');
+        document.removeEventListener('click', closeUserMenuOnOutsideClick);
+    }
+}
+
+function buildUserMenuOptions(user) {
+    const dropdown = document.getElementById('userMenuDropdown');
+    if (!dropdown) return;
+    dropdown.innerHTML = '';
+
+    // + Create Deck - available to USER and ADMIN
+    if (user.role !== 'GUEST') {
+        dropdown.appendChild(createUserMenuItem('+ Create Deck', () => { closeUserMenu(); createNewDeck(); }));
+    }
+    // + Create User - ADMIN only
+    if (user.role === 'ADMIN') {
+        dropdown.appendChild(createUserMenuItem('+ Create User', () => { closeUserMenu(); toggleCreateUserDropdown(); }));
+    }
+    // Change Password - USER and ADMIN (placeholder handler)
+    if (user.role !== 'GUEST') {
+        dropdown.appendChild(createUserMenuItem('Change Password', () => { closeUserMenu(); alert('Change Password coming soon'); }));
+    }
+    // Log Out - everyone
+    dropdown.appendChild(createUserMenuItem('Log Out', () => { closeUserMenu(); const btn = document.getElementById('logoutBtn'); if (btn) btn.click(); }));
+}
+
+function createUserMenuItem(label, onClick) {
+    const btn = document.createElement('button');
+    btn.className = 'user-menu-item';
+    btn.textContent = label;
+    btn.onclick = onClick;
+    return btn;
+}
+
+function closeUserMenu() {
+    const dropdown = document.getElementById('userMenuDropdown');
+    const toggle = document.getElementById('userMenuToggle');
+    if (dropdown) dropdown.classList.remove('show');
+    if (toggle) toggle.classList.remove('open');
+    document.removeEventListener('click', closeUserMenuOnOutsideClick);
+}
+
+// Expose handlers globally for inline HTML usage and sanity
+// (Some pages may load this script earlier/later; this ensures availability)
+window.toggleUserMenu = toggleUserMenu;
+window.closeUserMenu = closeUserMenu;
+window.toggleCreateUserDropdown = toggleCreateUserDropdown;
+window.closeCreateUserDropdown = closeCreateUserDropdown;
+window.createUser = createUser;
 
 // Create User functionality
 function toggleCreateUserDropdown() {
