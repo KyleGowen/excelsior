@@ -5845,9 +5845,8 @@
             
             if (decks.length === 0) {
                 deckList.innerHTML = `
-                    <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-                        <h4>No decks yet</h4>
-                        <p>Create your first deck to get started!</p>
+                    <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+                        <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
                     </div>
                 `;
                 return;

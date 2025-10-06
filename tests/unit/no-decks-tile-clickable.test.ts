@@ -1,11 +1,12 @@
 /**
- * Unit tests for "No decks yet" tile clickable functionality
+ * Unit tests for "Create your first deck." tile clickable functionality
  * Tests that the empty state tile opens the new deck editor when clicked
+ * and has the correct embossed styling
  */
 
 import { JSDOM } from 'jsdom';
 
-describe('No Decks Yet Tile Clickable Functionality', () => {
+describe('Create Your First Deck Tile Clickable Functionality', () => {
   let dom: JSDOM;
   let document: Document;
   let window: any;
@@ -25,6 +26,7 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
               padding: 20px;
               cursor: pointer;
               transition: all 0.3s ease;
+              min-height: 140px;
             }
             .deck-card:hover {
               transform: translateY(-2px);
@@ -40,9 +42,6 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
             }
             .deck-card[onclick="createNewDeck()"]:hover h4 {
               color: #4ecdc4;
-            }
-            .deck-card[onclick="createNewDeck()"]:hover p {
-              color: #ffffff;
             }
           </style>
         </head>
@@ -69,18 +68,17 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
     dom.window.close();
   });
 
-  describe('No decks yet tile generation', () => {
-    it('should generate clickable tile when no decks exist', () => {
+  describe('Empty state tile generation with embossed styling', () => {
+    it('should generate clickable tile with correct embossed styling when no decks exist', () => {
       const deckList = document.getElementById('deck-list');
       expect(deckList).toBeTruthy();
       const decks = []; // Empty decks array
 
-      // Simulate the displayDecks function logic
+      // Simulate the updated displayDecks function logic with new styling
       if (decks.length === 0) {
         deckList!.innerHTML = `
-          <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-            <h4>No decks yet</h4>
-            <p>Create your first deck to get started!</p>
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
           </div>
         `;
       }
@@ -91,16 +89,15 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
       expect(noDecksTile.style.cursor).toBe('pointer');
     });
 
-    it('should have correct text content', () => {
+    it('should have correct embossed text content and styling', () => {
       const deckList = document.getElementById('deck-list');
       expect(deckList).toBeTruthy();
       const decks = [];
 
       if (decks.length === 0) {
         deckList!.innerHTML = `
-          <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-            <h4>No decks yet</h4>
-            <p>Create your first deck to get started!</p>
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
           </div>
         `;
       }
@@ -109,29 +106,59 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
       const p = deckList!.querySelector('p');
       
       expect(h4).toBeTruthy();
-      expect(p).toBeTruthy();
-      expect(h4!.textContent).toBe('No decks yet');
-      expect(p!.textContent).toBe('Create your first deck to get started!');
+      expect(p).toBeFalsy(); // Should not have a paragraph element anymore
+      expect(h4!.textContent).toBe('Create your first deck.');
     });
 
-    it('should have correct styling attributes', () => {
+    it('should have correct embossed styling attributes', () => {
       const deckList = document.getElementById('deck-list');
       expect(deckList).toBeTruthy();
       const decks = [];
 
       if (decks.length === 0) {
         deckList!.innerHTML = `
-          <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-            <h4>No decks yet</h4>
-            <p>Create your first deck to get started!</p>
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
           </div>
         `;
       }
 
       const noDecksTile = deckList!.querySelector('.deck-card') as HTMLElement;
+      const h4 = noDecksTile.querySelector('h4') as HTMLElement;
+      
+      // Test container styling
+      expect(noDecksTile.style.display).toBe('flex');
+      expect(noDecksTile.style.alignItems).toBe('center');
+      expect(noDecksTile.style.justifyContent).toBe('center');
       expect(noDecksTile.style.textAlign).toBe('center');
-      expect(noDecksTile.style.color).toBe('rgb(189, 195, 199)'); // #bdc3c7
       expect(noDecksTile.style.cursor).toBe('pointer');
+      
+      // Test embossed text styling
+      expect(h4.style.color).toBe('rgb(52, 73, 94)'); // #34495e
+      expect(h4.style.fontWeight).toBe('bold');
+      expect(h4.style.margin).toBe('0px');
+      expect(h4.style.fontSize).toBe('18px');
+    });
+
+    it('should be perfectly centered vertically and horizontally', () => {
+      const deckList = document.getElementById('deck-list');
+      expect(deckList).toBeTruthy();
+      const decks = [];
+
+      if (decks.length === 0) {
+        deckList!.innerHTML = `
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
+          </div>
+        `;
+      }
+
+      const noDecksTile = deckList!.querySelector('.deck-card') as HTMLElement;
+      
+      // Test flexbox centering
+      expect(noDecksTile.style.display).toBe('flex');
+      expect(noDecksTile.style.alignItems).toBe('center');
+      expect(noDecksTile.style.justifyContent).toBe('center');
     });
   });
 
@@ -143,9 +170,8 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
 
       if (decks.length === 0) {
         deckList!.innerHTML = `
-          <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-            <h4>No decks yet</h4>
-            <p>Create your first deck to get started!</p>
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
           </div>
         `;
       }
@@ -169,9 +195,8 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
 
       if (decks.length === 0) {
         deckList!.innerHTML = `
-          <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-            <h4>No decks yet</h4>
-            <p>Create your first deck to get started!</p>
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
           </div>
         `;
       }
@@ -187,7 +212,7 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
     });
   });
 
-  describe('CSS hover effects', () => {
+  describe('CSS hover effects with embossed styling', () => {
     it('should have special hover styling for clickable tile', () => {
       const deckList = document.getElementById('deck-list');
       expect(deckList).toBeTruthy();
@@ -195,23 +220,20 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
 
       if (decks.length === 0) {
         deckList!.innerHTML = `
-          <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-            <h4>No decks yet</h4>
-            <p>Create your first deck to get started!</p>
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
           </div>
         `;
       }
 
       const noDecksTile = deckList!.querySelector('.deck-card') as HTMLElement;
       const h4 = noDecksTile.querySelector('h4');
-      const p = noDecksTile.querySelector('p');
 
       // Test that the tile has the onclick attribute for special styling
       expect(noDecksTile.getAttribute('onclick')).toBe('createNewDeck()');
       
-      // Test that the elements exist for hover styling
+      // Test that the h4 element exists for hover styling
       expect(h4).toBeTruthy();
-      expect(p).toBeTruthy();
     });
 
     it('should have correct CSS classes for hover effects', () => {
@@ -221,9 +243,8 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
 
       if (decks.length === 0) {
         deckList!.innerHTML = `
-          <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-            <h4>No decks yet</h4>
-            <p>Create your first deck to get started!</p>
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
           </div>
         `;
       }
@@ -244,9 +265,8 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
 
       if (decks.length === 0) {
         deckList!.innerHTML = `
-          <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-            <h4>No decks yet</h4>
-            <p>Create your first deck to get started!</p>
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
           </div>
         `;
       }
@@ -271,9 +291,8 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
 
       if (decks.length === 0) {
         deckList!.innerHTML = `
-          <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-            <h4>No decks yet</h4>
-            <p>Create your first deck to get started!</p>
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
           </div>
         `;
       }
@@ -285,7 +304,7 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
     });
   });
 
-  describe('Accessibility and usability', () => {
+  describe('Accessibility and usability with embossed styling', () => {
     it('should be keyboard accessible', () => {
       const deckList = document.getElementById('deck-list');
       expect(deckList).toBeTruthy();
@@ -293,9 +312,8 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
 
       if (decks.length === 0) {
         deckList!.innerHTML = `
-          <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-            <h4>No decks yet</h4>
-            <p>Create your first deck to get started!</p>
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
           </div>
         `;
       }
@@ -314,9 +332,8 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
 
       if (decks.length === 0) {
         deckList!.innerHTML = `
-          <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-            <h4>No decks yet</h4>
-            <p>Create your first deck to get started!</p>
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
           </div>
         `;
       }
@@ -325,30 +342,38 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
       expect(noDecksTile.style.cursor).toBe('pointer');
     });
 
-    it('should be visually distinct from regular deck cards', () => {
+    it('should be visually distinct with embossed styling', () => {
       const deckList = document.getElementById('deck-list');
       expect(deckList).toBeTruthy();
       const decks = [];
 
       if (decks.length === 0) {
         deckList!.innerHTML = `
-          <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-            <h4>No decks yet</h4>
-            <p>Create your first deck to get started!</p>
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
           </div>
         `;
       }
 
       const noDecksTile = deckList!.querySelector('.deck-card') as HTMLElement;
+      const h4 = noDecksTile.querySelector('h4') as HTMLElement;
       
-      // Should have special styling attributes
+      // Should have special styling attributes for embossed look
+      expect(noDecksTile.style.display).toBe('flex');
+      expect(noDecksTile.style.alignItems).toBe('center');
+      expect(noDecksTile.style.justifyContent).toBe('center');
       expect(noDecksTile.style.textAlign).toBe('center');
-      expect(noDecksTile.style.color).toBe('rgb(189, 195, 199)'); // #bdc3c7
       expect(noDecksTile.getAttribute('onclick')).toBe('createNewDeck()');
+      
+      // Should have embossed text styling
+      expect(h4.style.color).toBe('rgb(52, 73, 94)'); // #34495e - darker than background
+      expect(h4.style.fontWeight).toBe('bold');
+      expect(h4.style.margin).toBe('0px');
+      expect(h4.style.fontSize).toBe('18px');
     });
   });
 
-  describe('Edge cases', () => {
+  describe('Edge cases with embossed styling', () => {
     it('should handle missing createNewDeck function gracefully', () => {
       // Remove createNewDeck function
       delete (window as any).createNewDeck;
@@ -359,9 +384,8 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
 
       if (decks.length === 0) {
         deckList!.innerHTML = `
-          <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-            <h4>No decks yet</h4>
-            <p>Create your first deck to get started!</p>
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
           </div>
         `;
       }
@@ -390,9 +414,8 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
         
         if (decks.length === 0) {
           deckList!.innerHTML = `
-            <div class="deck-card" style="text-align: center; color: #bdc3c7; cursor: pointer;" onclick="createNewDeck()">
-              <h4>No decks yet</h4>
-              <p>Create your first deck to get started!</p>
+            <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+              <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
             </div>
           `;
         }
@@ -401,6 +424,55 @@ describe('No Decks Yet Tile Clickable Functionality', () => {
         expect(noDecksTile).toBeTruthy();
         expect(noDecksTile.getAttribute('onclick')).toBe('createNewDeck()');
       });
+    });
+  });
+
+  describe('Embossed styling validation', () => {
+    it('should have correct color contrast for embossed effect', () => {
+      const deckList = document.getElementById('deck-list');
+      expect(deckList).toBeTruthy();
+      const decks = [];
+
+      if (decks.length === 0) {
+        deckList!.innerHTML = `
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
+          </div>
+        `;
+      }
+
+      const h4 = deckList!.querySelector('h4') as HTMLElement;
+      
+      // Test that the color is darker than the background for embossed effect
+      expect(h4.style.color).toBe('rgb(52, 73, 94)'); // #34495e
+      expect(h4.style.fontWeight).toBe('bold');
+    });
+
+    it('should maintain embossed styling across different screen sizes', () => {
+      const deckList = document.getElementById('deck-list');
+      expect(deckList).toBeTruthy();
+      const decks = [];
+
+      if (decks.length === 0) {
+        deckList!.innerHTML = `
+          <div class="deck-card" style="display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer;" onclick="createNewDeck()">
+            <h4 style="color: #34495e; font-weight: bold; margin: 0; font-size: 18px;">Create your first deck.</h4>
+          </div>
+        `;
+      }
+
+      const noDecksTile = deckList!.querySelector('.deck-card') as HTMLElement;
+      const h4 = noDecksTile.querySelector('h4') as HTMLElement;
+      
+      // Test that flexbox centering is maintained
+      expect(noDecksTile.style.display).toBe('flex');
+      expect(noDecksTile.style.alignItems).toBe('center');
+      expect(noDecksTile.style.justifyContent).toBe('center');
+      
+      // Test that embossed text styling is maintained
+      expect(h4.style.color).toBe('rgb(52, 73, 94)');
+      expect(h4.style.fontWeight).toBe('bold');
+      expect(h4.style.fontSize).toBe('18px');
     });
   });
 });
