@@ -117,6 +117,14 @@ function createNewDeck() {
     console.log('🔍 DEBUG: createNewDeck called');
     isCreatingNewDeck = true;
     
+    // Ensure we're in edit mode for new decks
+    if (typeof isReadOnlyMode !== 'undefined') {
+        isReadOnlyMode = false;
+        console.log('🔍 DEBUG: Set isReadOnlyMode to false for new deck');
+        // Update the body class to reflect edit mode
+        document.body.classList.remove('read-only-mode');
+    }
+    
     // Define default UI preferences
     const defaultUIPreferences = {
         "viewMode": "tile",
