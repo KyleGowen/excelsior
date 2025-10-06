@@ -22,12 +22,9 @@ function switchToDatabaseView() {
     const databaseStats = document.getElementById('database-stats');
     const deckStats = document.getElementById('deck-stats');
     const createDeckSection = document.getElementById('createDeckSection');
-    const createDeckButtonContainer = document.getElementById('createDeckButtonContainer');
-    
     if (databaseStats) databaseStats.style.display = 'grid';
     if (deckStats) deckStats.style.display = 'none';
     if (createDeckSection) createDeckSection.style.display = 'none';
-    if (createDeckButtonContainer) createDeckButtonContainer.style.display = 'none';
     
     // Load database data if not already loaded
     if (document.getElementById('total-characters') && document.getElementById('total-characters').textContent === '-') {
@@ -76,8 +73,6 @@ function switchToDeckBuilder() {
     const databaseStats = document.getElementById('database-stats');
     const deckStats = document.getElementById('deck-stats');
     const createDeckSection = document.getElementById('createDeckSection');
-    const createDeckButtonContainer = document.getElementById('createDeckButtonContainer');
-    
     console.log('🔍 DEBUG: createDeckSection element:', createDeckSection);
     
     if (databaseStats) databaseStats.style.display = 'none';
@@ -87,11 +82,6 @@ function switchToDeckBuilder() {
         createDeckSection.style.display = 'flex';
     } else {
         console.log('❌ DEBUG: createDeckSection element not found!');
-    }
-    
-    // Show create deck button when switching to deck builder (will be hidden by displayDecks if no decks)
-    if (createDeckButtonContainer) {
-        createDeckButtonContainer.style.display = 'block';
     }
     
     // Ensure username is displayed when switching back to deck builder
