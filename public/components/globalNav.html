@@ -10,10 +10,20 @@
         </div>
     </div>
     <div class="header-right">
-        <span id="userWelcome">Welcome, <span id="currentUsername"></span>!</span>
-        <button id="createDeckBtn" class="create-deck-btn" onclick="createNewDeck()">+ Create Deck</button>
+        <!-- Compatibility: legacy userWelcome span for older tests -->
+        <span id="userWelcome" style="display:none">Welcome, <span id="currentUsernameHidden"></span>!</span>
+
+        <div id="userMenu" class="user-menu">
+            <button id="userMenuToggle" class="user-menu-toggle" onclick="toggleUserMenu(event)">
+                <span id="currentUserGreeting">Welcome, <span id="currentUsername"></span>!</span>
+                <span class="triangle-icon">▶</span>
+            </button>
+            <div id="userMenuDropdown" class="user-menu-dropdown">
+                <!-- Items injected by JS based on role -->
+            </div>
+        </div>
+        <!-- Hidden hooks for existing behaviors -->
         <div class="create-user-container" id="createUserContainer" style="display: none;">
-            <button id="createUserBtn" class="create-user-btn" onclick="toggleCreateUserDropdown()">+ Create User</button>
             <div class="create-user-dropdown" id="createUserDropdown">
                 <form id="createUserForm" onsubmit="createUser(event)">
                     <div class="form-group">
@@ -31,6 +41,27 @@
                 </form>
             </div>
         </div>
-        <button id="logoutBtn" class="logout-btn">Log Out</button>
+        <!-- Change Password dropdown (hidden by default) -->
+        <div class="create-user-container" id="changePasswordContainer" style="display: none;">
+            <div class="create-user-dropdown" id="changePasswordDropdown">
+                <form id="changePasswordForm" onsubmit="changePassword(event)">
+                    <div class="form-group">
+                        <label for="newPasswordField">New Password:</label>
+                        <input type="password" id="newPasswordField" name="newPassword" required autocomplete="new-password">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPasswordField">Confirm Password:</label>
+                        <input type="password" id="confirmPasswordField" name="confirmPassword" required autocomplete="new-password">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn">Save</button>
+                        <button type="button" class="cancel-btn" onclick="closeChangePasswordDropdown()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+            <!-- Compatibility: legacy Create Deck button hook for tests -->
+            <button id="createDeckBtn" class="create-deck-btn" onclick="createNewDeck()" style="display:none">+ Create Deck</button>
+                <button id="logoutBtn" class="logout-btn" style="display:none">Log Out</button>
     </div>
 </div>

@@ -261,6 +261,26 @@ app.post('/api/users', authenticateUser, async (req: any, res) => {
   }
 });
 
+// Change password for tests
+app.post('/api/users/change-password', authenticateUser, async (req: any, res) => {
+  try {
+    const currentUser = req.user;
+    if (!currentUser || (currentUser.role !== 'USER' && currentUser.role !== 'ADMIN')) {
+      return res.status(403).json({ success: false, error: 'Only USER or ADMIN may change password' });
+    }
+    const { newPassword } = req.body;
+    if (!newPassword || typeof newPassword !== 'string') {
+      return res.status(400).json({ success: false, error: 'New password is required' });
+    }
+    const updated = await userRepository.updateUserPassword(currentUser.id, newPassword);
+    if (!updated) return res.status(404).json({ success: false, error: 'User not found' });
+    res.json({ success: true, message: 'Password updated' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ success: false, error: 'Failed to change password' });
+  }
+});
+
 // Deck routes
 app.get('/api/decks', authenticateUser, async (req: any, res) => {
   try {

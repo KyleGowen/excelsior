@@ -194,6 +194,20 @@ export class PostgreSQLUserRepository implements UserRepository {
     }
   }
 
+  async updateUserPassword(id: string, newPlainPassword: string): Promise<boolean> {
+    const client = await this.pool.connect();
+    try {
+      const passwordHash = await PasswordUtils.hashPassword(newPlainPassword);
+      const result = await client.query(
+        'UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2',
+        [passwordHash, id]
+      );
+      return (result.rowCount || 0) > 0;
+    } finally {
+      client.release();
+    }
+  }
+
   async getUserStats(): Promise<{ users: number }> {
     const client = await this.pool.connect();
     try {

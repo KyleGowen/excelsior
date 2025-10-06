@@ -28,6 +28,7 @@ describe('AuthenticationService', () => {
       createUser: jest.fn(),
       getAllUsers: jest.fn(),
       updateUser: jest.fn(),
+      updateUserPassword: jest.fn(),
       deleteUser: jest.fn(),
       getUserStats: jest.fn(),
       initialize: jest.fn()

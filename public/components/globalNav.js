@@ -22,10 +22,12 @@ function switchToDatabaseView() {
     const databaseStats = document.getElementById('database-stats');
     const deckStats = document.getElementById('deck-stats');
     const createDeckSection = document.getElementById('createDeckSection');
+    const createDeckButtonContainer = document.getElementById('createDeckButtonContainer');
     
     if (databaseStats) databaseStats.style.display = 'grid';
     if (deckStats) deckStats.style.display = 'none';
     if (createDeckSection) createDeckSection.style.display = 'none';
+    if (createDeckButtonContainer) createDeckButtonContainer.style.display = 'none';
     
     // Load database data if not already loaded
     if (document.getElementById('total-characters') && document.getElementById('total-characters').textContent === '-') {
@@ -74,6 +76,7 @@ function switchToDeckBuilder() {
     const databaseStats = document.getElementById('database-stats');
     const deckStats = document.getElementById('deck-stats');
     const createDeckSection = document.getElementById('createDeckSection');
+    const createDeckButtonContainer = document.getElementById('createDeckButtonContainer');
     
     console.log('🔍 DEBUG: createDeckSection element:', createDeckSection);
     
@@ -84,6 +87,11 @@ function switchToDeckBuilder() {
         createDeckSection.style.display = 'flex';
     } else {
         console.log('❌ DEBUG: createDeckSection element not found!');
+    }
+    
+    // Show create deck button when switching to deck builder (will be hidden by displayDecks if no decks)
+    if (createDeckButtonContainer) {
+        createDeckButtonContainer.style.display = 'block';
     }
     
     // Ensure username is displayed when switching back to deck builder
@@ -327,7 +335,7 @@ function buildUserMenuOptions(user) {
     }
     // Change Password - USER and ADMIN (placeholder handler)
     if (user.role !== 'GUEST') {
-        dropdown.appendChild(createUserMenuItem('Change Password', () => { closeUserMenu(); alert('Change Password coming soon'); }));
+        dropdown.appendChild(createUserMenuItem('Change Password', () => { closeUserMenu(); setTimeout(() => toggleChangePasswordDropdown(), 0); }));
     }
     // Log Out - everyone
     dropdown.appendChild(createUserMenuItem('Log Out', () => { closeUserMenu(); const btn = document.getElementById('logoutBtn'); if (btn) btn.click(); }, 'user-menu-item--danger'));
@@ -356,6 +364,76 @@ window.closeUserMenu = closeUserMenu;
 window.toggleCreateUserDropdown = toggleCreateUserDropdown;
 window.closeCreateUserDropdown = closeCreateUserDropdown;
 window.createUser = createUser;
+window.toggleChangePasswordDropdown = toggleChangePasswordDropdown;
+window.closeChangePasswordDropdown = closeChangePasswordDropdown;
+window.changePassword = changePassword;
+
+function toggleChangePasswordDropdown() {
+    const dropdown = document.getElementById('changePasswordDropdown');
+    const container = document.getElementById('changePasswordContainer');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+        if (container) container.style.display = dropdown.classList.contains('show') ? 'inline-block' : 'none';
+        if (dropdown.classList.contains('show')) {
+            document.addEventListener('click', closeChangePasswordDropdownOnOutsideClick);
+        } else {
+            document.removeEventListener('click', closeChangePasswordDropdownOnOutsideClick);
+        }
+    }
+}
+
+function closeChangePasswordDropdown() {
+    const dropdown = document.getElementById('changePasswordDropdown');
+    const container = document.getElementById('changePasswordContainer');
+    if (dropdown) {
+        dropdown.classList.remove('show');
+        document.removeEventListener('click', closeChangePasswordDropdownOnOutsideClick);
+        const form = document.getElementById('changePasswordForm');
+        if (form) form.reset();
+    }
+    if (container) container.style.display = 'none';
+}
+
+function closeChangePasswordDropdownOnOutsideClick(event) {
+    const container = document.getElementById('changePasswordContainer');
+    if (container && !container.contains(event.target)) {
+        closeChangePasswordDropdown();
+    }
+}
+
+async function changePassword(event) {
+    event.preventDefault();
+    const newPwdEl = document.getElementById('newPasswordField');
+    const confirmEl = document.getElementById('confirmPasswordField');
+    const newPassword = newPwdEl && (newPwdEl).value;
+    const confirmPassword = confirmEl && (confirmEl).value;
+    if (!newPassword || !confirmPassword) {
+        alert('Both fields are required.');
+        return;
+    }
+    if (newPassword !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+    }
+    try {
+        const resp = await fetch('/api/users/change-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ newPassword })
+        });
+        const data = await resp.json();
+        if (resp.ok && data.success) {
+            alert('Password updated successfully');
+            closeChangePasswordDropdown();
+        } else {
+            alert(data.error || 'Failed to change password');
+        }
+    } catch (err) {
+        console.error('Change password error:', err);
+        alert('Error changing password. Please try again.');
+    }
+}
 
 // Create User functionality
 function toggleCreateUserDropdown() {

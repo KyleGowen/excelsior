@@ -3364,7 +3364,23 @@
         <!-- Global Navigation Component -->
         <div id="globalNav"></div>
 
-        <!-- Create New Deck Button - positioned below header (hidden in database view) -->
+        <!-- Create Deck Button - positioned below global nav -->
+        <div class="create-deck-button-container" id="createDeckButtonContainer" style="text-align: center; margin: 20px 0; display: none;">
+            <button class="create-deck-btn" onclick="createNewDeck()" style="
+                background: linear-gradient(135deg, #4ecdc4, #2cb1a6);
+                color: #1a1a2e;
+                border: 1px solid #4ecdc4;
+                padding: 12px 24px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 16px;
+                font-weight: 600;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 8px rgba(78, 205, 196, 0.3);
+            " onmouseover="this.style.background='linear-gradient(135deg, #5dd5cc, #3bc1b6)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(78, 205, 196, 0.4)'" onmouseout="this.style.background='linear-gradient(135deg, #4ecdc4, #2cb1a6)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(78, 205, 196, 0.3)'">
+                + Create Deck
+            </button>
+        </div>
 
         <div id="database-view" class="database-section" style="display: block;">
             <div class="stats">
@@ -5908,6 +5924,11 @@
                         <p>Create your first deck to get started!</p>
                     </div>
                 `;
+                // Hide the create deck button when no decks exist (empty state shows clickable tile)
+                const createDeckButtonContainer = document.getElementById('createDeckButtonContainer');
+                if (createDeckButtonContainer) {
+                    createDeckButtonContainer.style.display = 'none';
+                }
                 return;
             }
 
@@ -6019,6 +6040,15 @@
                     </div>
                 `;
             }).join('');
+
+            // Set the deck list HTML
+            deckList.innerHTML = deckCardsHTML;
+
+            // Show the create deck button below global nav
+            const createDeckButtonContainer = document.getElementById('createDeckButtonContainer');
+            if (createDeckButtonContainer) {
+                createDeckButtonContainer.style.display = 'block';
+            }
         }
 
         function updateDeckStats() {
