@@ -9890,7 +9890,8 @@
                 const toggle = header?.querySelector('.deck-list-section-toggle');
                 
                 if (itemsContainer && header && toggle) {
-                    const isExpanded = deckEditorExpansionState[type] !== false; // Default to expanded
+                    // In read-only list view, always expand sections by default
+                    const isExpanded = true; // Always expanded in read-only list view
                     if (!isExpanded) {
                         itemsContainer.style.display = 'none';
                         toggle.textContent = '▶';
