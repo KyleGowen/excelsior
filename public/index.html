@@ -3198,6 +3198,13 @@
             min-width: 100%;
             box-sizing: border-box;
         }
+
+        /* Two-column layout for deck list sections in read-only mode */
+        .read-only-mode .deck-cards-editor.list-view {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 20px !important;
+        }
         .deck-list-section {
             margin-bottom: 30px;
         }

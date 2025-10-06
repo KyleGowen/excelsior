@@ -2045,6 +2045,22 @@
             background: rgba(78, 205, 196, 0.1);
         }
 
+        /* List View Styles */
+        .deck-cards-editor.list-view {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Two-column layout for deck list sections in read-only mode */
+        .read-only-mode .deck-cards-editor.list-view {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 20px !important;
+        }
+
         .deck-card-editor-item {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
