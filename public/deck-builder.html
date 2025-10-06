@@ -2045,6 +2045,20 @@
             grid-template-columns: 1fr 1fr !important;
             gap: 20px !important;
         }
+        
+        /* More specific selector for read-only mode in modal */
+        #deckEditorModal.read-only-mode .deck-cards-editor.list-view {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 20px !important;
+        }
+        
+        /* Even more specific for body read-only mode */
+        body.read-only-mode .deck-cards-editor.list-view {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 20px !important;
+        }
 
         .deck-card-editor-item {
             background: rgba(255, 255, 255, 0.1);
