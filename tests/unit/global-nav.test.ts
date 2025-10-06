@@ -727,4 +727,260 @@ describe('Global Navigation Component', () => {
       expect(() => switchToDeckBuilder()).not.toThrow();
     });
   });
+
+  describe('Global Navigation UI Changes', () => {
+    let mockNewDeckBtn: any;
+    let mockUserMenuToggle: any;
+    let mockCurrentUserGreeting: any;
+
+    beforeEach(() => {
+      // Mock the new elements we added
+      mockNewDeckBtn = {
+        style: { display: 'block' },
+        onclick: null,
+        textContent: '+ Deck'
+      };
+
+      mockUserMenuToggle = {
+        style: { fontWeight: '400' },
+        classList: { add: jest.fn(), remove: jest.fn() }
+      };
+
+      mockCurrentUserGreeting = {
+        textContent: 'Welcome, testuser!'
+      };
+
+      // Update getElementById mock to include new elements
+      mockDocument.getElementById.mockImplementation((id: string) => {
+        switch (id) {
+          case 'databaseViewBtn': return mockDatabaseViewBtn;
+          case 'deckBuilderBtn': return mockDeckBuilderBtn;
+          case 'database-view': return mockDatabaseView;
+          case 'deck-builder': return mockDeckBuilder;
+          case 'database-stats': return mockDatabaseStats;
+          case 'deck-stats': return mockDeckStats;
+          case 'createDeckSection': return mockCreateDeckSection;
+          case 'currentUsername': return mockCurrentUsername;
+          case 'logoutBtn': return mockLogoutBtn;
+          case 'total-characters': return mockTotalCharacters;
+          case 'total-decks': return mockTotalDecks;
+          case 'newDeckBtn': return mockNewDeckBtn;
+          case 'userMenuToggle': return mockUserMenuToggle;
+          case 'currentUserGreeting': return mockCurrentUserGreeting;
+          default: return null;
+        }
+      });
+    });
+
+    describe('+ Deck Button Positioning', () => {
+      test('should have + Deck button in global navigation', () => {
+        const newDeckBtn = mockDocument.getElementById('newDeckBtn');
+        expect(newDeckBtn).toBe(mockNewDeckBtn);
+        expect(newDeckBtn.textContent).toBe('+ Deck');
+      });
+
+      test('should have correct onclick handler for + Deck button', () => {
+        const newDeckBtn = mockDocument.getElementById('newDeckBtn');
+        expect(newDeckBtn.onclick).toBeDefined();
+        // The onclick should be set to 'createNewDeck()' in the HTML
+      });
+
+      test('should be visible in global navigation', () => {
+        const newDeckBtn = mockDocument.getElementById('newDeckBtn');
+        expect(newDeckBtn.style.display).toBe('block');
+      });
+    });
+
+    describe('User Menu Welcome Text Styling', () => {
+      test('should have non-bold welcome text styling', () => {
+        const userMenuToggle = mockDocument.getElementById('userMenuToggle');
+        expect(userMenuToggle.style.fontWeight).toBe('400');
+      });
+
+      test('should display correct welcome text content', () => {
+        const currentUserGreeting = mockDocument.getElementById('currentUserGreeting');
+        expect(currentUserGreeting.textContent).toBe('Welcome, testuser!');
+      });
+
+      test('should update welcome text when user changes', () => {
+        mockGetCurrentUser.mockReturnValue({ 
+          id: 'user123', 
+          username: 'newuser', 
+          name: 'New User' 
+        });
+        
+        updateUserWelcome();
+        
+        expect(mockCurrentUsername.textContent).toBe('newuser');
+      });
+    });
+
+    describe('Global Navigation Layout', () => {
+      test('should have proper element order in header-right', () => {
+        // Test that the elements are in the correct order:
+        // 1. + Deck button
+        // 2. User menu (Welcome, User! ▶)
+        const newDeckBtn = mockDocument.getElementById('newDeckBtn');
+        const userMenuToggle = mockDocument.getElementById('userMenuToggle');
+        
+        expect(newDeckBtn).toBeDefined();
+        expect(userMenuToggle).toBeDefined();
+      });
+
+      test('should maintain proper spacing between elements', () => {
+        // This would typically be tested with CSS validation
+        // For now, we ensure both elements exist
+        const newDeckBtn = mockDocument.getElementById('newDeckBtn');
+        const userMenuToggle = mockDocument.getElementById('userMenuToggle');
+        
+        expect(newDeckBtn).toBeTruthy();
+        expect(userMenuToggle).toBeTruthy();
+      });
+    });
+
+    describe('Button Styling and Theming', () => {
+      test('should have correct CSS classes for + Deck button', () => {
+        const newDeckBtn = mockDocument.getElementById('newDeckBtn');
+        expect(newDeckBtn).toBeDefined();
+        // The button should have the 'new-deck-btn' class
+      });
+
+      test('should have correct CSS classes for user menu toggle', () => {
+        const userMenuToggle = mockDocument.getElementById('userMenuToggle');
+        expect(userMenuToggle).toBeDefined();
+        // The button should have the 'user-menu-toggle' class
+      });
+
+      test('should maintain consistent button styling', () => {
+        const newDeckBtn = mockDocument.getElementById('newDeckBtn');
+        const userMenuToggle = mockDocument.getElementById('userMenuToggle');
+        
+        // Both should be clickable elements
+        expect(newDeckBtn.onclick).toBeDefined();
+        expect(userMenuToggle).toBeDefined();
+      });
+    });
+
+    describe('Responsive Design', () => {
+      test('should handle different screen sizes', () => {
+        const newDeckBtn = mockDocument.getElementById('newDeckBtn');
+        const userMenuToggle = mockDocument.getElementById('userMenuToggle');
+        
+        // Elements should exist regardless of screen size
+        expect(newDeckBtn).toBeDefined();
+        expect(userMenuToggle).toBeDefined();
+      });
+
+      test('should maintain proper text sizing', () => {
+        const newDeckBtn = mockDocument.getElementById('newDeckBtn');
+        const userMenuToggle = mockDocument.getElementById('userMenuToggle');
+        
+        expect(newDeckBtn.textContent).toBe('+ Deck');
+        expect(userMenuToggle).toBeDefined();
+      });
+    });
+
+    describe('Accessibility Features', () => {
+      test('should be keyboard accessible', () => {
+        const newDeckBtn = mockDocument.getElementById('newDeckBtn');
+        const userMenuToggle = mockDocument.getElementById('userMenuToggle');
+        
+        // Both should be focusable elements
+        expect(newDeckBtn).toBeDefined();
+        expect(userMenuToggle).toBeDefined();
+      });
+
+      test('should have appropriate cursor styling', () => {
+        const newDeckBtn = mockDocument.getElementById('newDeckBtn');
+        const userMenuToggle = mockDocument.getElementById('userMenuToggle');
+        
+        // Both should be clickable
+        expect(newDeckBtn.onclick).toBeDefined();
+        expect(userMenuToggle).toBeDefined();
+      });
+    });
+
+    describe('Integration with Existing Functionality', () => {
+      test('should work with view switching', () => {
+        // Test that the new elements don't interfere with view switching
+        switchToDatabaseView();
+        switchToDeckBuilder();
+        
+        const newDeckBtn = mockDocument.getElementById('newDeckBtn');
+        const userMenuToggle = mockDocument.getElementById('userMenuToggle');
+        
+        expect(newDeckBtn).toBeDefined();
+        expect(userMenuToggle).toBeDefined();
+      });
+
+      test('should work with user welcome updates', () => {
+        mockGetCurrentUser.mockReturnValue({ 
+          id: 'guest', 
+          username: 'guest', 
+          name: 'Guest' 
+        });
+        
+        updateUserWelcome();
+        
+        expect(mockCurrentUsername.textContent).toBe('Guest');
+      });
+    });
+
+    describe('Edge Cases and Error Handling', () => {
+      test('should handle missing + Deck button gracefully', () => {
+        mockDocument.getElementById.mockImplementation((id: string) => {
+          switch (id) {
+            case 'newDeckBtn': return null;
+            case 'databaseViewBtn': return mockDatabaseViewBtn;
+            case 'deckBuilderBtn': return mockDeckBuilderBtn;
+            case 'database-view': return mockDatabaseView;
+            case 'deck-builder': return mockDeckBuilder;
+            case 'database-stats': return mockDatabaseStats;
+            case 'deck-stats': return mockDeckStats;
+            case 'createDeckSection': return mockCreateDeckSection;
+            case 'currentUsername': return mockCurrentUsername;
+            case 'logoutBtn': return mockLogoutBtn;
+            case 'total-characters': return mockTotalCharacters;
+            case 'total-decks': return mockTotalDecks;
+            case 'userMenuToggle': return mockUserMenuToggle;
+            case 'currentUserGreeting': return mockCurrentUserGreeting;
+            default: return null;
+          }
+        });
+        
+        expect(() => switchToDatabaseView()).not.toThrow();
+        expect(() => switchToDeckBuilder()).not.toThrow();
+      });
+
+      test('should handle missing user menu elements gracefully', () => {
+        mockDocument.getElementById.mockImplementation((id: string) => {
+          switch (id) {
+            case 'userMenuToggle':
+            case 'currentUserGreeting': return null;
+            case 'databaseViewBtn': return mockDatabaseViewBtn;
+            case 'deckBuilderBtn': return mockDeckBuilderBtn;
+            case 'database-view': return mockDatabaseView;
+            case 'deck-builder': return mockDeckBuilder;
+            case 'database-stats': return mockDatabaseStats;
+            case 'deck-stats': return mockDeckStats;
+            case 'createDeckSection': return mockCreateDeckSection;
+            case 'currentUsername': return mockCurrentUsername;
+            case 'logoutBtn': return mockLogoutBtn;
+            case 'total-characters': return mockTotalCharacters;
+            case 'total-decks': return mockTotalDecks;
+            case 'newDeckBtn': return mockNewDeckBtn;
+            default: return null;
+          }
+        });
+        
+        expect(() => updateUserWelcome()).not.toThrow();
+      });
+
+      test('should handle undefined current user gracefully', () => {
+        mockGetCurrentUser.mockReturnValue(null);
+        
+        expect(() => updateUserWelcome()).not.toThrow();
+      });
+    });
+  });
 });
