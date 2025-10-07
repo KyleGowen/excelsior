@@ -3452,7 +3452,9 @@
         .read-only-mode .quantity-btn,
         .read-only-mode .alternate-art-btn,
         .read-only-mode .remove-one-btn,
-        .read-only-mode .add-one-btn {
+        .read-only-mode .add-one-btn,
+        .read-only-mode .deck-list-item-quantity-btn,
+        .read-only-mode .deck-list-item-remove {
             display: none !important;
         }
         
@@ -9832,12 +9834,15 @@
                                     <div class="deck-list-item-quantity">${card.quantity}</div>
                                     <div class="deck-list-item-name">${cardName}</div>
                                     <div class="deck-list-item-actions">
-                                        ${card.quantity > 1 ? `
+                                        ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `
                                             <div class="deck-list-item-quantity-control">
                                                 <button class="deck-list-item-quantity-btn" onclick="removeOneCardFromEditor(${deckEditorCards.indexOf(card)})">-1</button>
+                                                <button class="deck-list-item-quantity-btn" onclick="addOneCardToEditor(${deckEditorCards.indexOf(card)})">+1</button>
                                             </div>
                                         ` : ''}
-                                        <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
+                                        ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `
+                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
+                                        ` : ''}
                                     </div>
                                 </div>
                             `;
@@ -9887,12 +9892,15 @@
                                 <div class="deck-list-item-quantity">${card.quantity}</div>
                                 <div class="deck-list-item-name">${cardName}</div>
                                 <div class="deck-list-item-actions">
-                                    ${card.quantity > 1 ? `
+                                    ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `
                                         <div class="deck-list-item-quantity-control">
                                             <button class="deck-list-item-quantity-btn" onclick="removeOneCardFromEditor(${deckEditorCards.indexOf(card)})">-1</button>
+                                            <button class="deck-list-item-quantity-btn" onclick="addOneCardToEditor(${deckEditorCards.indexOf(card)})">+1</button>
                                         </div>
                                     ` : ''}
-                                    <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
+                                    ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `
+                                        <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
+                                    ` : ''}
                                 </div>
                             </div>
                         `;
