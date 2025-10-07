@@ -223,6 +223,12 @@ describe('Auto Guest Login Integration Tests', () => {
       expect(deck.ui_preferences).toBeDefined();
       
       console.log('✅ Test deck created successfully:', deck);
+      
+      // Clean up test user and deck created in this test
+      if (testUserId && testDeckId) {
+        await pool.query('DELETE FROM decks WHERE id = $1', [testDeckId]);
+        await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
+      }
     });
 
     it('should verify test deck can be accessed by guest user', async () => {
