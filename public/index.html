@@ -9689,6 +9689,8 @@
             } else {
                 // Switch to list view
                 deckCardsEditor.classList.add('list-view');
+                // Ensure list view is always single column
+                deckCardsEditor.classList.remove('two-column');
                 listViewBtn.textContent = 'Tile View';
                 renderDeckCardsListView(); // Render in list view
                 
@@ -13209,6 +13211,11 @@
         function updateDeckLayout(deckWidth, totalWidth) {
             const deckCardsEditor = document.querySelector('.deck-cards-editor');
             if (!deckCardsEditor) return;
+            
+            // Don't apply responsive layout logic to list view - it should always be single column
+            if (deckCardsEditor.classList.contains('list-view')) {
+                return;
+            }
             
             const deckPercentage = (deckWidth / totalWidth) * 100;
             
