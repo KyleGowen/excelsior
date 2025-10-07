@@ -4,7 +4,7 @@
 // Set test environment variables
 process.env.NODE_ENV = 'test';
 process.env.PORT = '3000';
-process.env.SKIP_MIGRATIONS = 'true';
+// Note: SKIP_MIGRATIONS removed to ensure database schema is properly initialized
 
 // Import test server
 import { app, initializeTestServer } from '../src/test-server';
