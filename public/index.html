@@ -13548,6 +13548,12 @@
                     // Ensure scroll container can show all content after deck is displayed
                     setTimeout(() => {
                         ensureScrollContainerCanShowAllContent();
+                        
+                        // Also check if any collapsed headers are cut off and fix them
+                        const collapsedHeaders = document.querySelectorAll('.deck-type-header.collapsed');
+                        collapsedHeaders.forEach(header => {
+                            ensureCollapsedHeaderIsVisible(header);
+                        });
                     }, 100);
                     
                     // Load UI preferences from database AFTER deck cards are displayed
@@ -14818,16 +14824,8 @@
                 
                 // Ensure the collapsed header is fully visible by adjusting scroll position
                 setTimeout(() => {
-                    const deckCardsEditor = document.querySelector('.deck-cards-editor');
-                    if (deckCardsEditor && header) {
-                        const headerRect = header.getBoundingClientRect();
-                        const containerRect = deckCardsEditor.getBoundingClientRect();
-                        
-                        // If the header is cut off at the bottom, scroll to show it fully
-                        if (headerRect.bottom > containerRect.bottom) {
-                            const scrollAmount = headerRect.bottom - containerRect.bottom + 10; // 10px padding
-                            deckCardsEditor.scrollTop += scrollAmount;
-                        }
+                    if (header) {
+                        ensureCollapsedHeaderIsVisible(header);
                     }
                 }, 10); // Small delay to ensure DOM updates are complete
                 
@@ -14860,16 +14858,8 @@
                 
                 // Ensure the collapsed header is fully visible by adjusting scroll position
                 setTimeout(() => {
-                    const deckCardsEditor = document.querySelector('.deck-cards-editor');
-                    if (deckCardsEditor && header) {
-                        const headerRect = header.getBoundingClientRect();
-                        const containerRect = deckCardsEditor.getBoundingClientRect();
-                        
-                        // If the header is cut off at the bottom, scroll to show it fully
-                        if (headerRect.bottom > containerRect.bottom) {
-                            const scrollAmount = headerRect.bottom - containerRect.bottom + 10; // 10px padding
-                            deckCardsEditor.scrollTop += scrollAmount;
-                        }
+                    if (header) {
+                        ensureCollapsedHeaderIsVisible(header);
                     }
                 }, 10); // Small delay to ensure DOM updates are complete
                 
@@ -14898,6 +14888,36 @@
             if (maxScrollTop > 0 && deckCardsEditor.scrollTop < maxScrollTop) {
                 // Scroll to the bottom to ensure all content is accessible
                 deckCardsEditor.scrollTop = maxScrollTop;
+            }
+        }
+
+        // Enhanced scroll adjustment for collapsed headers
+        function ensureCollapsedHeaderIsVisible(header) {
+            const deckCardsEditor = document.querySelector('.deck-cards-editor');
+            if (!deckCardsEditor || !header) return;
+            
+            // Force a reflow to ensure all measurements are accurate
+            deckCardsEditor.offsetHeight;
+            header.offsetHeight;
+            
+            // Get the current scroll position and container dimensions
+            const containerRect = deckCardsEditor.getBoundingClientRect();
+            const headerRect = header.getBoundingClientRect();
+            
+            // Calculate if the header is cut off at the bottom
+            const headerBottom = headerRect.bottom;
+            const containerBottom = containerRect.bottom;
+            
+            // If the header is cut off, scroll to show it with extra padding
+            if (headerBottom > containerBottom) {
+                const scrollAmount = headerBottom - containerBottom + 20; // 20px extra padding
+                deckCardsEditor.scrollTop += scrollAmount;
+                
+                // Double-check that we can actually scroll that much
+                const maxScrollTop = deckCardsEditor.scrollHeight - deckCardsEditor.clientHeight;
+                if (deckCardsEditor.scrollTop > maxScrollTop) {
+                    deckCardsEditor.scrollTop = maxScrollTop;
+                }
             }
         }
 
