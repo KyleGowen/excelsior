@@ -367,7 +367,7 @@ app.post('/api/decks', authenticateUser, async (req: any, res) => {
     }
     
     const deck = await deckBusinessService.createDeck(req.user.id, name, description, characters);
-    res.json({ success: true, data: deck });
+    res.status(201).json({ success: true, data: deck });
   } catch (error) {
     if (error instanceof Error && error.message.includes('Maximum 4 characters allowed')) {
       return res.status(400).json({ 

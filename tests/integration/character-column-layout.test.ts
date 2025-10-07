@@ -190,18 +190,17 @@ describe('Character Column Layout Integration Tests', () => {
       expect(response.text).toContain('character-card');
     });
 
-    it('should have debugging console logs for character layout', async () => {
+    it('should include character layout scripts and styles without relying on debug logs', async () => {
       const response = await request(app)
         .get(`/users/${testUser.id}/decks/${testDeck.id}`)
         .set('Cookie', authCookie);
 
       expect(response.status).toBe(200);
       
-      // Verify that debugging console logs are present
-      expect(response.text).toContain('🔍 DEBUG: Creating character section with id="deck-type-character"');
-      expect(response.text).toContain('🔍 DEBUG: forceCharacterSingleColumnLayout called');
-      expect(response.text).toContain('🔍 DEBUG: Character section found:');
-      expect(response.text).toContain('🔍 DEBUG: Character cards grid-template-columns:');
+      // Verify that layout-related selectors and function names exist in HTML
+      expect(response.text).toContain('deck-type-character');
+      expect(response.text).toContain('forceCharacterSingleColumnLayout');
+      expect(response.text).toContain('grid-template-columns: 1fr');
     });
   });
 
