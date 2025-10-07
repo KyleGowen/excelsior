@@ -35,7 +35,6 @@ function switchToDatabaseView() {
 }
 
 function switchToDeckBuilder() {
-    console.log('🔍 DEBUG: switchToDeckBuilder called');
     
     // Update URL without page reload, but preserve /new if we're creating a new deck
     const currentUser = getCurrentUser();
@@ -48,7 +47,6 @@ function switchToDeckBuilder() {
         newUrl = `/users/${userId}/decks/new`;
     }
     
-    console.log('🔍 DEBUG: switchToDeckBuilder - preserving URL:', newUrl, 'isCreatingNewDeck:', isCreatingNewDeck);
     history.pushState({view: 'deckbuilder'}, '', newUrl);
     
     // Update button states
@@ -73,15 +71,11 @@ function switchToDeckBuilder() {
     const databaseStats = document.getElementById('database-stats');
     const deckStats = document.getElementById('deck-stats');
     const createDeckSection = document.getElementById('createDeckSection');
-    console.log('🔍 DEBUG: createDeckSection element:', createDeckSection);
     
     if (databaseStats) databaseStats.style.display = 'none';
     if (deckStats) deckStats.style.display = 'grid';
     if (createDeckSection) {
-        console.log('🔍 DEBUG: Setting createDeckSection to display: flex');
         createDeckSection.style.display = 'flex';
-    } else {
-        console.log('❌ DEBUG: createDeckSection element not found!');
     }
     
     // Ensure username is displayed when switching back to deck builder
@@ -99,28 +93,22 @@ function switchToDeckBuilder() {
     const historyState = window.history.state;
     const isCreatingNewDeckCheck = isCreatingNewDeck || currentUrl.includes('/decks/new') || (historyState && historyState.newDeck);
     
-    console.log('🔍 DEBUG: switchToDeckBuilder - currentUrl:', currentUrl, 'historyState:', historyState, 'isCreatingNewDeck:', isCreatingNewDeckCheck);
     
     if (!isCreatingNewDeckCheck && document.getElementById('total-decks') && document.getElementById('total-decks').textContent === '-') {
-        console.log('🔍 DEBUG: switchToDeckBuilder - loading deck data');
         if (typeof loadDeckBuilderData === 'function') {
             loadDeckBuilderData();
         } else if (typeof loadDecks === 'function') {
             loadDecks();
         }
-    } else {
-        console.log('🔍 DEBUG: switchToDeckBuilder - skipping deck data load (new deck creation or already loaded)');
     }
 }
 
 function createNewDeck() {
-    console.log('🔍 DEBUG: createNewDeck called');
     isCreatingNewDeck = true;
     
     // Ensure we're in edit mode for new decks
     if (typeof isReadOnlyMode !== 'undefined') {
         isReadOnlyMode = false;
-        console.log('🔍 DEBUG: Set isReadOnlyMode to false for new deck');
         // Update the body class to reflect edit mode
         document.body.classList.remove('read-only-mode');
     }
@@ -167,11 +155,9 @@ function createNewDeck() {
     const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
     const newUrl = `/users/${userId}/decks/new`;
     window.history.pushState({ newDeck: true, userId, view: 'deckbuilder' }, '', newUrl);
-    console.log('🔍 Updated URL to:', newUrl);
 
     // Show the deck editor with the blank deck
     if (typeof showDeckEditor === 'function') {
-        console.log('🔍 DEBUG: About to call showDeckEditor for new deck');
         
         // Clear any existing cards BEFORE showing the editor
         const deckCardsContainer = document.getElementById('deckCardsContainer');
@@ -217,7 +203,6 @@ function createNewDeck() {
         // Reset the flag after a short delay to allow the deck editor to fully initialize
         setTimeout(() => {
             isCreatingNewDeck = false;
-            console.log('🔍 DEBUG: Reset isCreatingNewDeck flag');
         }, 1000);
     } else {
         console.error('showDeckEditor function not found');
@@ -226,7 +211,6 @@ function createNewDeck() {
 
 // Initialize global navigation
 function initializeGlobalNav() {
-    console.log('🔍 DEBUG: initializeGlobalNav called');
     
     // Initialize user menu
     setupUserMenu();
@@ -257,7 +241,6 @@ function initializeGlobalNav() {
             switchToDatabaseView();
         } else if (event.state && event.state.newDeck) {
             // Don't call switchToDeckBuilder for new deck creation
-            console.log('🔍 DEBUG: popstate for new deck, not calling switchToDeckBuilder');
         } else {
             switchToDeckBuilder();
         }
@@ -294,7 +277,6 @@ function toggleUserMenu(event) {
     const dropdown = document.getElementById('userMenuDropdown');
     if (!toggle || !dropdown) return;
     const isOpen = dropdown.classList.toggle('show');
-    console.log('🔍 DEBUG: toggleUserMenu clicked, isOpen =', isOpen);
     toggle.classList.toggle('open', isOpen);
     if (isOpen) {
         document.addEventListener('click', closeUserMenuOnOutsideClick);

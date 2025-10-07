@@ -6211,14 +6211,12 @@
             const userId = currentUser ? (currentUser.userId || currentUser.id || 'guest') : 'guest';
             const newUrl = `/users/${userId}/decks/${deckId}`;
             window.history.pushState({ deckId, userId }, '', newUrl);
-            console.log('🔍 Updated URL to:', newUrl);
             
             showDeckEditor();
             loadDeckForEditing(deckId);
         }
 
         function viewDeck(deckId) {
-            console.log('🔍 viewDeck called for deckId:', deckId);
             
             // Get current user to determine the user ID for the URL
             const currentUser = getCurrentUser();
@@ -6227,7 +6225,6 @@
             // Update URL to include the deck ID for sharing
             const newUrl = `/users/${userId}/decks/${deckId}?readonly=true`;
             window.history.pushState({ deckId, userId, readonly: true }, '', newUrl);
-            console.log('🔍 Updated URL to:', newUrl);
             
             // Navigate to the deck editor in read-only mode
             window.location.href = newUrl;
@@ -7739,12 +7736,10 @@
 
         // Update power cards filter when deck changes
         function updatePowerCardsFilter() {
-            console.log('🔍 DEBUG: updatePowerCardsFilter called');
             
             // Update power card counts in the UI
             const powerCardsCategory = document.querySelector('.card-category[data-type="power"]');
             if (!powerCardsCategory) {
-                console.log('🔍 DEBUG: Power cards category not found');
                 return;
             }
             
@@ -7752,14 +7747,12 @@
             const powerTypeSections = powerCardsCategory.querySelectorAll('.character-group');
             let totalVisibleCards = 0;
             
-            console.log('🔍 DEBUG: Found', powerTypeSections.length, 'power type sections');
             
             powerTypeSections.forEach(section => {
                 const header = section.querySelector('.character-group-header span');
                 if (!header) return;
                 
                 const powerType = header.textContent.split(' (')[0]; // Extract power type name
-                console.log('🔍 DEBUG: Processing power type:', powerType);
                 
                 // Use DOM card items within this section so counts are correct on initial render
                 const powerTypeCount = section.querySelectorAll('.card-item').length;
@@ -7780,13 +7773,9 @@
                     .reduce((total, card) => total + card.quantity, 0);
                 
                 const originalText = mainHeader.textContent;
-                console.log(`🔍 DEBUG: Original header text: "${originalText}"`);
                 const newText = originalText.replace(/\(\d+\)/, `(${totalPowerCardCount})`);
-                console.log(`🔍 DEBUG: New header text: "${newText}"`);
                 mainHeader.textContent = newText;
                 console.log(`Updated main Power Cards header count to: ${totalPowerCardCount}`);
-            } else {
-                console.log('🔍 DEBUG: Main header not found');
             }
             
             // Also check if character filter is active
@@ -8383,7 +8372,6 @@
                         saveButton.style.opacity = '0.5';
                         saveButton.style.cursor = 'not-allowed';
                         saveButton.title = 'Guests cannot save edits..';
-                        console.log('🔍 Disabled Save button for guest user');
                     } else {
                         saveButton.disabled = false;
                         saveButton.style.opacity = '1';
@@ -10949,7 +10937,6 @@
             
             // Check if user is guest - guests cannot save any changes
             if (isGuestUser()) {
-                console.log('🔍 DEBUG: Blocking save - guest user');
                 alert('Guests cannot save edits. Please log in to save deck changes.');
                 return;
             }

@@ -5689,14 +5689,11 @@
         // Check if current user is guest
         function isGuestUser() {
             if (!currentUser) {
-                console.log('🔍 isGuestUser() - No currentUser, returning false');
                 return false;
             }
             
             const isGuest = currentUser.role === 'GUEST';
             
-            console.log('🔍 isGuestUser() - currentUser:', currentUser, 'isGuest:', isGuest);
-            console.log('🔍 isGuestUser() - role check:', currentUser.role === 'GUEST');
             
             return isGuest;
         }
@@ -5853,11 +5850,9 @@
             try {
                 // Ensure we have current user data before proceeding
                 if (!currentUser) {
-                    console.log('🔍 loadDecks - No currentUser, skipping deck load');
                     return;
                 }
                 
-                console.log('🔍 loadDecks - Loading decks for user:', currentUser);
                 const response = await fetch('/api/decks');
                 const data = await response.json();
                     if (data.success) {
@@ -5884,13 +5879,6 @@
 
             // Check if current user is guest
             const isGuest = isGuestUser();
-            console.log('🔍 displayDecks - currentUser:', currentUser, 'isGuest:', isGuest);
-            console.log('🔍 displayDecks - currentUser details:', {
-                id: currentUser?.id,
-                username: currentUser?.username,
-                name: currentUser?.name,
-                role: currentUser?.role
-            });
 
             // Fetch character data to get character names
             let characterMap = {};
@@ -5999,7 +5987,6 @@
                                     const buttonHtml = isGuest ? 
                                         '<button class="deck-action-btn danger" disabled title="Log in to delete decks...">Delete</button>' : 
                                         '<button class="deck-action-btn danger" onclick="deleteDeck(\'' + deck.id + '\')">Delete</button>';
-                                    console.log('🔍 Button HTML for deck', deck.id, 'isGuest:', isGuest, 'button:', buttonHtml);
                                     return buttonHtml;
                                 })()}
                         </div>
@@ -6170,14 +6157,12 @@
             const userId = currentUser ? (currentUser.userId || currentUser.id || 'guest') : 'guest';
             const newUrl = `/users/${userId}/decks/${deckId}`;
             window.history.pushState({ deckId, userId }, '', newUrl);
-            console.log('🔍 Updated URL to:', newUrl);
             
             showDeckEditor();
             loadDeckForEditing(deckId);
         }
 
         function viewDeck(deckId) {
-            console.log('🔍 viewDeck called for deckId:', deckId);
             
             // Get current user to determine the user ID for the URL
             const currentUser = getCurrentUser();
@@ -6186,7 +6171,6 @@
             // Update URL to include the deck ID for sharing
             const newUrl = `/users/${userId}/decks/${deckId}?readonly=true`;
             window.history.pushState({ deckId, userId, readonly: true }, '', newUrl);
-            console.log('🔍 Updated URL to:', newUrl);
             
             // Navigate to the deck editor in read-only mode
             window.location.href = newUrl;
@@ -6792,7 +6776,7 @@
             });
             
             // Rule 8: Deck cannot contain unusable cards
-            const characterNames = characterCards.map(card => {
+            const characterNamesForValidation = characterCards.map(card => {
                 const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
                 return availableCard ? availableCard.name || availableCard.card_name : 'Unknown';
             });
@@ -6844,7 +6828,7 @@
                         }
                         
                         // Regular character special validation
-                        if (!characterNames.includes(availableCard.character)) {
+                        if (!characterNamesForValidation.includes(availableCard.character)) {
                             errors.push(`"${cardName}" requires character "${availableCard.character}" in your team`);
                         }
                     }
@@ -7178,7 +7162,6 @@
         }
 
         function addAllMissionSetCards(missionSetName, cards) {
-            console.log(`Adding all cards from mission set: ${missionSetName}`, cards);
             
             // Check mission limit first
             const currentMissionCount = deckEditorCards
@@ -7218,7 +7201,6 @@
         }
 
         function addAllPowerCards(powerType, cards) {
-            console.log(`Adding all ${powerType} power cards:`, cards);
             
             let addedCount = 0;
             
@@ -7354,16 +7336,9 @@
             const deckCharacterCards = deckEditorCards.filter(card => card.type === 'character');
             const deckCharacterNames = deckCharacterCards.map(card => {
                 const characterName = characterMap[card.cardId];
-                console.log(`Mapping cardId ${card.cardId} to character name: ${characterName}`);
                 return characterName;
             }).filter(name => name); // Remove any undefined names
             
-            console.log('=== FILTER DEBUG ===');
-            console.log('Filter checked:', isChecked);
-            console.log('Deck character cards:', deckCharacterCards);
-            console.log('Deck character names:', deckCharacterNames);
-            console.log('Character map:', characterMap);
-            console.log('Found', characterGroups.length, 'character groups');
             
             // First, collect all groups and sort them to put "Any Character" at the top
             const groupsArray = Array.from(characterGroups);
@@ -7380,17 +7355,14 @@
             sortedGroups.forEach((group, index) => {
                 const header = group.querySelector('.character-group-header span');
                 if (!header) {
-                    console.log(`Group ${index}: No header found`);
                     return;
                 }
                 
                 const characterName = header.textContent.split(' (')[0];
-                console.log(`Group ${index}: "${characterName}"`);
                 
                 if (isChecked) {
                     // Always show "Any Character" group
                     if (characterName === 'Any Character') {
-                        console.log(`  ✓ Any Character - always shown`);
                         group.style.display = 'block';
                         return;
                     }
@@ -7399,32 +7371,26 @@
                     const isInDeck = deckCharacterNames.some(deckName => {
                         // Exact match
                         if (deckName === characterName) {
-                            console.log(`  ✓ Exact match: "${deckName}" === "${characterName}"`);
                             return true;
                         }
                         
                         // Handle special cases like "Angry Mob" vs "Angry Mob (Middle Ages)"
                         const deckNameClean = deckName.split(' (')[0];
                         if (deckNameClean === characterName) {
-                            console.log(`  ✓ Clean match: "${deckNameClean}" === "${characterName}"`);
                             return true;
                         }
                         
                         // Handle partial matches (e.g., "Angry Mob (Middle Ages)" should match "Angry Mob")
                         if (deckName.includes(characterName) || characterName.includes(deckName)) {
-                            console.log(`  ✓ Partial match: "${deckName}" includes "${characterName}" or vice versa`);
                             return true;
                         }
                         
-                        console.log(`  ✗ No match: "${deckName}" vs "${characterName}"`);
                         return false;
                     });
                     
-                    console.log(`  Result: ${isInDeck ? 'SHOW' : 'HIDE'}`);
                     group.style.display = isInDeck ? 'block' : 'none';
                 } else {
                     // Show all character groups
-                    console.log(`  Result: SHOW (filter off)`);
                     group.style.display = 'block';
                 }
             });
@@ -7436,7 +7402,6 @@
                     container.appendChild(group);
                 });
             }
-            console.log('=== END FILTER DEBUG ===');
         }
         
         // Update deck editor card count display
@@ -7452,22 +7417,16 @@
                 element.textContent = totalCards;
             });
             
-            console.log(`Deck card count updated: ${totalCards} total (${characterCount} characters, ${powerCardCount} power cards, ${specialCardCount} special cards)`);
         }
 
         // Update special cards filter when deck changes
         function updateSpecialCardsFilter() {
-            console.log('updateSpecialCardsFilter called');
-            console.log('Current deckEditorCards:', deckEditorCards);
             const filterCheckbox = document.getElementById('specialCardsCharacterFilter');
             if (filterCheckbox && filterCheckbox.checked) {
-                console.log('Filter is checked, calling toggleSpecialCardsCharacterFilter');
                 // Add a small delay to ensure DOM is fully updated
                 setTimeout(() => {
                     toggleSpecialCardsCharacterFilter();
                 }, 50);
-            } else {
-                console.log('Filter is not checked or checkbox not found');
             }
         }
 
@@ -7588,9 +7547,6 @@
                 .map(card => characterMap[card.cardId])
                 .filter(char => char); // Remove undefined entries
             
-            console.log('=== POWER CARDS FILTER DEBUG ===');
-            console.log('Filter checked:', isChecked);
-            console.log('Deck characters:', deckCharacters);
             
             // Get all power card groups
             const powerGroups = powerCardsCategory.querySelectorAll('.character-group');
@@ -7601,7 +7557,6 @@
                 if (!header) return;
                 
                 const powerType = header.textContent.split(' (')[0];
-                console.log(`Processing power type: "${powerType}"`);
                 
                 if (isChecked) {
                     // Filter power cards based on character stats
@@ -7641,7 +7596,6 @@
                                 }
                                 
                                 const usable = characterStat >= cardValue;
-                                console.log(`  ${char.name} (${cardType}: ${characterStat}) can use ${cardValue} ${cardType}: ${usable}`);
                                 return usable;
                             });
                             
@@ -7658,7 +7612,6 @@
                     // Show/hide the entire group based on whether any cards are visible
                     group.style.display = visibleCount > 0 ? 'block' : 'none';
                     totalVisibleCards += visibleCount;
-                    console.log(`  ${powerType}: ${visibleCount} cards visible`);
                 } else {
                     // Show all power cards and restore original counts
                     const cardItems = group.querySelectorAll('.card-item');
@@ -7681,7 +7634,6 @@
                     const newText = originalText.replace(/\(\d+\)/, `(${powerTypeCount})`);
                     header.textContent = newText;
                     totalVisibleCards += powerTypeCount;
-                    console.log(`  ${powerType}: all ${powerTypeCount} cards shown (${cardItems.length} unique cards)`);
                 }
             });
             
@@ -7694,20 +7646,16 @@
                 const originalText = mainHeader.textContent;
                 const newText = originalText.replace(/\(\d+\)/, `(${totalPowerCardCount})`);
                 mainHeader.textContent = newText;
-                console.log(`Updated main Power Cards header count to: ${totalPowerCardCount}`);
             }
             
-            console.log('=== END POWER CARDS FILTER DEBUG ===');
         }
 
         // Update power cards filter when deck changes
         function updatePowerCardsFilter() {
-            console.log('🔍 DEBUG: updatePowerCardsFilter called');
             
             // Update power card counts in the UI
             const powerCardsCategory = document.querySelector('.card-category[data-type="power"]');
             if (!powerCardsCategory) {
-                console.log('🔍 DEBUG: Power cards category not found');
                 return;
             }
             
@@ -7715,14 +7663,12 @@
             const powerTypeSections = powerCardsCategory.querySelectorAll('.character-group');
             let totalVisibleCards = 0;
             
-            console.log('🔍 DEBUG: Found', powerTypeSections.length, 'power type sections');
             
             powerTypeSections.forEach(section => {
                 const header = section.querySelector('.character-group-header span');
                 if (!header) return;
                 
                 const powerType = header.textContent.split(' (')[0]; // Extract power type name
-                console.log('🔍 DEBUG: Processing power type:', powerType);
                 
                 // Use DOM card items within this section so counts are correct on initial render
                 const powerTypeCount = section.querySelectorAll('.card-item').length;
@@ -7731,7 +7677,6 @@
                 const newText = originalText.replace(/\(\d+\)/, `(${powerTypeCount})`);
                 header.textContent = newText;
                 totalVisibleCards += powerTypeCount;
-                console.log(`  ${powerType}: all ${powerTypeCount} cards shown`);
             });
             
             // Update the main Power Cards header count from available items in DOM
@@ -7802,9 +7747,6 @@
                 .map(card => characterMap[card.cardId])
                 .filter(char => char); // Remove undefined entries
             
-            console.log('=== BASIC UNIVERSE FILTER DEBUG ===');
-            console.log('Filter checked:', isChecked);
-            console.log('Deck characters:', deckCharacters);
             
             // Get all basic universe cards
             const cardItems = basicUniverseCategory.querySelectorAll('.card-item');
@@ -7849,7 +7791,6 @@
                                 }
                                 
                                 const usable = characterStat >= requiredValue;
-                                console.log(`  ${char.name} (${cardTypeValue}: ${characterStat}) can use ${cardName} (${valueToUse}): ${usable}`);
                                 return usable;
                             });
                             
@@ -7880,7 +7821,6 @@
                 categoryHeader.textContent = newText;
             }
             
-            console.log(`Basic universe filter applied: ${totalVisibleCards} cards visible`);
         }
 
         // Update basic universe filter when deck changes
@@ -8065,9 +8005,6 @@
                 .map(card => characterMap[card.cardId])
                 .filter(char => char); // Remove undefined entries
             
-            console.log('=== TRAINING FILTER DEBUG ===');
-            console.log('Filter checked:', isChecked);
-            console.log('Deck characters:', deckCharacters);
             
             // Get all training cards
             const cardItems = trainingCategory.querySelectorAll('.card-item');
@@ -8135,7 +8072,6 @@
                                 const type2Usable = type2Stat <= requiredValue;
                                 const usable = type1Usable || type2Usable;
                                 
-                                console.log(`  ${char.name} (${type1}: ${type1Stat}, ${type2}: ${type2Stat}) can use ${cardName} (${valueToUse}): ${usable} (${type1Usable} || ${type2Usable})`);
                                 return usable;
                             });
                             
@@ -8166,7 +8102,6 @@
                 categoryHeader.textContent = newText;
             }
             
-            console.log(`Training filter applied: ${totalVisibleCards} cards visible`);
         }
 
         // Update training filter when deck changes
@@ -8227,9 +8162,6 @@
                 .map(card => characterMap[card.cardId])
                 .filter(char => char); // Remove undefined entries
             
-            console.log('=== ALLY UNIVERSE FILTER DEBUG ===');
-            console.log('Filter checked:', isChecked);
-            console.log('Deck characters:', deckCharacters);
             
             // Get all ally universe cards
             const cardItems = allyUniverseCategory.querySelectorAll('.card-item');
@@ -8278,7 +8210,6 @@
                                 // Check if the character meets the requirement
                                 const usable = isLessThan ? characterStat <= requiredValue : characterStat >= requiredValue;
                                 
-                                console.log(`  ${char.name} (${statTypeToUse}: ${characterStat}) can use ${cardName} (${statToUse}): ${usable}`);
                                 return usable;
                             });
                             
@@ -8309,7 +8240,6 @@
                 categoryHeader.textContent = newText;
             }
             
-            console.log(`Ally universe filter applied: ${totalVisibleCards} cards visible`);
         }
 
         // Update ally universe filter when deck changes
@@ -8322,7 +8252,6 @@
         // ===== DECK EDITOR FUNCTIONS =====
 
         function showDeckEditor() {
-            console.log('showDeckEditor called');
             try {
                 const modal = document.getElementById('deckEditorModal');
                 if (!modal) {
@@ -8339,7 +8268,6 @@
                         saveButton.style.opacity = '0.5';
                         saveButton.style.cursor = 'not-allowed';
                         saveButton.title = 'Guests cannot save edits..';
-                        console.log('🔍 Disabled Save button for guest user');
                     } else {
                         saveButton.disabled = false;
                         saveButton.style.opacity = '1';
@@ -8348,7 +8276,6 @@
                     }
                 }
                 
-                console.log('Modal displayed, setting up drag and drop');
                 setupDragAndDrop();
                 
                 // Initialize the resizable divider after the modal is shown
@@ -8583,7 +8510,6 @@
         }
 
         function initializeBlankDeck() {
-            console.log('initializeBlankDeck called');
             
             // Set up blank deck data
             currentDeckData = {
@@ -8636,16 +8562,13 @@
         }
 
         async function loadDeckForEditing(deckId) {
-            console.log('loadDeckForEditing called with deckId:', deckId);
             try {
                 const response = await fetch(`/api/decks/${deckId}`);
                 const data = await response.json();
-                console.log('Deck data loaded:', data);
                 
                 if (data.success) {
                     currentDeckData = data.data;
                     deckEditorCards = [...data.data.cards]; // Create working copy
-                    console.log('Working copy created:', deckEditorCards);
                     
                     // Set limited state from loaded deck
                     isDeckLimited = currentDeckData.is_limited || false;
@@ -9100,12 +9023,10 @@
                         // URL encode the path for CSS
                         const encodedPath = encodeURI(bgImage);
                         card.style.setProperty('--bg-image', `url(${encodedPath})`);
-                        console.log('Applied background image:', encodedPath);
                     };
                     img.onerror = function() {
                         // Fallback: use default gradient without background image
                         card.style.setProperty('--bg-image', 'none');
-                        console.log('Failed to load background image:', bgImage);
                     };
                     img.src = bgImage;
                 }
@@ -9456,7 +9377,6 @@
         // Save deck expansion state to localStorage
         function saveDeckExpansionState() {
             if (currentDeckId) {
-                console.log('Saving expansion state for deck:', currentDeckId, 'state:', deckEditorExpansionState);
                 localStorage.setItem(`deckExpansionState_${currentDeckId}`, JSON.stringify(deckEditorExpansionState));
             }
         }
@@ -9465,21 +9385,17 @@
         function loadDeckExpansionState() {
             if (currentDeckId) {
                 const savedState = localStorage.getItem(`deckExpansionState_${currentDeckId}`);
-                console.log('Loading expansion state for deck:', currentDeckId, 'saved state:', savedState);
                 if (savedState) {
                     try {
                         deckEditorExpansionState = JSON.parse(savedState);
-                        console.log('Loaded expansion state:', deckEditorExpansionState);
                     } catch (error) {
                         console.error('Error loading deck expansion state:', error);
                         deckEditorExpansionState = {};
                     }
                 } else {
-                    console.log('No saved expansion state found, using empty object');
                     deckEditorExpansionState = {};
                 }
             } else {
-                console.log('No currentDeckId, using empty expansion state');
                 deckEditorExpansionState = {};
             }
         }
@@ -9814,7 +9730,6 @@
         }
 
         function addAllSpecialCardsForCharacter(characterName) {
-            console.log(`Adding all special cards for character: ${characterName}`);
             
             // Fetch special cards data to get the cards for this character
             fetch('/api/special-cards')
@@ -9861,7 +9776,6 @@
                 });
         }
         function addAllAdvancedUniverseCardsForCharacter(characterName) {
-            console.log(`Adding all advanced universe cards for character: ${characterName}`);
             
             // Fetch advanced universe cards data to get the cards for this character
             fetch('/api/advanced-universe')
@@ -9917,7 +9831,6 @@
                 .filter(card => card.type === 'character')
                 .reduce((total, card) => total + card.quantity, 0);
             
-            console.log('updateCharacterLimitStatus - Current character count:', currentCharacterCount, 'deckEditorCards:', deckEditorCards);
             
             const isCharacterLimitReached = currentCharacterCount >= 4;
             
@@ -9941,7 +9854,6 @@
                 .filter(card => card.type === 'mission')
                 .reduce((total, card) => total + card.quantity, 0);
             
-            console.log('updateMissionLimitStatus - Current mission count:', currentMissionCount, 'deckEditorCards:', deckEditorCards);
             
             const isMissionLimitReached = currentMissionCount >= 7;
             
@@ -10635,7 +10547,6 @@
             }
         }
         function setupDragAndDrop() {
-            console.log('setupDragAndDrop called');
             try {
                 const deckCardsEditor = document.getElementById('deckCardsEditor');
                 if (!deckCardsEditor) {
@@ -10643,7 +10554,6 @@
                     return;
                 }
                 
-                console.log('Setting up drag and drop for deckCardsEditor');
             
             // Drag over effects
             deckCardsEditor.addEventListener('dragover', (e) => {
@@ -10686,7 +10596,6 @@
                     }
                 });
                 
-                console.log('Drag and drop setup complete');
             } catch (error) {
                 console.error('Error in setupDragAndDrop:', error);
             }
@@ -10788,7 +10697,6 @@
                     .filter(card => card.type === 'character')
                     .reduce((total, card) => total + card.quantity, 0);
                 
-                console.log('Adding character. Current count:', currentCharacterCount, 'deckEditorCards:', deckEditorCards);
                 
                 if (currentCharacterCount >= 4) {
                     showNotification('Cannot add more than 4 characters to a deck', 'error');
@@ -10818,7 +10726,6 @@
                     .filter(card => card.type === 'mission')
                     .reduce((total, card) => total + card.quantity, 0);
                 
-                console.log('Adding mission. Current count:', currentMissionCount, 'deckEditorCards:', deckEditorCards);
                 
                 if (currentMissionCount >= 7) {
                     showNotification('Cannot add more than 7 missions to a deck', 'error');
@@ -10905,7 +10812,6 @@
             
             // Check if user is guest - guests cannot save any changes
             if (isGuestUser()) {
-                console.log('🔍 DEBUG: Blocking save - guest user');
                 alert('Guests cannot save edits. Please log in to save deck changes.');
                 return;
             }

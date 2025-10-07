@@ -24,6 +24,14 @@
 - Include helpful debug logging when needed
 - Write comprehensive unit tests for new functionality
 
+## Debug Statement Management
+- **ALWAYS remove debug statements after figuring out an issue**
+- **NEVER commit debug statements to git**
+- Remove console.log, console.debug, and other temporary debugging code before committing
+- Keep only essential error logging (console.error) and important success messages
+- Clean up any temporary debugging variables or test code
+- Ensure console output is clean and professional for production use
+
 ## Git Workflow
 1. Make code changes
 2. Run `npm run test:unit` to verify all tests pass

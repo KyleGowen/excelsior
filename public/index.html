@@ -6336,60 +6336,47 @@
         let isClearingFilters = false;
         function clearAllFiltersGlobally() {
             if (isClearingFilters) {
-                console.log('🔍 clearAllFiltersGlobally() already running, skipping...');
                 return;
             }
             
             isClearingFilters = true;
-            console.log('🔍 clearAllFiltersGlobally() called');
             
             // Clear all text search inputs
             const headerFilters = document.querySelectorAll('.header-filter');
-            console.log('🔍 Found', headerFilters.length, 'header filters to clear');
             headerFilters.forEach(input => {
                 input.value = '';
             });
             
             // Clear all numeric filters
             const filterInputs = document.querySelectorAll('.filter-input');
-            console.log('🔍 Found', filterInputs.length, 'filter inputs to clear');
             filterInputs.forEach(input => {
                 input.value = '';
             });
             
             // Clear all checkboxes
             const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            console.log('🔍 Found', checkboxes.length, 'checkboxes to clear');
             checkboxes.forEach(checkbox => {
                 checkbox.checked = false;
             });
             
-            console.log('✅ All filters cleared globally');
             isClearingFilters = false;
         }
 
         // Load database view data
         async function loadDatabaseViewData() {
-            console.log('🔍 Starting database view data load...');
-            
             // Clear all filters globally before loading data
-            console.log('🔍 Clearing all filters globally...');
             clearAllFiltersGlobally();
             
             // Ensure characters tab is visible before loading data
-            console.log('🔍 Making characters tab visible...');
             const charactersTab = document.getElementById('characters-tab');
             charactersTab.style.display = 'block';
-            console.log('🔍 Characters tab display style:', charactersTab.style.display);
             
             // Set characters tab as active
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             const charactersButton = document.querySelector('[onclick="switchTab(\'characters\')"]');
             charactersButton.classList.add('active');
-            console.log('🔍 Characters button active class:', charactersButton.classList.contains('active'));
             
             try {
-                console.log('🔍 About to load all data in parallel...');
                 await Promise.all([
                     loadCharacters(),
                     loadSpecialCards(),
@@ -6410,13 +6397,11 @@
                 await updateAllStats();
                 
                 // Ensure characters tab is properly shown after loading data
-                console.log('🔍 Ensuring characters tab is shown after data load...');
                 switchTab('characters');
                 
             // Disable "Add to Deck" buttons for guest users immediately
             disableAddToDeckButtonsImmediate();
                 
-                console.log('✅ Database view data loaded successfully');
             } catch (error) {
                 console.error('❌ Error loading database view data:', error);
             }
@@ -6424,14 +6409,11 @@
 
         // Load and display characters
         async function loadCharacters() {
-            console.log('🔍 loadCharacters() called');
             try {
                 const response = await fetch('/api/characters');
                 const data = await response.json();
-                console.log('🔍 Characters API response:', data);
                 
                 if (data.success) {
-                    console.log('🔍 About to display', data.data.length, 'characters');
                     
                     // Small delay to ensure DOM is ready
                     await new Promise(resolve => setTimeout(resolve, 10));
@@ -6471,7 +6453,6 @@
         function isGuestUser() {
             const currentUser = getCurrentUser();
             const isGuest = currentUser && currentUser.role === 'GUEST';
-            console.log('🔍 isGuestUser() called - currentUser:', currentUser, 'isGuest:', isGuest);
             return isGuest;
         }
 
@@ -6487,7 +6468,6 @@
                     // Also add a data attribute for debugging
                     button.setAttribute('data-guest-disabled', 'true');
                 });
-                console.log('🔍 Disabled', addToDeckButtons.length, 'Add to Deck buttons for guest user');
             }
         }
 
@@ -6534,7 +6514,6 @@
             }
         }
         function displayCharacters(characters) {
-            console.log('🔍 displayCharacters() called with', characters.length, 'characters');
             const tbody = document.getElementById('characters-tbody');
             if (!tbody) {
                 console.error('❌ characters-tbody element not found!');
@@ -6543,17 +6522,13 @@
             
             // Ensure the characters tab is visible before populating
             const charactersTab = document.getElementById('characters-tab');
-            console.log('🔍 Characters tab display style before check:', charactersTab.style.display);
             if (charactersTab && charactersTab.style.display === 'none') {
-                console.log('🔍 Making characters tab visible before populating...');
                 charactersTab.style.display = 'block';
             }
             
             tbody.innerHTML = '';
-            console.log('🔍 Cleared tbody, about to render', characters.length, 'characters');
             
             // Verify tbody is ready
-            console.log('🔍 Tbody element ready:', tbody.offsetParent !== null);
 
             characters.forEach(character => {
                 const row = document.createElement('tr');
@@ -6721,14 +6696,12 @@
         }
         // Apply all active filters
         async function applyFilters() {
-            console.log('🔍 applyFilters() called');
             try {
                 const response = await fetch('/api/characters');
                 const data = await response.json();
                 
                 if (data.success) {
                     let filteredCharacters = data.data;
-                    console.log('🔍 Starting with', data.data.length, 'characters');
                     
                     // Check if any filters are actually applied
                     let hasActiveFilters = false;
@@ -6807,15 +6780,12 @@
                         }
                     });
                     
-                    console.log('🔍 Character filtering - hasActiveFilters:', hasActiveFilters, 'filteredCharacters count:', filteredCharacters.length);
                     
                     // Only apply filtering if there are active filters, otherwise show all characters
                     if (hasActiveFilters) {
-                        console.log('🔍 Applying filters, showing', filteredCharacters.length, 'filtered characters');
                     displayCharacters(filteredCharacters);
                     } else {
                         // No filters active, show all characters
-                        console.log('🔍 No active filters, showing all', data.data.length, 'characters');
                         displayCharacters(data.data);
                     }
                 }
@@ -7038,7 +7008,6 @@
 
         // Tab switching functionality
         function switchTab(tabName) {
-            console.log('🔍 switchTab called with:', tabName);
             
             // Clear all filters when switching tabs
             clearAllFiltersGlobally();
@@ -7067,12 +7036,10 @@
             const selectedButton = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
             if (selectedButton) {
                 selectedButton.classList.add('active');
-                console.log('🔍 Added active class to button:', selectedButton.textContent);
             }
             
             // Show selected tab
             document.getElementById(tabName + '-tab').style.display = 'block';
-            console.log('🔍 Showing tab:', tabName + '-tab');
             
             // Show search container for non-character tabs
             if (tabName !== 'characters') {
@@ -8256,7 +8223,6 @@
 
         // Load main app data in background without showing the UI
         function loadMainAppDataInBackground() {
-            console.log('🔍 loadMainAppDataInBackground() called - loading data without showing UI');
             // Load user decks
             loadUserDecks();
             // Load database view data (this will populate the global variables)
@@ -8351,12 +8317,10 @@
             if (authResult.isAuthenticated) {
                 if (authResult.deckId) {
                     // Going directly to deck editor - skip showing main app to avoid flash
-                    console.log('🔍 Going directly to deck editor, skipping main app display');
                     
                     // Ensure database view is hidden to prevent flash
                     const databaseView = document.getElementById('database-view');
                     if (databaseView) {
-                        console.log('🔍 Hiding database view to prevent flash');
                         databaseView.style.display = 'none';
                     }
                     
@@ -8489,7 +8453,6 @@
 
             // Check if current user is guest
             const isGuest = isGuestUser();
-            console.log('🔍 displayDecks (index.html) - isGuest:', isGuest);
 
             // No need to fetch character data or individual deck data anymore
             // The metadata columns now contain all the information we need
@@ -8743,8 +8706,6 @@
 
         // Deck actions
         function editDeck(deckId) {
-            console.log('🔍 editDeck called for deckId:', deckId);
-            console.trace('🔍 editDeck call stack:');
             
             // Get current user to determine read-only mode
             const currentUser = getCurrentUser();
@@ -8766,7 +8727,6 @@
             const userId = currentUser ? (currentUser.userId || currentUser.id || 'guest') : 'guest';
             const newUrl = `/users/${userId}/decks/${deckId}`;
             window.history.pushState({ deckId, userId }, '', newUrl);
-            console.log('🔍 Updated URL to:', newUrl);
             
             // Load and show the deck editor directly without page reload
             loadDeckForEditing(deckId, userId, isReadOnly)
@@ -8785,7 +8745,6 @@
         }
 
         function viewDeck(deckId) {
-            console.log('🔍 viewDeck called for deckId:', deckId);
             
             // Get current user to determine the user ID for the URL
             const currentUser = getCurrentUser();
@@ -8794,7 +8753,6 @@
             // Update URL to include the deck ID for sharing
             const newUrl = `/users/${userId}/decks/${deckId}?readonly=true`;
             window.history.pushState({ deckId, userId, readonly: true }, '', newUrl);
-            console.log('🔍 Updated URL to:', newUrl);
             
             // Navigate to the deck editor in read-only mode
             window.location.href = newUrl;
@@ -9269,7 +9227,7 @@
 
         // Draw Hand functionality
         function toggleDrawHand() {
-            console.log("DEBUG: toggleDrawHand called - button clicked");            console.log("DEBUG: toggleDrawHand called");            const drawHandSection = document.getElementById('drawHandSection');
+            const drawHandSection = document.getElementById('drawHandSection');
             const drawHandBtn = document.getElementById('drawHandBtn');
             
             if (drawHandSection.style.display === 'none') {
@@ -10031,10 +9989,8 @@
         }
 
         function drawHand() {
-            console.log("DEBUG: drawHand function called");
             const deckCards = deckEditorCards;
-            console.log("DEBUG: drawHand called. deckCards:", deckCards);
-            console.log("DEBUG: Total cards in deck:", deckCards.reduce((sum, card) => sum + card.quantity, 0));            const totalCards = deckCards.reduce((sum, card) => sum + card.quantity, 0);
+            const totalCards = deckCards.reduce((sum, card) => sum + card.quantity, 0);
             
             // Filter out characters, locations, and missions to create draw pile
             const drawPile = [];
@@ -10378,12 +10334,10 @@
             });
             
             // Rule 8: Deck cannot contain unusable cards
-            console.log('🔍 DEBUG: Starting Rule 8 validation');
             const characterNamesForUnusable = characterCards.map(card => {
                 const availableCard = availableCardsMap.get(card.cardId);
                 return availableCard ? availableCard.name || availableCard.card_name : 'Unknown';
             });
-            console.log('🔍 DEBUG: Character names:', characterNamesForUnusable);
             
             // Get character stats for power/universe card validation
             const characterStats = characterCards.map(card => {
@@ -10409,7 +10363,6 @@
             deckCards.forEach(card => {
                 const availableCard = availableCardsMap.get(card.cardId);
                 if (!availableCard) {
-                    console.log('🔍 DEBUG: Card not found in availableCardsMap:', card.cardId);
                     return;
                 }
                 
@@ -10425,7 +10378,6 @@
                     cardName = 'Unknown Card';
                 }
                 
-                console.log('🔍 DEBUG: Card name resolved:', cardName, 'for cardId:', card.cardId);
                 
                 // Check special cards for character compatibility
                 if (card.type === 'special') {
@@ -10455,17 +10407,9 @@
                 
                 // Check power cards for character stat requirements
                 if (card.type === 'power') {
-                    console.log('🔍 DEBUG: Checking power card:', card.cardId, availableCard);
-                    console.log('🔍 DEBUG: Power card name fields:', {
-                        name: availableCard.name,
-                        card_name: availableCard.card_name,
-                        power_type: availableCard.power_type,
-                        value: availableCard.value
-                    });
                     if (availableCard.power_type && availableCard.value) {
                         const requiredValue = availableCard.value;
                         const powerType = availableCard.power_type;
-                        console.log('🔍 DEBUG: Power card requirements:', requiredValue, powerType);
                         
                         // Check if any character can use this power card
                         const canUse = characterStats.some(char => {
@@ -10495,10 +10439,7 @@
                         });
                         
                         if (!canUse) {
-                            console.log('🔍 DEBUG: Power card is unusable, adding error');
                             errors.push(`"${cardName}" (Power Card) requires a character with ${requiredValue}+ ${powerType}`);
-                        } else {
-                            console.log('🔍 DEBUG: Power card is usable');
                         }
                     }
                 }
@@ -10560,41 +10501,32 @@
         function calculateTotalThreat(deckCards) {
             let totalThreat = 0;
             
-            console.log('🔍 calculateTotalThreat called with deckCards:', deckCards);
-            console.log('🔍 availableCardsMap size:', availableCardsMap.size);
             
             // Calculate threat from character cards
             const characterCards = deckCards.filter(card => card.type === 'character');
-            console.log('🔍 Character cards found:', characterCards.length);
             
             characterCards.forEach(card => {
                 const character = availableCardsMap.get(card.cardId);
-                console.log('🔍 Looking for character cardId:', card.cardId, 'found:', character);
                 if (character && character.threat_level) {
                     totalThreat += character.threat_level * card.quantity;
-                    console.log('🔍 Added threat:', character.threat_level * card.quantity, 'total now:', totalThreat);
                 }
             });
             
             // Calculate threat from location cards
             const locationCards = deckCards.filter(card => card.type === 'location');
-            console.log('🔍 Location cards found:', locationCards.length);
             
             locationCards.forEach(card => {
                 const location = availableCardsMap.get(card.cardId);
-                console.log('🔍 Looking for location cardId:', card.cardId, 'found:', location);
                 if (location && location.threat_level) {
                     totalThreat += location.threat_level * card.quantity;
-                    console.log('🔍 Added location threat:', location.threat_level * card.quantity, 'total now:', totalThreat);
                 }
             });
             
-            console.log('🔍 Final total threat:', totalThreat);
             return totalThreat;
         }
         // Function to update deck summary with stats and validation
         async function updateDeckSummary(deckCards) {
-            console.log("DEBUG: updateDeckSummary called with deckCards:", deckCards);            // Update total card count using shared function
+            // Update total card count using shared function
             const totalCards = calculateTotalCardCount(deckCards);
             
             // Check if deck size is invalid to determine display format
@@ -10613,21 +10545,20 @@
             
             // Enable/disable Draw Hand button based on playable cards
             const drawHandBtn = document.getElementById('drawHandBtn');
-                console.log("DEBUG: Found drawHandBtn element:", drawHandBtn);            if (drawHandBtn) {
+            if (drawHandBtn) {
                 // Count playable cards (excluding characters, locations, missions)
                 const playableCardsCount = deckCards
                     .filter(card => card.type !== 'character' && card.type !== 'location' && card.type !== 'mission')
                     .reduce((sum, card) => sum + card.quantity, 0);
                 
-                console.log("DEBUG: Updating drawHandBtn state. playableCardsCount:", playableCardsCount);
                 if (playableCardsCount >= 8) {
                     drawHandBtn.disabled = false;
                     drawHandBtn.style.opacity = "1";
-                    drawHandBtn.style.cursor = "pointer";                    console.log("DEBUG: Enabling drawHandBtn");
+                    drawHandBtn.style.cursor = "pointer";
                 } else {
                     drawHandBtn.disabled = true;
                     drawHandBtn.style.opacity = "0.5";
-                    drawHandBtn.style.cursor = "not-allowed";                    console.log("DEBUG: Disabling drawHandBtn");
+                    drawHandBtn.style.cursor = "not-allowed";
                 }
             }            
             // Calculate maximum character stats and total threat level
@@ -12113,27 +12044,16 @@
 
         // Apply UI preferences to the interface
         function applyUIPreferences(preferences) {
-            console.log('🔍 DEBUG: applyUIPreferences called with:', preferences);
             // Apply divider position
             if (preferences.dividerPosition) {
-                console.log('🔍 DEBUG: Applying divider position:', preferences.dividerPosition);
                 const layout = document.querySelector('.deck-editor-layout');
                 if (layout) {
-                    console.log('🔍 DEBUG: Layout found, width:', layout.offsetWidth);
                     const deckPane = document.querySelector('.deck-pane');
                     if (deckPane) {
                         const newWidth = (preferences.dividerPosition / 100) * layout.offsetWidth;
-                        console.log('🔍 DEBUG: Setting deck pane width to:', newWidth);
                         deckPane.style.width = `${newWidth}px`;
-                        console.log('🔍 DEBUG: Deck pane width set to:', deckPane.style.width);
-                    } else {
-                        console.error('🔍 DEBUG: Deck pane not found');
                     }
-                } else {
-                    console.error('🔍 DEBUG: Layout not found');
                 }
-            } else {
-                console.log('🔍 DEBUG: No divider position in preferences');
             }
 
             // Apply expansion state
@@ -12208,7 +12128,6 @@
 
         // Initialize deck editor search
         function initializeDeckEditorSearch() {
-            console.log('🔍 Initializing deck editor search...');
             const searchInput = document.getElementById('deckEditorSearchInput');
             const searchResults = document.getElementById('deckEditorSearchResults');
             
@@ -12217,7 +12136,6 @@
                 return;
             }
             
-            console.log('🔍 Search input found, setting up event listeners...');
 
             searchInput.addEventListener('input', handleDeckEditorSearch);
             searchInput.addEventListener('focus', showDeckEditorSearchResults);
@@ -12235,16 +12153,13 @@
                 }
             });
             
-            console.log('🔍 Deck editor search initialization complete!');
         }
         // Handle search input
         async function handleDeckEditorSearch(e) {
             const searchTerm = e.target.value.trim().toLowerCase();
-            console.log('🔍 Search term:', searchTerm);
             const searchResults = document.getElementById('deckEditorSearchResults');
             
             if (searchTerm.length < 2) {
-                console.log('🔍 Search term too short, hiding results');
                 hideDeckEditorSearchResults();
                 return;
             }
@@ -12256,10 +12171,8 @@
 
             // Debounce search
             deckEditorSearchTimeout = setTimeout(async () => {
-                console.log('🔍 Starting search for:', searchTerm);
                 try {
                     const results = await searchAllCards(searchTerm);
-                    console.log('🔍 Search results:', results.length, 'cards found');
                     displayDeckEditorSearchResults(results);
                 } catch (error) {
                     console.error('🔍 Search error:', error);
@@ -12276,12 +12189,9 @@
                 // Search characters
                 const charactersResponse = await fetch('/api/characters');
                 const characters = await charactersResponse.json();
-                console.log('🔍 Characters API response:', characters);
                 if (characters.success) {
-                    console.log('🔍 Searching through', characters.data.length, 'characters for:', searchTerm);
                     characters.data.forEach(char => {
                         if (char.name && char.name.toLowerCase().includes(searchTerm)) {
-                            console.log('🔍 Found character match:', char.name);
                             results.push({
                                 id: char.id,
                                 name: char.name,
@@ -12296,11 +12206,8 @@
                 // Search special cards
                 const specialResponse = await fetch('/api/special-cards');
                 const specialCards = await specialResponse.json();
-                console.log('🔍 Special cards API response:', specialCards);
                 if (specialCards.success) {
-                    console.log('🔍 Searching through', specialCards.data.length, 'special cards for:', searchTerm);
                     specialCards.data.forEach(card => {
-                        console.log('🔍 Special card data:', { id: card.id, name: card.name, character: card.character });
                         
                         // Check if card name contains search term
                         const nameMatch = card.name && card.name.toLowerCase().includes(searchTerm);
@@ -12313,7 +12220,6 @@
                         
                         const typeMatch = searchTerm === 'special';
                         if (nameMatch || characterMatch || exactCharacterMatch || typeMatch) {
-                            console.log('🔍 Found special card match:', card.name, 'for character:', card.character);
                             results.push({
                                 id: card.id,
                                 name: card.name,
@@ -12520,10 +12426,6 @@
                 console.error('Error searching cards:', error);
             }
 
-            console.log('🔍 Raw search results before filtering:', results.length);
-            results.forEach((result, index) => {
-                console.log(`🔍 Result ${index}:`, { name: result.name, type: result.type, id: result.id });
-            });
             
             // Sort results by name and limit to 20
             const filteredResults = results
@@ -12531,21 +12433,16 @@
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .slice(0, 20);
                 
-            console.log('🔍 Filtered search results:', filteredResults.length, filteredResults);
             return filteredResults;
         }
 
         // Display search results
         function displayDeckEditorSearchResults(results) {
-            console.log('🔍 Displaying search results:', results.length);
-            console.log('🔍 Results details:', results.map(r => ({ name: r.name, type: r.type, character: r.character })));
             const searchResults = document.getElementById('deckEditorSearchResults');
             
             if (results.length === 0) {
-                console.log('🔍 No results, showing "No cards found"');
                 searchResults.innerHTML = '<div class="deck-editor-search-result">No cards found</div>';
             } else {
-                console.log('🔍 Rendering', results.length, 'results');
                 const htmlContent = results.map(card => `
                     <div class="deck-editor-search-result" 
                          onclick="addCardToDeckFromSearch('${card.id}', '${card.type}')"
@@ -12560,22 +12457,17 @@
                     </div>
                 `).join('');
                 
-                console.log('🔍 Generated HTML length:', htmlContent.length);
                 searchResults.innerHTML = htmlContent;
-                console.log('🔍 Search results container children count:', searchResults.children.length);
             }
             
-            console.log('🔍 Showing search results');
             showDeckEditorSearchResults();
         }
 
         // Show search results
         function showDeckEditorSearchResults() {
-            console.log('🔍 Showing search results dropdown');
             const searchResults = document.getElementById('deckEditorSearchResults');
             if (searchResults) {
                 searchResults.style.display = 'block';
-                console.log('🔍 Search results dropdown displayed');
             } else {
                 console.error('🔍 Search results element not found!');
             }
@@ -12635,7 +12527,6 @@
 
         // Add card to deck from search
         async function addCardToDeckFromSearch(cardId, cardType) {
-            console.log('🔍 Adding card to deck:', { cardId, cardType, currentDeckId });
             
             // Check if in read-only mode
             if (isReadOnlyMode) {
@@ -12653,7 +12544,6 @@
                     cardId: cardId,
                     cardType: cardType
                 };
-                console.log('🔍 Sending request body:', requestBody);
                 
                 // Add the card to the deck
                 const response = await fetch(`/api/decks/${currentDeckId}/cards`, {
@@ -12889,7 +12779,6 @@
                     : null;
                 if (uiPrefs && uiPrefs.dividerPosition) {
                     const percentage = uiPrefs.dividerPosition;
-                    console.log('🔍 DEBUG: Setting initial divider position to:', percentage);
                     // Use a small delay to ensure the modal is rendered
                     setTimeout(() => {
                         const layout = document.querySelector('.deck-editor-layout');
@@ -12897,28 +12786,16 @@
                         if (layout && deckPane) {
                             const newWidth = (percentage / 100) * layout.offsetWidth;
                             deckPane.style.flex = `0 0 ${newWidth}px`;
-                            console.log('🔍 DEBUG: Initial position set to:', newWidth);
                         }
                     }, 10);
                 }
                 
                 // Add/remove read-only-mode class to modal
-                console.log('🔍 DEBUG: isReadOnlyMode:', isReadOnlyMode);
                 if (isReadOnlyMode) {
                     modal.classList.add('read-only-mode');
-                    console.log('🔍 Added read-only-mode class to modal');
                     
-                    // Debug: Check if card-selector-pane exists and is being hidden
-                    const cardSelectorPane = document.querySelector('.card-selector-pane');
-                    if (cardSelectorPane) {
-                        console.log('🔍 Found card-selector-pane element:', cardSelectorPane);
-                        console.log('🔍 card-selector-pane display style:', window.getComputedStyle(cardSelectorPane).display);
-                    } else {
-                        console.log('🔍 No card-selector-pane element found!');
-                    }
                 } else {
                     modal.classList.remove('read-only-mode');
-                    console.log('🔍 Removed read-only-mode class from modal');
                 }
                 
                 // Show/hide read-only indicator
@@ -12971,7 +12848,6 @@
                         saveButton.style.cursor = 'not-allowed';
                         saveButton.title = 'Guests cannot save edits..';
                         saveButton.style.display = 'block';
-                        console.log('🔍 Disabled Save button for guest user');
                     } else {
                         // Enable Save button for regular users
                         saveButton.disabled = false;
@@ -13003,7 +12879,6 @@
                         }
                         // Only ensure layout if it appears broken
                         if (layout && window.getComputedStyle(layout).flexDirection !== 'row') {
-                            console.log('🔍 DEBUG: Initial layout appears broken, fixing...');
                             ensureTwoPaneLayout();
                         }
                     }, 200);
@@ -13030,45 +12905,28 @@
         }
         // Resizable divider functionality
         function initializeResizableDivider() {
-            console.log('🔍 DEBUG: initializeResizableDivider called');
             const divider = document.getElementById('resizableDivider');
             const deckPane = document.querySelector('.deck-pane');
             const cardSelectorPane = document.querySelector('.card-selector-pane');
             const layout = document.querySelector('.deck-editor-layout');
             
-            console.log('🔍 DEBUG: Divider elements found:');
-            console.log('🔍 DEBUG: - divider:', divider);
-            console.log('🔍 DEBUG: - deckPane:', deckPane);
-            console.log('🔍 DEBUG: - cardSelectorPane:', cardSelectorPane);
-            console.log('🔍 DEBUG: - layout:', layout);
             
             if (!divider || !deckPane || !cardSelectorPane || !layout) {
-                console.log('🔍 DEBUG: Missing elements, returning early');
                 return;
             }
             
-            console.log('🔍 DEBUG: All elements found, setting up divider');
             
-            // Test if divider is clickable
-            divider.addEventListener('click', (e) => {
-                console.log('🔍 DEBUG: Divider clicked!', e);
-            });
             
-            divider.addEventListener('mouseenter', (e) => {
-                console.log('🔍 DEBUG: Divider mouseenter!', e);
-            });
 
             let isResizing = false;
             let startX = 0;
             let startDeckWidth = 0;
 
             divider.addEventListener('mousedown', (e) => {
-                console.log('🔍 DEBUG: Divider mousedown event triggered');
                 isResizing = true;
                 startX = e.clientX;
                 startDeckWidth = deckPane.offsetWidth;
                 
-                console.log('🔍 DEBUG: Starting resize - startX:', startX, 'startDeckWidth:', startDeckWidth);
                 
                 document.addEventListener('mousemove', handleMouseMove);
                 document.addEventListener('mouseup', handleMouseUp);
@@ -13221,19 +13079,15 @@
 
         // Force character cards to single column layout
         function forceCharacterSingleColumnLayout() {
-            console.log('🔍 DEBUG: forceCharacterSingleColumnLayout called');
             
             // Find all character sections
             const characterSections = document.querySelectorAll('#deck-type-character, .deck-type-section[data-type="character"]');
-            console.log('🔍 DEBUG: Found', characterSections.length, 'character sections');
             
             characterSections.forEach((section, index) => {
-                console.log('🔍 DEBUG: Processing character section', index, section);
                 
                 // Find the cards container within this section
                 const cardsContainer = section.querySelector('.deck-type-cards');
                 if (cardsContainer) {
-                    console.log('🔍 DEBUG: Found cards container in section', index, cardsContainer);
                     
                     // Force single column layout
                     cardsContainer.style.setProperty('grid-template-columns', '1fr', 'important');
@@ -13242,18 +13096,13 @@
                     // Also add a class to make it more specific
                     cardsContainer.classList.add('force-single-column');
                     
-                    console.log('🔍 DEBUG: Applied single column layout to section', index);
-                } else {
-                    console.log('🔍 DEBUG: No cards container found in section', index);
                 }
             });
             
             // Also check for any containers with character cards
             const containersWithCharacterCards = document.querySelectorAll('.deck-type-cards:has(.character-card), .deck-type-cards:has(.deck-card-editor-item.character-card)');
-            console.log('🔍 DEBUG: Found', containersWithCharacterCards.length, 'containers with character cards');
             
             containersWithCharacterCards.forEach((container, index) => {
-                console.log('🔍 DEBUG: Forcing single column on container', index, container);
                 container.style.setProperty('grid-template-columns', '1fr', 'important');
                 container.style.gridTemplateColumns = '1fr';
                 container.classList.add('force-single-column');
@@ -13278,7 +13127,6 @@
                 // Check if position has already been set (to avoid overriding initial position)
                 const existingDeckPane = document.querySelector('.deck-pane');
                 if (existingDeckPane && existingDeckPane.style.flex && existingDeckPane.style.flex !== '1') {
-                    console.log('🔍 DEBUG: Divider position already set, skipping restore');
                     return;
                 }
                 
@@ -13291,12 +13139,10 @@
                     : null;
                 if (restorePrefs && restorePrefs.dividerPosition) {
                     percentage = restorePrefs.dividerPosition;
-                    console.log('🔍 DEBUG: Using divider position from UI preferences:', percentage);
                 } else {
                     // Fall back to localStorage
                     const savedPosition = localStorage.getItem(`slider_position_${currentDeckId}`);
                     percentage = savedPosition ? parseFloat(savedPosition) : 65;
-                    console.log('🔍 DEBUG: Using divider position from localStorage:', percentage);
                 }
                 const layout = document.querySelector('.deck-editor-layout');
                 const deckPane = document.querySelector('.deck-pane');
@@ -13643,10 +13489,6 @@
                             <div class="deck-type-cards" id="deck-type-${type}">
                     `;
                     
-                    // Debug: Log character section creation
-                    if (type === 'character') {
-                        console.log('🔍 DEBUG: Creating character section with id="deck-type-character"');
-                    }
                     
                     if (type === 'special') {
                         // Special handling for special cards - group by character
@@ -14072,11 +13914,6 @@
                             const isAdvancedUniverse = card.type === 'advanced_universe';
                             const isTraining = card.type === 'training';
                             
-                            // Debug logging for card types
-                            if (card.type === 'basic_universe' || availableCard?.card_name?.includes('Advanced Technology')) {
-                                console.log('🔍 DEBUG: Processing card with type:', card.type, 'name:', availableCard?.card_name);
-                                console.log('🔍 DEBUG: isBasicUniverse:', isBasicUniverse);
-                            }
                             const characterClass = isCharacter ? 'character-card' : '';
                             const powerClass = isPower ? 'power-card' : '';
                             const locationClass = isLocation ? 'location-card' : '';
@@ -14089,11 +13926,6 @@
                             const advancedUniverseClass = isAdvancedUniverse ? 'advanced-universe-card' : '';
                             const trainingClass = isTraining ? 'training-card' : '';
                             
-                            // Debug logging for CSS classes
-                            if (card.type === 'basic_universe' || availableCard?.card_name?.includes('Advanced Technology')) {
-                                console.log('🔍 DEBUG: basicUniverseClass:', basicUniverseClass);
-                                console.log('🔍 DEBUG: All classes:', `${characterClass} ${powerClass} ${locationClass} ${missionClass} ${eventClass} ${aspectClass} ${teamworkClass} ${allyUniverseClass} ${basicUniverseClass} ${advancedUniverseClass} ${trainingClass}`);
-                            }
                             const selectedAlternateImage = card.selectedAlternateImage;
                             const bgImageData = (isCharacter || isPower || isLocation || isMission || isEvent || isAspect || isTeamwork || card.type === 'ally_universe' || card.type === 'basic_universe' || card.type === 'advanced_universe' || card.type === 'training') ? `data-bg-image="${getCardImagePath(availableCard, card.type, selectedAlternateImage)}"` : '';
                             
@@ -14141,32 +13973,21 @@
             setTimeout(() => {
                 const characterSection = document.getElementById('deck-type-character');
                 if (characterSection) {
-                    console.log('🔍 DEBUG: Character section found:', characterSection);
                     const characterCards = characterSection.querySelector('.deck-type-cards');
                     if (characterCards) {
-                        console.log('🔍 DEBUG: Character cards container found:', characterCards);
                         const computedStyle = window.getComputedStyle(characterCards);
-                        console.log('🔍 DEBUG: Character cards grid-template-columns:', computedStyle.gridTemplateColumns);
-                        console.log('🔍 DEBUG: Character cards display:', computedStyle.display);
-                        console.log('🔍 DEBUG: Character cards classes:', characterCards.className);
                         
                         // Force single column if not already set
                         if (computedStyle.gridTemplateColumns !== '1fr') {
-                            console.log('🔍 DEBUG: Forcing single column for character cards');
                             characterCards.style.gridTemplateColumns = '1fr';
                         }
                         
                         // Also check for character cards within the container
                         const characterCardElements = characterCards.querySelectorAll('.character-card');
-                        console.log('🔍 DEBUG: Found', characterCardElements.length, 'character card elements');
                         
                         // Force single column layout with JavaScript as backup
                         characterCards.style.setProperty('grid-template-columns', '1fr', 'important');
-                    } else {
-                        console.log('🔍 DEBUG: No character cards container found');
                     }
-                } else {
-                    console.log('🔍 DEBUG: No character section found');
                 }
             }, 100);
             
@@ -14201,9 +14022,7 @@
             
             // Apply character background images
             setTimeout(() => {
-                console.log('🔍 About to apply background images, checking for basic universe cards...');
                 const basicCards = document.querySelectorAll('.deck-card-editor-item.basic-universe-card');
-                console.log('🔍 Found', basicCards.length, 'basic universe cards before applying backgrounds');
                 applyCharacterBackgroundsToEditor();
             }, 500);
             
@@ -14383,27 +14202,21 @@
             
             // Apply to basic-universe cards
             const basicUniverseCards = document.querySelectorAll('.deck-card-editor-item.basic-universe-card');
-            console.log('🔍 Found', basicUniverseCards.length, 'basic universe cards');
             basicUniverseCards.forEach(card => {
                 const bgImage = card.getAttribute('data-bg-image');
-                console.log('🔍 Basic universe card bgImage:', bgImage);
                 if (bgImage) {
                     // Test if image loads successfully
                     const img = new Image();
                     img.onload = function() {
                         // URL encode the path for CSS
                         const encodedPath = encodeURI(bgImage);
-                        console.log('🔍 Setting --bg-image for basic universe card:', encodedPath);
                         card.style.setProperty('--bg-image', `url(${encodedPath})`);
                     };
                     img.onerror = function() {
-                        console.log('🔍 Failed to load basic universe card image:', bgImage);
                         // Fallback: use default gradient without background image
                         card.style.setProperty('--bg-image', 'none');
                     };
                     img.src = bgImage;
-                } else {
-                    console.log('🔍 No data-bg-image attribute found for basic universe card');
                 }
             });
             
@@ -16837,9 +16650,7 @@
             
             // Add click handlers for art options
             modal.addEventListener('click', (e) => {
-                console.log('🔍 DEBUG: Modal click event:', e.target);
                 if (e.target.closest('.art-option')) {
-                    console.log('🔍 DEBUG: Art option clicked, closing modal');
                     const selectedImage = e.target.closest('.art-option').dataset.image;
                     
                     if (cardIndex !== null) {
@@ -17142,35 +16953,27 @@
             });
         }
         async function saveDeckChanges() {
-            console.log('🔍 DEBUG: saveDeckChanges called');
-            console.log('🔍 DEBUG: currentDeckId:', currentDeckId);
-            console.log('🔍 DEBUG: currentDeckData:', currentDeckData);
-            console.log('🔍 DEBUG: isReadOnlyMode:', isReadOnlyMode);
             
             if (!currentDeckData) return;
             
             // Check if user is guest - guests cannot save any changes
             if (isGuestUser()) {
-                console.log('🔍 DEBUG: Blocking save - guest user');
                 alert('Guests cannot save edits. Please log in to save deck changes.');
                 return;
             }
             
             // Check if in read-only mode
             if (isReadOnlyMode) {
-                console.log('🔍 DEBUG: Blocking save - in read-only mode');
                 alert('Cannot save changes in read-only mode. You are viewing another user\'s deck.');
                 return;
             }
             
-            console.log('🔍 DEBUG: Proceeding with save...');
             
             try {
                 let deckId = currentDeckId;
                 
                 // If this is the first save (no deckId), create the deck first
                 if (!deckId) {
-                    console.log('🔍 DEBUG: First save - creating new deck');
                     const createResponse = await fetch('/api/decks', {
                         method: 'POST',
                         headers: {
@@ -17206,9 +17009,7 @@
                     const userId = currentUser ? (currentUser.userId || currentUser.id || 'guest') : 'guest';
                     const newUrl = `/users/${userId}/decks/${currentDeckId}`;
                     window.history.pushState({ deckId: currentDeckId, userId }, '', newUrl);
-                    console.log('🔍 Updated URL to:', newUrl);
                     
-                    console.log('🔍 DEBUG: Deck created with ID:', deckId);
                 }
                 
                 // Clear existing cards
