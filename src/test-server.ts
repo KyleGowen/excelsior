@@ -425,8 +425,13 @@ app.get('/api/decks/:id/full', authenticateUser, async (req: any, res) => {
 
 app.post('/api/decks', authenticateUser, async (req: any, res) => {
   try {
+    console.log('🔍 POST /api/decks - Starting deck creation');
+    console.log('🔍 User:', { id: req.user.id, role: req.user.role });
+    console.log('🔍 Request body:', { name: req.body.name, description: req.body.description, characterIds: req.body.characterIds, characters: req.body.characters });
+    
     // Check if user is guest - guests cannot create decks
     if (req.user.role === 'GUEST') {
+      console.log('❌ Guest user attempted to create deck');
       return res.status(403).json({ success: false, error: 'Guests may not create decks' });
     }
     
@@ -436,19 +441,24 @@ app.post('/api/decks', authenticateUser, async (req: any, res) => {
     // Check both characterIds and characters fields for validation
     const characterArray = characterIds || characters;
     
+    console.log('🔍 Character array:', characterArray);
+    
     // Validate character limit
     if (characterArray && characterArray.length > 4) {
+      console.log('❌ Character limit exceeded:', characterArray.length);
       return res.status(400).json({ 
         success: false, 
         error: 'Maximum 4 characters allowed per deck' 
       });
     }
     
+    console.log('🔍 Calling deckRepository.createDeck with:', { userId, name, description, characterArray });
     const deck = await deckRepository.createDeck(userId, name, description, characterArray);
+    console.log('✅ Deck created successfully:', { id: deck.id, name: deck.name });
     res.status(201).json({ success: true, data: deck });
   } catch (error) {
-    console.error('Error creating deck:', error);
-    console.error('Error details:', {
+    console.error('❌ Error creating deck:', error);
+    console.error('❌ Error details:', {
       message: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined,
       name: error instanceof Error ? error.name : 'Unknown'
