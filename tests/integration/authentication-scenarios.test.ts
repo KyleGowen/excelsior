@@ -582,5 +582,16 @@ describe('Authentication Scenarios Integration Tests', () => {
 
       expect(response.status).toBe(200);
     });
+
+    afterAll(async () => {
+      // Clean up test user
+      if (testUser) {
+        try {
+          await userRepository.deleteUser(testUser.id);
+        } catch (error) {
+          // Ignore cleanup errors
+        }
+      }
+    });
   });
 });
