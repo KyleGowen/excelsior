@@ -172,4 +172,29 @@ describe('Teamwork Card Fixes', () => {
       expect(parseInt(result.rows[0].count)).toBe(38);
     });
   });
+
+  describe('All Image Paths Are Correct', () => {
+    it('should have all teamwork cards with correct image paths', async () => {
+      const result = await pool.query(`
+        SELECT name, card_description, image_path 
+        FROM teamwork_cards 
+        WHERE universe = 'ERB'
+        ORDER BY name, card_description
+      `);
+
+      // Verify we have the expected number of cards
+      expect(result.rows).toHaveLength(38);
+      
+      // Verify all image paths start with 'teamwork-universe/' and end with '.webp'
+      result.rows.forEach((row, index) => {
+        expect(row.image_path).toMatch(/^teamwork-universe\/.*\.webp$/);
+      });
+      
+      // Verify specific key cards have correct paths
+      const anyPowerCards = result.rows.filter(row => row.name.includes('Any-Power'));
+      expect(anyPowerCards).toHaveLength(2);
+      expect(anyPowerCards[0].image_path).toBe('teamwork-universe/6_anypower.webp');
+      expect(anyPowerCards[1].image_path).toBe('teamwork-universe/7_anypower.webp');
+    });
+  });
 });
