@@ -142,53 +142,111 @@ export class PostgreSQLDeckRepository implements DeckRepository {
 
     const client = await this.pool.connect();
     try {
-      // Get deck metadata first
+      // Get deck metadata with character and location information using joins
       const deckResult = await client.query(`
-        SELECT * FROM decks 
-        WHERE user_id = $1 
-        ORDER BY created_at DESC
+        SELECT 
+          d.*,
+          c1.name as character_1_name,
+          c1.image_path as character_1_default_image,
+          c2.name as character_2_name,
+          c2.image_path as character_2_default_image,
+          c3.name as character_3_name,
+          c3.image_path as character_3_default_image,
+          c4.name as character_4_name,
+          c4.image_path as character_4_default_image,
+          l.name as location_name,
+          l.image_path as location_default_image
+        FROM decks d
+        LEFT JOIN characters c1 ON d.character_1_id = c1.id
+        LEFT JOIN characters c2 ON d.character_2_id = c2.id
+        LEFT JOIN characters c3 ON d.character_3_id = c3.id
+        LEFT JOIN characters c4 ON d.character_4_id = c4.id
+        LEFT JOIN locations l ON d.location_id = l.id
+        WHERE d.user_id = $1 
+        ORDER BY d.created_at DESC
       `, [userId]);
       
       if (deckResult.rows.length === 0) {
         return [];
       }
       
-      const deckIds = deckResult.rows.map(deck => deck.id);
-      
-      // Load only character and location cards for deck summaries
-      const cardsResult = await client.query(`
-        SELECT * FROM deck_cards 
-        WHERE deck_id = ANY($1) 
-        AND card_type IN ('character', 'location')
-        ORDER BY deck_id, card_type, card_id
-      `, [deckIds]);
-      
-      // Group cards by deck_id
-      const cardsByDeck = new Map<string, any[]>();
-      cardsResult.rows.forEach(card => {
-        if (!cardsByDeck.has(card.deck_id)) {
-          cardsByDeck.set(card.deck_id, []);
+      // Build character and location cards from metadata
+      const decks = deckResult.rows.map(deck => {
+        const cards: any[] = [];
+        
+        // Add character cards from metadata
+        if (deck.character_1_id) {
+          cards.push({
+            id: `char1_${deck.id}`,
+            type: 'character',
+            cardId: deck.character_1_id,
+            quantity: 1,
+            selectedAlternateImage: deck.character_1_image,
+            defaultImage: deck.character_1_default_image,
+            name: deck.character_1_name
+          });
         }
-        cardsByDeck.get(card.deck_id)!.push({
-          id: card.id,
-          type: card.card_type,
-          cardId: card.card_id,
-          quantity: card.quantity,
-          selectedAlternateImage: card.selected_alternate_image
-        });
+        if (deck.character_2_id) {
+          cards.push({
+            id: `char2_${deck.id}`,
+            type: 'character',
+            cardId: deck.character_2_id,
+            quantity: 1,
+            selectedAlternateImage: deck.character_2_image,
+            defaultImage: deck.character_2_default_image,
+            name: deck.character_2_name
+          });
+        }
+        if (deck.character_3_id) {
+          cards.push({
+            id: `char3_${deck.id}`,
+            type: 'character',
+            cardId: deck.character_3_id,
+            quantity: 1,
+            selectedAlternateImage: deck.character_3_image,
+            defaultImage: deck.character_3_default_image,
+            name: deck.character_3_name
+          });
+        }
+        if (deck.character_4_id) {
+          cards.push({
+            id: `char4_${deck.id}`,
+            type: 'character',
+            cardId: deck.character_4_id,
+            quantity: 1,
+            selectedAlternateImage: deck.character_4_image,
+            defaultImage: deck.character_4_default_image,
+            name: deck.character_4_name
+          });
+        }
+        
+        // Add location card from metadata
+        if (deck.location_id) {
+          cards.push({
+            id: `loc_${deck.id}`,
+            type: 'location',
+            cardId: deck.location_id,
+            quantity: 1,
+            selectedAlternateImage: null, // Locations don't have alternate images
+            name: deck.location_name
+          });
+        }
+        
+        return {
+          id: deck.id,
+          user_id: deck.user_id,
+          name: deck.name,
+          description: deck.description,
+          ui_preferences: deck.ui_preferences,
+          is_limited: deck.is_limited,
+          is_valid: deck.is_valid,
+          card_count: deck.card_count,
+          threat: deck.threat,
+          created_at: deck.created_at,
+          updated_at: deck.updated_at,
+          cards: cards
+        };
       });
-      
-      const decks = deckResult.rows.map(deck => ({
-        id: deck.id,
-        user_id: deck.user_id,
-        name: deck.name,
-        description: deck.description,
-        ui_preferences: deck.ui_preferences,
-        is_limited: deck.is_limited,
-        created_at: deck.created_at,
-        updated_at: deck.updated_at,
-        cards: cardsByDeck.get(deck.id) || [] // Only character and location cards
-      }));
       
       // Cache the result
       this.deckCache.set(cacheKey, { deck: decks as any, timestamp: now });
@@ -293,6 +351,10 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         setClause.push(`is_limited = $${paramCount++}`);
         values.push(updates.is_limited);
       }
+      if (updates.is_valid !== undefined) {
+        setClause.push(`is_valid = $${paramCount++}`);
+        values.push(updates.is_valid);
+      }
 
       if (setClause.length === 0) {
         return this.getDeckById(id);
@@ -318,6 +380,9 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         description: deck.description,
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
+        is_valid: deck.is_valid,
+        card_count: deck.card_count,
+        threat: deck.threat,
         created_at: deck.created_at,
         updated_at: deck.updated_at
       };

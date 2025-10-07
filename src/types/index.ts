@@ -19,6 +19,9 @@ export interface Deck {
   description?: string;
   ui_preferences?: UIPreferences;
   is_limited?: boolean;
+  is_valid?: boolean;
+  card_count?: number;
+  threat?: number;
   created_at?: string;
   updated_at?: string;
   cards?: DeckCard[];

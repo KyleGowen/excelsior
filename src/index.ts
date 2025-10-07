@@ -328,7 +328,7 @@ app.get('/api/decks', authenticateUser, async (req: any, res) => {
     const decks = await deckRepository.getDecksByUserId(req.user.id);
     
     // Transform deck data to match frontend expectations
-    // Note: getDecksByUserId now returns decks with only character/location cards for performance
+    // Note: getDecksByUserId now returns decks with metadata columns for performance
     const transformedDecks = decks.map(deck => ({
       metadata: {
         id: deck.id,
@@ -336,12 +336,14 @@ app.get('/api/decks', authenticateUser, async (req: any, res) => {
         description: deck.description,
         created: deck.created_at,
         lastModified: deck.updated_at,
-        cardCount: deck.cards?.length || 0,
+        cardCount: deck.card_count || 0, // Use metadata column instead of cards.length
+        threat: deck.threat || 0, // Use metadata column
+        is_valid: deck.is_valid || false, // Use metadata column
         userId: deck.user_id,
         uiPreferences: deck.ui_preferences,
         is_limited: deck.is_limited
       },
-      cards: deck.cards || []
+      cards: deck.cards || [] // Character and location cards from metadata
     }));
     
     res.json({ success: true, data: transformedDecks });
@@ -494,7 +496,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
-    const { name, description, is_limited } = req.body;
+    const { name, description, is_limited, is_valid } = req.body;
     
     // Check if deck exists
     const deck = await deckRepository.getDeckById(req.params.id);
@@ -507,7 +509,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
-    const updatedDeck = await deckRepository.updateDeck(req.params.id, { name, description, is_limited });
+    const updatedDeck = await deckRepository.updateDeck(req.params.id, { name, description, is_limited, is_valid });
     if (!updatedDeck) {
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }

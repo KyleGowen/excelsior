@@ -7,6 +7,16 @@
 - If tests fail, fix the issues before committing
 - If tests pass, proceed with git commit
 
+## Database Cleanup Requirements
+- **ALL tests that create users or decks in the database MUST clean up what they create**
+- **Cleanup must happen regardless of test success or failure**
+- Use `integrationTestUtils.trackTestDeck(deckId)` for all deck creation
+- Use `integrationTestUtils.createTestUser()` for user creation (auto-cleanup)
+- Use `createTrackedDeck()` helper function for API-created decks
+- **NEVER leave orphaned test data in the database**
+- Always verify cleanup is working by checking database after test runs
+- Use try/finally blocks or helper functions to ensure cleanup happens
+
 ## Code Quality Standards
 - Follow existing code patterns and conventions
 - Maintain consistent styling and formatting

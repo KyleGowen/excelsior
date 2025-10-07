@@ -6,6 +6,20 @@ describe('Limited Deck Integration Tests', () => {
   let testUser: any;
   let authCookie: string;
 
+  // Helper function to create a deck and automatically track it for cleanup
+  const createTrackedDeck = async (deckData: any) => {
+    const response = await request(app)
+      .post('/api/decks')
+      .set('Cookie', authCookie)
+      .send(deckData);
+    
+    if (response.status === 201 && response.body.success) {
+      integrationTestUtils.trackTestDeck(response.body.data.id);
+    }
+    
+    return response;
+  };
+
   beforeAll(async () => {
     // Create a test user using the integration test utils
     testUser = await integrationTestUtils.createTestUser({
@@ -50,10 +64,7 @@ describe('Limited Deck Integration Tests', () => {
         description: 'A test deck for limited functionality'
       };
 
-      const response = await request(app)
-        .post('/api/decks')
-        .set('Cookie', authCookie)
-        .send(deckData);
+      const response = await createTrackedDeck(deckData);
 
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
@@ -63,13 +74,10 @@ describe('Limited Deck Integration Tests', () => {
 
     test('should create a deck and then update is_limited to true', async () => {
       // First create a deck
-      const createResponse = await request(app)
-        .post('/api/decks')
-        .set('Cookie', authCookie)
-        .send({
-          name: 'Limited Test Deck',
-          description: 'A deck to test limited functionality'
-        });
+      const createResponse = await createTrackedDeck({
+        name: 'Limited Test Deck',
+        description: 'A deck to test limited functionality'
+      });
 
       expect(createResponse.status).toBe(201);
       const deckId = createResponse.body.data.id;
@@ -91,13 +99,10 @@ describe('Limited Deck Integration Tests', () => {
 
     test('should create a deck and then update is_limited to false', async () => {
       // First create a deck
-      const createResponse = await request(app)
-        .post('/api/decks')
-        .set('Cookie', authCookie)
-        .send({
-          name: 'Unlimited Test Deck',
-          description: 'A deck to test unlimited functionality'
-        });
+      const createResponse = await createTrackedDeck({
+        name: 'Unlimited Test Deck',
+        description: 'A deck to test unlimited functionality'
+      });
 
       expect(createResponse.status).toBe(201);
       const deckId = createResponse.body.data.id;
@@ -131,13 +136,10 @@ describe('Limited Deck Integration Tests', () => {
   describe('Deck Retrieval with Limited Flag', () => {
     test('should retrieve a deck with is_limited flag', async () => {
       // Create a limited deck
-      const createResponse = await request(app)
-        .post('/api/decks')
-        .set('Cookie', authCookie)
-        .send({
-          name: 'Retrieval Test Deck',
-          description: 'A deck to test retrieval with limited flag'
-        });
+      const createResponse = await createTrackedDeck({
+        name: 'Retrieval Test Deck',
+        description: 'A deck to test retrieval with limited flag'
+      });
 
       const deckId = createResponse.body.data.id;
 
@@ -164,25 +166,23 @@ describe('Limited Deck Integration Tests', () => {
 
     test('should retrieve all decks with is_limited flags', async () => {
       // Create multiple decks with different limited states
-      const deck1Response = await request(app)
-        .post('/api/decks')
-        .set('Cookie', authCookie)
-        .send({
-          name: 'Limited Deck 1',
-          description: 'First limited deck'
-        });
+      const deck1Response = await createTrackedDeck({
+        name: 'Limited Deck 1',
+        description: 'First limited deck'
+      });
 
-      const deck2Response = await request(app)
-        .post('/api/decks')
-        .set('Cookie', authCookie)
-        .send({
-          name: 'Regular Deck 1',
-          description: 'First regular deck'
-        });
+      const deck2Response = await createTrackedDeck({
+        name: 'Regular Deck 1',
+        description: 'First regular deck'
+      });
+
+      // Get deck IDs for later use
+      const deck1Id = deck1Response.body.data.id;
+      const deck2Id = deck2Response.body.data.id;
 
       // Make first deck limited
       await request(app)
-        .put(`/api/decks/${deck1Response.body.data.id}`)
+        .put(`/api/decks/${deck1Id}`)
         .set('Cookie', authCookie)
         .send({
           name: 'Limited Deck 1',
@@ -214,13 +214,10 @@ describe('Limited Deck Integration Tests', () => {
   describe('Deck List Display with Limited Icons', () => {
     test('should return deck data with is_limited flag for frontend display', async () => {
       // Create a limited deck
-      const createResponse = await request(app)
-        .post('/api/decks')
-        .set('Cookie', authCookie)
-        .send({
-          name: 'Display Test Limited Deck',
-          description: 'A deck to test display functionality'
-        });
+      const createResponse = await createTrackedDeck({
+        name: 'Display Test Limited Deck',
+        description: 'A deck to test display functionality'
+      });
 
       const deckId = createResponse.body.data.id;
 
@@ -257,13 +254,10 @@ describe('Limited Deck Integration Tests', () => {
 
     test('should return deck data with is_limited false for regular decks', async () => {
       // Create a regular deck
-      const createResponse = await request(app)
-        .post('/api/decks')
-        .set('Cookie', authCookie)
-        .send({
-          name: 'Display Test Regular Deck',
-          description: 'A regular deck for display testing'
-        });
+      const createResponse = await createTrackedDeck({
+        name: 'Display Test Regular Deck',
+        description: 'A regular deck for display testing'
+      });
 
       const deckId = createResponse.body.data.id;
 
@@ -292,13 +286,10 @@ describe('Limited Deck Integration Tests', () => {
   describe('Limited Flag Persistence', () => {
     test('should persist is_limited flag across multiple updates', async () => {
       // Create a deck
-      const createResponse = await request(app)
-        .post('/api/decks')
-        .set('Cookie', authCookie)
-        .send({
-          name: 'Persistence Test Deck',
-          description: 'A deck to test persistence'
-        });
+      const createResponse = await createTrackedDeck({
+        name: 'Persistence Test Deck',
+        description: 'A deck to test persistence'
+      });
 
       const deckId = createResponse.body.data.id;
 
@@ -375,13 +366,10 @@ describe('Limited Deck Integration Tests', () => {
 
     test('should handle updating deck without is_limited field', async () => {
       // Create a deck
-      const createResponse = await request(app)
-        .post('/api/decks')
-        .set('Cookie', authCookie)
-        .send({
-          name: 'No Limited Field Test',
-          description: 'A deck to test without is_limited field'
-        });
+      const createResponse = await createTrackedDeck({
+        name: 'No Limited Field Test',
+        description: 'A deck to test without is_limited field'
+      });
 
       const deckId = createResponse.body.data.id;
 
@@ -403,21 +391,15 @@ describe('Limited Deck Integration Tests', () => {
   describe('Frontend Integration Simulation', () => {
     test('should simulate frontend deck list with Limited badges', async () => {
       // Create multiple decks with different states
-      const limitedDeckResponse = await request(app)
-        .post('/api/decks')
-        .set('Cookie', authCookie)
-        .send({
-          name: 'Frontend Limited Deck',
-          description: 'A limited deck for frontend testing'
-        });
+      const limitedDeckResponse = await createTrackedDeck({
+        name: 'Frontend Limited Deck',
+        description: 'A limited deck for frontend testing'
+      });
 
-      const regularDeckResponse = await request(app)
-        .post('/api/decks')
-        .set('Cookie', authCookie)
-        .send({
-          name: 'Frontend Regular Deck',
-          description: 'A regular deck for frontend testing'
-        });
+      const regularDeckResponse = await createTrackedDeck({
+        name: 'Frontend Regular Deck',
+        description: 'A regular deck for frontend testing'
+      });
 
       // Make first deck limited
       await request(app)

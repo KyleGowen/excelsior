@@ -8493,75 +8493,60 @@
             const isGuest = isGuestUser();
             console.log('🔍 displayDecks (index.html) - isGuest:', isGuest);
 
-            // Fetch character data to get character names
-            let characterMap = {};
-            try {
-                const characterResponse = await fetch('/api/characters');
-                const characterData = await characterResponse.json();
-                if (characterData.success) {
-                    characterData.data.forEach(char => {
-                        characterMap[char.id] = char;
-                    });
-                }
-            } catch (error) {
-                console.error('Error fetching character data:', error);
-            }
-
-            // Fetch full deck data for each deck to get character information
-            const decksWithCharacters = await Promise.all(decks.map(async (deck) => {
-                try {
-                    const response = await fetch(`/api/decks/${deck.metadata.id}`, {
-                        credentials: 'include'
-                    });
-                    const data = await response.json();
-                    if (data.success) {
-                        return { ...deck, cards: data.data.cards };
-                    }
-                } catch (error) {
-                    console.error(`Error fetching deck ${deck.metadata.id}:`, error);
-                }
-                return deck;
-            }));
+            // No need to fetch character data or individual deck data anymore
+            // The metadata columns now contain all the information we need
 
             // Create the deck cards HTML
-            const deckCardsHTML = decksWithCharacters.map(deck => {
-                // Quick validation check for display
+            const deckCardsHTML = decks.map(deck => {
+                // Quick validation check for display using metadata
                 let validationStatus = '';
                 if (deck.metadata.is_limited) {
                     validationStatus = '<span class="deck-validation-badge limited">Limited</span>';
-                } else if (deck.cards && deck.cards.length > 0) {
-                    const validation = validateDeck(deck.cards);
-                    if (validation.errors.length > 0) {
-                        validationStatus = '<span class="deck-validation-badge error">Not Legal</span>';
-                    } else if (validation.warnings.length > 0) {
-                        validationStatus = '<span class="deck-validation-badge warning">ℹ️ Has Warnings</span>';
-                    } else {
-                        validationStatus = '<span class="deck-validation-badge success">✅ Legal</span>';
-                    }
+                } else if (deck.metadata.is_valid) {
+                    validationStatus = '<span class="deck-validation-badge success">✅ Legal</span>';
+                } else {
+                    validationStatus = '<span class="deck-validation-badge error">Not Legal</span>';
                 }
                 
-                // Get character names from deck cards
+                // Get character names from deck cards (now from metadata)
                 let characterList = '';
                 let characterDisplay = '';
                 if (deck.cards && deck.cards.length > 0) {
                     const characterCards = deck.cards.filter(card => card.type === 'character');
                     if (characterCards.length > 0) {
-                        const characterNames = characterCards.map(card => {
-                            // Look up character using the characterMap we fetched
-                            const character = characterMap[card.cardId];
-                            return character ? character.name : 'Unknown Character';
-                        });
+                        const characterNames = characterCards.map(card => card.name || 'Unknown Character');
                         characterList = `<div class="deck-characters">👥 Characters: ${characterNames.join(', ')}</div>`;
+                        
+                        // Helper function to get character image path
+                        const getCharacterImagePath = (card) => {
+                            if (card.selectedAlternateImage) {
+                                // Use the alternate image from metadata
+                                if (card.selectedAlternateImage.includes('/')) {
+                                    return `/src/resources/cards/images/${card.selectedAlternateImage}`;
+                                } else {
+                                    return `/src/resources/cards/images/characters/alternate/${card.selectedAlternateImage}`;
+                                }
+                            } else if (card.defaultImage) {
+                                // Use the default character image
+                                // card.defaultImage already includes the directory path (e.g., "characters/three_musketeers.webp")
+                                return `/src/resources/cards/images/${card.defaultImage}`;
+                            } else {
+                                // Fallback: construct from character name
+                                const characterName = card.name || '';
+                                if (characterName) {
+                                    const snakeCaseName = characterName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                                    return `/src/resources/cards/images/characters/${snakeCaseName}.webp`;
+                                }
+                                return null;
+                            }
+                        };
                         
                         // Create character display with rotating file effect
                         const characterDisplayCards = characterCards.slice(0, 4); // Max 4 characters
                         let characterDisplayHTML = characterDisplayCards.map(card => {
-                            // Look up character using the characterMap we fetched
-                            const character = characterMap[card.cardId];
-                            if (character && character.image) {
-                                // Use getCardImagePath to handle alternate images
-                                const imagePath = getCardImagePath(character, 'character', card.selectedAlternateImage);
-                                return `<div class="deck-character-card-display" style="background-image: url('${imagePath}')" title="${character.name}"></div>`;
+                            const imagePath = getCharacterImagePath(card);
+                            if (imagePath) {
+                                return `<div class="deck-character-card-display" style="background-image: url('${imagePath}')" title="${card.name}"></div>`;
                             } else {
                                 return `<div class="deck-character-card-display empty">?</div>`;
                             }
@@ -8591,8 +8576,8 @@
                                 ${deck.metadata.description ? `<div class="deck-description">${deck.metadata.description}</div>` : ''}
                                 ${characterList}
                                 <div class="deck-meta">
-                                    <span>📊 Cards:<br>${calculateTotalCardCount(deck.cards || [])}</span>
-                                    <span><img src="/resources/images/icons/threat.png" alt="Threat" class="stat-icon-small" onerror="console.error('Threat icon failed to load')"> Threat:<br>${calculateTotalThreat(deck.cards || [])}</span>
+                                    <span>📊 Cards:<br>${deck.metadata.cardCount || 0}</span>
+                                    <span><img src="/resources/images/icons/threat.png" alt="Threat" class="stat-icon-small" onerror="console.error('Threat icon failed to load')"> Threat:<br>${deck.metadata.threat || 0}</span>
                                     <span>📅 Created:<br>${new Date(deck.metadata.created).toLocaleDateString()}</span>
                                     <span>✏️ Modified:<br>${new Date(deck.metadata.lastModified).toLocaleDateString()}</span>
                                 </div>
@@ -17371,7 +17356,11 @@
                     });
                 }
                 
-                // Save deck metadata (name, description, and is_limited)
+                // Check validation status before saving
+                const validation = validateDeck(deckEditorCards);
+                const isDeckValid = validation.errors.length === 0;
+                
+                // Save deck metadata (name, description, is_limited, and is_valid)
                 await fetch(`/api/decks/${currentDeckId}`, {
                     method: 'PUT',
                     headers: {
@@ -17381,7 +17370,8 @@
                     body: JSON.stringify({
                         name: currentDeckData.metadata.name,
                         description: currentDeckData.metadata.description || '',
-                        is_limited: isDeckLimited
+                        is_limited: isDeckLimited,
+                        is_valid: isDeckValid
                     })
                 });
                 
@@ -17392,12 +17382,11 @@
                 const preferences = getCurrentUIPreferences();
                 await saveUIPreferences(currentDeckId, preferences);
                 
-                // Check validation status before saving
-                const validation = validateDeck(deckEditorCards);
-                if (validation.errors.length > 0) {
-                    showNotification('Deck saved with validation errors - not legal for tournament play', 'warning');
-                } else {
+                // Show appropriate notification based on validation status
+                if (isDeckValid) {
                     showNotification('Deck changes saved successfully!', 'success');
+                } else {
+                    showNotification('Deck saved with validation errors - not legal for tournament play', 'warning');
                 }
                 
                 // Don't close the editor - just refresh the deck list
