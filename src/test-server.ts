@@ -70,8 +70,15 @@ export async function initializeTestServer() {
   try {
     console.log('🔄 Starting test server initialization...');
     
-    // First, initialize database with Flyway migrations and data
-    await databaseInit.initializeDatabase();
+    // Check if we're in CI environment - if so, skip migrations as they're run separately
+    const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+    
+    if (isCI) {
+      console.log('🏗️ CI environment detected - skipping migrations (already run in CI workflow)');
+    } else {
+      // First, initialize database with Flyway migrations and data
+      await databaseInit.initializeDatabase();
+    }
     
     // Then initialize the repositories
     await Promise.all([
