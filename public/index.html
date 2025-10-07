@@ -8391,15 +8391,21 @@
                 if (databaseStats) databaseStats.style.display = 'grid';
                 if (deckStats) deckStats.style.display = 'none';
                 
-            loadAspects();
-            loadEvents();
-            loadTeamwork();
-                loadUserDecks(); // Load user decks for Add to Deck functionality
-            loadAllyUniverse();
-            loadTraining();
-            loadBasicUniverse();
-            loadPowerCards();
-            setupSearch();
+                // Load decks immediately for better user experience
+                loadDecks();
+                
+                // Load other data in background (non-blocking)
+                setTimeout(() => {
+                    loadAspects();
+                    loadEvents();
+                    loadTeamwork();
+                    loadUserDecks(); // Load user decks for Add to Deck functionality
+                    loadAllyUniverse();
+                    loadTraining();
+                    loadBasicUniverse();
+                    loadPowerCards();
+                    setupSearch();
+                }, 100); // Small delay to let decks load first
             }
             
             // Add location filter event listeners
@@ -8410,11 +8416,6 @@
             setTimeout(updateAllStats, 1000);
             // Make images clickable after they are loaded
             setTimeout(makeImagesClickable, 1000);
-            
-            // Load decks for deck builder (default tab)
-            setTimeout(() => {
-                loadDecks();
-            }, 1500); // Wait for database data to load first
         });
 
         // ===== DECK MANAGEMENT FUNCTIONS =====
@@ -8454,6 +8455,30 @@
             // Check if current user is guest
             const isGuest = isGuestUser();
 
+            // Helper function to get character image path (moved outside loop for performance)
+            const getCharacterImagePath = (card) => {
+                if (card.selectedAlternateImage) {
+                    // Use the alternate image from metadata
+                    if (card.selectedAlternateImage.includes('/')) {
+                        return `/src/resources/cards/images/${card.selectedAlternateImage}`;
+                    } else {
+                        return `/src/resources/cards/images/characters/alternate/${card.selectedAlternateImage}`;
+                    }
+                } else if (card.defaultImage) {
+                    // Use the default character image
+                    // card.defaultImage already includes the directory path (e.g., "characters/three_musketeers.webp")
+                    return `/src/resources/cards/images/${card.defaultImage}`;
+                } else {
+                    // Fallback: construct from character name
+                    const characterName = card.name || '';
+                    if (characterName) {
+                        const snakeCaseName = characterName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                        return `/src/resources/cards/images/characters/${snakeCaseName}.webp`;
+                    }
+                    return null;
+                }
+            };
+
             // No need to fetch character data or individual deck data anymore
             // The metadata columns now contain all the information we need
 
@@ -8478,29 +8503,6 @@
                         const characterNames = characterCards.map(card => card.name || 'Unknown Character');
                         characterList = `<div class="deck-characters">👥 Characters: ${characterNames.join(', ')}</div>`;
                         
-                        // Helper function to get character image path
-                        const getCharacterImagePath = (card) => {
-                            if (card.selectedAlternateImage) {
-                                // Use the alternate image from metadata
-                                if (card.selectedAlternateImage.includes('/')) {
-                                    return `/src/resources/cards/images/${card.selectedAlternateImage}`;
-                                } else {
-                                    return `/src/resources/cards/images/characters/alternate/${card.selectedAlternateImage}`;
-                                }
-                            } else if (card.defaultImage) {
-                                // Use the default character image
-                                // card.defaultImage already includes the directory path (e.g., "characters/three_musketeers.webp")
-                                return `/src/resources/cards/images/${card.defaultImage}`;
-                            } else {
-                                // Fallback: construct from character name
-                                const characterName = card.name || '';
-                                if (characterName) {
-                                    const snakeCaseName = characterName.toLowerCase().replace(/[^a-z0-9]/g, '_');
-                                    return `/src/resources/cards/images/characters/${snakeCaseName}.webp`;
-                                }
-                                return null;
-                            }
-                        };
                         
                         // Create character display with rotating file effect
                         const characterDisplayCards = characterCards.slice(0, 4); // Max 4 characters
