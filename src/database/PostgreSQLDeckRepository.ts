@@ -63,6 +63,16 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       return newDeck;
     } catch (error) {
       await client.query('ROLLBACK');
+      console.error('❌ PostgreSQLDeckRepository.createDeck error:', error);
+      console.error('❌ CreateDeck error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+        userId,
+        name,
+        description,
+        characterIds
+      });
       throw error;
     } finally {
       client.release();

@@ -445,6 +445,11 @@ app.post('/api/decks', authenticateUser, async (req: any, res) => {
     res.status(201).json({ success: true, data: deck });
   } catch (error) {
     console.error('Error creating deck:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     res.status(500).json({ success: false, error: 'Failed to create deck' });
   }
 });

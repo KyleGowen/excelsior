@@ -31,6 +31,13 @@ export class DatabaseInitializationService {
       console.log('✅ Database initialization completed successfully!');
     } catch (error) {
       console.error('❌ Database initialization failed:', error);
+      console.error('❌ Database initialization error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+        SKIP_MIGRATIONS: process.env.SKIP_MIGRATIONS,
+        NODE_ENV: process.env.NODE_ENV
+      });
       throw error;
     }
   }
