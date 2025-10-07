@@ -3,7 +3,7 @@
  */
 
 // Mock DOM environment
-const mockDeckEditorCards = [
+const addOneMockDeckEditorCards = [
     { cardId: 'card1', type: 'power', quantity: 1 },
     { cardId: 'card2', type: 'power', quantity: 3 },
     { cardId: 'card3', type: 'character', quantity: 1 },
@@ -12,7 +12,7 @@ const mockDeckEditorCards = [
 ];
 
 // Mock global variables and functions
-(global as any).deckEditorCards = mockDeckEditorCards;
+(global as any).deckEditorCards = addOneMockDeckEditorCards;
 (global as any).displayDeckCardsForEditing = jest.fn();
 (global as any).updateDeckEditorCardCount = jest.fn();
 (global as any).updateCharacterLimitStatus = jest.fn();
@@ -30,7 +30,7 @@ const mockDeckEditorCards = [
 (global as any).ultraAggressiveLayoutEnforcement = jest.fn();
 
 // Mock DOM elements
-const mockDeckCardsEditor = {
+const addOneMockDeckCardsEditor = {
     innerHTML: ''
 };
 
@@ -38,7 +38,7 @@ Object.defineProperty(global, 'document', {
     value: {
         querySelector: jest.fn((selector: string) => {
             if (selector === '.deck-cards-editor') {
-                return mockDeckCardsEditor;
+                return addOneMockDeckCardsEditor;
             }
             return null;
         })
