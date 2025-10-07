@@ -63,6 +63,24 @@ describe('Deck Management Integration Tests', () => {
       integrationTestUtils.trackTestDeck(testDeckId);
     });
 
+    afterEach(async () => {
+      // Clean up test user and deck created in beforeEach
+      if (testDeckId) {
+        try {
+          await pool.query('DELETE FROM decks WHERE id = $1', [testDeckId]);
+        } catch (error) {
+          // Ignore cleanup errors
+        }
+      }
+      if (testUserId) {
+        try {
+          await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
+        } catch (error) {
+          // Ignore cleanup errors
+        }
+      }
+    });
+
     it('should create a new deck with valid data', async () => {
       const result = await pool.query(
         'SELECT * FROM decks WHERE id = $1',
@@ -190,6 +208,24 @@ describe('Deck Management Integration Tests', () => {
       integrationTestUtils.trackTestDeck(testDeckId);
     });
 
+    afterEach(async () => {
+      // Clean up test user and deck created in beforeEach
+      if (testDeckId) {
+        try {
+          await pool.query('DELETE FROM decks WHERE id = $1', [testDeckId]);
+        } catch (error) {
+          // Ignore cleanup errors
+        }
+      }
+      if (testUserId) {
+        try {
+          await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
+        } catch (error) {
+          // Ignore cleanup errors
+        }
+      }
+    });
+
     it('should add cards to deck', async () => {
       expect(testDeckId).toBeDefined();
       
@@ -293,6 +329,15 @@ describe('Deck Management Integration Tests', () => {
       } catch (error) {
         expect(error).toBeDefined();
         console.log('✅ Deck name required constraint verified');
+      }
+      
+      // Clean up test user created in this test
+      if (testUserId) {
+        try {
+          await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
+        } catch (error) {
+          // Ignore cleanup errors
+        }
       }
     });
 
