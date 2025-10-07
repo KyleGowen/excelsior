@@ -64,7 +64,7 @@ async function initializeServer() {
       cardRepository.initialize()
     ]);
     
-    console.log('🚀 Overpower Deckbuilder server running on port', PORT);
+    console.log('🚀 Excelsior Deckbuilder server running on port', PORT);
     console.log('📖 API documentation available at http://localhost:' + PORT);
     
     const cardStats = await cardRepository.getCardStats();

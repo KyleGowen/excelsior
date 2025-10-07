@@ -190,7 +190,7 @@ describe('Deck Editability Browser Tests', () => {
 
       // Should show deck builder interface
       expect(html).toContain('deck-builder');
-      expect(html).toContain('Overpower Deckbuilder');
+      expect(html).toContain('Excelsior Deckbuilder');
 
       console.log('✅ Deck name is correctly displayed as title');
     });
