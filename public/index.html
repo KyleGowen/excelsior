@@ -14796,24 +14796,25 @@
         // Toggle deck type section visibility
         function toggleDeckTypeSection(type) {
             const section = document.getElementById(`deck-type-${type}`);
-            const header = section.previousElementSibling;
-            const toggle = header.querySelector('.deck-type-toggle');
+            const deckTypeSection = section.closest('.deck-type-section');
+            const header = deckTypeSection ? deckTypeSection.querySelector('.deck-type-header') : null;
+            const toggle = header ? header.querySelector('.deck-type-toggle') : null;
             
             if (section.style.display === 'none') {
                 section.style.display = 'block';
-                toggle.textContent = '▼';
-                header.classList.remove('collapsed');
+                if (toggle) toggle.textContent = '▼';
+                if (header) header.classList.remove('collapsed');
                 deckEditorExpansionState[type] = true; // Update global state
             } else {
                 section.style.display = 'none';
-                toggle.textContent = '▶';
-                header.classList.add('collapsed');
+                if (toggle) toggle.textContent = '▶';
+                if (header) header.classList.add('collapsed');
                 deckEditorExpansionState[type] = false; // Update global state
                 
                 // Ensure the collapsed header is fully visible by adjusting scroll position
                 setTimeout(() => {
                     const deckCardsEditor = document.querySelector('.deck-cards-editor');
-                    if (deckCardsEditor) {
+                    if (deckCardsEditor && header) {
                         const headerRect = header.getBoundingClientRect();
                         const containerRect = deckCardsEditor.getBoundingClientRect();
                         
@@ -14832,24 +14833,25 @@
         
         function toggleDeckListSection(type) {
             const itemsContainer = document.getElementById(`deck-list-items-${type}`);
-            const header = itemsContainer.previousElementSibling;
-            const toggle = header.querySelector('.deck-list-section-toggle');
+            const deckListSection = itemsContainer.closest('.deck-list-section');
+            const header = deckListSection ? deckListSection.querySelector('.deck-list-section-header') : null;
+            const toggle = header ? header.querySelector('.deck-list-section-toggle') : null;
             
             if (itemsContainer.style.display === 'none') {
                 itemsContainer.style.display = 'block';
-                toggle.textContent = '▼';
-                header.classList.remove('collapsed');
+                if (toggle) toggle.textContent = '▼';
+                if (header) header.classList.remove('collapsed');
                 deckEditorExpansionState[type] = true; // Update global state
             } else {
                 itemsContainer.style.display = 'none';
-                toggle.textContent = '▶';
-                header.classList.add('collapsed');
+                if (toggle) toggle.textContent = '▶';
+                if (header) header.classList.add('collapsed');
                 deckEditorExpansionState[type] = false; // Update global state
                 
                 // Ensure the collapsed header is fully visible by adjusting scroll position
                 setTimeout(() => {
                     const deckCardsEditor = document.querySelector('.deck-cards-editor');
-                    if (deckCardsEditor) {
+                    if (deckCardsEditor && header) {
                         const headerRect = header.getBoundingClientRect();
                         const containerRect = deckCardsEditor.getBoundingClientRect();
                         

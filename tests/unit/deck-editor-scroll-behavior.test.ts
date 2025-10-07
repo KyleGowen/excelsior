@@ -13,19 +13,23 @@ describe('Deck Editor Scroll Behavior', () => {
         <head></head>
         <body>
           <div class="deck-cards-editor" style="height: 300px; overflow-y: auto;">
-            <div class="deck-type-header" id="header-1">
-              <span class="deck-type-toggle">▼</span>
-              <span>Character Cards</span>
+            <div class="deck-type-section" data-type="character">
+              <div class="deck-type-header">
+                <span class="deck-type-toggle">▼</span>
+                <span>Character Cards</span>
+              </div>
+              <div class="deck-type-cards" id="deck-type-character" style="display: block;">
+                <div>Character card content</div>
+              </div>
             </div>
-            <div class="deck-type-section" id="deck-type-character" style="display: block;">
-              <div>Character card content</div>
-            </div>
-            <div class="deck-type-header" id="header-2">
-              <span class="deck-type-toggle">▼</span>
-              <span>Power Cards</span>
-            </div>
-            <div class="deck-type-section" id="deck-type-power" style="display: block;">
-              <div>Power card content</div>
+            <div class="deck-type-section" data-type="power">
+              <div class="deck-type-header">
+                <span class="deck-type-toggle">▼</span>
+                <span>Power Cards</span>
+              </div>
+              <div class="deck-type-cards" id="deck-type-power" style="display: block;">
+                <div>Power card content</div>
+              </div>
             </div>
           </div>
         </body>
@@ -47,8 +51,9 @@ describe('Deck Editor Scroll Behavior', () => {
     // Mock the toggleDeckTypeSection function
     (global as any).toggleDeckTypeSection = function(type: string) {
       const section = document.getElementById(`deck-type-${type}`);
-      const header = section?.previousElementSibling;
-      const toggle = header?.querySelector('.deck-type-toggle');
+      const deckTypeSection = section?.closest('.deck-type-section');
+      const header = deckTypeSection ? deckTypeSection.querySelector('.deck-type-header') : null;
+      const toggle = header ? header.querySelector('.deck-type-toggle') : null;
       
       if (section && header && toggle) {
         if (section.style.display === 'none') {
@@ -65,7 +70,7 @@ describe('Deck Editor Scroll Behavior', () => {
           // Ensure the collapsed header is fully visible by adjusting scroll position
           setTimeout(() => {
             const deckCardsEditor = document.querySelector('.deck-cards-editor');
-            if (deckCardsEditor) {
+            if (deckCardsEditor && header) {
               const headerRect = header.getBoundingClientRect();
               const containerRect = deckCardsEditor.getBoundingClientRect();
               
@@ -92,7 +97,8 @@ describe('Deck Editor Scroll Behavior', () => {
     it('should adjust scroll position when collapsing a section that gets cut off', (done) => {
       const deckCardsEditor = document.querySelector('.deck-cards-editor') as HTMLElement;
       const powerSection = document.getElementById('deck-type-power') as HTMLElement;
-      const powerHeader = powerSection.previousElementSibling as HTMLElement;
+      const powerDeckTypeSection = powerSection.closest('.deck-type-section') as HTMLElement;
+      const powerHeader = powerDeckTypeSection.querySelector('.deck-type-header') as HTMLElement;
       
       // Set initial scroll position to show the power section is at the bottom
       deckCardsEditor.scrollTop = 200; // Scroll down to make power section visible at bottom
@@ -145,7 +151,8 @@ describe('Deck Editor Scroll Behavior', () => {
     it('should not adjust scroll position when collapsing a section that is fully visible', (done) => {
       const deckCardsEditor = document.querySelector('.deck-cards-editor') as HTMLElement;
       const characterSection = document.getElementById('deck-type-character') as HTMLElement;
-      const characterHeader = characterSection.previousElementSibling as HTMLElement;
+      const characterDeckTypeSection = characterSection.closest('.deck-type-section') as HTMLElement;
+      const characterHeader = characterDeckTypeSection.querySelector('.deck-type-header') as HTMLElement;
       
       // Set initial scroll position to show the character section is fully visible
       deckCardsEditor.scrollTop = 0;
@@ -209,7 +216,8 @@ describe('Deck Editor Scroll Behavior', () => {
     it('should handle missing header element gracefully', () => {
       // Remove the header element
       const characterSection = document.getElementById('deck-type-character');
-      const header = characterSection?.previousElementSibling;
+      const deckTypeSection = characterSection?.closest('.deck-type-section');
+      const header = deckTypeSection?.querySelector('.deck-type-header');
       header?.remove();
       
       // This should not throw an error
