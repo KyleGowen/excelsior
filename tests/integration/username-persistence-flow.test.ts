@@ -5,6 +5,7 @@
 import request from 'supertest';
 import { app } from '../../src/test-server';
 import { integrationTestUtils } from '../setup-integration';
+import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 
 describe('Username Persistence Flow', () => {
     const assertWelcomeElements = async () => {
@@ -48,8 +49,15 @@ describe('Username Persistence Flow', () => {
     });
 
     afterEach(async () => {
-        // Cleanup is handled by global afterAll in setup-integration.ts
-        // No need for individual cleanup here
+        // Clean up test user created in beforeEach
+        if (testUser) {
+            try {
+                const userRepo = DataSourceConfig.getInstance().getUserRepository();
+                await userRepo.deleteUser(testUser.id);
+            } catch (error) {
+                // Ignore cleanup errors
+            }
+        }
     });
 
     describe('Username persistence after deck editor interactions', () => {
@@ -191,6 +199,14 @@ describe('Username Persistence Flow', () => {
 
             expect(response.status).toBe(200);
             await assertWelcomeElements();
+            
+            // Clean up usernameOnlyUser
+            try {
+                const userRepo = DataSourceConfig.getInstance().getUserRepository();
+                await userRepo.deleteUser(usernameOnlyUser.id);
+            } catch (error) {
+                // Ignore cleanup errors
+            }
         });
     });
 
@@ -218,6 +234,14 @@ describe('Username Persistence Flow', () => {
 
             expect(response.status).toBe(200);
             await assertWelcomeElements();
+            
+            // Clean up emptyNameUser
+            try {
+                const userRepo = DataSourceConfig.getInstance().getUserRepository();
+                await userRepo.deleteUser(emptyNameUser.id);
+            } catch (error) {
+                // Ignore cleanup errors
+            }
         });
     });
 });

@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { app } from '../../src/test-server';
 import { integrationTestUtils } from '../setup-integration';
+import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 
 describe('Limited Deck Integration Tests', () => {
   let testUser: any;
@@ -32,8 +33,15 @@ describe('Limited Deck Integration Tests', () => {
   });
 
   afterAll(async () => {
-    // Clean up test data
-    await integrationTestUtils.cleanupTestData();
+    // Clean up test user
+    if (testUser) {
+      try {
+        const userRepo = DataSourceConfig.getInstance().getUserRepository();
+        await userRepo.deleteUser(testUser.id);
+      } catch (error) {
+        // Ignore cleanup errors
+      }
+    }
   });
 
   beforeEach(async () => {

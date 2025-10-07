@@ -2,6 +2,7 @@ import request from 'supertest';
 import { Pool } from 'pg';
 import { app } from '../setup-integration';
 import { integrationTestUtils } from '../setup-integration';
+import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 
 describe('Limited Deck Save and Load Integration Tests', () => {
   let pool: Pool;
@@ -25,8 +26,15 @@ describe('Limited Deck Save and Load Integration Tests', () => {
   });
 
   afterAll(async () => {
-    // Clean up test data
-    await integrationTestUtils.cleanupTestData();
+    // Clean up test user
+    if (testUser) {
+      try {
+        const userRepo = DataSourceConfig.getInstance().getUserRepository();
+        await userRepo.deleteUser(testUser.id);
+      } catch (error) {
+        // Ignore cleanup errors
+      }
+    }
   });
 
   beforeEach(async () => {
