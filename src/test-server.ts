@@ -69,6 +69,7 @@ app.get('/components/globalNav.js', (req, res) => {
 export async function initializeTestServer() {
   try {
     console.log('🔄 Starting test server initialization...');
+    console.log('🔍 CI_DEBUG_2025_01_07_V2 - Test server code is being used');
     
     // First, initialize database with Flyway migrations and data
     await databaseInit.initializeDatabase();
@@ -474,7 +475,8 @@ app.post('/api/decks', authenticateUser, async (req: any, res) => {
     res.status(500).json({ 
       success: false, 
       error: 'Failed to create deck',
-      details: errorDetails
+      details: errorDetails,
+      debugInfo: 'CI_DEBUG_2025_01_07_V2' // Unique identifier to verify code is being used
     });
   }
 });

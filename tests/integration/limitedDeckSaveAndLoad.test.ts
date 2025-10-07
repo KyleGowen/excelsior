@@ -56,9 +56,15 @@ describe('Limited Deck Save and Load Integration Tests', () => {
         console.error('❌ Deck creation failed with status:', createResponse.status);
         console.error('❌ Response body:', createResponse.body);
         console.error('❌ Response headers:', createResponse.headers);
+        // Fail with detailed error information
+        throw new Error(`Deck creation failed with status ${createResponse.status}. Response: ${JSON.stringify(createResponse.body, null, 2)}`);
       }
       
       expect(createResponse.status).toBe(201);
+      if (createResponse.status !== 201) {
+        // This will definitely show up in CI output
+        fail(`Deck creation failed with status ${createResponse.status}. Response: ${JSON.stringify(createResponse.body, null, 2)}`);
+      }
       expect(createResponse.body.success).toBe(true);
       const deckId = createResponse.body.data.id;
       console.log('🔍 Created deck with ID:', deckId);
@@ -137,6 +143,8 @@ describe('Limited Deck Save and Load Integration Tests', () => {
         console.error('❌ Regular deck creation failed with status:', createResponse.status);
         console.error('❌ Response body:', createResponse.body);
         console.error('❌ Response headers:', createResponse.headers);
+        // Fail with detailed error information
+        throw new Error(`Regular deck creation failed with status ${createResponse.status}. Response: ${JSON.stringify(createResponse.body, null, 2)}`);
       }
       
       expect(createResponse.status).toBe(201);
@@ -208,6 +216,8 @@ describe('Limited Deck Save and Load Integration Tests', () => {
         console.error('❌ Toggle test deck creation failed with status:', createResponse.status);
         console.error('❌ Response body:', createResponse.body);
         console.error('❌ Response headers:', createResponse.headers);
+        // Fail with detailed error information
+        throw new Error(`Toggle test deck creation failed with status ${createResponse.status}. Response: ${JSON.stringify(createResponse.body, null, 2)}`);
       }
       
       expect(createResponse.status).toBe(201);
