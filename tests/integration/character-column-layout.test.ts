@@ -48,8 +48,15 @@ describe('Character Column Layout Integration Tests', () => {
   });
 
   afterAll(async () => {
-    // Cleanup is handled by global afterAll in setup-integration.ts
-    // No need for individual cleanup here
+    // Clean up test users
+    const userRepo = DataSourceConfig.getInstance().getUserRepository();
+    if (testUser) {
+      try {
+        await userRepo.deleteUser(testUser.id);
+      } catch (error) {
+        // Ignore cleanup errors
+      }
+    }
   });
 
   beforeEach(async () => {
@@ -87,6 +94,18 @@ describe('Character Column Layout Integration Tests', () => {
     
     // Extract session cookie
     authCookie = loginResponse.headers['set-cookie']![0].split(';')[0];
+  });
+
+  afterEach(async () => {
+    // Clean up test user created in beforeEach
+    const userRepo = DataSourceConfig.getInstance().getUserRepository();
+    if (testUser) {
+      try {
+        await userRepo.deleteUser(testUser.id);
+      } catch (error) {
+        // Ignore cleanup errors
+      }
+    }
   });
 
   describe('Character Column Layout', () => {
