@@ -359,6 +359,12 @@ describe('Read-Only Mode Integration Tests', () => {
       });
       
       console.log('✅ Deck data integrity verified for read-only viewing:', result.rows.length, 'decks');
+      
+      // Clean up test user and deck created in this test
+      if (testUserId && testDeckId) {
+        await pool.query('DELETE FROM decks WHERE id = $1', [testDeckId]);
+        await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
+      }
     });
 
     it('should verify deck ownership information is available', async () => {
@@ -396,6 +402,12 @@ describe('Read-Only Mode Integration Tests', () => {
       });
       
       console.log('✅ Deck ownership information verified:', result.rows.length, 'decks');
+      
+      // Clean up test user and deck created in this test
+      if (testUserId && testDeckId) {
+        await pool.query('DELETE FROM decks WHERE id = $1', [testDeckId]);
+        await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
+      }
     });
 
     it('should verify deck timestamps are valid for read-only mode', async () => {
@@ -433,6 +445,12 @@ describe('Read-Only Mode Integration Tests', () => {
       });
       
       console.log('✅ Deck timestamps verified for read-only mode:', result.rows.length, 'decks');
+      
+      // Clean up test user and deck created in this test
+      if (testUserId && testDeckId) {
+        await pool.query('DELETE FROM decks WHERE id = $1', [testDeckId]);
+        await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
+      }
     });
   });
 });

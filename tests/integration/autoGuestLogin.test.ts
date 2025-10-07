@@ -120,13 +120,15 @@ describe('Auto Guest Login Integration Tests', () => {
       );
 
       // If no decks exist yet, create a minimal deck to validate access
+      let ownerId: string | undefined;
+      let deckId: string | undefined;
       if (result.rows.length === 0) {
-        const ownerId = generateUUID();
+        ownerId = generateUUID();
         await pool.query(
           'INSERT INTO users (id, username, email, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
           [ownerId, `agl_seed_${generateUUID()}`, `agl-seed-${generateUUID()}@it.local`, 'seed_pw', 'USER']
         );
-        const deckId = generateUUID();
+        deckId = generateUUID();
         await pool.query(
           'INSERT INTO decks (id, user_id, name, description, ui_preferences, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())',
           [deckId, ownerId, 'Seed Deck', 'Seed deck for access check', JSON.stringify([])]
@@ -146,6 +148,12 @@ describe('Auto Guest Login Integration Tests', () => {
       });
 
       console.log('✅ Existing decks verified for guest access:', result.rows.length, 'decks');
+      
+      // Clean up test user and deck created in this test
+      if (ownerId && deckId) {
+        await pool.query('DELETE FROM decks WHERE id = $1', [deckId]);
+        await pool.query('DELETE FROM users WHERE id = $1', [ownerId]);
+      }
     });
 
     it('should verify deck ownership can be determined', async () => {
