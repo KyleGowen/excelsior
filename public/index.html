@@ -3198,6 +3198,19 @@
             min-width: 100%;
             box-sizing: border-box;
         }
+        
+        /* Override: List view should never use 4-column layout, only responsive 1-2 columns */
+        .deck-cards-editor.list-view:not(.read-only-mode) .deck-type-cards {
+            display: block !important;
+            grid-template-columns: none !important;
+            gap: 0 !important;
+        }
+        
+        .deck-cards-editor.list-view:not(.read-only-mode) .deck-list-view {
+            display: block !important;
+            grid-template-columns: none !important;
+            gap: 0 !important;
+        }
 
         /* Three-column layout for deck list sections in read-only mode */
         .read-only-mode .deck-cards-editor.list-view {
@@ -9689,8 +9702,6 @@
             } else {
                 // Switch to list view
                 deckCardsEditor.classList.add('list-view');
-                // Ensure list view is always single column
-                deckCardsEditor.classList.remove('two-column');
                 listViewBtn.textContent = 'Tile View';
                 renderDeckCardsListView(); // Render in list view
                 
@@ -13212,19 +13223,26 @@
             const deckCardsEditor = document.querySelector('.deck-cards-editor');
             if (!deckCardsEditor) return;
             
-            // Don't apply responsive layout logic to list view - it should always be single column
-            if (deckCardsEditor.classList.contains('list-view')) {
-                return;
-            }
-            
             const deckPercentage = (deckWidth / totalWidth) * 100;
             
-            if (deckPercentage >= 33) {
-                deckCardsEditor.classList.add('two-column');
-                createTwoColumnLayout();
+            if (deckCardsEditor.classList.contains('list-view')) {
+                // List view: responsive but never more than 2 columns
+                if (deckPercentage >= 33) {
+                    deckCardsEditor.classList.add('two-column');
+                    createTwoColumnLayout();
+                } else {
+                    deckCardsEditor.classList.remove('two-column');
+                    restoreSingleColumnLayout();
+                }
             } else {
-                deckCardsEditor.classList.remove('two-column');
-                restoreSingleColumnLayout();
+                // Tile view: normal responsive behavior
+                if (deckPercentage >= 33) {
+                    deckCardsEditor.classList.add('two-column');
+                    createTwoColumnLayout();
+                } else {
+                    deckCardsEditor.classList.remove('two-column');
+                    restoreSingleColumnLayout();
+                }
             }
         }
         
