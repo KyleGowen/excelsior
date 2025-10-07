@@ -83,6 +83,13 @@ describe('Bcrypt Authentication Integration Tests', () => {
       expect(storedHash).not.toBe(password); // Should not be plain text
       
       console.log('✅ User created with hashed password');
+      
+      // Clean up test user
+      try {
+        await userRepository.deleteUser(user.id);
+      } catch (error) {
+        // Ignore cleanup errors
+      }
     });
 
     it('should authenticate user with correct password', async () => {
@@ -108,6 +115,13 @@ describe('Bcrypt Authentication Integration Tests', () => {
       expect(authenticatedUser?.role).toBe('USER');
       
       console.log('✅ User authentication successful');
+      
+      // Clean up test user
+      try {
+        await userRepository.deleteUser(user.id);
+      } catch (error) {
+        // Ignore cleanup errors
+      }
     });
 
     it('should reject authentication with incorrect password', async () => {
@@ -130,6 +144,13 @@ describe('Bcrypt Authentication Integration Tests', () => {
       expect(authenticatedUser).toBeUndefined();
       
       console.log('✅ Incorrect password correctly rejected');
+      
+      // Clean up test user
+      try {
+        await userRepository.deleteUser(user.id);
+      } catch (error) {
+        // Ignore cleanup errors
+      }
     });
 
     it('should reject authentication for non-existent user', async () => {
