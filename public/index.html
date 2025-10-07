@@ -3451,7 +3451,8 @@
         .read-only-mode .deck-card-editor-change-art,
         .read-only-mode .quantity-btn,
         .read-only-mode .alternate-art-btn,
-        .read-only-mode .remove-one-btn {
+        .read-only-mode .remove-one-btn,
+        .read-only-mode .add-one-btn {
             display: none !important;
         }
         
@@ -4426,14 +4427,43 @@
             color: #ffffff;
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 3.3px;
-            padding: 3.3px 6.6px;
+            padding: 3.3px 0;
             font-size: 11px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
+            width: 24px;
+            min-width: 24px;
+            max-width: 24px;
+            font-family: monospace;
+            box-sizing: border-box;
+            line-height: 1;
+        }
+
+        /* Add One button styling - matches remove-one-btn */
+        .add-one-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 3.3px;
+            padding: 3.3px 0;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 24px;
+            min-width: 24px;
+            max-width: 24px;
+            font-family: monospace;
+            box-sizing: border-box;
+            line-height: 1;
         }
 
         .remove-one-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .add-one-btn:hover {
             background: rgba(255, 255, 255, 0.2);
         }
 
@@ -13882,9 +13912,10 @@
                                                 <div class="deck-card-editor-stats">${cardDetails}</div>
                                             </div>
                                             <div class="deck-card-editor-actions">
-                                                ${card.quantity > 1 ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
+                                                ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
+                                                ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="add-one-btn" onclick="addOneCardToEditor(${index})">+1</button>` : ''}
                                                 ${alternateArtButton}
-                                                <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
+                                                ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>` : ''}
                                             </div>
                                         </div>
                                     `;
@@ -13945,9 +13976,10 @@
                                             <div class="deck-card-editor-stats">${cardDetails}</div>
                                         </div>
                                         <div class="deck-card-editor-actions">
-                                            ${card.quantity > 1 ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
+                                            ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
+                                            ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="add-one-btn" onclick="addOneCardToEditor(${index})">+1</button>` : ''}
                                             ${alternateArtButton}
-                                            <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
+                                            ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>` : ''}
                                         </div>
                                     </div>
                                 `;
@@ -14126,9 +14158,10 @@
                                     ${cardDetails ? `<div class="deck-card-editor-stats">${cardDetails}</div>` : ''}
                                 </div>
                                 <div class="deck-card-editor-actions">
-                                    ${card.quantity > 1 ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
+                                    ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
+                                    ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="add-one-btn" onclick="addOneCardToEditor(${index})">+1</button>` : ''}
                                     ${alternateArtButton}
-                                    <button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>
+                                    ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">Remove</button>` : ''}
                                 </div>
                             </div>
                         `;
@@ -15156,11 +15189,18 @@
         }
 
         async function removeOneCardFromEditor(index) {
-            if (deckEditorCards[index] && deckEditorCards[index].quantity > 1) {
+            if (deckEditorCards[index]) {
                 // Capture current expansion state before re-rendering
                 const currentExpansionState = getExpansionState();
                 
-                deckEditorCards[index].quantity -= 1;
+                if (deckEditorCards[index].quantity > 1) {
+                    // If there are multiple cards, decrease quantity by 1
+                    deckEditorCards[index].quantity -= 1;
+                } else {
+                    // If there's only 1 card, remove the entire card
+                    deckEditorCards.splice(index, 1);
+                }
+                
                 await displayDeckCardsForEditing();
                 
                 // Ultra-aggressive layout enforcement
@@ -15198,6 +15238,55 @@
                 updateAllyUniverseFilter();
                 
                 // Validate deck after removing card
+                await showDeckValidation(deckEditorCards);
+            }
+        }
+
+        async function addOneCardToEditor(index) {
+            if (deckEditorCards[index]) {
+                // Capture current expansion state before re-rendering
+                const currentExpansionState = getExpansionState();
+                
+                // Increase quantity by 1
+                deckEditorCards[index].quantity += 1;
+                
+                await displayDeckCardsForEditing();
+                
+                // Ultra-aggressive layout enforcement
+                ultraAggressiveLayoutEnforcement();
+                
+                // Restore the expansion state after re-rendering
+                applyUIPreferences({ expansionState: currentExpansionState });
+                updateDeckEditorCardCount();
+                
+                // Update character limit status without affecting collapse state
+                updateCharacterLimitStatus();
+                
+                // Update mission limit status without affecting collapse state
+                updateMissionLimitStatus();
+                
+                // Update special cards filter if it's active
+                updateSpecialCardsFilter();
+                
+                // Update advanced universe filter if it's active
+                updateAdvancedUniverseFilter();
+                
+                // Update power cards filter if it's active
+                updatePowerCardsFilter();
+                
+                // Update basic universe filter if it's active
+                updateBasicUniverseFilter();
+                
+                // Update teamwork filter if it's active
+                updateTeamworkFilter();
+                
+                // Update training filter if it's active
+                updateTrainingFilter();
+                
+                // Update ally universe filter if it's active
+                updateAllyUniverseFilter();
+                
+                // Validate deck after adding card
                 await showDeckValidation(deckEditorCards);
             }
         }
