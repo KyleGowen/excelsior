@@ -98,12 +98,12 @@ describe('Teamwork Card Fixes', () => {
       {
         name: '8 Energy',
         description: 'Teamwork card: 8 Energy acts as 4 Attack with Intelligence + Brute Force followup',
-        expectedPath: 'teamwork-universe/8_energy_1bf_2i.webp'
+        expectedPath: 'teamwork-universe/8_energy_1c_2bf.webp'
       },
       {
         name: '8 Energy',
-        description: 'Teamwork card: 8 Energy acts as 4 Attack with Combat + Brute Force followup',
-        expectedPath: 'teamwork-universe/8_energy_1c_2bf.webp'
+        description: 'Teamwork card: 8 Energy acts as 4 Attack with Brute Force + Combat followup',
+        expectedPath: 'teamwork-universe/8_energy_1c_2i.webp'
       },
       {
         name: '8 Intelligence',
@@ -134,7 +134,7 @@ describe('Teamwork Card Fixes', () => {
   });
 
   describe('Description Corrections', () => {
-    it('should have correct description for 8 Energy with Combat + Brute Force followup', async () => {
+    it('should have correct description for 8 Energy with Intelligence + Brute Force followup', async () => {
       const result = await pool.query(`
         SELECT card_description 
         FROM teamwork_cards 
@@ -144,20 +144,20 @@ describe('Teamwork Card Fixes', () => {
       `);
 
       expect(result.rows).toHaveLength(1);
-      expect(result.rows[0].card_description).toBe('Teamwork card: 8 Energy acts as 4 Attack with Combat + Brute Force followup');
+      expect(result.rows[0].card_description).toBe('Teamwork card: 8 Energy acts as 4 Attack with Intelligence + Brute Force followup');
     });
 
-    it('should not have incorrect description for 8 Energy with Intelligence + Brute Force followup', async () => {
+    it('should have correct description for 8 Energy with Brute Force + Combat followup', async () => {
       const result = await pool.query(`
         SELECT card_description 
         FROM teamwork_cards 
         WHERE name = '8 Energy' 
-        AND image_path = 'teamwork-universe/8_energy_1c_2bf.webp'
-        AND card_description = 'Teamwork card: 8 Energy acts as 4 Attack with Intelligence + Brute Force followup'
+        AND image_path = 'teamwork-universe/8_energy_1c_2i.webp'
         AND universe = 'ERB'
       `);
 
-      expect(result.rows).toHaveLength(0);
+      expect(result.rows).toHaveLength(1);
+      expect(result.rows[0].card_description).toBe('Teamwork card: 8 Energy acts as 4 Attack with Brute Force + Combat followup');
     });
   });
 
