@@ -13545,6 +13545,11 @@
                     // Display deck cards after available cards are loaded
                     await displayDeckCardsForEditing();
                     
+                    // Ensure scroll container can show all content after deck is displayed
+                    setTimeout(() => {
+                        ensureScrollContainerCanShowAllContent();
+                    }, 100);
+                    
                     // Load UI preferences from database AFTER deck cards are displayed
                     const uiPreferences = await loadUIPreferences(deckId);
                     applyUIPreferences(uiPreferences);
@@ -14825,6 +14830,11 @@
                         }
                     }
                 }, 10); // Small delay to ensure DOM updates are complete
+                
+                // Also ensure the scroll container can show all content
+                setTimeout(() => {
+                    ensureScrollContainerCanShowAllContent();
+                }, 20);
             }
             
             // Save expansion state to localStorage
@@ -14862,12 +14872,35 @@
                         }
                     }
                 }, 10); // Small delay to ensure DOM updates are complete
+                
+                // Also ensure the scroll container can show all content
+                setTimeout(() => {
+                    ensureScrollContainerCanShowAllContent();
+                }, 20);
             }
             
             // Save expansion state to localStorage
             saveDeckExpansionState();
         }
         
+        // Ensure scroll container can show all content
+        function ensureScrollContainerCanShowAllContent() {
+            const deckCardsEditor = document.querySelector('.deck-cards-editor');
+            if (!deckCardsEditor) return;
+            
+            // Force a reflow to ensure all measurements are accurate
+            deckCardsEditor.offsetHeight;
+            
+            // Check if we can scroll to the bottom
+            const maxScrollTop = deckCardsEditor.scrollHeight - deckCardsEditor.clientHeight;
+            
+            // If there's content that can't be scrolled to, try to scroll to the maximum
+            if (maxScrollTop > 0 && deckCardsEditor.scrollTop < maxScrollTop) {
+                // Scroll to the bottom to ensure all content is accessible
+                deckCardsEditor.scrollTop = maxScrollTop;
+            }
+        }
+
         // Save deck expansion state to localStorage
         function saveDeckExpansionState() {
             if (currentDeckId) {
@@ -15303,6 +15336,11 @@
                 
                 // Validate deck after removing card
                 await showDeckValidation(deckEditorCards);
+                
+                // Ensure scroll container can show all content after card changes
+                setTimeout(() => {
+                    ensureScrollContainerCanShowAllContent();
+                }, 50);
             }
         }
 
@@ -15352,6 +15390,11 @@
                 
                 // Validate deck after adding card
                 await showDeckValidation(deckEditorCards);
+                
+                // Ensure scroll container can show all content after card changes
+                setTimeout(() => {
+                    ensureScrollContainerCanShowAllContent();
+                }, 50);
             }
         }
 
