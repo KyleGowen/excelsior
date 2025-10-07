@@ -41,6 +41,9 @@ describe('Deck Navigation Flow Integration Tests', () => {
       'Test Navigation Deck',
       'A deck for testing navigation flow'
     );
+    
+    // Track this deck for cleanup
+    integrationTestUtils.trackTestDeck(testDeck.id);
 
     // Login and get auth cookie
     const loginResponse = await request(app)
