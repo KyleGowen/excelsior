@@ -70,7 +70,10 @@ export async function initializeTestServer() {
   try {
     console.log('🔄 Starting test server initialization...');
     
-    // Initialize the repositories without running migrations
+    // First, initialize database with Flyway migrations and data
+    await databaseInit.initializeDatabase();
+    
+    // Then initialize the repositories
     await Promise.all([
       userRepository.initialize(),
       deckRepository.initialize(),
@@ -446,9 +449,9 @@ app.post('/api/decks', authenticateUser, async (req: any, res) => {
   } catch (error) {
     console.error('Error creating deck:', error);
     console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      name: error.name
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : 'Unknown'
     });
     res.status(500).json({ success: false, error: 'Failed to create deck' });
   }

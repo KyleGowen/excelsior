@@ -32,9 +32,9 @@ export class DatabaseInitializationService {
     } catch (error) {
       console.error('❌ Database initialization failed:', error);
       console.error('❌ Database initialization error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name,
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        name: error instanceof Error ? error.name : 'Unknown',
         SKIP_MIGRATIONS: process.env.SKIP_MIGRATIONS,
         NODE_ENV: process.env.NODE_ENV
       });
