@@ -14809,6 +14809,21 @@
                 toggle.textContent = '▶';
                 header.classList.add('collapsed');
                 deckEditorExpansionState[type] = false; // Update global state
+                
+                // Ensure the collapsed header is fully visible by adjusting scroll position
+                setTimeout(() => {
+                    const deckCardsEditor = document.querySelector('.deck-cards-editor');
+                    if (deckCardsEditor) {
+                        const headerRect = header.getBoundingClientRect();
+                        const containerRect = deckCardsEditor.getBoundingClientRect();
+                        
+                        // If the header is cut off at the bottom, scroll to show it fully
+                        if (headerRect.bottom > containerRect.bottom) {
+                            const scrollAmount = headerRect.bottom - containerRect.bottom + 10; // 10px padding
+                            deckCardsEditor.scrollTop += scrollAmount;
+                        }
+                    }
+                }, 10); // Small delay to ensure DOM updates are complete
             }
             
             // Save expansion state to localStorage
@@ -14830,6 +14845,21 @@
                 toggle.textContent = '▶';
                 header.classList.add('collapsed');
                 deckEditorExpansionState[type] = false; // Update global state
+                
+                // Ensure the collapsed header is fully visible by adjusting scroll position
+                setTimeout(() => {
+                    const deckCardsEditor = document.querySelector('.deck-cards-editor');
+                    if (deckCardsEditor) {
+                        const headerRect = header.getBoundingClientRect();
+                        const containerRect = deckCardsEditor.getBoundingClientRect();
+                        
+                        // If the header is cut off at the bottom, scroll to show it fully
+                        if (headerRect.bottom > containerRect.bottom) {
+                            const scrollAmount = headerRect.bottom - containerRect.bottom + 10; // 10px padding
+                            deckCardsEditor.scrollTop += scrollAmount;
+                        }
+                    }
+                }, 10); // Small delay to ensure DOM updates are complete
             }
             
             // Save expansion state to localStorage
