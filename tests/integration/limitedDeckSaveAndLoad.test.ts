@@ -1,12 +1,19 @@
 import request from 'supertest';
+import { Pool } from 'pg';
 import { app } from '../setup-integration';
 import { integrationTestUtils } from '../setup-integration';
 
 describe('Limited Deck Save and Load Integration Tests', () => {
+  let pool: Pool;
   let testUser: any;
   let authCookie: string;
 
   beforeAll(async () => {
+    // Set up database connection
+    pool = new Pool({
+      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+    });
+    
     // Create a test user
     testUser = await integrationTestUtils.createTestUser({
       name: 'limited-test-user',
@@ -42,6 +49,11 @@ describe('Limited Deck Save and Load Integration Tests', () => {
 
   describe('Save and Load Limited Deck', () => {
     it('should save a deck with is_limited=true and load it with Limited state preserved', async () => {
+      // Get valid character IDs from the database
+      const characterResult = await pool.query('SELECT id FROM characters LIMIT 2');
+      const characterIds = characterResult.rows.map(row => row.id);
+      expect(characterIds.length).toBeGreaterThanOrEqual(2);
+      
       // Step 1: Create a new deck
       const createResponse = await request(app)
         .post('/api/decks')
@@ -49,7 +61,7 @@ describe('Limited Deck Save and Load Integration Tests', () => {
         .send({
           name: 'Limited Test Deck',
           description: 'A deck to test Limited functionality',
-          characters: ['a9b944f2-194a-4814-b877-25db1ba784ad', '050f4873-2fa8-422c-ba32-eab3500cbdc0']
+          characters: characterIds
         });
 
       if (createResponse.status !== 201) {
@@ -129,6 +141,11 @@ describe('Limited Deck Save and Load Integration Tests', () => {
     });
 
     it('should save a deck with is_limited=false and load it with Limited state preserved', async () => {
+      // Get valid character IDs from the database
+      const characterResult = await pool.query('SELECT id FROM characters LIMIT 2');
+      const characterIds = characterResult.rows.map(row => row.id);
+      expect(characterIds.length).toBeGreaterThanOrEqual(2);
+      
       // Step 1: Create a new deck
       const createResponse = await request(app)
         .post('/api/decks')
@@ -136,7 +153,7 @@ describe('Limited Deck Save and Load Integration Tests', () => {
         .send({
           name: 'Regular Test Deck',
           description: 'A regular deck (not limited)',
-          characters: ['60f61594-3431-4ea8-b534-50ab6642d658', '9436652b-7b7f-4fee-b2c1-df6aa69afcd4']
+          characters: characterIds
         });
 
       if (createResponse.status !== 201) {
@@ -202,6 +219,11 @@ describe('Limited Deck Save and Load Integration Tests', () => {
     });
 
     it('should toggle is_limited state multiple times and preserve each state', async () => {
+      // Get valid character IDs from the database
+      const characterResult = await pool.query('SELECT id FROM characters LIMIT 1');
+      const characterIds = characterResult.rows.map(row => row.id);
+      expect(characterIds.length).toBeGreaterThanOrEqual(1);
+      
       // Step 1: Create a new deck
       const createResponse = await request(app)
         .post('/api/decks')
@@ -209,7 +231,7 @@ describe('Limited Deck Save and Load Integration Tests', () => {
         .send({
           name: 'Toggle Test Deck',
           description: 'A deck to test toggling Limited state',
-          characters: ['a9b944f2-194a-4814-b877-25db1ba784ad']
+          characters: characterIds
         });
 
       if (createResponse.status !== 201) {
