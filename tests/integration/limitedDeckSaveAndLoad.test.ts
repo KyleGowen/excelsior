@@ -80,6 +80,9 @@ describe('Limited Deck Save and Load Integration Tests', () => {
       expect(createResponse.body.success).toBe(true);
       const deckId = createResponse.body.data.id;
       console.log('🔍 Created deck with ID:', deckId);
+      
+      // Track this deck for cleanup
+      integrationTestUtils.trackTestDeck(deckId);
 
       // Step 2: Verify the deck was created with is_limited=false by default
       const initialLoadResponse = await request(app)
@@ -168,6 +171,9 @@ describe('Limited Deck Save and Load Integration Tests', () => {
       expect(createResponse.body.success).toBe(true);
       const deckId = createResponse.body.data.id;
       console.log('🔍 Created regular deck with ID:', deckId);
+      
+      // Track this deck for cleanup
+      integrationTestUtils.trackTestDeck(deckId);
 
       // Step 2: Verify the deck was created with is_limited=false by default
       const initialLoadResponse = await request(app)
@@ -246,6 +252,9 @@ describe('Limited Deck Save and Load Integration Tests', () => {
       expect(createResponse.body.success).toBe(true);
       const deckId = createResponse.body.data.id;
       console.log('🔍 Created toggle test deck with ID:', deckId);
+      
+      // Track this deck for cleanup
+      integrationTestUtils.trackTestDeck(deckId);
 
       // Step 2: Toggle to Limited (true)
       let updateResponse = await request(app)
