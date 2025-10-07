@@ -40,6 +40,9 @@ describe('Character Column Layout Integration Tests', () => {
       'Character Layout Test Deck',
       'A deck for testing character column layout'
     );
+    
+    // Track this deck for cleanup
+    integrationTestUtils.trackTestDeck(testDeck.id);
 
     console.log('✅ Test user and deck created:', { userId: testUser.id, deckId: testDeck.id });
   });
@@ -67,6 +70,9 @@ describe('Character Column Layout Integration Tests', () => {
       'Character Layout Test Deck',
       'A deck for testing character column layout'
     );
+    
+    // Track this deck for cleanup
+    integrationTestUtils.trackTestDeck(testDeck.id);
 
     // Login and get auth cookie
     const loginResponse = await request(app)
