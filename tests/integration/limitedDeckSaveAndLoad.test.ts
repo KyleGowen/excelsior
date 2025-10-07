@@ -52,6 +52,12 @@ describe('Limited Deck Save and Load Integration Tests', () => {
           characters: ['a9b944f2-194a-4814-b877-25db1ba784ad', '050f4873-2fa8-422c-ba32-eab3500cbdc0']
         });
 
+      if (createResponse.status !== 201) {
+        console.error('❌ Deck creation failed with status:', createResponse.status);
+        console.error('❌ Response body:', createResponse.body);
+        console.error('❌ Response headers:', createResponse.headers);
+      }
+      
       expect(createResponse.status).toBe(201);
       expect(createResponse.body.success).toBe(true);
       const deckId = createResponse.body.data.id;
@@ -127,6 +133,12 @@ describe('Limited Deck Save and Load Integration Tests', () => {
           characters: ['60f61594-3431-4ea8-b534-50ab6642d658', '9436652b-7b7f-4fee-b2c1-df6aa69afcd4']
         });
 
+      if (createResponse.status !== 201) {
+        console.error('❌ Regular deck creation failed with status:', createResponse.status);
+        console.error('❌ Response body:', createResponse.body);
+        console.error('❌ Response headers:', createResponse.headers);
+      }
+      
       expect(createResponse.status).toBe(201);
       expect(createResponse.body.success).toBe(true);
       const deckId = createResponse.body.data.id;
@@ -192,6 +204,12 @@ describe('Limited Deck Save and Load Integration Tests', () => {
           characters: ['a9b944f2-194a-4814-b877-25db1ba784ad']
         });
 
+      if (createResponse.status !== 201) {
+        console.error('❌ Toggle test deck creation failed with status:', createResponse.status);
+        console.error('❌ Response body:', createResponse.body);
+        console.error('❌ Response headers:', createResponse.headers);
+      }
+      
       expect(createResponse.status).toBe(201);
       expect(createResponse.body.success).toBe(true);
       const deckId = createResponse.body.data.id;

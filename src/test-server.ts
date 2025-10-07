@@ -463,7 +463,19 @@ app.post('/api/decks', authenticateUser, async (req: any, res) => {
       stack: error instanceof Error ? error.stack : undefined,
       name: error instanceof Error ? error.name : 'Unknown'
     });
-    res.status(500).json({ success: false, error: 'Failed to create deck' });
+    
+    // Include error details in response for debugging
+    const errorDetails = {
+      message: error instanceof Error ? error.message : String(error),
+      name: error instanceof Error ? error.name : 'Unknown',
+      stack: error instanceof Error ? error.stack : undefined
+    };
+    
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to create deck',
+      details: errorDetails
+    });
   }
 });
 
