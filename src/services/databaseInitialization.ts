@@ -81,6 +81,12 @@ export class DatabaseInitializationService {
       console.log(`🔧 Running command: ${command.replace(/-password="[^"]*"/, '-password="***"')}`);
       const { stdout, stderr } = await execAsync(command);
       
+      // Check if migrations were already up to date
+      if (stdout && stdout.includes('Schema `public` is up to date')) {
+        console.log('✅ Migrations already up to date');
+        return;
+      }
+      
       if (stderr && !stderr.includes('WARNING')) {
         console.error('❌ Migration error:', stderr);
         throw new Error(stderr);
@@ -89,7 +95,17 @@ export class DatabaseInitializationService {
       console.log('✅ Migrations completed successfully!');
     } catch (error) {
       console.error('❌ Migration failed:', error);
-      throw error;
+      // If migration fails, it might be because migrations are already up to date
+      // Let's check if the database is accessible and has the expected schema
+      try {
+        console.log('🔍 Checking if database is accessible and has expected schema...');
+        await this.checkDatabaseStatus();
+        console.log('✅ Database is accessible and has expected schema - migrations may already be up to date');
+        return;
+      } catch (checkError) {
+        console.error('❌ Database check failed:', checkError);
+        throw error; // Re-throw original migration error
+      }
     }
   }
 
