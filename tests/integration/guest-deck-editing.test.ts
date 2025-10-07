@@ -126,6 +126,9 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.data.name).toBe('User Deck');
+      
+      // Track this deck for cleanup
+      integrationTestUtils.trackTestDeck(response.body.data.id);
     });
 
     it('should allow admin to create decks', async () => {
