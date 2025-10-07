@@ -62,6 +62,18 @@ describe('Deck Navigation Flow Integration Tests', () => {
     authCookie = setCookieHeader![0].split(';')[0];
   });
 
+  afterEach(async () => {
+    // Clean up test user created in beforeEach
+    const userRepo = DataSourceConfig.getInstance().getUserRepository();
+    if (testUser) {
+      try {
+        await userRepo.deleteUser(testUser.id);
+      } catch (error) {
+        // Ignore cleanup errors
+      }
+    }
+  });
+
   describe('Deck Editor Navigation Flow', () => {
     it('should successfully navigate to deck editor without database view flash', async () => {
       // Test the deck editor page load

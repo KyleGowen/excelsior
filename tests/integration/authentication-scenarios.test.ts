@@ -10,6 +10,7 @@ describe('Authentication Scenarios Integration Tests', () => {
   let userRepository: any;
   let server: any;
   let authService: AuthenticationService;
+  let testUser: User | undefined;
 
   beforeAll(async () => {
     // Get test database
@@ -39,8 +40,14 @@ describe('Authentication Scenarios Integration Tests', () => {
       });
     }
     
-    // Cleanup is handled by global afterAll in setup-integration.ts
-    // No need for individual cleanup here
+    // Clean up test user
+    if (testUser) {
+      try {
+        await userRepository.deleteUser(testUser.id);
+      } catch (error) {
+        // Ignore cleanup errors
+      }
+    }
   });
 
   describe('USER Role Authentication', () => {
