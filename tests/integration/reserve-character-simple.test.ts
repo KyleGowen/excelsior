@@ -108,7 +108,7 @@ describe('Reserve Character Simple Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBe(testCharacterIds[0]);
+            expect(updateResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[0]);
 
             // Verify the updated deck has the reserve character set
             const getResponse = await request(app)
@@ -157,7 +157,7 @@ describe('Reserve Character Simple Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBe(testCharacterIds[1]);
+            expect(updateResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[1]);
         });
 
         it('should allow removing the reserve character', async () => {
@@ -198,7 +198,7 @@ describe('Reserve Character Simple Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBeNull();
+            expect(updateResponse.body.data.metadata.reserve_character).toBeNull();
         });
 
         it('should handle undefined reserve character as null', async () => {
@@ -220,7 +220,7 @@ describe('Reserve Character Simple Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBeNull();
+            expect(updateResponse.body.data.metadata.reserve_character).toBeNull();
         });
     });
 
@@ -266,7 +266,7 @@ describe('Reserve Character Simple Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBe(testCharacterIds[0]);
+            expect(updateResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[0]);
         });
 
         it('should work with a deck containing 2 characters', async () => {
@@ -310,7 +310,7 @@ describe('Reserve Character Simple Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBe(testCharacterIds[0]);
+            expect(updateResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[0]);
 
             // Should be able to switch to second character
             const switchResponse = await request(app)

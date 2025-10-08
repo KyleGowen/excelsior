@@ -512,7 +512,34 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }
     
-    res.json({ success: true, data: deck });
+    // Check if user owns this deck
+    const isOwner = deck.user_id === req.user.id;
+    
+    // Add ownership flag to response for frontend to use
+    const deckData = {
+      ...deck,
+      isOwner: isOwner
+    };
+    
+    // Transform deck data to match frontend expectations (same as GET endpoint)
+    const transformedDeck = {
+      metadata: {
+        id: deckData.id,
+        name: deckData.name,
+        description: deckData.description,
+        created: deckData.created_at,
+        lastModified: deckData.updated_at,
+        cardCount: deckData.cards?.length || 0,
+        userId: deckData.user_id,
+        uiPreferences: deckData.ui_preferences,
+        isOwner: deckData.isOwner,
+        is_limited: deckData.is_limited,
+        reserve_character: deckData.reserve_character
+      },
+      cards: deckData.cards || []
+    };
+    
+    res.json({ success: true, data: transformedDeck });
   } catch (error) {
     console.error('Error updating deck:', error);
     res.status(500).json({ success: false, error: 'Failed to update deck' });
