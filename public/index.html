@@ -15004,6 +15004,10 @@
                 // Capture current expansion state before re-rendering
                 const currentExpansionState = getExpansionState();
                 
+                // Capture current scroll position before re-rendering
+                const deckCardsEditor = document.querySelector('.deck-cards-editor');
+                const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
+                
                 if (deckEditorCards[index].quantity > 1) {
                     // If there are multiple cards, decrease quantity by 1
                     deckEditorCards[index].quantity -= 1;
@@ -15013,6 +15017,11 @@
                 }
                 
                 await displayDeckCardsForEditing();
+                
+                // Restore scroll position after re-rendering
+                if (deckCardsEditor) {
+                    deckCardsEditor.scrollTop = currentScrollTop;
+                }
                 
                 // Ultra-aggressive layout enforcement
                 ultraAggressiveLayoutEnforcement();
@@ -15064,10 +15073,19 @@
                 // Capture current expansion state before re-rendering
                 const currentExpansionState = getExpansionState();
                 
+                // Capture current scroll position before re-rendering
+                const deckCardsEditor = document.querySelector('.deck-cards-editor');
+                const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
+                
                 // Increase quantity by 1
                 deckEditorCards[index].quantity += 1;
                 
                 await displayDeckCardsForEditing();
+                
+                // Restore scroll position after re-rendering
+                if (deckCardsEditor) {
+                    deckCardsEditor.scrollTop = currentScrollTop;
+                }
                 
                 // Ultra-aggressive layout enforcement
                 ultraAggressiveLayoutEnforcement();

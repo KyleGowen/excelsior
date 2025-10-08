@@ -199,20 +199,28 @@ describe('Deck Editor Scroll Behavior', () => {
       
       // Mock the removeOneCardFromEditor function behavior (preserving scroll position)
       function removeOneCardFromEditor() {
-        // Simulate card removal logic without changing scroll
-        setTimeout(() => {
-          // Don't change scroll position when adding/removing cards
-          // The user should stay where they were
-        }, 50);
+        // Capture current scroll position before re-rendering
+        const currentScrollTop = deckCardsEditor.scrollTop;
+        
+        // Simulate card removal logic
+        // ... (card removal logic would go here)
+        
+        // Simulate displayDeckCardsForEditing() rebuilding the DOM
+        // This would normally reset scroll position, but we restore it
+        deckCardsEditor.scrollTop = currentScrollTop;
       }
       
       // Mock the addOneCardToEditor function behavior (preserving scroll position)
       function addOneCardToEditor() {
-        // Simulate card addition logic without changing scroll
-        setTimeout(() => {
-          // Don't change scroll position when adding/removing cards
-          // The user should stay where they were
-        }, 50);
+        // Capture current scroll position before re-rendering
+        const currentScrollTop = deckCardsEditor.scrollTop;
+        
+        // Simulate card addition logic
+        // ... (card addition logic would go here)
+        
+        // Simulate displayDeckCardsForEditing() rebuilding the DOM
+        // This would normally reset scroll position, but we restore it
+        deckCardsEditor.scrollTop = currentScrollTop;
       }
       
       // Call both functions
