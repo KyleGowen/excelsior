@@ -17108,14 +17108,22 @@
                 const cardInfo = cardElement.querySelector('.deck-card-editor-name');
                 if (!cardInfo) return;
                 
-                // Find the card ID from the deckEditorCards array
-                if (deckEditorCards[index] && deckEditorCards[index].type === 'character') {
-                    const cardId = deckEditorCards[index].cardId;
+                // Find the card ID from the deckEditorCards array by matching the card name
+                const cardName = cardInfo.textContent.trim();
+                const matchingCard = deckEditorCards.find(card => {
+                    if (card.type !== 'character') return false;
+                    const character = availableCardsMap.get(card.cardId);
+                    return character && character.name === cardName;
+                });
+                
+                if (matchingCard) {
+                    const cardId = matchingCard.cardId;
+                    const cardIndex = deckEditorCards.indexOf(matchingCard);
                     const reserveContainer = cardElement.querySelector('.deck-card-editor-reserve');
                     
                     if (reserveContainer) {
                         // Get the new button HTML
-                        const newButtonHTML = getReserveCharacterButton(cardId, index);
+                        const newButtonHTML = getReserveCharacterButton(cardId, cardIndex);
                         
                         // Only update if the content has actually changed to avoid unnecessary DOM manipulation
                         if (reserveContainer.innerHTML !== newButtonHTML) {
@@ -17128,11 +17136,22 @@
             // Also update reserve buttons in list view - only in Characters section
             const charactersListItems = document.querySelectorAll('#deck-list-items-character .deck-list-item');
             charactersListItems.forEach((listItem, index) => {
-                // Find the corresponding character card in deckEditorCards
-                const characterCards = deckEditorCards.filter(card => card.type === 'character');
-                if (characterCards[index]) {
-                    const cardId = characterCards[index].cardId;
-                    const originalIndex = deckEditorCards.indexOf(characterCards[index]);
+                // Find the card name from the list item
+                const cardNameElement = listItem.querySelector('.deck-list-item-name');
+                if (!cardNameElement) return;
+                
+                const cardName = cardNameElement.textContent.trim();
+                
+                // Find the corresponding character card in deckEditorCards by name
+                const matchingCard = deckEditorCards.find(card => {
+                    if (card.type !== 'character') return false;
+                    const character = availableCardsMap.get(card.cardId);
+                    return character && character.name === cardName;
+                });
+                
+                if (matchingCard) {
+                    const cardId = matchingCard.cardId;
+                    const originalIndex = deckEditorCards.indexOf(matchingCard);
                     const actionsContainer = listItem.querySelector('.deck-list-item-actions');
                     
                     if (actionsContainer) {
