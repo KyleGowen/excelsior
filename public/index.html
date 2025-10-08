@@ -10620,15 +10620,15 @@
                     // Apply reserve character adjustments
                     if (card.cardId === reserveCharacterId) {
                         // Carson of Venus: 18 -> 19 when reserve
-                        if (card.cardId === '61f13415-f7a0-4218-aa21-0dcf21b4af8d') {
+                        if (character && character.name === 'Carson of Venus') {
                             threatLevel = 19;
                         }
                         // Morgan le Fay: 19 -> 20 when reserve
-                        else if (card.cardId === 'f7cb4b37-73f3-4718-b8ad-ee6adfc2e5f1') {
+                        else if (character && character.name === 'Morgan le Fay') {
                             threatLevel = 20;
                         }
                         // Victory Harben: 18 -> 20 when reserve
-                        else if (card.cardId === '050f4873-2fa8-422c-ba32-eab3500cbdc0') {
+                        else if (character && character.name === 'Victory Harben') {
                             threatLevel = 20;
                         }
                     }
