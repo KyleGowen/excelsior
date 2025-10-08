@@ -402,8 +402,9 @@ jobs:
       run: sleep 30
       
     - name: Verify deployment
+      id: verify-deployment
       run: |
-        aws ssm send-command \
+        COMMAND_ID=$(aws ssm send-command \
           --instance-ids ${{ env.EC2_INSTANCE_ID }} \
           --document-name "AWS-RunShellScript" \
           --parameters 'commands=[
@@ -415,10 +416,21 @@ jobs:
             "grep -q \"DEBUG: calculateTotalThreat called\" /app/public/index.html && echo \"✅ Debug logging found in production\" || echo \"❌ Debug logging NOT found in production\"",
             "grep -q \"Victory Harben.*20\" /app/public/index.html && echo \"✅ Victory Harben fix found in production\" || echo \"❌ Victory Harben fix NOT found in production\""
           ]' \
-          --output text --query 'Command.CommandId'
+          --output text --query 'Command.CommandId')
+        echo "COMMAND_ID=$COMMAND_ID" >> $GITHUB_OUTPUT
+        echo "🔍 Verification command sent with ID: $COMMAND_ID"
           
     - name: Wait for verification
-      run: sleep 10
+      run: sleep 15
+      
+    - name: Get verification results
+      run: |
+        echo "🔍 Retrieving verification results..."
+        aws ssm get-command-invocation \
+          --command-id ${{ steps.verify-deployment.outputs.COMMAND_ID }} \
+          --instance-id ${{ env.EC2_INSTANCE_ID }} \
+          --query 'StandardOutputContent' \
+          --output text
       
     - name: Deployment success notification
       run: |
