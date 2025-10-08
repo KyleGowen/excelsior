@@ -190,7 +190,7 @@ describe('Deck Editor Scroll Behavior', () => {
       }, 60);
     });
 
-    it('should preserve scroll position when adding/removing cards with -1/+1 buttons', () => {
+    it('should preserve scroll position when adding/removing cards with -1/+1 buttons', (done) => {
       const deckCardsEditor = document.querySelector('.deck-cards-editor') as HTMLElement;
       
       // Set scroll position to middle
@@ -206,8 +206,10 @@ describe('Deck Editor Scroll Behavior', () => {
         // ... (card removal logic would go here)
         
         // Simulate displayDeckCardsForEditing() rebuilding the DOM
-        // This would normally reset scroll position, but we restore it
-        deckCardsEditor.scrollTop = currentScrollTop;
+        // This would normally reset scroll position, but we restore it with setTimeout
+        setTimeout(() => {
+          deckCardsEditor.scrollTop = currentScrollTop;
+        }, 10);
       }
       
       // Mock the addOneCardToEditor function behavior (preserving scroll position)
@@ -219,16 +221,21 @@ describe('Deck Editor Scroll Behavior', () => {
         // ... (card addition logic would go here)
         
         // Simulate displayDeckCardsForEditing() rebuilding the DOM
-        // This would normally reset scroll position, but we restore it
-        deckCardsEditor.scrollTop = currentScrollTop;
+        // This would normally reset scroll position, but we restore it with setTimeout
+        setTimeout(() => {
+          deckCardsEditor.scrollTop = currentScrollTop;
+        }, 10);
       }
       
       // Call both functions
       removeOneCardFromEditor();
       addOneCardToEditor();
       
-      // Scroll position should remain unchanged
-      expect(deckCardsEditor.scrollTop).toBe(initialScrollTop);
+      // Wait for setTimeout to complete and check scroll position
+      setTimeout(() => {
+        expect(deckCardsEditor.scrollTop).toBe(initialScrollTop);
+        done();
+      }, 20);
     });
   });
 

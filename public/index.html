@@ -14951,8 +14951,17 @@
             // Capture current expansion state before re-rendering
             const currentExpansionState = getExpansionState();
             
+            // Capture current scroll position before re-rendering
+            const deckCardsEditor = document.querySelector('.deck-cards-editor');
+            const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
+            
             deckEditorCards.splice(index, 1);
             await displayDeckCardsForEditing();
+            
+            // Restore scroll position after re-rendering
+            if (deckCardsEditor) {
+                deckCardsEditor.scrollTop = currentScrollTop;
+            }
             
             // Ultra-aggressive layout enforcement
             ultraAggressiveLayoutEnforcement();
@@ -15018,10 +15027,12 @@
                 
                 await displayDeckCardsForEditing();
                 
-                // Restore scroll position after re-rendering
-                if (deckCardsEditor) {
-                    deckCardsEditor.scrollTop = currentScrollTop;
-                }
+                // Restore scroll position after re-rendering with a small delay to ensure DOM is fully updated
+                setTimeout(() => {
+                    if (deckCardsEditor) {
+                        deckCardsEditor.scrollTop = currentScrollTop;
+                    }
+                }, 10);
                 
                 // Ultra-aggressive layout enforcement
                 ultraAggressiveLayoutEnforcement();
@@ -15082,10 +15093,12 @@
                 
                 await displayDeckCardsForEditing();
                 
-                // Restore scroll position after re-rendering
-                if (deckCardsEditor) {
-                    deckCardsEditor.scrollTop = currentScrollTop;
-                }
+                // Restore scroll position after re-rendering with a small delay to ensure DOM is fully updated
+                setTimeout(() => {
+                    if (deckCardsEditor) {
+                        deckCardsEditor.scrollTop = currentScrollTop;
+                    }
+                }, 10);
                 
                 // Ultra-aggressive layout enforcement
                 ultraAggressiveLayoutEnforcement();
@@ -15143,10 +15156,19 @@
             // Capture current expansion state before re-rendering
             const currentExpansionState = getExpansionState();
             
+            // Capture current scroll position before re-rendering
+            const deckCardsEditor = document.querySelector('.deck-cards-editor');
+            const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
+            
             // Remove all mission cards
             deckEditorCards = deckEditorCards.filter(card => card.type !== 'mission');
             
             await displayDeckCardsForEditing();
+            
+            // Restore scroll position after re-rendering
+            if (deckCardsEditor) {
+                deckCardsEditor.scrollTop = currentScrollTop;
+            }
             
             // Restore the expansion state after re-rendering
             applyUIPreferences({ expansionState: currentExpansionState });
@@ -15194,10 +15216,19 @@
             // Capture current expansion state before re-rendering
             const currentExpansionState = getExpansionState();
             
+            // Capture current scroll position before re-rendering
+            const deckCardsEditor = document.querySelector('.deck-cards-editor');
+            const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
+            
             // Remove all cards of this type
             deckEditorCards = deckEditorCards.filter(card => card.type !== cardType);
             
             await displayDeckCardsForEditing();
+            
+            // Restore scroll position after re-rendering
+            if (deckCardsEditor) {
+                deckCardsEditor.scrollTop = currentScrollTop;
+            }
             
             // Restore the expansion state after re-rendering
             applyUIPreferences({ expansionState: currentExpansionState });
