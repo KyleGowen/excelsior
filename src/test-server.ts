@@ -374,7 +374,8 @@ app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
         is_limited: deckData.is_limited,
         reserve_character: deckData.reserve_character
       },
-      cards: deckData.cards || []
+      cards: deckData.cards || [],
+      threat: deckData.threat
     };
     
     res.json({ success: true, data: transformedDeck });

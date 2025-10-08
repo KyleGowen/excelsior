@@ -53,6 +53,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
         reserve_character: deck.reserve_character,
+        threat: deck.threat,
         created_at: deck.created_at,
         updated_at: deck.updated_at
       };
@@ -129,6 +130,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
         reserve_character: deck.reserve_character,
+        threat: deck.threat,
         created_at: deck.created_at,
         updated_at: deck.updated_at,
         cards: cards
@@ -308,6 +310,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
         reserve_character: deck.reserve_character,
+        threat: deck.threat,
         created_at: deck.created_at,
         updated_at: deck.updated_at,
         cards: cards
@@ -335,6 +338,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
         reserve_character: deck.reserve_character,
+        threat: deck.threat,
         created_at: deck.created_at,
         updated_at: deck.updated_at
       }));

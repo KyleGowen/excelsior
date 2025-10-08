@@ -10535,6 +10535,8 @@
         function calculateTotalThreat(deckCards) {
             let totalThreat = 0;
             
+            // Get the current reserve character ID
+            const reserveCharacterId = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
             
             // Calculate threat from character cards
             const characterCards = deckCards.filter(card => card.type === 'character');
@@ -10542,7 +10544,25 @@
             characterCards.forEach(card => {
                 const character = availableCardsMap.get(card.cardId);
                 if (character && character.threat_level) {
-                    totalThreat += character.threat_level * card.quantity;
+                    let threatLevel = character.threat_level;
+                    
+                    // Apply reserve character adjustments
+                    if (card.cardId === reserveCharacterId) {
+                        // Carson of Venus: 18 -> 19 when reserve
+                        if (card.cardId === '61f13415-f7a0-4218-aa21-0dcf21b4af8d') {
+                            threatLevel = 19;
+                        }
+                        // Morgan le Fay: 19 -> 20 when reserve
+                        else if (card.cardId === 'f7cb4b37-73f3-4718-b8ad-ee6adfc2e5f1') {
+                            threatLevel = 20;
+                        }
+                        // Victory Harben: 18 -> 20 when reserve
+                        else if (card.cardId === '050f4873-2fa8-422c-ba32-eab3500cbdc0') {
+                            threatLevel = 20;
+                        }
+                    }
+                    
+                    totalThreat += threatLevel * card.quantity;
                 }
             });
             
@@ -10599,61 +10619,22 @@
             const characterCards = deckCards.filter(card => card.type === 'character');
             const locationCards = deckCards.filter(card => card.type === 'location');
             let maxEnergy = 0, maxCombat = 0, maxBruteForce = 0, maxIntelligence = 0;
-            let totalThreat = 0;
             
+            // Calculate character stats
             if (characterCards.length > 0) {
-                try {
-                    // Fetch character data from the API
-                    const response = await fetch('/api/characters');
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        const characterMap = {};
-                        data.data.forEach(char => {
-                            characterMap[char.id] = char;
-                        });
-                        
-                        characterCards.forEach(card => {
-                            // Direct lookup using UUID
-                            const characterData = availableCardsMap.get(card.cardId);
-                            if (characterData) {
-                                if (characterData.energy > maxEnergy) maxEnergy = characterData.energy;
-                                if (characterData.combat > maxCombat) maxCombat = characterData.combat;
-                                if (characterData.brute_force > maxBruteForce) maxBruteForce = characterData.brute_force;
-                                if (characterData.intelligence > maxIntelligence) maxIntelligence = characterData.intelligence;
-                                if (characterData.threat_level) totalThreat += characterData.threat_level;
-                            }
-                        });
+                characterCards.forEach(card => {
+                    const characterData = availableCardsMap.get(card.cardId);
+                    if (characterData) {
+                        if (characterData.energy > maxEnergy) maxEnergy = characterData.energy;
+                        if (characterData.combat > maxCombat) maxCombat = characterData.combat;
+                        if (characterData.brute_force > maxBruteForce) maxBruteForce = characterData.brute_force;
+                        if (characterData.intelligence > maxIntelligence) maxIntelligence = characterData.intelligence;
                     }
-                } catch (error) {
-                    console.error('Error fetching character data for summary:', error);
-                }
+                });
             }
             
-            // Add location threat levels
-            if (locationCards.length > 0) {
-                try {
-                    // Fetch location data from the API
-                    const response = await fetch('/api/locations');
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        const locationMap = {};
-                        data.data.forEach(loc => {
-                            locationMap[loc.id] = loc;
-                        });
-                        
-                        locationCards.forEach(card => {
-                            const locationData = locationMap[card.cardId];
-                            if (locationData && locationData.threat_level) {
-                                totalThreat += locationData.threat_level;
-                            }
-                        });
-                    }
-                } catch (error) {
-                    console.error('Error fetching location data for summary:', error);
-                }
-            }
+            // Use the shared calculateTotalThreat function for consistent threat calculation
+            const totalThreat = calculateTotalThreat(deckCards);
             
             document.getElementById('deckMaxEnergy').textContent = maxEnergy;
             document.getElementById('deckMaxCombat').textContent = maxCombat;
@@ -17115,6 +17096,9 @@
             
             // Re-render the entire deck to ensure all buttons are updated correctly
             await displayDeckCardsForEditing();
+            
+            // Update deck summary to reflect new threat calculation
+            await updateDeckSummary(currentDeckData.cards || []);
         }
 
         async function deselectReserveCharacter(index) {
@@ -17138,6 +17122,9 @@
             
             // Re-render the entire deck to ensure all buttons are updated correctly
             await displayDeckCardsForEditing();
+            
+            // Update deck summary to reflect new threat calculation
+            await updateDeckSummary(currentDeckData.cards || []);
         }
 
         async function saveDeckChanges() {
