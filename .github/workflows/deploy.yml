@@ -235,6 +235,27 @@ jobs:
           echo "❌ auth-service.js missing"
         fi
         
+        echo "Testing index.html file..."
+        if docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG test -f /app/public/index.html; then
+          echo "✅ index.html found"
+        else
+          echo "❌ index.html missing"
+        fi
+        
+        echo "Checking for debug logging in index.html..."
+        if docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG grep -q "DEBUG: calculateTotalThreat called" /app/public/index.html; then
+          echo "✅ Debug logging found in index.html"
+        else
+          echo "❌ Debug logging NOT found in index.html - deployment may be using old code"
+        fi
+        
+        echo "Checking for Victory Harben fix in index.html..."
+        if docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG grep -q "Victory Harben.*20" /app/public/index.html; then
+          echo "✅ Victory Harben fix found in index.html"
+        else
+          echo "❌ Victory Harben fix NOT found in index.html"
+        fi
+        
         echo "Listing public directory..."
         if docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ls -la /app/public/; then
           echo "✅ public directory listing successful"
@@ -389,7 +410,10 @@ jobs:
             "docker ps",
             "docker logs overpower-app --tail 20",
             "ls -la /app/public/js/",
-            "test -f /app/public/js/auth-service.js && echo \"✅ auth-service.js found\" || echo \"❌ auth-service.js missing\""
+            "test -f /app/public/js/auth-service.js && echo \"✅ auth-service.js found\" || echo \"❌ auth-service.js missing\"",
+            "test -f /app/public/index.html && echo \"✅ index.html found\" || echo \"❌ index.html missing\"",
+            "grep -q \"DEBUG: calculateTotalThreat called\" /app/public/index.html && echo \"✅ Debug logging found in production\" || echo \"❌ Debug logging NOT found in production\"",
+            "grep -q \"Victory Harben.*20\" /app/public/index.html && echo \"✅ Victory Harben fix found in production\" || echo \"❌ Victory Harben fix NOT found in production\""
           ]' \
           --output text --query 'Command.CommandId'
           
