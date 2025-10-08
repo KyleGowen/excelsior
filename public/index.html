@@ -9674,12 +9674,14 @@
             } else {
                 // Switch to list view
                 deckCardsEditor.classList.add('list-view');
-                // Force list view to always be 2 columns
-                deckCardsEditor.classList.add('two-column');
+                // Only force 2-column layout in edit mode, allow 3-column in read-only mode
+                if (!isReadOnlyMode) {
+                    deckCardsEditor.classList.add('two-column');
+                    // Ensure 2-column layout is applied
+                    createTwoColumnLayout();
+                }
                 listViewBtn.textContent = 'Tile View';
                 renderDeckCardsListView(); // Render in list view
-                // Ensure 2-column layout is applied
-                createTwoColumnLayout();
                 
                 // Set up layout observer for list view
                 setupLayoutObserver();
@@ -9977,6 +9979,11 @@
                 return;
             }
             
+            // Don't enforce horizontal layout in read-only mode (allow 3-column grid)
+            if (isReadOnlyMode) {
+                return;
+            }
+            
             const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
             listItems.forEach(item => {
                 // Force all layout properties with !important
@@ -10021,6 +10028,11 @@
         function ultraAggressiveLayoutEnforcement() {
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             if (!deckCardsEditor || !deckCardsEditor.classList.contains('list-view')) {
+                return;
+            }
+            
+            // Don't enforce 2-column layout in read-only mode (allow 3-column)
+            if (isReadOnlyMode) {
                 return;
             }
             
@@ -10078,7 +10090,7 @@
                     }
                 });
                 
-                if (shouldEnforce && deckCardsEditor.classList.contains('list-view')) {
+                if (shouldEnforce && deckCardsEditor.classList.contains('list-view') && !isReadOnlyMode) {
                     setTimeout(() => {
                         enforceListViewHorizontalLayout();
                     }, 10);
@@ -13105,9 +13117,11 @@
             const deckPercentage = (deckWidth / totalWidth) * 100;
             
             if (deckCardsEditor.classList.contains('list-view')) {
-                // List view: always 2 columns, never responsive
-                deckCardsEditor.classList.add('two-column');
-                createTwoColumnLayout();
+                // List view: 2 columns in edit mode, 3 columns in read-only mode
+                if (!isReadOnlyMode) {
+                    deckCardsEditor.classList.add('two-column');
+                    createTwoColumnLayout();
+                }
             } else {
                 // Tile view: normal responsive behavior
                 if (deckPercentage >= 33) {
@@ -14111,8 +14125,8 @@
                 const deckWidth = deckPane.offsetWidth;
                 const deckPercentage = (deckWidth / layoutWidth) * 100;
                 
-                if (deckPercentage >= 33) {
-                    // Only create two-column layout if it doesn't already exist
+                if (deckPercentage >= 33 && !isReadOnlyMode) {
+                    // Only create two-column layout if it doesn't already exist and not in read-only mode
                     const deckCardsEditor = document.querySelector('.deck-cards-editor');
                     if (!deckCardsEditor.querySelector('.deck-column')) {
                         createTwoColumnLayout();
@@ -17050,10 +17064,12 @@
             
             await displayDeckCardsForEditing();
             
-            // Enforce horizontal layout in list view after adding card
-            setTimeout(() => {
-                enforceListViewHorizontalLayout();
-            }, 10);
+            // Enforce horizontal layout in list view after adding card (only in edit mode)
+            if (!isReadOnlyMode) {
+                setTimeout(() => {
+                    enforceListViewHorizontalLayout();
+                }, 10);
+            }
             
             // Restore the expansion state after re-rendering
             applyUIPreferences({ expansionState: currentExpansionState });
