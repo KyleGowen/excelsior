@@ -2605,6 +2605,13 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
+        /* Reserve button styling for list view */
+        .deck-list-item .reserve-btn {
+            font-size: 10px;
+            padding: 2px 6px;
+            margin-right: 8px;
+        }
+
         /* Card Search Section */
         .card-search-section {
             display: flex;
@@ -9796,7 +9803,11 @@
                                                 <button class="deck-list-item-quantity-btn" onclick="addOneCardToEditor(${deckEditorCards.indexOf(card)})">+1</button>
                                             </div>
                                         ` : ''}
-                                        ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `
+                                        ${type === 'character' ? `
+                                            ${getReserveCharacterButton(card.cardId, deckEditorCards.indexOf(card))}
+                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
+                                        ` : ''}
+                                        ${(type === 'location' || type === 'mission') && type !== 'character' ? `
                                             <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
                                         ` : ''}
                                     </div>
@@ -9854,9 +9865,13 @@
                                             <button class="deck-list-item-quantity-btn" onclick="addOneCardToEditor(${deckEditorCards.indexOf(card)})">+1</button>
                                         </div>
                                     ` : ''}
-                                    ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `
-                                        <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
-                                    ` : ''}
+                                        ${type === 'character' ? `
+                                            ${getReserveCharacterButton(card.cardId, deckEditorCards.indexOf(card))}
+                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
+                                        ` : ''}
+                                        ${(type === 'location' || type === 'mission') && type !== 'character' ? `
+                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
+                                        ` : ''}
                                 </div>
                             </div>
                         `;
@@ -17109,6 +17124,35 @@
                     }
                 }
             });
+
+            // Also update reserve buttons in list view - only in Characters section
+            const charactersListItems = document.querySelectorAll('#deck-list-items-character .deck-list-item');
+            charactersListItems.forEach((listItem, index) => {
+                // Find the corresponding character card in deckEditorCards
+                const characterCards = deckEditorCards.filter(card => card.type === 'character');
+                if (characterCards[index]) {
+                    const cardId = characterCards[index].cardId;
+                    const originalIndex = deckEditorCards.indexOf(characterCards[index]);
+                    const actionsContainer = listItem.querySelector('.deck-list-item-actions');
+                    
+                    if (actionsContainer) {
+                        // Find existing reserve button and remove it
+                        const existingReserveBtn = actionsContainer.querySelector('.reserve-btn');
+                        if (existingReserveBtn) {
+                            existingReserveBtn.remove();
+                        }
+                        
+                        // Get the new button HTML
+                        const newButtonHTML = getReserveCharacterButton(cardId, originalIndex);
+                        
+                        // Insert the new button before the remove button
+                        const removeBtn = actionsContainer.querySelector('.deck-list-item-remove');
+                        if (removeBtn && newButtonHTML) {
+                            removeBtn.insertAdjacentHTML('beforebegin', newButtonHTML);
+                        }
+                    }
+                }
+            });
         }
 
 
@@ -17131,8 +17175,8 @@
             currentDeckData.metadata.reserve_character = cardId;
             showNotification('Reserve character selected! (Click Save to persist changes)', 'success');
             
-            // Re-render the entire deck to ensure all buttons are updated correctly
-            await displayDeckCardsForEditing();
+            // Update reserve buttons without re-rendering the entire deck to preserve layout
+            updateReserveButtons();
             
             // Update deck summary to reflect new threat calculation
             await updateDeckSummary(currentDeckData.cards || []);
@@ -17157,8 +17201,8 @@
             currentDeckData.metadata.reserve_character = null;
             showNotification('Reserve character deselected! (Click Save to persist changes)', 'success');
             
-            // Re-render the entire deck to ensure all buttons are updated correctly
-            await displayDeckCardsForEditing();
+            // Update reserve buttons without re-rendering the entire deck to preserve layout
+            updateReserveButtons();
             
             // Update deck summary to reflect new threat calculation
             await updateDeckSummary(currentDeckData.cards || []);
