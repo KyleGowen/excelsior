@@ -769,7 +769,7 @@ app.get('/users/:userId/decks/:deckId', (req: any, res) => {
 });
 
 // Add deck-editor route for integration tests
-app.get('/deck-editor/:deckId', authenticateUser, (req, res) => {
+app.get('/deck-editor/:deckId', authenticateUser, (req: any, res) => {
   const { deckId } = req.params;
   
   // Check if this is a read-only request (no authentication or guest user)
