@@ -197,7 +197,7 @@ describe('Role-Based Restrictions Integration Tests', () => {
       const loginResponse = await request(app)
         .post('/api/auth/login')
         .send({
-          username: 'test-any-username-user-role',
+          username: uniqueUsername,
           password: 'testpassword'
         });
 
