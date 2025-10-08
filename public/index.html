@@ -10620,32 +10620,40 @@
             
             // Get the current reserve character ID
             const reserveCharacterId = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
+            console.log('🔍 DEBUG: calculateTotalThreat called with reserveCharacterId:', reserveCharacterId);
             
             // Calculate threat from character cards
             const characterCards = deckCards.filter(card => card.type === 'character');
+            console.log('🔍 DEBUG: Character cards found:', characterCards.length);
             
             characterCards.forEach(card => {
                 const character = availableCardsMap.get(card.cardId);
                 if (character && character.threat_level) {
                     let threatLevel = character.threat_level;
                     
+                    console.log(`🔍 DEBUG: Processing ${character.name} (${card.cardId}): base threat ${threatLevel}, is reserve: ${card.cardId === reserveCharacterId}`);
+                    
                     // Apply reserve character adjustments
                     if (card.cardId === reserveCharacterId) {
                         // Carson of Venus: 18 -> 19 when reserve
                         if (character && character.name === 'Carson of Venus') {
                             threatLevel = 19;
+                            console.log('🔍 DEBUG: Applied Carson of Venus reserve adjustment: 18 -> 19');
                         }
                         // Morgan le Fay: 19 -> 20 when reserve
                         else if (character && character.name === 'Morgan le Fay') {
                             threatLevel = 20;
+                            console.log('🔍 DEBUG: Applied Morgan le Fay reserve adjustment: 19 -> 20');
                         }
                         // Victory Harben: 18 -> 20 when reserve
                         else if (character && character.name === 'Victory Harben') {
                             threatLevel = 20;
+                            console.log('🔍 DEBUG: Applied Victory Harben reserve adjustment: 18 -> 20');
                         }
                     }
                     
                     totalThreat += threatLevel * card.quantity;
+                    console.log(`🔍 DEBUG: Added ${threatLevel * card.quantity} threat from ${character.name}, total now: ${totalThreat}`);
                 }
             });
             
@@ -10659,6 +10667,7 @@
                 }
             });
             
+            console.log('🔍 DEBUG: Final calculated threat:', totalThreat);
             return totalThreat;
         }
         // Function to update deck summary with stats and validation
