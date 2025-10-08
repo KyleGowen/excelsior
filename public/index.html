@@ -8121,8 +8121,38 @@
                 checkbox.addEventListener('change', applyPowerCardFilters);
             });
 
-            document.getElementById('power-value-min').addEventListener('input', applyPowerCardFilters);
-            document.getElementById('power-value-max').addEventListener('input', applyPowerCardFilters);
+            // Add event listeners for value filter inputs with proper event handling
+            const minValueInput = document.getElementById('power-value-min');
+            const maxValueInput = document.getElementById('power-value-max');
+            
+            minValueInput.addEventListener('input', applyPowerCardFilters);
+            maxValueInput.addEventListener('input', applyPowerCardFilters);
+            
+            // Prevent form submission and unwanted navigation
+            minValueInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyPowerCardFilters();
+                }
+            });
+            
+            maxValueInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyPowerCardFilters();
+                }
+            });
+            
+            // Prevent click events from bubbling up and causing navigation
+            minValueInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            maxValueInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
         }
 
         async function applyPowerCardFilters() {
@@ -10736,6 +10766,7 @@
 
         // Toggle category collapse/expand
         function toggleCategory(headerElement) {
+            console.log('🔍 DEBUG: toggleCategory called with:', headerElement);
             const category = headerElement.closest('.card-category');
             const content = category.querySelector('.card-category-content');
             const icon = headerElement.querySelector('.collapse-icon');
@@ -11168,22 +11199,27 @@
 
         // Toggle power cards character filter
         async function togglePowerCardsCharacterFilter() {
+            console.log('🔍 DEBUG: togglePowerCardsCharacterFilter called');
             const filterCheckbox = document.getElementById('powerCardsCharacterFilter');
             if (!filterCheckbox) {
                 console.error('Power cards character filter checkbox not found');
                 return;
             }
+            console.log('🔍 DEBUG: filterCheckbox found:', filterCheckbox);
             
             const isChecked = filterCheckbox.checked;
+            console.log('🔍 DEBUG: isChecked:', isChecked);
             
             // Find the power cards category
             const allCategories = document.querySelectorAll('.card-category');
+            console.log('🔍 DEBUG: allCategories found:', allCategories.length);
             let powerCardsCategory = null;
             
             for (const category of allCategories) {
                 const header = category.querySelector('.card-category-header span');
                 if (header && header.textContent.includes('Power Cards')) {
                     powerCardsCategory = category;
+                    console.log('🔍 DEBUG: powerCardsCategory found:', powerCardsCategory);
                     break;
                 }
             }
@@ -13155,6 +13191,7 @@
                 
                 // Check for UI preferences first, then localStorage, then default to 65%
                 let percentage = 65; // Default to 65%
+                let savedPosition = null; // Declare savedPosition in the proper scope
                 
                 // Check if we have UI preferences with divider position
                 const restorePrefs = currentDeckData
@@ -13164,7 +13201,7 @@
                     percentage = restorePrefs.dividerPosition;
                 } else {
                     // Fall back to localStorage
-                    const savedPosition = localStorage.getItem(`slider_position_${currentDeckId}`);
+                    savedPosition = localStorage.getItem(`slider_position_${currentDeckId}`);
                     percentage = savedPosition ? parseFloat(savedPosition) : 65;
                 }
                 const layout = document.querySelector('.deck-editor-layout');

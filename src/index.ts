@@ -708,16 +708,18 @@ app.get('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res)
 
 app.put('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res) => {
   try {
-    // Check if user is guest - guests cannot modify decks
-    if (req.user.role === 'GUEST') {
-      return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
-    }
-    
     const { id } = req.params;
     const preferences = req.body;
     
-    // Check if user owns this deck
-    if (!await deckRepository.userOwnsDeck(id, req.user.id)) {
+    // Check if deck exists
+    const deck = await deckRepository.getDeckById(id);
+    if (!deck) {
+      return res.status(404).json({ success: false, error: 'Deck not found' });
+    }
+    
+    // Allow guests to save UI preferences (read-only access)
+    // Only check ownership for non-guests
+    if (req.user.role !== 'GUEST' && !await deckRepository.userOwnsDeck(id, req.user.id)) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     

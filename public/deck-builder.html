@@ -5596,8 +5596,38 @@
                 checkbox.addEventListener('change', applyPowerCardFilters);
             });
 
-            document.getElementById('power-value-min').addEventListener('input', applyPowerCardFilters);
-            document.getElementById('power-value-max').addEventListener('input', applyPowerCardFilters);
+            // Add event listeners for value filter inputs with proper event handling
+            const minValueInput = document.getElementById('power-value-min');
+            const maxValueInput = document.getElementById('power-value-max');
+            
+            minValueInput.addEventListener('input', applyPowerCardFilters);
+            maxValueInput.addEventListener('input', applyPowerCardFilters);
+            
+            // Prevent form submission and unwanted navigation
+            minValueInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyPowerCardFilters();
+                }
+            });
+            
+            maxValueInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyPowerCardFilters();
+                }
+            });
+            
+            // Prevent click events from bubbling up and causing navigation
+            minValueInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            maxValueInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
         }
         async function applyPowerCardFilters() {
             try {
@@ -9400,6 +9430,28 @@
             }
         }
         
+        // Helper function to map database image paths to actual file paths
+        function mapImagePathToActualFile(imagePath) {
+            if (!imagePath) return imagePath;
+            
+            // For all card types, the database now contains the full directory structure
+            // like "characters/angry_mob_industrial_age.webp", "missions/the-warlord-of-mars/a_fighting_man_of_mars.webp", etc.
+            // So we need to return the path after the first directory to preserve the directory structure
+            
+            // Check for common card type prefixes
+            const prefixes = ['characters/', 'missions/', 'specials/', 'locations/', 'events/', 'aspects/', 'power-cards/', 'teamwork-universe/', 'ally-universe/', 'training-universe/', 'basic-universe/', 'advanced-universe/'];
+            
+            for (const prefix of prefixes) {
+                if (imagePath.startsWith(prefix)) {
+                    return imagePath.substring(prefix.length);
+                }
+            }
+            
+            // Fallback: if no prefix matches, return the filename part (after the last slash)
+            const filename = imagePath.split('/').pop();
+            return filename;
+        }
+
         // Helper function to get card image path
         function getCardImagePath(card, cardType, selectedAlternateImage = null) {
             try {
@@ -9411,7 +9463,8 @@
                     
                     // Characters use the image field from the database
                     if (card.image) {
-                        return `src/resources/cards/images/characters/${card.image}`;
+                        const actualImagePath = mapImagePathToActualFile(card.image);
+                        return `src/resources/cards/images/characters/${actualImagePath}`;
                     }
                     // Fallback: try to construct from name
                     const characterName = card.name || card.card_name || '';
