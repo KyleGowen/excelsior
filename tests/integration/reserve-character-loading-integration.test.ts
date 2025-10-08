@@ -212,8 +212,8 @@ describe('Reserve Character Loading Integration Tests', () => {
                     reserve_character: 'invalid-character-id'
                 });
 
-            // Should fail with 500 due to invalid UUID format
-            expect(response.status).toBe(500);
+            // Should fail with 400 due to invalid UUID format
+            expect(response.status).toBe(400);
         });
     });
 

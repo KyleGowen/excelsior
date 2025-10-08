@@ -154,9 +154,10 @@ describe('Role-Based Restrictions Integration Tests', () => {
 
     it('should allow user with any username but USER role to modify decks', async () => {
       // Create a user with random username but USER role
+      const uniqueUsername = `test-any-username-user-role-${Date.now()}`;
       const testUser = await userRepository.createUser(
-        'test-any-username-user-role',
-        'test-any-username-user@example.com',
+        uniqueUsername,
+        `test-any-username-user-${Date.now()}@example.com`,
         'testpassword',
         'USER'
       );
