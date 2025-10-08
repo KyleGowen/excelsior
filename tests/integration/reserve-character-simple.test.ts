@@ -331,7 +331,7 @@ describe('Reserve Character Simple Integration Tests', () => {
                 .expect(200);
 
             expect(switchResponse.body.success).toBe(true);
-            expect(switchResponse.body.data.reserve_character).toBe(testCharacterIds[1]);
+            expect(switchResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[1]);
         });
     });
 });

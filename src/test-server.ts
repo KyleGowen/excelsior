@@ -512,25 +512,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }
     
-    // Transform deck data to match frontend expectations (same as GET endpoint)
-    const transformedDeck = {
-      metadata: {
-        id: deck.id,
-        name: deck.name,
-        description: deck.description,
-        created: deck.created_at,
-        lastModified: deck.updated_at,
-        cardCount: deck.cards?.length || 0,
-        userId: deck.user_id,
-        uiPreferences: deck.ui_preferences,
-        isOwner: true, // User owns the deck since they can update it
-        is_limited: deck.is_limited,
-        reserve_character: deck.reserve_character
-      },
-      cards: deck.cards || []
-    };
-    
-    res.json({ success: true, data: transformedDeck });
+    res.json({ success: true, data: deck });
   } catch (error) {
     console.error('Error updating deck:', error);
     res.status(500).json({ success: false, error: 'Failed to update deck' });

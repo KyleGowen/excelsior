@@ -203,7 +203,7 @@ describe('Reserve Character Integration Tests', () => {
                 .get(`/api/decks/${testDeck.id}`)
                 .expect(200);
 
-            expect(getResponse.body.data.reserve_character).toBeNull();
+            expect(getResponse.body.data.metadata.reserve_character).toBeNull();
         });
     });
 
@@ -360,7 +360,7 @@ describe('Reserve Character Integration Tests', () => {
                 .set('Cookie', `sessionId=${testUser.sessionId}`)
                 .expect(200);
 
-            expect(getResponse.body.data.reserve_character).toBeNull();
+            expect(getResponse.body.data.metadata.reserve_character).toBeNull();
         });
     });
 
@@ -517,7 +517,7 @@ describe('Reserve Character Integration Tests', () => {
                 .set('Cookie', `sessionId=${testAdmin.sessionId}`)
                 .expect(200);
 
-            expect(getResponse.body.data.reserve_character).toBeNull();
+            expect(getResponse.body.data.metadata.reserve_character).toBeNull();
         });
     });
 
