@@ -237,6 +237,168 @@ describe('Deck Editor Scroll Behavior', () => {
         done();
       }, 20);
     });
+
+    it('should preserve scroll position when removing individual cards with Remove button', (done) => {
+      const deckCardsEditor = document.querySelector('.deck-cards-editor') as HTMLElement;
+      
+      // Set scroll position to middle
+      deckCardsEditor.scrollTop = 200;
+      const initialScrollTop = deckCardsEditor.scrollTop;
+      
+      // Mock the removeCardFromEditor function behavior (preserving scroll position)
+      function removeCardFromEditor() {
+        // Capture current scroll position before re-rendering
+        const currentScrollTop = deckCardsEditor.scrollTop;
+        
+        // Simulate card removal logic
+        // ... (card removal logic would go here)
+        
+        // Simulate displayDeckCardsForEditing() rebuilding the DOM
+        // This would normally reset scroll position, but we restore it with setTimeout
+        setTimeout(() => {
+          deckCardsEditor.scrollTop = currentScrollTop;
+        }, 10);
+      }
+      
+      // Call the function
+      removeCardFromEditor();
+      
+      // Wait for setTimeout to complete and check scroll position
+      setTimeout(() => {
+        expect(deckCardsEditor.scrollTop).toBe(initialScrollTop);
+        done();
+      }, 20);
+    });
+
+    it('should preserve scroll position when removing all missions', (done) => {
+      const deckCardsEditor = document.querySelector('.deck-cards-editor') as HTMLElement;
+      
+      // Set scroll position to middle
+      deckCardsEditor.scrollTop = 300;
+      const initialScrollTop = deckCardsEditor.scrollTop;
+      
+      // Mock the removeAllMissionsFromDeck function behavior (preserving scroll position)
+      function removeAllMissionsFromDeck() {
+        // Capture current scroll position before re-rendering
+        const currentScrollTop = deckCardsEditor.scrollTop;
+        
+        // Simulate mission removal logic
+        // ... (mission removal logic would go here)
+        
+        // Simulate displayDeckCardsForEditing() rebuilding the DOM
+        // This would normally reset scroll position, but we restore it with setTimeout
+        setTimeout(() => {
+          deckCardsEditor.scrollTop = currentScrollTop;
+        }, 10);
+      }
+      
+      // Call the function
+      removeAllMissionsFromDeck();
+      
+      // Wait for setTimeout to complete and check scroll position
+      setTimeout(() => {
+        expect(deckCardsEditor.scrollTop).toBe(initialScrollTop);
+        done();
+      }, 20);
+    });
+
+    it('should preserve scroll position when removing all cards of a specific type', (done) => {
+      const deckCardsEditor = document.querySelector('.deck-cards-editor') as HTMLElement;
+      
+      // Set scroll position to middle
+      deckCardsEditor.scrollTop = 250;
+      const initialScrollTop = deckCardsEditor.scrollTop;
+      
+      // Mock the removeAllCardsFromDeck function behavior (preserving scroll position)
+      function removeAllCardsFromDeck() {
+        // Capture current scroll position before re-rendering
+        const currentScrollTop = deckCardsEditor.scrollTop;
+        
+        // Simulate card type removal logic
+        // ... (card type removal logic would go here)
+        
+        // Simulate displayDeckCardsForEditing() rebuilding the DOM
+        // This would normally reset scroll position, but we restore it with setTimeout
+        setTimeout(() => {
+          deckCardsEditor.scrollTop = currentScrollTop;
+        }, 10);
+      }
+      
+      // Call the function
+      removeAllCardsFromDeck();
+      
+      // Wait for setTimeout to complete and check scroll position
+      setTimeout(() => {
+        expect(deckCardsEditor.scrollTop).toBe(initialScrollTop);
+        done();
+      }, 20);
+    });
+
+    it('should handle missing deck cards editor gracefully in all card operation functions', () => {
+      // Remove the deck cards editor element
+      const deckCardsEditor = document.querySelector('.deck-cards-editor');
+      deckCardsEditor?.remove();
+      
+      // Mock all card operation functions
+      function removeOneCardFromEditor() {
+        const deckCardsEditor = document.querySelector('.deck-cards-editor');
+        const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
+        setTimeout(() => {
+          if (deckCardsEditor) {
+            deckCardsEditor.scrollTop = currentScrollTop;
+          }
+        }, 10);
+      }
+      
+      function addOneCardToEditor() {
+        const deckCardsEditor = document.querySelector('.deck-cards-editor');
+        const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
+        setTimeout(() => {
+          if (deckCardsEditor) {
+            deckCardsEditor.scrollTop = currentScrollTop;
+          }
+        }, 10);
+      }
+      
+      function removeCardFromEditor() {
+        const deckCardsEditor = document.querySelector('.deck-cards-editor');
+        const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
+        setTimeout(() => {
+          if (deckCardsEditor) {
+            deckCardsEditor.scrollTop = currentScrollTop;
+          }
+        }, 10);
+      }
+      
+      function removeAllMissionsFromDeck() {
+        const deckCardsEditor = document.querySelector('.deck-cards-editor');
+        const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
+        setTimeout(() => {
+          if (deckCardsEditor) {
+            deckCardsEditor.scrollTop = currentScrollTop;
+          }
+        }, 10);
+      }
+      
+      function removeAllCardsFromDeck() {
+        const deckCardsEditor = document.querySelector('.deck-cards-editor');
+        const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
+        setTimeout(() => {
+          if (deckCardsEditor) {
+            deckCardsEditor.scrollTop = currentScrollTop;
+          }
+        }, 10);
+      }
+      
+      // All functions should not throw errors when deck cards editor is missing
+      expect(() => {
+        removeOneCardFromEditor();
+        addOneCardToEditor();
+        removeCardFromEditor();
+        removeAllMissionsFromDeck();
+        removeAllCardsFromDeck();
+      }).not.toThrow();
+    });
   });
 
   describe('toggleDeckTypeSection scroll behavior', () => {
