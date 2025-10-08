@@ -108,7 +108,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(response.body.success).toBe(true);
-            expect(response.body.data.reserve_character).toBeNull();
+            expect(response.body.data.metadata.reserve_character).toBeNull();
 
             // Verify deck editor HTML contains "Select Reserve" buttons
             const deckEditorResponse = await request(app)
@@ -150,14 +150,14 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBe(testCharacterIds[0]);
+            expect(updateResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[0]);
 
             // Verify the updated deck has the reserve character set
             const getResponse = await request(app)
                 .get(`/api/decks/${testDeck.id}`)
                 .expect(200);
 
-            expect(getResponse.body.data.reserve_character).toBe(testCharacterIds[0]);
+            expect(getResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[0]);
         });
 
         it('should allow deselecting a reserve character', async () => {
@@ -196,7 +196,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBeNull();
+            expect(updateResponse.body.data.metadata.reserve_character).toBeNull();
 
             // Verify the updated deck has no reserve character
             const getResponse = await request(app)
@@ -215,7 +215,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(response.body.success).toBe(true);
-            expect(response.body.data.reserve_character).toBeNull();
+            expect(response.body.data.metadata.reserve_character).toBeNull();
 
             // Verify deck editor HTML contains "Select Reserve" buttons
             const deckEditorResponse = await request(app)
@@ -254,7 +254,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBe(testCharacterIds[0]);
+            expect(updateResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[0]);
 
             // Verify the updated deck has the reserve character set
             const getResponse = await request(app)
@@ -262,7 +262,7 @@ describe('Reserve Character Integration Tests', () => {
                 .set('Cookie', `sessionId=${testUser.sessionId}`)
                 .expect(200);
 
-            expect(getResponse.body.data.reserve_character).toBe(testCharacterIds[0]);
+            expect(getResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[0]);
         });
 
         it('should allow switching reserve character to a different character', async () => {
@@ -303,7 +303,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBe(testCharacterIds[1]);
+            expect(updateResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[1]);
 
             // Verify the updated deck has the new reserve character
             const getResponse = await request(app)
@@ -311,7 +311,7 @@ describe('Reserve Character Integration Tests', () => {
                 .set('Cookie', `sessionId=${testUser.sessionId}`)
                 .expect(200);
 
-            expect(getResponse.body.data.reserve_character).toBe(testCharacterIds[1]);
+            expect(getResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[1]);
         });
 
         it('should allow deselecting a reserve character', async () => {
@@ -352,7 +352,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBeNull();
+            expect(updateResponse.body.data.metadata.reserve_character).toBeNull();
 
             // Verify the updated deck has no reserve character
             const getResponse = await request(app)
@@ -372,7 +372,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(response.body.success).toBe(true);
-            expect(response.body.data.reserve_character).toBeNull();
+            expect(response.body.data.metadata.reserve_character).toBeNull();
 
             // Verify deck editor HTML contains "Select Reserve" buttons
             const deckEditorResponse = await request(app)
@@ -411,7 +411,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBe(testCharacterIds[0]);
+            expect(updateResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[0]);
 
             // Verify the updated deck has the reserve character set
             const getResponse = await request(app)
@@ -419,7 +419,7 @@ describe('Reserve Character Integration Tests', () => {
                 .set('Cookie', `sessionId=${testAdmin.sessionId}`)
                 .expect(200);
 
-            expect(getResponse.body.data.reserve_character).toBe(testCharacterIds[0]);
+            expect(getResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[0]);
         });
 
         it('should allow switching reserve character to a different character', async () => {
@@ -460,7 +460,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBe(testCharacterIds[1]);
+            expect(updateResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[1]);
 
             // Verify the updated deck has the new reserve character
             const getResponse = await request(app)
@@ -468,7 +468,7 @@ describe('Reserve Character Integration Tests', () => {
                 .set('Cookie', `sessionId=${testAdmin.sessionId}`)
                 .expect(200);
 
-            expect(getResponse.body.data.reserve_character).toBe(testCharacterIds[1]);
+            expect(getResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[1]);
         });
 
         it('should allow deselecting a reserve character', async () => {
@@ -509,7 +509,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBeNull();
+            expect(updateResponse.body.data.metadata.reserve_character).toBeNull();
 
             // Verify the updated deck has no reserve character
             const getResponse = await request(app)
@@ -564,7 +564,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(403);
 
             expect(updateResponse.body.success).toBe(false);
-            expect(updateResponse.body.error).toContain('not authorized');
+            expect(updateResponse.body.error).toContain('Access denied');
         });
 
         it('should show deck editor in read-only mode for another user\'s deck', async () => {
@@ -650,7 +650,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBe(testCharacterIds[0]);
+            expect(updateResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[0]);
         });
 
         it('should handle deck with 2 characters', async () => {
@@ -694,7 +694,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBe(testCharacterIds[0]);
+            expect(updateResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[0]);
 
             // Should be able to switch to second character
             const switchResponse = await request(app)
@@ -715,7 +715,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(switchResponse.body.success).toBe(true);
-            expect(switchResponse.body.data.reserve_character).toBe(testCharacterIds[1]);
+            expect(switchResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[1]);
         });
 
         it('should handle deck with 3 characters', async () => {
@@ -759,7 +759,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBe(testCharacterIds[2]);
+            expect(updateResponse.body.data.metadata.reserve_character).toBe(testCharacterIds[2]);
         });
     });
 
@@ -857,7 +857,7 @@ describe('Reserve Character Integration Tests', () => {
                 .expect(200);
 
             expect(updateResponse.body.success).toBe(true);
-            expect(updateResponse.body.data.reserve_character).toBeNull();
+            expect(updateResponse.body.data.metadata.reserve_character).toBeNull();
         });
     });
 });

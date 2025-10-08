@@ -436,7 +436,8 @@ app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
         userId: deckData.user_id,
         uiPreferences: deckData.ui_preferences,
         isOwner: deckData.isOwner,
-        is_limited: deckData.is_limited
+        is_limited: deckData.is_limited,
+        reserve_character: deckData.reserve_character
       },
       cards: deckData.cards || []
     };
@@ -477,7 +478,8 @@ app.get('/api/decks/:id/full', authenticateUser, async (req: any, res) => {
         userId: deckData.user_id,
         uiPreferences: deckData.ui_preferences,
         isOwner: deckData.isOwner,
-        is_limited: deckData.is_limited
+        is_limited: deckData.is_limited,
+        reserve_character: deckData.reserve_character
       },
       cards: deckData.cards || []
     };

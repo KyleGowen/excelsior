@@ -17043,8 +17043,8 @@
 
         // Reserve Character Functions
         function getReserveCharacterButton(cardId, index) {
-            const isReserveCharacter = currentDeckData && currentDeckData.reserve_character === cardId;
-            const hasReserveCharacter = currentDeckData && currentDeckData.reserve_character;
+            const isReserveCharacter = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character === cardId;
+            const hasReserveCharacter = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
             
             // If this card is the selected reserve character, show the "Reserve" button
             if (isReserveCharacter) {
@@ -17107,7 +17107,10 @@
             }
 
             // Update local deck data only - changes will be persisted when user clicks Save
-            currentDeckData.reserve_character = cardId;
+            if (!currentDeckData.metadata) {
+                currentDeckData.metadata = {};
+            }
+            currentDeckData.metadata.reserve_character = cardId;
             showNotification('Reserve character selected! (Click Save to persist changes)', 'success');
             
             // Re-render the entire deck to ensure all buttons are updated correctly
@@ -17127,7 +17130,10 @@
             }
 
             // Update local deck data only - changes will be persisted when user clicks Save
-            currentDeckData.reserve_character = null;
+            if (!currentDeckData.metadata) {
+                currentDeckData.metadata = {};
+            }
+            currentDeckData.metadata.reserve_character = null;
             showNotification('Reserve character deselected! (Click Save to persist changes)', 'success');
             
             // Re-render the entire deck to ensure all buttons are updated correctly
@@ -17247,7 +17253,7 @@
                         description: currentDeckData.metadata.description || '',
                         is_limited: isDeckLimited,
                         is_valid: isDeckValid,
-                        reserve_character: currentDeckData.reserve_character
+                        reserve_character: currentDeckData.metadata.reserve_character
                     })
                 });
                 

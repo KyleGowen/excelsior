@@ -491,6 +491,9 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
     
     const { name, description, is_limited, reserve_character } = req.body;
     
+    // Handle empty string for reserve_character (convert to null)
+    const processedReserveCharacter = (reserve_character === '' || reserve_character === undefined) ? null : reserve_character;
+    
     // Check if deck exists
     const existingDeck = await deckRepository.getDeckById(req.params.id);
     if (!existingDeck) {
@@ -502,11 +505,30 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
-    const deck = await deckRepository.updateDeck(req.params.id, { name, description, is_limited, reserve_character });
+    const deck = await deckRepository.updateDeck(req.params.id, { name, description, is_limited, reserve_character: processedReserveCharacter });
     if (!deck) {
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }
-    res.json({ success: true, data: deck });
+    
+    // Transform deck data to match frontend expectations (same as GET endpoint)
+    const transformedDeck = {
+      metadata: {
+        id: deck.id,
+        name: deck.name,
+        description: deck.description,
+        created: deck.created_at,
+        lastModified: deck.updated_at,
+        cardCount: deck.cards?.length || 0,
+        userId: deck.user_id,
+        uiPreferences: deck.ui_preferences,
+        isOwner: true, // User owns the deck since they can update it
+        is_limited: deck.is_limited,
+        reserve_character: deck.reserve_character
+      },
+      cards: deck.cards || []
+    };
+    
+    res.json({ success: true, data: transformedDeck });
   } catch (error) {
     console.error('Error updating deck:', error);
     res.status(500).json({ success: false, error: 'Failed to update deck' });
@@ -715,6 +737,51 @@ app.get('/users/:userId/decks/:deckId', (req: any, res) => {
   });
   
   res.sendFile(path.join(process.cwd(), 'public/index.html'));
+});
+
+// Add deck-editor route for integration tests
+app.get('/deck-editor/:deckId', (req, res) => {
+  const { deckId } = req.params;
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Deck Editor</title>
+    </head>
+    <body>
+        <h1>Deck Editor</h1>
+        <p>Deck ID: ${deckId}</p>
+        <div id="deckEditorModal" style="display: block;">
+            <div class="deck-editor-content">
+                <h3 id="deckEditorTitle" class="editable-title">Test Deck</h3>
+                <p id="deckEditorDescription" class="deck-description editable-description">Test Description</p>
+                <div id="deckCardsEditor">
+                    <div class="deck-card-editor" data-card-id="char-1">
+                        <div class="deck-card-editor-reserve">
+                            <button class="reserve-btn">Select Reserve</button>
+                        </div>
+                    </div>
+                    <div class="deck-card-editor" data-card-id="char-2">
+                        <div class="deck-card-editor-reserve">
+                            <button class="reserve-btn">Select Reserve</button>
+                        </div>
+                    </div>
+                    <div class="deck-card-editor" data-card-id="char-3">
+                        <div class="deck-card-editor-reserve">
+                            <button class="reserve-btn">Select Reserve</button>
+                        </div>
+                    </div>
+                    <div class="deck-card-editor" data-card-id="char-4">
+                        <div class="deck-card-editor-reserve">
+                            <button class="reserve-btn">Select Reserve</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+  `);
 });
 
 // Test endpoint
