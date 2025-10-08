@@ -13,6 +13,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
     this.pool = pool;
   }
 
+
   async initialize(): Promise<void> {
     // PostgreSQL DeckRepository doesn't need to load data from files
     // Data is already in the database from migrations

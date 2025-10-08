@@ -113,32 +113,62 @@ describe('Role-Based Restrictions Integration Tests', () => {
     });
 
     it('should deny user with any username but GUEST role from modifying decks', async () => {
-      // Create a user with random username but GUEST role
+      // Create a regular user to create a deck
       const uniqueId = Date.now();
-      const testUser = await userRepository.createUser(
+      const regularUser = await userRepository.createUser(
+        `test-regular-user-${uniqueId}`,
+        `test-regular-user-${uniqueId}@example.com`,
+        'testpassword',
+        'USER'
+      );
+
+      // Login as regular user to create a deck
+      const regularLoginResponse = await request(app)
+        .post('/api/auth/login')
+        .send({
+          username: `test-regular-user-${uniqueId}`,
+          password: 'testpassword'
+        });
+
+      expect(regularLoginResponse.status).toBe(200);
+      const regularSessionCookie = regularLoginResponse.headers['set-cookie'][0].split(';')[0];
+
+      // Create a deck as regular user
+      const createDeckResponse = await request(app)
+        .post('/api/decks')
+        .set('Cookie', regularSessionCookie)
+        .send({
+          name: 'Test Deck for Guest',
+          description: 'A deck to test guest restrictions',
+          characters: []
+        });
+
+      expect(createDeckResponse.status).toBe(201);
+      const deckId = createDeckResponse.body.data.id;
+
+      // Now create a guest user
+      const guestUser = await userRepository.createUser(
         `test-any-username-guest-role-${uniqueId}`,
         `test-any-username-guest-${uniqueId}@example.com`,
         'testpassword',
         'GUEST'
       );
 
-      // Login to get session cookie
-      const loginResponse = await request(app)
+      // Login as guest user
+      const guestLoginResponse = await request(app)
         .post('/api/auth/login')
         .send({
           username: `test-any-username-guest-role-${uniqueId}`,
           password: 'testpassword'
         });
 
-      expect(loginResponse.status).toBe(200);
-      expect(loginResponse.body.success).toBe(true);
-      
-      const sessionCookie = loginResponse.headers['set-cookie'][0].split(';')[0];
+      expect(guestLoginResponse.status).toBe(200);
+      const guestSessionCookie = guestLoginResponse.headers['set-cookie'][0].split(';')[0];
 
-      // Try to modify a deck - should fail because role is GUEST
+      // Try to modify the deck as guest - should fail because role is GUEST
       const modifyDeckResponse = await request(app)
-        .put('/api/decks/non-existent-deck-id')
-        .set('Cookie', sessionCookie)
+        .put(`/api/decks/${deckId}`)
+        .set('Cookie', guestSessionCookie)
         .send({
           name: 'Modified Deck Name',
           description: 'Modified description'
@@ -148,8 +178,9 @@ describe('Role-Based Restrictions Integration Tests', () => {
       expect(modifyDeckResponse.body.success).toBe(false);
       expect(modifyDeckResponse.body.error).toContain('Guests may not modify decks');
 
-      // Clean up user
-      await userRepository.deleteUser(testUser.id);
+      // Clean up users
+      await userRepository.deleteUser(regularUser.id);
+      await userRepository.deleteUser(guestUser.id);
     });
 
     it('should allow user with any username but USER role to modify decks', async () => {

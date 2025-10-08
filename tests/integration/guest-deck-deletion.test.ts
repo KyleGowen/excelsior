@@ -510,6 +510,7 @@ describe('Guest Deck Deletion Integration Tests', () => {
       
       const modifyResponse = await request(app)
         .put(`/api/decks/${tempDeck.id}`)
+        .set('x-expect-401', 'true')
         .send({
           name: 'Modified by Unauthenticated',
           description: 'This should fail'

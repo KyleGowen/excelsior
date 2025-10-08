@@ -31,4 +31,5 @@ export interface DeckRepository {
   
   // Authorization
   userOwnsDeck(deckId: string, userId: string): Promise<boolean>;
+  
 }
