@@ -15051,9 +15051,10 @@
                 // Validate deck after removing card
                 await showDeckValidation(deckEditorCards);
                 
-                // Ensure scroll container can show all content after card changes
+                // Preserve scroll position after card changes
                 setTimeout(() => {
-                    ensureScrollContainerCanShowAllContent();
+                    // Don't change scroll position when adding/removing cards
+                    // The user should stay where they were
                 }, 50);
             }
         }
@@ -15105,9 +15106,10 @@
                 // Validate deck after adding card
                 await showDeckValidation(deckEditorCards);
                 
-                // Ensure scroll container can show all content after card changes
+                // Preserve scroll position after card changes
                 setTimeout(() => {
-                    ensureScrollContainerCanShowAllContent();
+                    // Don't change scroll position when adding/removing cards
+                    // The user should stay where they were
                 }, 50);
             }
         }

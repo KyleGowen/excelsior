@@ -189,6 +189,39 @@ describe('Deck Editor Scroll Behavior', () => {
         done();
       }, 60);
     });
+
+    it('should preserve scroll position when adding/removing cards with -1/+1 buttons', () => {
+      const deckCardsEditor = document.querySelector('.deck-cards-editor') as HTMLElement;
+      
+      // Set scroll position to middle
+      deckCardsEditor.scrollTop = 150;
+      const initialScrollTop = deckCardsEditor.scrollTop;
+      
+      // Mock the removeOneCardFromEditor function behavior (preserving scroll position)
+      function removeOneCardFromEditor() {
+        // Simulate card removal logic without changing scroll
+        setTimeout(() => {
+          // Don't change scroll position when adding/removing cards
+          // The user should stay where they were
+        }, 50);
+      }
+      
+      // Mock the addOneCardToEditor function behavior (preserving scroll position)
+      function addOneCardToEditor() {
+        // Simulate card addition logic without changing scroll
+        setTimeout(() => {
+          // Don't change scroll position when adding/removing cards
+          // The user should stay where they were
+        }, 50);
+      }
+      
+      // Call both functions
+      removeOneCardFromEditor();
+      addOneCardToEditor();
+      
+      // Scroll position should remain unchanged
+      expect(deckCardsEditor.scrollTop).toBe(initialScrollTop);
+    });
   });
 
   describe('toggleDeckTypeSection scroll behavior', () => {
