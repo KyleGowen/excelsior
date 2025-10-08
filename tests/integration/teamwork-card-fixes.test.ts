@@ -4,18 +4,20 @@
  */
 
 import { Pool } from 'pg';
-import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 
 describe('Teamwork Card Fixes', () => {
   let pool: Pool;
 
   beforeAll(async () => {
-    // Use the same database connection as other integration tests
-    pool = DataSourceConfig.getInstance().getPool();
+    // Create database connection like other integration tests
+    pool = new Pool({
+      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+    });
   });
 
   afterAll(async () => {
-    // Don't close the pool as it's managed by DataSourceConfig
+    // Close the pool connection
+    await pool.end();
   });
 
   describe('Image Path Corrections', () => {
