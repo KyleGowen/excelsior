@@ -22,6 +22,7 @@ export interface Deck {
   is_valid?: boolean;
   card_count?: number;
   threat?: number;
+  reserve_character?: string; // UUID of the character card that serves as the reserve character
   created_at?: string;
   updated_at?: string;
   cards?: DeckCard[];

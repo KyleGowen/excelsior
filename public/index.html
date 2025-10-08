@@ -2574,6 +2574,37 @@
             background: rgba(255, 107, 107, 0.3);
         }
 
+        .deck-card-editor-reserve {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+        }
+
+        .reserve-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 3.3px 6.6px;
+            border-radius: 3.3px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s ease;
+        }
+
+        .reserve-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .reserve-btn.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+        }
+
+        .reserve-btn.active:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
         /* Card Search Section */
         .card-search-section {
             display: flex;
@@ -3466,6 +3497,7 @@
         .read-only-mode .alternate-art-btn,
         .read-only-mode .remove-one-btn,
         .read-only-mode .add-one-btn,
+        .read-only-mode .reserve-btn,
         .read-only-mode .deck-list-item-quantity-btn,
         .read-only-mode .deck-list-item-remove {
             display: none !important;
@@ -13965,6 +13997,7 @@
                                     ${alternateArtButton}
                                     ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">-</button>` : ''}
                                 </div>
+                                ${card.type === 'character' ? `<div class="deck-card-editor-reserve">${getReserveCharacterButton(card.cardId, index)}</div>` : ''}
                             </div>
                         `;
                     });
@@ -14388,7 +14421,7 @@
                         // Handle deck editor cards
                         if (cardElement.classList.contains('deck-card-editor-item')) {
                             // Check for any buttons in the deck editor card element first
-                            const buttons = cardElement.querySelectorAll('.quantity-btn, .remove-all-btn');
+                            const buttons = cardElement.querySelectorAll('.quantity-btn, .remove-all-btn, .reserve-btn');
                             let buttonAvoided = false;
                             
                             buttons.forEach(button => {
@@ -17007,6 +17040,100 @@
                 }
             });
         }
+
+        // Reserve Character Functions
+        function getReserveCharacterButton(cardId, index) {
+            const isReserveCharacter = currentDeckData && currentDeckData.reserve_character === cardId;
+            const hasReserveCharacter = currentDeckData && currentDeckData.reserve_character;
+            
+            // If this card is the selected reserve character, show the "Reserve" button
+            if (isReserveCharacter) {
+                const buttonText = 'Reserve';
+                const buttonClass = 'reserve-btn active';
+                const onclickFunction = `deselectReserveCharacter(${index})`;
+                return `<button class="${buttonClass}" onclick="${onclickFunction}">${buttonText}</button>`;
+            } 
+            // If a reserve character is selected (but this isn't it), hide the button
+            else if (hasReserveCharacter) {
+                return ''; 
+            }
+            // If no reserve character is selected, show "Select Reserve" button
+            else {
+                const buttonText = 'Select Reserve';
+                const buttonClass = 'reserve-btn';
+                const onclickFunction = `selectReserveCharacter('${cardId}', ${index})`;
+                return `<button class="${buttonClass}" onclick="${onclickFunction}">${buttonText}</button>`;
+            }
+        }
+
+        function updateReserveButtons() {
+            // Find all character cards in the deck editor
+            const characterCards = document.querySelectorAll('.deck-card-editor-item');
+            
+            characterCards.forEach((cardElement, index) => {
+                // Check if this is a character card
+                const cardInfo = cardElement.querySelector('.deck-card-editor-name');
+                if (!cardInfo) return;
+                
+                // Find the card ID from the deckEditorCards array
+                if (deckEditorCards[index] && deckEditorCards[index].type === 'character') {
+                    const cardId = deckEditorCards[index].cardId;
+                    const reserveContainer = cardElement.querySelector('.deck-card-editor-reserve');
+                    
+                    if (reserveContainer) {
+                        // Get the new button HTML
+                        const newButtonHTML = getReserveCharacterButton(cardId, index);
+                        
+                        // Only update if the content has actually changed to avoid unnecessary DOM manipulation
+                        if (reserveContainer.innerHTML !== newButtonHTML) {
+                            reserveContainer.innerHTML = newButtonHTML;
+                        }
+                    }
+                }
+            });
+        }
+
+
+        async function selectReserveCharacter(cardId, index) {
+            if (!currentDeckId || !currentDeckData) {
+                showNotification('No deck selected', 'error');
+                return;
+            }
+
+            // Check if in read-only mode
+            if (isReadOnlyMode) {
+                alert('Cannot modify deck in read-only mode. You are viewing another user\'s deck.');
+                return;
+            }
+
+            // Update local deck data only - changes will be persisted when user clicks Save
+            currentDeckData.reserve_character = cardId;
+            showNotification('Reserve character selected! (Click Save to persist changes)', 'success');
+            
+            // Re-render the entire deck to ensure all buttons are updated correctly
+            await displayDeckCardsForEditing();
+        }
+
+        async function deselectReserveCharacter(index) {
+            if (!currentDeckId || !currentDeckData) {
+                showNotification('No deck selected', 'error');
+                return;
+            }
+
+            // Check if in read-only mode
+            if (isReadOnlyMode) {
+                alert('Cannot modify deck in read-only mode. You are viewing another user\'s deck.');
+                return;
+            }
+
+            // Update local deck data only - changes will be persisted when user clicks Save
+            currentDeckData.reserve_character = null;
+            showNotification('Reserve character deselected! (Click Save to persist changes)', 'success');
+            
+            // Re-render the entire deck to ensure all buttons are updated correctly
+            await displayDeckCardsForEditing();
+        }
+
         async function saveDeckChanges() {
             
             if (!currentDeckData) return;
@@ -17108,7 +17235,7 @@
                 const validation = validateDeck(deckEditorCards);
                 const isDeckValid = validation.errors.length === 0;
                 
-                // Save deck metadata (name, description, is_limited, and is_valid)
+                // Save deck metadata (name, description, is_limited, is_valid, and reserve_character)
                 await fetch(`/api/decks/${currentDeckId}`, {
                     method: 'PUT',
                     headers: {
@@ -17119,7 +17246,8 @@
                         name: currentDeckData.metadata.name,
                         description: currentDeckData.metadata.description || '',
                         is_limited: isDeckLimited,
-                        is_valid: isDeckValid
+                        is_valid: isDeckValid,
+                        reserve_character: currentDeckData.reserve_character
                     })
                 });
                 

@@ -52,6 +52,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         description: deck.description,
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
+        reserve_character: deck.reserve_character,
         created_at: deck.created_at,
         updated_at: deck.updated_at
       };
@@ -127,6 +128,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         description: deck.description,
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
+        reserve_character: deck.reserve_character,
         created_at: deck.created_at,
         updated_at: deck.updated_at,
         cards: cards
@@ -252,6 +254,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
           is_valid: deck.is_valid,
           card_count: deck.card_count,
           threat: deck.threat,
+          reserve_character: deck.reserve_character,
           created_at: deck.created_at,
           updated_at: deck.updated_at,
           cards: cards
@@ -304,6 +307,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         description: deck.description,
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
+        reserve_character: deck.reserve_character,
         created_at: deck.created_at,
         updated_at: deck.updated_at,
         cards: cards
@@ -330,6 +334,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         description: deck.description,
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
+        reserve_character: deck.reserve_character,
         created_at: deck.created_at,
         updated_at: deck.updated_at
       }));
@@ -365,6 +370,10 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         setClause.push(`is_valid = $${paramCount++}`);
         values.push(updates.is_valid);
       }
+      if (updates.reserve_character !== undefined) {
+        setClause.push(`reserve_character = $${paramCount++}`);
+        values.push(updates.reserve_character);
+      }
 
       if (setClause.length === 0) {
         return this.getDeckById(id);
@@ -393,6 +402,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         is_valid: deck.is_valid,
         card_count: deck.card_count,
         threat: deck.threat,
+        reserve_character: deck.reserve_character,
         created_at: deck.created_at,
         updated_at: deck.updated_at
       };

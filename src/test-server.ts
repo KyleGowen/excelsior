@@ -371,7 +371,8 @@ app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
         userId: deckData.user_id,
         uiPreferences: deckData.ui_preferences,
         isOwner: deckData.isOwner,
-        is_limited: deckData.is_limited
+        is_limited: deckData.is_limited,
+        reserve_character: deckData.reserve_character
       },
       cards: deckData.cards || []
     };
@@ -488,7 +489,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
-    const { name, description, is_limited } = req.body;
+    const { name, description, is_limited, reserve_character } = req.body;
     
     // Check if deck exists
     const existingDeck = await deckRepository.getDeckById(req.params.id);
@@ -501,7 +502,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
-    const deck = await deckRepository.updateDeck(req.params.id, { name, description, is_limited });
+    const deck = await deckRepository.updateDeck(req.params.id, { name, description, is_limited, reserve_character });
     if (!deck) {
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }

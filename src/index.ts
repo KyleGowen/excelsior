@@ -496,7 +496,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
-    const { name, description, is_limited, is_valid } = req.body;
+    const { name, description, is_limited, is_valid, reserve_character } = req.body;
     
     // Check if deck exists
     const deck = await deckRepository.getDeckById(req.params.id);
@@ -509,7 +509,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
-    const updatedDeck = await deckRepository.updateDeck(req.params.id, { name, description, is_limited, is_valid });
+    const updatedDeck = await deckRepository.updateDeck(req.params.id, { name, description, is_limited, is_valid, reserve_character });
     if (!updatedDeck) {
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }
