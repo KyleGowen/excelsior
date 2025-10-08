@@ -300,6 +300,7 @@ app.get('/api/decks', authenticateUser, async (req: any, res) => {
         created: deck.created_at,
         lastModified: deck.updated_at,
         cardCount: deck.cards?.length || 0,
+        threat: deck.threat || 0,
         userId: deck.user_id,
         uiPreferences: deck.ui_preferences,
         is_limited: deck.is_limited
