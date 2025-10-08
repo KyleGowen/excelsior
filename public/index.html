@@ -13601,7 +13601,7 @@
                                         <div class="deck-card-editor-actions">
                                             ${card.quantity > 1 ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
                                             ${alternateArtButton}
-                                            <button class="quantity-btn" onclick="removeCardFromEditor(${index})">X</button>
+                                            <button class="quantity-btn" onclick="removeCardFromEditor(${index})">-</button>
                                         </div>
                                     </div>
                                 `;
@@ -13727,7 +13727,7 @@
                                                 ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
                                                 ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="add-one-btn" onclick="addOneCardToEditor(${index})">+1</button>` : ''}
                                                 ${alternateArtButton}
-                                                ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">X</button>` : ''}
+                                                ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">-</button>` : ''}
                                             </div>
                                         </div>
                                     `;
@@ -13791,7 +13791,7 @@
                                             ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
                                             ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="add-one-btn" onclick="addOneCardToEditor(${index})">+1</button>` : ''}
                                             ${alternateArtButton}
-                                            ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">X</button>` : ''}
+                                            ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">-</button>` : ''}
                                         </div>
                                     </div>
                                 `;
@@ -13963,7 +13963,7 @@
                                     ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
                                     ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="add-one-btn" onclick="addOneCardToEditor(${index})">+1</button>` : ''}
                                     ${alternateArtButton}
-                                    ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">X</button>` : ''}
+                                    ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">-</button>` : ''}
                                 </div>
                             </div>
                         `;

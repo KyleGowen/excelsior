@@ -1,11 +1,11 @@
 /**
  * Unit tests for Remove button text changes
- * Verifies that character, location, and mission cards show "X" instead of "Remove"
+ * Verifies that character, location, and mission cards show "-" instead of "Remove"
  */
 
 describe('Remove Button Text Changes', () => {
 
-  it('should display "X" instead of "Remove" for character cards', () => {
+  it('should display "-" instead of "Remove" for character cards', () => {
     // Mock the displayDeckCardsForEditing function behavior
     const mockCharacterCard = {
       type: 'character',
@@ -15,14 +15,14 @@ describe('Remove Button Text Changes', () => {
 
     // Simulate the HTML generation for character cards
     const characterButtonHtml = mockCharacterCard.type === 'character' || mockCharacterCard.type === 'location' || mockCharacterCard.type === 'mission' 
-      ? `<button class="quantity-btn" onclick="removeCardFromEditor(0)">X</button>` 
+      ? `<button class="quantity-btn" onclick="removeCardFromEditor(0)">-</button>` 
       : '';
 
-    expect(characterButtonHtml).toContain('>X<');
+    expect(characterButtonHtml).toContain('>-<');
     expect(characterButtonHtml).not.toContain('>Remove<');
   });
 
-  it('should display "X" instead of "Remove" for location cards', () => {
+  it('should display "-" instead of "Remove" for location cards', () => {
     // Mock the displayDeckCardsForEditing function behavior
     const mockLocationCard = {
       type: 'location',
@@ -32,14 +32,14 @@ describe('Remove Button Text Changes', () => {
 
     // Simulate the HTML generation for location cards
     const locationButtonHtml = mockLocationCard.type === 'character' || mockLocationCard.type === 'location' || mockLocationCard.type === 'mission' 
-      ? `<button class="quantity-btn" onclick="removeCardFromEditor(0)">X</button>` 
+      ? `<button class="quantity-btn" onclick="removeCardFromEditor(0)">-</button>` 
       : '';
 
-    expect(locationButtonHtml).toContain('>X<');
+    expect(locationButtonHtml).toContain('>-<');
     expect(locationButtonHtml).not.toContain('>Remove<');
   });
 
-  it('should display "X" instead of "Remove" for mission cards', () => {
+  it('should display "-" instead of "Remove" for mission cards', () => {
     // Mock the displayDeckCardsForEditing function behavior
     const mockMissionCard = {
       type: 'mission',
@@ -49,10 +49,10 @@ describe('Remove Button Text Changes', () => {
 
     // Simulate the HTML generation for mission cards
     const missionButtonHtml = mockMissionCard.type === 'character' || mockMissionCard.type === 'location' || mockMissionCard.type === 'mission' 
-      ? `<button class="quantity-btn" onclick="removeCardFromEditor(0)">X</button>` 
+      ? `<button class="quantity-btn" onclick="removeCardFromEditor(0)">-</button>` 
       : '';
 
-    expect(missionButtonHtml).toContain('>X<');
+    expect(missionButtonHtml).toContain('>-<');
     expect(missionButtonHtml).not.toContain('>Remove<');
   });
 
@@ -71,7 +71,7 @@ describe('Remove Button Text Changes', () => {
 
     expect(powerButtonHtml).toContain('>-1<');
     expect(powerButtonHtml).toContain('>+1<');
-    expect(powerButtonHtml).not.toContain('>X<');
+    expect(powerButtonHtml).not.toContain('>-<');
   });
 
   it('should verify all button text changes are consistent', () => {
@@ -79,10 +79,10 @@ describe('Remove Button Text Changes', () => {
     
     cardTypes.forEach(cardType => {
       const buttonHtml = cardType === 'character' || cardType === 'location' || cardType === 'mission' 
-        ? `<button class="quantity-btn" onclick="removeCardFromEditor(0)">X</button>` 
+        ? `<button class="quantity-btn" onclick="removeCardFromEditor(0)">-</button>` 
         : '';
 
-      expect(buttonHtml).toContain('>X<');
+      expect(buttonHtml).toContain('>-<');
       expect(buttonHtml).not.toContain('>Remove<');
     });
   });
