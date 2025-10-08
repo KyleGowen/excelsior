@@ -1,21 +1,21 @@
 /**
- * Unit tests for teamwork card image path and description fixes
+ * Integration tests for teamwork card image path and description fixes
  * Verifies that teamwork cards have the correct image paths and descriptions
  */
 
 import { Pool } from 'pg';
+import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 
 describe('Teamwork Card Fixes', () => {
   let pool: Pool;
 
-  beforeAll(() => {
-    pool = new Pool({
-      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
-    });
+  beforeAll(async () => {
+    // Use the same database connection as other integration tests
+    pool = DataSourceConfig.getInstance().getPool();
   });
 
   afterAll(async () => {
-    await pool.end();
+    // Don't close the pool as it's managed by DataSourceConfig
   });
 
   describe('Image Path Corrections', () => {
