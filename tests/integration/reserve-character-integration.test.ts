@@ -366,8 +366,30 @@ describe('Reserve Character Integration Tests', () => {
 
     describe('Admin User Reserve Character Functionality', () => {
         it('should show "Select Reserve" buttons on all characters when no reserve is selected', async () => {
+            // Create a deck as admin user
+            const adminDeckData = {
+                name: 'Admin Reserve Test Deck',
+                description: 'Test deck for admin reserve character functionality',
+                is_limited: false,
+                characters: testCharacterIds.slice(0, 4),
+                power_cards: [],
+                special_cards: [],
+                events: [],
+                locations: [],
+                missions: []
+            };
+
+            const createResponse = await request(app)
+                .post('/api/decks')
+                .send(adminDeckData)
+                .set('Cookie', `sessionId=${testAdmin.sessionId}`)
+                .expect(201);
+
+            const adminDeck = createResponse.body.data;
+            integrationTestUtils.trackTestDeck(adminDeck.id);
+
             const response = await request(app)
-                .get(`/api/decks/${testDeck.id}`)
+                .get(`/api/decks/${adminDeck.id}`)
                 .set('Cookie', `sessionId=${testAdmin.sessionId}`)
                 .expect(200);
 
@@ -376,7 +398,7 @@ describe('Reserve Character Integration Tests', () => {
 
             // Verify deck editor HTML contains "Select Reserve" buttons
             const deckEditorResponse = await request(app)
-                .get(`/deck-editor/${testDeck.id}`)
+                .get(`/deck-editor/${adminDeck.id}`)
                 .set('Cookie', `sessionId=${testAdmin.sessionId}`)
                 .expect(200);
 
@@ -392,12 +414,34 @@ describe('Reserve Character Integration Tests', () => {
         });
 
         it('should allow selecting a reserve character and update button states', async () => {
+            // Create a deck as admin user
+            const adminDeckData = {
+                name: 'Admin Reserve Test Deck',
+                description: 'Test deck for admin reserve character functionality',
+                is_limited: false,
+                characters: testCharacterIds.slice(0, 4),
+                power_cards: [],
+                special_cards: [],
+                events: [],
+                locations: [],
+                missions: []
+            };
+
+            const createResponse = await request(app)
+                .post('/api/decks')
+                .send(adminDeckData)
+                .set('Cookie', `sessionId=${testAdmin.sessionId}`)
+                .expect(201);
+
+            const adminDeck = createResponse.body.data;
+            integrationTestUtils.trackTestDeck(adminDeck.id);
+
             // Select first character as reserve
             const updateResponse = await request(app)
-                .put(`/api/decks/${testDeck.id}`)
+                .put(`/api/decks/${adminDeck.id}`)
                 .send({
-                    name: 'Reserve Test Deck',
-                    description: 'Test deck for reserve character functionality',
+                    name: 'Admin Reserve Test Deck',
+                    description: 'Test deck for admin reserve character functionality',
                     is_limited: false,
                     characters: testCharacterIds.slice(0, 4),
                     power_cards: [],
@@ -415,7 +459,7 @@ describe('Reserve Character Integration Tests', () => {
 
             // Verify the updated deck has the reserve character set
             const getResponse = await request(app)
-                .get(`/api/decks/${testDeck.id}`)
+                .get(`/api/decks/${adminDeck.id}`)
                 .set('Cookie', `sessionId=${testAdmin.sessionId}`)
                 .expect(200);
 
@@ -423,12 +467,34 @@ describe('Reserve Character Integration Tests', () => {
         });
 
         it('should allow switching reserve character to a different character', async () => {
+            // Create a deck as admin user
+            const adminDeckData = {
+                name: 'Admin Reserve Test Deck',
+                description: 'Test deck for admin reserve character functionality',
+                is_limited: false,
+                characters: testCharacterIds.slice(0, 4),
+                power_cards: [],
+                special_cards: [],
+                events: [],
+                locations: [],
+                missions: []
+            };
+
+            const createResponse = await request(app)
+                .post('/api/decks')
+                .send(adminDeckData)
+                .set('Cookie', `sessionId=${testAdmin.sessionId}`)
+                .expect(201);
+
+            const adminDeck = createResponse.body.data;
+            integrationTestUtils.trackTestDeck(adminDeck.id);
+
             // First select first character as reserve
             await request(app)
-                .put(`/api/decks/${testDeck.id}`)
+                .put(`/api/decks/${adminDeck.id}`)
                 .send({
-                    name: 'Reserve Test Deck',
-                    description: 'Test deck for reserve character functionality',
+                    name: 'Admin Reserve Test Deck',
+                    description: 'Test deck for admin reserve character functionality',
                     is_limited: false,
                     characters: testCharacterIds.slice(0, 4),
                     power_cards: [],
@@ -443,10 +509,10 @@ describe('Reserve Character Integration Tests', () => {
 
             // Then switch to second character
             const updateResponse = await request(app)
-                .put(`/api/decks/${testDeck.id}`)
+                .put(`/api/decks/${adminDeck.id}`)
                 .send({
-                    name: 'Reserve Test Deck',
-                    description: 'Test deck for reserve character functionality',
+                    name: 'Admin Reserve Test Deck',
+                    description: 'Test deck for admin reserve character functionality',
                     is_limited: false,
                     characters: testCharacterIds.slice(0, 4),
                     power_cards: [],
@@ -464,7 +530,7 @@ describe('Reserve Character Integration Tests', () => {
 
             // Verify the updated deck has the new reserve character
             const getResponse = await request(app)
-                .get(`/api/decks/${testDeck.id}`)
+                .get(`/api/decks/${adminDeck.id}`)
                 .set('Cookie', `sessionId=${testAdmin.sessionId}`)
                 .expect(200);
 
@@ -472,12 +538,34 @@ describe('Reserve Character Integration Tests', () => {
         });
 
         it('should allow deselecting a reserve character', async () => {
+            // Create a deck as admin user
+            const adminDeckData = {
+                name: 'Admin Reserve Test Deck',
+                description: 'Test deck for admin reserve character functionality',
+                is_limited: false,
+                characters: testCharacterIds.slice(0, 4),
+                power_cards: [],
+                special_cards: [],
+                events: [],
+                locations: [],
+                missions: []
+            };
+
+            const createResponse = await request(app)
+                .post('/api/decks')
+                .send(adminDeckData)
+                .set('Cookie', `sessionId=${testAdmin.sessionId}`)
+                .expect(201);
+
+            const adminDeck = createResponse.body.data;
+            integrationTestUtils.trackTestDeck(adminDeck.id);
+
             // First set a reserve character
             await request(app)
-                .put(`/api/decks/${testDeck.id}`)
+                .put(`/api/decks/${adminDeck.id}`)
                 .send({
-                    name: 'Reserve Test Deck',
-                    description: 'Test deck for reserve character functionality',
+                    name: 'Admin Reserve Test Deck',
+                    description: 'Test deck for admin reserve character functionality',
                     is_limited: false,
                     characters: testCharacterIds.slice(0, 4),
                     power_cards: [],
@@ -492,10 +580,10 @@ describe('Reserve Character Integration Tests', () => {
 
             // Then deselect it
             const updateResponse = await request(app)
-                .put(`/api/decks/${testDeck.id}`)
+                .put(`/api/decks/${adminDeck.id}`)
                 .send({
-                    name: 'Reserve Test Deck',
-                    description: 'Test deck for reserve character functionality',
+                    name: 'Admin Reserve Test Deck',
+                    description: 'Test deck for admin reserve character functionality',
                     is_limited: false,
                     characters: testCharacterIds.slice(0, 4),
                     power_cards: [],
@@ -513,7 +601,7 @@ describe('Reserve Character Integration Tests', () => {
 
             // Verify the updated deck has no reserve character
             const getResponse = await request(app)
-                .get(`/api/decks/${testDeck.id}`)
+                .get(`/api/decks/${adminDeck.id}`)
                 .set('Cookie', `sessionId=${testAdmin.sessionId}`)
                 .expect(200);
 
@@ -809,6 +897,7 @@ describe('Reserve Character Integration Tests', () => {
                         reserve_character: invalidCharacterId
                     })
                     .set('Cookie', `sessionId=${testUser.sessionId}`)
+                    .set('x-expect-400-validation', 'true')
                     .expect(400);
 
                 expect(updateResponse.body.success).toBe(false);
