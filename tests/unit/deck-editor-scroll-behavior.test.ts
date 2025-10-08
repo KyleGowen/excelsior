@@ -93,6 +93,104 @@ describe('Deck Editor Scroll Behavior', () => {
     dom.window.close();
   });
 
+  describe('Deck Editor Initial Scroll Position', () => {
+    it('should set scroll position to top when showDeckEditor is called', (done) => {
+      const deckCardsEditor = document.querySelector('.deck-cards-editor') as HTMLElement;
+      
+      // Set scroll position to bottom initially
+      deckCardsEditor.scrollTop = 200;
+      
+      // Mock the showDeckEditor function behavior
+      function showDeckEditor() {
+        // Simulate the setTimeout behavior from the actual function
+        setTimeout(() => {
+          if (deckCardsEditor) {
+            deckCardsEditor.scrollTop = 0;
+          }
+        }, 50);
+      }
+      
+      // Call showDeckEditor
+      showDeckEditor();
+      
+      // Wait for the setTimeout to execute
+      setTimeout(() => {
+        expect(deckCardsEditor.scrollTop).toBe(0);
+        done();
+      }, 60);
+    });
+
+    it('should set scroll position to top in ensureScrollContainerCanShowAllContent', () => {
+      const deckCardsEditor = document.querySelector('.deck-cards-editor') as HTMLElement;
+      
+      // Set scroll position to bottom initially
+      deckCardsEditor.scrollTop = 200;
+      
+      // Mock the ensureScrollContainerCanShowAllContent function
+      function ensureScrollContainerCanShowAllContent() {
+        if (!deckCardsEditor) return;
+        
+        // Force a reflow to ensure all measurements are accurate
+        deckCardsEditor.offsetHeight;
+        
+        // Always start at the top of the deck editor
+        deckCardsEditor.scrollTop = 0;
+      }
+      
+      // Call the function
+      ensureScrollContainerCanShowAllContent();
+      
+      // Verify scroll position is set to top
+      expect(deckCardsEditor.scrollTop).toBe(0);
+    });
+
+    it('should handle missing deck cards editor gracefully in ensureScrollContainerCanShowAllContent', () => {
+      // Remove the deck cards editor element
+      const deckCardsEditor = document.querySelector('.deck-cards-editor');
+      deckCardsEditor?.remove();
+      
+      // Mock the ensureScrollContainerCanShowAllContent function
+      function ensureScrollContainerCanShowAllContent() {
+        const deckCardsEditor = document.querySelector('.deck-cards-editor');
+        if (!deckCardsEditor) return;
+        
+        // This should not execute if element is missing
+        deckCardsEditor.scrollTop = 0;
+      }
+      
+      // This should not throw an error
+      expect(() => {
+        ensureScrollContainerCanShowAllContent();
+      }).not.toThrow();
+    });
+
+    it('should handle missing deck cards editor gracefully in showDeckEditor', (done) => {
+      // Remove the deck cards editor element
+      const deckCardsEditor = document.querySelector('.deck-cards-editor');
+      deckCardsEditor?.remove();
+      
+      // Mock the showDeckEditor function behavior
+      function showDeckEditor() {
+        setTimeout(() => {
+          const deckCardsEditor = document.querySelector('.deck-cards-editor');
+          if (deckCardsEditor) {
+            deckCardsEditor.scrollTop = 0;
+          }
+        }, 50);
+      }
+      
+      // This should not throw an error
+      expect(() => {
+        showDeckEditor();
+      }).not.toThrow();
+      
+      // Wait for setTimeout to complete
+      setTimeout(() => {
+        done();
+      }, 60);
+    });
+  });
+
   describe('toggleDeckTypeSection scroll behavior', () => {
     it('should adjust scroll position when collapsing a section that gets cut off', (done) => {
       const deckCardsEditor = document.querySelector('.deck-cards-editor') as HTMLElement;

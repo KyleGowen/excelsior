@@ -12775,6 +12775,14 @@
                 }
                 modal.style.display = 'flex';
                 
+                // Ensure the deck editor starts scrolled to the top
+                setTimeout(() => {
+                    const deckCardsEditor = document.querySelector('.deck-cards-editor');
+                    if (deckCardsEditor) {
+                        deckCardsEditor.scrollTop = 0;
+                    }
+                }, 50);
+                
                 // Set initial divider position immediately to prevent 50% flash
                 const uiPrefs = currentDeckData
                     ? (currentDeckData.ui_preferences || (currentDeckData.metadata && currentDeckData.metadata.ui_preferences))
@@ -14613,14 +14621,8 @@
             // Force a reflow to ensure all measurements are accurate
             deckCardsEditor.offsetHeight;
             
-            // Check if we can scroll to the bottom
-            const maxScrollTop = deckCardsEditor.scrollHeight - deckCardsEditor.clientHeight;
-            
-            // If there's content that can't be scrolled to, try to scroll to the maximum
-            if (maxScrollTop > 0 && deckCardsEditor.scrollTop < maxScrollTop) {
-                // Scroll to the bottom to ensure all content is accessible
-                deckCardsEditor.scrollTop = maxScrollTop;
-            }
+            // Always start at the top of the deck editor
+            deckCardsEditor.scrollTop = 0;
         }
 
         // Enhanced scroll adjustment for collapsed headers
