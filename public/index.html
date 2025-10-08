@@ -3656,6 +3656,12 @@
 
         .deck-card-editor-info {
             flex: 1;
+            min-width: 0; /* Allow flex item to shrink below content size */
+        }
+        
+        /* Character card info needs extra right padding to avoid button overlap */
+        .deck-card-editor-item.character-card .deck-card-editor-info {
+            padding-right: 150px; /* Reserve space for buttons */
         }
 
         .deck-card-editor-name {
@@ -3715,12 +3721,15 @@
             color: #ffffff;
             font-size: 0.8rem;
             font-weight: 400;
-            line-height: 1.3;
+            line-height: 1.4;
             text-align: left;
             opacity: 0.9;
-            margin-top: 4px;
+            margin-top: 6px;
             margin-left: 0;
-            min-height: 1.3em;
+            margin-right: 0;
+            margin-bottom: 10px; /* Add bottom margin to separate from buttons */
+            min-height: 1.4em;
+            padding-right: 10px; /* Add right padding to ensure text doesn't get too close to edge */
         }
         
         /* Card type specific stat styling */
@@ -3846,6 +3855,16 @@
             align-items: flex-start;
             padding-top: 10px;
         }
+        
+        /* Character card tiles need more height to accommodate ability text and buttons on separate lines */
+        .deck-card-editor-item.preview-view.character-card {
+            min-height: 100px;
+            align-items: flex-start;
+            padding-top: 10px;
+            padding-bottom: 50px; /* Reserve space for buttons at the bottom */
+            padding-right: 15px;
+        }
+        
         /* Character background styling for deck editor tiles */
         .deck-card-editor-item.character-card {
             background: linear-gradient(to right, 
