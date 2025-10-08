@@ -2605,8 +2605,29 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
+        /* Read-only reserve indicator styling - matches reserve-btn.active */
+        .reserve-indicator {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 3.3px 6.6px;
+            border-radius: 3.3px;
+            font-size: 10px;
+            font-weight: 500;
+            text-align: center;
+            cursor: default;
+            display: none; /* Hidden by default, shown only in read-only mode for selected reserve */
+        }
+
         /* Reserve button styling for list view */
         .deck-list-item .reserve-btn {
+            font-size: 10px;
+            padding: 2px 6px;
+            margin-right: 8px;
+        }
+
+        /* Read-only reserve indicator styling for list view */
+        .deck-list-item .reserve-indicator {
             font-size: 10px;
             padding: 2px 6px;
             margin-right: 8px;
@@ -3508,6 +3529,11 @@
         .read-only-mode .deck-list-item-quantity-btn,
         .read-only-mode .deck-list-item-remove {
             display: none !important;
+        }
+        
+        /* Show read-only reserve indicator for selected reserve character */
+        .read-only-mode .reserve-indicator {
+            display: inline-block !important;
         }
         
         /* Hide Remove All and Remove Unusables buttons specifically (but keep Draw Hand and List View) */
@@ -17078,6 +17104,15 @@
         function getReserveCharacterButton(cardId, index) {
             const isReserveCharacter = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character === cardId;
             const hasReserveCharacter = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
+            
+            // In read-only mode, show indicator only for the selected reserve character
+            if (isReadOnlyMode) {
+                if (isReserveCharacter) {
+                    return `<span class="reserve-indicator">Reserve</span>`;
+                } else {
+                    return ''; // No indicator for non-reserve characters in read-only mode
+                }
+            }
             
             // If this card is the selected reserve character, show the "Reserve" button
             if (isReserveCharacter) {
