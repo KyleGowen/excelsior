@@ -29,7 +29,7 @@ function switchToDatabaseView() {
     // Load database data if not already loaded
     if (document.getElementById('total-characters') && document.getElementById('total-characters').textContent === '-') {
         if (typeof loadDatabaseViewData === 'function') {
-            loadDatabaseViewData();
+            loadDatabaseViewData(true); // Force characters tab when user explicitly switches to database view
         }
     }
 }

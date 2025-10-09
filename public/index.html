@@ -6110,25 +6110,7 @@
         }
 
         
-        // Load database view data
-        async function loadDatabaseViewData() {
-            try {
-                await Promise.all([
-                    loadCharacters(),
-                    loadAspects(),
-                    loadEvents(),
-                    loadTeamwork(),
-                    loadAllyUniverse(),
-                    loadTraining(),
-                    loadBasicUniverse(),
-                    loadPowerCards(),
-                    loadUserDecks()
-                ]);
-                console.log('Database view data loaded successfully');
-            } catch (error) {
-                console.error('Error loading database view data:', error);
-            }
-        }
+        // Load database view data - REMOVED DUPLICATE FUNCTION
 
         // Get current user from authentication service
         function getCurrentUser() {
@@ -6426,18 +6408,21 @@
         }
 
         // Load database view data
-        async function loadDatabaseViewData() {
+        async function loadDatabaseViewData(forceCharactersTab = false) {
             // Clear all filters globally before loading data
             clearAllFiltersGlobally();
             
-            // Ensure characters tab is visible before loading data
-            const charactersTab = document.getElementById('characters-tab');
-            charactersTab.style.display = 'block';
-            
-            // Set characters tab as active
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            const charactersButton = document.querySelector('[onclick="switchTab(\'characters\')"]');
-            charactersButton.classList.add('active');
+            // Only force characters tab if explicitly requested
+            if (forceCharactersTab) {
+                // Ensure characters tab is visible before loading data
+                const charactersTab = document.getElementById('characters-tab');
+                charactersTab.style.display = 'block';
+                
+                // Set characters tab as active
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                const charactersButton = document.querySelector('[onclick="switchTab(\'characters\')"]');
+                charactersButton.classList.add('active');
+            }
             
             try {
                 await Promise.all([
@@ -6459,8 +6444,10 @@
                 // Update all statistics after loading all data
                 await updateAllStats();
                 
-                // Ensure characters tab is properly shown after loading data
-                switchTab('characters');
+                // Only switch to characters tab if explicitly requested
+                if (forceCharactersTab) {
+                    switchTab('characters');
+                }
                 
             // Disable "Add to Deck" buttons for guest users immediately
             disableAddToDeckButtonsImmediate();
@@ -6728,7 +6715,8 @@
         // Advanced filtering functionality
         function setupSearch() {
             const headerFilters = document.querySelectorAll('.header-filter');
-            const filterInputs = document.querySelectorAll('.filter-input');
+            // Only target filter inputs within the characters tab, not all filter inputs
+            const filterInputs = document.querySelectorAll('#characters-tab .filter-input');
             const clearFiltersBtn = document.getElementById('clear-filters');
             const hasInherentAbilityToggle = document.getElementById('has-inherent-ability');
             const hasNoInherentAbilityToggle = document.getElementById('has-no-inherent-ability');
@@ -6738,7 +6726,7 @@
                 input.addEventListener('input', applyFilters);
             });
             
-            // Setup numeric filters
+            // Setup numeric filters - only for character filters
             filterInputs.forEach(input => {
                 input.addEventListener('input', applyFilters);
             });
@@ -6960,6 +6948,7 @@
 
         // Location filtering functions
         async function applyLocationFilters() {
+            console.log('🔍 DEBUG: applyLocationFilters called');
             try {
                 const resp = await fetch('/api/locations');
                 const data = await resp.json();
@@ -6971,12 +6960,16 @@
                 const minThreat = document.getElementById('location-threat-min').value;
                 const maxThreat = document.getElementById('location-threat-max').value;
                 
+                console.log('🔍 DEBUG: Location filter values - min:', minThreat, 'max:', maxThreat);
+                
                 if (minThreat && !isNaN(minThreat)) {
                     filtered = filtered.filter(location => location.threat_level >= parseInt(minThreat));
                 }
                 if (maxThreat && !isNaN(maxThreat)) {
                     filtered = filtered.filter(location => location.threat_level <= parseInt(maxThreat));
                 }
+                
+                console.log('🔍 DEBUG: Filtered locations count:', filtered.length);
 
                 displayLocations(filtered);
             } catch (err) {
@@ -7070,6 +7063,33 @@
 
         // Tab switching functionality
         function switchTab(tabName) {
+            const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+            console.log(`🔍 DEBUG: switchTab called with: ${tabName} at ${timestamp}`);
+            console.trace('🔍 DEBUG: switchTab call stack');
+            
+            // Removed overly aggressive tab switching protection
+            
+            // Add a global flag to track if we're in the middle of a filter interaction
+            if (window.isFilterInteraction) {
+                console.log('🔍 DEBUG: switchTab called during filter interaction - this might be the problem!');
+                
+                // If we're in a filter interaction and trying to switch to characters, block it
+                if (tabName === 'characters') {
+                    console.log('🚨 BLOCKING: Characters tab switch during filter interaction - preventing unwanted navigation!');
+                    return; // Block the tab switch
+                }
+            }
+            
+            // Also check if this is a call to switch to characters tab
+            if (tabName === 'characters') {
+                console.log('🔍 DEBUG: switchTab called to switch to characters tab - investigating...');
+                console.trace('🔍 DEBUG: Characters tab switch call stack');
+                
+                // Check if this is happening after a filter interaction
+                if (window.isFilterInteraction) {
+                    console.log('🚨 ALERT: Characters tab switch called during filter interaction!');
+                }
+            }
             
             // Clear all filters when switching tabs
             clearAllFiltersGlobally();
@@ -7098,10 +7118,19 @@
             const selectedButton = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
             if (selectedButton) {
                 selectedButton.classList.add('active');
+                console.log(`🔍 DEBUG: Added active class to ${tabName} button`);
+            } else {
+                console.log(`🔍 DEBUG: Button for ${tabName} not found!`);
             }
             
             // Show selected tab
-            document.getElementById(tabName + '-tab').style.display = 'block';
+            const selectedTab = document.getElementById(tabName + '-tab');
+            if (selectedTab) {
+                selectedTab.style.display = 'block';
+                console.log(`🔍 DEBUG: Showing tab ${tabName}-tab`);
+            } else {
+                console.log(`🔍 DEBUG: Tab ${tabName}-tab not found!`);
+            }
             
             // Show search container for non-character tabs
             if (tabName !== 'characters') {
@@ -8071,14 +8100,27 @@
 
         // Power Cards functions
         async function loadPowerCards() {
+            console.log('🔍 DEBUG: loadPowerCards called');
             try {
                 const resp = await fetch('/api/power-cards');
                 const data = await resp.json();
-                if (data.success) displayPowerCards(data.data);
+                if (data.success) {
+                    console.log('🔍 DEBUG: Power cards data loaded, calling displayPowerCards');
+                    displayPowerCards(data.data);
+                }
             } catch (e) { console.error('Error loading power cards:', e); }
         }
 
         function displayPowerCards(cards) {
+            console.log('🔍 DEBUG: displayPowerCards called with', cards.length, 'cards');
+            
+            // Check DOM state before making any changes
+            const powerCardsTab = document.getElementById('power-cards-tab');
+            const charactersTab = document.getElementById('characters-tab');
+            console.log('🔍 DEBUG: displayPowerCards - BEFORE changes:');
+            console.log('  power-cards-tab display:', powerCardsTab ? powerCardsTab.style.display : 'NOT FOUND');
+            console.log('  characters-tab display:', charactersTab ? charactersTab.style.display : 'NOT FOUND');
+            
             const tbody = document.getElementById('power-cards-tbody');
             if (!cards || cards.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4">No power cards found</td></tr>';
@@ -8124,9 +8166,16 @@
                     <td>${card.value}</td>
                 </tr>
             `).join('');
+            
+            // Check DOM state after making changes
+            console.log('🔍 DEBUG: displayPowerCards - AFTER changes:');
+            console.log('  power-cards-tab display:', powerCardsTab ? powerCardsTab.style.display : 'NOT FOUND');
+            console.log('  characters-tab display:', charactersTab ? charactersTab.style.display : 'NOT FOUND');
         }
         function setupPowerCardsSearch() {
+            console.log('🔍 DEBUG: setupPowerCardsSearch called');
             const searchInput = document.getElementById('search-input');
+            console.log('🔍 DEBUG: searchInput found:', !!searchInput);
             searchInput.addEventListener('input', async (e) => {
                 const term = e.target.value.toLowerCase();
                 if (term.length === 0) { 
@@ -8155,11 +8204,49 @@
             const minValueInput = document.getElementById('power-value-min');
             const maxValueInput = document.getElementById('power-value-max');
             
-            minValueInput.addEventListener('input', applyPowerCardFilters);
-            maxValueInput.addEventListener('input', applyPowerCardFilters);
+            console.log('🔍 DEBUG: Setting up power card value filter inputs');
+            console.log('🔍 DEBUG: minValueInput found:', !!minValueInput);
+            console.log('🔍 DEBUG: maxValueInput found:', !!maxValueInput);
+            
+            minValueInput.addEventListener('input', (e) => {
+                console.log('🔍 DEBUG: minValueInput input event triggered, value:', e.target.value);
+                window.isFilterInteraction = true;
+                
+                // Add visual debugging - check what tabs are actually visible
+                const powerCardsTab = document.getElementById('power-cards-tab');
+                const charactersTab = document.getElementById('characters-tab');
+                const powerCardsButton = document.querySelector('[onclick="switchTab(\'power-cards\')"]');
+                const charactersButton = document.querySelector('[onclick="switchTab(\'characters\')"]');
+                
+                console.log('🔍 DEBUG: DOM State Check:');
+                console.log('  power-cards-tab display:', powerCardsTab ? powerCardsTab.style.display : 'NOT FOUND');
+                console.log('  characters-tab display:', charactersTab ? charactersTab.style.display : 'NOT FOUND');
+                console.log('  power-cards button active:', powerCardsButton ? powerCardsButton.classList.contains('active') : 'NOT FOUND');
+                console.log('  characters button active:', charactersButton ? charactersButton.classList.contains('active') : 'NOT FOUND');
+                
+                applyPowerCardFilters();
+                
+                // Check DOM state again after applying filters
+                setTimeout(() => {
+                    console.log('🔍 DEBUG: DOM State Check AFTER filter:');
+                    console.log('  power-cards-tab display:', powerCardsTab ? powerCardsTab.style.display : 'NOT FOUND');
+                    console.log('  characters-tab display:', charactersTab ? charactersTab.style.display : 'NOT FOUND');
+                    console.log('  power-cards button active:', powerCardsButton ? powerCardsButton.classList.contains('active') : 'NOT FOUND');
+                    console.log('  characters button active:', charactersButton ? charactersButton.classList.contains('active') : 'NOT FOUND');
+                }, 100);
+                
+                setTimeout(() => { window.isFilterInteraction = false; }, 3000);
+            });
+            maxValueInput.addEventListener('input', (e) => {
+                console.log('🔍 DEBUG: maxValueInput input event triggered, value:', e.target.value);
+                window.isFilterInteraction = true;
+                applyPowerCardFilters();
+                setTimeout(() => { window.isFilterInteraction = false; }, 3000);
+            });
             
             // Prevent form submission and unwanted navigation
             minValueInput.addEventListener('keydown', (e) => {
+                console.log('🔍 DEBUG: minValueInput keydown event:', e.key);
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     e.stopPropagation();
@@ -8168,6 +8255,7 @@
             });
             
             maxValueInput.addEventListener('keydown', (e) => {
+                console.log('🔍 DEBUG: maxValueInput keydown event:', e.key);
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     e.stopPropagation();
@@ -8175,17 +8263,100 @@
                 }
             });
             
-            // Prevent click events from bubbling up and causing navigation
+            // Prevent click events from bubbling up and causing navigation (but allow normal input behavior)
             minValueInput.addEventListener('click', (e) => {
-                e.stopPropagation();
+                console.log('🔍 DEBUG: minValueInput click event');
+                window.isFilterInteraction = true;
+                e.stopPropagation(); // Only stop propagation, don't prevent default
+                setTimeout(() => { window.isFilterInteraction = false; }, 3000);
             });
             
             maxValueInput.addEventListener('click', (e) => {
+                console.log('🔍 DEBUG: maxValueInput click event');
+                window.isFilterInteraction = true;
+                e.stopPropagation(); // Only stop propagation, don't prevent default
+                setTimeout(() => { window.isFilterInteraction = false; }, 3000);
+            });
+            
+            // Add event listeners for spinner arrows (mousedown/up events) - only prevent on spinner arrows
+            minValueInput.addEventListener('mousedown', (e) => {
+                console.log('🔍 DEBUG: minValueInput mousedown event');
+                // Only prevent if it's on the spinner arrows (not the input field itself)
+                if (e.target !== minValueInput) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                } else {
+                    e.stopPropagation(); // Just stop propagation for the input field
+                }
+            });
+            
+            maxValueInput.addEventListener('mousedown', (e) => {
+                console.log('🔍 DEBUG: maxValueInput mousedown event');
+                // Only prevent if it's on the spinner arrows (not the input field itself)
+                if (e.target !== maxValueInput) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                } else {
+                    e.stopPropagation(); // Just stop propagation for the input field
+                }
+            });
+            
+            // Add event listeners for mouseup events (spinner arrows) - only prevent on spinner arrows
+            minValueInput.addEventListener('mouseup', (e) => {
+                console.log('🔍 DEBUG: minValueInput mouseup event');
+                // Only prevent if it's on the spinner arrows (not the input field itself)
+                if (e.target !== minValueInput) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                } else {
+                    e.stopPropagation(); // Just stop propagation for the input field
+                }
+            });
+            
+            maxValueInput.addEventListener('mouseup', (e) => {
+                console.log('🔍 DEBUG: maxValueInput mouseup event');
+                // Only prevent if it's on the spinner arrows (not the input field itself)
+                if (e.target !== maxValueInput) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                } else {
+                    e.stopPropagation(); // Just stop propagation for the input field
+                }
+            });
+            
+            // Add event listeners for focus events
+            minValueInput.addEventListener('focus', (e) => {
+                console.log('🔍 DEBUG: minValueInput focus event');
                 e.stopPropagation();
+            });
+            
+            maxValueInput.addEventListener('focus', (e) => {
+                console.log('🔍 DEBUG: maxValueInput focus event');
+                e.stopPropagation();
+            });
+            
+            // Prevent any form submission or navigation
+            minValueInput.addEventListener('change', (e) => {
+                console.log('🔍 DEBUG: minValueInput change event, value:', e.target.value);
+                e.preventDefault();
+                e.stopPropagation();
+                applyPowerCardFilters();
+            });
+            
+            maxValueInput.addEventListener('change', (e) => {
+                console.log('🔍 DEBUG: maxValueInput change event, value:', e.target.value);
+                e.preventDefault();
+                e.stopPropagation();
+                applyPowerCardFilters();
             });
         }
 
         async function applyPowerCardFilters() {
+            console.log('🔍 DEBUG: applyPowerCardFilters called');
             try {
                 const resp = await fetch('/api/power-cards');
                 const data = await resp.json();
@@ -8228,12 +8399,16 @@
                 const minValue = document.getElementById('power-value-min').value;
                 const maxValue = document.getElementById('power-value-max').value;
                 
+                console.log('🔍 DEBUG: Filter values - min:', minValue, 'max:', maxValue);
+                
                 if (minValue && !isNaN(minValue)) {
                     filtered = filtered.filter(card => card.value >= parseInt(minValue));
                 }
                 if (maxValue && !isNaN(maxValue)) {
                     filtered = filtered.filter(card => card.value <= parseInt(maxValue));
                 }
+                
+                console.log('🔍 DEBUG: Filtered cards count:', filtered.length);
 
                 displayPowerCards(filtered);
             } catch (err) {
@@ -8252,6 +8427,81 @@
         // Authentication functions
         let currentUser = null;
         let isReadOnlyMode = false; // Track if we're viewing another user's deck - managed by auth service
+        
+        // Add global event listener to catch any clicks that might trigger tab switches
+        document.addEventListener('click', function(event) {
+            if (window.isFilterInteraction) {
+                console.log('🔍 DEBUG: Click event during filter interaction:', event.target);
+                if (event.target.onclick && event.target.onclick.toString().includes('switchTab')) {
+                    console.log('🚨 ALERT: Click on element with switchTab onclick during filter interaction!');
+                    console.log('Element:', event.target);
+                    console.log('onclick:', event.target.onclick.toString());
+                }
+            }
+        });
+        
+        // Add event listeners to catch any page navigation or refresh events
+        window.addEventListener('beforeunload', function(event) {
+            if (window.isFilterInteraction) {
+                console.log('🚨 ALERT: Page is about to unload during filter interaction!');
+            }
+        });
+        
+        // Add DOM observer to catch any changes to the characters tab
+        const charactersTab = document.getElementById('characters-tab');
+        if (charactersTab) {
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                        console.log('🚨 ALERT: characters-tab style changed!');
+                        console.log('  Old value:', mutation.oldValue);
+                        console.log('  New value:', charactersTab.style.cssText);
+                        console.trace('🚨 ALERT: characters-tab style change call stack');
+                    }
+                });
+            });
+            observer.observe(charactersTab, { 
+                attributes: true, 
+                attributeOldValue: true,
+                attributeFilter: ['style']
+            });
+        }
+        
+        window.addEventListener('popstate', function(event) {
+            if (window.isFilterInteraction) {
+                console.log('🚨 ALERT: Browser back/forward button pressed during filter interaction!');
+            }
+        });
+        
+        // Add event listener to catch any form submissions
+        document.addEventListener('submit', function(event) {
+            if (window.isFilterInteraction) {
+                console.log('🚨 ALERT: Form submission during filter interaction!');
+                console.log('Form:', event.target);
+                event.preventDefault();
+                event.stopPropagation();
+                return false;
+            }
+        });
+        
+        // Add event listener to catch any navigation events
+        window.addEventListener('beforeunload', function(event) {
+            if (window.isFilterInteraction) {
+                console.log('🚨 ALERT: Page navigation during filter interaction!');
+                event.preventDefault();
+                event.returnValue = '';
+                return '';
+            }
+        });
+        
+        // Add event listener to catch any hash changes
+        window.addEventListener('hashchange', function(event) {
+            if (window.isFilterInteraction) {
+                console.log('🚨 ALERT: Hash change during filter interaction!');
+                event.preventDefault();
+                return false;
+            }
+        });
         
         // Check for stored user immediately to prevent any flash
         (function() {
@@ -8500,9 +8750,128 @@
                 }, 100); // Small delay to let decks load first
             }
             
-            // Add location filter event listeners
-            document.getElementById('location-threat-min').addEventListener('input', applyLocationFilters);
-            document.getElementById('location-threat-max').addEventListener('input', applyLocationFilters);
+            // Add location filter event listeners with comprehensive event prevention
+            const locationThreatMin = document.getElementById('location-threat-min');
+            const locationThreatMax = document.getElementById('location-threat-max');
+            
+            console.log('🔍 DEBUG: Setting up location threat filter inputs');
+            console.log('🔍 DEBUG: locationThreatMin found:', !!locationThreatMin);
+            console.log('🔍 DEBUG: locationThreatMax found:', !!locationThreatMax);
+            
+            locationThreatMin.addEventListener('input', (e) => {
+                console.log('🔍 DEBUG: locationThreatMin input event triggered, value:', e.target.value);
+                applyLocationFilters();
+            });
+            locationThreatMax.addEventListener('input', (e) => {
+                console.log('🔍 DEBUG: locationThreatMax input event triggered, value:', e.target.value);
+                applyLocationFilters();
+            });
+            
+            // Prevent form submission and unwanted navigation
+            locationThreatMin.addEventListener('keydown', (e) => {
+                console.log('🔍 DEBUG: locationThreatMin keydown event:', e.key);
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyLocationFilters();
+                }
+            });
+            
+            locationThreatMax.addEventListener('keydown', (e) => {
+                console.log('🔍 DEBUG: locationThreatMax keydown event:', e.key);
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyLocationFilters();
+                }
+            });
+            
+            // Prevent click events from bubbling up and causing navigation (but allow normal input behavior)
+            locationThreatMin.addEventListener('click', (e) => {
+                console.log('🔍 DEBUG: locationThreatMin click event');
+                e.stopPropagation(); // Only stop propagation, don't prevent default
+            });
+            
+            locationThreatMax.addEventListener('click', (e) => {
+                console.log('🔍 DEBUG: locationThreatMax click event');
+                e.stopPropagation(); // Only stop propagation, don't prevent default
+            });
+            
+            // Add event listeners for spinner arrows (mousedown/up events) - only prevent on spinner arrows
+            locationThreatMin.addEventListener('mousedown', (e) => {
+                console.log('🔍 DEBUG: locationThreatMin mousedown event');
+                // Only prevent if it's on the spinner arrows (not the input field itself)
+                if (e.target !== locationThreatMin) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                } else {
+                    e.stopPropagation(); // Just stop propagation for the input field
+                }
+            });
+            
+            locationThreatMax.addEventListener('mousedown', (e) => {
+                console.log('🔍 DEBUG: locationThreatMax mousedown event');
+                // Only prevent if it's on the spinner arrows (not the input field itself)
+                if (e.target !== locationThreatMax) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                } else {
+                    e.stopPropagation(); // Just stop propagation for the input field
+                }
+            });
+            
+            // Add event listeners for mouseup events (spinner arrows) - only prevent on spinner arrows
+            locationThreatMin.addEventListener('mouseup', (e) => {
+                console.log('🔍 DEBUG: locationThreatMin mouseup event');
+                // Only prevent if it's on the spinner arrows (not the input field itself)
+                if (e.target !== locationThreatMin) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                } else {
+                    e.stopPropagation(); // Just stop propagation for the input field
+                }
+            });
+            
+            locationThreatMax.addEventListener('mouseup', (e) => {
+                console.log('🔍 DEBUG: locationThreatMax mouseup event');
+                // Only prevent if it's on the spinner arrows (not the input field itself)
+                if (e.target !== locationThreatMax) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                } else {
+                    e.stopPropagation(); // Just stop propagation for the input field
+                }
+            });
+            
+            // Add event listeners for focus events
+            locationThreatMin.addEventListener('focus', (e) => {
+                console.log('🔍 DEBUG: locationThreatMin focus event');
+                e.stopPropagation();
+            });
+            
+            locationThreatMax.addEventListener('focus', (e) => {
+                console.log('🔍 DEBUG: locationThreatMax focus event');
+                e.stopPropagation();
+            });
+            
+            // Prevent any form submission or navigation
+            locationThreatMin.addEventListener('change', (e) => {
+                console.log('🔍 DEBUG: locationThreatMin change event, value:', e.target.value);
+                e.preventDefault();
+                e.stopPropagation();
+                applyLocationFilters();
+            });
+            
+            locationThreatMax.addEventListener('change', (e) => {
+                console.log('🔍 DEBUG: locationThreatMax change event, value:', e.target.value);
+                e.preventDefault();
+                e.stopPropagation();
+                applyLocationFilters();
+            });
             
             // Update all stats after loading data
             setTimeout(updateAllStats, 1000);
@@ -10033,40 +10402,85 @@
                 return;
             }
             
+            // Enforce 2-column layout specifically for list view
+            enforceTwoColumnLayoutInListView();
+            
             // Run enforcement multiple times with different timing
             enforceListViewHorizontalLayout();
             
             setTimeout(() => {
+                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 0);
             
             setTimeout(() => {
+                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 1);
             
             setTimeout(() => {
+                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 5);
             
             setTimeout(() => {
+                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 10);
             
             setTimeout(() => {
+                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 25);
             
             setTimeout(() => {
+                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 50);
             
             setTimeout(() => {
+                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 100);
             
             setTimeout(() => {
+                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 200);
+        }
+        
+        // Function to enforce exactly 2 columns in list view
+        function enforceTwoColumnLayoutInListView() {
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            if (!deckCardsEditor || !deckCardsEditor.classList.contains('list-view')) {
+                return;
+            }
+            
+            // Don't enforce 2-column layout in read-only mode (allow 3-column)
+            if (isReadOnlyMode) {
+                return;
+            }
+            
+            // Force exactly 2 columns with CSS
+            deckCardsEditor.style.setProperty('display', 'flex', 'important');
+            deckCardsEditor.style.setProperty('gap', '20px', 'important');
+            deckCardsEditor.style.setProperty('align-items', 'flex-start', 'important');
+            deckCardsEditor.style.setProperty('flex-direction', 'row', 'important');
+            
+            // Ensure we have exactly 2 columns
+            const columns = deckCardsEditor.querySelectorAll('.deck-column');
+            if (columns.length !== 2) {
+                // If we don't have exactly 2 columns, recreate the layout
+                createTwoColumnLayout();
+            }
+            
+            // Force each column to be exactly 50% width
+            columns.forEach(column => {
+                column.style.setProperty('flex', '1', 'important');
+                column.style.setProperty('display', 'flex', 'important');
+                column.style.setProperty('flex-direction', 'column', 'important');
+                column.style.setProperty('gap', '20px', 'important');
+            });
         }
         
         // Set up MutationObserver to watch for layout changes
@@ -13152,13 +13566,13 @@
             const sections = Array.from(deckCardsEditor.children);
             if (sections.length === 0) return;
             
-            // Create two columns
+            // Create exactly two columns - never more, never less
             const leftColumn = document.createElement('div');
             leftColumn.className = 'deck-column';
             const rightColumn = document.createElement('div');
             rightColumn.className = 'deck-column';
             
-            // Distribute sections between columns based on category count
+            // Distribute sections between exactly 2 columns
             // Left column gets the first half (with carry-over), right column gets the second half
             const totalSections = sections.length;
             const leftColumnCount = Math.ceil(totalSections / 2);
@@ -13171,10 +13585,15 @@
                 }
             });
             
-            // Clear and add columns
+            // Clear and add exactly 2 columns
             deckCardsEditor.innerHTML = '';
             deckCardsEditor.appendChild(leftColumn);
             deckCardsEditor.appendChild(rightColumn);
+            
+            // Ensure the layout is exactly 2 columns with CSS
+            deckCardsEditor.style.setProperty('display', 'flex', 'important');
+            deckCardsEditor.style.setProperty('gap', '20px', 'important');
+            deckCardsEditor.style.setProperty('align-items', 'flex-start', 'important');
         }
         
         function restoreSingleColumnLayout() {
@@ -15215,6 +15634,11 @@
                 // Ultra-aggressive layout enforcement
                 ultraAggressiveLayoutEnforcement();
                 
+                // Additional enforcement for list view to prevent 4-column layout
+                if (deckCardsEditor && deckCardsEditor.classList.contains('list-view') && !isReadOnlyMode) {
+                    enforceTwoColumnLayoutInListView();
+                }
+                
                 // Restore the expansion state after re-rendering
                 applyUIPreferences({ expansionState: currentExpansionState });
                 updateDeckEditorCardCount();
@@ -17074,6 +17498,7 @@
             if (!isReadOnlyMode) {
                 setTimeout(() => {
                     enforceListViewHorizontalLayout();
+                    enforceTwoColumnLayoutInListView();
                 }, 10);
             }
             
