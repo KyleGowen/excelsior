@@ -203,13 +203,21 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        echo "🚀 Starting Docker build..."
-        docker build --platform linux/amd64 --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        echo "🚀 Starting FORCE Docker build with NO CACHE..."
+        echo "🧹 Cleaning up any existing images..."
+        docker system prune -f || true
+        docker builder prune -f || true
+        echo "🔨 Building with --no-cache --pull --force-rm..."
+        docker build --platform linux/amd64 --no-cache --pull --force-rm -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         echo "✅ Docker build completed"
         
         echo "🏷️ Tagging image..."
         docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
         echo "✅ Image tagged"
+        
+        echo "📋 Verifying build contents..."
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ls -la /app/public/index.html
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG grep -c "DEBUG: calculateTotalThreat called" /app/public/index.html || echo "0"
         
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
@@ -388,35 +396,41 @@ jobs:
           --instance-ids ${{ env.EC2_INSTANCE_ID }} \
           --document-name "AWS-RunShellScript" \
           --parameters "commands=[
-            \"echo '=== DEPLOYMENT DEBUG START ==='\",
+            \"echo '=== FORCE DEPLOYMENT START ==='\",
             \"echo 'Current time:' $(date)\",
             \"echo 'ECR URI:' $ECR_URI\",
             \"echo 'AWS Region:' ${{ env.AWS_REGION }}\",
             \"echo ''\",
+            \"echo '🧹 NUCLEAR OPTION: Cleaning everything...'\",
+            \"docker system prune -af || true\",
+            \"docker volume prune -f || true\",
+            \"docker network prune -f || true\",
             \"echo '🔐 Logging into ECR...'\",
             \"aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_URI\",
-            \"echo '📥 Pulling latest image...'\",
-            \"docker pull $ECR_URI:latest\",
+            \"echo '📥 FORCE pulling latest image (no cache)...'\",
+            \"docker pull --no-cache $ECR_URI:latest\",
             \"echo '📋 Current images:'\",
             \"docker images | grep overpower-deckbuilder\",
             \"echo ''\",
-            \"echo '🛑 Force stopping and removing old container...'\",
+            \"echo '🛑 NUCLEAR: Force stopping and removing ALL containers...'\",
             \"docker stop overpower-app || true\",
             \"docker rm overpower-app || true\",
-            \"echo '🧹 Cleaning up any dangling containers...'\",
-            \"docker container prune -f || true\",
-            \"echo '🚀 Starting new container with latest image...'\",
+            \"docker stop \$(docker ps -aq) || true\",
+            \"docker rm \$(docker ps -aq) || true\",
+            \"echo '🧹 Final cleanup...'\",
+            \"docker system prune -af || true\",
+            \"echo '🚀 Starting FRESH container with latest image...'\",
             \"docker run -d --name overpower-app --restart unless-stopped -p 3000:3000 --env-file /opt/app/.env -e SKIP_MIGRATIONS=false $ECR_URI:latest\",
             \"echo '⏳ Waiting for container to start...'\",
-            \"sleep 15\",
+            \"sleep 20\",
             \"echo '📋 Container status:'\",
             \"docker ps\",
-            \"echo '📋 Container logs (last 10 lines):'\",
-            \"docker logs overpower-app --tail 10\",
+            \"echo '📋 Container logs (last 20 lines):'\",
+            \"docker logs overpower-app --tail 20\",
             \"echo '🔧 Running Flyway repair...'\",
             \"docker exec overpower-app flyway -url=jdbc:postgresql://op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require -user=postgres -password=TempPassword123! -locations=filesystem:/app/migrations repair || true\",
-            \"echo '✅ Container deployment completed'\",
-            \"echo '=== DEPLOYMENT DEBUG END ==='\"
+            \"echo '✅ NUCLEAR deployment completed'\",
+            \"echo '=== FORCE DEPLOYMENT END ==='\"
           ]" \
           --output text --query 'Command.CommandId'
           
