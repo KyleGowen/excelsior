@@ -390,11 +390,18 @@ jobs:
           --parameters "commands=[
             \"aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_URI\",
             \"docker pull $ECR_URI:latest\",
+            \"echo '🛑 Force stopping and removing old container...'\",
             \"docker stop overpower-app || true\",
             \"docker rm overpower-app || true\",
+            \"echo '🧹 Cleaning up any dangling containers...'\",
+            \"docker container prune -f || true\",
+            \"echo '🚀 Starting new container with latest image...'\",
             \"docker run -d --name overpower-app --restart unless-stopped -p 3000:3000 --env-file /opt/app/.env -e SKIP_MIGRATIONS=false $ECR_URI:latest\",
-            \"sleep 10\",
-            \"docker exec overpower-app flyway -url=jdbc:postgresql://op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require -user=postgres -password=TempPassword123! -locations=filesystem:/app/migrations repair || true\"
+            \"echo '⏳ Waiting for container to start...'\",
+            \"sleep 15\",
+            \"echo '🔧 Running Flyway repair...'\",
+            \"docker exec overpower-app flyway -url=jdbc:postgresql://op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require -user=postgres -password=TempPassword123! -locations=filesystem:/app/migrations repair || true\",
+            \"echo '✅ Container deployment completed'\"
           ]" \
           --output text --query 'Command.CommandId'
           
