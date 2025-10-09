@@ -5393,7 +5393,6 @@
                             <th>Image</th>
                             <th></th>
                             <th>Name</th>
-                            <th>Card Type</th>
                             <th>Character</th>
                             <th>Card Effect</th>
                         </tr>
@@ -5405,12 +5404,11 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="special-cards-tbody">
                         <tr>
-                            <td colspan="6" class="loading">Loading special cards...</td>
+                            <td colspan="5" class="loading">Loading special cards...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -6719,7 +6717,6 @@
                         </button>
                     </td>
                     <td><strong>${card.name}</strong></td>
-                    <td>${card.card_type}</td>
                     <td>${card.character}</td>
                     <td>${formatSpecialCardEffect(card.card_effect, card)}</td>
                 `;
