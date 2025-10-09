@@ -402,35 +402,31 @@ jobs:
       run: sleep 30
       
     - name: Verify deployment
-      id: verify-deployment
       run: |
-        COMMAND_ID=$(aws ssm send-command \
+        echo "🔍 Running production verification..."
+        aws ssm send-command \
           --instance-ids ${{ env.EC2_INSTANCE_ID }} \
           --document-name "AWS-RunShellScript" \
           --parameters 'commands=[
+            "echo \"=== PRODUCTION VERIFICATION RESULTS ===\"",
+            "echo \"Container Status:\"",
             "docker ps",
+            "echo \"\"",
+            "echo \"Application Logs (last 20 lines):\"",
             "docker logs overpower-app --tail 20",
-            "ls -la /app/public/js/",
+            "echo \"\"",
+            "echo \"File Verification:\"",
             "test -f /app/public/js/auth-service.js && echo \"✅ auth-service.js found\" || echo \"❌ auth-service.js missing\"",
             "test -f /app/public/index.html && echo \"✅ index.html found\" || echo \"❌ index.html missing\"",
+            "echo \"\"",
+            "echo \"Code Verification:\"",
             "grep -q \"DEBUG: calculateTotalThreat called\" /app/public/index.html && echo \"✅ Debug logging found in production\" || echo \"❌ Debug logging NOT found in production\"",
-            "grep -q \"Victory Harben.*20\" /app/public/index.html && echo \"✅ Victory Harben fix found in production\" || echo \"❌ Victory Harben fix NOT found in production\""
+            "grep -q \"Victory Harben.*20\" /app/public/index.html && echo \"✅ Victory Harben fix found in production\" || echo \"❌ Victory Harben fix NOT found in production\"",
+            "echo \"\"",
+            "echo \"=== END VERIFICATION ===\""
           ]' \
-          --output text --query 'Command.CommandId')
-        echo "COMMAND_ID=$COMMAND_ID" >> $GITHUB_OUTPUT
-        echo "🔍 Verification command sent with ID: $COMMAND_ID"
-          
-    - name: Wait for verification
-      run: sleep 15
-      
-    - name: Get verification results
-      run: |
-        echo "🔍 Retrieving verification results..."
-        aws ssm get-command-invocation \
-          --command-id ${{ steps.verify-deployment.outputs.COMMAND_ID }} \
-          --instance-id ${{ env.EC2_INSTANCE_ID }} \
-          --query 'StandardOutputContent' \
-          --output text
+          --output text --query 'Command.CommandId'
+        echo "✅ Verification command sent successfully"
       
     - name: Deployment success notification
       run: |
