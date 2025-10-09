@@ -388,8 +388,18 @@ jobs:
           --instance-ids ${{ env.EC2_INSTANCE_ID }} \
           --document-name "AWS-RunShellScript" \
           --parameters "commands=[
+            \"echo '=== DEPLOYMENT DEBUG START ==='\",
+            \"echo 'Current time:' $(date)\",
+            \"echo 'ECR URI:' $ECR_URI\",
+            \"echo 'AWS Region:' ${{ env.AWS_REGION }}\",
+            \"echo ''\",
+            \"echo '🔐 Logging into ECR...'\",
             \"aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_URI\",
+            \"echo '📥 Pulling latest image...'\",
             \"docker pull $ECR_URI:latest\",
+            \"echo '📋 Current images:'\",
+            \"docker images | grep overpower-deckbuilder\",
+            \"echo ''\",
             \"echo '🛑 Force stopping and removing old container...'\",
             \"docker stop overpower-app || true\",
             \"docker rm overpower-app || true\",
@@ -399,15 +409,42 @@ jobs:
             \"docker run -d --name overpower-app --restart unless-stopped -p 3000:3000 --env-file /opt/app/.env -e SKIP_MIGRATIONS=false $ECR_URI:latest\",
             \"echo '⏳ Waiting for container to start...'\",
             \"sleep 15\",
+            \"echo '📋 Container status:'\",
+            \"docker ps\",
+            \"echo '📋 Container logs (last 10 lines):'\",
+            \"docker logs overpower-app --tail 10\",
             \"echo '🔧 Running Flyway repair...'\",
             \"docker exec overpower-app flyway -url=jdbc:postgresql://op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require -user=postgres -password=TempPassword123! -locations=filesystem:/app/migrations repair || true\",
-            \"echo '✅ Container deployment completed'\"
+            \"echo '✅ Container deployment completed'\",
+            \"echo '=== DEPLOYMENT DEBUG END ==='\"
           ]" \
           --output text --query 'Command.CommandId'
           
     - name: Wait for deployment
       run: sleep 30
       
+    - name: Get deployment logs
+      run: |
+        echo "🔍 Getting deployment logs..."
+        aws ssm send-command \
+          --instance-ids ${{ env.EC2_INSTANCE_ID }} \
+          --document-name "AWS-RunShellScript" \
+          --parameters 'commands=[
+            "echo \"=== DEPLOYMENT LOGS ===\"",
+            "docker logs overpower-app --tail 50",
+            "echo \"\"",
+            "echo \"=== CONTAINER INFO ===\"",
+            "docker inspect overpower-app --format=\"{{.Image}}\"",
+            "docker inspect overpower-app --format=\"{{.Created}}\"",
+            "echo \"\"",
+            "echo \"=== FILE VERIFICATION ===\"",
+            "ls -la /app/public/index.html",
+            "grep -c \"DEBUG: calculateTotalThreat called\" /app/public/index.html || echo \"0\"",
+            "grep -c \"Victory Harben.*20\" /app/public/index.html || echo \"0\""
+          ]' \
+          --output text --query 'Command.CommandId'
+        echo "✅ Deployment logs command sent successfully"
+        
     - name: Verify deployment
       run: |
         echo "🔍 Running production verification..."
