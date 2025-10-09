@@ -185,6 +185,32 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history to ensure we have the latest commit
+      
+    - name: Verify Git Information
+      run: |
+        echo "🔍 VERIFYING GIT INFORMATION:"
+        echo "Current branch: $(git branch --show-current)"
+        echo "Current commit SHA: $(git rev-parse HEAD)"
+        echo "Expected commit SHA: ${{ github.sha }}"
+        echo "Commit message: $(git log -1 --pretty=format:'%s')"
+        echo "Commit author: $(git log -1 --pretty=format:'%an <%ae>')"
+        echo "Commit date: $(git log -1 --pretty=format:'%ad')"
+        echo "Files changed in this commit:"
+        git diff --name-only HEAD~1 HEAD || echo "No previous commit to compare"
+        echo "🔍 Checking if our fixes are in the current commit:"
+        if grep -q "DEBUG: calculateTotalThreat called" public/index.html; then
+          echo "✅ Debug logging found in current commit"
+        else
+          echo "❌ Debug logging NOT found in current commit"
+        fi
+        if grep -q "Victory Harben.*20" public/index.html; then
+          echo "✅ Victory Harben fix found in current commit"
+        else
+          echo "❌ Victory Harben fix NOT found in current commit"
+        fi
+        echo "=== END GIT VERIFICATION ==="
       
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -204,6 +230,22 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         echo "🚀 Starting FORCE Docker build with NO CACHE..."
+        echo "🔍 PRE-BUILD VERIFICATION:"
+        echo "Building from commit: $(git rev-parse HEAD)"
+        echo "Building from branch: $(git branch --show-current)"
+        echo "Checking source files before build:"
+        if grep -q "DEBUG: calculateTotalThreat called" public/index.html; then
+          echo "✅ Debug logging found in source files"
+        else
+          echo "❌ Debug logging NOT found in source files"
+          exit 1
+        fi
+        if grep -q "Victory Harben.*20" public/index.html; then
+          echo "✅ Victory Harben fix found in source files"
+        else
+          echo "❌ Victory Harben fix NOT found in source files"
+          exit 1
+        fi
         echo "🧹 Cleaning up any existing images..."
         docker system prune -f || true
         docker builder prune -f || true
