@@ -528,10 +528,65 @@ jobs:
           --output text --query 'Command.CommandId'
         echo "✅ Verification command sent successfully"
       
+    - name: Production Health Check
+      run: |
+        echo "🏥 Running production health check..."
+        aws ssm send-command \
+          --instance-ids ${{ env.EC2_INSTANCE_ID }} \
+          --document-name "AWS-RunShellScript" \
+          --parameters 'commands=[
+            "echo \"=== PRODUCTION HEALTH CHECK ===\"",
+            "echo \"Testing health endpoint...\"",
+            "sleep 5",
+            "HEALTH_RESPONSE=$(curl -s -w \"%{http_code}\" http://localhost:3000/health -o /tmp/health_response.json)",
+            "echo \"Health check HTTP status: $HEALTH_RESPONSE\"",
+            "if [ \"$HEALTH_RESPONSE\" = \"200\" ]; then",
+            "  echo \"✅ Health check passed (HTTP 200)\"",
+            "  echo \"Health check response:\"",
+            "  cat /tmp/health_response.json | jq .",
+            "  echo \"\"",
+            "  echo \"🔍 Verifying key health metrics:\"",
+            "  STATUS=$(cat /tmp/health_response.json | jq -r \".status\")",
+            "  DB_STATUS=$(cat /tmp/health_response.json | jq -r \".database.status\")",
+            "  MIGRATION_VERSION=$(cat /tmp/health_response.json | jq -r \".database.latestMigration.version\")",
+            "  GIT_COMMIT=$(cat /tmp/health_response.json | jq -r \".git.commit\")",
+            "  echo \"Overall status: $STATUS\"",
+            "  echo \"Database status: $DB_STATUS\"",
+            "  echo \"Latest migration: $MIGRATION_VERSION\"",
+            "  echo \"Git commit: $GIT_COMMIT\"",
+            "  echo \"\"",
+            "  if [ \"$STATUS\" = \"OK\" ] && [ \"$DB_STATUS\" = \"OK\" ]; then",
+            "    echo \"✅ All health checks passed!\"",
+            "    echo \"✅ Database is healthy\"",
+            "    echo \"✅ Latest migration: $MIGRATION_VERSION\"",
+            "    echo \"✅ Deployed commit: $GIT_COMMIT\"",
+            "  else",
+            "    echo \"❌ Health check failed - status: $STATUS, database: $DB_STATUS\"",
+            "    exit 1",
+            "  fi",
+            "else",
+            "  echo \"❌ Health check failed with HTTP status: $HEALTH_RESPONSE\"",
+            "  echo \"Response body:\"",
+            "  cat /tmp/health_response.json",
+            "  echo \"\"",
+            "  echo \"Container logs (last 20 lines):\"",
+            "  docker logs overpower-app --tail 20",
+            "  exit 1",
+            "fi",
+            "echo \"\"",
+            "echo \"=== HEALTH CHECK COMPLETE ===\""
+          ]' \
+          --output text --query 'Command.CommandId'
+        echo "✅ Health check command sent successfully"
+        
+    - name: Wait for health check
+      run: sleep 10
+      
     - name: Deployment success notification
       run: |
         echo "✅ Deployment completed successfully!"
         echo "🌐 Application URL: http://excelsior.cards"
         echo "🔍 Image deployed: ${{ steps.build-image.outputs.image }}"
+        echo "🏥 Health check: PASSED"
 # Trigger new deployment
 # Trigger verification test

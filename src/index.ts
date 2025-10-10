@@ -8,6 +8,7 @@ import { AuthenticationService } from './services/AuthenticationService';
 import { DeckValidationService } from './services/deckValidationService';
 import { Character } from './types';
 import path from 'path';
+import { execSync } from 'child_process';
 
 export const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,6 +27,17 @@ const deckBusinessService = new DeckService(deckRepository);
 
 // Initialize authentication service
 const authService = new AuthenticationService(userRepository);
+
+// Function to get git information
+function getGitInfo() {
+  try {
+    const commit = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+    const branch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();
+    return { commit, branch };
+  } catch (error) {
+    return { commit: 'unknown', branch: 'unknown' };
+  }
+}
 
 // Middleware
 app.use(express.json());
@@ -829,13 +841,179 @@ app.use(express.static('public', {
 }));
 app.use('/src/resources', express.static('src/resources'));
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+// Comprehensive health check endpoint
+app.get('/health', async (req, res) => {
+  const startTime = Date.now();
+  const gitInfo = getGitInfo();
+  const healthData: any = {
+    status: 'OK',
     timestamp: new Date().toISOString(),
-    database: 'PostgreSQL with Flyway migrations'
-  });
+    uptime: process.uptime(),
+    version: process.env.npm_package_version || '1.0.0',
+    environment: process.env.NODE_ENV || 'development',
+    git: {
+      commit: gitInfo.commit,
+      branch: gitInfo.branch
+    }
+  };
+
+  try {
+    // System resource information
+    const memUsage = process.memoryUsage();
+    healthData.resources = {
+      memory: {
+        rss: `${Math.round(memUsage.rss / 1024 / 1024)}MB`,
+        heapTotal: `${Math.round(memUsage.heapTotal / 1024 / 1024)}MB`,
+        heapUsed: `${Math.round(memUsage.heapUsed / 1024 / 1024)}MB`,
+        external: `${Math.round(memUsage.external / 1024 / 1024)}MB`
+      },
+      cpu: {
+        platform: process.platform,
+        arch: process.arch,
+        nodeVersion: process.version
+      }
+    };
+
+    // Database health check
+    try {
+      const dbStartTime = Date.now();
+      
+      // Test database connection
+      const pool = (dataSource as any).pool;
+      const client = await pool.connect();
+      
+      // Check if GUEST user exists
+      const guestUserResult = await client.query(
+        'SELECT id, username, role FROM users WHERE role = $1 OR username = $2',
+        ['GUEST', 'guest']
+      );
+      
+      // Count total guest decks
+      const guestDecksResult = await client.query(
+        'SELECT COUNT(*) as count FROM decks WHERE user_id IN (SELECT id FROM users WHERE role = $1 OR username = $2)',
+        ['GUEST', 'guest']
+      );
+      
+      // Get database stats
+      const dbStatsResult = await client.query(`
+        SELECT 
+          (SELECT COUNT(*) FROM users) as total_users,
+          (SELECT COUNT(*) FROM decks) as total_decks,
+          (SELECT COUNT(*) FROM deck_cards) as total_deck_cards,
+          (SELECT COUNT(*) FROM characters) as total_characters,
+          (SELECT COUNT(*) FROM special_cards) as total_special_cards,
+          (SELECT COUNT(*) FROM power_cards) as total_power_cards
+      `);
+      
+      // Get latest migration information
+      const migrationResult = await client.query(`
+        SELECT 
+          version,
+          description,
+          type,
+          script,
+          checksum,
+          installed_by,
+          installed_on,
+          execution_time,
+          success
+        FROM flyway_schema_history 
+        ORDER BY installed_rank DESC 
+        LIMIT 1
+      `);
+      
+      client.release();
+      
+      const dbLatency = Date.now() - dbStartTime;
+      
+      healthData.database = {
+        status: 'OK',
+        latency: `${dbLatency}ms`,
+        connection: 'Active',
+        guestUser: {
+          exists: guestUserResult.rows.length > 0,
+          count: guestUserResult.rows.length,
+          users: guestUserResult.rows.map((row: any) => ({
+            id: row.id,
+            username: row.username,
+            role: row.role
+          }))
+        },
+        guestDecks: {
+          total: parseInt(guestDecksResult.rows[0].count)
+        },
+        stats: {
+          totalUsers: parseInt(dbStatsResult.rows[0].total_users),
+          totalDecks: parseInt(dbStatsResult.rows[0].total_decks),
+          totalDeckCards: parseInt(dbStatsResult.rows[0].total_deck_cards),
+          totalCharacters: parseInt(dbStatsResult.rows[0].total_characters),
+          totalSpecialCards: parseInt(dbStatsResult.rows[0].total_special_cards),
+          totalPowerCards: parseInt(dbStatsResult.rows[0].total_power_cards)
+        },
+        latestMigration: migrationResult.rows.length > 0 ? {
+          version: migrationResult.rows[0].version,
+          description: migrationResult.rows[0].description,
+          type: migrationResult.rows[0].type,
+          script: migrationResult.rows[0].script,
+          installedBy: migrationResult.rows[0].installed_by,
+          installedOn: migrationResult.rows[0].installed_on,
+          executionTime: migrationResult.rows[0].execution_time,
+          success: migrationResult.rows[0].success
+        } : null
+      };
+      
+    } catch (dbError) {
+      healthData.database = {
+        status: 'ERROR',
+        error: dbError instanceof Error ? dbError.message : 'Unknown database error',
+        connection: 'Failed'
+      };
+      healthData.status = 'DEGRADED';
+    }
+
+    // Check Flyway migrations status
+    try {
+      const isValid = await databaseInit.validateDatabase();
+      const isUpToDate = await databaseInit.checkDatabaseStatus();
+      
+      healthData.migrations = {
+        status: 'OK',
+        valid: isValid,
+        upToDate: isUpToDate
+      };
+    } catch (migrationError) {
+      healthData.migrations = {
+        status: 'ERROR',
+        error: migrationError instanceof Error ? migrationError.message : 'Unknown migration error'
+      };
+      healthData.status = 'DEGRADED';
+    }
+
+    // Calculate total response time
+    const totalLatency = Date.now() - startTime;
+    healthData.latency = `${totalLatency}ms`;
+
+    // Determine overall status
+    if (healthData.database.status === 'ERROR') {
+      healthData.status = 'ERROR';
+    } else if (healthData.migrations.status === 'ERROR') {
+      healthData.status = 'DEGRADED';
+    }
+
+    // Set appropriate HTTP status code
+    const httpStatus = healthData.status === 'OK' ? 200 : 
+                      healthData.status === 'DEGRADED' ? 200 : 503;
+
+    res.status(httpStatus).json(healthData);
+
+  } catch (error) {
+    // Critical error - server is unhealthy
+    healthData.status = 'ERROR';
+    healthData.error = error instanceof Error ? error.message : 'Unknown error';
+    healthData.latency = `${Date.now() - startTime}ms`;
+    
+    res.status(503).json(healthData);
+  }
 });
 
 // Database status endpoint
