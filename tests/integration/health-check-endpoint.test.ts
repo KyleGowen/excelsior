@@ -34,20 +34,14 @@ describe('Health Check Endpoint Integration Test', () => {
     app = express();
     app.use(express.json());
 
-    // Initialize database repositories
-    pool = new Pool({
-      user: 'postgres',
-      host: 'localhost',
-      database: 'overpower',
-      password: 'password',
-      port: 1337,
-    });
-    userRepository = new PostgreSQLUserRepository(pool);
-    deckRepository = new PostgreSQLDeckRepository(pool);
-    cardRepository = new PostgreSQLCardRepository(pool);
-    await userRepository.initialize();
-    await deckRepository.initialize();
-    await cardRepository.initialize();
+    // Use the existing test database configuration
+    const dataSource = DataSourceConfig.getInstance();
+    pool = (dataSource as any).pool; // Access the pool from the singleton
+    
+    // Get repositories from the existing data source (cast to concrete types)
+    userRepository = dataSource.getUserRepository() as PostgreSQLUserRepository;
+    deckRepository = dataSource.getDeckRepository() as PostgreSQLDeckRepository;
+    cardRepository = dataSource.getCardRepository() as PostgreSQLCardRepository;
 
     // Set up the health endpoint
     app.get('/health', async (req, res) => {
@@ -213,7 +207,7 @@ describe('Health Check Endpoint Integration Test', () => {
   });
 
   afterAll(async () => {
-    await pool.end();
+    // Don't close the pool since it's managed by the existing test infrastructure
   });
 
   beforeEach(async () => {
