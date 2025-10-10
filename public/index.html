@@ -6138,13 +6138,9 @@
                     credentials: 'include'
                 });
                 const data = await response.json();
-                console.log('Deck API response:', data);
                 if (data.success) {
                     userDecks = data.data;
-                    console.log('Loaded user decks:', userDecks);
                     if (userDecks.length > 0) {
-                        console.log('First deck structure:', userDecks[0]);
-                        console.log('Available properties:', Object.keys(userDecks[0]));
                     }
                 } else {
                     console.error('Failed to load decks:', data.error);
@@ -6953,7 +6949,6 @@
 
         // Location filtering functions
         async function applyLocationFilters() {
-            console.log('🔍 DEBUG: applyLocationFilters called');
             try {
                 const resp = await fetch('/api/locations');
                 const data = await resp.json();
@@ -6965,7 +6960,6 @@
                 const minThreat = document.getElementById('location-threat-min').value;
                 const maxThreat = document.getElementById('location-threat-max').value;
                 
-                console.log('🔍 DEBUG: Location filter values - min:', minThreat, 'max:', maxThreat);
                 
                 if (minThreat && !isNaN(minThreat)) {
                     filtered = filtered.filter(location => location.threat_level >= parseInt(minThreat));
@@ -6974,7 +6968,6 @@
                     filtered = filtered.filter(location => location.threat_level <= parseInt(maxThreat));
                 }
                 
-                console.log('🔍 DEBUG: Filtered locations count:', filtered.length);
 
                 displayLocations(filtered);
             } catch (err) {
@@ -7069,14 +7062,11 @@
         // Tab switching functionality
         function switchTab(tabName) {
             const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
-            console.log(`🔍 DEBUG: switchTab called with: ${tabName} at ${timestamp}`);
-            console.trace('🔍 DEBUG: switchTab call stack');
             
             // Removed overly aggressive tab switching protection
             
             // Add a global flag to track if we're in the middle of a filter interaction
             if (window.isFilterInteraction) {
-                console.log('🔍 DEBUG: switchTab called during filter interaction - this might be the problem!');
                 
                 // If we're in a filter interaction and trying to switch to characters, block it
                 if (tabName === 'characters') {
@@ -7087,8 +7077,6 @@
             
             // Also check if this is a call to switch to characters tab
             if (tabName === 'characters') {
-                console.log('🔍 DEBUG: switchTab called to switch to characters tab - investigating...');
-                console.trace('🔍 DEBUG: Characters tab switch call stack');
                 
                 // Check if this is happening after a filter interaction
                 if (window.isFilterInteraction) {
@@ -7123,18 +7111,14 @@
             const selectedButton = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
             if (selectedButton) {
                 selectedButton.classList.add('active');
-                console.log(`🔍 DEBUG: Added active class to ${tabName} button`);
             } else {
-                console.log(`🔍 DEBUG: Button for ${tabName} not found!`);
             }
             
             // Show selected tab
             const selectedTab = document.getElementById(tabName + '-tab');
             if (selectedTab) {
                 selectedTab.style.display = 'block';
-                console.log(`🔍 DEBUG: Showing tab ${tabName}-tab`);
             } else {
-                console.log(`🔍 DEBUG: Tab ${tabName}-tab not found!`);
             }
             
             // Show search container for non-character tabs
@@ -8105,26 +8089,20 @@
 
         // Power Cards functions
         async function loadPowerCards() {
-            console.log('🔍 DEBUG: loadPowerCards called');
             try {
                 const resp = await fetch('/api/power-cards');
                 const data = await resp.json();
                 if (data.success) {
-                    console.log('🔍 DEBUG: Power cards data loaded, calling displayPowerCards');
                     displayPowerCards(data.data);
                 }
             } catch (e) { console.error('Error loading power cards:', e); }
         }
 
         function displayPowerCards(cards) {
-            console.log('🔍 DEBUG: displayPowerCards called with', cards.length, 'cards');
             
             // Check DOM state before making any changes
             const powerCardsTab = document.getElementById('power-cards-tab');
             const charactersTab = document.getElementById('characters-tab');
-            console.log('🔍 DEBUG: displayPowerCards - BEFORE changes:');
-            console.log('  power-cards-tab display:', powerCardsTab ? powerCardsTab.style.display : 'NOT FOUND');
-            console.log('  characters-tab display:', charactersTab ? charactersTab.style.display : 'NOT FOUND');
             
             const tbody = document.getElementById('power-cards-tbody');
             if (!cards || cards.length === 0) {
@@ -8172,15 +8150,9 @@
                 </tr>
             `).join('');
             
-            // Check DOM state after making changes
-            console.log('🔍 DEBUG: displayPowerCards - AFTER changes:');
-            console.log('  power-cards-tab display:', powerCardsTab ? powerCardsTab.style.display : 'NOT FOUND');
-            console.log('  characters-tab display:', charactersTab ? charactersTab.style.display : 'NOT FOUND');
         }
         function setupPowerCardsSearch() {
-            console.log('🔍 DEBUG: setupPowerCardsSearch called');
             const searchInput = document.getElementById('search-input');
-            console.log('🔍 DEBUG: searchInput found:', !!searchInput);
             searchInput.addEventListener('input', async (e) => {
                 const term = e.target.value.toLowerCase();
                 if (term.length === 0) { 
@@ -8209,12 +8181,8 @@
             const minValueInput = document.getElementById('power-value-min');
             const maxValueInput = document.getElementById('power-value-max');
             
-            console.log('🔍 DEBUG: Setting up power card value filter inputs');
-            console.log('🔍 DEBUG: minValueInput found:', !!minValueInput);
-            console.log('🔍 DEBUG: maxValueInput found:', !!maxValueInput);
             
             minValueInput.addEventListener('input', (e) => {
-                console.log('🔍 DEBUG: minValueInput input event triggered, value:', e.target.value);
                 window.isFilterInteraction = true;
                 
                 // Add visual debugging - check what tabs are actually visible
@@ -8223,7 +8191,6 @@
                 const powerCardsButton = document.querySelector('[onclick="switchTab(\'power-cards\')"]');
                 const charactersButton = document.querySelector('[onclick="switchTab(\'characters\')"]');
                 
-                console.log('🔍 DEBUG: DOM State Check:');
                 console.log('  power-cards-tab display:', powerCardsTab ? powerCardsTab.style.display : 'NOT FOUND');
                 console.log('  characters-tab display:', charactersTab ? charactersTab.style.display : 'NOT FOUND');
                 console.log('  power-cards button active:', powerCardsButton ? powerCardsButton.classList.contains('active') : 'NOT FOUND');
@@ -8233,7 +8200,6 @@
                 
                 // Check DOM state again after applying filters
                 setTimeout(() => {
-                    console.log('🔍 DEBUG: DOM State Check AFTER filter:');
                     console.log('  power-cards-tab display:', powerCardsTab ? powerCardsTab.style.display : 'NOT FOUND');
                     console.log('  characters-tab display:', charactersTab ? charactersTab.style.display : 'NOT FOUND');
                     console.log('  power-cards button active:', powerCardsButton ? powerCardsButton.classList.contains('active') : 'NOT FOUND');
@@ -8243,7 +8209,6 @@
                 setTimeout(() => { window.isFilterInteraction = false; }, 3000);
             });
             maxValueInput.addEventListener('input', (e) => {
-                console.log('🔍 DEBUG: maxValueInput input event triggered, value:', e.target.value);
                 window.isFilterInteraction = true;
                 applyPowerCardFilters();
                 setTimeout(() => { window.isFilterInteraction = false; }, 3000);
@@ -8251,7 +8216,6 @@
             
             // Prevent form submission and unwanted navigation
             minValueInput.addEventListener('keydown', (e) => {
-                console.log('🔍 DEBUG: minValueInput keydown event:', e.key);
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     e.stopPropagation();
@@ -8260,7 +8224,6 @@
             });
             
             maxValueInput.addEventListener('keydown', (e) => {
-                console.log('🔍 DEBUG: maxValueInput keydown event:', e.key);
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     e.stopPropagation();
@@ -8270,14 +8233,12 @@
             
             // Prevent click events from bubbling up and causing navigation (but allow normal input behavior)
             minValueInput.addEventListener('click', (e) => {
-                console.log('🔍 DEBUG: minValueInput click event');
                 window.isFilterInteraction = true;
                 e.stopPropagation(); // Only stop propagation, don't prevent default
                 setTimeout(() => { window.isFilterInteraction = false; }, 3000);
             });
             
             maxValueInput.addEventListener('click', (e) => {
-                console.log('🔍 DEBUG: maxValueInput click event');
                 window.isFilterInteraction = true;
                 e.stopPropagation(); // Only stop propagation, don't prevent default
                 setTimeout(() => { window.isFilterInteraction = false; }, 3000);
@@ -8285,7 +8246,6 @@
             
             // Add event listeners for spinner arrows (mousedown/up events) - only prevent on spinner arrows
             minValueInput.addEventListener('mousedown', (e) => {
-                console.log('🔍 DEBUG: minValueInput mousedown event');
                 // Only prevent if it's on the spinner arrows (not the input field itself)
                 if (e.target !== minValueInput) {
                     e.preventDefault();
@@ -8297,7 +8257,6 @@
             });
             
             maxValueInput.addEventListener('mousedown', (e) => {
-                console.log('🔍 DEBUG: maxValueInput mousedown event');
                 // Only prevent if it's on the spinner arrows (not the input field itself)
                 if (e.target !== maxValueInput) {
                     e.preventDefault();
@@ -8310,7 +8269,6 @@
             
             // Add event listeners for mouseup events (spinner arrows) - only prevent on spinner arrows
             minValueInput.addEventListener('mouseup', (e) => {
-                console.log('🔍 DEBUG: minValueInput mouseup event');
                 // Only prevent if it's on the spinner arrows (not the input field itself)
                 if (e.target !== minValueInput) {
                     e.preventDefault();
@@ -8322,7 +8280,6 @@
             });
             
             maxValueInput.addEventListener('mouseup', (e) => {
-                console.log('🔍 DEBUG: maxValueInput mouseup event');
                 // Only prevent if it's on the spinner arrows (not the input field itself)
                 if (e.target !== maxValueInput) {
                     e.preventDefault();
@@ -8335,25 +8292,21 @@
             
             // Add event listeners for focus events
             minValueInput.addEventListener('focus', (e) => {
-                console.log('🔍 DEBUG: minValueInput focus event');
                 e.stopPropagation();
             });
             
             maxValueInput.addEventListener('focus', (e) => {
-                console.log('🔍 DEBUG: maxValueInput focus event');
                 e.stopPropagation();
             });
             
             // Prevent any form submission or navigation
             minValueInput.addEventListener('change', (e) => {
-                console.log('🔍 DEBUG: minValueInput change event, value:', e.target.value);
                 e.preventDefault();
                 e.stopPropagation();
                 applyPowerCardFilters();
             });
             
             maxValueInput.addEventListener('change', (e) => {
-                console.log('🔍 DEBUG: maxValueInput change event, value:', e.target.value);
                 e.preventDefault();
                 e.stopPropagation();
                 applyPowerCardFilters();
@@ -8361,7 +8314,6 @@
         }
 
         async function applyPowerCardFilters() {
-            console.log('🔍 DEBUG: applyPowerCardFilters called');
             try {
                 const resp = await fetch('/api/power-cards');
                 const data = await resp.json();
@@ -8404,7 +8356,6 @@
                 const minValue = document.getElementById('power-value-min').value;
                 const maxValue = document.getElementById('power-value-max').value;
                 
-                console.log('🔍 DEBUG: Filter values - min:', minValue, 'max:', maxValue);
                 
                 if (minValue && !isNaN(minValue)) {
                     filtered = filtered.filter(card => card.value >= parseInt(minValue));
@@ -8413,7 +8364,6 @@
                     filtered = filtered.filter(card => card.value <= parseInt(maxValue));
                 }
                 
-                console.log('🔍 DEBUG: Filtered cards count:', filtered.length);
 
                 displayPowerCards(filtered);
             } catch (err) {
@@ -8436,7 +8386,6 @@
         // Add global event listener to catch any clicks that might trigger tab switches
         document.addEventListener('click', function(event) {
             if (window.isFilterInteraction) {
-                console.log('🔍 DEBUG: Click event during filter interaction:', event.target);
                 if (event.target.onclick && event.target.onclick.toString().includes('switchTab')) {
                     console.log('🚨 ALERT: Click on element with switchTab onclick during filter interaction!');
                     console.log('Element:', event.target);
@@ -8759,22 +8708,16 @@
             const locationThreatMin = document.getElementById('location-threat-min');
             const locationThreatMax = document.getElementById('location-threat-max');
             
-            console.log('🔍 DEBUG: Setting up location threat filter inputs');
-            console.log('🔍 DEBUG: locationThreatMin found:', !!locationThreatMin);
-            console.log('🔍 DEBUG: locationThreatMax found:', !!locationThreatMax);
             
             locationThreatMin.addEventListener('input', (e) => {
-                console.log('🔍 DEBUG: locationThreatMin input event triggered, value:', e.target.value);
                 applyLocationFilters();
             });
             locationThreatMax.addEventListener('input', (e) => {
-                console.log('🔍 DEBUG: locationThreatMax input event triggered, value:', e.target.value);
                 applyLocationFilters();
             });
             
             // Prevent form submission and unwanted navigation
             locationThreatMin.addEventListener('keydown', (e) => {
-                console.log('🔍 DEBUG: locationThreatMin keydown event:', e.key);
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     e.stopPropagation();
@@ -8783,7 +8726,6 @@
             });
             
             locationThreatMax.addEventListener('keydown', (e) => {
-                console.log('🔍 DEBUG: locationThreatMax keydown event:', e.key);
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     e.stopPropagation();
@@ -8793,18 +8735,15 @@
             
             // Prevent click events from bubbling up and causing navigation (but allow normal input behavior)
             locationThreatMin.addEventListener('click', (e) => {
-                console.log('🔍 DEBUG: locationThreatMin click event');
                 e.stopPropagation(); // Only stop propagation, don't prevent default
             });
             
             locationThreatMax.addEventListener('click', (e) => {
-                console.log('🔍 DEBUG: locationThreatMax click event');
                 e.stopPropagation(); // Only stop propagation, don't prevent default
             });
             
             // Add event listeners for spinner arrows (mousedown/up events) - only prevent on spinner arrows
             locationThreatMin.addEventListener('mousedown', (e) => {
-                console.log('🔍 DEBUG: locationThreatMin mousedown event');
                 // Only prevent if it's on the spinner arrows (not the input field itself)
                 if (e.target !== locationThreatMin) {
                     e.preventDefault();
@@ -8816,7 +8755,6 @@
             });
             
             locationThreatMax.addEventListener('mousedown', (e) => {
-                console.log('🔍 DEBUG: locationThreatMax mousedown event');
                 // Only prevent if it's on the spinner arrows (not the input field itself)
                 if (e.target !== locationThreatMax) {
                     e.preventDefault();
@@ -8829,7 +8767,6 @@
             
             // Add event listeners for mouseup events (spinner arrows) - only prevent on spinner arrows
             locationThreatMin.addEventListener('mouseup', (e) => {
-                console.log('🔍 DEBUG: locationThreatMin mouseup event');
                 // Only prevent if it's on the spinner arrows (not the input field itself)
                 if (e.target !== locationThreatMin) {
                     e.preventDefault();
@@ -8841,7 +8778,6 @@
             });
             
             locationThreatMax.addEventListener('mouseup', (e) => {
-                console.log('🔍 DEBUG: locationThreatMax mouseup event');
                 // Only prevent if it's on the spinner arrows (not the input field itself)
                 if (e.target !== locationThreatMax) {
                     e.preventDefault();
@@ -8854,25 +8790,21 @@
             
             // Add event listeners for focus events
             locationThreatMin.addEventListener('focus', (e) => {
-                console.log('🔍 DEBUG: locationThreatMin focus event');
                 e.stopPropagation();
             });
             
             locationThreatMax.addEventListener('focus', (e) => {
-                console.log('🔍 DEBUG: locationThreatMax focus event');
                 e.stopPropagation();
             });
             
             // Prevent any form submission or navigation
             locationThreatMin.addEventListener('change', (e) => {
-                console.log('🔍 DEBUG: locationThreatMin change event, value:', e.target.value);
                 e.preventDefault();
                 e.stopPropagation();
                 applyLocationFilters();
             });
             
             locationThreatMax.addEventListener('change', (e) => {
-                console.log('🔍 DEBUG: locationThreatMax change event, value:', e.target.value);
                 e.preventDefault();
                 e.stopPropagation();
                 applyLocationFilters();
@@ -10026,7 +9958,7 @@
         attachDragListeners();
     }
         // List View functionality
-        function toggleListView() {
+        async function toggleListView() {
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             const listViewBtn = document.getElementById('listViewBtn');
             
@@ -10052,6 +9984,17 @@
                     createTwoColumnLayout();
                 }
                 listViewBtn.textContent = 'Tile View';
+                
+                // Ensure available cards are loaded before rendering list view
+                if (availableCardsMap.size === 0) {
+                    await loadAvailableCards();
+                    
+                    // Double-check after loading
+                    if (availableCardsMap.size === 0) {
+                        await loadAvailableCards();
+                    }
+                }
+                
                 renderDeckCardsListView(); // Render in list view
                 
                 // Set up layout observer for list view
@@ -10100,6 +10043,7 @@
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             if (!deckCardsEditor) return;
 
+
             // Group cards by type
             const cardsByType = {};
             deckEditorCards.forEach(card => {
@@ -10109,6 +10053,7 @@
                 }
                 cardsByType[type].push(card);
             });
+
 
             // Define type order and display names
             const typeOrder = ['character', 'location', 'special', 'power', 'teamwork', 'ally-universe', 'basic-universe', 'advanced-universe', 'training', 'mission', 'event', 'aspect'];
@@ -10232,7 +10177,10 @@
 
                     cards.forEach((card, index) => {
                         const availableCard = availableCardsMap.get(card.cardId);
-                        if (!availableCard) return;
+                        
+                        if (!availableCard) {
+                            return;
+                        }
 
                         // Use the same naming logic as tile view
                         let cardName;
@@ -11036,40 +10984,33 @@
             
             // Get the current reserve character ID
             const reserveCharacterId = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
-            console.log('🔍 DEBUG: calculateTotalThreat called with reserveCharacterId:', reserveCharacterId);
             
             // Calculate threat from character cards
             const characterCards = deckCards.filter(card => card.type === 'character');
-            console.log('🔍 DEBUG: Character cards found:', characterCards.length);
             
             characterCards.forEach(card => {
                 const character = availableCardsMap.get(card.cardId);
                 if (character && character.threat_level) {
                     let threatLevel = character.threat_level;
                     
-                    console.log(`🔍 DEBUG: Processing ${character.name} (${card.cardId}): base threat ${threatLevel}, is reserve: ${card.cardId === reserveCharacterId}`);
                     
                     // Apply reserve character adjustments
                     if (card.cardId === reserveCharacterId) {
                         // Carson of Venus: 18 -> 19 when reserve
                         if (character && character.name === 'Carson of Venus') {
                             threatLevel = 19;
-                            console.log('🔍 DEBUG: Applied Carson of Venus reserve adjustment: 18 -> 19');
                         }
                         // Morgan le Fay: 19 -> 20 when reserve
                         else if (character && character.name === 'Morgan le Fay') {
                             threatLevel = 20;
-                            console.log('🔍 DEBUG: Applied Morgan le Fay reserve adjustment: 19 -> 20');
                         }
                         // Victory Harben: 18 -> 20 when reserve
                         else if (character && character.name === 'Victory Harben') {
                             threatLevel = 20;
-                            console.log('🔍 DEBUG: Applied Victory Harben reserve adjustment: 18 -> 20');
                         }
                     }
                     
                     totalThreat += threatLevel * card.quantity;
-                    console.log(`🔍 DEBUG: Added ${threatLevel * card.quantity} threat from ${character.name}, total now: ${totalThreat}`);
                 }
             });
             
@@ -11083,7 +11024,6 @@
                 }
             });
             
-            console.log('🔍 DEBUG: Final calculated threat:', totalThreat);
             return totalThreat;
         }
         // Function to update deck summary with stats and validation
@@ -11244,7 +11184,6 @@
 
         // Toggle category collapse/expand
         function toggleCategory(headerElement) {
-            console.log('🔍 DEBUG: toggleCategory called with:', headerElement);
             const category = headerElement.closest('.card-category');
             const content = category.querySelector('.card-category-content');
             const icon = headerElement.querySelector('.collapse-icon');
@@ -11593,7 +11532,6 @@
                 element.textContent = totalCards;
             });
             
-            console.log(`Deck card count updated: ${totalCards} total (${characterCount} characters, ${powerCardCount} power cards, ${specialCardCount} special cards)`);
         }
 
         // Update special cards filter when deck changes
@@ -11677,27 +11615,22 @@
 
         // Toggle power cards character filter
         async function togglePowerCardsCharacterFilter() {
-            console.log('🔍 DEBUG: togglePowerCardsCharacterFilter called');
             const filterCheckbox = document.getElementById('powerCardsCharacterFilter');
             if (!filterCheckbox) {
                 console.error('Power cards character filter checkbox not found');
                 return;
             }
-            console.log('🔍 DEBUG: filterCheckbox found:', filterCheckbox);
             
             const isChecked = filterCheckbox.checked;
-            console.log('🔍 DEBUG: isChecked:', isChecked);
             
             // Find the power cards category
             const allCategories = document.querySelectorAll('.card-category');
-            console.log('🔍 DEBUG: allCategories found:', allCategories.length);
             let powerCardsCategory = null;
             
             for (const category of allCategories) {
                 const header = category.querySelector('.card-category-header span');
                 if (header && header.textContent.includes('Power Cards')) {
                     powerCardsCategory = category;
-                    console.log('🔍 DEBUG: powerCardsCategory found:', powerCardsCategory);
                     break;
                 }
             }
@@ -13293,7 +13226,6 @@
         }
 
         function showDeckEditor() {
-            console.log('showDeckEditor called');
             try {
                 const modal = document.getElementById('deckEditorModal');
                 if (!modal) {
@@ -13395,7 +13327,6 @@
                     }
                 }
                 
-                console.log('Modal displayed, setting up drag and drop');
                 // Don't set up drag and drop immediately - wait for API response to determine read-only mode
                 // setupDragAndDrop() will be called after loadDeckForEditing() completes
                 
@@ -13788,6 +13719,20 @@
                 if (data.success) {
                     currentDeckData = data.data;
                     deckEditorCards = [...data.data.cards]; // Create working copy
+                    
+                    // Convert database type format to frontend format
+                    deckEditorCards = deckEditorCards.map(card => {
+                        let convertedType = card.type;
+                        if (card.type === 'ally_universe') {
+                            convertedType = 'ally-universe';
+                        } else if (card.type === 'basic_universe') {
+                            convertedType = 'basic-universe';
+                        } else if (card.type === 'advanced_universe') {
+                            convertedType = 'advanced-universe';
+                        }
+                        return { ...card, type: convertedType };
+                    });
+                    
                     console.log('Working copy created:', deckEditorCards);
                     
                     // Check if readonly=true query parameter is set - this takes precedence
@@ -13936,8 +13881,8 @@
             // Define type order and display names
             const typeOrder = [
                 'character', 'location', 'mission', 'event', 'special', 
-                'aspect', 'advanced_universe', 'teamwork', 'ally_universe', 
-                'training', 'basic_universe', 'power'
+                'aspect', 'advanced-universe', 'teamwork', 'ally-universe', 
+                'training', 'basic-universe', 'power'
             ];
             
             const typeDisplayNames = {
@@ -13947,11 +13892,11 @@
                 'event': 'Events',
                 'special': 'Special Cards',
                 'aspect': 'Aspects',
-                'advanced_universe': 'Advanced Universe',
+                'advanced-universe': 'Advanced Universe',
                 'teamwork': 'Universe: Teamwork',
-                'ally_universe': 'Universe: Ally',
+                'ally-universe': 'Universe: Ally',
                 'training': 'Universe: Training',
-                'basic_universe': 'Universe: Basic',
+                'basic-universe': 'Universe: Basic',
                 'power': 'Power Cards'
             };
             
@@ -14414,7 +14359,7 @@
                                     </div>
                                 `;
                             }
-                        } else if (card.type === 'ally_universe') {
+                        } else if (card.type === 'ally-universe') {
                             // Ally universe details
                             if (availableCard.one_per_deck) {
                                 cardDetails = `
@@ -14454,9 +14399,9 @@
                             const isEvent = card.type === 'event';
                             const isAspect = card.type === 'aspect';
                             const isTeamwork = card.type === 'teamwork';
-                            const isAllyUniverse = card.type === 'ally_universe';
-                            const isBasicUniverse = card.type === 'basic_universe';
-                            const isAdvancedUniverse = card.type === 'advanced_universe';
+                            const isAllyUniverse = card.type === 'ally-universe';
+                            const isBasicUniverse = card.type === 'basic-universe';
+                            const isAdvancedUniverse = card.type === 'advanced-universe';
                             const isTraining = card.type === 'training';
                             
                             const characterClass = isCharacter ? 'character-card' : '';
@@ -14472,7 +14417,7 @@
                             const trainingClass = isTraining ? 'training-card' : '';
                             
                             const selectedAlternateImage = card.selectedAlternateImage;
-                            const bgImageData = (isCharacter || isPower || isLocation || isMission || isEvent || isAspect || isTeamwork || card.type === 'ally_universe' || card.type === 'basic_universe' || card.type === 'advanced_universe' || card.type === 'training') ? `data-bg-image="${getCardImagePath(availableCard, card.type, selectedAlternateImage)}"` : '';
+                            const bgImageData = (isCharacter || isPower || isLocation || isMission || isEvent || isAspect || isTeamwork || card.type === 'ally-universe' || card.type === 'basic-universe' || card.type === 'advanced-universe' || card.type === 'training') ? `data-bg-image="${getCardImagePath(availableCard, card.type, selectedAlternateImage)}"` : '';
                             
                             // Add alternate art button for characters, special cards, and power cards with alternate images
                             let alternateArtButton = '';
@@ -14491,7 +14436,7 @@
                                  ondragover="handleDeckCardDragOver(event)"
                                  ondrop="handleDeckCardDrop(event)">
                                 <div class="deck-card-editor-info">
-                                        <div class="deck-card-editor-name">${card.type === 'power' ? `${availableCard.value} - ${availableCard.power_type}` : (card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally_universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic-universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))))))} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
+                                        <div class="deck-card-editor-name">${card.type === 'power' ? `${availableCard.value} - ${availableCard.power_type}` : (card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally-universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic-universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))))))} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
                                     ${cardDetails ? `<div class="deck-card-editor-stats">${cardDetails}</div>` : ''}
                                 </div>
                                 <div class="deck-card-editor-actions">
@@ -14600,6 +14545,8 @@
             const eventCards = document.querySelectorAll('.deck-card-editor-item.event-card');
             const aspectCards = document.querySelectorAll('.deck-card-editor-item.aspect-card');
             const teamworkCards = document.querySelectorAll('.deck-card-editor-item.teamwork-card');
+            const allyUniverseCards = document.querySelectorAll('.deck-card-editor-item.ally-universe-card');
+            const basicUniverseCards = document.querySelectorAll('.deck-card-editor-item.basic-universe-card');
             const advancedUniverseCards = document.querySelectorAll('.deck-card-editor-item.advanced-universe-card');
             const trainingCards = document.querySelectorAll('.deck-card-editor-item.training-card');
             
@@ -14726,28 +14673,7 @@
                 }
             });
             
-            // Apply to ally-universe cards
-            const allyUniverseCards = document.querySelectorAll('.deck-card-editor-item.ally-universe-card');
-            allyUniverseCards.forEach(card => {
-                const bgImage = card.getAttribute('data-bg-image');
-                if (bgImage) {
-                    // Test if image loads successfully
-                    const img = new Image();
-                    img.onload = function() {
-                        // URL encode the path for CSS
-                        const encodedPath = encodeURI(bgImage);
-                        card.style.setProperty('--bg-image', `url(${encodedPath})`);
-                    };
-                    img.onerror = function() {
-                        // Fallback: use default gradient without background image
-                        card.style.setProperty('--bg-image', 'none');
-                    };
-                    img.src = bgImage;
-                }
-            });
-            
             // Apply to basic-universe cards
-            const basicUniverseCards = document.querySelectorAll('.deck-card-editor-item.basic-universe-card');
             basicUniverseCards.forEach(card => {
                 const bgImage = card.getAttribute('data-bg-image');
                 if (bgImage) {
@@ -14787,6 +14713,44 @@
             
             // Apply to training cards
             trainingCards.forEach(card => {
+                const bgImage = card.getAttribute('data-bg-image');
+                if (bgImage) {
+                    // Test if image loads successfully
+                    const img = new Image();
+                    img.onload = function() {
+                        // URL encode the path for CSS
+                        const encodedPath = encodeURI(bgImage);
+                        card.style.setProperty('--bg-image', `url(${encodedPath})`);
+                    };
+                    img.onerror = function() {
+                        // Fallback: use default gradient without background image
+                        card.style.setProperty('--bg-image', 'none');
+                    };
+                    img.src = bgImage;
+                }
+            });
+
+            // Apply to ally-universe cards
+            allyUniverseCards.forEach(card => {
+                const bgImage = card.getAttribute('data-bg-image');
+                if (bgImage) {
+                    // Test if image loads successfully
+                    const img = new Image();
+                    img.onload = function() {
+                        // URL encode the path for CSS
+                        const encodedPath = encodeURI(bgImage);
+                        card.style.setProperty('--bg-image', `url(${encodedPath})`);
+                    };
+                    img.onerror = function() {
+                        // Fallback: use default gradient without background image
+                        card.style.setProperty('--bg-image', 'none');
+                    };
+                    img.src = bgImage;
+                }
+            });
+
+            // Apply to basic-universe cards
+            basicUniverseCards.forEach(card => {
                 const bgImage = card.getAttribute('data-bg-image');
                 if (bgImage) {
                     // Test if image loads successfully
@@ -14884,7 +14848,6 @@
         
         // Show card hover modal
         function showCardHoverModal(imagePath, cardName) {
-            console.log('showCardHoverModal called with:', imagePath, cardName);
             
             // Clear any existing hide timeout
             if (window.hoverHideTimeout) {
@@ -15057,7 +15020,6 @@
         // Hide card hover modal
         function hideCardHoverModal() {
             // Always hide the modal, regardless of drag state
-            console.log('hideCardHoverModal called');
             
             // Add a small delay to prevent rapid show/hide cycles
             if (window.hoverHideTimeout) {
