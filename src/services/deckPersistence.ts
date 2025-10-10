@@ -231,6 +231,35 @@ export class DeckPersistenceService {
     return true;
   }
 
+  // Bulk replace all cards in a deck (used for save operations)
+  replaceAllCardsInDeck(deckId: string, cards: Array<{cardType: string, cardId: string, quantity: number, selectedAlternateImage?: string}>): DeckData | null {
+    const deck = this.decks.get(deckId);
+    if (!deck) return null;
+
+    // Clear existing cards
+    deck.cards = [];
+
+    // Add all new cards
+    for (const card of cards) {
+      const newCard: DeckCard = {
+        id: generateUUID(),
+        type: card.cardType as DeckCard['type'],
+        cardId: card.cardId,
+        quantity: card.quantity,
+        ...((card.cardType === 'character' || card.cardType === 'special' || card.cardType === 'power') && card.selectedAlternateImage && { selectedAlternateImage: card.selectedAlternateImage })
+      };
+      deck.cards.push(newCard);
+    }
+
+    // Update metadata
+    deck.metadata.cardCount = this.calculateCardCount(deck.cards);
+    deck.metadata.lastModified = new Date().toISOString();
+
+    this.saveDecks();
+    console.log(`✅ Replaced all cards in deck: ${deck.metadata.name} (${cards.length} cards)`);
+    return deck;
+  }
+
   // Recalculate card counts for all decks (useful for fixing existing data)
   recalculateAllDeckCounts(): void {
     for (const deck of this.decks.values()) {

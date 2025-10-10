@@ -17736,22 +17736,8 @@
                     
                 }
                 
-                // Clear existing cards
-                const clearResponse = await fetch(`/api/decks/${deckId}/cards`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        cardType: 'all',
-                        cardId: 'all',
-                        quantity: 999 // Remove all
-                    })
-                });
-                
-                // Add new cards
-                for (const card of deckEditorCards) {
+                // Prepare cards data for bulk replacement
+                const cardsData = deckEditorCards.map(card => {
                     const cardData = {
                         cardType: card.type,
                         cardId: card.cardId,
@@ -17763,14 +17749,21 @@
                         cardData.selectedAlternateImage = card.selectedAlternateImage;
                     }
                     
-                    await fetch(`/api/decks/${deckId}/cards`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        credentials: 'include',
-                        body: JSON.stringify(cardData)
-                    });
+                    return cardData;
+                });
+                
+                // Bulk replace all cards in one atomic operation
+                const replaceResponse = await fetch(`/api/decks/${deckId}/cards`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ cards: cardsData })
+                });
+                
+                if (!replaceResponse.ok) {
+                    throw new Error('Failed to save deck cards');
                 }
                 
                 // Check validation status before saving

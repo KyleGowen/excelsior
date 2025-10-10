@@ -663,6 +663,47 @@ export class PostgreSQLDeckRepository implements DeckRepository {
     }
   }
 
+  // Bulk replace all cards in a deck (used for save operations)
+  async replaceAllCardsInDeck(deckId: string, cards: Array<{cardType: string, cardId: string, quantity: number, selectedAlternateImage?: string}>): Promise<boolean> {
+    const client = await this.pool.connect();
+    try {
+      // Start a transaction to ensure atomicity
+      await client.query('BEGIN');
+      
+      // Clear all existing cards
+      await client.query('DELETE FROM deck_cards WHERE deck_id = $1', [deckId]);
+      
+      // Insert all new cards
+      for (const card of cards) {
+        await client.query(
+          'INSERT INTO deck_cards (deck_id, card_type, card_id, quantity, selected_alternate_image) VALUES ($1, $2, $3, $4, $5)',
+          [deckId, card.cardType, card.cardId, card.quantity, card.selectedAlternateImage || null]
+        );
+      }
+      
+      // Commit the transaction
+      await client.query('COMMIT');
+      
+      // Invalidate cache for this deck and user's deck list
+      this.deckCache.delete(deckId);
+      // Get user_id to invalidate user's deck list cache
+      const userResult = await client.query('SELECT user_id FROM decks WHERE id = $1', [deckId]);
+      const userId = userResult.rows[0]?.user_id;
+      if (userId) {
+        this.deckCache.delete(`user_decks_${userId}`);
+      }
+      
+      return true;
+    } catch (error) {
+      // Rollback on error
+      await client.query('ROLLBACK');
+      console.error('Error replacing all cards in deck:', error);
+      return false;
+    } finally {
+      client.release();
+    }
+  }
+
   async getDeckCards(deckId: string): Promise<DeckCard[]> {
     const client = await this.pool.connect();
     try {

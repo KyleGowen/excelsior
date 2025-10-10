@@ -607,6 +607,38 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   }
 });
 
+// Bulk replace all cards in a deck (used for save operations)
+app.put('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
+  try {
+    // Check if user is guest - guests cannot modify decks
+    if (req.user.role === 'GUEST') {
+      return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
+    }
+    
+    const { cards } = req.body;
+    if (!Array.isArray(cards)) {
+      return res.status(400).json({ success: false, error: 'Cards array is required' });
+    }
+    
+    // Check if user owns this deck
+    if (!await deckRepository.userOwnsDeck(req.params.id, req.user.id)) {
+      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
+    }
+    
+    const success = await deckRepository.replaceAllCardsInDeck(req.params.id, cards);
+    if (!success) {
+      return res.status(404).json({ success: false, error: 'Deck not found or failed to replace cards' });
+    }
+    
+    // Return the updated deck
+    const updatedDeck = await deckRepository.getDeckById(req.params.id);
+    res.json({ success: true, data: updatedDeck });
+  } catch (error) {
+    console.error('Error replacing cards in deck:', error);
+    res.status(500).json({ success: false, error: 'Failed to replace cards in deck' });
+  }
+});
+
 app.delete('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
     // Check if user is guest - guests cannot modify decks

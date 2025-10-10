@@ -27,6 +27,7 @@ export interface DeckRepository {
   removeCardFromDeck(deckId: string, cardType: string, cardId: string, quantity?: number): Promise<boolean>;
   updateCardInDeck(deckId: string, cardType: string, cardId: string, updates: { quantity?: number; selectedAlternateImage?: string }): Promise<boolean>;
   removeAllCardsFromDeck(deckId: string): Promise<boolean>;
+  replaceAllCardsInDeck(deckId: string, cards: Array<{cardType: string, cardId: string, quantity: number, selectedAlternateImage?: string}>): Promise<boolean>;
   getDeckCards(deckId: string): Promise<DeckCard[]>;
   
   // Authorization
