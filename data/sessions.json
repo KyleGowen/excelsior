@@ -3790,5 +3790,11 @@
     "userId": "00000000-0000-0000-0000-000000000000",
     "username": "fakeuser",
     "expiresAt": "2025-10-12T00:59:38.599Z"
+  },
+  {
+    "sessionId": "sess_4anzv2l04_mgmvvryw",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T01:05:34.040Z"
   }
 ]
