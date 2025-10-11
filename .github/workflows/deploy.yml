@@ -589,5 +589,52 @@ jobs:
         echo "🌐 Application URL: http://excelsior.cards"
         echo "🔍 Image deployed: ${{ steps.build-image.outputs.image }}"
         echo "🏥 Health check: PASSED"
-# Trigger new deployment
-# Trigger verification test
+
+  post-production:
+    name: Post Production
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Wait for deployment to stabilize
+      run: |
+        echo "⏳ Waiting for deployment to fully stabilize..."
+        sleep 30
+        
+    - name: Call health check endpoint
+      run: |
+        echo "🏥 Calling health check endpoint on production server..."
+        echo "=========================================="
+        
+        # Call the health check endpoint
+        HEALTH_RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" "http://excelsior.cards/health" || echo "HTTP_STATUS:000")
+        
+        # Extract HTTP status code
+        HTTP_STATUS=$(echo "$HEALTH_RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
+        HEALTH_BODY=$(echo "$HEALTH_RESPONSE" | sed '/HTTP_STATUS:/d')
+        
+        echo "📊 Health Check Results:"
+        echo "========================"
+        echo "HTTP Status Code: $HTTP_STATUS"
+        echo ""
+        echo "Response Body:"
+        echo "$HEALTH_BODY" | jq . 2>/dev/null || echo "$HEALTH_BODY"
+        echo ""
+        echo "=========================================="
+        
+        # Check if health check was successful
+        if [ "$HTTP_STATUS" = "200" ]; then
+          echo "✅ Health check PASSED - Server is healthy"
+          exit 0
+        else
+          echo "❌ Health check FAILED - Server may not be ready"
+          echo "HTTP Status: $HTTP_STATUS"
+          exit 1
+        fi
+        
+    - name: Post-production verification complete
+      run: |
+        echo "✅ Post-production verification completed successfully!"
+        echo "🌐 Production server is healthy and responding"
+        echo "📊 Full health check details displayed above"
