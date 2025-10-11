@@ -108,7 +108,7 @@ describe('New Deck Creation After Persisted Deck Integration', () => {
         // Clean up test users
         const { Pool } = require('pg');
         const pool = new Pool({
-            connectionString: 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
+            connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower'
         });
         
         try {

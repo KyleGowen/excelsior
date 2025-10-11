@@ -14,7 +14,7 @@ describe('Change Password Integration', () => {
 
   afterAll(async () => {
     const { Pool } = require('pg');
-    const pool = new Pool({ connectionString: 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower'' });
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower' });
     try {
       await pool.query('DELETE FROM users WHERE id = $1', [user.id]);
     } finally {

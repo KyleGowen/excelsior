@@ -5,7 +5,7 @@ import { app, integrationTestUtils } from '../setup-integration';
 const cleanupTestUser = async (userId: string) => {
     const { Pool } = require('pg');
     const pool = new Pool({
-        connectionString: 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
+        connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower'
     });
     
     try {
