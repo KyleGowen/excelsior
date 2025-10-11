@@ -13,7 +13,7 @@ describe('Reserve Character Integration Tests', () => {
     beforeAll(async () => {
         // Set up database connection
         pool = new Pool({
-            connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+            connectionString: 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
         });
 
         // Get some test character IDs from the database

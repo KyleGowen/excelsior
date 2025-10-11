@@ -57,7 +57,7 @@ export const integrationTestUtils = {
     const crypto = require('crypto');
     const bcrypt = require('bcrypt');
     const pool = new Pool({
-      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+      connectionString: process.env.DATABASE_URL || 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
     });
     
     try {
@@ -93,7 +93,7 @@ export const integrationTestUtils = {
     const { Pool } = require('pg');
     const crypto = require('crypto');
     const pool = new Pool({
-      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+      connectionString: process.env.DATABASE_URL || 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
     });
     
     try {
@@ -134,7 +134,7 @@ export const integrationTestUtils = {
     
     const { Pool } = require('pg');
     const pool = new Pool({
-      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+      connectionString: process.env.DATABASE_URL || 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
     });
     
     try {
@@ -188,7 +188,7 @@ export const integrationTestUtils = {
     const { Pool } = require('pg');
     const bcrypt = require('bcrypt');
     const pool = new Pool({
-      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+      connectionString: process.env.DATABASE_URL || 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
     });
     
     try {
@@ -224,7 +224,7 @@ export const integrationTestUtils = {
     const { Pool } = require('pg');
     const bcrypt = require('bcrypt');
     const pool = new Pool({
-      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+      connectionString: process.env.DATABASE_URL || 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
     });
     try {
       // Hash the admin password
@@ -276,7 +276,7 @@ afterEach(async () => {
   // Don't clean up users as they may be needed for subsequent tests in the same suite
   const { Pool } = require('pg');
   const pool = new Pool({
-    connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+    connectionString: process.env.DATABASE_URL || 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
   });
   
   try {
@@ -321,7 +321,7 @@ afterAll(async () => {
     // Check V113 deck before cleanup
     const { Pool } = require('pg');
     const pool = new Pool({
-      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+      connectionString: process.env.DATABASE_URL || 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
     });
     
     const beforeResult = await pool.query('SELECT id, name, user_id FROM decks WHERE id = $1', ['be383a46-c8e0-4f85-8fc7-2a3b33048ced']);

@@ -12,7 +12,7 @@ describe('Authentication Behavior Tests', () => {
 
   beforeAll(async () => {
     pool = new Pool({
-      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+      connectionString: 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
     });
     
     userPersistence = new UserPersistenceService();

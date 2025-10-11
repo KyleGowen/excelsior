@@ -173,6 +173,7 @@ jobs:
       
     - name: Run integration tests
       run: npm run test:integration
+      timeout-minutes: 10
       env:
         DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
 

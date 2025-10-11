@@ -16,7 +16,7 @@ export const integrationTestUtils = {
     const { Pool } = require('pg');
     const crypto = require('crypto');
     const pool = new Pool({
-      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+      connectionString: 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
     });
     
     try {
@@ -44,7 +44,7 @@ export const integrationTestUtils = {
   ensureGuestUser: async () => {
     const { Pool } = require('pg');
     const pool = new Pool({
-      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+      connectionString: 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
     });
     
     try {
@@ -67,7 +67,7 @@ export const integrationTestUtils = {
   ensureAdminUser: async () => {
     const { Pool } = require('pg');
     const pool = new Pool({
-      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+      connectionString: 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
     });
     
     try {

@@ -22,7 +22,7 @@ describe('Toast Notification Role-Based Behavior', () => {
         
         // Initialize database pool
         pool = new Pool({
-            connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+            connectionString: 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
         });
     });
 

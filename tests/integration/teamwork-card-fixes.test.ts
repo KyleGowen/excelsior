@@ -11,7 +11,7 @@ describe('Teamwork Card Fixes', () => {
   beforeAll(async () => {
     // Create database connection like other integration tests
     pool = new Pool({
-      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+      connectionString: 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
     });
   });
 

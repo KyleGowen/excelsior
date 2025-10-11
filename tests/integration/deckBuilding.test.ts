@@ -19,7 +19,7 @@ describe('Deck Building Integration Tests', () => {
   beforeAll(async () => {
     // Set up database connection - use shared connection
     pool = new Pool({
-      connectionString: 'postgresql://postgres:password@localhost:1337/overpower'
+      connectionString: 'process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower''
     });
     
     // Ensure test server is initialized
