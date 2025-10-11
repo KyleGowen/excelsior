@@ -868,72 +868,161 @@ Update UI preferences for a specific deck.
 ## System Endpoints
 
 ### GET /health
-Comprehensive health check endpoint.
+Comprehensive health check endpoint that provides detailed system status information.
+
+**Description:**
+This endpoint performs a thorough health check of the entire system, including database connectivity, migration status, resource usage, and application metrics. It's designed for monitoring, debugging, and deployment verification.
+
+**HTTP Status Codes:**
+- `200` - System is healthy (OK or DEGRADED status)
+- `503` - System is unhealthy (ERROR status)
 
 **Response:**
 ```json
 {
   "status": "OK|DEGRADED|ERROR",
-  "timestamp": "string",
-  "uptime": "number",
-  "version": "string",
-  "environment": "string",
+  "timestamp": "2024-01-15T10:30:45.123Z",
+  "uptime": 3600.5,
+  "version": "1.0.0",
+  "environment": "development|production|staging",
   "git": {
-    "commit": "string",
-    "branch": "string"
+    "commit": "4a2f68584caa4dc270f45c3d4f279c93307b4f17",
+    "branch": "main"
   },
   "resources": {
     "memory": {
-      "rss": "string",
-      "heapTotal": "string",
-      "heapUsed": "string",
-      "external": "string"
+      "rss": "45MB",
+      "heapTotal": "20MB", 
+      "heapUsed": "15MB",
+      "external": "2MB"
     },
     "cpu": {
-      "platform": "string",
-      "arch": "string",
-      "nodeVersion": "string"
+      "platform": "darwin",
+      "arch": "x64",
+      "nodeVersion": "v18.17.0"
     }
   },
   "database": {
     "status": "OK|ERROR",
-    "latency": "string",
+    "latency": "15ms",
     "connection": "Active|Failed",
     "guestUser": {
-      "exists": "boolean",
-      "count": "number",
-      "users": []
+      "exists": true,
+      "count": 1,
+      "users": [
+        {
+          "id": "uuid",
+          "username": "guest",
+          "role": "GUEST"
+        }
+      ]
     },
     "guestDecks": {
-      "total": "number"
+      "total": 5
     },
     "stats": {
-      "totalUsers": "number",
-      "totalDecks": "number",
-      "totalDeckCards": "number",
-      "totalCharacters": "number",
-      "totalSpecialCards": "number",
-      "totalPowerCards": "number"
+      "totalUsers": 3,
+      "totalDecks": 12,
+      "totalDeckCards": 156,
+      "totalCharacters": 43,
+      "totalSpecialCards": 28,
+      "totalPowerCards": 15
     },
     "latestMigration": {
-      "version": "string",
-      "description": "string",
-      "type": "string",
-      "script": "string",
-      "installedBy": "string",
-      "installedOn": "string",
-      "executionTime": "number",
-      "success": "boolean"
+      "version": "V150",
+      "description": "Fix_The_Gemini_alternate_image",
+      "type": "SQL",
+      "script": "V150__Fix_The_Gemini_alternate_image.sql",
+      "installedBy": "postgres",
+      "installedOn": "2024-01-15T09:45:30.000Z",
+      "executionTime": 250,
+      "success": true
     }
   },
   "migrations": {
     "status": "OK|ERROR",
-    "valid": "boolean",
-    "upToDate": "boolean"
+    "valid": true,
+    "upToDate": true
   },
-  "latency": "string"
+  "latency": "45ms"
 }
 ```
+
+**Field Descriptions:**
+
+**Top Level:**
+- `status`: Overall system health status
+  - `OK`: All systems functioning normally
+  - `DEGRADED`: Some non-critical issues detected (database slow, migrations pending)
+  - `ERROR`: Critical system failure (database down, migration errors)
+- `timestamp`: ISO 8601 timestamp of when the health check was performed
+- `uptime`: Server uptime in seconds since last restart
+- `version`: Application version from package.json
+- `environment`: Current Node.js environment (development/production/staging)
+- `latency`: Total time taken to perform the health check
+
+**Git Information:**
+- `commit`: Full SHA hash of the current git commit
+- `branch`: Current git branch name
+
+**Resource Usage:**
+- `memory.rss`: Resident Set Size - total memory allocated to the process
+- `memory.heapTotal`: Total heap memory allocated by V8
+- `memory.heapUsed`: Heap memory currently in use by V8
+- `memory.external`: Memory used by C++ objects bound to JavaScript objects
+- `cpu.platform`: Operating system platform (darwin, linux, win32)
+- `cpu.arch`: CPU architecture (x64, arm64, etc.)
+- `cpu.nodeVersion`: Node.js version string
+
+**Database Health:**
+- `status`: Database connection and query status
+- `latency`: Time taken to execute database health queries
+- `connection`: Database connection state
+- `guestUser`: Information about guest user accounts
+  - `exists`: Whether guest users are properly configured
+  - `count`: Number of guest users in the system
+  - `users`: Array of guest user details
+- `guestDecks`: Statistics about guest-created decks
+- `stats`: Database table row counts for monitoring
+- `latestMigration`: Information about the most recent database migration
+  - `version`: Migration version number (e.g., V150)
+  - `description`: Human-readable migration description
+  - `type`: Migration type (SQL, JAVA, etc.)
+  - `script`: Migration script filename
+  - `installedBy`: Database user who ran the migration
+  - `installedOn`: When the migration was executed
+  - `executionTime`: How long the migration took (milliseconds)
+  - `success`: Whether the migration completed successfully
+
+**Migration Status:**
+- `status`: Overall migration system health
+- `valid`: Whether the database schema is valid
+- `upToDate`: Whether all available migrations have been applied
+
+**Usage Examples:**
+
+**Basic Health Check:**
+```bash
+curl http://localhost:3000/health
+```
+
+**Health Check with Status Code:**
+```bash
+curl -w "%{http_code}" http://localhost:3000/health
+```
+
+**Monitoring Integration:**
+This endpoint is designed for integration with monitoring systems like:
+- Prometheus/Grafana
+- DataDog
+- New Relic
+- Custom health check services
+
+**Error Scenarios:**
+- Database connection failure returns `status: "ERROR"` with HTTP 503
+- Migration issues return `status: "DEGRADED"` with HTTP 200
+- System resource exhaustion may affect response times
+- Network issues between application and database are detected
 
 ### GET /api/database/status
 Get database status information.
