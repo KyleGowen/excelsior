@@ -120,13 +120,31 @@ function displayAdvancedUniverse(advancedUniverse) {
     const tbody = document.getElementById('advanced-universe-tbody');
     if (!tbody) return;
     
+    if (advancedUniverse.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6">No advanced universe cards found</td></tr>';
+        return;
+    }
+    
     tbody.innerHTML = advancedUniverse.map(card => `
         <tr>
-            <td>${card.card_name}</td>
-            <td>${card.type}</td>
-            <td>${card.value}</td>
-            <td>${card.bonus}</td>
-            <td>${card.card_text}</td>
+            <td>
+                <img src="/src/resources/cards/images/${card.image}" 
+                     alt="${card.name}" 
+                     class="card-image"
+                     style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
+                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                     onclick="openModal(this)"
+                     onmouseenter="showCardHoverModal('/src/resources/cards/images/${card.image}', '${card.name.replace(/'/g, "\\'")}')"
+                     onmouseleave="hideCardHoverModal()">
+            </td>
+            <td>
+                <button class="add-to-deck-btn" onclick="showDeckSelection('advanced-universe', '${card.id}', '${card.name.replace(/'/g, "\\'")}', this)">
+                    Add to Deck
+                </button>
+            </td>
+            <td><strong>${card.name}</strong></td>
+            <td>${card.character}</td>
+            <td>${card.card_description || card.card_effect || 'No description available'}</td>
             <td class="one-per-deck-advanced-column">${card.is_one_per_deck ? 'Yes' : 'No'}</td>
         </tr>
     `).join('');
