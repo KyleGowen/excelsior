@@ -92,8 +92,8 @@ describe('Deck Editability Browser Tests', () => {
       const hasEditableDescClass = descElement.includes('editable-description');
       
       // Check for click handlers
-      const hasTitleClickHandler = titleElement.includes('onclick="startEditingTitle()"');
-      const hasDescClickHandler = descElement.includes('onclick="startEditingDescription()"');
+      const hasTitleClickHandler = titleElement.includes('data-edit-handler="startEditingTitle"');
+      const hasDescClickHandler = descElement.includes('data-edit-handler="startEditingDescription"');
 
       // Check for read-only mode
       const hasReadOnlyIndicator = html.includes('Read Only Mode');
@@ -161,12 +161,12 @@ describe('Deck Editability Browser Tests', () => {
       // The static HTML always shows editable elements regardless of role
       const titleElement = html.match(/<h3[^>]*id="deckEditorTitle"[^>]*>/)?.[0] || '';
       expect(titleElement).toContain('editable-title');
-      expect(titleElement).toContain('onclick="startEditingTitle()"');
+      expect(titleElement).toContain('data-edit-handler="startEditingTitle"');
 
       // Description should be editable
       const descElement = html.match(/<p[^>]*id="deckEditorDescription"[^>]*>/)?.[0] || '';
       expect(descElement).toContain('editable-description');
-      expect(descElement).toContain('onclick="startEditingDescription()"');
+      expect(descElement).toContain('data-edit-handler="startEditingDescription"');
 
       console.log('✅ GUEST role correctly sees non-editable elements');
     });

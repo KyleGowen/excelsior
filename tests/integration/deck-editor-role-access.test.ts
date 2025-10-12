@@ -173,8 +173,8 @@ describe('Deck Editor Role-Based Access Integration Tests', () => {
       expect(response.text).toContain('id="deckEditorTitle"');
       expect(response.text).toContain('id="deckEditorDescription"');
       expect(response.text).toContain('class="editable-title"');
-      expect(response.text).toContain('onclick="startEditingTitle()"');
-      expect(response.text).toContain('onclick="startEditingDescription()"');
+      expect(response.text).toContain('data-edit-handler="startEditingTitle"');
+      expect(response.text).toContain('data-edit-handler="startEditingDescription"');
     });
 
     it('should have save button present for all user roles', async () => {
@@ -185,7 +185,7 @@ describe('Deck Editor Role-Based Access Integration Tests', () => {
 
       // Verify save button is present
       expect(response.text).toContain('id="saveDeckButton"');
-      expect(response.text).toContain('onclick="saveDeckChanges()"');
+      expect(response.text).toContain('data-click-handler="saveDeckChanges"');
       expect(response.text).toContain('Save');
     });
   });

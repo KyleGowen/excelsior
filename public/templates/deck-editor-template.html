@@ -1,0 +1,110 @@
+<!-- Deck Editor Modal Template -->
+<div id="deckEditorModal" class="modal" data-close-handler="closeDeckEditor">
+    <div class="modal-content large-modal" data-stop-propagation="true">
+        <div class="modal-header">
+            <div class="deck-editor-title-section">
+                <div class="deck-title-with-validation">
+                    <h3 id="deckEditorTitle" class="editable-title" data-edit-handler="startEditingTitle">Edit Deck</h3>
+                    <span id="deckTitleValidationBadge" class="deck-validation-badge"></span>
+                </div>
+                <p id="deckEditorDescription" class="deck-description editable-description" data-edit-handler="startEditingDescription"></p>
+                <div id="readOnlyIndicator" class="read-only-indicator" style="display: none;">
+                    <span class="read-only-text">📖 Read Only Mode</span>
+                </div>
+            </div>
+            <div class="deck-editor-search-container">
+                <input type="text" id="deckEditorSearchInput" class="deck-editor-search-input" placeholder="Search by card name, character, or type...">
+                <div id="deckEditorSearchResults" class="deck-editor-search-results" style="display: none;">
+                    <!-- Search results will appear here -->
+                </div>
+            </div>
+            <div class="deck-editor-actions">
+                <button class="btn-secondary" data-click-handler="closeDeckEditor">Cancel</button>
+                <button id="saveDeckButton" class="btn-primary" data-click-handler="saveDeckChanges">Save</button>
+            </div>
+        </div>
+        
+        <!-- Deck Summary Section -->
+        <div class="deck-summary-section">
+            <div class="deck-summary-content">
+                <div class="deck-summary-stats">
+                    <div class="summary-stat">
+                        <span class="stat-label">Total Cards:</span>
+                        <span class="stat-value" id="deckTotalCards">0</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-label">Max Energy:</span>
+                        <span class="stat-value" id="deckMaxEnergy">0</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-label">Max Combat:</span>
+                        <span class="stat-value" id="deckMaxCombat">0</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-label">Max Brute Force:</span>
+                        <span class="stat-value" id="deckMaxBruteForce">0</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-label">Max Intelligence:</span>
+                        <span class="stat-value" id="deckMaxIntelligence">0</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-label">Total Threat:</span>
+                        <span class="stat-value" id="deckTotalThreat">0</span>
+                    </div>
+                </div>
+                <div class="summary-stat">
+                    <button class="remove-all-btn" id="drawHandBtn" data-click-handler="toggleDrawHand" disabled>Draw Hand</button>
+                    <button class="remove-all-btn" id="listViewBtn" data-click-handler="toggleListView">List View</button>
+                    <button class="remove-all-btn" id="screenshotViewBtn" data-click-handler="toggleScreenshotView" style="display: none;">Screenshot View</button>
+                </div>
+                <div class="deck-summary-validation" id="deckSummaryValidation">
+                    <!-- Validation content will be displayed here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Draw Hand Section -->
+        <div class="draw-hand-section" id="drawHandSection" style="display: none;">
+            <div class="draw-hand-header">
+                <h4>Draw Hand</h4>
+                <button class="draw-hand-close" data-click-handler="closeDrawHand">×</button>
+            </div>
+            <div class="draw-hand-content" id="drawHandContent">
+                <!-- Drawn cards will be displayed here -->
+            </div>
+        </div>
+        
+        <!-- Screenshot View Section -->
+        <div class="screenshot-view-section" id="screenshotViewSection" style="display: none;">
+            <button class="screenshot-view-close" data-click-handler="closeScreenshotView">×</button>
+            <div class="screenshot-view-content" id="screenshotViewContent">
+                <!-- Deck cards will be displayed here in tabletop layout -->
+            </div>
+        </div>
+        
+        <div class="modal-body">
+            <div class="deck-editor-layout">
+                <!-- Left Pane: Deck List View -->
+                <div class="deck-pane">
+                    <div class="deck-cards-editor" id="deckCardsEditor">
+                        <!-- Deck cards will be displayed here -->
+                    </div>
+                </div>
+                
+                <!-- Resizable Divider -->
+                <div class="resizable-divider" id="resizableDivider"></div>
+                
+                <!-- Right Pane: Card Selector -->
+                <div class="card-selector-pane">
+                    <div class="card-selector-header">
+                        <h4>Available Cards</h4>
+                        <div class="card-categories" id="cardCategories">
+                            <!-- Card categories will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

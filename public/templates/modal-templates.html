@@ -1,0 +1,134 @@
+<!-- Modal Templates -->
+
+<!-- Image Modal -->
+<div id="imageModal" class="modal" data-close-handler="closeModal">
+    <div class="modal-content" data-stop-propagation="true">
+        <img id="modalImage" src="" alt="Card Image">
+        <div id="modalCaption"></div>
+    </div>
+</div>
+
+<!-- Create Deck Modal -->
+<div id="createDeckModal" class="modal" data-close-handler="closeCreateDeckModal">
+    <div class="modal-content create-deck-modal" data-stop-propagation="true">
+        <div class="modal-header">
+            <h3>Create New Deck</h3>
+        </div>
+        <form id="createDeckForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="deckName">Deck Name:</label>
+                    <input type="text" id="deckName" name="deckName" required placeholder="Enter deck name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="deckDescription">Deck Description:</label>
+                    <textarea id="deckDescription" name="deckDescription" placeholder="Enter deck description"></textarea>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="characterSelect">Characters: <span style="font-style: italic; color: #666; font-weight: normal; font-size: 0.9em;">Optional</span></label>
+                    <div class="character-selection">
+                        <select id="characterSelect" class="character-dropdown">
+                            <option value="">Select a character to add...</option>
+                        </select>
+                        <div id="selectedCharacters" class="selected-characters">
+                            <!-- Selected characters will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" data-click-handler="closeCreateDeckModal" class="btn-secondary">Cancel</button>
+                <button type="submit" class="btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- View/Edit Deck Modal -->
+<div id="viewDeckModal" class="modal" data-close-handler="closeViewDeckModal">
+    <div class="modal-content large-modal" data-stop-propagation="true">
+        <div class="modal-header">
+            <h3 id="viewDeckTitle">Deck Details</h3>
+            <button class="close-btn" data-click-handler="closeViewDeckModal">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="deck-info-section">
+                <div class="deck-metadata">
+                    <div class="metadata-item">
+                        <label>Description:</label>
+                        <span id="viewDeckDescription">-</span>
+                    </div>
+                    <div class="metadata-item">
+                        <label>Created:</label>
+                        <span id="viewDeckCreated">-</span>
+                    </div>
+                    <div class="metadata-item">
+                        <label>Last Modified:</label>
+                        <span id="viewDeckModified">-</span>
+                    </div>
+                    <div class="metadata-item">
+                        <label>Total Cards:</label>
+                        <span id="viewDeckCardCount">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="deck-cards-section">
+                <div class="section-header">
+                    <h4>Cards in Deck</h4>
+                    <button class="add-cards-btn" data-click-handler="showAddCardsModal">Add Cards</button>
+                </div>
+                <div class="deck-cards-list" id="deckCardsList">
+                    <!-- Cards will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Cards Modal -->
+<div id="addCardsModal" class="modal" data-close-handler="closeAddCardsModal">
+    <div class="modal-content large-modal" data-stop-propagation="true">
+        <div class="modal-header">
+            <h3>Add Cards to Deck</h3>
+            <button class="close-btn" data-click-handler="closeAddCardsModal">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="card-search-section">
+                <div class="search-controls">
+                    <select id="cardTypeFilter" class="card-type-select">
+                        <option value="">All Card Types</option>
+                        <option value="character">Characters</option>
+                        <option value="special">Special Cards</option>
+                        <option value="location">Locations</option>
+                        <option value="mission">Missions</option>
+                        <option value="event">Events</option>
+                        <option value="aspect">Aspects</option>
+                        <option value="advanced-universe">Advanced Universe</option>
+                        <option value="teamwork">Universe: Teamwork</option>
+                        <option value="ally-universe">Universe: Ally</option>
+                        <option value="training">Universe: Training</option>
+                        <option value="basic-universe">Universe: Basic</option>
+                        <option value="power">Power Cards</option>
+                    </select>
+                    <input type="text" id="cardSearchInput" class="card-search-input" placeholder="Search cards...">
+                </div>
+                <div class="card-results" id="cardResults">
+                    <!-- Search results will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Card Hover Modal -->
+<div id="cardHoverModal" class="card-hover-modal">
+    <div class="card-hover-content">
+        <img id="cardHoverImage" src="" alt="Card" class="card-hover-image">
+        <div id="cardHoverCaption" class="card-hover-caption"></div>
+    </div>
+</div>

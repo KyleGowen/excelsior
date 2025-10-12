@@ -1,0 +1,33 @@
+<!-- Database View Template -->
+<div id="database-view" class="database-section" style="display: none;">
+    <div class="section-header">
+    </div>
+    
+    <div class="tab-container">
+        <div class="tab-row">
+            <button class="tab-button active" data-click-handler="switchTab" data-tab="characters">Characters</button>
+            <button class="tab-button" data-click-handler="switchTab" data-tab="special-cards">Special Cards</button>
+            <button class="tab-button" data-click-handler="switchTab" data-tab="advanced-universe">Advanced Universe</button>
+            <button class="tab-button" data-click-handler="switchTab" data-tab="locations">Locations</button>
+            <button class="tab-button" data-click-handler="switchTab" data-tab="aspects">Aspects</button>
+            <button class="tab-button" data-click-handler="switchTab" data-tab="missions">Missions</button>
+        </div>
+        <div class="tab-row">
+            <button class="tab-button" data-click-handler="switchTab" data-tab="events">Events</button>
+            <button class="tab-button" data-click-handler="switchTab" data-tab="teamwork">Universe: Teamwork</button>
+            <button class="tab-button" data-click-handler="switchTab" data-tab="ally-universe">Universe: Ally</button>
+            <button class="tab-button" data-click-handler="switchTab" data-tab="training">Universe: Training</button>
+            <button class="tab-button" data-click-handler="switchTab" data-tab="basic-universe">Universe: Basic</button>
+            <button class="tab-button" data-click-handler="switchTab" data-tab="power-cards">Power Cards</button>
+        </div>
+    </div>
+
+    <div class="search-container" id="search-container" style="display: none;">
+        <input type="text" class="search-input" id="search-input" placeholder="Search...">
+    </div>
+
+    <!-- Table containers will be dynamically loaded here -->
+    <div id="table-container-placeholder">
+        <!-- Tables will be inserted here by JavaScript -->
+    </div>
+</div>

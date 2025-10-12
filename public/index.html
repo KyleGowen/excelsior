@@ -35,13 +35,15 @@
     <script src="/js/layout-drag-drop-functions.js"></script>
     <script src="/js/validation-calculation-functions.js"></script>
     <script src="/js/remaining-utility-functions.js"></script>
+    <script src="/js/template-loader.js"></script>
+    <script src="/js/event-binder.js"></script>
 </head>
 <body>
     <!-- Login Modal -->
     <div id="loginModal" class="login-modal">
         <div class="login-modal-content">
             <div class="login-header">
-                <img src="/src/resources/images/logo/logo5.png" alt="Excelsior Deckbuilder" style="max-width: 300px; height: auto; display: block; margin: 0 auto;" onclick="console.log('Login logo clicked'); event.preventDefault(); event.stopPropagation(); return false;">
+                <img src="/src/resources/images/logo/logo5.png" alt="Excelsior Deckbuilder" style="max-width: 300px; height: auto; display: block; margin: 0 auto;" data-click-handler="handleLoginLogoClick">
             </div>
             <form id="loginForm" class="login-form">
                 <div class="form-group">
@@ -70,20 +72,20 @@
             
             <div class="tab-container">
                 <div class="tab-row">
-                    <button class="tab-button active" onclick="switchTab('characters')">Characters</button>
-                    <button class="tab-button" onclick="switchTab('special-cards')">Special Cards</button>
-                    <button class="tab-button" onclick="switchTab('advanced-universe')">Advanced Universe</button>
-                    <button class="tab-button" onclick="switchTab('locations')">Locations</button>
-                    <button class="tab-button" onclick="switchTab('aspects')">Aspects</button>
-                    <button class="tab-button" onclick="switchTab('missions')">Missions</button>
+                    <button class="tab-button active" data-click-handler="switchTab" data-tab="characters">Characters</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="special-cards">Special Cards</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="advanced-universe">Advanced Universe</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="locations">Locations</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="aspects">Aspects</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="missions">Missions</button>
                 </div>
                 <div class="tab-row">
-                    <button class="tab-button" onclick="switchTab('events')">Events</button>
-                    <button class="tab-button" onclick="switchTab('teamwork')">Universe: Teamwork</button>
-                    <button class="tab-button" onclick="switchTab('ally-universe')">Universe: Ally</button>
-                    <button class="tab-button" onclick="switchTab('training')">Universe: Training</button>
-                    <button class="tab-button" onclick="switchTab('basic-universe')">Universe: Basic</button>
-                    <button class="tab-button" onclick="switchTab('power-cards')">Power Cards</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="events">Events</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="teamwork">Universe: Teamwork</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="ally-universe">Universe: Ally</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="training">Universe: Training</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="basic-universe">Universe: Basic</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="power-cards">Power Cards</button>
                 </div>
             </div>
 
@@ -606,16 +608,16 @@
     </div>
 
     <!-- Image Modal -->
-    <div id="imageModal" class="modal" onclick="closeModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
+    <div id="imageModal" class="modal" data-close-handler="closeModal">
+        <div class="modal-content" data-stop-propagation="true">
             <img id="modalImage" src="" alt="Card Image">
             <div id="modalCaption"></div>
         </div>
     </div>
 
     <!-- Create Deck Modal -->
-    <div id="createDeckModal" class="modal" onclick="closeCreateDeckModal()">
-        <div class="modal-content create-deck-modal" onclick="event.stopPropagation()">
+    <div id="createDeckModal" class="modal" data-close-handler="closeCreateDeckModal">
+        <div class="modal-content create-deck-modal" data-stop-propagation="true">
             <div class="modal-header">
             <h3>Create New Deck</h3>
             </div>
@@ -646,7 +648,7 @@
                     </div>
                 </div>
                 <div class="form-actions">
-                    <button type="button" onclick="closeCreateDeckModal()" class="btn-secondary">Cancel</button>
+                    <button type="button" data-click-handler="closeCreateDeckModal" class="btn-secondary">Cancel</button>
                     <button type="submit" class="btn-primary">Save</button>
                 </div>
             </form>
@@ -654,11 +656,11 @@
     </div>
 
     <!-- View/Edit Deck Modal -->
-    <div id="viewDeckModal" class="modal" onclick="closeViewDeckModal()">
-        <div class="modal-content large-modal" onclick="event.stopPropagation()">
+    <div id="viewDeckModal" class="modal" data-close-handler="closeViewDeckModal">
+        <div class="modal-content large-modal" data-stop-propagation="true">
             <div class="modal-header">
                 <h3 id="viewDeckTitle">Deck Details</h3>
-                <button class="close-btn" onclick="closeViewDeckModal()">×</button>
+                <button class="close-btn" data-click-handler="closeViewDeckModal">×</button>
             </div>
             <div class="modal-body">
                 <div class="deck-info-section">
@@ -685,7 +687,7 @@
                 <div class="deck-cards-section">
                     <div class="section-header">
                         <h4>Cards in Deck</h4>
-                        <button class="add-cards-btn" onclick="showAddCardsModal()">Add Cards</button>
+                        <button class="add-cards-btn" data-click-handler="showAddCardsModal">Add Cards</button>
                     </div>
                     <div class="deck-cards-list" id="deckCardsList">
                         <!-- Cards will be loaded here -->
@@ -696,11 +698,11 @@
     </div>
 
     <!-- Add Cards Modal -->
-    <div id="addCardsModal" class="modal" onclick="closeAddCardsModal()">
-        <div class="modal-content large-modal" onclick="event.stopPropagation()">
+    <div id="addCardsModal" class="modal" data-close-handler="closeAddCardsModal">
+        <div class="modal-content large-modal" data-stop-propagation="true">
             <div class="modal-header">
                 <h3>Add Cards to Deck</h3>
-                <button class="close-btn" onclick="closeAddCardsModal()">×</button>
+                <button class="close-btn" data-click-handler="closeAddCardsModal">×</button>
             </div>
             <div class="modal-body">
                 <div class="card-search-section">
@@ -738,15 +740,15 @@
         </div>
     </div>
     <!-- Deck Editor Modal -->
-    <div id="deckEditorModal" class="modal" onclick="closeDeckEditor()">
-        <div class="modal-content large-modal" onclick="event.stopPropagation()">
+    <div id="deckEditorModal" class="modal" data-close-handler="closeDeckEditor">
+        <div class="modal-content large-modal" data-stop-propagation="true">
             <div class="modal-header">
                 <div class="deck-editor-title-section">
                     <div class="deck-title-with-validation">
-                        <h3 id="deckEditorTitle" class="editable-title" onclick="startEditingTitle()">Edit Deck</h3>
+                        <h3 id="deckEditorTitle" class="editable-title" data-edit-handler="startEditingTitle">Edit Deck</h3>
                         <span id="deckTitleValidationBadge" class="deck-validation-badge"></span>
                     </div>
-                    <p id="deckEditorDescription" class="deck-description editable-description" onclick="startEditingDescription()"></p>
+                    <p id="deckEditorDescription" class="deck-description editable-description" data-edit-handler="startEditingDescription"></p>
                     <div id="readOnlyIndicator" class="read-only-indicator" style="display: none;">
                         <span class="read-only-text">📖 Read Only Mode</span>
                     </div>
@@ -758,8 +760,8 @@
                     </div>
                 </div>
                 <div class="deck-editor-actions">
-                    <button class="btn-secondary" onclick="closeDeckEditor()">Cancel</button>
-                    <button id="saveDeckButton" class="btn-primary" onclick="saveDeckChanges()">Save</button>
+                    <button class="btn-secondary" data-click-handler="closeDeckEditor">Cancel</button>
+                    <button id="saveDeckButton" class="btn-primary" data-click-handler="saveDeckChanges">Save</button>
                 </div>
             </div>
             
@@ -793,9 +795,9 @@
                         </div>
                     </div>
                     <div class="summary-stat">
-                        <button class="remove-all-btn" id="drawHandBtn" onclick="toggleDrawHand()" disabled>Draw Hand</button>
-                        <button class="remove-all-btn" id="listViewBtn" onclick="toggleListView()">List View</button>
-                        <button class="remove-all-btn" id="screenshotViewBtn" onclick="toggleScreenshotView()" style="display: none;">Screenshot View</button>
+                        <button class="remove-all-btn" id="drawHandBtn" data-click-handler="toggleDrawHand" disabled>Draw Hand</button>
+                        <button class="remove-all-btn" id="listViewBtn" data-click-handler="toggleListView">List View</button>
+                        <button class="remove-all-btn" id="screenshotViewBtn" data-click-handler="toggleScreenshotView" style="display: none;">Screenshot View</button>
                     </div>
                     <div class="deck-summary-validation" id="deckSummaryValidation">
                         <!-- Validation content will be displayed here -->
@@ -807,7 +809,7 @@
             <div class="draw-hand-section" id="drawHandSection" style="display: none;">
                 <div class="draw-hand-header">
                     <h4>Draw Hand</h4>
-                    <button class="draw-hand-close" onclick="closeDrawHand()">×</button>
+                    <button class="draw-hand-close" data-click-handler="closeDrawHand">×</button>
                 </div>
                 <div class="draw-hand-content" id="drawHandContent">
                     <!-- Drawn cards will be displayed here -->
@@ -816,7 +818,7 @@
             
        <!-- Screenshot View Section -->
        <div class="screenshot-view-section" id="screenshotViewSection" style="display: none;">
-           <button class="screenshot-view-close" onclick="closeScreenshotView()">×</button>
+           <button class="screenshot-view-close" data-click-handler="closeScreenshotView">×</button>
            <div class="screenshot-view-content" id="screenshotViewContent">
                <!-- Deck cards will be displayed here in tabletop layout -->
                 </div>
