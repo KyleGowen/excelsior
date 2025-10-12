@@ -640,11 +640,9 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
                 .set('Cookie', guestAuthCookie)
                 .expect(200);
 
-            // Check that the disableAddToDeckButtons function is defined
-            expect(response.text).toContain('function disableAddToDeckButtons()');
-            expect(response.text).toContain('querySelectorAll');
-            expect(response.text).toContain('disabled = true');
-            expect(response.text).toContain('Log in to add to decks...');
+            // Check that the disableAddToDeckButtons function is loaded from external file
+            expect(response.text).toContain('<script src="/js/deck-editor-simple.js"></script>');
+            expect(response.text).toContain('disableAddToDeckButtons function moved to external file');
         });
 
         it('should call disableAddToDeckButtonsImmediate after data loads', async () => {

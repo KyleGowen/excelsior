@@ -3952,5 +3952,203 @@
     "userId": "test-user-id",
     "username": "test-user",
     "expiresAt": "2025-10-12T17:53:44.137Z"
+  },
+  {
+    "sessionId": "sess_ib2ikzpfo_mgnwgrur",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T18:09:39.843Z"
+  },
+  {
+    "sessionId": "sess_k61pqvz18_mgnwhbsi",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:10:05.682Z"
+  },
+  {
+    "sessionId": "sess_flww9w3mc_mgnwhbsk",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:10:05.684Z"
+  },
+  {
+    "sessionId": "sess_z8jpbirwb_mgnwjnte",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T18:11:54.578Z"
+  },
+  {
+    "sessionId": "sess_mfrx298bj_mgnwk8h0",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:12:21.348Z"
+  },
+  {
+    "sessionId": "sess_98iy78wgq_mgnwk8h2",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:12:21.350Z"
+  },
+  {
+    "sessionId": "sess_yvb4kkf29_mgnwn55w",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T18:14:37.028Z"
+  },
+  {
+    "sessionId": "sess_smiexm1ou_mgnwnl1r",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:14:57.615Z"
+  },
+  {
+    "sessionId": "sess_o6qhrl0uz_mgnwnl1s",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:14:57.616Z"
+  },
+  {
+    "sessionId": "sess_rmnv6e36h_mgnwpzqn",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T18:16:49.967Z"
+  },
+  {
+    "sessionId": "sess_re3jrzk5k_mgnwqh0a",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:17:12.346Z"
+  },
+  {
+    "sessionId": "sess_k65ipjiqc_mgnwqh0b",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:17:12.347Z"
+  },
+  {
+    "sessionId": "sess_9tctgqxz0_mgnwt30c",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T18:19:14.172Z"
+  },
+  {
+    "sessionId": "sess_kqfjqjbvb_mgnwtbrv",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:19:25.531Z"
+  },
+  {
+    "sessionId": "sess_g40ys3vph_mgnwtbrx",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:19:25.533Z"
+  },
+  {
+    "sessionId": "sess_ti92nlwmm_mgnwvvpr",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T18:21:24.687Z"
+  },
+  {
+    "sessionId": "sess_z51yzoe4t_mgnwwl12",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:21:57.494Z"
+  },
+  {
+    "sessionId": "sess_rpdlj749t_mgnwwl14",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:21:57.496Z"
+  },
+  {
+    "sessionId": "sess_vjb3pxzea_mgnwycob",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T18:23:19.979Z"
+  },
+  {
+    "sessionId": "sess_jrtd9hzco_mgnwz3n0",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:23:54.924Z"
+  },
+  {
+    "sessionId": "sess_hheqfee4v_mgnwz3n2",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:23:54.926Z"
+  },
+  {
+    "sessionId": "sess_u1d6xp2bl_mgnx1619",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T18:25:31.341Z"
+  },
+  {
+    "sessionId": "sess_87qjhtqhz_mgnx1qi4",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:25:57.868Z"
+  },
+  {
+    "sessionId": "sess_dvbbe0zbp_mgnx1qi6",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:25:57.870Z"
+  },
+  {
+    "sessionId": "sess_v8kboc834_mgnx49ou",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T18:27:56.046Z"
+  },
+  {
+    "sessionId": "sess_ncm5oyxty_mgnx4gjo",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:28:04.932Z"
+  },
+  {
+    "sessionId": "sess_4vrbutahe_mgnx4gjp",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:28:04.933Z"
+  },
+  {
+    "sessionId": "sess_xo4h57089_mgnxvq8s",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T18:49:17.212Z"
+  },
+  {
+    "sessionId": "sess_pc9dei8sh_mgnxxj6v",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:50:41.383Z"
+  },
+  {
+    "sessionId": "sess_7vmm5p24k_mgnxxj6x",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:50:41.385Z"
+  },
+  {
+    "sessionId": "sess_m7u192n5s_mgnxz56i",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T18:51:56.538Z"
+  },
+  {
+    "sessionId": "sess_2pgksa6u9_mgny0bg8",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:52:51.320Z"
+  },
+  {
+    "sessionId": "sess_id3opx8f1_mgny0bga",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T18:52:51.322Z"
   }
 ]

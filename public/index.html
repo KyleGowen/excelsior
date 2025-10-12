@@ -21,6 +21,7 @@
     <script src="/js/layout-manager.js"></script>
     <script src="/js/deck-management.js"></script>
     <script src="/js/card-display.js"></script>
+    <script src="/js/deck-editor-simple.js"></script>
 </head>
 <body>
     <!-- Login Modal -->
@@ -974,19 +975,7 @@
         }
 
         // Disable "Add to Deck" buttons for guest users
-        function disableAddToDeckButtons() {
-            if (isGuestUser()) {
-                const addToDeckButtons = document.querySelectorAll('.add-to-deck-btn');
-                addToDeckButtons.forEach(button => {
-                    button.disabled = true;
-                    button.style.opacity = '0.5';
-                    button.style.cursor = 'not-allowed';
-                    button.title = 'Log in to add to decks...';
-                    // Also add a data attribute for debugging
-                    button.setAttribute('data-guest-disabled', 'true');
-                });
-            }
-        }
+        // disableAddToDeckButtons function moved to external file
 
         // Enhanced function to disable buttons immediately and prevent flash
         function disableAddToDeckButtonsImmediate() {
@@ -1877,21 +1866,7 @@
             }
         }
 
-        function toggleOnePerDeckColumn() {
-            const onePerDeckColumn = document.querySelectorAll('.one-per-deck-column');
-            const toggleButton = document.getElementById('toggle-one-per-deck');
-            const toggleText = document.getElementById('one-per-deck-toggle-text');
-            
-            onePerDeckColumn.forEach(col => {
-                col.classList.toggle('hidden');
-            });
-            
-            if (onePerDeckColumn[0].classList.contains('hidden')) {
-                toggleText.textContent = 'Show';
-            } else {
-                toggleText.textContent = 'Hide';
-            }
-        }
+        // toggleOnePerDeckColumn function moved to external file
 
         // Advanced Universe functions
         async function loadAdvancedUniverse() {
