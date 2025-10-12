@@ -3281,22 +3281,22 @@
             gap: 0 !important;
         }
 
-        /* Three-column layout for deck type sections in read-only mode */
-        .read-only-mode .deck-cards-editor {
+        /* Three-column layout for deck list sections in read-only mode */
+        .read-only-mode .deck-cards-editor.list-view {
             display: grid !important;
             grid-template-columns: 1fr 1fr 1fr !important;
             gap: 20px !important;
         }
         
         /* More specific selector for read-only mode in modal */
-        #deckEditorModal.read-only-mode .deck-cards-editor {
+        #deckEditorModal.read-only-mode .deck-cards-editor.list-view {
             display: grid !important;
             grid-template-columns: 1fr 1fr 1fr !important;
             gap: 20px !important;
         }
         
         /* Even more specific for body read-only mode */
-        body.read-only-mode .deck-cards-editor {
+        body.read-only-mode .deck-cards-editor.list-view {
             display: grid !important;
             grid-template-columns: 1fr 1fr 1fr !important;
             gap: 20px !important;
@@ -3602,11 +3602,10 @@
             padding: 20px !important;
         }
         
-        /* Organize cards in 3 columns in read-only mode - apply to individual card sections */
+        /* Organize cards in 4 columns in read-only mode - apply to individual card sections */
+        .read-only-mode .deck-cards-editor,
         .read-only-mode .deck-cards-editor.two-column {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr 1fr !important;
-            gap: 20px !important;
+            display: block !important;
             overflow-y: auto !important;
             overflow-x: hidden !important;
         }
@@ -3623,11 +3622,10 @@
             gap: 16px !important;
         }
         
-        /* Ensure deck type sections fit properly in 3-column grid */
+        /* Ensure deck type sections take full width */
         .read-only-mode .deck-type-section {
             width: 100% !important;
-            margin-bottom: 0 !important;
-            min-height: fit-content !important;
+            margin-bottom: 20px !important;
         }
         
         /* Make list view also use single column in read-only mode */
