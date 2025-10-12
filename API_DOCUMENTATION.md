@@ -887,7 +887,13 @@ This endpoint performs a thorough health check of the entire system, including d
   "environment": "development|production|staging",
   "git": {
     "commit": "4a2f68584caa4dc270f45c3d4f279c93307b4f17",
-    "branch": "main"
+    "shortCommit": "4a2f685",
+    "branch": "main",
+    "commitDate": "2024-01-15 10:25:30 +0000",
+    "commitMessage": "Add enhanced health check with git and migration info",
+    "commitAuthor": "John Doe",
+    "commitEmail": "john.doe@example.com",
+    "remoteUrl": "https://github.com/username/repository.git"
   },
   "resources": {
     "memory": {
@@ -963,7 +969,13 @@ This endpoint performs a thorough health check of the entire system, including d
 
 **Git Information:**
 - `commit`: Full SHA hash of the current git commit
+- `shortCommit`: Short SHA hash (first 7 characters) for display
 - `branch`: Current git branch name
+- `commitDate`: ISO timestamp of when the commit was made
+- `commitMessage`: Subject line of the most recent commit
+- `commitAuthor`: Name of the commit author
+- `commitEmail`: Email address of the commit author
+- `remoteUrl`: URL of the remote git repository
 
 **Resource Usage:**
 - `memory.rss`: Resident Set Size - total memory allocated to the process
@@ -984,15 +996,23 @@ This endpoint performs a thorough health check of the entire system, including d
   - `users`: Array of guest user details
 - `guestDecks`: Statistics about guest-created decks
 - `stats`: Database table row counts for monitoring
-- `latestMigration`: Information about the most recent database migration
-  - `version`: Migration version number (e.g., V150)
-  - `description`: Human-readable migration description
-  - `type`: Migration type (SQL, JAVA, etc.)
-  - `script`: Migration script filename
-  - `installedBy`: Database user who ran the migration
-  - `installedOn`: When the migration was executed
-  - `executionTime`: How long the migration took (milliseconds)
-  - `success`: Whether the migration completed successfully
+- `migrations`: Comprehensive migration information
+  - `latest`: Information about the most recent database migration
+    - `version`: Migration version number (e.g., V150)
+    - `description`: Human-readable migration description
+    - `type`: Migration type (SQL, JAVA, etc.)
+    - `script`: Migration script filename
+    - `checksum`: Migration file checksum for integrity verification
+    - `installedBy`: Database user who ran the migration
+    - `installedOn`: When the migration was executed
+    - `executionTime`: How long the migration took (milliseconds)
+    - `success`: Whether the migration completed successfully
+    - `installedRank`: Migration execution order rank
+  - `summary`: Overall migration statistics
+    - `total`: Total number of migrations in the system
+    - `successful`: Number of successfully applied migrations
+    - `failed`: Number of failed migrations
+    - `lastRun`: Date of the most recent migration execution
 
 **Migration Status:**
 - `status`: Overall migration system health

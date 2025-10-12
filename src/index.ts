@@ -33,9 +33,34 @@ function getGitInfo() {
   try {
     const commit = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
     const branch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();
-    return { commit, branch };
+    const shortCommit = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+    const commitDate = execSync('git log -1 --format=%ci', { encoding: 'utf8' }).trim();
+    const commitMessage = execSync('git log -1 --format=%s', { encoding: 'utf8' }).trim();
+    const commitAuthor = execSync('git log -1 --format=%an', { encoding: 'utf8' }).trim();
+    const commitEmail = execSync('git log -1 --format=%ae', { encoding: 'utf8' }).trim();
+    const remoteUrl = execSync('git config --get remote.origin.url', { encoding: 'utf8' }).trim();
+    
+    return { 
+      commit, 
+      shortCommit,
+      branch, 
+      commitDate,
+      commitMessage,
+      commitAuthor,
+      commitEmail,
+      remoteUrl
+    };
   } catch (error) {
-    return { commit: 'unknown', branch: 'unknown' };
+    return { 
+      commit: 'unknown', 
+      shortCommit: 'unknown',
+      branch: 'unknown',
+      commitDate: 'unknown',
+      commitMessage: 'unknown',
+      commitAuthor: 'unknown',
+      commitEmail: 'unknown',
+      remoteUrl: 'unknown'
+    };
   }
 }
 
@@ -853,7 +878,13 @@ app.get('/health', async (req, res) => {
     environment: process.env.NODE_ENV || 'development',
     git: {
       commit: gitInfo.commit,
-      branch: gitInfo.branch
+      shortCommit: gitInfo.shortCommit,
+      branch: gitInfo.branch,
+      commitDate: gitInfo.commitDate,
+      commitMessage: gitInfo.commitMessage,
+      commitAuthor: gitInfo.commitAuthor,
+      commitEmail: gitInfo.commitEmail,
+      remoteUrl: gitInfo.remoteUrl
     }
   };
 
@@ -916,10 +947,25 @@ app.get('/health', async (req, res) => {
           installed_by,
           installed_on,
           execution_time,
-          success
+          success,
+          installed_rank
         FROM flyway_schema_history 
         ORDER BY installed_rank DESC 
         LIMIT 1
+      `);
+      
+      // Get total migration count
+      const migrationCountResult = await client.query(`
+        SELECT COUNT(*) as total_migrations FROM flyway_schema_history
+      `);
+      
+      // Get migration status summary
+      const migrationStatusResult = await client.query(`
+        SELECT 
+          COUNT(CASE WHEN success = true THEN 1 END) as successful_migrations,
+          COUNT(CASE WHEN success = false THEN 1 END) as failed_migrations,
+          MAX(installed_on) as last_migration_date
+        FROM flyway_schema_history
       `);
       
       client.release();
@@ -950,16 +996,26 @@ app.get('/health', async (req, res) => {
           totalSpecialCards: parseInt(dbStatsResult.rows[0].total_special_cards),
           totalPowerCards: parseInt(dbStatsResult.rows[0].total_power_cards)
         },
-        latestMigration: migrationResult.rows.length > 0 ? {
-          version: migrationResult.rows[0].version,
-          description: migrationResult.rows[0].description,
-          type: migrationResult.rows[0].type,
-          script: migrationResult.rows[0].script,
-          installedBy: migrationResult.rows[0].installed_by,
-          installedOn: migrationResult.rows[0].installed_on,
-          executionTime: migrationResult.rows[0].execution_time,
-          success: migrationResult.rows[0].success
-        } : null
+        migrations: {
+          latest: migrationResult.rows.length > 0 ? {
+            version: migrationResult.rows[0].version,
+            description: migrationResult.rows[0].description,
+            type: migrationResult.rows[0].type,
+            script: migrationResult.rows[0].script,
+            checksum: migrationResult.rows[0].checksum,
+            installedBy: migrationResult.rows[0].installed_by,
+            installedOn: migrationResult.rows[0].installed_on,
+            executionTime: migrationResult.rows[0].execution_time,
+            success: migrationResult.rows[0].success,
+            installedRank: migrationResult.rows[0].installed_rank
+          } : null,
+          summary: {
+            total: parseInt(migrationCountResult.rows[0].total_migrations),
+            successful: parseInt(migrationStatusResult.rows[0].successful_migrations),
+            failed: parseInt(migrationStatusResult.rows[0].failed_migrations),
+            lastRun: migrationStatusResult.rows[0].last_migration_date
+          }
+        }
       };
       
     } catch (dbError) {
