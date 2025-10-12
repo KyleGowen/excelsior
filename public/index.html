@@ -31,8 +31,11 @@
         <script src="/js/card-display-functions.js"></script>
         <script src="/js/search-filter-functions.js"></script>
         <script src="/js/deck-management-functions.js"></script>
-        <script src="/js/ui-utility-functions.js"></script>
-    </head>
+    <script src="/js/ui-utility-functions.js"></script>
+    <script src="/js/layout-drag-drop-functions.js"></script>
+    <script src="/js/validation-calculation-functions.js"></script>
+    <script src="/js/remaining-utility-functions.js"></script>
+</head>
 <body>
     <!-- Login Modal -->
     <div id="loginModal" class="login-modal">
@@ -2553,16 +2556,7 @@
             }).join('');
         }
 
-        // Card management functions
-        function getCardName(card) {
-            // TODO: This should fetch the actual card name from the database
-            // For now, return a placeholder
-            return `${formatCardType(card.type)} Card ${card.cardId}`;
-        }
-
-        function formatCardType(type) {
-            return type.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        }
+        // getCardName, formatCardType functions moved to external file
         async function changeCardQuantity(cardId, change) {
             if (!currentDeckId) return;
             
@@ -2706,26 +2700,7 @@
             }
         }
 
-        function displayCardSearchResults(cards) {
-            const cardResults = document.getElementById('cardResults');
-            
-            if (cards.length === 0) {
-                cardResults.innerHTML = '<div style="text-align: center; color: #bdc3c7; padding: 20px;">No cards found</div>';
-                return;
-            }
-
-            cardResults.innerHTML = cards.map(card => `
-                <div class="card-result-item">
-                    <div class="card-result-info">
-                        <div class="card-result-name">${card.displayName}</div>
-                        <div class="card-result-type">${formatCardType(card.type)}</div>
-                    </div>
-                    <button class="add-card-btn" onclick="addCardToDeck('${card.type}', '${card.id}')">
-                        ${card.type === 'character' ? 'Add to Deck' : 'Add to Deck (+)'}
-                    </button>
-                </div>
-            `).join('');
-        }
+        // displayCardSearchResults function moved to external file
         async function addCardToDeck(cardType, cardId) {
             if (!currentDeckId) {
                 showNotification('No deck selected', 'error');
@@ -2860,183 +2835,13 @@
         let selectedCards = new Set();
         let initialPositions = new Map(); // Store initial positions for group dragging
         
-        function getCardBounds(card) {
-            const rect = card.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
-            return {
-                left: rect.left - containerRect.left,
-                top: rect.top - containerRect.top,
-                right: rect.right - containerRect.left,
-                bottom: rect.bottom - containerRect.top,
-                width: rect.width,
-                height: rect.height
-            };
-        }
-        
-        function clearSelection() {
-            selectedCards.forEach(c => c.classList.remove('selected'));
-            selectedCards.clear();
-        }
+        // getCardBounds, clearSelection functions moved to external file
 
-        function onPointerMove(e) {
-            console.log('onPointerMove called, activeCard:', activeCard);
-            const rect = container.getBoundingClientRect();
-            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        // onPointerMove function moved to external file
 
-            if (isMarqueeSelecting && selectionRect) {
-                const currentX = clientX - rect.left;
-                const currentY = clientY - rect.top;
-                const left = Math.min(currentX, marqueeStartX);
-                const top = Math.min(currentY, marqueeStartY);
-                const width = Math.abs(currentX - marqueeStartX);
-                const height = Math.abs(currentY - marqueeStartY);
-                selectionRect.style.left = left + 'px';
-                selectionRect.style.top = top + 'px';
-                selectionRect.style.width = width + 'px';
-                selectionRect.style.height = height + 'px';
+        // onPointerUp function moved to external file
 
-                // Update selection set by overlap
-                clearSelection();
-                container.querySelectorAll('.screenshot-draggable-card').forEach(card => {
-                    const b = getCardBounds(card);
-                    const overlaps = !(b.left > left + width || b.right < left || b.top > top + height || b.bottom < top);
-                    if (overlaps) {
-                        card.classList.add('selected');
-                        selectedCards.add(card);
-                    }
-                });
-                return;
-            }
-
-            if (!activeCard) {
-                console.log('No activeCard, returning');
-                return;
-            }
-            console.log('ActiveCard found, proceeding with drag');
-            e.preventDefault(); // Prevent text selection or other default browser behavior
-            // Position cards by their visual center, maintaining the click offset
-            const cardWidth = 140;  // Container width
-            const cardHeight = 200; // Container height
-            // Calculate center of container
-            const centerX = rect.left + cardWidth/2;
-            const centerY = rect.top + cardHeight/2;
-            // Position the card so its center is at the cursor position minus offset
-            const x = clientX - centerX - offsetX;
-            const y = clientY - centerY - offsetY;
-            
-            console.log('Drag calculation:', {
-                clientX, clientY,
-                centerX, centerY,
-                offsetX, offsetY,
-                calculatedX: x, calculatedY: y
-            });
-
-            // Move either single card or group
-            const toMove = selectedCards.size > 0 && selectedCards.has(activeCard) ? Array.from(selectedCards) : [activeCard];
-            
-            if (toMove.length === 1) {
-                // Single card - move directly
-                toMove[0].style.left = x + 'px';
-                toMove[0].style.top = y + 'px';
-            } else {
-                // Group dragging - calculate delta from active card's initial position
-                const activeInitialPos = initialPositions.get(activeCard);
-                if (activeInitialPos) {
-                    const deltaX = x - activeInitialPos.x;
-                    const deltaY = y - activeInitialPos.y;
-                    
-                    toMove.forEach(card => {
-                        const initialPos = initialPositions.get(card);
-                        if (initialPos) {
-                            card.style.left = (initialPos.x + deltaX) + 'px';
-                            card.style.top = (initialPos.y + deltaY) + 'px';
-                        }
-                    });
-                }
-            }
-        }
-
-        function onPointerUp(e) {
-            console.log('onPointerUp called, activeCard:', activeCard);
-            if (isMarqueeSelecting) {
-                isMarqueeSelecting = false;
-                if (selectionRect && selectionRect.parentNode) selectionRect.parentNode.removeChild(selectionRect);
-                selectionRect = null;
-                container.removeEventListener('pointermove', onPointerMove);
-                window.removeEventListener('pointerup', onPointerUp);
-                return;
-            }
-
-            if (!activeCard) return;
-            // End drag; no additional snapping here to avoid post-release movement
-            const toMove = selectedCards.size > 0 && selectedCards.has(activeCard) ? Array.from(selectedCards) : [activeCard];
-            toMove.forEach(card => {
-                card.classList.remove('dragging');
-            });
-
-            container.removeEventListener('pointermove', onPointerMove);
-            window.removeEventListener('pointerup', onPointerUp);
-            activeCard = null;
-            initialPositions.clear();
-        }
-
-        // Attach event listeners to all draggable cards
-        function attachDragListeners() {
-            const cards = container.querySelectorAll('.screenshot-draggable-card');
-            cards.forEach(card => {
-                // Skip if already has listeners attached
-                if (card.hasAttribute('data-drag-attached')) {
-                    return;
-                }
-                
-                // Disable native drag
-                card.setAttribute('draggable', 'false');
-                card.setAttribute('data-drag-attached', 'true');
-
-                card.addEventListener('pointerdown', (e) => {
-                    console.log('Card pointerdown event triggered');
-                    // If clicking on a non-selected card, clear selection unless holding Shift (multi-select toggle)
-                    const isShift = e.shiftKey;
-                    if (!isShift && !card.classList.contains('selected')) {
-                        clearSelection();
-                    }
-                    if (isShift) {
-                        // Toggle selection
-                        if (card.classList.contains('selected')) {
-                            card.classList.remove('selected');
-                            selectedCards.delete(card);
-                        } else {
-                            card.classList.add('selected');
-                            selectedCards.add(card);
-                        }
-                    }
-
-                    activeCard = card;
-                    const rect = card.getBoundingClientRect();
-                    // For unrotated container (140x200)
-                    const cardWidth = 140;  // Container width
-                    const cardHeight = 200; // Container height
-                    // Calculate offset from click point to container center
-                    const centerX = rect.left + cardWidth/2;
-                    const centerY = rect.top + cardHeight/2;
-                    offsetX = (e.clientX || (e.touches && e.touches[0].clientX)) - centerX;
-                    offsetY = (e.clientY || (e.touches && e.touches[0].clientY)) - centerY;
-                        
-                    // Store initial positions for group dragging
-                    initialPositions.clear();
-                    const toMove = selectedCards.size > 0 && selectedCards.has(card) ? Array.from(selectedCards) : [card];
-                    toMove.forEach(cardToMove => {
-                        const bounds = getCardBounds(cardToMove);
-                        initialPositions.set(cardToMove, { x: bounds.left, y: bounds.top });
-                    });
-                    
-                    card.classList.add('dragging');
-                    container.addEventListener('pointermove', onPointerMove);
-                    window.addEventListener('pointerup', onPointerUp);
-                });
-        });
-        }
+        // attachDragListeners function moved to external file
 
         // Marquee selection on empty space
         container.addEventListener('pointerdown', (e) => {
@@ -3729,18 +3534,7 @@
             e.target.classList.remove('drag-over');
         }
 
-        // Function to validate deck according to Overpower rules
-        function validateDeck(deckCards) {
-            const errors = [];
-            const warnings = [];
-            
-            // Count card types
-            const cardCounts = {};
-            const characterCards = [];
-            const eventCards = [];
-            const missionCards = [];
-            const locationCards = [];
-            const onePerDeckCards = {};
+        // validateDeck function moved to external file
             
             deckCards.forEach(card => {
                 const type = card.type;
@@ -4076,61 +3870,9 @@
             return { errors, warnings, isValid: errors.length === 0 };
         }
 
-        // Shared function to calculate total card count (excluding mission, character, and location cards)
-        function calculateTotalCardCount(deckCards) {
-            return deckCards
-                .filter(card => !['mission', 'character', 'location'].includes(card.type))
-                .reduce((sum, card) => sum + card.quantity, 0);
-        }
+        // calculateTotalCardCount function moved to external file
 
-        // Function to calculate total threat level for a deck
-        function calculateTotalThreat(deckCards) {
-            let totalThreat = 0;
-            
-            // Get the current reserve character ID
-            const reserveCharacterId = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
-            
-            // Calculate threat from character cards
-            const characterCards = deckCards.filter(card => card.type === 'character');
-            
-            characterCards.forEach(card => {
-                const character = availableCardsMap.get(card.cardId);
-                if (character && character.threat_level) {
-                    let threatLevel = character.threat_level;
-                    
-                    
-                    // Apply reserve character adjustments
-                    if (card.cardId === reserveCharacterId) {
-                        // Carson of Venus: 18 -> 19 when reserve
-                        if (character && character.name === 'Carson of Venus') {
-                            threatLevel = 19;
-                        }
-                        // Morgan le Fay: 19 -> 20 when reserve
-                        else if (character && character.name === 'Morgan le Fay') {
-                            threatLevel = 20;
-                        }
-                        // Victory Harben: 18 -> 20 when reserve
-                        else if (character && character.name === 'Victory Harben') {
-                            threatLevel = 20;
-                        }
-                    }
-                    
-                    totalThreat += threatLevel * card.quantity;
-                }
-            });
-            
-            // Calculate threat from location cards
-            const locationCards = deckCards.filter(card => card.type === 'location');
-            
-            locationCards.forEach(card => {
-                const location = availableCardsMap.get(card.cardId);
-                if (location && location.threat_level) {
-                    totalThreat += location.threat_level * card.quantity;
-                }
-            });
-            
-            return totalThreat;
-        }
+        // calculateTotalThreat function moved to external file
         // Function to update deck summary with stats and validation
         async function updateDeckSummary(deckCards) {
             // Update total card count using shared function
@@ -4228,60 +3970,10 @@
             }
         }
 
-        // Global variable to track limited state
-        let isDeckLimited = false;
+        // isDeckLimited variable moved to external file
 
         // Function to update deck title validation badge
-        function updateDeckTitleValidation(deckCards) {
-            const validationBadge = document.getElementById('deckTitleValidationBadge');
-            if (!validationBadge) return;
-
-            if (!deckCards || deckCards.length === 0) {
-                validationBadge.textContent = '';
-                validationBadge.className = 'deck-validation-badge';
-                validationBadge.removeAttribute('title');
-                validationBadge.onclick = null;
-                return;
-            }
-
-            // If deck is marked as limited, show Limited state
-            if (isDeckLimited) {
-                validationBadge.textContent = 'Limited';
-                validationBadge.className = 'deck-validation-badge limited';
-                validationBadge.removeAttribute('title');
-                validationBadge.onclick = toggleLimitedState;
-                return;
-            }
-
-            const validation = validateDeck(deckCards);
-            
-            if (validation.errors.length > 0) {
-                validationBadge.textContent = 'Not Legal';
-                validationBadge.className = 'deck-validation-badge error';
-                // Add tooltip with all validation errors
-                const tooltipText = validation.errors.join('\n');
-                validationBadge.setAttribute('title', tooltipText);
-                validationBadge.onclick = toggleLimitedState;
-            } else if (validation.warnings.length > 0) {
-                validationBadge.textContent = 'Has Warnings';
-                validationBadge.className = 'deck-validation-badge warning';
-                // Add tooltip with all warnings
-                const tooltipText = validation.warnings.join('\n');
-                validationBadge.setAttribute('title', tooltipText);
-                validationBadge.onclick = toggleLimitedState;
-            } else {
-                validationBadge.textContent = 'Legal';
-                validationBadge.className = 'deck-validation-badge success';
-                validationBadge.removeAttribute('title');
-                validationBadge.onclick = toggleLimitedState;
-            }
-        }
-
-        // Function to toggle limited state
-        function toggleLimitedState() {
-            isDeckLimited = !isDeckLimited;
-            updateDeckTitleValidation(deckEditorCards);
-        }
+        // updateDeckTitleValidation, toggleLimitedState functions moved to external file
 
         // Add event listeners for card search
         document.getElementById('cardTypeFilter').addEventListener('change', searchCards);
@@ -9450,366 +9142,15 @@
                 }
             });
         }
-        function setupDragAndDrop() {
-            console.log('setupDragAndDrop called');
-            
-            // Skip drag and drop setup in read-only mode
-            if (isReadOnlyMode) {
-                console.log('Skipping drag and drop setup - read-only mode');
-                return;
-            }
-            
-            try {
-                const deckCardsEditor = document.getElementById('deckCardsEditor');
-                if (!deckCardsEditor) {
-                    console.error('deckCardsEditor element not found');
-                    return;
-                }
-                
-                console.log('Setting up drag and drop for deckCardsEditor');
-            
-            // Drag over effects
-            deckCardsEditor.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                deckCardsEditor.classList.add('drag-over');
-            });
-            
-            deckCardsEditor.addEventListener('dragleave', () => {
-                deckCardsEditor.classList.remove('drag-over');
-            });
-            
-            // Drop handling
-            deckCardsEditor.addEventListener('drop', (e) => {
-                e.preventDefault();
-                deckCardsEditor.classList.remove('drag-over');
-                
-                const cardType = e.dataTransfer.getData('text/plain').split('|')[0];
-                const cardId = e.dataTransfer.getData('text/plain').split('|')[1];
-                const cardName = e.dataTransfer.getData('text/plain').split('|')[2];
-                
-                if (cardType && cardId) {
-                    addCardToEditor(cardType, cardId, cardName);
-                }
-            });
-            
-            // Setup card item drag events
-            document.addEventListener('dragstart', (e) => {
-                if (e.target.classList.contains('card-item')) {
-                    e.target.classList.add('dragging');
-                    const cardType = e.target.dataset.type;
-                    const cardId = e.target.dataset.id;
-                    const cardName = e.target.dataset.name;
-                    e.dataTransfer.setData('text/plain', `${cardType}|${cardId}|${cardName}`);
-                }
-            });
-            
-                            document.addEventListener('dragend', (e) => {
-                    if (e.target.classList.contains('card-item')) {
-                        e.target.classList.remove('dragging');
-                    }
-                });
-                
-                console.log('Drag and drop setup complete');
-            } catch (error) {
-                console.error('Error in setupDragAndDrop:', error);
-            }
-        }
+        // setupDragAndDrop function moved to external file
 
-        // Function to handle plus button clicks
-        function handlePlusButtonClick(event, cardType, cardId, cardName) {
-            event.stopPropagation(); // Prevent drag event
-            addCardToEditor(cardType, cardId, cardName);
-        }
+        // handlePlusButtonClick, handleCardClick functions moved to external file
 
-        function handleCardClick(event, cardType, cardId, cardName) {
-            // Only add card if it's not disabled and the click wasn't on the plus button
-            if (event.target.classList.contains('card-item-plus')) {
-                return; // Let the plus button handle its own click
-            }
-            
-            // Check if the card is disabled
-            const cardElement = event.currentTarget;
-            if (cardElement.classList.contains('disabled')) {
-                return; // Don't add disabled cards
-            }
-            
-            // Add the card to the editor
-            addCardToEditor(cardType, cardId, cardName);
-        }
+        // Enhanced drag and drop functionality for deck cards - variables moved to external file
 
-        // Enhanced drag and drop functionality for deck cards
-        let draggedCardIndex = null;
-        let draggedCardType = null;
-        let draggedCardElement = null;
-        let dropTargetIndex = null;
-        let dropPosition = null; // 'above' or 'below'
-        let isDragging = false; // Track if currently dragging
+        // handleDeckCardDragStart function moved to external file
 
-        function handleDeckCardDragStart(event) {
-            draggedCardIndex = parseInt(event.target.dataset.index);
-            draggedCardType = deckEditorCards[draggedCardIndex].type;
-            draggedCardElement = event.target;
-            isDragging = true;
-            
-            // Hide any existing hover modal immediately
-            console.log('About to hide modal in drag start');
-            hideCardHoverModal();
-            
-            event.target.classList.add('dragging');
-            event.dataTransfer.effectAllowed = 'move';
-            event.dataTransfer.setData('text/plain', draggedCardIndex.toString());
-            
-            console.log('Drag started:', draggedCardIndex, draggedCardType, 'isDragging set to:', isDragging);
-            
-            // Update the visual layout
-            updateDragLayout();
-        }
-
-        function handleDeckCardDragEnd(event) {
-            // Restore the dragged card
-            event.target.style.display = '';
-            event.target.classList.remove('dragging');
-            isDragging = false;
-            
-            console.log('Drag ended - isDragging set to:', isDragging);
-            
-            // Clean up all drag classes and spaces
-            document.querySelectorAll('.deck-card-editor-item').forEach(el => {
-                el.classList.remove('drag-over', 'drag-target', 'drag-above', 'drag-below', 'drag-placeholder', 'drag-space');
-                el.style.transform = '';
-            });
-            
-            document.querySelectorAll('.deck-type-section').forEach(el => {
-                el.classList.remove('drag-over');
-            });
-            
-            // Remove any drag space elements
-            document.querySelectorAll('.drag-space').forEach(el => {
-                el.remove();
-            });
-            
-            draggedCardIndex = null;
-            draggedCardType = null;
-            draggedCardElement = null;
-            dropTargetIndex = null;
-            dropPosition = null;
-        }
-
-        function handleDeckCardDragOver(event) {
-            event.preventDefault();
-            event.dataTransfer.dropEffect = 'move';
-            
-            const targetCard = event.target.closest('.deck-card-editor-item');
-            const targetSection = event.target.closest('.deck-type-section');
-            
-            if (targetCard && targetCard !== draggedCardElement) {
-                const targetIndex = parseInt(targetCard.dataset.index);
-                
-                // Check if targetIndex is valid and card exists
-                if (isNaN(targetIndex) || !deckEditorCards[targetIndex]) {
-                    console.log('Invalid target index:', targetIndex, 'deckEditorCards length:', deckEditorCards.length);
-                    return;
-                }
-                
-                const targetType = deckEditorCards[targetIndex].type;
-                
-                console.log('Drag over card:', targetIndex, targetType, 'dragged type:', draggedCardType);
-                
-                // Only allow reordering within the same card type
-                if (draggedCardType === targetType) {
-                    // Determine drop position based on mouse position
-                    const rect = targetCard.getBoundingClientRect();
-                    const cardCenterY = rect.top + rect.height / 2;
-                    const mouseY = event.clientY;
-                    
-                    dropTargetIndex = targetIndex;
-                    dropPosition = mouseY < cardCenterY ? 'above' : 'below';
-                    
-                    console.log('Drop position:', dropPosition, 'target:', dropTargetIndex);
-                    
-                    updateDragLayout();
-                }
-            } else if (targetSection) {
-                // Highlight the section if it contains cards of the same type
-                const sectionCards = targetSection.querySelectorAll('.deck-card-editor-item');
-                const hasMatchingType = Array.from(sectionCards).some(card => {
-                    const cardIndex = parseInt(card.dataset.index);
-                    return deckEditorCards[cardIndex].type === draggedCardType;
-                });
-                
-                if (hasMatchingType) {
-                    targetSection.classList.add('drag-over');
-                }
-            }
-        }
-
-        function handleDeckCardDrop(event) {
-            event.preventDefault();
-            
-            console.log('Drop event:', dropTargetIndex, draggedCardIndex, dropPosition);
-            
-            if (dropTargetIndex !== null && draggedCardIndex !== dropTargetIndex) {
-                // Calculate the actual target index based on drop position
-                let actualTargetIndex = dropTargetIndex;
-                if (dropPosition === 'below') {
-                    actualTargetIndex = dropTargetIndex + 1;
-                }
-                
-                console.log('Reordering from', draggedCardIndex, 'to', actualTargetIndex);
-                reorderDeckCards(draggedCardIndex, actualTargetIndex);
-            }
-            
-            // Clean up all drag classes
-            document.querySelectorAll('.deck-card-editor-item, .deck-type-section').forEach(el => {
-                el.classList.remove('drag-over', 'drag-target', 'drag-above', 'drag-below', 'drag-placeholder', 'drag-space');
-                el.style.transform = '';
-            });
-            
-            // Remove any drag space elements
-            document.querySelectorAll('.drag-space').forEach(el => {
-                el.remove();
-            });
-        }
-
-        // Handle drag over available cards section (for removing cards from deck)
-        function handleAvailableCardDragOver(event) {
-            event.preventDefault();
-            event.dataTransfer.dropEffect = 'move';
-            
-            // Add visual feedback to show this is a drop zone
-            const targetSection = event.target.closest('.card-category-content');
-            if (targetSection) {
-                targetSection.classList.add('available-drop-zone');
-            }
-        }
-
-        // Handle drag leave from available cards section
-        function handleAvailableCardDragLeave(event) {
-            // Only remove the visual feedback if we're actually leaving the section
-            const targetSection = event.target.closest('.card-category-content');
-            const relatedTarget = event.relatedTarget;
-            
-            if (targetSection && (!relatedTarget || !targetSection.contains(relatedTarget))) {
-                targetSection.classList.remove('available-drop-zone');
-            }
-        }
-
-        // Handle drop on available cards section (remove card from deck)
-        function handleAvailableCardDrop(event) {
-            event.preventDefault();
-            
-            // Remove visual feedback
-            const targetSection = event.target.closest('.card-category-content');
-            if (targetSection) {
-                targetSection.classList.remove('available-drop-zone');
-            }
-            
-            // Check if we have a valid dragged card from deck content
-            if (draggedCardIndex !== null && draggedCardIndex >= 0 && draggedCardIndex < deckEditorCards.length) {
-                // Capture current expansion state before re-rendering
-                const currentExpansionState = getExpansionState();
-                
-                // Remove the card from the deck
-                deckEditorCards.splice(draggedCardIndex, 1);
-                
-                // Refresh the display
-                displayDeckCardsForEditing();
-                
-                // Restore the expansion state after re-rendering
-                applyUIPreferences({ expansionState: currentExpansionState });
-                updateDeckEditorCardCount();
-                
-                // Update character limit status
-                updateCharacterLimitStatus();
-                
-                console.log('Card removed from deck via drag to available cards');
-            }
-            
-            // Clean up
-            draggedCardIndex = null;
-            draggedCardType = null;
-            draggedCardElement = null;
-            dropTargetIndex = null;
-            dropPosition = null;
-        }
-
-        function updateDragLayout() {
-            if (draggedCardIndex === null || draggedCardType === null) return;
-            
-            // Find all cards of the same type
-            const sameTypeCards = [];
-            deckEditorCards.forEach((card, index) => {
-                if (card && card.type === draggedCardType && index !== draggedCardIndex) {
-                    const element = document.querySelector(`[data-index="${index}"]`);
-                    if (element) {
-                        sameTypeCards.push({ index, element });
-                    }
-                }
-            });
-            
-            // Remove any existing drag spaces
-            document.querySelectorAll('.drag-space').forEach(el => {
-                el.remove();
-            });
-            
-            // Add visual effects to show where the card will be dropped
-            sameTypeCards.forEach(({ index, element }) => {
-                element.classList.add('drag-target');
-                
-                if (dropTargetIndex !== null) {
-                    if (index === dropTargetIndex) {
-                        if (dropPosition === 'above') {
-                            element.classList.add('drag-above');
-                            // Add space above this card
-                            const spaceElement = document.createElement('div');
-                            spaceElement.className = 'deck-card-editor-item drag-space';
-                            spaceElement.setAttribute('data-drag-space', 'true');
-                            element.parentNode.insertBefore(spaceElement, element);
-                        } else if (dropPosition === 'below') {
-                            element.classList.add('drag-below');
-                            // Add space below this card
-                            const spaceElement = document.createElement('div');
-                            spaceElement.className = 'deck-card-editor-item drag-space';
-                            spaceElement.setAttribute('data-drag-space', 'true');
-                            element.parentNode.insertBefore(spaceElement, element.nextSibling);
-                        }
-                    }
-                } else {
-                    // Show general movement effect
-                    if (index > draggedCardIndex) {
-                        element.classList.add('drag-above');
-                    } else {
-                        element.classList.add('drag-below');
-                    }
-                }
-            });
-        }
-
-        function reorderDeckCards(fromIndex, toIndex) {
-            // Get the card being moved
-            const cardToMove = deckEditorCards[fromIndex];
-            
-            // Remove the card from its current position
-            deckEditorCards.splice(fromIndex, 1);
-            
-            // Adjust the target index if we're moving down
-            const adjustedToIndex = fromIndex < toIndex ? toIndex - 1 : toIndex;
-            
-            // Capture current expansion state before re-rendering
-            const currentExpansionState = getExpansionState();
-            
-            // Insert the card at the new position
-            deckEditorCards.splice(adjustedToIndex, 0, cardToMove);
-            
-            // Refresh the display
-            displayDeckCardsForEditing();
-            
-            // Restore the expansion state after re-rendering
-            applyUIPreferences({ expansionState: currentExpansionState });
-            
-            // Save the deck
-            saveDeck();
-        }
+        // handleDeckCardDragEnd, handleDeckCardDragOver, handleDeckCardDrop, handleAvailableCardDragOver, handleAvailableCardDragLeave, handleAvailableCardDrop, updateDragLayout, reorderDeckCards functions moved to external file
 
         // Function to show alternate art selection modal
         function showAlternateArtSelection(card, cardId, cardName, cardIndex = null, cardType = 'character') {
