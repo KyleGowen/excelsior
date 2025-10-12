@@ -38,8 +38,6 @@ function getGitInfo() {
     const commitMessage = execSync('git log -1 --format=%s', { encoding: 'utf8' }).trim();
     const commitAuthor = execSync('git log -1 --format=%an', { encoding: 'utf8' }).trim();
     const commitEmail = execSync('git log -1 --format=%ae', { encoding: 'utf8' }).trim();
-    const remoteUrl = execSync('git config --get remote.origin.url', { encoding: 'utf8' }).trim();
-    
     return { 
       commit, 
       shortCommit,
@@ -47,8 +45,7 @@ function getGitInfo() {
       commitDate,
       commitMessage,
       commitAuthor,
-      commitEmail,
-      remoteUrl
+      commitEmail
     };
   } catch (error) {
     return { 
@@ -58,8 +55,7 @@ function getGitInfo() {
       commitDate: 'unknown',
       commitMessage: 'unknown',
       commitAuthor: 'unknown',
-      commitEmail: 'unknown',
-      remoteUrl: 'unknown'
+      commitEmail: 'unknown'
     };
   }
 }
@@ -884,7 +880,6 @@ app.get('/health', async (req, res) => {
       commitMessage: gitInfo.commitMessage,
       commitAuthor: gitInfo.commitAuthor,
       commitEmail: gitInfo.commitEmail,
-      remoteUrl: gitInfo.remoteUrl
     }
   };
 
@@ -1009,12 +1004,6 @@ app.get('/health', async (req, res) => {
             success: migrationResult.rows[0].success,
             installedRank: migrationResult.rows[0].installed_rank
           } : null,
-          summary: {
-            total: parseInt(migrationCountResult.rows[0].total_migrations),
-            successful: parseInt(migrationStatusResult.rows[0].successful_migrations),
-            failed: parseInt(migrationStatusResult.rows[0].failed_migrations),
-            lastRun: migrationStatusResult.rows[0].last_migration_date
-          }
         }
       };
       
@@ -1027,23 +1016,6 @@ app.get('/health', async (req, res) => {
       healthData.status = 'DEGRADED';
     }
 
-    // Check Flyway migrations status
-    try {
-      const isValid = await databaseInit.validateDatabase();
-      const isUpToDate = await databaseInit.checkDatabaseStatus();
-      
-      healthData.migrations = {
-        status: 'OK',
-        valid: isValid,
-        upToDate: isUpToDate
-      };
-    } catch (migrationError) {
-      healthData.migrations = {
-        status: 'ERROR',
-        error: migrationError instanceof Error ? migrationError.message : 'Unknown migration error'
-      };
-      healthData.status = 'DEGRADED';
-    }
 
     // Calculate total response time
     const totalLatency = Date.now() - startTime;
@@ -1052,8 +1024,6 @@ app.get('/health', async (req, res) => {
     // Determine overall status
     if (healthData.database.status === 'ERROR') {
       healthData.status = 'ERROR';
-    } else if (healthData.migrations.status === 'ERROR') {
-      healthData.status = 'DEGRADED';
     }
 
     // Set appropriate HTTP status code
