@@ -653,7 +653,7 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
 
             // Check that the function is called after data loads
             expect(response.text).toContain('disableAddToDeckButtonsImmediate()');
-            expect(response.text).toContain('loadDatabaseViewData()');
+            expect(response.text).toContain('<script src="/js/app-initialization.js"></script>');
         });
     });
 
