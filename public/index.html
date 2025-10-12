@@ -3245,19 +3245,6 @@
             gap: 0 !important;
         }
 
-        /* Three-column layout for deck list sections in read-only mode - ONLY for list view */
-        .read-only-mode .deck-cards-editor.list-view {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr 1fr !important;
-            gap: 20px !important;
-        }
-        
-        /* More specific selector for read-only mode in modal - ONLY for list view */
-        #deckEditorModal.read-only-mode .deck-cards-editor.list-view {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr 1fr !important;
-            gap: 20px !important;
-        }
         
         /* Even more specific for body read-only mode - ONLY for list view */
         body.read-only-mode .deck-cards-editor.list-view {
@@ -3266,10 +3253,6 @@
             gap: 20px !important;
         }
         
-        /* Ensure tile view in read-only mode maintains single column layout */
-        .read-only-mode .deck-cards-editor:not(.list-view) {
-            display: block !important;
-        }
         
         .read-only-mode .deck-cards-editor:not(.list-view) .deck-type-section {
             display: block !important;
@@ -3595,12 +3578,6 @@
             display: grid !important;
             grid-template-columns: 1fr !important; /* Single column for individual cards */
             gap: 16px !important;
-        }
-        
-        /* Ensure deck type sections take full width */
-        .read-only-mode .deck-type-section {
-            width: 100% !important;
-            margin-bottom: 20px !important;
         }
         
         /* Make list view also use single column in read-only mode */
