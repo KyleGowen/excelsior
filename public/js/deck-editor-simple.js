@@ -38,3 +38,32 @@ function toggleOnePerDeckColumn() {
         toggleText.textContent = 'Hide';
     }
 }
+
+/**
+ * Toggle visibility of one per deck advanced column
+ */
+function toggleOnePerDeckAdvancedColumn() {
+    const onePerDeckAdvancedColumn = document.querySelectorAll('.one-per-deck-advanced-column');
+    const toggleButton = document.getElementById('toggle-one-per-deck-advanced');
+    const toggleText = document.getElementById('one-per-deck-advanced-toggle-text');
+    
+    onePerDeckAdvancedColumn.forEach(col => {
+        col.classList.toggle('hidden');
+    });
+    
+    if (onePerDeckAdvancedColumn[0].classList.contains('hidden')) {
+        toggleText.textContent = 'Show';
+    } else {
+        toggleText.textContent = 'Hide';
+    }
+}
+
+/**
+ * Close the create deck modal and reset form
+ */
+function closeCreateDeckModal() {
+    document.getElementById('createDeckModal').style.display = 'none';
+    document.getElementById('createDeckForm').reset();
+    document.getElementById('selectedCharacters').innerHTML = '';
+    selectedCharacterIds = [];
+}
