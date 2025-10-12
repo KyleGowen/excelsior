@@ -6158,44 +6158,6 @@
             };
         }
 
-        // Top-level app tab switching
-        function switchAppTab(tabId) {
-            const databaseView = document.getElementById('database-view');
-            const deckBuilder = document.getElementById('deck-builder');
-            const databaseStats = document.getElementById('database-stats');
-            const deckStats = document.getElementById('deck-stats');
-            // Hide both, then show selected
-            databaseView.style.display = 'none';
-            deckBuilder.style.display = 'none';
-            document.getElementById(tabId).style.display = 'block';
-
-            // Show/hide appropriate statistics and controls based on view
-            if (tabId === 'deck-builder') {
-                // Show deck statistics in deck builder view
-                if (databaseStats) databaseStats.style.display = 'none';
-                if (deckStats) deckStats.style.display = 'grid';
-            } else {
-                // Show database statistics in database view
-                if (databaseStats) databaseStats.style.display = 'grid';
-                if (deckStats) deckStats.style.display = 'none';
-            }
-
-            // Update active styles
-            document.querySelectorAll('.app-tab-button').forEach(btn => btn.classList.remove('active'));
-            const clickedAppTabButton = document.querySelector(`[onclick="${tabId === 'deck-builder' ? 'switchToDeckBuilder()' : 'switchToDatabaseView()'}"]`);
-            if (clickedAppTabButton) {
-                clickedAppTabButton.classList.add('active');
-            }
-
-            // Load decks when switching to deck builder tab
-            if (tabId === 'deck-builder') {
-                loadDecks();
-            }
-        }
-
-        
-        // Load database view data - REMOVED DUPLICATE FUNCTION
-
         // Get current user from authentication service
         function getCurrentUser() {
             return window.authService.getCurrentUser();
@@ -6522,7 +6484,6 @@
                 ]);
                 
                 // Update all statistics after loading all data
-                await updateAllStats();
                 
                 // Only switch to characters tab if explicitly requested
                 if (forceCharactersTab) {
@@ -6549,7 +6510,6 @@
                     await new Promise(resolve => setTimeout(resolve, 10));
                     
                     displayCharacters(data.data);
-                    updateStats(data.data);
                     console.log('✅ Characters loaded and displayed successfully:', data.data.length);
                 } else {
                     throw new Error('Failed to load characters');
@@ -6696,17 +6656,6 @@
             });
         }
 
-        function updateStats(characters) {
-            console.log('Updating stats with', characters.length, 'characters');
-            // Statistics elements were removed as requested, so this function is now a no-op
-            // but we keep it to avoid breaking the loadCharacters function
-        }
-
-        async function updateAllStats() {
-            // Statistics elements were removed as requested, so this function is now a no-op
-            // but we keep it to avoid breaking the loadDatabaseViewData function
-            console.log('✅ All statistics updated including alternate image counts');
-        }
 
         function formatSpecialCardEffect(effectText, cardData = null) {
             if (!effectText) return '';
@@ -8658,7 +8607,6 @@
             loadBasicUniverse();
             loadPowerCards();
             loadDecks();
-            updateStats();
         }
         // Load and initialize global navigation component
         async function loadGlobalNav() {
@@ -8887,7 +8835,6 @@
             });
             
             // Update all stats after loading data
-            setTimeout(updateAllStats, 1000);
             // Make images clickable after they are loaded
             setTimeout(makeImagesClickable, 1000);
         });
@@ -17941,19 +17888,6 @@
             }
         }
 
-        // Add missing toggle function for teamwork type groups
-        function toggleTeamworkTypeGroup(header) {
-            const content = header.nextElementSibling;
-            const icon = header.querySelector('.collapse-icon');
-            
-            if (content.classList.contains('collapsed')) {
-                content.classList.remove('collapsed');
-                icon.textContent = '▲';
-            } else {
-                content.classList.add('collapsed');
-                icon.textContent = '▼';
-            }
-        }
 
 
 
