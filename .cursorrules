@@ -52,6 +52,25 @@
 - Ensure proper stacking context for navigation elements
 - Test that popups are visible and not hidden behind other page elements
 
+## Server Health Check Requirements
+- **ALWAYS use the health check endpoint when verifying server status**
+- **NEVER use basic curl or simple port checks for server verification**
+- Use `curl -s http://localhost:3000/health | jq .` for health checks
+- **ALWAYS format health check output in a friendly, readable format**
+- Include key metrics like status, uptime, database connectivity, and response time
+- Present health check results with clear status indicators (✅/❌)
+- Example format:
+  ```
+  🏥 Server Health Check
+  ┌─────────────────────────────────────────────────────────────┐
+  │ Status: ✅ OK                                               │
+  │ Uptime: 2h 15m 30s                                         │
+  │ Database: ✅ Connected (15ms latency)                      │
+  │ Response Time: 45ms                                        │
+  │ Environment: development                                   │
+  └─────────────────────────────────────────────────────────────┘
+  ```
+
 ## Testing Commands
 - `npm run test:unit` - Run all unit tests
 - `npm run test:integration` - Run integration tests  
