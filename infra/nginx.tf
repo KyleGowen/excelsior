@@ -68,11 +68,16 @@ locals {
             proxy_read_timeout 60s;
         }
 
-        # Health check endpoint
+        # Health check endpoint - proxy to application for full JSON response
         location /health {
             access_log off;
-            return 200 "healthy\n";
-            add_header Content-Type text/plain;
+            proxy_pass http://localhost:3000/health;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            add_header Content-Type application/json;
         }
     }
 
