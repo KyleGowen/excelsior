@@ -2840,6 +2840,42 @@
             z-index: 10;
             box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
         }
+        .deck-editor-search-result:hover {
+            background: rgba(78, 205, 196, 0.1);
+            transform: translateY(-4px);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
+        .deck-editor-search-result:hover {
+            background: rgba(78, 205, 196, 0.1);
+            transform: translateY(-4px);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
+        .deck-editor-search-result:hover {
+            background: rgba(78, 205, 196, 0.1);
+            transform: translateY(-4px);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
+        .deck-editor-search-result:hover {
+            background: rgba(78, 205, 196, 0.1);
+            transform: translateY(-4px);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
+        .deck-editor-search-result:hover {
+            background: rgba(78, 205, 196, 0.1);
+            transform: translateY(-4px);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
+        .deck-editor-search-result:hover {
+            background: rgba(78, 205, 196, 0.1);
+            transform: translateY(-4px);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
 
         .deck-editor-search-result:last-child {
             border-bottom: none;
@@ -3245,6 +3281,19 @@
             gap: 0 !important;
         }
 
+        /* Three-column layout for deck list sections in read-only mode - ONLY for list view */
+        .read-only-mode .deck-cards-editor.list-view {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr 1fr !important;
+            gap: 20px !important;
+        }
+        
+        /* More specific selector for read-only mode in modal - ONLY for list view */
+        #deckEditorModal.read-only-mode .deck-cards-editor.list-view {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr 1fr !important;
+            gap: 20px !important;
+        }
         
         /* Even more specific for body read-only mode - ONLY for list view */
         body.read-only-mode .deck-cards-editor.list-view {
@@ -3253,6 +3302,10 @@
             gap: 20px !important;
         }
         
+        /* Ensure tile view in read-only mode maintains single column layout */
+        .read-only-mode .deck-cards-editor:not(.list-view) {
+            display: block !important;
+        }
         
         .read-only-mode .deck-cards-editor:not(.list-view) .deck-type-section {
             display: block !important;
@@ -3510,6 +3563,11 @@
             display: none !important;
         }
         
+        /* Hide "-" buttons in list view when in read-only mode */
+        .read-only-mode .deck-list-item-remove {
+            display: none !important;
+        }
+        
         /* Hide search bar in read-only mode */
         .read-only-mode .deck-editor-search-container {
             display: none !important;
@@ -3580,11 +3638,28 @@
             gap: 16px !important;
         }
         
+        /* Ensure deck type sections take full width */
+        .read-only-mode .deck-type-section {
+            width: 100% !important;
+            margin-bottom: 20px !important;
+        }
+        
         /* Make list view also use single column in read-only mode */
         .read-only-mode .deck-list-view {
             display: grid !important;
             grid-template-columns: 1fr !important; /* Single column for individual cards */
             gap: 16px !important;
+        }
+        
+        /* Read-only mode styling */
+        .read-only-mode {
+            /* Read-only mode styling can be added here if needed */
+        }
+        
+        /* Debug: Make hidden elements visible with a different color to see what's being hidden */
+        .read-only-mode .card-selector-pane {
+            display: none !important;
+            background: yellow !important;
         }
 
         .deck-card-editor-item {
@@ -6082,13 +6157,19 @@
                 const currentMode = this.getCurrentMode();
                 const columnCount = this.getCurrentColumnCount();
                 
-                // Set appropriate layout class using generic function
-                let layoutClass = 'one-column';
-                if (columnCount === 2) layoutClass = 'two-column';
-                else if (columnCount === 3) layoutClass = 'three-column';
-                else if (columnCount === 4) layoutClass = 'four-column';
+                // Remove existing layout classes
+                deckCardsEditor.classList.remove('one-column', 'two-column', 'three-column', 'four-column');
                 
-                manageDeckLayout('setLayout', { layout: layoutClass });
+                // Add appropriate column class
+                if (columnCount === 1) {
+                    deckCardsEditor.classList.add('one-column');
+                } else if (columnCount === 2) {
+                    deckCardsEditor.classList.add('two-column');
+                } else if (columnCount === 3) {
+                    deckCardsEditor.classList.add('three-column');
+                } else if (columnCount === 4) {
+                    deckCardsEditor.classList.add('four-column');
+                }
                 
                 // Force a reflow to ensure the grid layout is applied
                 deckCardsEditor.offsetHeight;
@@ -6932,14 +7013,6 @@
             // Reload all characters
             loadCharacters();
         }
-
-        // Generic clear filters function to replace all specific clear*Filters() functions
-        function clearFilters(loadFunction) {
-            clearAllFiltersGlobally();
-            if (typeof loadFunction === 'function') {
-                loadFunction();
-            }
-        }
         // Modal functionality
         function openModal(imgElement) {
             document.getElementById('modalImage').src = imgElement.src;
@@ -7063,24 +7136,29 @@
         }
 
         function clearLocationFilters() {
-            clearFilters(loadLocations);
+            clearAllFiltersGlobally();
+            loadLocations();
         }
 
         // Clear filter functions for all tabs
         function clearSpecialCardFilters() {
-            clearFilters(loadSpecialCards);
+            clearAllFiltersGlobally();
+            loadSpecialCards();
         }
 
         function clearAdvancedUniverseFilters() {
-            clearFilters(loadAdvancedUniverse);
+            clearAllFiltersGlobally();
+            loadAdvancedUniverse();
         }
 
         function clearAspectsFilters() {
-            clearFilters(loadAspects);
+            clearAllFiltersGlobally();
+            loadAspects();
         }
 
         function clearMissionsFilters() {
-            clearFilters(loadMissions);
+            clearAllFiltersGlobally();
+            loadMissions();
         }
 
         function applyMissionFilters() {
@@ -7103,7 +7181,8 @@
         }
 
         function clearEventsFilters() {
-            clearFilters(loadEvents);
+            clearAllFiltersGlobally();
+            loadEvents();
         }
 
         function applyEventsFilters() {
@@ -7126,15 +7205,18 @@
         }
 
         function clearTeamworkFilters() {
-            clearFilters(loadTeamwork);
+            clearAllFiltersGlobally();
+            loadTeamwork();
         }
 
         function clearAllyUniverseFilters() {
-            clearFilters(loadAllyUniverse);
+            clearAllFiltersGlobally();
+            loadAllyUniverse();
         }
 
         function clearTrainingFilters() {
-            clearFilters(loadTraining);
+            clearAllFiltersGlobally();
+            loadTraining();
         }
 
         // Tab switching functionality
@@ -8084,7 +8166,8 @@
         }
 
         function clearBasicUniverseFilters() {
-            clearFilters(loadBasicUniverse);
+            clearAllFiltersGlobally();
+            loadBasicUniverse();
         }
 
         async function applyBasicUniverseFilters() {
@@ -8449,7 +8532,8 @@
         }
 
         function clearPowerCardFilters() {
-            clearFilters(loadPowerCards);
+            clearAllFiltersGlobally();
+            loadPowerCards();
         }
 
 
@@ -10052,10 +10136,10 @@
                 displayDeckCardsForEditing(); // Re-render in tile view
             } else {
                 // Switch to list view
-                manageDeckLayout('addClass', { className: 'list-view' });
+                deckCardsEditor.classList.add('list-view');
                 // Only force 2-column layout in edit mode, allow 3-column in read-only mode
                 if (!isReadOnlyMode) {
-                    manageDeckLayout('addClass', { className: 'two-column' });
+                    deckCardsEditor.classList.add('two-column');
                     // Ensure 2-column layout is applied
                     createTwoColumnLayout();
                 }
@@ -12644,12 +12728,12 @@
                 
                 if (deckCardsEditor && listViewBtn) {
                     if (preferences.viewMode === 'list') {
-                        manageDeckLayout('addClass', { className: 'list-view' });
+                        deckCardsEditor.classList.add('list-view');
                         listViewBtn.textContent = 'Tile View';
                         // Re-render in list view
                         renderDeckCardsListView();
                     } else {
-                        manageDeckLayout('removeClass', { className: 'list-view' });
+                        deckCardsEditor.classList.remove('list-view');
                         listViewBtn.textContent = 'List View';
                         // Re-render in tile view
                         displayDeckCardsForEditing();
@@ -13322,8 +13406,8 @@
                         // Apply two-column layout immediately if deck is wide enough
                         if (deckPercentage >= 33 && !isReadOnlyMode) {
                             const deckCardsEditor = document.querySelector('.deck-cards-editor');
-                            if (deckCardsEditor && !manageDeckLayout('hasClass', { className: 'list-view' })) {
-                                manageDeckLayout('addClass', { className: 'two-column' });
+                            if (deckCardsEditor && !deckCardsEditor.classList.contains('list-view')) {
+                                deckCardsEditor.classList.add('two-column');
                                 createTwoColumnLayout();
                             }
                         }
@@ -13571,54 +13655,18 @@
             if (deckCardsEditor.classList.contains('list-view')) {
                 // List view: 2 columns in edit mode, 3 columns in read-only mode
                 if (!isReadOnlyMode) {
-                    manageDeckLayout('addClass', { className: 'two-column' });
+                    deckCardsEditor.classList.add('two-column');
                     createTwoColumnLayout();
                 }
             } else {
                 // Tile view: normal responsive behavior
                 if (deckPercentage >= 33) {
-                    manageDeckLayout('addClass', { className: 'two-column' });
+                    deckCardsEditor.classList.add('two-column');
                     createTwoColumnLayout();
                 } else {
-                    manageDeckLayout('removeClass', { className: 'two-column' });
+                    deckCardsEditor.classList.remove('two-column');
                     restoreSingleColumnLayout();
                 }
-            }
-        }
-        
-        // Generic layout management function to consolidate duplicate patterns
-        function manageDeckLayout(action, options = {}) {
-            const deckCardsEditor = document.querySelector('.deck-cards-editor');
-            if (!deckCardsEditor) return;
-            
-            switch (action) {
-                case 'addClass':
-                    if (options.className) {
-                        deckCardsEditor.classList.add(options.className);
-                    }
-                    break;
-                case 'removeClass':
-                    if (options.className) {
-                        deckCardsEditor.classList.remove(options.className);
-                    }
-                    break;
-                case 'toggleClass':
-                    if (options.className) {
-                        deckCardsEditor.classList.toggle(options.className);
-                    }
-                    break;
-                case 'setLayout':
-                    if (options.layout) {
-                        // Remove all layout classes first
-                        deckCardsEditor.classList.remove('one-column', 'two-column', 'three-column', 'four-column', 'list-view');
-                        // Add the specified layout class
-                        deckCardsEditor.classList.add(options.layout);
-                    }
-                    break;
-                case 'hasClass':
-                    return options.className ? deckCardsEditor.classList.contains(options.className) : false;
-                default:
-                    console.warn('Unknown layout action:', action);
             }
         }
         
