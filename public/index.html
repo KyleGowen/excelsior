@@ -3610,10 +3610,10 @@
             display: block !important;
         }
         
-        /* Four-column layout for individual card tiles within each section in read-only mode */
+        /* Single column layout for individual card tiles within each section in read-only mode */
         .read-only-mode .deck-type-cards:not([style*="display: none"]) {
             display: grid !important;
-            grid-template-columns: 1fr 1fr 1fr 1fr !important; /* Four columns for individual cards */
+            grid-template-columns: 1fr !important; /* Single column for individual cards */
             gap: 16px !important;
         }
         
@@ -3623,10 +3623,10 @@
             margin-bottom: 20px !important;
         }
         
-        /* Make list view also use four columns in read-only mode */
+        /* Make list view also use single column in read-only mode */
         .read-only-mode .deck-list-view {
             display: grid !important;
-            grid-template-columns: 1fr 1fr 1fr 1fr !important; /* Four columns for individual cards */
+            grid-template-columns: 1fr !important; /* Single column for individual cards */
             gap: 16px !important;
         }
         
