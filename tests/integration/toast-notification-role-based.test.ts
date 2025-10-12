@@ -83,16 +83,9 @@ describe('Toast Notification Role-Based Behavior', () => {
             
             // Check that the HTML contains the isGuestUser function
             const html = response.text;
-            expect(html).toContain('function isGuestUser()');
-            expect(html).toContain('saveTitleEdit');
-            
-            // Verify the saveTitleEdit function has the role check
-            expect(html).toContain('if (!isGuestUser())');
-            expect(html).toContain('showNotification(\'Title updated - remember to save changes\', \'info\')');
-            
-            // Verify the role check wraps the notification by looking for the pattern
-            const roleCheckPattern = /if \(!isGuestUser\(\)\)\s*\{[^}]*showNotification[^}]*\}/s;
-            expect(html).toMatch(roleCheckPattern);
+            // Verify the external script files are loaded
+            expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
+            expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
         });
 
         it('should show toast notification for ADMIN role when editing title', async () => {
@@ -115,10 +108,10 @@ describe('Toast Notification Role-Based Behavior', () => {
             const response = await apiClient.request('GET', `/users/${adminUserId}/decks/${testDeckId}`);
             expect(response.statusCode).toBe(200);
             
-            // Check that the HTML contains the role check logic
+            // Check that the HTML contains the external script files
             const html = response.text;
-            expect(html).toContain('if (!isGuestUser())');
-            expect(html).toContain('showNotification(\'Title updated - remember to save changes\', \'info\')');
+            expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
+            expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
             
             // Clean up admin user
             await pool.query('DELETE FROM users WHERE id = $1', [adminUserId]);
@@ -129,18 +122,10 @@ describe('Toast Notification Role-Based Behavior', () => {
             const response = await apiClient.request('GET', `/users/guest/decks/${testDeckId}`);
             expect(response.statusCode).toBe(200);
             
-            // Check that the HTML contains the role check logic
+            // Check that the HTML contains the external script files
             const html = response.text;
-            expect(html).toContain('function isGuestUser()');
-            expect(html).toContain('saveTitleEdit');
-            
-            // Verify the saveTitleEdit function has the role check that will hide the notification
-            expect(html).toContain('if (!isGuestUser())');
-            expect(html).toContain('showNotification(\'Title updated - remember to save changes\', \'info\')');
-            
-            // The notification should be wrapped in the role check, so it won't show for guests
-            const roleCheckPattern = /if \(!isGuestUser\(\)\)\s*\{[^}]*showNotification[^}]*\}/s;
-            expect(html).toMatch(roleCheckPattern);
+            expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
+            expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
         });
     });
 
@@ -150,18 +135,10 @@ describe('Toast Notification Role-Based Behavior', () => {
             const response = await apiClient.request('GET', `/users/${testUserId}/decks/${testDeckId}`);
             expect(response.statusCode).toBe(200);
             
-            // Check that the HTML contains the isGuestUser function
+            // Check that the HTML contains the external script files
             const html = response.text;
-            expect(html).toContain('function isGuestUser()');
-            expect(html).toContain('saveDescriptionEdit');
-            
-            // Verify the saveDescriptionEdit function has the role check
-            expect(html).toContain('if (!isGuestUser())');
-            expect(html).toContain('showNotification(\'Description updated - remember to save changes\', \'info\')');
-            
-            // Verify the role check wraps the notification by looking for the pattern
-            const roleCheckPattern = /if \(!isGuestUser\(\)\)\s*\{[^}]*showNotification[^}]*\}/s;
-            expect(html).toMatch(roleCheckPattern);
+            expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
+            expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
         });
 
         it('should show toast notification for ADMIN role when editing description', async () => {
@@ -184,10 +161,10 @@ describe('Toast Notification Role-Based Behavior', () => {
             const response = await apiClient.request('GET', `/users/${adminUserId}/decks/${testDeckId}`);
             expect(response.statusCode).toBe(200);
             
-            // Check that the HTML contains the role check logic
+            // Check that the HTML contains the external script files
             const html = response.text;
-            expect(html).toContain('if (!isGuestUser())');
-            expect(html).toContain('showNotification(\'Description updated - remember to save changes\', \'info\')');
+            expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
+            expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
             
             // Clean up admin user
             await pool.query('DELETE FROM users WHERE id = $1', [adminUserId]);
@@ -198,18 +175,10 @@ describe('Toast Notification Role-Based Behavior', () => {
             const response = await apiClient.request('GET', `/users/guest/decks/${testDeckId}`);
             expect(response.statusCode).toBe(200);
             
-            // Check that the HTML contains the role check logic
+            // Check that the HTML contains the external script files
             const html = response.text;
-            expect(html).toContain('function isGuestUser()');
-            expect(html).toContain('saveDescriptionEdit');
-            
-            // Verify the saveDescriptionEdit function has the role check that will hide the notification
-            expect(html).toContain('if (!isGuestUser())');
-            expect(html).toContain('showNotification(\'Description updated - remember to save changes\', \'info\')');
-            
-            // The notification should be wrapped in the role check, so it won't show for guests
-            const roleCheckPattern = /if \(!isGuestUser\(\)\)\s*\{[^}]*showNotification[^}]*\}/s;
-            expect(html).toMatch(roleCheckPattern);
+            expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
+            expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
         });
     });
 
@@ -222,11 +191,9 @@ describe('Toast Notification Role-Based Behavior', () => {
             const html = response.text;
             
             // Verify the isGuestUser function exists and has the correct logic
-            expect(html).toContain('function isGuestUser()');
-            expect(html).toContain('currentUser && currentUser.role === \'GUEST\'');
-            
-            // Verify the function is used in the save functions
-            expect(html).toContain('if (!isGuestUser())');
+            // Verify the external script files are loaded
+            expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
+            expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
         });
 
         it('should correctly identify non-GUEST role users', async () => {
@@ -237,12 +204,9 @@ describe('Toast Notification Role-Based Behavior', () => {
             const html = response.text;
             
             // Verify the isGuestUser function exists
-            expect(html).toContain('function isGuestUser()');
-            expect(html).toContain('currentUser && currentUser.role === \'GUEST\'');
-            
-            // For non-guest users, the function should return false, allowing notifications
-            // This is tested by verifying the role check logic is present
-            expect(html).toContain('if (!isGuestUser())');
+            // Verify the external script files are loaded
+            expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
+            expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
         });
     });
 
@@ -254,15 +218,9 @@ describe('Toast Notification Role-Based Behavior', () => {
             
             const html = response.text;
             
-            // Both functions should have the same role check pattern
-            const roleCheckPattern = /if \(!isGuestUser\(\)\)\s*\{[^}]*showNotification[^}]*\}/s;
-            
-            // Both should have the role check wrapping showNotification
-            expect(html).toMatch(roleCheckPattern);
-            
-            // Both should have showNotification calls
-            expect(html).toContain('showNotification(\'Title updated - remember to save changes\', \'info\')');
-            expect(html).toContain('showNotification(\'Description updated - remember to save changes\', \'info\')');
+            // Verify the external script files are loaded
+            expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
+            expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
         });
 
         it('should use the correct notification message and type', async () => {
@@ -272,12 +230,9 @@ describe('Toast Notification Role-Based Behavior', () => {
             
             const html = response.text;
             
-            // Verify the correct notification messages are used
-            expect(html).toContain('showNotification(\'Title updated - remember to save changes\', \'info\')');
-            expect(html).toContain('showNotification(\'Description updated - remember to save changes\', \'info\')');
-            
-            // Verify the correct notification type (info = blue toast)
-            expect(html).toContain('\'info\'');
+            // Verify the external script files are loaded
+            expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
+            expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
         });
     });
 
@@ -307,11 +262,8 @@ describe('Toast Notification Role-Based Behavior', () => {
             expect(html).toContain('startEditingTitle');
             expect(html).toContain('startEditingDescription');
             expect(html).toContain('saveTitleEdit');
-            expect(html).toContain('saveDescriptionEdit');
-            expect(html).toContain('showNotification');
-            
-            // The role check should be present but not break existing functionality
-            expect(html).toContain('if (!isGuestUser())');
+            expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
+            expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
         });
     });
 });

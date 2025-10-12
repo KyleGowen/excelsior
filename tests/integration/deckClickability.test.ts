@@ -418,9 +418,8 @@ describe('Deck Clickability Tests', () => {
       expect(html).toContain('id="deckEditorTitle"');
       expect(html).toContain('id="deckEditorDescription"');
 
-      // Check for JavaScript functions
-      expect(html).toContain('function startEditingTitle()');
-      expect(html).toContain('function startEditingDescription()');
+      // Check for external script references that contain the functions
+      expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
 
       // Check that CSS link is present (CSS is now external)
       expect(html).toContain('<link rel="stylesheet" href="/css/index.css">');

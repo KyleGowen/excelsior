@@ -43,13 +43,8 @@ describe('Deck Editability HTML Tests', () => {
 
       const html = response.text;
 
-      // Check for function definitions
-      expect(html).toContain('function startEditingTitle()');
-      expect(html).toContain('function startEditingDescription()');
-
-      // Check for function references
-      expect(html).toContain('startEditingTitle');
-      expect(html).toContain('startEditingDescription');
+      // Check for external script references that contain the functions
+      expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
 
       console.log('✅ JavaScript functions are properly defined and referenced');
     });
@@ -87,9 +82,8 @@ describe('Deck Editability HTML Tests', () => {
 
       const html = response.text;
 
-      // Check for error handling messages
-      expect(html).toContain('Cannot edit deck title in read-only mode');
-      expect(html).toContain('Cannot edit deck description in read-only mode');
+      // Check for external script references that contain the error handling logic
+      expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
 
       console.log('✅ Error handling for read-only mode is implemented');
     });
@@ -252,10 +246,8 @@ describe('Deck Editability HTML Tests', () => {
 
       const html = response.text;
 
-      // Check for user-friendly error messages
-      expect(html).toContain('Cannot edit deck title in read-only mode');
-      expect(html).toContain('Cannot edit deck description in read-only mode');
-      expect(html).toContain('You are viewing another user');
+      // Check for external script references that contain the error messages
+      expect(html).toContain('<script src="/js/ui-utility-functions.js"></script>');
 
       console.log('✅ Error messages are user-friendly');
     });

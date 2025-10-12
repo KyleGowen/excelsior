@@ -4492,5 +4492,221 @@
     "userId": "test-user-id",
     "username": "test-user",
     "expiresAt": "2025-10-12T23:46:47.281Z"
+  },
+  {
+    "sessionId": "sess_38uyx7qq9_mgo914fo",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-13T00:01:24.660Z"
+  },
+  {
+    "sessionId": "sess_l7jrisbhl_mgo91jcy",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:01:44.002Z"
+  },
+  {
+    "sessionId": "sess_r5b61leur_mgo91jcz",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:01:44.003Z"
+  },
+  {
+    "sessionId": "sess_w7br682r8_mgo94mkx",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-13T00:04:08.145Z"
+  },
+  {
+    "sessionId": "sess_ma26mp6bq_mgo957fr",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:04:35.175Z"
+  },
+  {
+    "sessionId": "sess_k04erysi7_mgo957ft",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:04:35.177Z"
+  },
+  {
+    "sessionId": "sess_r4ome6u1l_mgo97mu6",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-13T00:06:28.446Z"
+  },
+  {
+    "sessionId": "sess_zopy0elya_mgo987gk",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:06:55.172Z"
+  },
+  {
+    "sessionId": "sess_mv63tx6z0_mgo987gm",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:06:55.174Z"
+  },
+  {
+    "sessionId": "sess_udwg0ehxl_mgo9aleg",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-13T00:08:46.552Z"
+  },
+  {
+    "sessionId": "sess_vlx5qrmrb_mgo9aue9",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:08:58.209Z"
+  },
+  {
+    "sessionId": "sess_lt480346s_mgo9auea",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:08:58.210Z"
+  },
+  {
+    "sessionId": "sess_3iy22iq1d_mgo9dnsh",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-13T00:11:09.617Z"
+  },
+  {
+    "sessionId": "sess_fgba7b642_mgo9e563",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:11:32.139Z"
+  },
+  {
+    "sessionId": "sess_2vl99yw0u_mgo9e565",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:11:32.141Z"
+  },
+  {
+    "sessionId": "sess_sfd4xqhdw_mgo9gsov",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-13T00:13:35.935Z"
+  },
+  {
+    "sessionId": "sess_6bo95bbv8_mgo9hbtx",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:14:00.741Z"
+  },
+  {
+    "sessionId": "sess_1il9gjrs3_mgo9hbtz",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:14:00.743Z"
+  },
+  {
+    "sessionId": "sess_72cmnqxh9_mgo9krim",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-13T00:16:41.038Z"
+  },
+  {
+    "sessionId": "sess_tklzkwz8m_mgo9ljat",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:17:17.045Z"
+  },
+  {
+    "sessionId": "sess_u7tzv9c15_mgo9ljav",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:17:17.047Z"
+  },
+  {
+    "sessionId": "sess_94v2xxmwr_mgo9qafr",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-13T00:20:58.839Z"
+  },
+  {
+    "sessionId": "sess_isb3rumme_mgo9qxrc",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:21:29.064Z"
+  },
+  {
+    "sessionId": "sess_t117zbz78_mgo9qxrd",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:21:29.065Z"
+  },
+  {
+    "sessionId": "sess_sw7bk7iaq_mgo9t6oo",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-13T00:23:13.944Z"
+  },
+  {
+    "sessionId": "sess_ltkhq6a91_mgo9tql7",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:23:39.739Z"
+  },
+  {
+    "sessionId": "sess_k23a4h8f8_mgo9tql8",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:23:39.740Z"
+  },
+  {
+    "sessionId": "sess_1hlae6eop_mgo9vphk",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-13T00:25:11.624Z"
+  },
+  {
+    "sessionId": "sess_huoryhdzy_mgo9wspn",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:26:02.459Z"
+  },
+  {
+    "sessionId": "sess_883vlvqee_mgo9wspp",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:26:02.461Z"
+  },
+  {
+    "sessionId": "sess_w34f8y1xc_mgo9ymva",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-13T00:27:28.198Z"
+  },
+  {
+    "sessionId": "sess_s76ogdtl5_mgo9zk26",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:28:11.214Z"
+  },
+  {
+    "sessionId": "sess_pbk89074v_mgo9zk28",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:28:11.216Z"
+  },
+  {
+    "sessionId": "sess_e0w1gmjfo_mgoa2k1e",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-13T00:30:31.154Z"
+  },
+  {
+    "sessionId": "sess_s5198mwiu_mgoa351e",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:30:58.370Z"
+  },
+  {
+    "sessionId": "sess_p3v0n4twc_mgoa351g",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-13T00:30:58.372Z"
   }
 ]
