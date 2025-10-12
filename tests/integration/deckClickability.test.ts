@@ -422,9 +422,8 @@ describe('Deck Clickability Tests', () => {
       expect(html).toContain('function startEditingTitle()');
       expect(html).toContain('function startEditingDescription()');
 
-      // Check for CSS classes
-      expect(html).toContain('.editable-title');
-      expect(html).toContain('.editable-description');
+      // Check that CSS link is present (CSS is now external)
+      expect(html).toContain('<link rel="stylesheet" href="/css/index.css">');
 
       console.log('✅ HTML contains all necessary elements for clickability');
     });

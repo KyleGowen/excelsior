@@ -98,12 +98,9 @@ describe('Character Column Layout Integration Tests', () => {
       // Check that the HTML contains the character section
       expect(response.text).toContain('deck-type-character');
       
-      // Verify that the CSS rules for single column layout are present
-      expect(response.text).toContain('grid-template-columns: 1fr !important');
+      // Verify that CSS link is present (CSS is now external)
+      expect(response.text).toContain('<link rel="stylesheet" href="/css/index.css">');
       expect(response.text).toContain('deck-type-cards');
-      
-      // Verify that the force-single-column class CSS is present
-      expect(response.text).toContain('.force-single-column');
       
       // Verify that the JavaScript function is present
       expect(response.text).toContain('forceCharacterSingleColumnLayout');
@@ -131,8 +128,8 @@ describe('Character Column Layout Integration Tests', () => {
       expect(response.status).toBe(200);
       expect(response.text).toContain('deckEditorModal');
       
-      // Verify that the character layout CSS rules are still present
-      expect(response.text).toContain('grid-template-columns: 1fr !important');
+      // Verify that CSS link is present (CSS is now external)
+      expect(response.text).toContain('<link rel="stylesheet" href="/css/index.css">');
       expect(response.text).toContain('deck-type-cards');
     });
 
@@ -173,8 +170,8 @@ describe('Character Column Layout Integration Tests', () => {
 
       expect(response.status).toBe(200);
       
-      // Verify that there's a CSS rule that overrides read-only mode for character cards
-      expect(response.text).toContain('grid-template-columns: 1fr !important');
+      // Verify that CSS link is present (CSS is now external)
+      expect(response.text).toContain('<link rel="stylesheet" href="/css/index.css">');
       expect(response.text).toContain('read-only-mode');
     });
 
@@ -202,7 +199,8 @@ describe('Character Column Layout Integration Tests', () => {
       // Verify that layout-related selectors and function names exist in HTML
       expect(response.text).toContain('deck-type-character');
       expect(response.text).toContain('forceCharacterSingleColumnLayout');
-      expect(response.text).toContain('grid-template-columns: 1fr');
+      // CSS is now external, so check for the link instead
+      expect(response.text).toContain('<link rel="stylesheet" href="/css/index.css">');
     });
   });
 
