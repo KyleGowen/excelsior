@@ -3235,13 +3235,18 @@
             transform: rotate(-90deg);
         }
         
-        /* Unified deck content tiles styling - always single column */
+        /* Unified deck content tiles styling - responsive columns */
         .deck-type-cards {
             padding: 16px;
             background: rgba(255, 255, 255, 0.02);
             display: grid;
-            grid-template-columns: 1fr; /* Single column for all deck content tiles */
+            grid-template-columns: 1fr; /* Default single column */
             gap: 16px;
+        }
+
+        /* Two-column layout for wide deck panes to prevent flash */
+        .deck-cards-editor.two-column .deck-type-cards {
+            grid-template-columns: 1fr; /* Keep single column within each section */
         }
 
         /* Force single column class for JavaScript override */
@@ -13233,6 +13238,26 @@
                     return;
                 }
                 modal.style.display = 'flex';
+                
+                // Apply layout immediately to prevent flash
+                setTimeout(() => {
+                    const layout = document.querySelector('.deck-editor-layout');
+                    const deckPane = document.querySelector('.deck-pane');
+                    if (layout && deckPane) {
+                        const layoutWidth = layout.offsetWidth;
+                        const deckWidth = deckPane.offsetWidth;
+                        const deckPercentage = (deckWidth / layoutWidth) * 100;
+                        
+                        // Apply two-column layout immediately if deck is wide enough
+                        if (deckPercentage >= 33 && !isReadOnlyMode) {
+                            const deckCardsEditor = document.querySelector('.deck-cards-editor');
+                            if (deckCardsEditor && !deckCardsEditor.classList.contains('list-view')) {
+                                deckCardsEditor.classList.add('two-column');
+                                createTwoColumnLayout();
+                            }
+                        }
+                    }
+                }, 10); // Very short delay to ensure elements are rendered
                 
                 // Ensure the deck editor starts scrolled to the top
                 setTimeout(() => {
