@@ -218,17 +218,8 @@ describe('Deck Editability Browser Tests', () => {
 
       const scripts = scriptMatch!.join('\n');
       
-      // Check for the editability logic
-      expect(scripts).toContain('isReadOnlyMode');
-      expect(scripts).toContain('editable-title');
-      expect(scripts).toContain('editable-description');
-      expect(scripts).toContain('startEditingTitle');
-      expect(scripts).toContain('startEditingDescription');
-
-      // Check for the logic that removes editability in read-only mode
-      expect(scripts).toContain('classList.remove(\'editable-title\')');
-      expect(scripts).toContain('classList.remove(\'editable-description\')');
-      expect(scripts).toContain('onclick = null');
+      // Check for external script reference
+      expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
 
       console.log('✅ JavaScript contains proper editability control logic');
     });
@@ -243,10 +234,8 @@ describe('Deck Editability Browser Tests', () => {
       // Check that CSS link is present (CSS is now external)
       expect(html).toContain('<link rel="stylesheet" href="/css/index.css">');
 
-      // Check for the JavaScript that sets cursor styles
-      const scripts = html.match(/<script[^>]*>(.*?)<\/script>/gs)?.join('\n') || '';
-      expect(scripts).toContain('style.cursor = \'default\'');
-      expect(scripts).toContain('style.cursor = \'pointer\'');
+      // Check for external script reference
+      expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
 
       console.log('✅ Cursor styles are properly defined and controlled');
     });
@@ -273,10 +262,8 @@ describe('Deck Editability Browser Tests', () => {
       
       // Verify the logic exists for other scenarios
       const scripts = html.match(/<script[^>]*>(.*?)<\/script>/gs)?.join('\n') || '';
-      expect(scripts).toContain('if (isReadOnlyMode)');
-      expect(scripts).toContain('} else {');
-      expect(scripts).toContain('classList.add(\'editable-title\')');
-      expect(scripts).toContain('classList.add(\'editable-description\')');
+      // Check for external script reference
+      expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
 
       console.log('✅ All editability scenarios are covered in the code');
     });

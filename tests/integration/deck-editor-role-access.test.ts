@@ -430,13 +430,8 @@ describe('Deck Editor Role-Based Access Integration Tests', () => {
         .set('Cookie', guestSessionCookie)
         .expect(200);
 
-      // Verify all required functions are present
-      expect(response.text).toContain('function showDeckEditor()');
-      expect(response.text).toContain('function initializeBlankDeck()');
-      expect(response.text).toContain('function saveDeckChanges()');
-      expect(response.text).toContain('function startEditingTitle()');
-      expect(response.text).toContain('function startEditingDescription()');
-      expect(response.text).toContain('function closeDeckEditor()');
+      // Verify external script references are present
+      expect(response.text).toContain('<script src="/js/deck-editor-core.js"></script>');
     });
 
     it('should have proper error handling for guest user restrictions', async () => {

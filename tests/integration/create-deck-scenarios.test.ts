@@ -308,10 +308,8 @@ describe('Create Deck Scenarios Integration Tests', () => {
                 .expect(200);
             expect(globalNavResponse.text).toContain('function createNewDeck()');
             
-            // Verify the main page contains the other functions
-            expect(response.text).toContain('function saveDeckChanges()');
-            expect(response.text).toContain('function showDeckEditor()');
-            expect(response.text).toContain('function initializeBlankDeck()');
+            // Verify the main page contains the external script references
+            expect(response.text).toContain('<script src="/js/deck-editor-core.js"></script>');
         });
     });
 

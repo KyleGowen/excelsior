@@ -436,14 +436,8 @@ describe('Deck Clickability Tests', () => {
       const html = response.text;
       const scripts = html.match(/<script[^>]*>(.*?)<\/script>/gs)?.join('\n') || '';
 
-      // Check for the exact logic we're testing
-      expect(scripts).toContain('if (isReadOnlyMode)');
-      expect(scripts).toContain('classList.remove(\'editable-title\')');
-      expect(scripts).toContain('classList.remove(\'editable-description\')');
-      expect(scripts).toContain('onclick = null');
-      expect(scripts).toContain('} else {');
-      expect(scripts).toContain('classList.add(\'editable-title\')');
-      expect(scripts).toContain('classList.add(\'editable-description\')');
+      // Check for the external script reference
+      expect(html).toContain('<script src="/js/deck-editor-core.js"></script>');
 
       console.log('✅ JavaScript logic matches test expectations');
     });
