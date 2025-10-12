@@ -63,17 +63,17 @@ const dom = new JSDOM(`
             gap: 16px;
         }
 
-        /* Four-column layout for individual card tiles within each section in read-only mode */
+        /* Single column layout for individual card tiles within each section in read-only mode */
         .read-only-mode .deck-type-cards:not([style*="display: none"]) {
             display: grid !important;
-            grid-template-columns: 1fr 1fr 1fr 1fr !important; /* Four columns for individual cards */
+            grid-template-columns: 1fr !important; /* Single column for individual cards */
             gap: 16px !important;
         }
         
-        /* Make list view also use four columns in read-only mode */
+        /* Make list view also use single column in read-only mode */
         .read-only-mode .deck-list-view {
             display: grid !important;
-            grid-template-columns: 1fr 1fr 1fr 1fr !important; /* Four columns for individual cards */
+            grid-template-columns: 1fr !important; /* Single column for individual cards */
             gap: 16px !important;
         }
     </style>
@@ -219,21 +219,21 @@ describe('Read-Only Mode List View Layout', () => {
             expect(getGridTemplateColumns(listViewContainer)).toBe('1fr 1fr 1fr');
         });
 
-        it('should use 4-column grid layout for deck-type-cards in read-only mode', () => {
+        it('should use single column grid layout for deck-type-cards in read-only mode', () => {
             const deckTypeCards = listViewContainer.querySelectorAll('.deck-type-cards');
             
             deckTypeCards.forEach(cards => {
                 expect(getDisplay(cards)).toBe('grid');
-                expect(getGridTemplateColumns(cards)).toBe('1fr 1fr 1fr 1fr');
+                expect(getGridTemplateColumns(cards)).toBe('1fr');
             });
         });
 
-        it('should use 4-column grid layout for deck-list-view in read-only mode', () => {
+        it('should use single column grid layout for deck-list-view in read-only mode', () => {
             const deckListView = listViewContainer.querySelectorAll('.deck-list-view');
             
             deckListView.forEach(listView => {
                 expect(getDisplay(listView)).toBe('grid');
-                expect(getGridTemplateColumns(listView)).toBe('1fr 1fr 1fr 1fr');
+                expect(getGridTemplateColumns(listView)).toBe('1fr');
             });
         });
 
@@ -260,7 +260,7 @@ describe('Read-Only Mode List View Layout', () => {
             });
         });
 
-        it('should use 4-column layout for tile view in read-only mode', () => {
+        it('should use single column layout for tile view in read-only mode', () => {
             // Apply read-only mode
             document.body.classList.add('read-only-mode');
             tileViewContainer.classList.add('read-only-mode');
@@ -269,7 +269,7 @@ describe('Read-Only Mode List View Layout', () => {
             
             deckTypeCards.forEach(cards => {
                 expect(getDisplay(cards)).toBe('grid');
-                expect(getGridTemplateColumns(cards)).toBe('1fr 1fr 1fr 1fr');
+                expect(getGridTemplateColumns(cards)).toBe('1fr');
             });
         });
 
@@ -383,11 +383,11 @@ describe('Read-Only Mode List View Layout', () => {
             // Apply read-only mode
             document.body.classList.add('read-only-mode');
             
-            // Should still work correctly
+            // Should still work correctly - tile view should use single column
             const deckTypeCards = tileViewContainer.querySelectorAll('.deck-type-cards');
             deckTypeCards.forEach(cards => {
                 expect(getDisplay(cards)).toBe('grid');
-                expect(getGridTemplateColumns(cards)).toBe('1fr 1fr 1fr 1fr');
+                expect(getGridTemplateColumns(cards)).toBe('1fr');
             });
         });
 
