@@ -124,6 +124,145 @@ npm start
 - `POST /api/auth/logout` - User logout
 - `GET /api/auth/me` - Get current user info
 
+### System Monitoring
+- `GET /health` - Comprehensive health check endpoint
+
+## Health Check Endpoint
+
+The application includes a comprehensive health check endpoint at `/health` that provides detailed system information for monitoring and debugging purposes.
+
+### Features
+
+- **System Status**: Overall application health and uptime
+- **Git Information**: Current commit, branch, author, and deployment details
+- **Database Health**: Connection status, latency, and migration information
+- **Resource Usage**: Memory and CPU statistics
+- **Migration Status**: Latest migration details and validation status
+
+### Response Format
+
+```json
+{
+  "status": "OK",
+  "timestamp": "2025-01-07T23:10:45.000Z",
+  "uptime": 3600.123,
+  "version": "1.0.0",
+  "environment": "production",
+  "git": {
+    "commit": "a9b2957247b6b8749dfdd0d2cd031e251308582d",
+    "shortCommit": "a9b2957",
+    "branch": "main",
+    "commitDate": "2025-01-07 23:10:45 +0000",
+    "commitMessage": "Add comprehensive unit tests for read-only list view",
+    "commitAuthor": "Kyle Gowen",
+    "commitEmail": "kyle@example.com",
+    "remoteUrl": "https://github.com/KyleGowen/overpower-deckbuilder.git"
+  },
+  "resources": {
+    "memory": {
+      "rss": "67MB",
+      "heapTotal": "20MB",
+      "heapUsed": "13MB",
+      "external": "3MB"
+    },
+    "cpu": {
+      "platform": "linux",
+      "arch": "x64",
+      "nodeVersion": "v20.19.4"
+    }
+  },
+  "database": {
+    "status": "OK",
+    "latency": "19ms",
+    "connection": "Active",
+    "guestUser": {
+      "exists": true,
+      "count": 2,
+      "users": [...]
+    },
+    "guestDecks": {
+      "total": 4
+    },
+    "stats": {
+      "totalUsers": 326,
+      "totalDecks": 5,
+      "totalDeckCards": 187,
+      "totalCharacters": 43,
+      "totalSpecialCards": 271,
+      "totalPowerCards": 39
+    },
+    "migrations": {
+      "latest": {
+        "version": "150",
+        "description": "Fix The Gemini alternate image",
+        "type": "SQL",
+        "script": "V150__Fix_The_Gemini_alternate_image.sql",
+        "checksum": -1876551577,
+        "installedBy": "postgres",
+        "installedOn": "2025-01-07T23:00:00.000Z",
+        "executionTime": 8,
+        "success": true,
+        "installedRank": 136
+      },
+      "summary": {
+        "total": 136,
+        "successful": 136,
+        "failed": 0,
+        "lastRun": "2025-01-07T23:00:00.000Z"
+      }
+    }
+  },
+  "migrations": {
+    "status": "OK",
+    "valid": true,
+    "upToDate": true
+  },
+  "latency": "3777ms"
+}
+```
+
+### Usage Examples
+
+**Basic Health Check:**
+```bash
+curl http://localhost:3000/health
+```
+
+**Check with jq formatting:**
+```bash
+curl -s http://localhost:3000/health | jq .
+```
+
+**Check specific information:**
+```bash
+# Get git information
+curl -s http://localhost:3000/health | jq '.git'
+
+# Get database status
+curl -s http://localhost:3000/health | jq '.database.status'
+
+# Get migration information
+curl -s http://localhost:3000/health | jq '.database.migrations'
+```
+
+### Monitoring Integration
+
+The health check endpoint is designed to work with monitoring systems:
+
+- **Prometheus/Grafana**: Use the JSON response for custom dashboards
+- **DataDog**: Parse the structured response for application monitoring
+- **New Relic**: Use the endpoint for custom health checks
+- **AWS CloudWatch**: Monitor the endpoint for application health
+
+### Status Codes
+
+- **200 OK**: Application is healthy and all systems operational
+- **503 Service Unavailable**: Application is degraded or unhealthy
+
+### CI/CD Integration
+
+The health check is automatically called in the CI/CD pipeline during the "Post Production" step to verify successful deployment and system health.
+
 ## Project Structure
 
 ```
