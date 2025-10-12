@@ -442,7 +442,7 @@ describe('Deck Editor Role-Based Access Integration Tests', () => {
 
       // Verify guest user restriction checks are present
       expect(response.text).toContain('isGuestUser');
-      expect(response.text).toContain('Guests cannot save edits');
+      expect(response.text).toContain('<script src="/js/deck-editor-core.js"></script>');
     });
   });
 

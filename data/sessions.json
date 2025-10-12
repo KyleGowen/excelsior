@@ -4456,5 +4456,41 @@
     "userId": "test-user-id",
     "username": "test-user",
     "expiresAt": "2025-10-12T23:30:44.125Z"
+  },
+  {
+    "sessionId": "sess_g277g1agt_mgo8c6ek",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T23:42:00.812Z"
+  },
+  {
+    "sessionId": "sess_zv5dpvitz_mgo8cuvp",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T23:42:32.533Z"
+  },
+  {
+    "sessionId": "sess_imms67f4z_mgo8cuvu",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T23:42:32.538Z"
+  },
+  {
+    "sessionId": "sess_ycb37o2gx_mgo8i2my",
+    "userId": "00000000-0000-0000-0000-000000000000",
+    "username": "fakeuser",
+    "expiresAt": "2025-10-12T23:46:35.866Z"
+  },
+  {
+    "sessionId": "sess_f7zwm9uuv_mgo8ibg0",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T23:46:47.280Z"
+  },
+  {
+    "sessionId": "sess_3e0gbenwk_mgo8ibg1",
+    "userId": "test-user-id",
+    "username": "test-user",
+    "expiresAt": "2025-10-12T23:46:47.281Z"
   }
 ]
