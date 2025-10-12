@@ -24,6 +24,7 @@
     <script src="/js/deck-editor-simple.js"></script>
     <script src="/js/search-filter.js"></script>
     <script src="/js/modal-ui.js"></script>
+    <script src="/js/auth-app-init.js"></script>
 </head>
 <body>
     <!-- Login Modal -->
@@ -2662,15 +2663,7 @@
             return authResult;
         }
 
-        function showLoginModal() {
-            document.getElementById('loginModal').style.display = 'flex';
-            document.getElementById('mainContainer').style.display = 'none';
-            // Ensure app views are hidden to avoid flash when returning to login
-            const databaseView = document.getElementById('database-view');
-            const deckBuilder = document.getElementById('deck-builder');
-            if (databaseView) databaseView.style.display = 'none';
-            if (deckBuilder) deckBuilder.style.display = 'none';
-        }
+        // showLoginModal function moved to external file
 
         function showMainApp() {
             document.getElementById('loginModal').style.display = 'none';
@@ -2740,15 +2733,9 @@
             window.location.href = '/';
         }
 
-        function showLoginError(message) {
-            const errorDiv = document.getElementById('loginError');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-        }
+        // showLoginError function moved to external file
 
-        function hideLoginError() {
-            document.getElementById('loginError').style.display = 'none';
-        }
+        // hideLoginError function moved to external file
         async function loadUserData() {
             // Load user-specific data
             loadCharacters();
