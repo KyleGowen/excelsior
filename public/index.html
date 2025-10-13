@@ -1103,9 +1103,7 @@
             displayMissions(filteredMissions);
         }
 
-        function clearEventsFilters() {
-            clearFilters(loadEvents);
-        }
+        // clearEventsFilters function moved to filter-functions.js
 
         function applyEventsFilters() {
             const selectedMissionSets = Array.from(document.querySelectorAll('#events-tab input[type="checkbox"]:checked'))
@@ -1126,17 +1124,15 @@
             displayEvents(filteredEvents);
         }
 
-        function clearTeamworkFilters() {
-            clearFilters(loadTeamwork);
-        }
+        // clearTeamworkFilters function moved to filter-functions.js
 
+        // clearAllyUniverseFilters function moved to filter-functions.js
         function clearAllyUniverseFilters() {
             clearFilters(loadAllyUniverse);
         }
 
-        function clearTrainingFilters() {
-            clearFilters(loadTraining);
-        }
+        // clearTrainingFilters function moved to filter-functions.js
+        // clearTrainingFilters already commented above
 
         // Tab switching functionality
         function switchTab(tabName) {
@@ -1346,21 +1342,7 @@
         }
         // displayAspects function moved to external file
 
-        function toggleFortificationsColumn() {
-            const fortificationsColumn = document.querySelectorAll('.fortifications-column');
-            const toggleButton = document.getElementById('toggle-fortifications');
-            const toggleText = document.getElementById('fortifications-toggle-text');
-            
-            fortificationsColumn.forEach(col => {
-                col.classList.toggle('hidden');
-            });
-            
-            if (fortificationsColumn[0].classList.contains('hidden')) {
-                toggleText.textContent = 'Show';
-            } else {
-                toggleText.textContent = 'Hide';
-            }
-        }
+        // toggleFortificationsColumn function moved to filter-functions.js
 
         // toggleOnePerDeckColumn function moved to external file
 
@@ -2295,10 +2277,7 @@
             deckList.innerHTML = deckCardsHTML;
         }
 
-        function updateDeckStats() {
-            // Statistics elements were removed as requested, so this function is now a no-op
-            // but we keep it to avoid breaking other functions that call it
-        }
+        // updateDeckStats function moved to filter-functions.js
 
         // Modal functions
         async function showCreateDeckModal() {
