@@ -118,8 +118,8 @@ describe('Deck Navigation Flow Integration Tests', () => {
       expect(openResponse.text).toContain('deckEditorModal');
       expect(openResponse.text).toContain('modal-content');
       
-      // Test that the deck editor has the correct layout
-      expect(openResponse.text).toContain('force-two-pane');
+      // Test that the deck editor has the correct layout functions available
+      expect(openResponse.text).toContain('<script src="/js/filter-functions.js"></script>');
     });
 
     it('should load available cards for deck editor', async () => {

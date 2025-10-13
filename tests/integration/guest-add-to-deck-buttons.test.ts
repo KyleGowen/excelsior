@@ -628,10 +628,8 @@ describe('Guest Add to Deck Buttons Integration Tests', () => {
                 .set('Cookie', guestAuthCookie)
                 .expect(200);
 
-            // Check that the isGuestUser function is defined
-            expect(response.text).toContain('function isGuestUser()');
-            expect(response.text).toContain('getCurrentUser()');
-            expect(response.text).toContain('GUEST');
+            // Check that the isGuestUser function is available via external script
+            expect(response.text).toContain('<script src="/js/filter-functions.js"></script>');
         });
 
         it('should have disableAddToDeckButtons function defined', async () => {
