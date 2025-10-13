@@ -1127,9 +1127,6 @@
         // clearTeamworkFilters function moved to filter-functions.js
 
         // clearAllyUniverseFilters function moved to filter-functions.js
-        function clearAllyUniverseFilters() {
-            clearFilters(loadAllyUniverse);
-        }
 
         // clearTrainingFilters function moved to filter-functions.js
         // clearTrainingFilters already commented above
@@ -2394,17 +2391,7 @@
 
         // showViewDeckModal, closeViewDeckModal, showAddCardsModal, closeAddCardsModal functions moved to external file
         // Ensure consistent two-pane layout
-        function ensureTwoPaneLayout() {
-            const layout = document.querySelector('.deck-editor-layout');
-            if (layout) {
-                // Only add the class if we're not in read-only mode
-                if (!isReadOnlyMode) {
-                    layout.classList.add('force-two-pane');
-                } else {
-                    layout.classList.remove('force-two-pane');
-                }
-            }
-        }
+        // ensureTwoPaneLayout function moved to filter-functions.js
         
         // Add window resize listener for layout maintenance (throttled)
         let resizeTimeout;
