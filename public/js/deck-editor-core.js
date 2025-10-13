@@ -156,6 +156,51 @@ function showDeckEditor() {
 // Load deck for editing
 async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) {
     console.log('loadDeckForEditing called with deckId:', deckId);
+    
+    // Handle new deck creation
+    if (deckId === 'new') {
+        console.log('Initializing new deck');
+        currentDeckId = null; // No ID until saved
+        currentDeckData = {
+            metadata: {
+                id: null,
+                name: 'New Deck',
+                description: '',
+                created: new Date().toISOString(),
+                lastModified: new Date().toISOString(),
+                cardCount: 0,
+                userId: getCurrentUser() ? (getCurrentUser().userId || getCurrentUser().id) : 'guest'
+            },
+            cards: []
+        };
+        deckEditorCards = [];
+        isReadOnlyMode = false; // New decks are always editable
+        
+        // Update the body class to reflect edit mode
+        document.body.classList.remove('read-only-mode');
+        
+        // Update the modal class as well
+        const modal = document.getElementById('deckEditorModal');
+        if (modal) {
+            modal.classList.remove('read-only-mode');
+        }
+        
+        // Show the deck editor modal
+        document.getElementById('deckEditorModal').style.display = 'block';
+        
+        // Load available cards
+        if (typeof loadAvailableCards === 'function') {
+            loadAvailableCards();
+        }
+        
+        // Update card count
+        if (typeof updateDeckCardCount === 'function') {
+            updateDeckCardCount();
+        }
+        
+        return;
+    }
+    
     currentDeckId = deckId; // Set the current deck ID
     try {
         const response = await fetch(`/api/decks/${deckId}`, {
