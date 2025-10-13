@@ -200,6 +200,11 @@ function createNewDeck() {
             updateDeckCardCount();
         }
         
+        // Update deck summary to set proper button states
+        if (typeof updateDeckSummary === 'function') {
+            updateDeckSummary(deckEditorCards);
+        }
+        
         // Reset the flag after a short delay to allow the deck editor to fully initialize
         setTimeout(() => {
             isCreatingNewDeck = false;

@@ -3149,6 +3149,19 @@
             background: rgba(78, 205, 196, 0.3);
             border-color: rgba(78, 205, 196, 0.4);
         }
+
+        .remove-all-btn:disabled {
+            background: rgba(78, 205, 196, 0.1) !important;
+            color: rgba(78, 205, 196, 0.5) !important;
+            border-color: rgba(78, 205, 196, 0.2) !important;
+            cursor: not-allowed !important;
+            opacity: 0.5 !important;
+        }
+
+        .remove-all-btn:disabled:hover {
+            background: rgba(78, 205, 196, 0.1) !important;
+            border-color: rgba(78, 205, 196, 0.2) !important;
+        }
         
         /* Power Cards Sort Toggle */
         .power-cards-sort-toggle {

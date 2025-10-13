@@ -198,6 +198,11 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             updateDeckCardCount();
         }
         
+        // Update deck summary to set proper button states
+        if (typeof updateDeckSummary === 'function') {
+            updateDeckSummary(deckEditorCards);
+        }
+        
         return;
     }
     

@@ -3458,6 +3458,8 @@
         async function updateDeckSummary(deckCards) {
             console.log('🔍 updateDeckSummary called with deckCards:', deckCards?.length || 0, 'cards');
             console.log('🔍 updateDeckSummary - currentDeckId:', currentDeckId, 'isGuest:', isGuestUser());
+            console.log('🔍 updateDeckSummary - call stack:', new Error().stack);
+            console.log('🔍 updateDeckSummary - deckCards content:', JSON.stringify(deckCards, null, 2));
             
             // Update total card count using shared function
             const totalCards = calculateTotalCardCount(deckCards);
@@ -3478,21 +3480,33 @@
             
             // Enable/disable Draw Hand button based on playable cards
             const drawHandBtn = document.getElementById('drawHandBtn');
+            console.log('🔍 Draw Hand Button Debug - drawHandBtn element:', drawHandBtn);
+            
             if (drawHandBtn) {
                 // Count playable cards (excluding characters, locations, missions)
                 const playableCardsCount = deckCards
                     .filter(card => card.type !== 'character' && card.type !== 'location' && card.type !== 'mission')
                     .reduce((sum, card) => sum + card.quantity, 0);
                 
+                console.log('🔍 Draw Hand Button Debug - deckCards:', deckCards);
+                console.log('🔍 Draw Hand Button Debug - playableCardsCount:', playableCardsCount);
+                console.log('🔍 Draw Hand Button Debug - current button state - disabled:', drawHandBtn.disabled, 'opacity:', drawHandBtn.style.opacity);
+                
                 if (playableCardsCount >= 8) {
+                    console.log('🔍 Draw Hand Button Debug - ENABLING button (playableCardsCount >= 8)');
                     drawHandBtn.disabled = false;
                     drawHandBtn.style.opacity = "1";
                     drawHandBtn.style.cursor = "pointer";
                 } else {
+                    console.log('🔍 Draw Hand Button Debug - DISABLING button (playableCardsCount < 8)');
                     drawHandBtn.disabled = true;
                     drawHandBtn.style.opacity = "0.5";
                     drawHandBtn.style.cursor = "not-allowed";
                 }
+                
+                console.log('🔍 Draw Hand Button Debug - final button state - disabled:', drawHandBtn.disabled, 'opacity:', drawHandBtn.style.opacity);
+            } else {
+                console.log('❌ Draw Hand Button Debug - drawHandBtn element not found!');
             }            
             // Calculate maximum character stats and total threat level
             const characterCards = deckCards.filter(card => card.type === 'character');
@@ -9311,6 +9325,19 @@
         }
 
         // saveDeckChanges function moved to external file
+
+        // Global alias for updateDeckEditorCardCount
+        window.updateDeckCardCount = function() {
+            console.log('🔍 updateDeckCardCount called - deckEditorCards:', deckEditorCards?.length || 0);
+            updateDeckEditorCardCount();
+            // Also update deck summary to ensure button states are correct
+            if (typeof updateDeckSummary === 'function') {
+                console.log('🔍 updateDeckCardCount calling updateDeckSummary');
+                updateDeckSummary(deckEditorCards);
+            } else {
+                console.log('❌ updateDeckSummary function not found');
+            }
+        };
 
 
 
