@@ -44,6 +44,36 @@ function clearEventsFilters() {
     applyFilters();
 }
 
+function clearTeamworkFilters() {
+    // Clear teamwork filters
+    // Add specific filter clearing logic here if needed
+    applyFilters();
+}
+
+function clearAllyUniverseFilters() {
+    // Clear ally universe filters
+    // Add specific filter clearing logic here if needed
+    applyFilters();
+}
+
+function clearTrainingFilters() {
+    // Clear training filters
+    // Add specific filter clearing logic here if needed
+    applyFilters();
+}
+
+function clearBasicUniverseFilters() {
+    // Clear basic universe filters
+    // Add specific filter clearing logic here if needed
+    applyFilters();
+}
+
+function clearPowerCardFilters() {
+    // Clear power card filters
+    // Add specific filter clearing logic here if needed
+    applyFilters();
+}
+
 // Toggle column visibility functions
 function toggleFortificationsColumn() {
     const fortificationsColumn = document.querySelectorAll('.fortifications-column');
