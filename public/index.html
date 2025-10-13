@@ -4789,6 +4789,12 @@
 
         // Load UI preferences from database
         async function loadUIPreferences(deckId) {
+            // Skip loading UI preferences for guest users
+            if (isGuestUser()) {
+                console.log('Skipping UI preferences load for guest user');
+                return {};
+            }
+            
             try {
                 const response = await fetch(`/api/decks/${deckId}/ui-preferences`, {
                     credentials: 'include'
@@ -4811,6 +4817,12 @@
 
         // Save UI preferences to database
         async function saveUIPreferences(deckId, preferences) {
+            // Skip saving UI preferences for guest users
+            if (isGuestUser()) {
+                console.log('Skipping UI preferences save for guest user');
+                return;
+            }
+            
             try {
                 const response = await fetch(`/api/decks/${deckId}/ui-preferences`, {
                     method: 'PUT',
