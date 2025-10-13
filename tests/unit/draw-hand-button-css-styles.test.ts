@@ -1,12 +1,12 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Unit tests for Draw Hand button CSS styling and state management
  * 
  * Tests that the disabled button state is properly managed
  * and that the CSS rules are correctly defined.
- */
-
-/**
- * @jest-environment jsdom
  */
 
 describe('Draw Hand Button CSS Styling', () => {

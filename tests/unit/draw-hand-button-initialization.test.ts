@@ -1,12 +1,12 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Unit tests for Draw Hand button initialization and state management
  * 
  * Tests that the Draw Hand button is properly initialized and updated
  * when new decks are created and when card counts change.
- */
-
-/**
- * @jest-environment jsdom
  */
 
 describe('Draw Hand Button Initialization', () => {

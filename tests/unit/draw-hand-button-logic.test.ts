@@ -1,12 +1,12 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Unit tests for Draw Hand button logic
  * 
  * Tests that the Draw Hand button is properly enabled/disabled based on
  * the number of draw pile cards (excluding characters, locations, missions).
- */
-
-/**
- * @jest-environment jsdom
  */
 
 describe('Draw Hand Button Logic', () => {
