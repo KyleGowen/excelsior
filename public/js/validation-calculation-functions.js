@@ -223,6 +223,9 @@ function calculateTotalCardCount(deckCards) {
 function calculateTotalThreat(deckCards) {
     let totalThreat = 0;
     
+    // Get the current reserve character ID
+    const reserveCharacterId = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
+    
     // Get character cards
     const characterCards = deckCards.filter(card => card.type === 'character');
     
@@ -233,7 +236,25 @@ function calculateTotalThreat(deckCards) {
     characterCards.forEach(card => {
         const character = availableCardsMap.get(card.cardId);
         if (character && character.threat_level) {
-            totalThreat += character.threat_level;
+            let threatLevel = character.threat_level;
+            
+            // Apply reserve character adjustments
+            if (card.cardId === reserveCharacterId) {
+                // Victory Harben: 18 -> 20 when reserve (+2)
+                if (character.name === 'Victory Harben') {
+                    threatLevel = 20;
+                }
+                // Carson of Venus: 18 -> 19 when reserve (+1)
+                else if (character.name === 'Carson of Venus') {
+                    threatLevel = 19;
+                }
+                // Morgan Le Fay: 19 -> 20 when reserve (+1)
+                else if (character.name === 'Morgan Le Fay') {
+                    threatLevel = 20;
+                }
+            }
+            
+            totalThreat += threatLevel * card.quantity;
         }
     });
     

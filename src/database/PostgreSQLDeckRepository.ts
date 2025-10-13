@@ -46,17 +46,25 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       
       await client.query('COMMIT');
       
+      // Fetch the updated deck data after triggers have updated threat values
+      const updatedDeckResult = await client.query(
+        'SELECT * FROM decks WHERE id = $1',
+        [deckId]
+      );
+      
+      const updatedDeck = updatedDeckResult.rows[0];
+      
       const newDeck = {
-        id: deck.id,
-        user_id: deck.user_id,
-        name: deck.name,
-        description: deck.description,
-        ui_preferences: deck.ui_preferences,
-        is_limited: deck.is_limited,
-        reserve_character: deck.reserve_character,
-        threat: deck.threat,
-        created_at: deck.created_at,
-        updated_at: deck.updated_at
+        id: updatedDeck.id,
+        user_id: updatedDeck.user_id,
+        name: updatedDeck.name,
+        description: updatedDeck.description,
+        ui_preferences: updatedDeck.ui_preferences,
+        is_limited: updatedDeck.is_limited,
+        reserve_character: updatedDeck.reserve_character,
+        threat: updatedDeck.threat,
+        created_at: updatedDeck.created_at,
+        updated_at: updatedDeck.updated_at
       };
       
       // Cache the new deck and invalidate user's deck list cache

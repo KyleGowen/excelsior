@@ -339,10 +339,47 @@ class DeckEditor {
     // Calculate total threat
     calculateTotalThreat() {
         const characters = this.deckManager.deckCards.filter(card => card.type === 'character');
-        const totalThreat = characters.reduce((sum, card) => {
+        const locations = this.deckManager.deckCards.filter(card => card.type === 'location');
+        
+        // Get the current reserve character ID
+        const reserveCharacterId = this.deckManager.currentDeck?.metadata?.reserve_character;
+        
+        let totalThreat = 0;
+        
+        // Calculate threat from characters
+        characters.forEach(card => {
             const charData = this.deckManager.getCardById('character', card.cardId);
-            return sum + ((charData?.threat_level || 0) * card.quantity);
-        }, 0);
+            if (charData?.threat_level) {
+                let threatLevel = charData.threat_level;
+                
+                // Apply reserve character adjustments
+                if (card.cardId === reserveCharacterId) {
+                    // Victory Harben: 18 -> 20 when reserve (+2)
+                    if (charData.name === 'Victory Harben') {
+                        threatLevel = 20;
+                    }
+                    // Carson of Venus: 18 -> 19 when reserve (+1)
+                    else if (charData.name === 'Carson of Venus') {
+                        threatLevel = 19;
+                    }
+                    // Morgan Le Fay: 19 -> 20 when reserve (+1)
+                    else if (charData.name === 'Morgan Le Fay') {
+                        threatLevel = 20;
+                    }
+                }
+                
+                totalThreat += threatLevel * card.quantity;
+            }
+        });
+        
+        // Calculate threat from locations
+        locations.forEach(card => {
+            const locationData = this.deckManager.getCardById('location', card.cardId);
+            if (locationData?.threat_level) {
+                totalThreat += locationData.threat_level * card.quantity;
+            }
+        });
+        
         return `${totalThreat}/76`;
     }
 
