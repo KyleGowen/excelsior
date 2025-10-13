@@ -6414,13 +6414,20 @@
             
             deckCardsEditor.innerHTML = cardsHtml;
             
-            // Debug: Check character section layout
+            // Debug: Check character section layout and body classes
             setTimeout(() => {
+                console.log('🔍 Layout Debug - Body classes:', document.body.className);
+                console.log('🔍 Layout Debug - isReadOnlyMode:', isReadOnlyMode);
+                console.log('🔍 Layout Debug - currentUser role:', currentUser?.role);
+                console.log('🔍 Layout Debug - isGuestUser():', typeof isGuestUser === 'function' ? isGuestUser() : 'function not available');
+                
                 const characterSection = document.getElementById('deck-type-character');
                 if (characterSection) {
                     const characterCards = characterSection.querySelector('.deck-type-cards');
                     if (characterCards) {
                         const computedStyle = window.getComputedStyle(characterCards);
+                        console.log('🔍 Layout Debug - Character cards computed style grid-template-columns:', computedStyle.gridTemplateColumns);
+                        console.log('🔍 Layout Debug - Character cards element:', characterCards);
                         
                         // In read-only mode, allow CSS to control the layout
                         // Don't force single column layout
@@ -6429,9 +6436,29 @@
                             if (computedStyle.gridTemplateColumns !== '1fr') {
                                 characterCards.style.gridTemplateColumns = '1fr';
                             }
+                        } else {
+                            // In read-only mode, check if we need to force single column for guest users
+                            if (currentUser && currentUser.role === 'GUEST') {
+                                console.log('🔍 Layout Debug - Forcing single column for guest user');
+                                characterCards.style.setProperty('grid-template-columns', '1fr', 'important');
+                            }
                         }
                     }
                 }
+                
+                // Debug all card sections
+                const allCardSections = document.querySelectorAll('.deck-type-cards');
+                console.log('🔍 Layout Debug - Found', allCardSections.length, 'card sections');
+                allCardSections.forEach((section, index) => {
+                    const computedStyle = window.getComputedStyle(section);
+                    console.log(`🔍 Layout Debug - Section ${index} grid-template-columns:`, computedStyle.gridTemplateColumns);
+                    
+                    // Force single column for guest users in read-only mode
+                    if (currentUser && currentUser.role === 'GUEST' && isReadOnlyMode) {
+                        console.log(`🔍 Layout Debug - Forcing single column for section ${index}`);
+                        section.style.setProperty('grid-template-columns', '1fr', 'important');
+                    }
+                });
             }, 100);
             
             // Check if we're in list view mode and re-render accordingly
