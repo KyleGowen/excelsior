@@ -3490,6 +3490,19 @@
             display: none !important;
         }
         
+        /* Hide +1/-1 quantity adjustment buttons in read-only mode */
+        .read-only-mode .add-one-btn {
+            display: none !important;
+        }
+        
+        .read-only-mode .remove-one-btn {
+            display: none !important;
+        }
+        
+        .read-only-mode .deck-list-item-quantity-btn {
+            display: none !important;
+        }
+        
         
         
 

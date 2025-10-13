@@ -35,8 +35,12 @@ describe('Read-Only Mode DOM Button Behavior Tests', () => {
             { id: 'removeAll1', className: 'remove-all-btn', style: { display: '' } },
             { id: 'removeAll2', className: 'remove-all-btn', style: { display: '' } },
             
-            // Buttons that should remain visible
+            // Buttons that should now be hidden
             { id: 'addOneBtn1', className: 'add-one-btn', style: { display: '' } },
+            { id: 'removeOneBtn1', className: 'remove-one-btn', style: { display: '' } },
+            { id: 'quantityBtn1', className: 'deck-list-item-quantity-btn', style: { display: '' } },
+            
+            // Buttons that should remain visible
             { id: 'reserveBtn1', className: 'reserve-btn', style: { display: '' } },
             { id: 'listViewBtn', className: 'remove-all-btn', style: { display: '' } }, // Has remove-all-btn class but specific ID
             { id: 'drawHandBtn', className: 'remove-all-btn', style: { display: '' } }  // Has remove-all-btn class but specific ID
@@ -66,6 +70,10 @@ describe('Read-Only Mode DOM Button Behavior Tests', () => {
                     return mockButtons.filter(btn => btn.className === 'remove-all-btn');
                 } else if (selector === '.add-one-btn') {
                     return mockButtons.filter(btn => btn.className === 'add-one-btn');
+                } else if (selector === '.remove-one-btn') {
+                    return mockButtons.filter(btn => btn.className === 'remove-one-btn');
+                } else if (selector === '.deck-list-item-quantity-btn') {
+                    return mockButtons.filter(btn => btn.className === 'deck-list-item-quantity-btn');
                 } else if (selector === '.reserve-btn') {
                     return mockButtons.filter(btn => btn.className === 'reserve-btn');
                 }
@@ -284,25 +292,87 @@ describe('Read-Only Mode DOM Button Behavior Tests', () => {
         });
     });
 
-    describe('Buttons That Always Remain Visible', () => {
-        test('should keep +1 buttons visible regardless of read-only mode', () => {
+    describe('+1/-1 Quantity Button Hiding', () => {
+        test('should hide +1 buttons in read-only mode', () => {
             // Test in read-only mode
             mockBody.classList.contains.mockReturnValue(true);
             const addOneButtons = mockDocument.querySelectorAll('.add-one-btn');
             
+            // Apply CSS rule
             addOneButtons.forEach((button: any) => {
-                // +1 buttons are not targeted by any CSS rule, so they remain visible
-                expect(button.style.display).toBe('');
+                if (mockBody.classList.contains('read-only-mode')) {
+                    button.style.display = 'none';
+                }
+            });
+            
+            addOneButtons.forEach((button: any) => {
+                expect(button.style.display).toBe('none');
             });
 
             // Test in edit mode
             mockBody.classList.contains.mockReturnValue(false);
             addOneButtons.forEach((button: any) => {
+                button.style.display = ''; // Reset
                 expect(button.style.display).toBe('');
             });
 
             expect(addOneButtons.length).toBe(1);
         });
+
+        test('should hide -1 buttons in read-only mode', () => {
+            // Test in read-only mode
+            mockBody.classList.contains.mockReturnValue(true);
+            const removeOneButtons = mockDocument.querySelectorAll('.remove-one-btn');
+            
+            // Apply CSS rule
+            removeOneButtons.forEach((button: any) => {
+                if (mockBody.classList.contains('read-only-mode')) {
+                    button.style.display = 'none';
+                }
+            });
+            
+            removeOneButtons.forEach((button: any) => {
+                expect(button.style.display).toBe('none');
+            });
+
+            // Test in edit mode
+            mockBody.classList.contains.mockReturnValue(false);
+            removeOneButtons.forEach((button: any) => {
+                button.style.display = ''; // Reset
+                expect(button.style.display).toBe('');
+            });
+
+            expect(removeOneButtons.length).toBe(1);
+        });
+
+        test('should hide deck list item quantity buttons in read-only mode', () => {
+            // Test in read-only mode
+            mockBody.classList.contains.mockReturnValue(true);
+            const quantityButtons = mockDocument.querySelectorAll('.deck-list-item-quantity-btn');
+            
+            // Apply CSS rule
+            quantityButtons.forEach((button: any) => {
+                if (mockBody.classList.contains('read-only-mode')) {
+                    button.style.display = 'none';
+                }
+            });
+            
+            quantityButtons.forEach((button: any) => {
+                expect(button.style.display).toBe('none');
+            });
+
+            // Test in edit mode
+            mockBody.classList.contains.mockReturnValue(false);
+            quantityButtons.forEach((button: any) => {
+                button.style.display = ''; // Reset
+                expect(button.style.display).toBe('');
+            });
+
+            expect(quantityButtons.length).toBe(1);
+        });
+    });
+
+    describe('Buttons That Always Remain Visible', () => {
 
         test('should keep Reserve buttons visible regardless of read-only mode', () => {
             // Test in read-only mode
@@ -365,6 +435,8 @@ describe('Read-Only Mode DOM Button Behavior Tests', () => {
             const removeButtons = mockDocument.querySelectorAll('.deck-list-item-remove');
             const removeAllButtons = mockDocument.querySelectorAll('.remove-all-btn');
             const addOneButtons = mockDocument.querySelectorAll('.add-one-btn');
+            const removeOneButtons = mockDocument.querySelectorAll('.remove-one-btn');
+            const quantityListButtons = mockDocument.querySelectorAll('.deck-list-item-quantity-btn');
             const reserveButtons = mockDocument.querySelectorAll('.reserve-btn');
 
             // Hide buttons that should be hidden
@@ -375,6 +447,15 @@ describe('Read-Only Mode DOM Button Behavior Tests', () => {
                 button.style.display = 'none';
             });
             removeButtons.forEach((button: any) => {
+                button.style.display = 'none';
+            });
+            addOneButtons.forEach((button: any) => {
+                button.style.display = 'none';
+            });
+            removeOneButtons.forEach((button: any) => {
+                button.style.display = 'none';
+            });
+            quantityListButtons.forEach((button: any) => {
                 button.style.display = 'none';
             });
             removeAllButtons.forEach((button: any) => {
@@ -393,11 +474,17 @@ describe('Read-Only Mode DOM Button Behavior Tests', () => {
             removeButtons.forEach((button: any) => {
                 expect(button.style.display).toBe('none');
             });
+            addOneButtons.forEach((button: any) => {
+                expect(button.style.display).toBe('none');
+            });
+            removeOneButtons.forEach((button: any) => {
+                expect(button.style.display).toBe('none');
+            });
+            quantityListButtons.forEach((button: any) => {
+                expect(button.style.display).toBe('none');
+            });
 
             // Verify visible buttons
-            addOneButtons.forEach((button: any) => {
-                expect(button.style.display).toBe('');
-            });
             reserveButtons.forEach((button: any) => {
                 expect(button.style.display).toBe('');
             });
@@ -424,6 +511,8 @@ describe('Read-Only Mode DOM Button Behavior Tests', () => {
                 ...mockDocument.querySelectorAll('.deck-list-item-remove'),
                 ...mockDocument.querySelectorAll('.remove-all-btn'),
                 ...mockDocument.querySelectorAll('.add-one-btn'),
+                ...mockDocument.querySelectorAll('.remove-one-btn'),
+                ...mockDocument.querySelectorAll('.deck-list-item-quantity-btn'),
                 ...mockDocument.querySelectorAll('.reserve-btn')
             ];
 

@@ -208,12 +208,12 @@ describe('Read-Only Mode Card Button Visibility Tests', () => {
         });
     });
 
-    describe('Buttons That Should Remain Visible', () => {
-        test('should keep +1 buttons visible in read-only mode', () => {
+    describe('+1/-1 Quantity Button Hiding', () => {
+        test('should hide +1 buttons in read-only mode', () => {
             // Mock read-only mode
             mockBody.classList.contains.mockReturnValue(true);
 
-            // Mock +1 buttons (these should remain visible)
+            // Mock +1 buttons (these should now be hidden)
             const addOneButtons = [
                 { className: 'add-one-btn' },
                 { className: 'add-one-btn' }
@@ -223,13 +223,79 @@ describe('Read-Only Mode Card Button Visibility Tests', () => {
                 const hasAddOneBtnClass = button.className === 'add-one-btn';
                 const isInReadOnlyMode = mockBody.classList.contains('read-only-mode');
 
-                // +1 buttons should NOT be hidden because they don't match any of the hidden selectors
-                const shouldBeHidden = false; // +1 buttons are not targeted by any CSS rule
+                // +1 buttons should now be hidden in read-only mode
+                const shouldBeHidden = isInReadOnlyMode && hasAddOneBtnClass;
 
-                expect(shouldBeHidden).toBe(false);
+                expect(shouldBeHidden).toBe(true);
                 expect(hasAddOneBtnClass).toBe(true);
             });
         });
+
+        test('should hide -1 buttons in read-only mode', () => {
+            // Mock read-only mode
+            mockBody.classList.contains.mockReturnValue(true);
+
+            // Mock -1 buttons (these should now be hidden)
+            const removeOneButtons = [
+                { className: 'remove-one-btn' },
+                { className: 'remove-one-btn' }
+            ];
+
+            removeOneButtons.forEach(button => {
+                const hasRemoveOneBtnClass = button.className === 'remove-one-btn';
+                const isInReadOnlyMode = mockBody.classList.contains('read-only-mode');
+
+                // -1 buttons should now be hidden in read-only mode
+                const shouldBeHidden = isInReadOnlyMode && hasRemoveOneBtnClass;
+
+                expect(shouldBeHidden).toBe(true);
+                expect(hasRemoveOneBtnClass).toBe(true);
+            });
+        });
+
+        test('should hide deck list item quantity buttons in read-only mode', () => {
+            // Mock read-only mode
+            mockBody.classList.contains.mockReturnValue(true);
+
+            // Mock deck list item quantity buttons (these should now be hidden)
+            const quantityButtons = [
+                { className: 'deck-list-item-quantity-btn' },
+                { className: 'deck-list-item-quantity-btn' }
+            ];
+
+            quantityButtons.forEach(button => {
+                const hasQuantityBtnClass = button.className === 'deck-list-item-quantity-btn';
+                const isInReadOnlyMode = mockBody.classList.contains('read-only-mode');
+
+                // Quantity buttons should now be hidden in read-only mode
+                const shouldBeHidden = isInReadOnlyMode && hasQuantityBtnClass;
+
+                expect(shouldBeHidden).toBe(true);
+                expect(hasQuantityBtnClass).toBe(true);
+            });
+        });
+
+        test('should not hide +1/-1 buttons in edit mode', () => {
+            // Mock edit mode (not read-only)
+            mockBody.classList.contains.mockReturnValue(false);
+
+            // Test that +1/-1 buttons would NOT be hidden
+            const quantityButtons = [
+                { className: 'add-one-btn' },
+                { className: 'remove-one-btn' },
+                { className: 'deck-list-item-quantity-btn' }
+            ];
+
+            quantityButtons.forEach(button => {
+                const isInReadOnlyMode = mockBody.classList.contains('read-only-mode');
+                const shouldBeHidden = isInReadOnlyMode; // Only hidden in read-only mode
+
+                expect(shouldBeHidden).toBe(false);
+            });
+        });
+    });
+
+    describe('Buttons That Should Remain Visible', () => {
 
         test('should keep Reserve buttons visible in read-only mode', () => {
             // Mock read-only mode
@@ -266,12 +332,16 @@ describe('Read-Only Mode Card Button Visibility Tests', () => {
                 { buttonClass: 'alternate-art-btn', isReadOnlyMode: true, expectedHidden: true },
                 { buttonClass: 'quantity-btn', isReadOnlyMode: true, expectedHidden: true },
                 { buttonClass: 'deck-list-item-remove', isReadOnlyMode: true, expectedHidden: true },
-                { buttonClass: 'add-one-btn', isReadOnlyMode: true, expectedHidden: false },
+                { buttonClass: 'add-one-btn', isReadOnlyMode: true, expectedHidden: true },
+                { buttonClass: 'remove-one-btn', isReadOnlyMode: true, expectedHidden: true },
+                { buttonClass: 'deck-list-item-quantity-btn', isReadOnlyMode: true, expectedHidden: true },
                 { buttonClass: 'reserve-btn', isReadOnlyMode: true, expectedHidden: false },
                 { buttonClass: 'alternate-art-btn', isReadOnlyMode: false, expectedHidden: false },
                 { buttonClass: 'quantity-btn', isReadOnlyMode: false, expectedHidden: false },
                 { buttonClass: 'deck-list-item-remove', isReadOnlyMode: false, expectedHidden: false },
                 { buttonClass: 'add-one-btn', isReadOnlyMode: false, expectedHidden: false },
+                { buttonClass: 'remove-one-btn', isReadOnlyMode: false, expectedHidden: false },
+                { buttonClass: 'deck-list-item-quantity-btn', isReadOnlyMode: false, expectedHidden: false },
                 { buttonClass: 'reserve-btn', isReadOnlyMode: false, expectedHidden: false }
             ];
 
@@ -280,7 +350,10 @@ describe('Read-Only Mode Card Button Visibility Tests', () => {
                 const shouldBeHidden = isReadOnlyMode && 
                                      (buttonClass === 'alternate-art-btn' || 
                                       buttonClass === 'quantity-btn' || 
-                                      buttonClass === 'deck-list-item-remove');
+                                      buttonClass === 'deck-list-item-remove' ||
+                                      buttonClass === 'add-one-btn' ||
+                                      buttonClass === 'remove-one-btn' ||
+                                      buttonClass === 'deck-list-item-quantity-btn');
 
                 expect(shouldBeHidden).toBe(expectedHidden);
             });
@@ -302,7 +375,10 @@ describe('Read-Only Mode Card Button Visibility Tests', () => {
                 const shouldBeHidden = isReadOnlyMode && 
                                      (buttonClass === 'alternate-art-btn' || 
                                       buttonClass === 'quantity-btn' || 
-                                      buttonClass === 'deck-list-item-remove');
+                                      buttonClass === 'deck-list-item-remove' ||
+                                      buttonClass === 'add-one-btn' ||
+                                      buttonClass === 'remove-one-btn' ||
+                                      buttonClass === 'deck-list-item-quantity-btn');
 
                 expect(shouldBeHidden).toBe(expectedHidden);
             });
@@ -370,7 +446,9 @@ describe('Read-Only Mode Card Button Visibility Tests', () => {
                 { className: 'alternate-art-btn', type: 'change-art' },
                 { className: 'quantity-btn', type: 'remove' },
                 { className: 'deck-list-item-remove', type: 'remove' },
-                { className: 'add-one-btn', type: 'add' },
+                { className: 'add-one-btn', type: 'quantity' },
+                { className: 'remove-one-btn', type: 'quantity' },
+                { className: 'deck-list-item-quantity-btn', type: 'quantity' },
                 { className: 'reserve-btn', type: 'reserve' }
             ];
 
@@ -387,9 +465,9 @@ describe('Read-Only Mode Card Button Visibility Tests', () => {
             buttons.forEach(button => {
                 const isInReadOnlyMode = mockBody.classList.contains('read-only-mode');
                 const shouldBeHidden = isInReadOnlyMode && 
-                                     (button.type === 'change-art' || button.type === 'remove');
+                                     (button.type === 'change-art' || button.type === 'remove' || button.type === 'quantity');
                 
-                if (button.type === 'change-art' || button.type === 'remove') {
+                if (button.type === 'change-art' || button.type === 'remove' || button.type === 'quantity') {
                     expect(shouldBeHidden).toBe(true);
                 } else {
                     expect(shouldBeHidden).toBe(false);
