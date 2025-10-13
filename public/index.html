@@ -1883,6 +1883,9 @@
             const authResult = await checkAuthentication();
             currentUser = authResult.currentUser; // Update global currentUser after checkAuthentication
 
+            // Initialize ViewManager
+            viewManager.initialize();
+
             // Update user welcome message and show/hide Create User button based on role
             if (typeof updateUserWelcome === 'function') {
                 updateUserWelcome();
@@ -2787,15 +2790,31 @@
         // Attach drag listeners to any existing cards
         attachDragListeners();
     }
-        // List View functionality
-        async function toggleListView() {
-            const deckCardsEditor = document.getElementById('deckCardsEditor');
-            const listViewBtn = document.getElementById('listViewBtn');
-            
-            if (deckCardsEditor.classList.contains('list-view')) {
-                // Switch back to tile view
-                deckCardsEditor.classList.remove('list-view');
-                listViewBtn.textContent = 'List View';
+        // View Manager - Clean abstraction layer for view switching
+        class ViewManager {
+            constructor() {
+                this.currentView = 'tile';
+                this.deckCardsEditor = null;
+                this.listViewBtn = null;
+            }
+
+            initialize() {
+                this.deckCardsEditor = document.getElementById('deckCardsEditor');
+                this.listViewBtn = document.getElementById('listViewBtn');
+                console.log('🔍 ViewManager initialized');
+            }
+
+            async switchToTileView() {
+                console.log('🔍 ViewManager switching to tile view');
+                this.currentView = 'tile';
+                
+                if (this.deckCardsEditor) {
+                    this.deckCardsEditor.classList.remove('list-view');
+                }
+                
+                if (this.listViewBtn) {
+                    this.listViewBtn.textContent = 'List View';
+                }
                 
                 // Disconnect layout observer when switching to tile view
                 if (layoutObserver) {
@@ -2803,36 +2822,31 @@
                     layoutObserver = null;
                 }
                 
-                displayDeckCardsForEditing(); // Re-render in tile view
-            } else {
-                // Switch to list view
-                manageDeckLayout('addClass', { className: 'list-view' });
-                // Only force 2-column layout in edit mode, allow 3-column in read-only mode
-                if (!isReadOnlyMode) {
-                    manageDeckLayout('addClass', { className: 'two-column' });
-                    // Ensure 2-column layout is applied
-                    createTwoColumnLayout();
-                }
-                listViewBtn.textContent = 'Tile View';
+                // Use the original function to maintain exact behavior
+                await displayDeckCardsForEditing();
+            }
+
+            async switchToListView() {
+                console.log('🔍 ViewManager switching to list view');
+                this.currentView = 'list';
                 
-                // Ensure available cards are loaded before rendering list view
-                if (availableCardsMap.size === 0) {
-                    await loadAvailableCards();
-                    
-                    // Double-check after loading
-                    if (availableCardsMap.size === 0) {
-                        await loadAvailableCards();
-                    }
+                if (this.deckCardsEditor) {
+                    this.deckCardsEditor.classList.add('list-view');
                 }
                 
-                renderDeckCardsListView(); // Render in list view
+                if (this.listViewBtn) {
+                    this.listViewBtn.textContent = 'Tile View';
+                }
+                
+                // Use the original function to maintain exact behavior
+                renderDeckCardsListView();
                 
                 // Set up layout observer for list view
                 setupLayoutObserver();
                 
                 // Force immediate layout fix for list view
                 setTimeout(() => {
-                    const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
+                    const listItems = this.deckCardsEditor.querySelectorAll('.deck-list-item');
                     listItems.forEach(item => {
                         item.style.display = 'flex';
                         item.style.flexDirection = 'row';
@@ -2843,11 +2857,11 @@
                         item.style.alignItems = 'center';
                         item.style.justifyContent = 'flex-start';
                     });
-                    deckCardsEditor.offsetHeight; // Trigger reflow
+                    this.deckCardsEditor.offsetHeight; // Trigger reflow
                     
                     // Additional enforcement after a short delay
                     setTimeout(() => {
-                        const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
+                        const listItems = this.deckCardsEditor.querySelectorAll('.deck-list-item');
                         listItems.forEach(item => {
                             item.style.display = 'flex';
                             item.style.flexDirection = 'row';
@@ -2858,11 +2872,39 @@
                             item.style.alignItems = 'center';
                             item.style.justifyContent = 'flex-start';
                         });
-                    }, 10);
-                }, 0);
+                    }, 50);
+                }, 10);
+            }
+
+            getCurrentView() {
+                return this.currentView;
+            }
+
+            isListView() {
+                return this.currentView === 'list';
+            }
+
+            isTileView() {
+                return this.currentView === 'tile';
+            }
+        }
+
+        // Global view manager instance
+        const viewManager = new ViewManager();
+
+        // List View functionality - now uses ViewManager
+        function toggleListView() {
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            const listViewBtn = document.getElementById('listViewBtn');
+            
+            if (deckCardsEditor.classList.contains('list-view')) {
+                // Switch back to tile view
+                viewManager.switchToTileView();
+            } else {
+                // Switch to list view
+                viewManager.switchToListView();
             }
             
-            // Save UI preferences when view mode changes
             if (currentDeckId) {
                 const preferences = getCurrentUIPreferences();
                 saveUIPreferences(currentDeckId, preferences);
@@ -3174,7 +3216,7 @@
         }
         
         // Ultra-aggressive layout enforcement function
-        function ultraAggressiveLayoutEnforcement() {
+        async function ultraAggressiveLayoutEnforcement() {
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             if (!deckCardsEditor || !deckCardsEditor.classList.contains('list-view')) {
                 return;
@@ -3604,7 +3646,7 @@
         }
 
         // Toggle power cards sort mode between type and value
-        function togglePowerCardsSort() {
+        async function togglePowerCardsSort() {
             const checkbox = document.getElementById('powerCardsSortToggle');
             powerCardsSortMode = checkbox.checked ? 'value' : 'type';
             
@@ -3618,7 +3660,7 @@
             }
             
             // Re-render the deck to apply new sort mode
-            displayDeckCardsForEditing();
+            await displayDeckCardsForEditing();
         }
         
         // Load power cards sort mode from localStorage
@@ -4917,7 +4959,7 @@
         }
 
         // Apply UI preferences to the interface
-        function applyUIPreferences(preferences) {
+        async function applyUIPreferences(preferences) {
             // Apply divider position
             if (preferences.dividerPosition) {
                 const layout = document.querySelector('.deck-editor-layout');
@@ -4988,11 +5030,13 @@
                         manageDeckLayout('removeClass', { className: 'list-view' });
                         listViewBtn.textContent = 'List View';
                         // Re-render in tile view
-                        displayDeckCardsForEditing();
+                        await displayDeckCardsForEditing();
                     }
                 }
             }
         }
+
+
 
         // ===== DECK EDITOR FUNCTIONS =====
 
@@ -6452,33 +6496,121 @@
                 allCardSections.forEach((section, index) => {
                     const computedStyle = window.getComputedStyle(section);
                     console.log(`🔍 Layout Debug - Section ${index} grid-template-columns:`, computedStyle.gridTemplateColumns);
+                    console.log(`🔍 Layout Debug - Section ${index} element:`, section);
+                    console.log(`🔍 Layout Debug - Section ${index} classes:`, section.className);
+                    console.log(`🔍 Layout Debug - Section ${index} parent classes:`, section.parentElement?.className);
                     
-                    // Force single column for guest users in read-only mode
+                    // Force single column for guest users in read-only mode (but only in tile view)
                     if (currentUser && currentUser.role === 'GUEST' && isReadOnlyMode) {
-                        console.log(`🔍 Layout Debug - Forcing single column for section ${index}`);
-                        section.style.setProperty('grid-template-columns', '1fr', 'important');
+                        const deckCardsEditor = document.getElementById('deckCardsEditor');
+                        const isListView = deckCardsEditor && deckCardsEditor.classList.contains('list-view');
                         
-                        // Extra aggressive fix for character cards
-                        const characterSection = section.closest('.deck-type-section[data-type="character"]');
-                        if (characterSection) {
-                            console.log(`🔍 Layout Debug - Extra aggressive fix for character section ${index}`);
+                        if (!isListView) {
+                            console.log(`🔍 Layout Debug - Forcing single column for section ${index} (tile view)`);
+                            
+                            // Try multiple approaches to force single column
                             section.style.setProperty('grid-template-columns', '1fr', 'important');
                             section.style.setProperty('display', 'grid', 'important');
+                            section.style.setProperty('width', '100%', 'important');
+                            section.style.setProperty('max-width', '100%', 'important');
+                            
+                            // Also try setting the CSS custom property
+                            section.style.setProperty('--grid-template-columns', '1fr', 'important');
+                        } else {
+                            console.log(`🔍 Layout Debug - Allowing CSS to handle layout for section ${index} (list view)`);
+                            // In list view, let CSS handle the layout (3-column for read-only mode)
+                            section.style.removeProperty('grid-template-columns');
+                            section.style.removeProperty('--grid-template-columns');
                         }
+                        
+                        // Force the parent container to be single column too
+                        const parentSection = section.closest('.deck-type-section');
+                        if (parentSection) {
+                            parentSection.style.setProperty('width', '100%', 'important');
+                            parentSection.style.setProperty('max-width', '100%', 'important');
+                        }
+                        
+                        // Extra aggressive fix for character cards (but only in tile view)
+                        const characterSection = section.closest('.deck-type-section[data-type="character"]');
+                        if (characterSection && !isListView) {
+                            console.log(`🔍 Layout Debug - Extra aggressive fix for character section ${index} (tile view)`);
+                            section.style.setProperty('grid-template-columns', '1fr', 'important');
+                            section.style.setProperty('display', 'grid', 'important');
+                            section.style.setProperty('width', '100%', 'important');
+                            section.style.setProperty('max-width', '100%', 'important');
+                        }
+                        
+                        // Check if the fix worked
+                        const newComputedStyle = window.getComputedStyle(section);
+                        console.log(`🔍 Layout Debug - Section ${index} AFTER fix grid-template-columns:`, newComputedStyle.gridTemplateColumns);
                     }
                 });
                 
-                // Additional aggressive fix with delay for character cards
+                // Additional aggressive fix with delay for character cards (but only in tile view)
                 if (currentUser && currentUser.role === 'GUEST' && isReadOnlyMode) {
                     setTimeout(() => {
+                        const deckCardsEditor = document.getElementById('deckCardsEditor');
+                        const isListView = deckCardsEditor && deckCardsEditor.classList.contains('list-view');
+                        
                         const characterCards = document.querySelector('.deck-type-section[data-type="character"] .deck-type-cards');
-                        if (characterCards) {
-                            console.log('🔍 Layout Debug - Final aggressive fix for character cards');
+                        if (characterCards && !isListView) {
+                            console.log('🔍 Layout Debug - Final aggressive fix for character cards (tile view)');
                             characterCards.style.setProperty('grid-template-columns', '1fr', 'important');
                             characterCards.style.setProperty('display', 'grid', 'important');
                             characterCards.style.setProperty('width', '100%', 'important');
                         }
+                        
+                        // Fix card width overflow for all cards in read-only mode
+                        const allCardItems = document.querySelectorAll('.read-only-mode .deck-card-editor-item');
+                        console.log(`🔍 Layout Debug - Fixing ${allCardItems.length} card items for width overflow`);
+                        allCardItems.forEach((card, index) => {
+                            const beforeWidth = card.offsetWidth;
+                            const beforeMaxWidth = window.getComputedStyle(card).maxWidth;
+                            const beforeBoxSizing = window.getComputedStyle(card).boxSizing;
+                            const parentWidth = card.parentElement?.offsetWidth || 'unknown';
+                            console.log(`🔍 Layout Debug - Card ${index} BEFORE: width=${beforeWidth}px, max-width=${beforeMaxWidth}, box-sizing=${beforeBoxSizing}, parent-width=${parentWidth}px`);
+                            
+                            card.style.setProperty('max-width', '100%', 'important');
+                            card.style.setProperty('width', '100%', 'important');
+                            card.style.setProperty('box-sizing', 'border-box', 'important');
+                            card.style.setProperty('overflow', 'hidden', 'important');
+                            
+                            const afterWidth = card.offsetWidth;
+                            const afterMaxWidth = window.getComputedStyle(card).maxWidth;
+                            const afterBoxSizing = window.getComputedStyle(card).boxSizing;
+                            console.log(`🔍 Layout Debug - Card ${index} AFTER: width=${afterWidth}px, max-width=${afterMaxWidth}, box-sizing=${afterBoxSizing}`);
+                            
+                            // Fix character card content specifically
+                            if (card.classList.contains('character-card')) {
+                                const cardInfo = card.querySelector('.deck-card-editor-info');
+                                if (cardInfo) {
+                                    cardInfo.style.setProperty('flex', '1', 'important');
+                                    cardInfo.style.setProperty('min-width', '0', 'important');
+                                    cardInfo.style.setProperty('max-width', 'calc(100% - 120px)', 'important');
+                                    cardInfo.style.setProperty('overflow', 'hidden', 'important');
+                                }
+                                
+                                const cardName = card.querySelector('.deck-card-editor-name');
+                                if (cardName) {
+                                    cardName.style.setProperty('white-space', 'nowrap', 'important');
+                                    cardName.style.setProperty('overflow', 'hidden', 'important');
+                                    cardName.style.setProperty('text-overflow', 'ellipsis', 'important');
+                                }
+                                
+                                const cardActions = card.querySelector('.deck-card-editor-actions');
+                                if (cardActions) {
+                                    cardActions.style.setProperty('flex-shrink', '0', 'important');
+                                    cardActions.style.setProperty('width', '100px', 'important');
+                                }
+                            }
+                        });
                     }, 200);
+                    
+                    // Layout enforcement is now handled by the separated view renderers
+                    // No more global layout enforcement functions needed
+                    
+                    // Layout enforcement is now handled by the separated view renderers
+                    // No more global layout enforcement calls needed
                 }
             }, 100);
             
@@ -8875,13 +9007,13 @@
         }
 
         // Function to update alternate image for existing card
-        function updateCardAlternateImage(cardIndex, selectedImage) {
+        async function updateCardAlternateImage(cardIndex, selectedImage) {
             if (deckEditorCards[cardIndex]) {
                 // Capture current expansion state before re-rendering
                 const currentExpansionState = getExpansionState();
                 
                 deckEditorCards[cardIndex].selectedAlternateImage = selectedImage;
-                displayDeckCardsForEditing();
+                await displayDeckCardsForEditing();
                 
                 // Restore the expansion state after re-rendering
                 applyUIPreferences({ expansionState: currentExpansionState });

@@ -22,10 +22,16 @@
 function getCardName(card) {
     // TODO: This should fetch the actual card name from the database
     // For now, return a placeholder
+    if (!card || !card.type || !card.cardId) {
+        return 'Unknown Card';
+    }
     return `${formatCardType(card.type)} Card ${card.cardId}`;
 }
 
 function formatCardType(type) {
+    if (!type) {
+        return 'Unknown';
+    }
     return type.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
 

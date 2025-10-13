@@ -3601,6 +3601,117 @@
             grid-template-columns: 1fr !important; /* Force single column for character cards */
         }
         
+        /* Ultra-specific rule to override any other grid rules for guest users */
+        body.guest-user.read-only-mode .deck-cards-editor .deck-type-cards {
+            grid-template-columns: 1fr !important;
+            display: grid !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        /* Even more specific for character cards */
+        body.guest-user.read-only-mode .deck-type-section[data-type="character"] .deck-type-cards {
+            grid-template-columns: 1fr !important;
+            display: grid !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        /* Fix card width overflow in read-only mode */
+        .read-only-mode .deck-card-editor-item {
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+        
+        /* Fix card container width overflow in read-only mode */
+        .read-only-mode .deck-type-cards {
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+        
+        /* Fix deck type section width overflow in read-only mode */
+        .read-only-mode .deck-type-section {
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+        
+        /* Specific fix for character cards in read-only mode */
+        .read-only-mode .deck-card-editor-item.character-card {
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+        
+        /* Fix character card content overflow */
+        .read-only-mode .character-card .deck-card-editor-info {
+            max-width: calc(100% - 120px) !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+        
+        /* Fix character card name overflow */
+        .read-only-mode .character-card .deck-card-editor-name {
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+        
+        /* Fix character card actions positioning */
+        .read-only-mode .character-card .deck-card-editor-actions {
+            flex-shrink: 0 !important;
+            width: 100px !important;
+            max-width: 100px !important;
+        }
+        
+        /* Ensure character cards fit properly in read-only mode */
+        .read-only-mode .deck-card-editor-item.character-card {
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Fix character card content overflow */
+        .read-only-mode .deck-card-editor-item.character-card .deck-card-editor-info {
+            flex: 1 !important;
+            min-width: 0 !important;
+            overflow: hidden !important;
+        }
+        
+        .read-only-mode .deck-card-editor-item.character-card .deck-card-editor-name {
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+        
+        /* Ultra-specific card width constraints for guest users */
+        body.guest-user.read-only-mode .deck-card-editor-item {
+            max-width: 100% !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+        
+        /* Force character cards to fit within their container */
+        body.guest-user.read-only-mode .deck-card-editor-item.character-card {
+            max-width: 100% !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+        
+        /* Constrain the card content areas */
+        body.guest-user.read-only-mode .deck-card-editor-item .deck-card-editor-info {
+            max-width: calc(100% - 120px) !important; /* Leave room for buttons */
+            overflow: hidden !important;
+        }
+        
+        body.guest-user.read-only-mode .deck-card-editor-item .deck-card-editor-actions {
+            flex-shrink: 0 !important;
+            width: 100px !important;
+        }
+        
         /* Two column layout for regular users in read-only mode tile view */
         .read-only-mode:not(.guest-user) .deck-cards-editor:not(.list-view) .deck-type-cards:not([style*="display: none"]) {
             display: grid !important;
