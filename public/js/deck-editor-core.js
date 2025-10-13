@@ -21,7 +21,7 @@ function showDeckEditor() {
                 const deckPercentage = (deckWidth / layoutWidth) * 100;
                 
                 // Apply two-column layout immediately if deck is wide enough
-                if (deckPercentage >= 33 && !isReadOnlyMode) {
+                if (deckPercentage >= 33) {
                     const deckCardsEditor = document.querySelector('.deck-cards-editor');
                     if (deckCardsEditor && !manageDeckLayout('hasClass', { className: 'list-view' })) {
                         manageDeckLayout('addClass', { className: 'two-column' });
@@ -56,58 +56,14 @@ function showDeckEditor() {
             }, 10);
         }
         
-        // Add/remove read-only-mode class to modal
-        if (isReadOnlyMode) {
-            modal.classList.add('read-only-mode');
-            
-        } else {
-            modal.classList.remove('read-only-mode');
-        }
-        
-        // Show/hide read-only indicator
-        const readOnlyIndicator = document.getElementById('readOnlyIndicator');
-        if (readOnlyIndicator) {
-            readOnlyIndicator.style.display = isReadOnlyMode ? 'block' : 'none';
-        }
-        
-        // Make title and description non-editable in read-only mode
-        const titleElement = document.getElementById('deckEditorTitle');
-        const descriptionElement = document.getElementById('deckEditorDescription');
-        
-        if (isReadOnlyMode) {
-            // Remove editable classes and click handlers
-            if (titleElement) {
-                titleElement.classList.remove('editable-title');
-                titleElement.style.cursor = 'default';
-                titleElement.onclick = null;
-            }
-            if (descriptionElement) {
-                descriptionElement.classList.remove('editable-description');
-                descriptionElement.style.cursor = 'default';
-                descriptionElement.onclick = null;
-            }
-        } else {
-            // Restore editable classes and click handlers
-            if (titleElement) {
-                titleElement.classList.add('editable-title');
-                titleElement.style.cursor = 'pointer';
-                titleElement.onclick = startEditingTitle;
-            }
-            if (descriptionElement) {
-                descriptionElement.classList.add('editable-description');
-                descriptionElement.style.cursor = 'pointer';
-                descriptionElement.onclick = startEditingDescription;
-            }
-        }
+        // Read-only mode removed - now handled by backend flag
         
         // Title is already set to the deck name, no need to override it
         
-        // Hide/show Save button based on mode and guest status
+        // Hide/show Save button based on guest status
         const saveButton = document.getElementById('saveDeckButton');
         if (saveButton) {
-            if (isReadOnlyMode) {
-                saveButton.style.display = 'none';
-            } else if (isGuestUser()) {
+            if (isGuestUser()) {
                 // Disable Save button for guest users
                 saveButton.disabled = true;
                 saveButton.style.opacity = '0.5';
@@ -155,7 +111,16 @@ function showDeckEditor() {
 
 // Load deck for editing
 async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) {
-    console.log('loadDeckForEditing called with deckId:', deckId);
+    console.log('loadDeckForEditing called with deckId:', deckId, 'isReadOnly:', isReadOnly);
+    
+    // Apply or remove read-only mode class based on parameter
+    if (isReadOnly) {
+        document.body.classList.add('read-only-mode');
+        console.log('🔍 Read-only mode applied from loadDeckForEditing parameter');
+    } else {
+        document.body.classList.remove('read-only-mode');
+        console.log('🔍 Read-only mode removed from loadDeckForEditing parameter');
+    }
     
     // Handle new deck creation
     if (deckId === 'new') {
@@ -174,16 +139,7 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             cards: []
         };
         deckEditorCards = [];
-        isReadOnlyMode = false; // New decks are always editable
-        
-        // Update the body class to reflect edit mode
-        document.body.classList.remove('read-only-mode');
-        
-        // Update the modal class as well
-        const modal = document.getElementById('deckEditorModal');
-        if (modal) {
-            modal.classList.remove('read-only-mode');
-        }
+        // Read-only mode removed - now handled by backend flag
         
         // Show the deck editor modal
         document.getElementById('deckEditorModal').style.display = 'block';
@@ -233,28 +189,7 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             
             console.log('Working copy created:', deckEditorCards);
             
-            // Check if readonly=true query parameter is set - this takes precedence
-            const urlParams = new URLSearchParams(window.location.search);
-            const isReadOnlyFromQuery = urlParams.get('readonly') === 'true';
-            
-            if (isReadOnlyFromQuery) {
-                // Force read-only mode when readonly=true query parameter is present
-                isReadOnlyMode = true;
-                console.log('Forcing read-only mode due to readonly=true query parameter');
-            } else if (data.data.metadata && data.data.metadata.isOwner !== undefined) {
-                // Only use API response if no readonly query parameter is set
-                isReadOnlyMode = !data.data.metadata.isOwner;
-                console.log('Updated read-only mode from API:', isReadOnlyMode, 'isOwner:', data.data.metadata.isOwner);
-            }
-            
-            // Update the body class to reflect the correct read-only mode
-            document.body.classList.toggle('read-only-mode', isReadOnlyMode);
-            
-            // Update the modal class as well
-            const modal = document.getElementById('deckEditorModal');
-            if (modal) {
-                modal.classList.toggle('read-only-mode', isReadOnlyMode);
-            }
+            // Read-only mode removed - now handled by backend flag
             
             // Now set up drag and drop based on the correct read-only mode
             setupDragAndDrop();
@@ -359,11 +294,7 @@ async function saveDeckChanges() {
         return;
     }
     
-    // Check if in read-only mode
-    if (isReadOnlyMode) {
-        alert('Cannot save changes in read-only mode. You are viewing another user\'s deck.');
-        return;
-    }
+    // Read-only mode removed - now handled by backend flag
     
     
     try {

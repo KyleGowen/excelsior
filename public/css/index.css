@@ -2281,28 +2281,6 @@
             font-style: italic;
         }
 
-        /* Read-only mode styles */
-        .read-only-mode #deckEditorTitle {
-            cursor: default !important;
-            background: transparent !important;
-            border: 1px solid transparent !important;
-        }
-
-        .read-only-mode #deckEditorTitle:hover {
-            background: transparent !important;
-            border-color: transparent !important;
-        }
-
-        .read-only-mode #deckEditorDescription {
-            cursor: default !important;
-            background: transparent !important;
-            border: 1px solid transparent !important;
-        }
-
-        .read-only-mode #deckEditorDescription:hover {
-            background: transparent !important;
-            border-color: transparent !important;
-        }
 
         .edit-input {
             background: transparent;
@@ -3215,18 +3193,18 @@
             transform: rotate(-90deg);
         }
         
-        /* Unified deck content tiles styling - responsive columns */
+        /* Unified deck content tiles styling - single column by default */
         .deck-type-cards {
             padding: 16px;
             background: rgba(255, 255, 255, 0.02);
             display: grid;
-            grid-template-columns: 1fr; /* Default single column */
+            grid-template-columns: 1fr; /* Single column by default */
             gap: 16px;
         }
 
         /* Two-column layout for wide deck panes to prevent flash */
         .deck-cards-editor.two-column .deck-type-cards {
-            grid-template-columns: 1fr; /* Keep single column within each section */
+            grid-template-columns: 1fr; /* Single column within each section */
         }
 
         /* Force single column class for JavaScript override */
@@ -3249,32 +3227,21 @@
         }
         
         /* Override: List view should never use 4-column layout, only responsive 1-2 columns */
-        .deck-cards-editor.list-view:not(.read-only-mode) .deck-type-cards {
+        .deck-cards-editor.list-view .deck-type-cards {
             display: block !important;
             grid-template-columns: none !important;
             gap: 0 !important;
         }
         
-        .deck-cards-editor.list-view:not(.read-only-mode) .deck-list-view {
+        .deck-cards-editor.list-view .deck-list-view {
             display: block !important;
             grid-template-columns: none !important;
             gap: 0 !important;
         }
 
         
-        /* Even more specific for body read-only mode - ONLY for list view */
-        body.read-only-mode .deck-cards-editor.list-view {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr 1fr !important;
-            gap: 20px !important;
-        }
         
         
-        .read-only-mode .deck-cards-editor:not(.list-view) .deck-type-section {
-            display: block !important;
-            width: 100% !important;
-            margin-bottom: 20px !important;
-        }
         .deck-list-section {
             margin-bottom: 30px;
         }
@@ -3482,66 +3449,15 @@
             overflow: hidden;
         }
 
-        /* Read-Only Mode Indicator */
-        .read-only-indicator {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.1));
-            border: 1px solid rgba(255, 193, 7, 0.4);
-            border-radius: 6px;
-            padding: 8px 12px;
-            margin-top: 8px;
-            text-align: center;
-        }
-
-        .read-only-text {
-            color: #ffc107;
-            font-size: 0.9rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        
-        /* Hide editing buttons in read-only mode (but keep List View and Draw Hand buttons) */
-        .read-only-mode .deck-card-editor-remove,
-        .read-only-mode .deck-card-editor-change-art,
-        .read-only-mode .quantity-btn,
-        .read-only-mode .alternate-art-btn,
-        .read-only-mode .remove-one-btn,
-        .read-only-mode .add-one-btn,
-        .read-only-mode .reserve-btn,
-        .read-only-mode .deck-list-item-quantity-btn,
-        .read-only-mode .deck-list-item-remove {
-            display: none !important;
-        }
-        
-        /* Show read-only reserve indicator for selected reserve character */
-        .read-only-mode .reserve-indicator {
-            display: inline-block !important;
-        }
-        
-        /* Hide Remove All and Remove Unusables buttons specifically (but keep Draw Hand and List View) */
-        .read-only-mode .remove-all-btn:not(#drawHandBtn):not(#listViewBtn),
-        .read-only-mode .remove-unusables-btn {
-            display: none !important;
-        }
-        
-        /* Hide search bar in read-only mode */
-        .read-only-mode .deck-editor-search-container {
-            display: none !important;
-        }
-        
-        /* Hide Available Cards pane in read-only mode and make deck content full width */
+        /* Read-only mode styles - hide available cards pane and make deck content full width */
         .read-only-mode .card-selector-pane {
             display: none !important;
         }
         
-        .read-only-mode .deck-editor-content {
-            width: 100% !important;
-            max-width: none !important;
+        .read-only-mode .resizable-divider {
+            display: none !important;
         }
         
-        /* Make the deck pane take full width when card selector is hidden */
         .read-only-mode .deck-pane {
             flex: 1 1 100% !important;
             min-width: 100% !important;
@@ -3550,181 +3466,13 @@
             padding-right: 0 !important;
         }
         
-        /* Hide the resizable divider in read-only mode */
-        .read-only-mode .resizable-divider {
-            display: none !important;
-        }
-        
-        /* Make the modal content have proper spacing in read-only mode */
-        .read-only-mode .modal-content {
-            width: calc(100vw - 40px) !important;
-            max-width: calc(100vw - 40px) !important;
-            margin: 20px auto !important;
-            margin-left: 0px !important;
-            left: auto !important;
-            right: auto !important;
-            box-sizing: border-box !important;
-        }
-        
-        /* Add proper padding to the modal in read-only mode */
-        .read-only-mode.modal {
-            padding: 20px !important;
-        }
-        
-        /* Organize cards in read-only mode - different layouts for tile vs list view */
-        .read-only-mode .deck-cards-editor:not(.list-view) {
-            display: block !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-        }
-        
-        .read-only-mode .deck-cards-editor.two-column:not(.list-view) {
-            display: block !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-        }
-        
-        /* Override two-column layout in read-only mode */
-        .read-only-mode .deck-cards-editor.two-column .deck-column {
-            display: block !important;
-        }
-        
-        /* Single column layout for guest users in read-only mode tile view */
-        .read-only-mode.guest-user .deck-cards-editor:not(.list-view) .deck-type-cards:not([style*="display: none"]) {
-            display: grid !important;
-            grid-template-columns: 1fr !important; /* Single column for guest users in read-only mode */
-            gap: 16px !important;
-        }
-        
-        /* More specific rule for character cards in guest read-only mode */
-        .read-only-mode.guest-user .deck-type-section[data-type="character"] .deck-type-cards {
-            grid-template-columns: 1fr !important; /* Force single column for character cards */
-        }
-        
-        /* Ultra-specific rule to override any other grid rules for guest users */
-        body.guest-user.read-only-mode .deck-cards-editor .deck-type-cards {
-            grid-template-columns: 1fr !important;
-            display: grid !important;
+        .read-only-mode .deck-editor-content {
             width: 100% !important;
-            max-width: 100% !important;
+            max-width: none !important;
         }
         
-        /* Even more specific for character cards */
-        body.guest-user.read-only-mode .deck-type-section[data-type="character"] .deck-type-cards {
-            grid-template-columns: 1fr !important;
-            display: grid !important;
-            width: 100% !important;
-            max-width: 100% !important;
-        }
         
-        /* Fix card width overflow in read-only mode */
-        .read-only-mode .deck-card-editor-item {
-            max-width: 100% !important;
-            box-sizing: border-box !important;
-            overflow: hidden !important;
-        }
         
-        /* Fix card container width overflow in read-only mode */
-        .read-only-mode .deck-type-cards {
-            max-width: 100% !important;
-            box-sizing: border-box !important;
-            overflow: hidden !important;
-        }
-        
-        /* Fix deck type section width overflow in read-only mode */
-        .read-only-mode .deck-type-section {
-            max-width: 100% !important;
-            box-sizing: border-box !important;
-            overflow: hidden !important;
-        }
-        
-        /* Specific fix for character cards in read-only mode */
-        .read-only-mode .deck-card-editor-item.character-card {
-            max-width: 100% !important;
-            box-sizing: border-box !important;
-            overflow: hidden !important;
-        }
-        
-        /* Fix character card content overflow */
-        .read-only-mode .character-card .deck-card-editor-info {
-            max-width: calc(100% - 120px) !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-        }
-        
-        /* Fix character card name overflow */
-        .read-only-mode .character-card .deck-card-editor-name {
-            white-space: nowrap !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-        }
-        
-        /* Fix character card actions positioning */
-        .read-only-mode .character-card .deck-card-editor-actions {
-            flex-shrink: 0 !important;
-            width: 100px !important;
-            max-width: 100px !important;
-        }
-        
-        /* Ensure character cards fit properly in read-only mode */
-        .read-only-mode .deck-card-editor-item.character-card {
-            max-width: 100% !important;
-            box-sizing: border-box !important;
-        }
-        
-        /* Fix character card content overflow */
-        .read-only-mode .deck-card-editor-item.character-card .deck-card-editor-info {
-            flex: 1 !important;
-            min-width: 0 !important;
-            overflow: hidden !important;
-        }
-        
-        .read-only-mode .deck-card-editor-item.character-card .deck-card-editor-name {
-            white-space: nowrap !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-        }
-        
-        /* Ultra-specific card width constraints for guest users */
-        body.guest-user.read-only-mode .deck-card-editor-item {
-            max-width: 100% !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
-            overflow: hidden !important;
-        }
-        
-        /* Force character cards to fit within their container */
-        body.guest-user.read-only-mode .deck-card-editor-item.character-card {
-            max-width: 100% !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
-            overflow: hidden !important;
-        }
-        
-        /* Constrain the card content areas */
-        body.guest-user.read-only-mode .deck-card-editor-item .deck-card-editor-info {
-            max-width: calc(100% - 120px) !important; /* Leave room for buttons */
-            overflow: hidden !important;
-        }
-        
-        body.guest-user.read-only-mode .deck-card-editor-item .deck-card-editor-actions {
-            flex-shrink: 0 !important;
-            width: 100px !important;
-        }
-        
-        /* Two column layout for regular users in read-only mode tile view */
-        .read-only-mode:not(.guest-user) .deck-cards-editor:not(.list-view) .deck-type-cards:not([style*="display: none"]) {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important; /* Two columns for regular users in read-only mode */
-            gap: 16px !important;
-        }
-        
-        /* Make list view also use single column in read-only mode */
-        .read-only-mode .deck-list-view {
-            display: grid !important;
-            grid-template-columns: 1fr !important; /* Single column for individual cards */
-            gap: 16px !important;
-        }
 
         .deck-card-editor-item {
             background: rgba(255, 255, 255, 0.1);

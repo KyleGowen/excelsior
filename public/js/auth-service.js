@@ -134,27 +134,7 @@ class FrontendAuthService {
       }
     }
 
-    // Determine read-only mode if a deck is being viewed
-    if (authResult.deckId) {
-      
-      // Only set read-only mode if we have a valid URL user ID and it doesn't match current user
-      // If URL user ID is undefined or invalid, let the API determine ownership
-      if (authResult.isAuthenticated && authResult.currentUser && authResult.urlUserId && authResult.urlUserId !== 'undefined' && authResult.currentUser.id !== authResult.urlUserId) {
-        authResult.isReadOnlyMode = true;
-        this.isReadOnlyMode = true;
-        console.log('Read-only mode: viewing another user\'s deck');
-      } else if (!authResult.isAuthenticated) {
-        // If not authenticated at all, it's read-only (e.g., if guest login failed)
-        authResult.isReadOnlyMode = true;
-        this.isReadOnlyMode = true;
-        console.log('Read-only mode: no authentication (or guest login failed)');
-      } else {
-        // Default to edit mode - API will make final determination based on actual deck ownership
-        authResult.isReadOnlyMode = false;
-        this.isReadOnlyMode = false;
-        console.log('Edit mode: will be confirmed by API based on deck ownership');
-      }
-    }
+    // Read-only mode removed - now handled by backend flag
 
     return authResult;
   }

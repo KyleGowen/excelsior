@@ -1766,7 +1766,15 @@
         // Initialize page
         // Authentication functions
         let currentUser = null;
-        let isReadOnlyMode = false; // Track if we're viewing another user's deck - managed by auth service
+        
+        // Check for readOnly=true parameter and apply read-only mode class
+        const urlParams = new URLSearchParams(window.location.search);
+        const isReadOnlyFromQuery = urlParams.get('readonly') === 'true';
+        
+        if (isReadOnlyFromQuery) {
+            document.body.classList.add('read-only-mode');
+            console.log('🔍 Read-only mode detected from URL parameter');
+        }
         
         // Add global event listener to catch any clicks that might trigger tab switches
         document.addEventListener('click', function(event) {
@@ -1901,8 +1909,7 @@
                         databaseView.style.display = 'none';
                     }
                     
-                    isReadOnlyMode = authResult.isReadOnlyMode; // Update global flag
-                    document.body.classList.toggle('read-only-mode', isReadOnlyMode);
+                    // Read-only mode removed - now handled by backend flag
                     
                     // Add guest class if user is a guest
                     if (currentUser && currentUser.role === 'GUEST') {
@@ -1912,7 +1919,11 @@
                     // Load main app data in background (without showing the UI) for when user navigates back
                     loadMainAppDataInBackground();
                     
-                    await loadDeckForEditing(authResult.deckId, authResult.urlUserId, isReadOnlyMode);
+                    // Check if readonly=true parameter is set - this takes precedence
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const isReadOnlyFromQuery = urlParams.get('readonly') === 'true';
+                    
+                    await loadDeckForEditing(authResult.deckId, authResult.urlUserId, isReadOnlyFromQuery);
                     showDeckEditor();
                 } else {
                     // No deck ID - show main app normally
@@ -2808,18 +2819,18 @@
                 console.log('🔍 ViewManager switching to tile view');
                 this.currentView = 'tile';
                 
+                // Disconnect layout observer when switching to tile view
+                if (layoutObserver) {
+                    layoutObserver.disconnect();
+                    layoutObserver = null;
+                }
+                
                 if (this.deckCardsEditor) {
                     this.deckCardsEditor.classList.remove('list-view');
                 }
                 
                 if (this.listViewBtn) {
                     this.listViewBtn.textContent = 'List View';
-                }
-                
-                // Disconnect layout observer when switching to tile view
-                if (layoutObserver) {
-                    layoutObserver.disconnect();
-                    layoutObserver = null;
                 }
                 
                 // Use the original function to maintain exact behavior
@@ -3170,10 +3181,7 @@
                 return;
             }
             
-            // Don't enforce horizontal layout in read-only mode (allow 3-column grid)
-            if (isReadOnlyMode) {
-                return;
-            }
+            // Layout enforcement always active
             
             const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
             listItems.forEach(item => {
@@ -3222,10 +3230,7 @@
                 return;
             }
             
-            // Don't enforce 2-column layout in read-only mode (allow 3-column)
-            if (isReadOnlyMode) {
-                return;
-            }
+            // Layout enforcement always active
             
             // Enforce 2-column layout specifically for list view
             enforceTwoColumnLayoutInListView();
@@ -3281,10 +3286,7 @@
                 return;
             }
             
-            // Don't enforce 2-column layout in read-only mode (allow 3-column)
-            if (isReadOnlyMode) {
-                return;
-            }
+            // Layout enforcement always active
             
             // Force exactly 2 columns with CSS
             deckCardsEditor.style.setProperty('display', 'flex', 'important');
@@ -3326,7 +3328,7 @@
                     }
                 });
                 
-                if (shouldEnforce && deckCardsEditor.classList.contains('list-view') && !isReadOnlyMode) {
+                if (shouldEnforce && deckCardsEditor.classList.contains('list-view')) {
                     setTimeout(() => {
                         enforceListViewHorizontalLayout();
                     }, 10);
@@ -5405,11 +5407,7 @@
         // Add card to deck from search
         async function addCardToDeckFromSearch(cardId, cardType) {
             
-            // Check if in read-only mode
-            if (isReadOnlyMode) {
-                alert('Cannot add cards in read-only mode. You are viewing another user\'s deck.');
-                return;
-            }
+            // Read-only mode removed - now handled by backend flag
             
             if (!currentDeckId) {
                 console.error('No current deck selected');
@@ -5577,8 +5575,8 @@
             const deckPercentage = (deckWidth / totalWidth) * 100;
             
             if (deckCardsEditor.classList.contains('list-view')) {
-                // List view: 2 columns in edit mode, 3 columns in read-only mode
-                if (!isReadOnlyMode) {
+                // List view: 2 columns layout
+                if (true) {
                     manageDeckLayout('addClass', { className: 'two-column' });
                     createTwoColumnLayout();
                 }
@@ -5692,8 +5690,9 @@
             });
         }
 
-        // Force character cards to single column layout
+        // Force character cards to single column layout (only in edit mode)
         function forceCharacterSingleColumnLayout() {
+            // Layout enforcement always active
             
             // Find all character sections
             const characterSections = document.querySelectorAll('#deck-type-character, .deck-type-section[data-type="character"]');
@@ -6461,7 +6460,7 @@
             // Debug: Check character section layout and body classes
             setTimeout(() => {
                 console.log('🔍 Layout Debug - Body classes:', document.body.className);
-                console.log('🔍 Layout Debug - isReadOnlyMode:', isReadOnlyMode);
+                console.log('🔍 Layout Debug - read-only mode removed');
                 console.log('🔍 Layout Debug - currentUser role:', currentUser?.role);
                 console.log('🔍 Layout Debug - isGuestUser():', typeof isGuestUser === 'function' ? isGuestUser() : 'function not available');
                 
@@ -6473,20 +6472,7 @@
                         console.log('🔍 Layout Debug - Character cards computed style grid-template-columns:', computedStyle.gridTemplateColumns);
                         console.log('🔍 Layout Debug - Character cards element:', characterCards);
                         
-                        // In read-only mode, allow CSS to control the layout
-                        // Don't force single column layout
-                        if (!isReadOnlyMode) {
-                            // Only force single column in edit mode if not already set
-                            if (computedStyle.gridTemplateColumns !== '1fr') {
-                                characterCards.style.gridTemplateColumns = '1fr';
-                            }
-                        } else {
-                            // In read-only mode, check if we need to force single column for guest users
-                            if (currentUser && currentUser.role === 'GUEST') {
-                                console.log('🔍 Layout Debug - Forcing single column for guest user');
-                                characterCards.style.setProperty('grid-template-columns', '1fr', 'important');
-                            }
-                        }
+                        // Read-only mode should use the same layout as edit mode - no special JavaScript rules needed
                     }
                 }
                 
@@ -6500,118 +6486,10 @@
                     console.log(`🔍 Layout Debug - Section ${index} classes:`, section.className);
                     console.log(`🔍 Layout Debug - Section ${index} parent classes:`, section.parentElement?.className);
                     
-                    // Force single column for guest users in read-only mode (but only in tile view)
-                    if (currentUser && currentUser.role === 'GUEST' && isReadOnlyMode) {
-                        const deckCardsEditor = document.getElementById('deckCardsEditor');
-                        const isListView = deckCardsEditor && deckCardsEditor.classList.contains('list-view');
-                        
-                        if (!isListView) {
-                            console.log(`🔍 Layout Debug - Forcing single column for section ${index} (tile view)`);
-                            
-                            // Try multiple approaches to force single column
-                            section.style.setProperty('grid-template-columns', '1fr', 'important');
-                            section.style.setProperty('display', 'grid', 'important');
-                            section.style.setProperty('width', '100%', 'important');
-                            section.style.setProperty('max-width', '100%', 'important');
-                            
-                            // Also try setting the CSS custom property
-                            section.style.setProperty('--grid-template-columns', '1fr', 'important');
-                        } else {
-                            console.log(`🔍 Layout Debug - Allowing CSS to handle layout for section ${index} (list view)`);
-                            // In list view, let CSS handle the layout (3-column for read-only mode)
-                            section.style.removeProperty('grid-template-columns');
-                            section.style.removeProperty('--grid-template-columns');
-                        }
-                        
-                        // Force the parent container to be single column too
-                        const parentSection = section.closest('.deck-type-section');
-                        if (parentSection) {
-                            parentSection.style.setProperty('width', '100%', 'important');
-                            parentSection.style.setProperty('max-width', '100%', 'important');
-                        }
-                        
-                        // Extra aggressive fix for character cards (but only in tile view)
-                        const characterSection = section.closest('.deck-type-section[data-type="character"]');
-                        if (characterSection && !isListView) {
-                            console.log(`🔍 Layout Debug - Extra aggressive fix for character section ${index} (tile view)`);
-                            section.style.setProperty('grid-template-columns', '1fr', 'important');
-                            section.style.setProperty('display', 'grid', 'important');
-                            section.style.setProperty('width', '100%', 'important');
-                            section.style.setProperty('max-width', '100%', 'important');
-                        }
-                        
-                        // Check if the fix worked
-                        const newComputedStyle = window.getComputedStyle(section);
-                        console.log(`🔍 Layout Debug - Section ${index} AFTER fix grid-template-columns:`, newComputedStyle.gridTemplateColumns);
-                    }
+                    // Read-only mode should use the same layout as edit mode - no special JavaScript rules needed
                 });
                 
-                // Additional aggressive fix with delay for character cards (but only in tile view)
-                if (currentUser && currentUser.role === 'GUEST' && isReadOnlyMode) {
-                    setTimeout(() => {
-                        const deckCardsEditor = document.getElementById('deckCardsEditor');
-                        const isListView = deckCardsEditor && deckCardsEditor.classList.contains('list-view');
-                        
-                        const characterCards = document.querySelector('.deck-type-section[data-type="character"] .deck-type-cards');
-                        if (characterCards && !isListView) {
-                            console.log('🔍 Layout Debug - Final aggressive fix for character cards (tile view)');
-                            characterCards.style.setProperty('grid-template-columns', '1fr', 'important');
-                            characterCards.style.setProperty('display', 'grid', 'important');
-                            characterCards.style.setProperty('width', '100%', 'important');
-                        }
-                        
-                        // Fix card width overflow for all cards in read-only mode
-                        const allCardItems = document.querySelectorAll('.read-only-mode .deck-card-editor-item');
-                        console.log(`🔍 Layout Debug - Fixing ${allCardItems.length} card items for width overflow`);
-                        allCardItems.forEach((card, index) => {
-                            const beforeWidth = card.offsetWidth;
-                            const beforeMaxWidth = window.getComputedStyle(card).maxWidth;
-                            const beforeBoxSizing = window.getComputedStyle(card).boxSizing;
-                            const parentWidth = card.parentElement?.offsetWidth || 'unknown';
-                            console.log(`🔍 Layout Debug - Card ${index} BEFORE: width=${beforeWidth}px, max-width=${beforeMaxWidth}, box-sizing=${beforeBoxSizing}, parent-width=${parentWidth}px`);
-                            
-                            card.style.setProperty('max-width', '100%', 'important');
-                            card.style.setProperty('width', '100%', 'important');
-                            card.style.setProperty('box-sizing', 'border-box', 'important');
-                            card.style.setProperty('overflow', 'hidden', 'important');
-                            
-                            const afterWidth = card.offsetWidth;
-                            const afterMaxWidth = window.getComputedStyle(card).maxWidth;
-                            const afterBoxSizing = window.getComputedStyle(card).boxSizing;
-                            console.log(`🔍 Layout Debug - Card ${index} AFTER: width=${afterWidth}px, max-width=${afterMaxWidth}, box-sizing=${afterBoxSizing}`);
-                            
-                            // Fix character card content specifically
-                            if (card.classList.contains('character-card')) {
-                                const cardInfo = card.querySelector('.deck-card-editor-info');
-                                if (cardInfo) {
-                                    cardInfo.style.setProperty('flex', '1', 'important');
-                                    cardInfo.style.setProperty('min-width', '0', 'important');
-                                    cardInfo.style.setProperty('max-width', 'calc(100% - 120px)', 'important');
-                                    cardInfo.style.setProperty('overflow', 'hidden', 'important');
-                                }
-                                
-                                const cardName = card.querySelector('.deck-card-editor-name');
-                                if (cardName) {
-                                    cardName.style.setProperty('white-space', 'nowrap', 'important');
-                                    cardName.style.setProperty('overflow', 'hidden', 'important');
-                                    cardName.style.setProperty('text-overflow', 'ellipsis', 'important');
-                                }
-                                
-                                const cardActions = card.querySelector('.deck-card-editor-actions');
-                                if (cardActions) {
-                                    cardActions.style.setProperty('flex-shrink', '0', 'important');
-                                    cardActions.style.setProperty('width', '100px', 'important');
-                                }
-                            }
-                        });
-                    }, 200);
-                    
-                    // Layout enforcement is now handled by the separated view renderers
-                    // No more global layout enforcement functions needed
-                    
-                    // Layout enforcement is now handled by the separated view renderers
-                    // No more global layout enforcement calls needed
-                }
+                // Read-only mode should use the same layout as edit mode - no special JavaScript rules needed
             }, 100);
             
             // Check if we're in list view mode and re-render accordingly
@@ -6632,7 +6510,7 @@
                 const deckWidth = deckPane.offsetWidth;
                 const deckPercentage = (deckWidth / layoutWidth) * 100;
                 
-                if (deckPercentage >= 33 && !isReadOnlyMode) {
+                if (deckPercentage >= 33) {
                     // Only create two-column layout if it doesn't already exist and not in read-only mode
                     const deckCardsEditor = document.querySelector('.deck-cards-editor');
                     if (!deckCardsEditor.querySelector('.deck-column')) {
@@ -7572,11 +7450,7 @@
             const deckPane = document.querySelector('.deck-pane');
             const cardSelectorPane = document.querySelector('.card-selector-pane');
             
-            // Check if in read-only mode
-            if (isReadOnlyMode) {
-                alert('Cannot remove cards in read-only mode. You are viewing another user\'s deck.');
-                return;
-            }
+            // Read-only mode removed - now handled by backend flag
             
             // Capture current expansion state before re-rendering
             const currentExpansionState = getExpansionState();
@@ -7734,7 +7608,7 @@
                 ultraAggressiveLayoutEnforcement();
                 
                 // Additional enforcement for list view to prevent 4-column layout
-                if (deckCardsEditor && deckCardsEditor.classList.contains('list-view') && !isReadOnlyMode) {
+                if (deckCardsEditor && deckCardsEditor.classList.contains('list-view')) {
                     enforceTwoColumnLayoutInListView();
                 }
                 
@@ -9242,8 +9116,8 @@
             
             await displayDeckCardsForEditing();
             
-            // Enforce horizontal layout in list view after adding card (only in edit mode)
-            if (!isReadOnlyMode) {
+            // Enforce horizontal layout in list view after adding card
+            if (true) {
                 setTimeout(() => {
                     enforceListViewHorizontalLayout();
                     enforceTwoColumnLayoutInListView();
@@ -9300,13 +9174,9 @@
             const isReserveCharacter = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character === cardId;
             const hasReserveCharacter = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
             
-            // In read-only mode, show indicator only for the selected reserve character
-            if (isReadOnlyMode) {
-                if (isReserveCharacter) {
-                    return `<span class="reserve-indicator">Reserve</span>`;
-                } else {
-                    return ''; // No indicator for non-reserve characters in read-only mode
-                }
+            // Reserve character indicator always shown for selected character
+            if (isReserveCharacter) {
+                return `<span class="reserve-indicator">Reserve</span>`;
             }
             
             // If this card is the selected reserve character, show the "Reserve" button
@@ -9409,7 +9279,7 @@
 
 
         async function selectReserveCharacter(cardId, index) {
-            console.log('🔍 selectReserveCharacter called with:', { cardId, index, currentDeckId, isReadOnlyMode, isGuest: isGuestUser() });
+            console.log('🔍 selectReserveCharacter called with:', { cardId, index, currentDeckId, isGuest: isGuestUser() });
             
             if (!currentDeckId && currentDeckId !== null) {
                 console.log('❌ No deck selected - currentDeckId:', currentDeckId);
@@ -9423,12 +9293,7 @@
                 return;
             }
 
-            // Check if in read-only mode
-            if (isReadOnlyMode) {
-                console.log('❌ In read-only mode, cannot modify deck');
-                alert('Cannot modify deck in read-only mode. You are viewing another user\'s deck.');
-                return;
-            }
+            // Read-only mode removed - now handled by backend flag
 
             console.log('✅ Proceeding with reserve character selection');
 
@@ -9473,12 +9338,7 @@
                 return;
             }
 
-            // Check if in read-only mode
-            if (isReadOnlyMode) {
-                console.log('❌ In read-only mode, cannot modify deck');
-                alert('Cannot modify deck in read-only mode. You are viewing another user\'s deck.');
-                return;
-            }
+            // Read-only mode removed - now handled by backend flag
 
             console.log('✅ Proceeding with reserve character deselection');
 
