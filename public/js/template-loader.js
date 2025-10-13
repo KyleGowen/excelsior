@@ -1,4 +1,15 @@
-// Template Loader and Event Handler
+/* ========================================
+ * PHASE 11B: TEMPLATE LOADER
+ * ========================================
+ * 
+ * This file contains HTML template loading and injection functionality
+ * created during Phase 11B of the refactoring project.
+ * 
+ * Purpose: HTML template loading and injection
+ * Created: Phase 11B of 12-phase refactoring project
+ * Contains: JavaScript logic to fetch and inject HTML templates into DOM elements
+ * 
+ * ======================================== */
 class TemplateLoader {
     constructor() {
         this.templates = new Map();

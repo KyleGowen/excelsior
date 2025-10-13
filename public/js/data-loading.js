@@ -1,5 +1,20 @@
-// Data Loading Functions
-// Extracted from index.html for better modularity
+/* ========================================
+ * PHASE 6: DATA LOADING FUNCTIONS
+ * ========================================
+ * 
+ * This file contains API data loading and management functions
+ * extracted from index.html during Phase 6 of the refactoring project.
+ * 
+ * Purpose: API data loading and management
+ * Created: Phase 6 of 12-phase refactoring project
+ * Contains:
+ *   - loadDatabaseViewData() - Database view initialization
+ *   - loadCharacters() - Character data loading
+ *   - loadSpecialCards() - Special card data loading
+ *   - All other card type loading functions
+ *   - Background data loading functions
+ * 
+ * ======================================== */
 
 // Load all database view data
 async function loadDatabaseViewData(forceCharactersTab = false) {

@@ -1,5 +1,23 @@
-// Layout and Drag-Drop Functions
-// Extracted from public/index.html for better organization
+/* ========================================
+ * PHASE 10A: LAYOUT AND DRAG-DROP FUNCTIONS
+ * ========================================
+ * 
+ * This file contains drag-and-drop functionality and layout management
+ * extracted from index.html during Phase 10A of the refactoring project.
+ * 
+ * Purpose: Drag-and-drop functionality and layout management
+ * Created: Phase 10A of 12-phase refactoring project
+ * Contains:
+ *   - setupDragAndDrop() - Drag-and-drop initialization
+ *   - handlePlusButtonClick() - Plus button interactions
+ *   - handleCardClick() - Card click handling
+ *   - handleDeckCardDragStart() / handleDeckCardDragEnd() - Deck card dragging
+ *   - handleDeckCardDragOver() / handleDeckCardDrop() - Deck card drop handling
+ *   - handleAvailableCardDragOver() / handleAvailableCardDrop() - Available card dragging
+ *   - updateDragLayout() - Layout updates during drag
+ *   - reorderDeckCards() - Card reordering
+ * 
+ * ======================================== */
 
 // Global variables for drag and drop
 let draggedCardIndex = null;

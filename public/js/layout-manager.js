@@ -1,7 +1,15 @@
-/**
- * LayoutManager - Centralized layout management for deck editor views
- * Handles tile view, list view, read-only modes, and layout enforcement
- */
+/* ========================================
+ * PHASE 7: LAYOUT MANAGER
+ * ========================================
+ * 
+ * This file contains centralized layout management for deck editor views
+ * created during Phase 7 of the refactoring project.
+ * 
+ * Purpose: Centralized layout management for deck editor views
+ * Created: Phase 7 of 12-phase refactoring project
+ * Contains: Handles tile view, list view, read-only modes, and layout enforcement
+ * 
+ * ======================================== */
 class LayoutManager {
     constructor() {
         this.currentViewMode = 'tile'; // 'tile' or 'list'

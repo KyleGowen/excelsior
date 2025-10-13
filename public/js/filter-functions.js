@@ -1,5 +1,31 @@
-// Filter Functions
-// Extracted from index.html for better modularity
+/* ========================================
+ * PHASE 11C & 12: FILTER FUNCTIONS
+ * ========================================
+ * 
+ * This file contains filter-related functions and utilities extracted from
+ * index.html during Phase 11C and 12 of the refactoring project.
+ * 
+ * Purpose: Filter-related functions and utilities
+ * Created: Phase 11C & 12 of 12-phase refactoring project
+ * Contains:
+ *   - isGuestUser() - Guest user detection
+ *   - clearLocationFilters() - Location filter clearing
+ *   - clearSpecialCardFilters() - Special card filter clearing
+ *   - clearAdvancedUniverseFilters() - Advanced universe filter clearing
+ *   - clearAspectsFilters() - Aspects filter clearing
+ *   - clearMissionsFilters() - Missions filter clearing
+ *   - clearEventsFilters() - Events filter clearing
+ *   - clearTeamworkFilters() - Teamwork filter clearing
+ *   - clearAllyUniverseFilters() - Ally universe filter clearing
+ *   - clearTrainingFilters() - Training filter clearing
+ *   - clearBasicUniverseFilters() - Basic universe filter clearing
+ *   - clearPowerCardFilters() - Power card filter clearing
+ *   - toggleFortificationsColumn() - Fortifications column toggle
+ *   - ensureTwoPaneLayout() - Two-pane layout enforcement
+ *   - updateDeckStats() - Deck statistics updates
+ *   - toggleCategory() - Category toggle functionality
+ * 
+ * ======================================== */
 
 // User utility functions
 function isGuestUser() {

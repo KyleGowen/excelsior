@@ -1,5 +1,22 @@
-// Remaining Utility Functions
-// Extracted from public/index.html for better organization
+/* ========================================
+ * PHASE 10C: REMAINING UTILITY FUNCTIONS
+ * ========================================
+ * 
+ * This file contains remaining utility and helper functions extracted from
+ * index.html during Phase 10C of the refactoring project.
+ * 
+ * Purpose: Remaining utility and helper functions
+ * Created: Phase 10C of 12-phase refactoring project
+ * Contains:
+ *   - getCardName() - Card name extraction
+ *   - formatCardType() - Card type formatting
+ *   - displayCardSearchResults() - Search result display
+ *   - getCardBounds() - Card boundary calculations
+ *   - clearSelection() - Selection clearing
+ *   - onPointerMove() / onPointerUp() - Pointer event handling
+ *   - attachDragListeners() - Drag listener attachment
+ * 
+ * ======================================== */
 
 // Card management functions
 function getCardName(card) {

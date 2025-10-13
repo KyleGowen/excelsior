@@ -1,7 +1,20 @@
-/**
- * Search and Filter Functions
- * Starting with simple, self-contained functions
- */
+/* ========================================
+ * PHASE 7: SEARCH AND FILTER FUNCTIONS
+ * ========================================
+ * 
+ * This file contains search and filtering functionality extracted from
+ * index.html during Phase 7 of the refactoring project.
+ * 
+ * Purpose: Search and filtering functionality
+ * Created: Phase 7 of 12-phase refactoring project
+ * Contains:
+ *   - setupCharacterSearch() - Character search setup
+ *   - setupSpecialCardSearch() - Special card search
+ *   - setupLocationSearch() - Location search
+ *   - All other search and filter functions
+ *   - Global filter management
+ * 
+ * ======================================== */
 
 /**
  * Clear all filters globally

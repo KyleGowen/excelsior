@@ -1,6 +1,20 @@
-// Frontend Authentication Service
-// This file provides the same authentication functionality as the original embedded code
-// but uses a service-based approach
+/* ========================================
+ * PHASE 5: AUTHENTICATION FUNCTIONS
+ * ========================================
+ * 
+ * This file contains user authentication and session management functions
+ * extracted from index.html during Phase 5 of the refactoring project.
+ * 
+ * Purpose: User authentication and session management
+ * Created: Phase 5 of 12-phase refactoring project
+ * Contains:
+ *   - login() - User login functionality
+ *   - logout() - User logout functionality
+ *   - checkAuthentication() - Session verification
+ *   - showLoginModal() - Login modal management
+ *   - showLoginError() / hideLoginError() - Error handling
+ * 
+ * ======================================== */
 
 
 class FrontendAuthService {

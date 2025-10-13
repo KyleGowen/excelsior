@@ -1,7 +1,18 @@
-/**
- * Simple Deck Editor Functions
- * Starting with basic, self-contained functions
- */
+/* ========================================
+ * PHASE 4: DECK EDITOR FUNCTIONS
+ * ========================================
+ * 
+ * This file contains basic deck editor functionality extracted from
+ * index.html during Phase 4 of the refactoring project.
+ * 
+ * Purpose: Basic deck editor functionality
+ * Created: Phase 4 of 12-phase refactoring project
+ * Contains:
+ *   - disableAddToDeckButtons() - Guest user button handling
+ *   - toggleOnePerDeckColumn() - Column visibility toggle
+ *   - Basic deck editor utilities
+ * 
+ * ======================================== */
 
 /**
  * Disable add to deck buttons for guest users

@@ -1,7 +1,20 @@
-/**
- * Card Display Functions
- * Functions for displaying characters, special cards, locations, and formatting card effects
- */
+/* ========================================
+ * PHASE 3: CARD DISPLAY FUNCTIONS
+ * ========================================
+ * 
+ * This file contains all card rendering and display functions extracted from
+ * index.html during Phase 3 of the refactoring project.
+ * 
+ * Purpose: All card rendering and display functions
+ * Created: Phase 3 of 12-phase refactoring project
+ * Contains:
+ *   - displayCharacters() - Character card rendering
+ *   - displaySpecialCards() - Special card rendering
+ *   - displayLocations() - Location card rendering
+ *   - formatSpecialCardEffect() - Card effect formatting
+ *   - All other card type display functions
+ * 
+ * ======================================== */
 
 /**
  * Display character cards in the characters table

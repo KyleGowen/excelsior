@@ -1,3 +1,17 @@
+/* ========================================
+ * PHASE 1: CSS EXTRACTION
+ * ========================================
+ * 
+ * This file contains all CSS styles extracted from index.html during Phase 1
+ * of the refactoring project. This extraction reduced the HTML file by ~5,000 lines
+ * and improved maintainability by separating concerns.
+ * 
+ * Purpose: All styling for the Excelsior Deckbuilder application
+ * Created: Phase 1 of 12-phase refactoring project
+ * Impact: Reduced HTML file size significantly
+ * 
+ * ======================================== */
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);

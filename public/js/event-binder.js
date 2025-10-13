@@ -1,4 +1,15 @@
-// Event Binding System for Data Attributes
+/* ========================================
+ * PHASE 11B: EVENT BINDER
+ * ========================================
+ * 
+ * This file contains centralized event binding for data attributes
+ * created during Phase 11B of the refactoring project.
+ * 
+ * Purpose: Centralized event binding for data attributes
+ * Created: Phase 11B of 12-phase refactoring project
+ * Contains: JavaScript logic to dynamically attach event listeners based on data attributes
+ * 
+ * ======================================== */
 class EventBinder {
     constructor() {
         this.initialized = false;

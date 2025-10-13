@@ -1,5 +1,20 @@
-// Validation and Calculation Functions
-// Extracted from public/index.html for better organization
+/* ========================================
+ * PHASE 10B: VALIDATION AND CALCULATION FUNCTIONS
+ * ========================================
+ * 
+ * This file contains deck validation and calculation functions extracted from
+ * index.html during Phase 10B of the refactoring project.
+ * 
+ * Purpose: Deck validation and calculation functions
+ * Created: Phase 10B of 12-phase refactoring project
+ * Contains:
+ *   - validateDeck() - Deck validation logic
+ *   - calculateTotalCardCount() - Card count calculations
+ *   - calculateTotalThreat() - Threat level calculations
+ *   - updateDeckTitleValidation() - Title validation updates
+ *   - toggleLimitedState() - Limited deck state management
+ * 
+ * ======================================== */
 
 // Global variable to track limited state
 let isDeckLimited = false;

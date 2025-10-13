@@ -1,5 +1,21 @@
-// UI Utility Functions
-// Extracted from index.html as part of Phase 10E refactoring
+/* ========================================
+ * PHASE 9: UI UTILITY FUNCTIONS
+ * ========================================
+ * 
+ * This file contains UI interactions and utility functions extracted from
+ * index.html during Phase 9 of the refactoring project.
+ * 
+ * Purpose: UI interactions and utility functions
+ * Created: Phase 9 of 12-phase refactoring project
+ * Contains:
+ *   - showToast() - Toast notifications
+ *   - startEditingTitle() / saveTitleEdit() - Title editing
+ *   - startEditingDescription() / saveDescriptionEdit() - Description editing
+ *   - cancelTitleEdit() / cancelDescriptionEdit() - Edit cancellation
+ *   - toggleDrawHand() - Draw hand toggle
+ *   - screenshotView() - Screenshot functionality
+ * 
+ * ======================================== */
 
 // UI utility functions
 function toggleDrawHand() {

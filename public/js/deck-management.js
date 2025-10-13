@@ -1,7 +1,21 @@
-/**
- * Deck Management Functions
- * Core functionality for loading, creating, and managing decks
- */
+/* ========================================
+ * PHASE 8: DECK MANAGEMENT FUNCTIONS
+ * ========================================
+ * 
+ * This file contains deck creation, editing, and management functions
+ * extracted from index.html during Phase 8 of the refactoring project.
+ * 
+ * Purpose: Deck creation, editing, and management
+ * Created: Phase 8 of 12-phase refactoring project
+ * Contains:
+ *   - createNewDeck() - New deck creation
+ *   - editDeck() - Deck editing
+ *   - viewDeck() - Deck viewing
+ *   - deleteDeck() - Deck deletion
+ *   - showDeckSelection() - Deck selection modal
+ *   - All deck management utilities
+ * 
+ * ======================================== */
 
 // Global variable for user decks
 let userDecks = [];
