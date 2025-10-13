@@ -90,3 +90,43 @@ function toggleFortificationsColumn() {
         toggleText.textContent = 'Hide';
     }
 }
+
+// Layout utility functions
+function ensureTwoPaneLayout() {
+    const layout = document.querySelector('.deck-editor-layout');
+    if (layout) {
+        // Only add the class if we're not in read-only mode
+        if (!isReadOnlyMode) {
+            layout.classList.add('force-two-pane');
+        } else {
+            layout.classList.remove('force-two-pane');
+        }
+    }
+}
+
+// Deck utility functions
+function updateDeckStats() {
+    // Statistics elements were removed as requested, so this function is now a no-op
+    // but we keep it to avoid breaking other functions that call it
+}
+
+// UI utility functions
+function toggleCategory(headerElement) {
+    const category = headerElement.closest('.card-category');
+    const content = category.querySelector('.card-category-content');
+    const icon = headerElement.querySelector('.collapse-icon');
+    
+    if (headerElement.classList.contains('collapsed')) {
+        // Expand
+        headerElement.classList.remove('collapsed');
+        content.classList.remove('collapsed');
+        content.classList.add('expanded');
+        icon.textContent = '▼';
+    } else {
+        // Collapse
+        headerElement.classList.add('collapsed');
+        content.classList.add('collapsed');
+        content.classList.remove('expanded');
+        icon.textContent = '▶';
+    }
+}
