@@ -53,7 +53,7 @@ COPY flyway.conf /app/flyway.conf
 
 # Copy static files for the web frontend
 COPY public /app/public
-COPY src/public /app/src/public
+# Copy src/resources (card images and data)
 COPY src/resources /app/src/resources
 
 # Health: Node logs to stdout by default; dumb-init forwards signals

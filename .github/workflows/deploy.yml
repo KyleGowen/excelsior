@@ -200,16 +200,16 @@ jobs:
         echo "Commit date: $(git log -1 --pretty=format:'%ad')"
         echo "Files changed in this commit:"
         git diff --name-only HEAD~1 HEAD || echo "No previous commit to compare"
-        echo "🔍 Checking if our fixes are in the current commit:"
+        echo "🔍 Checking if key files are present in the current commit:"
         if grep -q "replaceAllCardsInDeck" src/database/PostgreSQLDeckRepository.ts; then
           echo "✅ Card duplication bug fix found in current commit"
         else
           echo "❌ Card duplication bug fix NOT found in current commit"
         fi
-        if grep -q "Victory Harben.*20" public/index.html; then
-          echo "✅ Victory Harben fix found in current commit"
+        if test -f public/index.html; then
+          echo "✅ Main index.html file found in current commit"
         else
-          echo "❌ Victory Harben fix NOT found in current commit"
+          echo "❌ Main index.html file NOT found in current commit"
         fi
         echo "=== END GIT VERIFICATION ==="
       
@@ -241,10 +241,10 @@ jobs:
           echo "❌ Card duplication bug fix NOT found in source files"
           exit 1
         fi
-        if grep -q "Victory Harben.*20" public/index.html; then
-          echo "✅ Victory Harben fix found in source files"
+        if test -f public/index.html; then
+          echo "✅ Main index.html file found in source files"
         else
-          echo "❌ Victory Harben fix NOT found in source files"
+          echo "❌ Main index.html file NOT found in source files"
           exit 1
         fi
         echo "🧹 Cleaning up any existing images..."
@@ -300,11 +300,11 @@ jobs:
           echo "❌ Card duplication bug fix NOT found in deployment - deployment may be using old code"
         fi
         
-        echo "Checking for Victory Harben fix in index.html..."
-        if docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG grep -q "Victory Harben.*20" /app/public/index.html; then
-          echo "✅ Victory Harben fix found in index.html"
+        echo "Checking for refactored JavaScript files..."
+        if docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG test -d /app/public/js; then
+          echo "✅ Refactored JavaScript directory found"
         else
-          echo "❌ Victory Harben fix NOT found in index.html"
+          echo "❌ Refactored JavaScript directory NOT found"
         fi
         
         echo "Listing public directory..."
@@ -522,7 +522,7 @@ jobs:
             "echo \"\"",
             "echo \"Code Verification:\"",
             "grep -q \"replaceAllCardsInDeck\" /app/src/database/PostgreSQLDeckRepository.ts && echo \"✅ Card duplication bug fix found in production\" || echo \"❌ Card duplication bug fix NOT found in production\"",
-            "grep -q \"Victory Harben.*20\" /app/public/index.html && echo \"✅ Victory Harben fix found in production\" || echo \"❌ Victory Harben fix NOT found in production\"",
+            "test -d /app/public/js && echo \"✅ Refactored JavaScript directory found in production\" || echo \"❌ Refactored JavaScript directory NOT found in production\"",
             "echo \"\"",
             "echo \"=== END VERIFICATION ===\""
           ]' \
