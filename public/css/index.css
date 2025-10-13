@@ -3596,6 +3596,11 @@
             gap: 16px !important;
         }
         
+        /* More specific rule for character cards in guest read-only mode */
+        .read-only-mode.guest-user .deck-type-section[data-type="character"] .deck-type-cards {
+            grid-template-columns: 1fr !important; /* Force single column for character cards */
+        }
+        
         /* Two column layout for regular users in read-only mode tile view */
         .read-only-mode:not(.guest-user) .deck-cards-editor:not(.list-view) .deck-type-cards:not([style*="display: none"]) {
             display: grid !important;

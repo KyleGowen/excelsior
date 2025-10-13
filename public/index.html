@@ -6457,8 +6457,29 @@
                     if (currentUser && currentUser.role === 'GUEST' && isReadOnlyMode) {
                         console.log(`🔍 Layout Debug - Forcing single column for section ${index}`);
                         section.style.setProperty('grid-template-columns', '1fr', 'important');
+                        
+                        // Extra aggressive fix for character cards
+                        const characterSection = section.closest('.deck-type-section[data-type="character"]');
+                        if (characterSection) {
+                            console.log(`🔍 Layout Debug - Extra aggressive fix for character section ${index}`);
+                            section.style.setProperty('grid-template-columns', '1fr', 'important');
+                            section.style.setProperty('display', 'grid', 'important');
+                        }
                     }
                 });
+                
+                // Additional aggressive fix with delay for character cards
+                if (currentUser && currentUser.role === 'GUEST' && isReadOnlyMode) {
+                    setTimeout(() => {
+                        const characterCards = document.querySelector('.deck-type-section[data-type="character"] .deck-type-cards');
+                        if (characterCards) {
+                            console.log('🔍 Layout Debug - Final aggressive fix for character cards');
+                            characterCards.style.setProperty('grid-template-columns', '1fr', 'important');
+                            characterCards.style.setProperty('display', 'grid', 'important');
+                            characterCards.style.setProperty('width', '100%', 'important');
+                        }
+                    }, 200);
+                }
             }, 100);
             
             // Check if we're in list view mode and re-render accordingly
