@@ -1901,6 +1901,11 @@
                     isReadOnlyMode = authResult.isReadOnlyMode; // Update global flag
                     document.body.classList.toggle('read-only-mode', isReadOnlyMode);
                     
+                    // Add guest class if user is a guest
+                    if (currentUser && currentUser.role === 'GUEST') {
+                        document.body.classList.add('guest-user');
+                    }
+                    
                     // Load main app data in background (without showing the UI) for when user navigates back
                     loadMainAppDataInBackground();
                     

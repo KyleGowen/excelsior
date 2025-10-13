@@ -3589,10 +3589,17 @@
             display: block !important;
         }
         
-        /* Two column layout for individual card tiles within each section in read-only mode tile view */
-        .read-only-mode .deck-cards-editor:not(.list-view) .deck-type-cards:not([style*="display: none"]) {
+        /* Single column layout for guest users in read-only mode tile view */
+        .read-only-mode.guest-user .deck-cards-editor:not(.list-view) .deck-type-cards:not([style*="display: none"]) {
             display: grid !important;
-            grid-template-columns: 1fr 1fr !important; /* Two columns for tile view in read-only mode */
+            grid-template-columns: 1fr !important; /* Single column for guest users in read-only mode */
+            gap: 16px !important;
+        }
+        
+        /* Two column layout for regular users in read-only mode tile view */
+        .read-only-mode:not(.guest-user) .deck-cards-editor:not(.list-view) .deck-type-cards:not([style*="display: none"]) {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important; /* Two columns for regular users in read-only mode */
             gap: 16px !important;
         }
         
