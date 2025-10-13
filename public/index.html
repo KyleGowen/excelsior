@@ -1083,22 +1083,11 @@
 
         // clearLocationFilters function moved to filter-functions.js
 
-        // Clear filter functions for all tabs
-        function clearSpecialCardFilters() {
-            clearFilters(loadSpecialCards);
-        }
-
-        function clearAdvancedUniverseFilters() {
-            clearFilters(loadAdvancedUniverse);
-        }
-
-        function clearAspectsFilters() {
-            clearFilters(loadAspects);
-        }
-
-        function clearMissionsFilters() {
-            clearFilters(loadMissions);
-        }
+        // Clear filter functions moved to filter-functions.js:
+        // - clearSpecialCardFilters
+        // - clearAdvancedUniverseFilters  
+        // - clearAspectsFilters
+        // - clearMissionsFilters
 
         function applyMissionFilters() {
             const selectedMissionSets = Array.from(document.querySelectorAll('#missions-tab input[type="checkbox"]:checked'))
