@@ -3456,6 +3456,9 @@
         // calculateTotalThreat function moved to external file
         // Function to update deck summary with stats and validation
         async function updateDeckSummary(deckCards) {
+            console.log('🔍 updateDeckSummary called with deckCards:', deckCards?.length || 0, 'cards');
+            console.log('🔍 updateDeckSummary - currentDeckId:', currentDeckId, 'isGuest:', isGuestUser());
+            
             // Update total card count using shared function
             const totalCards = calculateTotalCardCount(deckCards);
             
@@ -9130,6 +9133,9 @@
         }
 
         function updateReserveButtons() {
+            console.log('🔍 updateReserveButtons called');
+            console.log('🔍 updateReserveButtons - currentDeckData:', currentDeckData?.metadata?.reserve_character);
+            
             // Find all character cards in the deck editor
             const characterCards = document.querySelectorAll('.deck-card-editor-item');
             
@@ -9206,29 +9212,50 @@
 
 
         async function selectReserveCharacter(cardId, index) {
-            if (!currentDeckId || !currentDeckData) {
+            console.log('🔍 selectReserveCharacter called with:', { cardId, index, currentDeckId, isReadOnlyMode, isGuest: isGuestUser() });
+            
+            if (!currentDeckId && currentDeckId !== null) {
+                console.log('❌ No deck selected - currentDeckId:', currentDeckId);
                 showNotification('No deck selected', 'error');
+                return;
+            }
+
+            if (!currentDeckData) {
+                console.log('❌ No deck data - currentDeckData:', currentDeckData);
+                showNotification('No deck data available', 'error');
                 return;
             }
 
             // Check if in read-only mode
             if (isReadOnlyMode) {
+                console.log('❌ In read-only mode, cannot modify deck');
                 alert('Cannot modify deck in read-only mode. You are viewing another user\'s deck.');
                 return;
             }
 
+            console.log('✅ Proceeding with reserve character selection');
+
             // Update local deck data only - changes will be persisted when user clicks Save
             if (!currentDeckData.metadata) {
+                console.log('🔧 Creating metadata object');
                 currentDeckData.metadata = {};
             }
+            
+            console.log('🔧 Setting reserve_character to:', cardId);
             currentDeckData.metadata.reserve_character = cardId;
+            
+            console.log('✅ Reserve character set, showing notification');
             showNotification('Reserve character selected! (Click Save to persist changes)', 'success');
             
+            console.log('🔧 Updating reserve buttons');
             // Update reserve buttons without re-rendering the entire deck to preserve layout
             updateReserveButtons();
             
+            console.log('🔧 Updating deck summary');
             // Update deck summary to reflect new threat calculation
             await updateDeckSummary(currentDeckData.cards || []);
+            
+            console.log('✅ selectReserveCharacter completed successfully');
         }
 
         async function deselectReserveCharacter(index) {

@@ -221,6 +221,9 @@ function calculateTotalCardCount(deckCards) {
 
 // Function to calculate total threat level for a deck
 function calculateTotalThreat(deckCards) {
+    console.log('🔍 calculateTotalThreat called with deckCards:', deckCards?.length || 0, 'cards');
+    console.log('🔍 calculateTotalThreat - currentDeckData:', currentDeckData?.metadata?.reserve_character);
+    
     let totalThreat = 0;
     
     // Get the current reserve character ID
@@ -266,6 +269,7 @@ function calculateTotalThreat(deckCards) {
         }
     });
     
+    console.log('🔍 calculateTotalThreat returning totalThreat:', totalThreat);
     return totalThreat;
 }
 
