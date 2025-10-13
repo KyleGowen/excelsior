@@ -43,3 +43,20 @@ function clearEventsFilters() {
     // Add specific filter clearing logic here if needed
     applyFilters();
 }
+
+// Toggle column visibility functions
+function toggleFortificationsColumn() {
+    const fortificationsColumn = document.querySelectorAll('.fortifications-column');
+    const toggleButton = document.getElementById('toggle-fortifications');
+    const toggleText = document.getElementById('fortifications-toggle-text');
+    
+    fortificationsColumn.forEach(col => {
+        col.classList.toggle('hidden');
+    });
+    
+    if (fortificationsColumn[0].classList.contains('hidden')) {
+        toggleText.textContent = 'Show';
+    } else {
+        toggleText.textContent = 'Hide';
+    }
+}
