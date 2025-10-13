@@ -122,6 +122,9 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
         console.log('🔍 Read-only mode removed from loadDeckForEditing parameter');
     }
     
+    // Update Read-Only badge visibility
+    updateReadOnlyBadge();
+    
     // Handle new deck creation
     if (deckId === 'new') {
         console.log('Initializing new deck');

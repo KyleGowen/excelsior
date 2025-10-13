@@ -748,6 +748,7 @@
                     <div class="deck-title-with-validation">
                         <h3 id="deckEditorTitle" class="editable-title" data-edit-handler="startEditingTitle">Edit Deck</h3>
                         <span id="deckTitleValidationBadge" class="deck-validation-badge"></span>
+                        <span id="readOnlyBadge" class="deck-validation-badge read-only" style="display: none;">Read-Only</span>
                     </div>
                     <p id="deckEditorDescription" class="deck-description editable-description" data-edit-handler="startEditingDescription"></p>
                     <div id="readOnlyIndicator" class="read-only-indicator" style="display: none;">
@@ -1775,6 +1776,21 @@
             document.body.classList.add('read-only-mode');
             console.log('🔍 Read-only mode detected from URL parameter');
         }
+        
+        // Show/hide Read-Only badge based on read-only mode
+        window.updateReadOnlyBadge = function() {
+            const readOnlyBadge = document.getElementById('readOnlyBadge');
+            if (readOnlyBadge) {
+                if (document.body.classList.contains('read-only-mode')) {
+                    readOnlyBadge.style.display = 'inline-block';
+                } else {
+                    readOnlyBadge.style.display = 'none';
+                }
+            }
+        }
+        
+        // Update badge on page load
+        updateReadOnlyBadge();
         
         // Add global event listener to catch any clicks that might trigger tab switches
         document.addEventListener('click', function(event) {

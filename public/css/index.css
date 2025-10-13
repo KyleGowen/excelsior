@@ -3471,6 +3471,25 @@
             max-width: none !important;
         }
         
+        /* Hide Remove All buttons in read-only mode, but preserve List View and Draw Hand buttons */
+        .read-only-mode .remove-all-btn:not(#drawHandBtn):not(#listViewBtn) {
+            display: none !important;
+        }
+        
+        /* Hide Change Art buttons on individual cards in read-only mode */
+        .read-only-mode .alternate-art-btn {
+            display: none !important;
+        }
+        
+        /* Hide - (remove) buttons on individual cards in read-only mode */
+        .read-only-mode .quantity-btn {
+            display: none !important;
+        }
+        
+        .read-only-mode .deck-list-item-remove {
+            display: none !important;
+        }
+        
         
         
 
@@ -4545,6 +4564,12 @@
             color: #d2b48c;
             border: 1px solid rgba(210, 180, 140, 0.3);
             cursor: pointer;
+        }
+
+        .deck-validation-badge.read-only {
+            background: rgba(100, 149, 237, 0.2);
+            color: #6495ed;
+            border: 1px solid rgba(100, 149, 237, 0.3);
         }
 
         .card-item {
