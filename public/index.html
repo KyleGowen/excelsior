@@ -874,12 +874,7 @@
 
         // loadSpecialCards function moved to external file
 
-        // Check if current user is guest
-        function isGuestUser() {
-            const currentUser = getCurrentUser();
-            const isGuest = currentUser && currentUser.role === 'GUEST';
-            return isGuest;
-        }
+        // isGuestUser function moved to filter-functions.js
 
         // Disable "Add to Deck" buttons for guest users
         // disableAddToDeckButtons function moved to external file

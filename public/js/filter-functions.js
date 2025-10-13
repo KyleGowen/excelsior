@@ -1,6 +1,13 @@
 // Filter Functions
 // Extracted from index.html for better modularity
 
+// User utility functions
+function isGuestUser() {
+    const currentUser = getCurrentUser();
+    const isGuest = currentUser && currentUser.role === 'GUEST';
+    return isGuest;
+}
+
 // Clear filter functions for different card types
 function clearLocationFilters() {
     // Clear location-specific filters
