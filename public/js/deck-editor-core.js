@@ -437,6 +437,9 @@ async function saveDeckChanges() {
 
 // Close deck editor modal
 async function closeDeckEditor() {
+    // Close draw hand pane first to clear any drawn cards
+    closeDrawHand();
+    
     // Save UI preferences before closing
     if (currentDeckId) {
         const preferences = getCurrentUIPreferences();
