@@ -284,7 +284,7 @@ function setupAllyUniverseSearch() {
                     (card.card_type && card.card_type.toLowerCase().includes(searchTerm)) ||
                     (card.stat_to_use && card.stat_to_use.toLowerCase().includes(searchTerm)) ||
                     (card.stat_type_to_use && card.stat_type_to_use.toLowerCase().includes(searchTerm)) ||
-                    (card.attack_value && card.attack_value.toLowerCase().includes(searchTerm)) ||
+                    (card.attack_value && String(card.attack_value).toLowerCase().includes(searchTerm)) ||
                     (card.attack_type && card.attack_type.toLowerCase().includes(searchTerm)) ||
                     (card.card_text && card.card_text.toLowerCase().includes(searchTerm))
                 );
@@ -309,8 +309,8 @@ function setupTrainingSearch() {
                             (card.card_name && card.card_name.toLowerCase().includes(searchTerm)) ||
                             (card.type_1 && card.type_1.toLowerCase().includes(searchTerm)) ||
                             (card.type_2 && card.type_2.toLowerCase().includes(searchTerm)) ||
-                            (card.value_to_use && card.value_to_use.toLowerCase().includes(searchTerm)) ||
-                            (card.bonus && card.bonus.toLowerCase().includes(searchTerm))
+                            (card.value_to_use && String(card.value_to_use).toLowerCase().includes(searchTerm)) ||
+                            (card.bonus && String(card.bonus).toLowerCase().includes(searchTerm))
                         );
                 displayTraining(filtered);
             }
@@ -330,8 +330,8 @@ function setupBasicUniverseSearch() {
                 const filtered = data.data.filter(card =>
                     (card.card_name && card.card_name.toLowerCase().includes(searchTerm)) ||
                     (card.type && card.type.toLowerCase().includes(searchTerm)) ||
-                    (card.value_to_use && card.value_to_use.toLowerCase().includes(searchTerm)) ||
-                    (card.bonus && card.bonus.toLowerCase().includes(searchTerm))
+                    (card.value_to_use && String(card.value_to_use).toLowerCase().includes(searchTerm)) ||
+                    (card.bonus && String(card.bonus).toLowerCase().includes(searchTerm))
                 );
                 displayBasicUniverse(filtered);
             }
