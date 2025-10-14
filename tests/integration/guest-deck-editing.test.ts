@@ -98,22 +98,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
       }
     }
     
-    // Clean up test users
-    const userRepo = DataSourceConfig.getInstance().getUserRepository();
-    if (testUser) {
-      try {
-        await userRepo.deleteUser(testUser.id);
-      } catch (error) {
-        // Ignore cleanup errors
-      }
-    }
-    if (testAdmin) {
-      try {
-        await userRepo.deleteUser(testAdmin.id);
-      } catch (error) {
-        // Ignore cleanup errors
-      }
-    }
+    // Users are cleaned up by tracked ID utilities
   });
 
   describe('Deck Creation Restrictions', () => {

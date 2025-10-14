@@ -45,6 +45,9 @@ describe('Toast Notification Role-Based Behavior', () => {
             [testUserId, username, email, hashedPassword, 'USER']
         );
 
+        // Track user for cleanup via global utilities
+        integrationTestUtils.trackTestUser(testUserId);
+
         // Login as the test user
         await apiClient.login(username, 'password123');
 
@@ -65,14 +68,7 @@ describe('Toast Notification Role-Based Behavior', () => {
                 console.log('Deck already deleted or not found');
             }
         }
-        if (testUserId) {
-            // Clean up user
-            try {
-                await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
-            } catch (error) {
-                console.log('User already deleted or not found');
-            }
-        }
+        // User cleanup handled by test utilities using tracked IDs
     });
 
     describe('Title Edit Toast Notifications', () => {

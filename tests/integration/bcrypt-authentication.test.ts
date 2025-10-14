@@ -1,6 +1,7 @@
 import { Pool } from 'pg';
 import bcrypt from 'bcrypt';
 import { PostgreSQLUserRepository } from '../../src/database/PostgreSQLUserRepository';
+import { integrationTestUtils } from '../setup-integration';
 import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 
 describe('Bcrypt Authentication Integration Tests', () => {
@@ -19,10 +20,7 @@ describe('Bcrypt Authentication Integration Tests', () => {
   });
 
   afterAll(async () => {
-    // Clean up test user
-    if (testUserId) {
-      await pool.query('DELETE FROM users WHERE id = $1', [testUserId]);
-    }
+    // Users cleaned by global utilities; ensure pool closed
     await pool.end();
   });
 
@@ -74,6 +72,7 @@ describe('Bcrypt Authentication Integration Tests', () => {
       expect(user.role).toBe('USER');
       
       testUserId = user.id;
+      integrationTestUtils.trackTestUser(testUserId);
       
       // Verify password is hashed in database
       const dbResult = await pool.query('SELECT password_hash FROM users WHERE id = $1', [user.id]);
@@ -84,12 +83,7 @@ describe('Bcrypt Authentication Integration Tests', () => {
       
       console.log('✅ User created with hashed password');
       
-      // Clean up test user
-      try {
-        await userRepository.deleteUser(user.id);
-      } catch (error) {
-        // Ignore cleanup errors
-      }
+      // Cleanup handled by tracked user utilities
     });
 
     it('should authenticate user with correct password', async () => {
@@ -104,6 +98,7 @@ describe('Bcrypt Authentication Integration Tests', () => {
       // Create user
       const user = await userRepository.createUser(username, email, password, 'USER');
       testUserId = user.id;
+      integrationTestUtils.trackTestUser(testUserId);
       
       // Authenticate with correct password
       const authenticatedUser = await userRepository.authenticateUser(username, password);
@@ -116,12 +111,7 @@ describe('Bcrypt Authentication Integration Tests', () => {
       
       console.log('✅ User authentication successful');
       
-      // Clean up test user
-      try {
-        await userRepository.deleteUser(user.id);
-      } catch (error) {
-        // Ignore cleanup errors
-      }
+      // Cleanup handled by tracked user utilities
     });
 
     it('should reject authentication with incorrect password', async () => {

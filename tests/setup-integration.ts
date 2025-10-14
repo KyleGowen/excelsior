@@ -14,8 +14,9 @@ global.TextDecoder = TextDecoder;
 // Import test server
 import { app, initializeTestServer } from '../src/test-server';
 
-// Track test-created deck IDs to ensure we only delete what tests create
+// Track test-created deck and user IDs to ensure we only delete what tests create
 const testCreatedDeckIds = new Set<string>();
+const testCreatedUserIds = new Set<string>();
 
 // Debug function to log all deck deletions
 const logDeckDeletion = (source: string, deckId: string, reason: string = '') => {
@@ -38,6 +39,11 @@ export const integrationTestUtils = {
   trackTestDeck: (deckId: string) => {
     testCreatedDeckIds.add(deckId);
     console.log(`✅ DEBUG: Deck ${deckId} added to tracking set. Current tracked decks: [${Array.from(testCreatedDeckIds).join(', ')}]`);
+  },
+
+  // Helper to track a user created by tests
+  trackTestUser: (userId: string) => {
+    testCreatedUserIds.add(userId);
   },
 
   // Helper to untrack a deck (when it's deleted by tests)
@@ -78,6 +84,10 @@ export const integrationTestUtils = {
           userData.role || 'USER'
         ]
       );
+      // Track created user for automatic cleanup
+      if (result.rows[0]?.id) {
+        testCreatedUserIds.add(result.rows[0].id);
+      }
       return result.rows[0];
     } finally {
       await pool.end();
@@ -161,14 +171,19 @@ export const integrationTestUtils = {
         console.log('ℹ️ No tracked test decks to delete');
       }
       
-      // Clear the tracking set
+      // Clear the deck tracking set
       testCreatedDeckIds.clear();
       
-      // Note: Individual tests should clean up their own users in their afterAll hooks
-      // We don't delete users here to avoid accidentally affecting production data
-      console.log(`ℹ️ User cleanup is handled by individual test afterAll hooks`);
-      
-      console.log(`✅ Cleanup completed: 0 users deleted (handled by individual tests)`);
+      // Delete tracked test users
+      if (testCreatedUserIds.size > 0) {
+        const userIds = Array.from(testCreatedUserIds);
+        await pool.query('DELETE FROM users WHERE id = ANY($1)', [userIds]);
+        console.log(`✅ Deleted ${userIds.length} test-created users`);
+      } else {
+        console.log('ℹ️ No tracked test users to delete');
+      }
+      // Clear user tracking set
+      testCreatedUserIds.clear();
     } finally {
       await pool.end();
     }
@@ -294,6 +309,9 @@ afterEach(async () => {
       testCreatedDeckIds.clear();
     } else {
     }
+
+    // Note: Do not delete tracked users after each test, as some suites
+    // create users in beforeAll and reuse them across multiple tests.
   } finally {
     await pool.end();
   }
