@@ -60,18 +60,27 @@ function showDeckEditor() {
         
         // Title is already set to the deck name, no need to override it
         
-        // Hide/show Save button based on guest status
+        // Hide/show Save button based on guest status and read-only mode
         const saveButton = document.getElementById('saveDeckButton');
         if (saveButton) {
-            if (isGuestUser()) {
+            // SECURITY: Check for read-only mode first
+            if (document.body.classList.contains('read-only-mode')) {
+                // Disable Save button in read-only mode
+                saveButton.disabled = true;
+                saveButton.style.opacity = '0.5';
+                saveButton.style.cursor = 'not-allowed';
+                saveButton.title = 'Save is disabled in read-only mode';
+                saveButton.style.display = 'block';
+                console.log('🔒 SECURITY: Save button disabled in read-only mode');
+            } else if (isGuestUser()) {
                 // Disable Save button for guest users
                 saveButton.disabled = true;
                 saveButton.style.opacity = '0.5';
                 saveButton.style.cursor = 'not-allowed';
-                saveButton.title = 'Guests cannot save edits..';
+                saveButton.title = 'Guests cannot save edits';
                 saveButton.style.display = 'block';
             } else {
-                // Enable Save button for regular users
+                // Enable Save button for regular users in edit mode
                 saveButton.disabled = false;
                 saveButton.style.opacity = '1';
                 saveButton.style.cursor = 'pointer';
@@ -122,8 +131,11 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
         console.log('🔍 Read-only mode removed from loadDeckForEditing parameter');
     }
     
-    // Update Read-Only badge visibility
-    updateReadOnlyBadge();
+                // Update Read-Only badge visibility
+                updateReadOnlyBadge();
+                
+                // Update Save button state based on read-only mode
+                updateSaveButtonState();
     
     // Handle new deck creation
     if (deckId === 'new') {
@@ -290,6 +302,13 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
 async function saveDeckChanges() {
     
     if (!currentDeckData) return;
+    
+    // SECURITY: Check for read-only mode first
+    if (document.body.classList.contains('read-only-mode')) {
+        console.log('🔒 SECURITY: Blocking saveDeckChanges in read-only mode');
+        alert('Cannot save changes in read-only mode.');
+        return;
+    }
     
     // Check if user is guest - guests cannot save any changes
     if (isGuestUser()) {

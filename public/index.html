@@ -1788,9 +1788,41 @@
                 }
             }
         }
+
+        // Update Save button state based on read-only mode and user status
+        window.updateSaveButtonState = function() {
+            const saveButton = document.getElementById('saveDeckButton');
+            if (saveButton) {
+                // SECURITY: Check for read-only mode first
+                if (document.body.classList.contains('read-only-mode')) {
+                    // Disable Save button in read-only mode
+                    saveButton.disabled = true;
+                    saveButton.style.opacity = '0.5';
+                    saveButton.style.cursor = 'not-allowed';
+                    saveButton.title = 'Save is disabled in read-only mode';
+                    saveButton.style.display = 'block';
+                    console.log('🔒 SECURITY: Save button disabled in read-only mode');
+                } else if (isGuestUser()) {
+                    // Disable Save button for guest users
+                    saveButton.disabled = true;
+                    saveButton.style.opacity = '0.5';
+                    saveButton.style.cursor = 'not-allowed';
+                    saveButton.title = 'Guests cannot save edits';
+                    saveButton.style.display = 'block';
+                } else {
+                    // Enable Save button for regular users in edit mode
+                    saveButton.disabled = false;
+                    saveButton.style.opacity = '1';
+                    saveButton.style.cursor = 'pointer';
+                    saveButton.title = '';
+                    saveButton.style.display = 'block';
+                }
+            }
+        }
         
-        // Update badge on page load
+        // Update badge and Save button state on page load
         updateReadOnlyBadge();
+        updateSaveButtonState();
         
         // Add global event listener to catch any clicks that might trigger tab switches
         document.addEventListener('click', function(event) {
@@ -3693,6 +3725,18 @@
 
         // Toggle character group collapse/expand within special cards and power cards
         function toggleCharacterGroup(headerElement, groupKey = null) {
+            // SECURITY: Block UI interactions in read-only mode
+            if (document.body.classList.contains('read-only-mode')) {
+                console.log('🔒 SECURITY: Blocking character group toggle in read-only mode');
+                return;
+            }
+            
+            // SECURITY: Check if user owns this deck before allowing UI interactions
+            if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isOwner) {
+                console.log('🔒 SECURITY: Blocking character group toggle - user does not own this deck');
+                return;
+            }
+            
             const group = headerElement.closest('.character-group');
             const content = group.querySelector('.character-group-content');
             const icon = headerElement.querySelector('.collapse-icon');
@@ -4905,6 +4949,18 @@
                 return;
             }
             
+            // SECURITY: Block saving UI preferences in read-only mode
+            if (document.body.classList.contains('read-only-mode')) {
+                console.log('🔒 SECURITY: Blocking UI preferences save in read-only mode');
+                return;
+            }
+            
+            // SECURITY: Check if user owns this deck before saving UI preferences
+            if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isOwner) {
+                console.log('🔒 SECURITY: Blocking UI preferences save - user does not own this deck');
+                return;
+            }
+            
             try {
                 const response = await fetch(`/api/decks/${deckId}/ui-preferences`, {
                     method: 'PUT',
@@ -5509,6 +5565,20 @@
             let startDeckWidth = 0;
 
             divider.addEventListener('mousedown', (e) => {
+                // SECURITY: Block divider dragging in read-only mode
+                if (document.body.classList.contains('read-only-mode')) {
+                    console.log('🔒 SECURITY: Blocking divider drag in read-only mode');
+                    e.preventDefault();
+                    return;
+                }
+                
+                // SECURITY: Check if user owns this deck before allowing divider dragging
+                if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isOwner) {
+                    console.log('🔒 SECURITY: Blocking divider drag - user does not own this deck');
+                    e.preventDefault();
+                    return;
+                }
+                
                 isResizing = true;
                 startX = e.clientX;
                 startDeckWidth = deckPane.offsetWidth;
@@ -5742,6 +5812,18 @@
         // Store slider position for persistence
         function storeSliderPosition(deckWidth, totalWidth) {
             if (currentDeckId) {
+                // SECURITY: Block saving slider position in read-only mode
+                if (document.body.classList.contains('read-only-mode')) {
+                    console.log('🔒 SECURITY: Blocking slider position save in read-only mode');
+                    return;
+                }
+                
+                // SECURITY: Check if user owns this deck before saving slider position
+                if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isOwner) {
+                    console.log('🔒 SECURITY: Blocking slider position save - user does not own this deck');
+                    return;
+                }
+                
                 const percentage = (deckWidth / totalWidth) * 100;
                 localStorage.setItem(`slider_position_${currentDeckId}`, percentage.toString());
                 
@@ -7104,6 +7186,12 @@
         }
         
         function toggleDeckListSection(type) {
+            // SECURITY: Check if user owns this deck before allowing UI interactions
+            if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isOwner) {
+                console.log('🔒 SECURITY: Blocking deck list section toggle - user does not own this deck');
+                return;
+            }
+            
             const itemsContainer = document.getElementById(`deck-list-items-${type}`);
             const deckListSection = itemsContainer.closest('.deck-list-section');
             const header = deckListSection ? deckListSection.querySelector('.deck-list-section-header') : null;
@@ -7182,6 +7270,12 @@
         // Save deck expansion state to localStorage
         function saveDeckExpansionState() {
             if (currentDeckId) {
+                // SECURITY: Check if user owns this deck before saving expansion state
+                if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isOwner) {
+                    console.log('🔒 SECURITY: Blocking expansion state save - user does not own this deck');
+                    return;
+                }
+                
                 console.log('Saving expansion state for deck:', currentDeckId, 'state:', deckEditorExpansionState);
                 localStorage.setItem(`deckExpansionState_${currentDeckId}`, JSON.stringify(deckEditorExpansionState));
                 
@@ -7217,6 +7311,18 @@
         // Save character group expansion state to localStorage
         function saveCharacterGroupExpansionState() {
             if (currentDeckId) {
+                // SECURITY: Block saving character group expansion state in read-only mode
+                if (document.body.classList.contains('read-only-mode')) {
+                    console.log('🔒 SECURITY: Blocking character group expansion state save in read-only mode');
+                    return;
+                }
+                
+                // SECURITY: Check if user owns this deck before saving character group expansion state
+                if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isOwner) {
+                    console.log('🔒 SECURITY: Blocking character group expansion state save - user does not own this deck');
+                    return;
+                }
+                
                 localStorage.setItem(`characterGroupExpansionState_${currentDeckId}`, JSON.stringify(characterGroupExpansionState));
                 
                 // Also save UI preferences to database
