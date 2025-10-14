@@ -10,7 +10,7 @@
 (global as any).saveUIPreferences = jest.fn();
 
 // Mock DOM elements
-const mockDeckCardsEditor = {
+const mockViewManagerDeckCardsEditor = {
   classList: {
     contains: jest.fn(() => false),
     add: jest.fn(),
@@ -24,7 +24,7 @@ const mockListViewBtn = {
 
 // Mock document methods
 const mockGetElementById = jest.fn((id: string) => {
-  if (id === 'deckCardsEditor') return mockDeckCardsEditor;
+  if (id === 'deckCardsEditor') return mockViewManagerDeckCardsEditor;
   if (id === 'listViewBtn') return mockListViewBtn;
   return null;
 });
@@ -136,7 +136,7 @@ describe('ViewManager Integration', () => {
     it('should initialize DOM elements correctly', () => {
       viewManager.initialize();
       
-      expect(viewManager.deckCardsEditor).toBe(mockDeckCardsEditor);
+      expect(viewManager.deckCardsEditor).toBe(mockViewManagerDeckCardsEditor);
       expect(viewManager.listViewBtn).toBe(mockListViewBtn);
     });
   });
@@ -149,14 +149,14 @@ describe('ViewManager Integration', () => {
     it('should switch to tile view correctly', async () => {
       // Arrange
       viewManager.currentView = 'list';
-      mockDeckCardsEditor.classList.contains.mockReturnValue(true);
+      mockViewManagerDeckCardsEditor.classList.contains.mockReturnValue(true);
       
       // Act
       await viewManager.switchToTileView();
       
       // Assert
       expect(viewManager.currentView).toBe('tile');
-      expect(mockDeckCardsEditor.classList.remove).toHaveBeenCalledWith('list-view');
+      expect(mockViewManagerDeckCardsEditor.classList.remove).toHaveBeenCalledWith('list-view');
       expect(mockListViewBtn.textContent).toBe('List View');
       expect((global as any).displayDeckCardsForEditing).toHaveBeenCalledTimes(1);
     });
@@ -164,14 +164,14 @@ describe('ViewManager Integration', () => {
     it('should switch to list view correctly', async () => {
       // Arrange
       viewManager.currentView = 'tile';
-      mockDeckCardsEditor.classList.contains.mockReturnValue(false);
+      mockViewManagerDeckCardsEditor.classList.contains.mockReturnValue(false);
       
       // Act
       await viewManager.switchToListView();
       
       // Assert
       expect(viewManager.currentView).toBe('list');
-      expect(mockDeckCardsEditor.classList.add).toHaveBeenCalledWith('list-view');
+      expect(mockViewManagerDeckCardsEditor.classList.add).toHaveBeenCalledWith('list-view');
       expect(mockListViewBtn.textContent).toBe('Tile View');
       expect((global as any).renderDeckCardsListView).toHaveBeenCalledTimes(1);
       expect((global as any).setupLayoutObserver).toHaveBeenCalledTimes(1);
@@ -221,7 +221,7 @@ describe('ViewManager Integration', () => {
     it('should use ViewManager for tile to list view switch', async () => {
       // Arrange
       const currentDeckId = 'test-deck-id';
-      mockDeckCardsEditor.classList.contains.mockReturnValue(false);
+      mockViewManagerDeckCardsEditor.classList.contains.mockReturnValue(false);
       
       // Act
       toggleListView();
@@ -235,7 +235,7 @@ describe('ViewManager Integration', () => {
     it('should use ViewManager for list to tile view switch', async () => {
       // Arrange
       const currentDeckId = 'test-deck-id';
-      mockDeckCardsEditor.classList.contains.mockReturnValue(true);
+      mockViewManagerDeckCardsEditor.classList.contains.mockReturnValue(true);
       
       // Act
       toggleListView();
@@ -248,7 +248,7 @@ describe('ViewManager Integration', () => {
     it('should save UI preferences when currentDeckId exists', () => {
       // Arrange
       const currentDeckId = 'test-deck-id';
-      mockDeckCardsEditor.classList.contains.mockReturnValue(false);
+      mockViewManagerDeckCardsEditor.classList.contains.mockReturnValue(false);
       
       // Act
       toggleListView(currentDeckId);
