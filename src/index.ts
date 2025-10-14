@@ -13,6 +13,75 @@ import { execSync } from 'child_process';
 export const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Helper function to detect read-only mode from request
+function isReadOnlyMode(req: any): boolean {
+  // Check URL parameters for readonly=true
+  const urlParams = new URLSearchParams(req.url.split('?')[1] || '');
+  const readonlyParam = urlParams.get('readonly');
+  
+  // Check query parameters
+  const queryReadonly = req.query.readonly;
+  
+  // Check headers (for API calls that might pass this in headers)
+  const headerReadonly = req.headers['x-readonly-mode'];
+  
+  return readonlyParam === 'true' || queryReadonly === 'true' || headerReadonly === 'true';
+}
+
+// Helper function to block operations in read-only mode
+function blockInReadOnlyMode(req: any, res: any, operation: string): boolean {
+  if (isReadOnlyMode(req)) {
+    console.log(`🔒 SECURITY: Blocking ${operation} - read-only mode detected`);
+    res.status(403).json({ 
+      success: false, 
+      error: `Operation not allowed in read-only mode` 
+    });
+    return true;
+  }
+  return false;
+}
+
+// Rate limiting for security-sensitive operations
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 10; // Max 10 requests per minute per IP
+
+function checkRateLimit(req: any, res: any, operation: string): boolean {
+  const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+  const now = Date.now();
+  const key = `${clientIP}:${operation}`;
+  
+  const current = rateLimitMap.get(key);
+  
+  if (!current || now > current.resetTime) {
+    // First request or window expired
+    rateLimitMap.set(key, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return false;
+  }
+  
+  if (current.count >= RATE_LIMIT_MAX_REQUESTS) {
+    console.log(`🔒 SECURITY: Rate limit exceeded for ${operation} from IP ${clientIP}`);
+    res.status(429).json({ 
+      success: false, 
+      error: `Rate limit exceeded. Maximum ${RATE_LIMIT_MAX_REQUESTS} requests per minute allowed.` 
+    });
+    return true;
+  }
+  
+  current.count++;
+  return false;
+}
+
+// Clean up expired rate limit entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, value] of rateLimitMap.entries()) {
+    if (now > value.resetTime) {
+      rateLimitMap.delete(key);
+    }
+  }
+}, 5 * 60 * 1000); // Clean up every 5 minutes
+
 // Initialize services
 const deckService = new DeckPersistenceService();
 const databaseInit = new DatabaseInitializationService();
@@ -389,14 +458,39 @@ app.get('/api/decks', authenticateUser, async (req: any, res) => {
 // Deck management API routes
 app.post('/api/decks', authenticateUser, async (req: any, res) => {
   try {
+    // SECURITY: Rate limiting for deck creation
+    if (checkRateLimit(req, res, 'deck creation')) {
+      return;
+    }
+    
+    // SECURITY: Block deck creation in read-only mode
+    if (blockInReadOnlyMode(req, res, 'deck creation')) {
+      return;
+    }
+    
     // Check if user is guest - guests cannot create decks
     if (req.user.role === 'GUEST') {
+      console.log('🔒 SECURITY: Blocking deck creation - guest user attempted to create deck');
       return res.status(403).json({ success: false, error: 'Guests may not create decks' });
     }
     
     const { name, description, characters } = req.body;
-    if (!name) {
-      return res.status(400).json({ success: false, error: 'Deck name is required' });
+    
+    // SECURITY: Comprehensive input validation
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+      return res.status(400).json({ success: false, error: 'Deck name is required and must be a non-empty string' });
+    }
+    
+    if (name.length > 100) {
+      return res.status(400).json({ success: false, error: 'Deck name must be 100 characters or less' });
+    }
+    
+    if (description && (typeof description !== 'string' || description.length > 500)) {
+      return res.status(400).json({ success: false, error: 'Description must be a string with 500 characters or less' });
+    }
+    
+    if (characters && (!Array.isArray(characters) || characters.length > 50)) {
+      return res.status(400).json({ success: false, error: 'Characters must be an array with 50 items or less' });
     }
     
     const deck = await deckBusinessService.createDeck(req.user.id, name, description, characters);
@@ -408,6 +502,7 @@ app.post('/api/decks', authenticateUser, async (req: any, res) => {
         error: error.message 
       });
     }
+    console.error('Error creating deck:', error);
     res.status(500).json({ success: false, error: 'Failed to create deck' });
   }
 });
@@ -526,12 +621,48 @@ app.get('/api/decks/:id/full', authenticateUser, async (req: any, res) => {
 
 app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
   try {
+    // SECURITY: Rate limiting for deck update
+    if (checkRateLimit(req, res, 'deck update')) {
+      return;
+    }
+    
+    // SECURITY: Block deck update in read-only mode
+    if (blockInReadOnlyMode(req, res, 'deck update')) {
+      return;
+    }
+    
     // Check if user is guest - guests cannot modify decks
     if (req.user.role === 'GUEST') {
+      console.log('🔒 SECURITY: Blocking deck update - guest user attempted to modify deck');
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
     const { name, description, is_limited, is_valid, reserve_character } = req.body;
+    
+    // SECURITY: Comprehensive input validation
+    if (name !== undefined && (!name || typeof name !== 'string' || name.trim().length === 0)) {
+      return res.status(400).json({ success: false, error: 'Deck name must be a non-empty string' });
+    }
+    
+    if (name && name.length > 100) {
+      return res.status(400).json({ success: false, error: 'Deck name must be 100 characters or less' });
+    }
+    
+    if (description !== undefined && description !== null && (typeof description !== 'string' || description.length > 500)) {
+      return res.status(400).json({ success: false, error: 'Description must be a string with 500 characters or less' });
+    }
+    
+    if (is_limited !== undefined && typeof is_limited !== 'boolean') {
+      return res.status(400).json({ success: false, error: 'is_limited must be a boolean value' });
+    }
+    
+    if (is_valid !== undefined && typeof is_valid !== 'boolean') {
+      return res.status(400).json({ success: false, error: 'is_valid must be a boolean value' });
+    }
+    
+    if (reserve_character !== undefined && reserve_character !== null && (typeof reserve_character !== 'string' || reserve_character.length > 50)) {
+      return res.status(400).json({ success: false, error: 'Reserve character must be a string with 50 characters or less' });
+    }
     
     // Check if deck exists
     const deck = await deckRepository.getDeckById(req.params.id);
@@ -539,8 +670,9 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }
     
-    // Check if user owns this deck
+    // SECURITY: Check if user owns this deck
     if (deck.user_id !== req.user.id) {
+      console.log('🔒 SECURITY: Blocking deck update - user does not own this deck');
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
@@ -584,8 +716,19 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
 
 app.delete('/api/decks/:id', authenticateUser, async (req: any, res) => {
   try {
+    // SECURITY: Rate limiting for deck deletion
+    if (checkRateLimit(req, res, 'deck deletion')) {
+      return;
+    }
+    
+    // SECURITY: Block deck deletion in read-only mode
+    if (blockInReadOnlyMode(req, res, 'deck deletion')) {
+      return;
+    }
+    
     // Check if user is guest - guests cannot delete decks
     if (req.user.role === 'GUEST') {
+      console.log('🔒 SECURITY: Blocking deck deletion - guest user attempted to delete deck');
       return res.status(403).json({ success: false, error: 'Guests may not delete decks' });
     }
 
@@ -595,8 +738,9 @@ app.delete('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }
 
-    // Check if user owns this deck
+    // SECURITY: Check if user owns this deck
     if (deck.user_id !== req.user.id) {
+      console.log('🔒 SECURITY: Blocking deck deletion - user does not own this deck');
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
 
@@ -612,18 +756,52 @@ app.delete('/api/decks/:id', authenticateUser, async (req: any, res) => {
 
 app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
+    // SECURITY: Rate limiting for card addition
+    if (checkRateLimit(req, res, 'card addition')) {
+      return;
+    }
+    
+    // SECURITY: Block card addition in read-only mode
+    if (blockInReadOnlyMode(req, res, 'card addition')) {
+      return;
+    }
+    
     // Check if user is guest - guests cannot modify decks
     if (req.user.role === 'GUEST') {
+      console.log('🔒 SECURITY: Blocking card addition - guest user attempted to modify deck');
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
     const { cardType, cardId, quantity, selectedAlternateImage } = req.body;
-    if (!cardType || !cardId) {
-      return res.status(400).json({ success: false, error: 'Card type and card ID are required' });
+    
+    // SECURITY: Comprehensive input validation
+    if (!cardType || typeof cardType !== 'string' || cardType.trim().length === 0) {
+      return res.status(400).json({ success: false, error: 'Card type is required and must be a non-empty string' });
     }
     
-    // Check if user owns this deck
+    if (!cardId || typeof cardId !== 'string' || cardId.trim().length === 0) {
+      return res.status(400).json({ success: false, error: 'Card ID is required and must be a non-empty string' });
+    }
+    
+    if (cardType.length > 50) {
+      return res.status(400).json({ success: false, error: 'Card type must be 50 characters or less' });
+    }
+    
+    if (cardId.length > 100) {
+      return res.status(400).json({ success: false, error: 'Card ID must be 100 characters or less' });
+    }
+    
+    if (quantity !== undefined && (typeof quantity !== 'number' || quantity < 1 || quantity > 10)) {
+      return res.status(400).json({ success: false, error: 'Quantity must be a number between 1 and 10' });
+    }
+    
+    if (selectedAlternateImage !== undefined && selectedAlternateImage !== null && (typeof selectedAlternateImage !== 'string' || selectedAlternateImage.length > 200)) {
+      return res.status(400).json({ success: false, error: 'Selected alternate image must be a string with 200 characters or less' });
+    }
+    
+    // SECURITY: Check if user owns this deck
     if (!await deckRepository.userOwnsDeck(req.params.id, req.user.id)) {
+      console.log('🔒 SECURITY: Blocking card addition - user does not own this deck');
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
@@ -643,18 +821,56 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
 // Bulk replace all cards in a deck (used for save operations)
 app.put('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
+    // SECURITY: Rate limiting for card replacement
+    if (checkRateLimit(req, res, 'card replacement')) {
+      return;
+    }
+    
+    // SECURITY: Block card replacement in read-only mode
+    if (blockInReadOnlyMode(req, res, 'card replacement')) {
+      return;
+    }
+    
     // Check if user is guest - guests cannot modify decks
     if (req.user.role === 'GUEST') {
+      console.log('🔒 SECURITY: Blocking card replacement - guest user attempted to modify deck');
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
     const { cards } = req.body;
+    
+    // SECURITY: Comprehensive input validation
     if (!Array.isArray(cards)) {
-      return res.status(400).json({ success: false, error: 'Cards array is required' });
+      return res.status(400).json({ success: false, error: 'Cards must be an array' });
     }
     
-    // Check if user owns this deck
+    if (cards.length > 100) {
+      return res.status(400).json({ success: false, error: 'Cannot replace more than 100 cards at once' });
+    }
+    
+    // Validate each card in the array
+    for (let i = 0; i < cards.length; i++) {
+      const card = cards[i];
+      if (!card || typeof card !== 'object') {
+        return res.status(400).json({ success: false, error: `Card at index ${i} must be an object` });
+      }
+      
+      if (!card.cardType || typeof card.cardType !== 'string' || card.cardType.trim().length === 0) {
+        return res.status(400).json({ success: false, error: `Card at index ${i}: cardType is required and must be a non-empty string` });
+      }
+      
+      if (!card.cardId || typeof card.cardId !== 'string' || card.cardId.trim().length === 0) {
+        return res.status(400).json({ success: false, error: `Card at index ${i}: cardId is required and must be a non-empty string` });
+      }
+      
+      if (card.quantity !== undefined && (typeof card.quantity !== 'number' || card.quantity < 1 || card.quantity > 10)) {
+        return res.status(400).json({ success: false, error: `Card at index ${i}: quantity must be a number between 1 and 10` });
+      }
+    }
+    
+    // SECURITY: Check if user owns this deck
     if (!await deckRepository.userOwnsDeck(req.params.id, req.user.id)) {
+      console.log('🔒 SECURITY: Blocking card replacement - user does not own this deck');
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
@@ -674,18 +890,48 @@ app.put('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
 
 app.delete('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
+    // SECURITY: Rate limiting for card removal
+    if (checkRateLimit(req, res, 'card removal')) {
+      return;
+    }
+    
+    // SECURITY: Block card removal in read-only mode
+    if (blockInReadOnlyMode(req, res, 'card removal')) {
+      return;
+    }
+    
     // Check if user is guest - guests cannot modify decks
     if (req.user.role === 'GUEST') {
+      console.log('🔒 SECURITY: Blocking card removal - guest user attempted to modify deck');
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
     const { cardType, cardId, quantity } = req.body;
-    if (!cardType || !cardId) {
-      return res.status(400).json({ success: false, error: 'Card type and card ID are required' });
+    
+    // SECURITY: Comprehensive input validation
+    if (!cardType || typeof cardType !== 'string' || cardType.trim().length === 0) {
+      return res.status(400).json({ success: false, error: 'Card type is required and must be a non-empty string' });
     }
     
-    // Check if user owns this deck
+    if (!cardId || typeof cardId !== 'string' || cardId.trim().length === 0) {
+      return res.status(400).json({ success: false, error: 'Card ID is required and must be a non-empty string' });
+    }
+    
+    if (cardType.length > 50) {
+      return res.status(400).json({ success: false, error: 'Card type must be 50 characters or less' });
+    }
+    
+    if (cardId.length > 100) {
+      return res.status(400).json({ success: false, error: 'Card ID must be 100 characters or less' });
+    }
+    
+    if (quantity !== undefined && (typeof quantity !== 'number' || quantity < 1 || quantity > 10)) {
+      return res.status(400).json({ success: false, error: 'Quantity must be a number between 1 and 10' });
+    }
+    
+    // SECURITY: Check if user owns this deck
     if (!await deckRepository.userOwnsDeck(req.params.id, req.user.id)) {
+      console.log('🔒 SECURITY: Blocking card removal - user does not own this deck');
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
@@ -773,8 +1019,48 @@ app.get('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res)
 
 app.put('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res) => {
   try {
+    // SECURITY: Rate limiting for UI preferences save
+    if (checkRateLimit(req, res, 'UI preferences save')) {
+      return;
+    }
+    
+    // SECURITY: Block UI preferences save in read-only mode
+    if (blockInReadOnlyMode(req, res, 'UI preferences save')) {
+      return;
+    }
+    
+    // SECURITY: Check if user is guest - guests cannot modify decks
+    if (req.user.role === 'GUEST') {
+      console.log('🔒 SECURITY: Blocking UI preferences save - guest user attempted to modify deck');
+      return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
+    }
+    
     const { id } = req.params;
     const preferences = req.body;
+    
+    // SECURITY: Comprehensive input validation
+    if (!preferences || typeof preferences !== 'object') {
+      return res.status(400).json({ success: false, error: 'Preferences must be an object' });
+    }
+    
+    // Validate specific preference fields if they exist
+    if (preferences.viewMode && !['tile', 'list'].includes(preferences.viewMode)) {
+      return res.status(400).json({ success: false, error: 'viewMode must be either "tile" or "list"' });
+    }
+    
+    if (preferences.sortBy && (typeof preferences.sortBy !== 'string' || preferences.sortBy.length > 50)) {
+      return res.status(400).json({ success: false, error: 'sortBy must be a string with 50 characters or less' });
+    }
+    
+    if (preferences.filterBy && (typeof preferences.filterBy !== 'string' || preferences.filterBy.length > 50)) {
+      return res.status(400).json({ success: false, error: 'filterBy must be a string with 50 characters or less' });
+    }
+    
+    // Limit the size of the preferences object
+    const preferencesString = JSON.stringify(preferences);
+    if (preferencesString.length > 1000) {
+      return res.status(400).json({ success: false, error: 'Preferences object is too large (max 1000 characters)' });
+    }
     
     // Check if deck exists
     const deck = await deckRepository.getDeckById(id);
@@ -782,9 +1068,9 @@ app.put('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res)
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }
     
-    // Allow guests to save UI preferences (read-only access)
-    // Only check ownership for non-guests
-    if (req.user.role !== 'GUEST' && !await deckRepository.userOwnsDeck(id, req.user.id)) {
+    // SECURITY: Check if user owns this deck
+    if (!await deckRepository.userOwnsDeck(id, req.user.id)) {
+      console.log('🔒 SECURITY: Blocking UI preferences save - user does not own this deck');
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
@@ -795,6 +1081,7 @@ app.put('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res)
       res.status(404).json({ success: false, error: 'Deck not found' });
     }
   } catch (error) {
+    console.error('Error updating UI preferences:', error);
     res.status(500).json({ success: false, error: 'Failed to update UI preferences' });
   }
 });

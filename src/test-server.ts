@@ -721,22 +721,25 @@ app.get('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res)
 
 app.put('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res) => {
   try {
-    // Check if user is guest - guests cannot modify decks
+    // SECURITY: Check if user is guest - guests cannot modify decks
     if (req.user.role === 'GUEST') {
+      console.log('🔒 SECURITY: Blocking UI preferences save - guest user attempted to modify deck');
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
     const { id } = req.params;
     const preferences = req.body;
     
-    // Check if user owns this deck
+    // SECURITY: Check if user owns this deck
     if (!await deckRepository.userOwnsDeck(id, req.user.id)) {
+      console.log('🔒 SECURITY: Blocking UI preferences save - user does not own this deck');
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
     await deckRepository.updateUIPreferences(id, preferences);
     res.json({ success: true, message: 'UI preferences updated successfully' });
   } catch (error) {
+    console.error('Error updating UI preferences:', error);
     res.status(500).json({ success: false, error: 'Failed to update UI preferences' });
   }
 });

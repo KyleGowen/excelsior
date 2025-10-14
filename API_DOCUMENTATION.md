@@ -473,6 +473,10 @@ Get all decks for the authenticated user.
 Create a new deck.
 
 **Authentication:** Required (USER or ADMIN role, not GUEST)
+**Security:**
+- Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
+- Rate limiting: 10 requests per minute per IP
+- Input validation: name required (max 100 chars), description max 500 chars, characters max 50 items
 
 **Request Body:**
 ```json
@@ -572,6 +576,11 @@ Get a deck with all card types loaded (background loading endpoint).
 Update a deck's metadata.
 
 **Authentication:** Required (USER or ADMIN role, not GUEST)
+**Security:**
+- Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
+- Rate limiting: 10 requests per minute per IP
+- Ownership validation required
+- Input validation: name max 100 chars, description max 500 chars, reserve_character max 50 chars
 
 **Parameters:**
 - `id` (string): Deck ID
@@ -614,6 +623,10 @@ Update a deck's metadata.
 Delete a deck.
 
 **Authentication:** Required (USER or ADMIN role, not GUEST)
+**Security:**
+- Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
+- Rate limiting: 10 requests per minute per IP
+- Ownership validation required
 
 **Parameters:**
 - `id` (string): Deck ID
@@ -634,6 +647,11 @@ Delete a deck.
 Add a card to a deck.
 
 **Authentication:** Required (USER or ADMIN role, not GUEST)
+**Security:**
+- Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
+- Rate limiting: 10 requests per minute per IP
+- Ownership validation required
+- Input validation: cardType/cardId required (max 50/100 chars), quantity 1-10, selectedAlternateImage max 200 chars
 
 **Parameters:**
 - `id` (string): Deck ID
@@ -668,6 +686,11 @@ Add a card to a deck.
 Replace all cards in a deck (bulk operation).
 
 **Authentication:** Required (USER or ADMIN role, not GUEST)
+**Security:**
+- Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
+- Rate limiting: 10 requests per minute per IP
+- Ownership validation required
+- Input validation: cards array max 100 items, each card validated individually
 
 **Parameters:**
 - `id` (string): Deck ID
@@ -706,6 +729,11 @@ Replace all cards in a deck (bulk operation).
 Remove a card from a deck.
 
 **Authentication:** Required (USER or ADMIN role, not GUEST)
+**Security:**
+- Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
+- Rate limiting: 10 requests per minute per IP
+- Ownership validation required
+- Input validation: cardType/cardId required (max 50/100 chars), quantity 1-10
 
 **Parameters:**
 - `id` (string): Deck ID
@@ -790,6 +818,37 @@ Validate a deck configuration.
 
 ---
 
+## Security Features
+
+### Read-Only Mode Detection
+All deck modification endpoints automatically detect read-only mode through:
+- URL parameters: `?readonly=true`
+- Query parameters: `readonly=true`
+- HTTP headers: `x-readonly-mode: true`
+
+When read-only mode is detected, all modification operations are blocked with a 403 Forbidden response.
+
+### Rate Limiting
+Security-sensitive operations are rate limited to prevent abuse:
+- **Limit:** 10 requests per minute per IP address
+- **Scope:** Per operation type (deck creation, card addition, etc.)
+- **Response:** 429 Too Many Requests when limit exceeded
+- **Window:** 1 minute sliding window
+
+### Input Validation
+All endpoints include comprehensive input validation:
+- **String lengths:** Enforced maximum lengths for all text fields
+- **Array sizes:** Limited array sizes for bulk operations
+- **Data types:** Strict type checking for all parameters
+- **Required fields:** Validation of mandatory parameters
+
+### Authentication & Authorization
+- **Guest users:** Blocked from all modification operations
+- **Ownership validation:** Users can only modify decks they own
+- **Role-based access:** USER and ADMIN roles required for modifications
+
+---
+
 ## Statistics Endpoints
 
 ### GET /api/deck-stats
@@ -837,7 +896,12 @@ Get UI preferences for a specific deck.
 ### PUT /api/decks/:id/ui-preferences
 Update UI preferences for a specific deck.
 
-**Authentication:** Required (GUEST users can save preferences for read-only access)
+**Authentication:** Required (USER or ADMIN role, not GUEST)
+**Security:** 
+- Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
+- Rate limiting: 10 requests per minute per IP
+- Ownership validation required
+- Input validation: preferences object size limited to 1000 characters
 
 **Parameters:**
 - `id` (string): Deck ID

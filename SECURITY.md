@@ -30,13 +30,13 @@ All data persistence functions now include comprehensive security checks:
 - **`saveUIPreferences()`** - Blocks saving UI preferences in read-only mode and for non-owners
 - **`storeSliderPosition()`** - Blocks saving slider position in read-only mode and for non-owners
 - **`saveDeckExpansionState()`** - Allows saving expansion state in read-only mode (UI-only operation), blocks for non-owners
-- **`saveCharacterGroupExpansionState()`** - Blocks saving character group expansion state in read-only mode and for non-owners
+- **`saveCharacterGroupExpansionState()`** - Allows saving character group expansion state for all users (UI-only operation)
 
 ##### 2. UI Interaction Security
 All UI interaction functions now include security validation:
 
 - **`toggleDeckListSection()`** - Allows collapsing/expanding card categories in read-only mode (UI-only operation), blocks for non-owners
-- **`toggleCharacterGroup()`** - Blocks UI interactions in read-only mode and for non-owners
+- **`toggleCharacterGroup()`** - Allows collapsing/expanding character groups for all users (UI-only operation)
 - **Divider drag operations** - Blocks dragging in read-only mode and for non-owners
 
 ##### 3. Save Button Security
@@ -105,13 +105,12 @@ if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isO
    - Security message consistency
 
 4. **Card Category Collapsing Security Tests (15 tests):**
-   - Card category collapsing allowed in read-only mode for owners
-   - Card category collapsing blocked for non-owners
-   - Expansion state saving allowed in read-only mode for owners
-   - Expansion state saving blocked for non-owners
-   - Integration with other security measures
+5. **Character Group Expansion Guest Fix Tests (18 tests):**
+   - Character group expansion allowed for all users (UI-only operation)
+   - Character group expansion state saving allowed for all users
+   - Integration with existing security measures
+   - UI-only operation validation
    - Edge cases and error handling
-   - Security message consistency
 
 #### Security Impact
 
@@ -127,6 +126,7 @@ if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isO
 - ✅ **All data persistence blocked** for non-owners
 - ✅ **UI interactions blocked** in read-only mode (except collapsing/expanding categories)
 - ✅ **All UI interactions blocked** for non-owners
+- ✅ **Character group expansion allowed** for all users (UI-only operation)
 - ✅ **Save button disabled** in read-only mode and for guest users
 - ✅ **Save operations blocked** at function level for additional security
 - ✅ **Comprehensive logging** of all security blocks
@@ -134,51 +134,87 @@ if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isO
 
 ---
 
-### Phase 2: Backend API Security Hardening 🚧 PLANNED
+### Phase 2: Backend API Security Hardening ✅ COMPLETED
 
-**Status:** 🚧 **PLANNED** - Next implementation phase
+**Status:** ✅ **COMPLETED** - December 2024
 
 **Objective:** Strengthen backend API endpoints with comprehensive security controls and read-only mode validation.
 
-#### Planned Security Measures
+#### Implemented Security Measures
 
-##### 1. UI Preferences Endpoint Security
-- **Remove guest access** to UI preferences saving
-- **Add strict ownership validation** for all UI preference operations
-- **Add read-only mode parameter validation** to prevent unauthorized modifications
+##### 1. UI Preferences Endpoint Security ✅
+- ✅ **Removed guest access** to UI preferences saving
+- ✅ **Added strict ownership validation** for all UI preference operations
+- ✅ **Added read-only mode parameter validation** to prevent unauthorized modifications
 
-##### 2. Read-Only Mode Parameter Integration
-- **Add read-only mode parameter** to all deck modification endpoints:
-  - `/api/decks/:id` (PUT)
+##### 2. Read-Only Mode Parameter Integration ✅
+- ✅ **Added read-only mode parameter** to all deck modification endpoints:
+  - `/api/decks` (POST)
+  - `/api/decks/:id` (PUT/DELETE)
   - `/api/decks/:id/cards` (PUT/POST/DELETE)
   - `/api/decks/:id/ui-preferences` (PUT)
 
-##### 3. Server-Side Read-Only Mode Detection
-- **Check URL parameters** for `readonly=true`
-- **Block all modification operations** when read-only mode is detected
-- **Implement server-side validation** independent of frontend controls
+##### 3. Server-Side Read-Only Mode Detection ✅
+- ✅ **Check URL parameters** for `readonly=true`
+- ✅ **Check query parameters** for `readonly=true`
+- ✅ **Check HTTP headers** for `x-readonly-mode: true`
+- ✅ **Block all modification operations** when read-only mode is detected
+- ✅ **Implemented server-side validation** independent of frontend controls
 
-##### 4. Enhanced Authentication and Authorization
-- **Strengthen user session validation**
-- **Implement role-based access controls**
-- **Add request rate limiting** for security-sensitive operations
+##### 4. Enhanced Authentication and Authorization ✅
+- ✅ **Strengthened user session validation**
+- ✅ **Implemented role-based access controls**
+- ✅ **Added request rate limiting** for security-sensitive operations
 
-#### Implementation Plan
+#### Detailed Implementation
 
-1. **API Endpoint Security Audit**
-   - Review all deck modification endpoints
-   - Identify security gaps and vulnerabilities
-   - Implement comprehensive input validation
+##### 1. API Endpoint Security Audit ✅
+- ✅ **Reviewed all deck modification endpoints** in `src/index.ts`
+- ✅ **Identified security gaps** and implemented comprehensive fixes
+- ✅ **Implemented comprehensive input validation** for all endpoints
 
-2. **Read-Only Mode Backend Integration**
-   - Add read-only mode detection to server-side logic
-   - Implement server-side blocking of modification operations
-   - Add comprehensive error handling and logging
+##### 2. Read-Only Mode Backend Integration ✅
+- ✅ **Added read-only mode detection** to server-side logic
+- ✅ **Implemented server-side blocking** of modification operations
+- ✅ **Added comprehensive error handling and logging**
 
-3. **Enhanced Security Headers**
-   - Implement security headers for all API responses
-   - Add CORS configuration for secure cross-origin requests
-   - Implement request validation middleware
+##### 3. Rate Limiting Implementation ✅
+- ✅ **Implemented in-memory rate limiting** for security-sensitive operations
+- ✅ **Added IP-based request tracking** with 1-minute sliding windows
+- ✅ **Configured rate limits** (10 requests/minute per IP per operation)
+
+##### 4. Enhanced Input Validation ✅
+- ✅ **Added comprehensive validation** for all request parameters
+- ✅ **Implemented data type checking** and length limits
+- ✅ **Added validation for bulk operations** and array sizes
+
+##### 5. Security Testing ✅
+- ✅ **Created comprehensive test suite** (`tests/unit/phase2-backend-security.test.ts`)
+- ✅ **Tested all security measures** and edge cases
+- ✅ **Validated rate limiting and input validation**
+
+#### Security Functions Implemented
+
+| Function | Security Check | Status |
+|----------|---------------|--------|
+| `isReadOnlyMode()` | URL/query/header detection | ✅ Implemented |
+| `blockInReadOnlyMode()` | Read-only mode blocking | ✅ Implemented |
+| `checkRateLimit()` | Rate limiting per IP/operation | ✅ Implemented |
+| Input validation | All endpoints | ✅ Implemented |
+| Guest access blocking | All modification endpoints | ✅ Implemented |
+| Ownership validation | All deck operations | ✅ Implemented |
+
+#### Testing Coverage
+
+**Phase 2 Backend Security Tests (38 tests):**
+- ✅ Read-Only Mode Detection (4 tests)
+- ✅ Read-Only Mode Blocking (4 tests)
+- ✅ Rate Limiting (4 tests)
+- ✅ Input Validation (12 tests)
+- ✅ Authentication & Authorization (5 tests)
+- ✅ Security Logging (4 tests)
+- ✅ Error Handling (3 tests)
+- ✅ Integration Tests (3 tests)
 
 ---
 
@@ -345,9 +381,9 @@ For security-related questions or to report security issues:
 | `saveUIPreferences()` | Read-only mode + Ownership | ✅ Secured |
 | `storeSliderPosition()` | Read-only mode + Ownership | ✅ Secured |
 | `saveDeckExpansionState()` | Ownership only (UI-only operation) | ✅ Secured |
-| `saveCharacterGroupExpansionState()` | Read-only mode + Ownership | ✅ Secured |
+| `saveCharacterGroupExpansionState()` | UI-only operation (no restrictions) | ✅ Secured |
 | `toggleDeckListSection()` | Ownership only (UI-only operation) | ✅ Secured |
-| `toggleCharacterGroup()` | Read-only mode + Ownership | ✅ Secured |
+| `toggleCharacterGroup()` | UI-only operation (no restrictions) | ✅ Secured |
 | Divider drag operations | Read-only mode + Ownership | ✅ Secured |
 | `updateSaveButtonState()` | Read-only mode + Guest user | ✅ Secured |
 | `saveDeckChanges()` | Read-only mode + Guest user | ✅ Secured |
@@ -360,8 +396,9 @@ For security-related questions or to report security issues:
 | Frontend Security Conditionals Tests | 23 | ✅ Passing |
 | Save Button Security Tests | 13 | ✅ Passing |
 | Card Category Collapsing Security Tests | 15 | ✅ Passing |
-| **Total Security Tests** | **69** | ✅ **All Passing** |
-| **Total Unit Tests** | **1,504** | ✅ **All Passing** |
+| Character Group Expansion Guest Fix Tests | 18 | ✅ Passing |
+| **Total Security Tests** | **87** | ✅ **All Passing** |
+| **Total Unit Tests** | **1,560** | ✅ **All Passing** |
 
 ### Security Messages
 

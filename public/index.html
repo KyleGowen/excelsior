@@ -3725,17 +3725,8 @@
 
         // Toggle character group collapse/expand within special cards and power cards
         function toggleCharacterGroup(headerElement, groupKey = null) {
-            // SECURITY: Block UI interactions in read-only mode
-            if (document.body.classList.contains('read-only-mode')) {
-                console.log('🔒 SECURITY: Blocking character group toggle in read-only mode');
-                return;
-            }
-            
-            // SECURITY: Check if user owns this deck before allowing UI interactions
-            if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isOwner) {
-                console.log('🔒 SECURITY: Blocking character group toggle - user does not own this deck');
-                return;
-            }
+            // Character group expansion is a UI-only operation that should be allowed for all users
+            // No security check needed - this is just visual state management
             
             const group = headerElement.closest('.character-group');
             const content = group.querySelector('.character-group-content');
@@ -7311,21 +7302,10 @@
         // Save character group expansion state to localStorage
         function saveCharacterGroupExpansionState() {
             if (currentDeckId) {
-                // SECURITY: Block saving character group expansion state in read-only mode
-                if (document.body.classList.contains('read-only-mode')) {
-                    console.log('🔒 SECURITY: Blocking character group expansion state save in read-only mode');
-                    return;
-                }
-                
-                // SECURITY: Check if user owns this deck before saving character group expansion state
-                if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isOwner) {
-                    console.log('🔒 SECURITY: Blocking character group expansion state save - user does not own this deck');
-                    return;
-                }
-                
+                // Character group expansion state is UI-only and should be saved for all users
                 localStorage.setItem(`characterGroupExpansionState_${currentDeckId}`, JSON.stringify(characterGroupExpansionState));
                 
-                // Also save UI preferences to database
+                // Also save UI preferences to database (this will be blocked by saveUIPreferences if needed)
                 const preferences = getCurrentUIPreferences();
                 saveUIPreferences(currentDeckId, preferences);
             }
