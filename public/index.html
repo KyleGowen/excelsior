@@ -797,7 +797,7 @@
                         </div>
                     </div>
                     <div class="summary-stat">
-                        <button class="remove-all-btn" id="drawHandBtn" data-click-handler="toggleDrawHand" disabled>Draw Hand</button>
+                        <button class="remove-all-btn" id="drawHandBtn" data-click-handler="toggleDrawHand" disabled title="Deck must contain at least 8 playable cards.">Draw Hand</button>
                         <button class="remove-all-btn" id="listViewBtn" data-click-handler="toggleListView">List View</button>
                         <button class="remove-all-btn" id="screenshotViewBtn" data-click-handler="toggleScreenshotView" style="display: none;">Screenshot View</button>
                     </div>
@@ -3594,11 +3594,13 @@
                     drawHandBtn.disabled = false;
                     drawHandBtn.style.opacity = "1";
                     drawHandBtn.style.cursor = "pointer";
+                    drawHandBtn.title = ""; // Remove tooltip when enabled
                 } else {
                     console.log('🔍 Draw Hand Button Debug - DISABLING button (playableCardsCount < 8)');
                     drawHandBtn.disabled = true;
                     drawHandBtn.style.opacity = "0.5";
                     drawHandBtn.style.cursor = "not-allowed";
+                    drawHandBtn.title = "Deck must contain at least 8 playable cards."; // Add tooltip when disabled
                 }
                 
                 console.log('🔍 Draw Hand Button Debug - final button state - disabled:', drawHandBtn.disabled, 'opacity:', drawHandBtn.style.opacity);
