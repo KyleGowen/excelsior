@@ -20,7 +20,6 @@ const testCreatedDeckIds = new Set<string>();
 // Debug function to log all deck deletions
 const logDeckDeletion = (source: string, deckId: string, reason: string = '') => {
   const timestamp = new Date().toISOString();
-  console.log(`🔍 DEBUG: [${timestamp}] DECK DELETION from ${source}: ${deckId} ${reason ? `(${reason})` : ''}`);
   
   // Check if this is a protected deck
   const protectedDeckIds = [
@@ -37,7 +36,6 @@ const logDeckDeletion = (source: string, deckId: string, reason: string = '') =>
 export const integrationTestUtils = {
   // Helper to track a deck created by tests
   trackTestDeck: (deckId: string) => {
-    console.log(`🔍 DEBUG: trackTestDeck() called with deckId: ${deckId}`);
     testCreatedDeckIds.add(deckId);
     console.log(`✅ DEBUG: Deck ${deckId} added to tracking set. Current tracked decks: [${Array.from(testCreatedDeckIds).join(', ')}]`);
   },
@@ -88,7 +86,6 @@ export const integrationTestUtils = {
   
   // Helper to create test deck in database
   createTestDeck: async (userId: string, deckData: any) => {
-    console.log(`🔍 DEBUG: createTestDeck() called with userId: ${userId}, deckData:`, deckData);
     
     const { Pool } = require('pg');
     const crypto = require('crypto');
@@ -98,7 +95,6 @@ export const integrationTestUtils = {
     
     try {
       const deckId = crypto.randomUUID();
-      console.log(`🔍 DEBUG: createTestDeck() - Generated deckId: ${deckId}`);
       
       const result = await pool.query(
         'INSERT INTO decks (id, user_id, name, description) VALUES ($1, $2, $3, $4) RETURNING *',
@@ -130,7 +126,6 @@ export const integrationTestUtils = {
 
   // Comprehensive cleanup function for manual cleanup of all test data
   cleanupAllTestData: async () => {
-    console.log(`🔍 DEBUG: cleanupAllTestData() starting...`);
     
     const { Pool } = require('pg');
     const pool = new Pool({
@@ -142,7 +137,6 @@ export const integrationTestUtils = {
       
       // Get tracked test deck IDs
       let trackedDeckIds = Array.from(testCreatedDeckIds);
-      console.log(`🔍 DEBUG: cleanupAllTestData() - Current tracked deck IDs: [${trackedDeckIds.join(', ')}]`);
       
       // Only delete tracked test decks - no complex protection needed
       
@@ -150,13 +144,11 @@ export const integrationTestUtils = {
         console.log(`🗑️ Deleting ${trackedDeckIds.length} test-created decks: ${trackedDeckIds.join(', ')}`);
         
         // First, delete all deck cards for tracked test decks
-        console.log(`🔍 DEBUG: cleanupAllTestData() - Deleting deck_cards for decks: [${trackedDeckIds.join(', ')}]`);
         await pool.query(`
           DELETE FROM deck_cards WHERE deck_id = ANY($1)
         `, [trackedDeckIds]);
         
         // Then delete the tracked test decks
-        console.log(`🔍 DEBUG: cleanupAllTestData() - Deleting decks: [${trackedDeckIds.join(', ')}]`);
         for (const deckId of trackedDeckIds) {
           logDeckDeletion('cleanupAllTestData', deckId, 'tracked test deck');
         }
@@ -179,7 +171,6 @@ export const integrationTestUtils = {
       console.log(`✅ Cleanup completed: 0 users deleted (handled by individual tests)`);
     } finally {
       await pool.end();
-      console.log(`🔍 DEBUG: cleanupAllTestData() completed`);
     }
   },
   
@@ -270,7 +261,6 @@ beforeAll(async () => {
 // Clean up test data after each test suite (not after each individual test)
 // This prevents deleting users that are needed for subsequent tests in the same suite
 afterEach(async () => {
-  console.log(`🔍 DEBUG: afterEach() cleanup starting...`);
   
   // Only clean up specific test data that should be cleaned after each test
   // Don't clean up users as they may be needed for subsequent tests in the same suite
@@ -282,20 +272,17 @@ afterEach(async () => {
   try {
     // Get tracked test deck IDs for this test run
     const trackedDeckIds = Array.from(testCreatedDeckIds);
-    console.log(`🔍 DEBUG: afterEach() - Current tracked deck IDs: [${trackedDeckIds.join(', ')}]`);
     
     if (trackedDeckIds.length > 0) {
       console.log(`🧹 Cleaning up ${trackedDeckIds.length} test-created decks after test: ${trackedDeckIds.join(', ')}`);
       
       // Only delete tracked test decks - no complex protection needed
       // First, delete all deck cards for tracked test decks
-      console.log(`🔍 DEBUG: Deleting deck_cards for decks: [${trackedDeckIds.join(', ')}]`);
       await pool.query(`
         DELETE FROM deck_cards WHERE deck_id = ANY($1)
       `, [trackedDeckIds]);
       
       // Then delete the tracked test decks
-      console.log(`🔍 DEBUG: Deleting decks: [${trackedDeckIds.join(', ')}]`);
       for (const deckId of trackedDeckIds) {
         logDeckDeletion('afterEach cleanup', deckId, 'tracked test deck');
       }
@@ -306,11 +293,9 @@ afterEach(async () => {
       // Clear the tracking set for this test run
       testCreatedDeckIds.clear();
     } else {
-      console.log(`🔍 DEBUG: afterEach() - No tracked decks to clean up`);
     }
   } finally {
     await pool.end();
-    console.log(`🔍 DEBUG: afterEach() cleanup completed`);
   }
 });
 
@@ -325,14 +310,12 @@ afterAll(async () => {
     });
     
     const beforeResult = await pool.query('SELECT id, name, user_id FROM decks WHERE id = $1', ['be383a46-c8e0-4f85-8fc7-2a3b33048ced']);
-    console.log('🔍 DEBUG: afterAll() - V113 deck before cleanup:', beforeResult.rows.length > 0 ? beforeResult.rows[0] : 'NOT FOUND');
     
     // Run comprehensive cleanup of all test data
     await integrationTestUtils.cleanupAllTestData();
     
     // Check V113 deck after cleanup
     const afterResult = await pool.query('SELECT id, name, user_id FROM decks WHERE id = $1', ['be383a46-c8e0-4f85-8fc7-2a3b33048ced']);
-    console.log('🔍 DEBUG: afterAll() - V113 deck after cleanup:', afterResult.rows.length > 0 ? afterResult.rows[0] : 'NOT FOUND');
     
     await pool.end();
     

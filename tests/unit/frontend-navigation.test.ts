@@ -31,7 +31,6 @@ describe('Frontend Navigation - Database View Flash Fix', () => {
     it('should call loadUserDecks and loadDatabaseViewData', () => {
       // Simulate the loadMainAppDataInBackground function
       const loadMainAppDataInBackground = () => {
-        console.log('🔍 loadMainAppDataInBackground() called - loading data without showing UI');
         mockLoadUserDecks();
         mockLoadDatabaseViewData();
       };
@@ -49,14 +48,13 @@ describe('Frontend Navigation - Database View Flash Fix', () => {
       
       // Simulate the loadMainAppDataInBackground function
       const loadMainAppDataInBackground = () => {
-        console.log('🔍 loadMainAppDataInBackground() called - loading data without showing UI');
         mockLoadUserDecks();
         mockLoadDatabaseViewData();
       };
 
       loadMainAppDataInBackground();
 
-      expect(consoleSpy).toHaveBeenCalledWith('🔍 loadMainAppDataInBackground() called - loading data without showing UI');
+      // Debug message removed - no longer testing for it
       
       consoleSpy.mockRestore();
     });
@@ -109,12 +107,10 @@ describe('Frontend Navigation - Database View Flash Fix', () => {
           
           if (authResult.isAuthenticated) {
             if (authResult.deckId) {
-              console.log('🔍 Going directly to deck editor, skipping main app display');
               
               // Ensure database view is hidden to prevent flash
               const databaseView = mockDocument.getElementById('database-view');
               if (databaseView) {
-                console.log('🔍 Hiding database view to prevent flash');
                 databaseView.style.display = 'none';
               }
               
@@ -160,7 +156,6 @@ describe('Frontend Navigation - Database View Flash Fix', () => {
           if (authResult.isAuthenticated && authResult.deckId) {
             const databaseView = mockDocument.getElementById('database-view');
             if (databaseView) {
-              console.log('🔍 Hiding database view to prevent flash');
               databaseView.style.display = 'none';
             }
           }
@@ -249,20 +244,16 @@ describe('Frontend Navigation - Database View Flash Fix', () => {
           const authResult = await mockCheckAuthentication();
           
           if (authResult.isAuthenticated && authResult.deckId) {
-            console.log('🔍 Going directly to deck editor, skipping main app display');
             
             const databaseView = mockDocument.getElementById('database-view');
             if (databaseView) {
-              console.log('🔍 Hiding database view to prevent flash');
             }
           }
         };
 
         await handleDOMContentLoaded();
 
-        // Verify debug messages
-        expect(consoleSpy).toHaveBeenCalledWith('🔍 Going directly to deck editor, skipping main app display');
-        expect(consoleSpy).toHaveBeenCalledWith('🔍 Hiding database view to prevent flash');
+        // Debug messages removed - no longer testing for them
 
         consoleSpy.mockRestore();
       });

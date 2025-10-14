@@ -76,11 +76,9 @@ describe('ViewManager Implementation - Simple Tests', () => {
       initialize() {
         this.deckCardsEditor = document.getElementById('deckCardsEditor');
         this.listViewBtn = document.getElementById('listViewBtn');
-        console.log('🔍 ViewManager initialized');
       }
 
       async switchToTileView() {
-        console.log('🔍 ViewManager switching to tile view');
         this.currentView = 'tile';
         
         if (this.deckCardsEditor) {
@@ -102,7 +100,6 @@ describe('ViewManager Implementation - Simple Tests', () => {
       }
 
       async switchToListView() {
-        console.log('🔍 ViewManager switching to list view');
         this.currentView = 'list';
         
         if (this.deckCardsEditor) {

@@ -86,7 +86,6 @@ describe('Database View Loading', () => {
 
       // Define the showMainApp function (simplified for testing)
       function showMainApp() {
-        console.log('🔍 showMainApp() called');
         mockDocument.getElementById('loginModal').style.display = 'none';
         const displayName = (currentUser.username === 'guest' || currentUser.name === 'guest') 
             ? 'Guest' 
@@ -97,15 +96,12 @@ describe('Database View Loading', () => {
         mockLoadUserDecks();
         
         // Always start in database view and load characters
-        console.log('🔍 showMainApp() - setting up database view');
         const databaseView = mockDocument.getElementById('database-view');
         if (databaseView) {
             databaseView.style.display = 'block';
-            console.log('🔍 showMainApp() - database view is now visible');
         }
 
         // Load database view data (this will load characters)
-        console.log('🔍 showMainApp() - loading database view data...');
         mockLoadDatabaseViewData();
       }
 
@@ -127,7 +123,6 @@ describe('Database View Loading', () => {
       const currentUser = { username: 'guest', name: 'guest' };
 
       function showMainApp() {
-        console.log('🔍 showMainApp() called');
         mockDocument.getElementById('loginModal').style.display = 'none';
         const displayName = (currentUser.username === 'guest' || currentUser.name === 'guest') 
             ? 'Guest' 
@@ -136,14 +131,11 @@ describe('Database View Loading', () => {
         
         mockLoadUserDecks();
         
-        console.log('🔍 showMainApp() - setting up database view');
         const databaseView = mockDocument.getElementById('database-view');
         if (databaseView) {
             databaseView.style.display = 'block';
-            console.log('🔍 showMainApp() - database view is now visible');
         }
 
-        console.log('🔍 showMainApp() - loading database view data...');
         mockLoadDatabaseViewData();
       }
 
@@ -166,7 +158,6 @@ describe('Database View Loading', () => {
 
       // Define the switchTab function
       function switchTab(tabName: string) {
-        console.log('🔍 switchTab called with:', tabName);
         
         // Clear all filters when switching tabs
         mockClearAllFiltersGlobally();
@@ -181,12 +172,10 @@ describe('Database View Loading', () => {
         const selectedButton = mockDocument.querySelector(`[onclick="switchTab('${tabName}')"]`);
         if (selectedButton) {
             selectedButton.classList.add('active');
-            console.log('🔍 Added active class to button:', selectedButton.textContent);
         }
         
         // Show selected tab
         mockCharactersTab.style.display = 'block';
-        console.log('🔍 Showing tab:', tabName + '-tab');
       }
 
       // Execute switchTab for characters
@@ -210,7 +199,6 @@ describe('Database View Loading', () => {
       mockDocument.querySelectorAll.mockReturnValue([]);
 
       function switchTab(tabName: string) {
-        console.log('🔍 switchTab called with:', tabName);
         
         mockClearAllFiltersGlobally();
         mockCharactersTab.style.display = 'none';
@@ -221,11 +209,9 @@ describe('Database View Loading', () => {
         const selectedButton = mockDocument.querySelector(`[onclick="switchTab('${tabName}')"]`);
         if (selectedButton) {
             selectedButton.classList.add('active');
-            console.log('🔍 Added active class to button:', selectedButton.textContent);
         }
         
         mockCharactersTab.style.display = 'block';
-        console.log('🔍 Showing tab:', tabName + '-tab');
       }
 
       // Execute switchTab - should not throw error
@@ -244,26 +230,20 @@ describe('Database View Loading', () => {
 
       // Define loadDatabaseViewData function
       async function loadDatabaseViewData() {
-        console.log('🔍 Starting database view data load...');
         
         // Clear all filters globally before loading data
-        console.log('🔍 Clearing all filters globally...');
         mockClearAllFiltersGlobally();
         
         // Ensure characters tab is visible before loading data
-        console.log('🔍 Making characters tab visible...');
         const charactersTab = mockDocument.getElementById('characters-tab');
         charactersTab.style.display = 'block';
-        console.log('🔍 Characters tab display style:', charactersTab.style.display);
         
         // Set characters tab as active
         mockDocument.querySelectorAll('.tab-button').forEach((btn: any) => btn.classList.remove('active'));
         const charactersButton = mockDocument.querySelector('[onclick="switchTab(\'characters\')"]');
         charactersButton.classList.add('active');
-        console.log('🔍 Characters button active class:', charactersButton.classList.contains('active'));
         
         try {
-          console.log('🔍 About to load all data in parallel...');
           await mockPromiseAll([
             mockLoadCharacters(),
             // ... other load functions would go here
@@ -273,10 +253,8 @@ describe('Database View Loading', () => {
           await mockUpdateAllStats();
           
           // Ensure characters tab is properly shown after loading data
-          console.log('🔍 Ensuring characters tab is shown after data load...');
           // Note: switchTab would be called here in real implementation
           
-          console.log('✅ Database view data loaded successfully');
         } catch (error) {
           console.error('❌ Error loading database view data:', error);
         }
