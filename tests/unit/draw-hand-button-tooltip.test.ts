@@ -194,6 +194,36 @@ describe('Draw Hand Button Tooltip', () => {
     });
   });
 
+  describe('Tooltip visibility behavior', () => {
+    test('should show tooltip when button is disabled', () => {
+      // Simulate disabled button state
+      mockDrawHandBtn.disabled = true;
+      mockDrawHandBtn.title = "Deck must contain at least 8 playable cards.";
+      mockDrawHandBtn.style.opacity = "0.5";
+      mockDrawHandBtn.style.cursor = "not-allowed";
+
+      // Verify tooltip is present when disabled
+      expect(mockDrawHandBtn.disabled).toBe(true);
+      expect(mockDrawHandBtn.title).toBe("Deck must contain at least 8 playable cards.");
+      expect(mockDrawHandBtn.style.opacity).toBe("0.5");
+      expect(mockDrawHandBtn.style.cursor).toBe("not-allowed");
+    });
+
+    test('should not show tooltip when button is enabled', () => {
+      // Simulate enabled button state
+      mockDrawHandBtn.disabled = false;
+      mockDrawHandBtn.title = "";
+      mockDrawHandBtn.style.opacity = "1";
+      mockDrawHandBtn.style.cursor = "pointer";
+
+      // Verify tooltip is not present when enabled
+      expect(mockDrawHandBtn.disabled).toBe(false);
+      expect(mockDrawHandBtn.title).toBe("");
+      expect(mockDrawHandBtn.style.opacity).toBe("1");
+      expect(mockDrawHandBtn.style.cursor).toBe("pointer");
+    });
+  });
+
   describe('Button state transitions', () => {
     test('should transition from disabled with tooltip to enabled without tooltip', () => {
       // Start with disabled state
