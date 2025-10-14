@@ -334,10 +334,10 @@
                             <th>
                                 <div class="column-filters">
                                     <div class="checkbox-group">
-                                        <label><input type="checkbox" value="The Call of Cthulhu" checked> The Call of Cthulhu</label>
                                         <label><input type="checkbox" value="King of the Jungle" checked> King of the Jungle</label>
-                                        <label><input type="checkbox" value="Warlord of Mars" checked> Warlord of Mars</label>
+                                        <label><input type="checkbox" value="The Call of Cthulhu" checked> The Call of Cthulhu</label>
                                         <label><input type="checkbox" value="Time Wars: Rise of the Gods" checked> Time Wars: Rise of the Gods</label>
+                                        <label><input type="checkbox" value="Warlord of Mars" checked> Warlord of Mars</label>
                                     </div>
                                 </div>
                             </th>
@@ -372,10 +372,10 @@
                             <th>
                                 <div class="column-filters">
                                     <div class="checkbox-group">
-                                        <label><input type="checkbox" value="The Call of Cthulhu" checked> The Call of Cthulhu</label>
                                         <label><input type="checkbox" value="King of the Jungle" checked> King of the Jungle</label>
-                                        <label><input type="checkbox" value="Warlord of Mars" checked> Warlord of Mars</label>
+                                        <label><input type="checkbox" value="The Call of Cthulhu" checked> The Call of Cthulhu</label>
                                         <label><input type="checkbox" value="Time Wars: Rise of the Gods" checked> Time Wars: Rise of the Gods</label>
+                                        <label><input type="checkbox" value="Warlord of Mars" checked> Warlord of Mars</label>
                                     </div>
                                 </div>
                             </th>
@@ -1085,24 +1085,7 @@
         // - clearAspectsFilters
         // - clearMissionsFilters
 
-        function applyMissionFilters() {
-            const selectedMissionSets = Array.from(document.querySelectorAll('#missions-tab input[type="checkbox"]:checked'))
-                .map(checkbox => checkbox.value);
-            
-            if (selectedMissionSets.length === 0) {
-                // If no mission sets selected, show none
-                document.getElementById('missions-tbody').innerHTML = '<tr><td colspan="3" class="no-results">No mission sets selected</td></tr>';
-                return;
-            }
-            
-            // Filter missions based on selected mission sets
-            const missions = window.missionsData || [];
-            const filteredMissions = missions.filter(mission => 
-                selectedMissionSets.includes(mission.mission_set)
-            );
-            
-            displayMissions(filteredMissions);
-        }
+        // applyMissionFilters function moved to external file
 
         // clearEventsFilters function moved to filter-functions.js
 

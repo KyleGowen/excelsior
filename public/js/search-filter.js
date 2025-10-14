@@ -38,10 +38,18 @@ function clearAllFiltersGlobally() {
         input.value = '';
     });
     
-    // Clear all checkboxes
+    // Clear all checkboxes except mission set checkboxes (which should be checked by default)
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
-        checkbox.checked = false;
+        // Check if this is a mission set checkbox by looking at its value
+        const missionSetValues = ['King of the Jungle', 'The Call of Cthulhu', 'Time Wars: Rise of the Gods', 'Warlord of Mars'];
+        if (missionSetValues.includes(checkbox.value)) {
+            // Keep mission set checkboxes checked by default
+            checkbox.checked = true;
+        } else {
+            // Clear all other checkboxes
+            checkbox.checked = false;
+        }
     });
     
     isClearingFilters = false;

@@ -212,6 +212,30 @@ function setupMissionSearch() {
             console.error('Error searching missions:', error);
         }
     });
+
+    // Set up checkbox event listeners for mission set filtering
+    document.querySelectorAll('#missions-tab input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', applyMissionFilters);
+    });
+}
+
+function applyMissionFilters() {
+    const selectedMissionSets = Array.from(document.querySelectorAll('#missions-tab input[type="checkbox"]:checked'))
+        .map(checkbox => checkbox.value);
+    
+    if (selectedMissionSets.length === 0) {
+        // If no mission sets selected, show none
+        document.getElementById('missions-tbody').innerHTML = '<tr><td colspan="3" class="no-results">No mission sets selected</td></tr>';
+        return;
+    }
+    
+    // Filter missions based on selected mission sets
+    const missions = window.missionsData || [];
+    const filteredMissions = missions.filter(mission => 
+        selectedMissionSets.includes(mission.mission_set)
+    );
+    
+    displayMissions(filteredMissions);
 }
 
 function setupEventSearch() {
