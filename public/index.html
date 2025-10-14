@@ -5178,13 +5178,22 @@
                 const missions = await missionsResponse.json();
                 if (missions.success) {
                     missions.data.forEach(mission => {
-                        if (mission.name && mission.name.toLowerCase().includes(searchTerm)) {
+                        // Check if card name contains search term
+                        const nameMatch = mission.card_name && mission.card_name.toLowerCase().includes(searchTerm);
+                        
+                        // Check if mission set contains search term
+                        const setMatch = mission.mission_set && mission.mission_set.toLowerCase().includes(searchTerm);
+                        
+                        // Check for exact type match
+                        const typeMatch = searchTerm === 'mission' || searchTerm === 'missions';
+                        
+                        if (nameMatch || setMatch || typeMatch) {
                             results.push({
                                 id: mission.id,
-                                name: mission.name,
+                                name: mission.card_name,
                                 type: 'mission',
                                 image: `/src/resources/cards/images/${mission.image}`,
-                                character: null
+                                character: mission.mission_set
                             });
                         }
                     });
@@ -5195,13 +5204,22 @@
                 const events = await eventsResponse.json();
                 if (events.success) {
                     events.data.forEach(event => {
-                        if (event.name && event.name.toLowerCase().includes(searchTerm)) {
+                        // Check if event name contains search term
+                        const nameMatch = event.name && event.name.toLowerCase().includes(searchTerm);
+                        
+                        // Check if mission set contains search term
+                        const setMatch = event.mission_set && event.mission_set.toLowerCase().includes(searchTerm);
+                        
+                        // Check for exact type match
+                        const typeMatch = searchTerm === 'event' || searchTerm === 'events';
+                        
+                        if (nameMatch || setMatch || typeMatch) {
                             results.push({
                                 id: event.id,
                                 name: event.name,
                                 type: 'event',
                                 image: `/src/resources/cards/images/${event.image}`,
-                                character: null
+                                character: event.mission_set
                             });
                         }
                     });
