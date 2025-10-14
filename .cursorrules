@@ -58,17 +58,25 @@
 - Use `curl -s http://localhost:3000/health | jq .` for health checks
 - **ALWAYS format health check output in a friendly, readable format**
 - Include key metrics like status, uptime, database connectivity, and response time
+- **ALWAYS include latest git commit and migration information in health check summaries**
 - Present health check results with clear status indicators (✅/❌)
-- Example format:
-  ```
-  🏥 Server Health Check
+- Use this command for friendly formatted output:
+  ```bash
+  curl -s http://localhost:3000/health | jq -r '
+  "🏥 Server Health Check
   ┌─────────────────────────────────────────────────────────────┐
-  │ Status: ✅ OK                                               │
-  │ Uptime: 2h 15m 30s                                         │
-  │ Database: ✅ Connected (15ms latency)                      │
-  │ Response Time: 45ms                                        │
-  │ Environment: development                                   │
-  └─────────────────────────────────────────────────────────────┘
+  │ Status: " + (if .status == "OK" then "✅ OK" else "❌ ERROR" end) + "                                               │
+  │ Uptime: " + (.uptime | floor | . / 3600 | floor | tostring) + "h " + ((.uptime | floor) % 3600 / 60 | floor | tostring) + "m " + ((.uptime | floor) % 60 | tostring) + "s                                         │
+  │ Database: " + (if .database.status == "OK" then "✅ Connected" else "❌ Error" end) + " (" + (.database.latency // "N/A") + ")                      │
+  │ Response Time: " + .latency + "                                        │
+  │ Environment: " + .environment + "                                   │
+  ├─────────────────────────────────────────────────────────────┤
+  │ Latest Git Commit:                                          │
+  │ " + .git.shortCommit + " - " + .git.commitMessage + " │
+  ├─────────────────────────────────────────────────────────────┤
+  │ Latest Migration:                                           │
+  │ V" + .database.migrations.latest.version + " - " + .database.migrations.latest.description + " │
+  └─────────────────────────────────────────────────────────────┘"'
   ```
 
 ## Testing Commands
