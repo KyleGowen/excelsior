@@ -39,7 +39,6 @@ function makeImagesClickable() {
  * Show notification message
  */
 function showNotification(message, type = 'info') {
-    console.log('🔍 showNotification called with:', { message, type, isGuest: typeof isGuestUser === 'function' ? isGuestUser() : 'function not available' });
     
     // Create notification element
     const notification = document.createElement('div');

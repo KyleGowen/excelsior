@@ -3366,6 +3366,15 @@
     <!-- Global Navigation Component -->
     <link rel="stylesheet" href="/components/globalNav.css">
     <script src="/components/globalNav.js"></script>
+    
+    <!-- Essential JavaScript files for Add to Deck functionality -->
+    <script src="/js/auth-service.js"></script>
+    <script src="/js/utilities.js"></script>
+    <script src="/js/deck-management.js"></script>
+    <script src="/js/card-display.js"></script>
+    <script src="/js/card-display-functions.js"></script>
+    <script src="/js/ui-utility-functions.js"></script>
+    <script src="/js/validation-calculation-functions.js"></script>
 </head>
 <body>
     <!-- Login Modal -->
@@ -4766,8 +4775,6 @@
 
         // Tab switching functionality
         function switchTab(tabName) {
-            console.log('🔍 DEBUG: switchTab called with:', tabName);
-            console.trace('🔍 DEBUG: switchTab call stack');
             
             // Hide all tabs
             document.getElementById('characters-tab').style.display = 'none';
@@ -5655,9 +5662,7 @@
         }
 
         function setupPowerCardsSearch() {
-            console.log('🔍 DEBUG: setupPowerCardsSearch called');
             const searchInput = document.getElementById('search-input');
-            console.log('🔍 DEBUG: searchInput found:', !!searchInput);
             searchInput.addEventListener('input', async (e) => {
                 const term = e.target.value.toLowerCase();
                 if (term.length === 0) { 
@@ -5686,22 +5691,16 @@
             const minValueInput = document.getElementById('power-value-min');
             const maxValueInput = document.getElementById('power-value-max');
             
-            console.log('🔍 DEBUG: Setting up power card value filter inputs');
-            console.log('🔍 DEBUG: minValueInput found:', !!minValueInput);
-            console.log('🔍 DEBUG: maxValueInput found:', !!maxValueInput);
             
             minValueInput.addEventListener('input', (e) => {
-                console.log('🔍 DEBUG: minValueInput input event triggered, value:', e.target.value);
                 applyPowerCardFilters();
             });
             maxValueInput.addEventListener('input', (e) => {
-                console.log('🔍 DEBUG: maxValueInput input event triggered, value:', e.target.value);
                 applyPowerCardFilters();
             });
             
             // Prevent form submission and unwanted navigation
             minValueInput.addEventListener('keydown', (e) => {
-                console.log('🔍 DEBUG: minValueInput keydown event:', e.key);
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     e.stopPropagation();
@@ -5710,7 +5709,6 @@
             });
             
             maxValueInput.addEventListener('keydown', (e) => {
-                console.log('🔍 DEBUG: maxValueInput keydown event:', e.key);
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     e.stopPropagation();
@@ -5720,27 +5718,23 @@
             
             // Prevent click events from bubbling up and causing navigation
             minValueInput.addEventListener('click', (e) => {
-                console.log('🔍 DEBUG: minValueInput click event');
                 e.preventDefault();
                 e.stopPropagation();
             });
             
             maxValueInput.addEventListener('click', (e) => {
-                console.log('🔍 DEBUG: maxValueInput click event');
                 e.preventDefault();
                 e.stopPropagation();
             });
             
             // Add event listeners for spinner arrows (mousedown/up events)
             minValueInput.addEventListener('mousedown', (e) => {
-                console.log('🔍 DEBUG: minValueInput mousedown event');
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
             });
             
             maxValueInput.addEventListener('mousedown', (e) => {
-                console.log('🔍 DEBUG: maxValueInput mousedown event');
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
@@ -5748,14 +5742,12 @@
             
             // Add event listeners for mouseup events (spinner arrows)
             minValueInput.addEventListener('mouseup', (e) => {
-                console.log('🔍 DEBUG: minValueInput mouseup event');
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
             });
             
             maxValueInput.addEventListener('mouseup', (e) => {
-                console.log('🔍 DEBUG: maxValueInput mouseup event');
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
@@ -5763,25 +5755,21 @@
             
             // Add event listeners for focus events
             minValueInput.addEventListener('focus', (e) => {
-                console.log('🔍 DEBUG: minValueInput focus event');
                 e.stopPropagation();
             });
             
             maxValueInput.addEventListener('focus', (e) => {
-                console.log('🔍 DEBUG: maxValueInput focus event');
                 e.stopPropagation();
             });
             
             // Prevent any form submission or navigation
             minValueInput.addEventListener('change', (e) => {
-                console.log('🔍 DEBUG: minValueInput change event, value:', e.target.value);
                 e.preventDefault();
                 e.stopPropagation();
                 applyPowerCardFilters();
             });
             
             maxValueInput.addEventListener('change', (e) => {
-                console.log('🔍 DEBUG: maxValueInput change event, value:', e.target.value);
                 e.preventDefault();
                 e.stopPropagation();
                 applyPowerCardFilters();
@@ -5789,7 +5777,6 @@
         }
 
         async function applyPowerCardFilters() {
-            console.log('🔍 DEBUG: applyPowerCardFilters called');
             try {
                 const resp = await fetch('/api/power-cards');
                 const data = await resp.json();
@@ -5808,7 +5795,6 @@
                 const minValue = document.getElementById('power-value-min').value;
                 const maxValue = document.getElementById('power-value-max').value;
                 
-                console.log('🔍 DEBUG: Filter values - min:', minValue, 'max:', maxValue);
                 
                 if (minValue && !isNaN(minValue)) {
                     filtered = filtered.filter(card => card.value >= parseInt(minValue));
@@ -5817,7 +5803,6 @@
                     filtered = filtered.filter(card => card.value <= parseInt(maxValue));
                 }
 
-                console.log('🔍 DEBUG: Filtered cards count:', filtered.length);
                 displayPowerCards(filtered);
             } catch (err) {
                 console.error('Error applying power card filters:', err);
@@ -7507,9 +7492,6 @@
                 return characterName;
             }).filter(name => name); // Remove any undefined names
             
-            console.log('=== FILTER DEBUG ===');
-            console.log('Filter checked:', isChecked);
-            console.log('Deck character cards:', deckCharacterCards);
             console.log('Deck character names:', deckCharacterNames);
             console.log('Character map:', characterMap);
             console.log('Found', characterGroups.length, 'character groups');
@@ -7585,7 +7567,6 @@
                     container.appendChild(group);
                 });
             }
-            console.log('=== END FILTER DEBUG ===');
         }
         
         // Update deck editor card count display
@@ -7737,9 +7718,6 @@
                 .map(card => characterMap[card.cardId])
                 .filter(char => char); // Remove undefined entries
             
-            console.log('=== POWER CARDS FILTER DEBUG ===');
-            console.log('Filter checked:', isChecked);
-            console.log('Deck characters:', deckCharacters);
             
             // Get all power card groups
             const powerGroups = powerCardsCategory.querySelectorAll('.character-group');
@@ -7839,7 +7817,6 @@
                 console.log(`Updated main Power Cards header count to: ${totalPowerCardCount}`);
             }
             
-            console.log('=== END POWER CARDS FILTER DEBUG ===');
         }
 
         // Update power cards filter when deck changes
@@ -7943,9 +7920,6 @@
                 .map(card => characterMap[card.cardId])
                 .filter(char => char); // Remove undefined entries
             
-            console.log('=== BASIC UNIVERSE FILTER DEBUG ===');
-            console.log('Filter checked:', isChecked);
-            console.log('Deck characters:', deckCharacters);
             
             // Get all basic universe cards
             const cardItems = basicUniverseCategory.querySelectorAll('.card-item');
@@ -8206,9 +8180,6 @@
                 .map(card => characterMap[card.cardId])
                 .filter(char => char); // Remove undefined entries
             
-            console.log('=== TRAINING FILTER DEBUG ===');
-            console.log('Filter checked:', isChecked);
-            console.log('Deck characters:', deckCharacters);
             
             // Get all training cards
             const cardItems = trainingCategory.querySelectorAll('.card-item');
@@ -8368,9 +8339,6 @@
                 .map(card => characterMap[card.cardId])
                 .filter(char => char); // Remove undefined entries
             
-            console.log('=== ALLY UNIVERSE FILTER DEBUG ===');
-            console.log('Filter checked:', isChecked);
-            console.log('Deck characters:', deckCharacters);
             
             // Get all ally universe cards
             const cardItems = allyUniverseCategory.querySelectorAll('.card-item');

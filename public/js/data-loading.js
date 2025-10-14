@@ -77,7 +77,6 @@ async function loadCharacters() {
             await new Promise(resolve => setTimeout(resolve, 10));
             
             displayCharacters(data.data);
-            console.log('✅ Characters loaded and displayed successfully:', data.data.length);
         } else {
             throw new Error('Failed to load characters');
         }

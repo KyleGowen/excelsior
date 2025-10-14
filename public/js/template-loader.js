@@ -37,7 +37,6 @@ class TemplateLoader {
             this.templates.set('database-view', dbViewHtml);
 
             this.loaded = true;
-            console.log('✅ Templates loaded successfully');
         } catch (error) {
             console.error('❌ Error loading templates:', error);
         }

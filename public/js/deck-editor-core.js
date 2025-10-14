@@ -120,15 +120,12 @@ function showDeckEditor() {
 
 // Load deck for editing
 async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) {
-    console.log('loadDeckForEditing called with deckId:', deckId, 'isReadOnly:', isReadOnly);
     
     // Apply or remove read-only mode class based on parameter
     if (isReadOnly) {
         document.body.classList.add('read-only-mode');
-        console.log('🔍 Read-only mode applied from loadDeckForEditing parameter');
     } else {
         document.body.classList.remove('read-only-mode');
-        console.log('🔍 Read-only mode removed from loadDeckForEditing parameter');
     }
     
                 // Update Read-Only badge visibility
@@ -183,7 +180,6 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             credentials: 'include'
         });
         const data = await response.json();
-        console.log('Deck data loaded:', data);
         
         if (data.success) {
             currentDeckData = data.data;
@@ -202,7 +198,6 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
                 return { ...card, type: convertedType };
             });
             
-            console.log('Working copy created:', deckEditorCards);
             
             // Read-only mode removed - now handled by backend flag
             

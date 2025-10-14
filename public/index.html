@@ -1125,7 +1125,6 @@
                 
                 // If we're in a filter interaction and trying to switch to characters, block it
                 if (tabName === 'characters') {
-                    console.log('🚨 BLOCKING: Characters tab switch during filter interaction - preventing unwanted navigation!');
                     return; // Block the tab switch
                 }
             }
@@ -1134,9 +1133,6 @@
             if (tabName === 'characters') {
                 
                 // Check if this is happening after a filter interaction
-                if (window.isFilterInteraction) {
-                    console.log('🚨 ALERT: Characters tab switch called during filter interaction!');
-                }
             }
             
             // Clear all filters when switching tabs
@@ -1757,7 +1753,6 @@
         
         if (isReadOnlyFromQuery) {
             document.body.classList.add('read-only-mode');
-            console.log('🔍 Read-only mode detected from URL parameter');
         }
         
         // Show/hide Read-Only badge based on read-only mode
@@ -1784,7 +1779,6 @@
                     saveButton.style.cursor = 'not-allowed';
                     saveButton.title = 'Save is disabled in read-only mode';
                     saveButton.style.display = 'block';
-                    console.log('🔒 SECURITY: Save button disabled in read-only mode');
                 } else if (isGuestUser()) {
                     // Disable Save button for guest users
                     saveButton.disabled = true;
@@ -1811,8 +1805,6 @@
         document.addEventListener('click', function(event) {
             if (window.isFilterInteraction) {
                 if (event.target.onclick && event.target.onclick.toString().includes('switchTab')) {
-                    console.log('🚨 ALERT: Click on element with switchTab onclick during filter interaction!');
-                    console.log('Element:', event.target);
                     console.log('onclick:', event.target.onclick.toString());
                 }
             }
@@ -1821,7 +1813,7 @@
         // Add event listeners to catch any page navigation or refresh events
         window.addEventListener('beforeunload', function(event) {
             if (window.isFilterInteraction) {
-                console.log('🚨 ALERT: Page is about to unload during filter interaction!');
+                // Page is about to unload during filter interaction
             }
         });
         
@@ -1831,9 +1823,7 @@
             const observer = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                        console.log('🚨 ALERT: characters-tab style changed!');
-                        console.log('  Old value:', mutation.oldValue);
-                        console.log('  New value:', charactersTab.style.cssText);
+                        // characters-tab style changed
                         console.trace('🚨 ALERT: characters-tab style change call stack');
                     }
                 });
@@ -1847,15 +1837,14 @@
         
         window.addEventListener('popstate', function(event) {
             if (window.isFilterInteraction) {
-                console.log('🚨 ALERT: Browser back/forward button pressed during filter interaction!');
+                // Browser back/forward button pressed during filter interaction
             }
         });
         
         // Add event listener to catch any form submissions
         document.addEventListener('submit', function(event) {
             if (window.isFilterInteraction) {
-                console.log('🚨 ALERT: Form submission during filter interaction!');
-                console.log('Form:', event.target);
+                // Form submission during filter interaction
                 event.preventDefault();
                 event.stopPropagation();
                 return false;
@@ -1865,7 +1854,7 @@
         // Add event listener to catch any navigation events
         window.addEventListener('beforeunload', function(event) {
             if (window.isFilterInteraction) {
-                console.log('🚨 ALERT: Page navigation during filter interaction!');
+                // Page navigation during filter interaction
                 event.preventDefault();
                 event.returnValue = '';
                 return '';
@@ -1875,7 +1864,7 @@
         // Add event listener to catch any hash changes
         window.addEventListener('hashchange', function(event) {
             if (window.isFilterInteraction) {
-                console.log('🚨 ALERT: Hash change during filter interaction!');
+                // Hash change during filter interaction
                 event.preventDefault();
                 return false;
             }
@@ -2843,11 +2832,9 @@
             initialize() {
                 this.deckCardsEditor = document.getElementById('deckCardsEditor');
                 this.listViewBtn = document.getElementById('listViewBtn');
-                console.log('🔍 ViewManager initialized');
             }
 
             async switchToTileView() {
-                console.log('🔍 ViewManager switching to tile view');
                 this.currentView = 'tile';
                 
                 // Disconnect layout observer when switching to tile view
@@ -2869,7 +2856,6 @@
             }
 
             async switchToListView() {
-                console.log('🔍 ViewManager switching to list view');
                 this.currentView = 'list';
                 
                 if (this.deckCardsEditor) {
@@ -3536,10 +3522,6 @@
         // calculateTotalThreat function moved to external file
         // Function to update deck summary with stats and validation
         async function updateDeckSummary(deckCards) {
-            console.log('🔍 updateDeckSummary called with deckCards:', deckCards?.length || 0, 'cards');
-            console.log('🔍 updateDeckSummary - currentDeckId:', currentDeckId, 'isGuest:', isGuestUser());
-            console.log('🔍 updateDeckSummary - call stack:', new Error().stack);
-            console.log('🔍 updateDeckSummary - deckCards content:', JSON.stringify(deckCards, null, 2));
             
             // Update total card count using shared function
             const totalCards = calculateTotalCardCount(deckCards);
@@ -3560,7 +3542,6 @@
             
             // Enable/disable Draw Hand button based on playable cards
             const drawHandBtn = document.getElementById('drawHandBtn');
-            console.log('🔍 Draw Hand Button Debug - drawHandBtn element:', drawHandBtn);
             
             if (drawHandBtn) {
                 // Count playable cards (excluding characters, locations, missions)
@@ -3568,27 +3549,19 @@
                     .filter(card => card.type !== 'character' && card.type !== 'location' && card.type !== 'mission')
                     .reduce((sum, card) => sum + card.quantity, 0);
                 
-                console.log('🔍 Draw Hand Button Debug - deckCards:', deckCards);
-                console.log('🔍 Draw Hand Button Debug - playableCardsCount:', playableCardsCount);
-                console.log('🔍 Draw Hand Button Debug - current button state - disabled:', drawHandBtn.disabled, 'opacity:', drawHandBtn.style.opacity);
                 
                 if (playableCardsCount >= 8) {
-                    console.log('🔍 Draw Hand Button Debug - ENABLING button (playableCardsCount >= 8)');
                     drawHandBtn.disabled = false;
                     drawHandBtn.style.opacity = "1";
                     drawHandBtn.style.cursor = "pointer";
                     drawHandBtn.title = ""; // Remove tooltip when enabled
                 } else {
-                    console.log('🔍 Draw Hand Button Debug - DISABLING button (playableCardsCount < 8)');
                     drawHandBtn.disabled = true;
                     drawHandBtn.style.opacity = "0.5";
                     drawHandBtn.style.cursor = "not-allowed";
                     drawHandBtn.title = "Deck must contain at least 8 playable cards."; // Add tooltip when disabled
                 }
                 
-                console.log('🔍 Draw Hand Button Debug - final button state - disabled:', drawHandBtn.disabled, 'opacity:', drawHandBtn.style.opacity);
-            } else {
-                console.log('❌ Draw Hand Button Debug - drawHandBtn element not found!');
             }            
             // Calculate maximum character stats and total threat level
             const characterCards = deckCards.filter(card => card.type === 'character');
@@ -6533,18 +6506,12 @@
             
             // Debug: Check character section layout and body classes
             setTimeout(() => {
-                console.log('🔍 Layout Debug - Body classes:', document.body.className);
-                console.log('🔍 Layout Debug - read-only mode removed');
-                console.log('🔍 Layout Debug - currentUser role:', currentUser?.role);
-                console.log('🔍 Layout Debug - isGuestUser():', typeof isGuestUser === 'function' ? isGuestUser() : 'function not available');
                 
                 const characterSection = document.getElementById('deck-type-character');
                 if (characterSection) {
                     const characterCards = characterSection.querySelector('.deck-type-cards');
                     if (characterCards) {
                         const computedStyle = window.getComputedStyle(characterCards);
-                        console.log('🔍 Layout Debug - Character cards computed style grid-template-columns:', computedStyle.gridTemplateColumns);
-                        console.log('🔍 Layout Debug - Character cards element:', characterCards);
                         
                         // Read-only mode should use the same layout as edit mode - no special JavaScript rules needed
                     }
@@ -6552,13 +6519,8 @@
                 
                 // Debug all card sections
                 const allCardSections = document.querySelectorAll('.deck-type-cards');
-                console.log('🔍 Layout Debug - Found', allCardSections.length, 'card sections');
                 allCardSections.forEach((section, index) => {
                     const computedStyle = window.getComputedStyle(section);
-                    console.log(`🔍 Layout Debug - Section ${index} grid-template-columns:`, computedStyle.gridTemplateColumns);
-                    console.log(`🔍 Layout Debug - Section ${index} element:`, section);
-                    console.log(`🔍 Layout Debug - Section ${index} classes:`, section.className);
-                    console.log(`🔍 Layout Debug - Section ${index} parent classes:`, section.parentElement?.className);
                     
                     // Read-only mode should use the same layout as edit mode - no special JavaScript rules needed
                 });
@@ -9287,8 +9249,6 @@
         }
 
         function updateReserveButtons() {
-            console.log('🔍 updateReserveButtons called');
-            console.log('🔍 updateReserveButtons - currentDeckData:', currentDeckData?.metadata?.reserve_character);
             
             // Find all character cards in the deck editor
             const characterCards = document.querySelectorAll('.deck-card-editor-item');
@@ -9366,23 +9326,19 @@
 
 
         async function selectReserveCharacter(cardId, index) {
-            console.log('🔍 selectReserveCharacter called with:', { cardId, index, currentDeckId, isGuest: isGuestUser() });
             
             if (!currentDeckId && currentDeckId !== null) {
-                console.log('❌ No deck selected - currentDeckId:', currentDeckId);
                 showNotification('No deck selected', 'error');
                 return;
             }
 
             if (!currentDeckData) {
-                console.log('❌ No deck data - currentDeckData:', currentDeckData);
                 showNotification('No deck data available', 'error');
                 return;
             }
 
             // Read-only mode removed - now handled by backend flag
 
-            console.log('✅ Proceeding with reserve character selection');
 
             // Update local deck data only - changes will be persisted when user clicks Save
             if (!currentDeckData.metadata) {
@@ -9393,7 +9349,6 @@
             console.log('🔧 Setting reserve_character to:', cardId);
             currentDeckData.metadata.reserve_character = cardId;
             
-            console.log('✅ Reserve character set, showing notification');
             showNotification('Reserve character selected! (Click Save to persist changes)', 'success');
             
             console.log('🔧 Updating reserve buttons');
@@ -9406,28 +9361,22 @@
             console.log('🔧 Current deckEditorCards:', deckEditorCards.length);
             await updateDeckSummary(deckEditorCards);
             
-            console.log('✅ selectReserveCharacter completed successfully');
         }
 
         async function deselectReserveCharacter(index) {
-            console.log('🔍 deselectReserveCharacter called with index:', index);
-            console.log('🔍 deselectReserveCharacter - currentDeckId:', currentDeckId, 'currentDeckData:', !!currentDeckData, 'isGuest:', isGuestUser());
             
             if (!currentDeckId && currentDeckId !== null) {
-                console.log('❌ No deck selected - currentDeckId:', currentDeckId);
                 showNotification('No deck selected', 'error');
                 return;
             }
 
             if (!currentDeckData) {
-                console.log('❌ No deck data - currentDeckData:', currentDeckData);
                 showNotification('No deck data available', 'error');
                 return;
             }
 
             // Read-only mode removed - now handled by backend flag
 
-            console.log('✅ Proceeding with reserve character deselection');
 
             // Update local deck data only - changes will be persisted when user clicks Save
             if (!currentDeckData.metadata) {
@@ -9438,7 +9387,6 @@
             console.log('🔧 Clearing reserve_character');
             currentDeckData.metadata.reserve_character = null;
             
-            console.log('✅ Reserve character cleared, showing notification');
             showNotification('Reserve character deselected! (Click Save to persist changes)', 'success');
             
             console.log('🔧 Updating reserve buttons');
@@ -9451,21 +9399,17 @@
             console.log('🔧 Current deckEditorCards:', deckEditorCards.length);
             await updateDeckSummary(deckEditorCards);
             
-            console.log('✅ deselectReserveCharacter completed successfully');
         }
 
         // saveDeckChanges function moved to external file
 
         // Global alias for updateDeckEditorCardCount
         window.updateDeckCardCount = function() {
-            console.log('🔍 updateDeckCardCount called - deckEditorCards:', deckEditorCards?.length || 0);
             updateDeckEditorCardCount();
             // Also update deck summary to ensure button states are correct
             if (typeof updateDeckSummary === 'function') {
-                console.log('🔍 updateDeckCardCount calling updateDeckSummary');
                 updateDeckSummary(deckEditorCards);
             } else {
-                console.log('❌ updateDeckSummary function not found');
             }
         };
 

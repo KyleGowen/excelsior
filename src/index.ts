@@ -16,6 +16,98 @@ import { execSync } from 'child_process';
 export const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Deck building rules constants
+const DECK_RULES = {
+  MIN_DECK_SIZE: 51,
+  MIN_DECK_SIZE_WITH_EVENTS: 56,
+  EXACT_CHARACTERS: 4,
+  MAX_TOTAL_THREAT: 76,
+  MAX_COPIES_ONE_PER_DECK: 1,
+  EXACT_MISSION_CARDS: 7,
+  MAX_LOCATIONS: 1
+};
+
+// Function to validate adding a single card to a deck
+async function validateCardAddition(currentCards: any[], cardType: string, cardId: string, quantity: number): Promise<string | null> {
+  // Create a copy of current cards and add the new card
+  const testCards = [...currentCards];
+  
+  // Add the new card to test deck
+  const existingCardIndex = testCards.findIndex(card => card.type === cardType && card.cardId === cardId);
+  if (existingCardIndex >= 0) {
+    testCards[existingCardIndex] = {
+      ...testCards[existingCardIndex],
+      quantity: testCards[existingCardIndex].quantity + quantity
+    };
+  } else {
+    testCards.push({
+      type: cardType,
+      cardId: cardId,
+      quantity: quantity
+    });
+  }
+  
+  // Count card types
+  const cardCounts: { [key: string]: number } = {};
+  const characterCards: any[] = [];
+  const missionCards: any[] = [];
+  const locationCards: any[] = [];
+  
+  testCards.forEach(card => {
+    const type = card.type;
+    cardCounts[type] = (cardCounts[type] || 0) + card.quantity;
+    
+    if (type === 'character') {
+      characterCards.push(card);
+    } else if (type === 'mission') {
+      missionCards.push(card);
+    } else if (type === 'location') {
+      locationCards.push(card);
+    }
+  });
+  
+  // Rule 1: Exactly 4 characters
+  if (characterCards.length > DECK_RULES.EXACT_CHARACTERS) {
+    return `Deck cannot have more than ${DECK_RULES.EXACT_CHARACTERS} characters (would have ${characterCards.length})`;
+  }
+  
+  // Rule 2: Exactly 7 mission cards
+  if (missionCards.length > DECK_RULES.EXACT_MISSION_CARDS) {
+    return `Deck cannot have more than ${DECK_RULES.EXACT_MISSION_CARDS} mission cards (would have ${missionCards.length})`;
+  }
+  
+  // Rule 3: Maximum 1 location
+  if (locationCards.length > DECK_RULES.MAX_LOCATIONS) {
+    return `Deck cannot have more than ${DECK_RULES.MAX_LOCATIONS} location (would have ${locationCards.length})`;
+  }
+  
+  // Rule 4: Check for "One Per Deck" cards
+  const onePerDeckCards: { [key: string]: number } = {};
+  testCards.forEach(card => {
+    // This is a simplified check - in a real implementation, you'd need to check the card database
+    // for the "one_per_deck" property, but for now we'll assume certain cards are one per deck
+    if (card.type === 'character' || card.type === 'location') {
+      const cardKey = `${card.type}_${card.cardId}`;
+      onePerDeckCards[cardKey] = (onePerDeckCards[cardKey] || 0) + card.quantity;
+    }
+  });
+  
+  for (const [cardKey, count] of Object.entries(onePerDeckCards)) {
+    if (count > DECK_RULES.MAX_COPIES_ONE_PER_DECK) {
+      // Provide user-friendly error messages based on card type
+      if (cardKey.startsWith('character_')) {
+        return 'Unable to add character, may only have 1 of each character.';
+      } else if (cardKey.startsWith('location_')) {
+        return 'Unable to add location, may only have 1 per deck.';
+      } else {
+        return `Card can only have ${DECK_RULES.MAX_COPIES_ONE_PER_DECK} copy per deck (would have ${count})`;
+      }
+    }
+  }
+  
+  return null; // No validation errors
+}
+
 // Helper function to detect read-only mode from request
 function isReadOnlyMode(req: any): boolean {
   // Check URL parameters for readonly=true
@@ -814,6 +906,18 @@ app.post('/api/decks/:id/cards', authenticateUser, /* securityMiddleware.csrfPro
     if (!await deckRepository.userOwnsDeck(req.params.id, req.user.id)) {
       console.log('🔒 SECURITY: Blocking card addition - user does not own this deck');
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
+    }
+    
+    // Get current deck to validate card addition
+    const currentDeck = await deckRepository.getDeckById(req.params.id);
+    if (!currentDeck) {
+      return res.status(404).json({ success: false, error: 'Deck not found' });
+    }
+    
+    // Validate deck building rules before adding card
+    const validationError = await validateCardAddition(currentDeck.cards || [], cardType, cardId, quantity || 1);
+    if (validationError) {
+      return res.status(400).json({ success: false, error: validationError });
     }
     
     const success = await deckRepository.addCardToDeck(req.params.id, cardType, cardId, quantity || 1, selectedAlternateImage);

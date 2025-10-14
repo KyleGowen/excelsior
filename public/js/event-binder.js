@@ -26,7 +26,6 @@ class EventBinder {
         this.setupMutationObserver();
         
         this.initialized = true;
-        console.log('✅ Event binding system initialized');
     }
 
     // Bind events for a specific container

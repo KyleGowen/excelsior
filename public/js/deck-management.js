@@ -52,8 +52,6 @@ async function loadUserDecks() {
  * Show deck selection menu for adding cards to decks
  */
 async function showDeckSelection(cardType, cardId, cardName, buttonElement) {
-    console.log('showDeckSelection called with:', { cardType, cardId, cardName });
-    console.log('Current userDecks:', userDecks);
     
     // Check if user is authenticated
     const currentUser = getCurrentUser();
@@ -132,7 +130,8 @@ function createDeckSelectionMenu(cardType, cardId, cardName, buttonElement) {
     title.textContent = 'Add to Deck:';
     title.style.cssText = `
         color: #fff;
-        font-weight: bold;
+        font-weight: normal;
+        font-size: 14px;
         margin-bottom: 10px;
         padding-bottom: 5px;
         border-bottom: 1px solid #444;
@@ -143,9 +142,10 @@ function createDeckSelectionMenu(cardType, cardId, cardName, buttonElement) {
     userDecks.forEach(deck => {
         const deckOption = document.createElement('div');
         deckOption.className = 'deck-option';
-        deckOption.textContent = deck.name;
+        deckOption.textContent = deck.name || deck.metadata?.name || 'Unnamed Deck';
         deckOption.style.cssText = `
             color: #fff;
+            font-size: 14px;
             padding: 8px 12px;
             cursor: pointer;
             border-radius: 4px;
@@ -163,29 +163,21 @@ function createDeckSelectionMenu(cardType, cardId, cardName, buttonElement) {
         
         // Add click handler
         deckOption.addEventListener('click', async () => {
-            await addCardToDatabaseDeck(deck.id, cardType, cardId, cardName);
+            // Try different possible deck ID properties
+            const deckId = deck.id || deck.metadata?.id || deck.deckId;
+            
+            if (!deckId) {
+                console.error('❌ ERROR: No deck ID found in deck object:', deck);
+                showNotification('Error: Could not identify deck ID', 'error');
+                return;
+            }
+            
+            await addCardToDatabaseDeck(deckId, cardType, cardId, cardName);
             menu.remove();
         });
         
         menu.appendChild(deckOption);
     });
-    
-    // Add close button
-    const closeButton = document.createElement('div');
-    closeButton.textContent = 'Cancel';
-    closeButton.style.cssText = `
-        color: #888;
-        padding: 8px 12px;
-        cursor: pointer;
-        border-radius: 4px;
-        margin-top: 5px;
-        text-align: center;
-        border-top: 1px solid #444;
-    `;
-    closeButton.addEventListener('click', () => {
-        menu.remove();
-    });
-    menu.appendChild(closeButton);
     
     // Add menu to document
     document.body.appendChild(menu);
@@ -208,18 +200,28 @@ function createDeckSelectionMenu(cardType, cardId, cardName, buttonElement) {
  * Add card to a database deck
  */
 async function addCardToDatabaseDeck(deckId, cardType, cardId, cardName) {
+    
+    if (!deckId) {
+        console.error('❌ ERROR: deckId is undefined or null');
+        showNotification('Error: No deck selected', 'error');
+        return;
+    }
+    
     try {
+        const requestBody = {
+            cardType: cardType,
+            cardId: cardId,
+            quantity: 1
+        };
+        
+        
         const response = await fetch(`/api/decks/${deckId}/cards`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             credentials: 'include',
-            body: JSON.stringify({
-                cardType: cardType,
-                cardId: cardId,
-                quantity: 1
-            })
+            body: JSON.stringify(requestBody)
         });
         
         if (response.ok) {

@@ -103,7 +103,6 @@ class FrontendAuthService {
 
     // If no user is authenticated and we are on a deck URL, attempt auto guest login
     if (!authResult.isAuthenticated && authResult.deckId) {
-      console.log('✅ Detected deck URL - attempting auto guest login for deck:', authResult.deckId, 'user:', authResult.urlUserId);
       try {
         const response = await fetch('/api/auth/login', {
           method: 'POST',
