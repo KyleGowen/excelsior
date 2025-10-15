@@ -16,13 +16,13 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             margin: 0;
-            padding: 8px;
+            padding: 20px;
             color: #ffffff;
             min-height: 100vh;
         }
 
         .container {
-            max-width: 98vw;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -628,7 +628,7 @@
         }
 
         .modal-content {
-            margin: 20px auto 10px auto;
+            margin: 20px auto;
             display: block;
             width: 400px; /* 5x the table image width (80px * 5) */
             height: auto;
@@ -637,6 +637,7 @@
             box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
             position: relative;
         }
+
 
         .modal-content img {
             width: auto;
@@ -2156,15 +2157,32 @@
             border: 2px dashed #4ecdc4;
         }
 
-        /* Large Modal Styles */
+        /* Large Modal Styles - for general use */
         .large-modal {
+            max-width: 90vw;
+            max-height: 90vh;
+            width: 90vw;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Deck Editor Modal - specific styling for deck editor only */
+        .deck-editor-modal {
             max-width: 96vw;
             max-height: 94vh;
             width: 96vw;
             height: 94vh;
+            margin: 20px auto 10px auto;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+        }
+
+        /* Deck Editor Specific Body Padding Override */
+        body.deck-editor-active {
+            padding: 8px;
         }
 
         .modal-header {

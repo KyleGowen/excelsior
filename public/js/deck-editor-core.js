@@ -11,6 +11,9 @@ function showDeckEditor() {
         }
         modal.style.display = 'flex';
         
+        // Add body class for deck editor specific styling
+        document.body.classList.add('deck-editor-active');
+        
         // Apply layout immediately to prevent flash
         setTimeout(() => {
             const layout = document.querySelector('.deck-editor-layout');
@@ -442,6 +445,10 @@ async function closeDeckEditor() {
     }
     
     document.getElementById('deckEditorModal').style.display = 'none';
+    
+    // Remove body class for deck editor specific styling
+    document.body.classList.remove('deck-editor-active');
+    
     currentDeckId = null;
     currentDeckData = null;
     deckEditorCards = [];
