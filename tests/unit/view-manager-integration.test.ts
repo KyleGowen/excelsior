@@ -34,14 +34,14 @@ Object.defineProperty(document, 'getElementById', {
   writable: true
 });
 
-// Mock setTimeout
-jest.useFakeTimers();
-
 describe('ViewManager Integration', () => {
   let ViewManager: any;
   let viewManager: any;
 
   beforeEach(() => {
+    // Set up fake timers for each test
+    jest.useFakeTimers();
+    
     // Clear all mocks
     jest.clearAllMocks();
     
