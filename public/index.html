@@ -2872,6 +2872,11 @@
                 // Set up layout observer for list view
                 setupLayoutObserver();
                 
+                // Force 2-column layout for list view
+                setTimeout(() => {
+                    enforceTwoColumnLayoutInListView();
+                }, 10);
+                
                 // Force immediate layout fix for list view
                 setTimeout(() => {
                     const listItems = this.deckCardsEditor.querySelectorAll('.deck-list-item');
@@ -2880,7 +2885,7 @@
                         item.style.flexDirection = 'row';
                         item.style.flexWrap = 'nowrap';
                         item.style.width = '100%';
-                        item.style.minWidth = '100%';
+                        item.style.minWidth = '0';
                         item.style.boxSizing = 'border-box';
                         item.style.alignItems = 'center';
                         item.style.justifyContent = 'flex-start';
@@ -3202,17 +3207,17 @@
             
             const listItems = deckCardsEditor.querySelectorAll('.deck-list-item');
             listItems.forEach(item => {
-                // Force all layout properties with !important
+                // Allow list items to shrink like tiles
                 item.style.setProperty('display', 'flex', 'important');
                 item.style.setProperty('flex-direction', 'row', 'important');
                 item.style.setProperty('flex-wrap', 'nowrap', 'important');
                 item.style.setProperty('width', '100%', 'important');
-                item.style.setProperty('min-width', '100%', 'important');
+                item.style.setProperty('min-width', '0', 'important');
                 item.style.setProperty('box-sizing', 'border-box', 'important');
                 item.style.setProperty('align-items', 'center', 'important');
                 item.style.setProperty('justify-content', 'flex-start', 'important');
                 
-                // Force child elements to maintain horizontal layout
+                // Force child elements to be shrinkable
                 const quantity = item.querySelector('.deck-list-item-quantity');
                 const name = item.querySelector('.deck-list-item-name');
                 const actions = item.querySelector('.deck-list-item-actions');
@@ -3220,17 +3225,22 @@
                 if (quantity) {
                     quantity.style.setProperty('display', 'inline-block', 'important');
                     quantity.style.setProperty('white-space', 'nowrap', 'important');
+                    quantity.style.setProperty('min-width', '0', 'important');
+                    quantity.style.setProperty('flex', '0 0 auto', 'important');
                 }
                 if (name) {
                     name.style.setProperty('display', 'inline-block', 'important');
                     name.style.setProperty('white-space', 'nowrap', 'important');
-                    name.style.setProperty('flex', '1', 'important');
+                    name.style.setProperty('flex', '1 1 auto', 'important');
+                    name.style.setProperty('min-width', '0', 'important');
                 }
                 if (actions) {
                     actions.style.setProperty('display', 'flex', 'important');
                     actions.style.setProperty('flex-direction', 'row', 'important');
                     actions.style.setProperty('flex-wrap', 'nowrap', 'important');
                     actions.style.setProperty('align-items', 'center', 'important');
+                    actions.style.setProperty('min-width', '0', 'important');
+                    actions.style.setProperty('flex', '0 0 auto', 'important');
                 }
             });
             
@@ -3249,49 +3259,41 @@
             
             // Layout enforcement always active
             
-            // Enforce 2-column layout specifically for list view
-            enforceTwoColumnLayoutInListView();
+            // Don't call enforceTwoColumnLayoutInListView here - let the main layout system handle it
+            // enforceTwoColumnLayoutInListView();
             
             // Run enforcement multiple times with different timing
             enforceListViewHorizontalLayout();
             
             setTimeout(() => {
-                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 0);
             
             setTimeout(() => {
-                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 1);
             
             setTimeout(() => {
-                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 5);
             
             setTimeout(() => {
-                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 10);
             
             setTimeout(() => {
-                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 25);
             
             setTimeout(() => {
-                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 50);
             
             setTimeout(() => {
-                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 100);
             
             setTimeout(() => {
-                enforceTwoColumnLayoutInListView();
                 enforceListViewHorizontalLayout();
             }, 200);
         }
@@ -3303,8 +3305,9 @@
                 return;
             }
             
-            // Layout enforcement always active
+            console.log('🔍 DEBUG: enforceTwoColumnLayoutInListView - forcing two-column layout for list view');
             
+            // List view ALWAYS uses exactly 2 columns - no responsive behavior
             // Force exactly 2 columns with CSS
             deckCardsEditor.style.setProperty('display', 'flex', 'important');
             deckCardsEditor.style.setProperty('gap', '20px', 'important');
@@ -3313,17 +3316,31 @@
             
             // Ensure we have exactly 2 columns
             const columns = deckCardsEditor.querySelectorAll('.deck-column');
+            console.log('🔍 DEBUG: enforceTwoColumnLayoutInListView - found', columns.length, 'deck-column elements');
             if (columns.length !== 2) {
+                console.log('🔍 DEBUG: enforceTwoColumnLayoutInListView - recreating layout (not exactly 2 columns)');
                 // If we don't have exactly 2 columns, recreate the layout
                 createTwoColumnLayout();
             }
             
             // Force each column to be exactly 50% width
-            columns.forEach(column => {
+            const finalColumns = deckCardsEditor.querySelectorAll('.deck-column');
+            finalColumns.forEach((column, index) => {
+                console.log('🔍 DEBUG: enforceTwoColumnLayoutInListView - setting column', index, 'styles');
                 column.style.setProperty('flex', '1', 'important');
                 column.style.setProperty('display', 'flex', 'important');
                 column.style.setProperty('flex-direction', 'column', 'important');
                 column.style.setProperty('gap', '20px', 'important');
+                
+                // Log the computed styles
+                const computedStyle = window.getComputedStyle(column);
+                console.log('🔍 DEBUG: enforceTwoColumnLayoutInListView - column', index, 'computed styles:', {
+                    width: computedStyle.width,
+                    flex: computedStyle.flex,
+                    minWidth: computedStyle.minWidth,
+                    maxWidth: computedStyle.maxWidth,
+                    actualWidth: column.offsetWidth
+                });
             });
         }
         
@@ -5572,6 +5589,8 @@
                 
                 // Constrain the new width
                 const constrainedWidth = Math.max(minWidth, Math.min(maxWidth, newDeckWidth));
+                const deckPercentage = (constrainedWidth / layoutWidth) * 100;
+                
                 
                 // Update the flex-basis to maintain the width
                 deckPane.style.flex = `0 0 ${constrainedWidth}px`;
@@ -5626,23 +5645,42 @@
             if (!deckCardsEditor) return;
             
             const deckPercentage = (deckWidth / totalWidth) * 100;
+            const isListView = deckCardsEditor.classList.contains('list-view');
+            const hasTwoColumn = deckCardsEditor.classList.contains('two-column');
             
-            if (deckCardsEditor.classList.contains('list-view')) {
-                // List view: 2 columns layout
-                if (true) {
-                    manageDeckLayout('addClass', { className: 'two-column' });
-                    createTwoColumnLayout();
-                }
+            console.log('🔍 DEBUG: updateDeckLayout called', {
+                deckWidth: deckWidth,
+                totalWidth: totalWidth,
+                deckPercentage: deckPercentage.toFixed(2),
+                isListView: isListView,
+                hasTwoColumn: hasTwoColumn,
+                threshold: isListView ? 'always-two' : 33,
+                willAddTwoColumn: isListView ? true : deckPercentage >= 33,
+                willRemoveTwoColumn: isListView ? false : deckPercentage < 33
+            });
+            
+            if (isListView) {
+                // List view: always keep two columns; only widths shrink/expand
+                console.log('🔍 DEBUG: List view - forcing two-column layout regardless of width');
+                manageDeckLayout('addClass', { className: 'two-column' });
+                createTwoColumnLayout();
             } else {
                 // Tile view: normal responsive behavior
+                console.log('🔍 DEBUG: Tile view - checking percentage >= 33:', deckPercentage >= 33);
                 if (deckPercentage >= 33) {
+                    console.log('🔍 DEBUG: Tile view - adding two-column');
                     manageDeckLayout('addClass', { className: 'two-column' });
                     createTwoColumnLayout();
                 } else {
+                    console.log('🔍 DEBUG: Tile view - removing two-column');
                     manageDeckLayout('removeClass', { className: 'two-column' });
                     restoreSingleColumnLayout();
                 }
             }
+            
+            // Log final state
+            const finalHasTwoColumn = deckCardsEditor.classList.contains('two-column');
+            console.log('🔍 DEBUG: Final state - hasTwoColumn:', finalHasTwoColumn);
         }
         
         // Generic layout management function to consolidate duplicate patterns
@@ -5685,12 +5723,22 @@
             const deckCardsEditor = document.querySelector('.deck-cards-editor');
             if (!deckCardsEditor) return;
             
+            console.log('🔍 DEBUG: createTwoColumnLayout called', {
+                hasTwoColumn: deckCardsEditor.classList.contains('two-column'),
+                isListView: deckCardsEditor.classList.contains('list-view'),
+                allClasses: deckCardsEditor.className,
+                currentWidth: deckCardsEditor.offsetWidth,
+                hasExistingColumns: !!deckCardsEditor.querySelector('.deck-column')
+            });
+            
             // If already in two-column mode, don't redistribute - keep categories stable
             if (deckCardsEditor.querySelector('.deck-column')) {
+                console.log('🔍 DEBUG: createTwoColumnLayout - already has deck-column, returning');
                 return; // Don't redistribute existing content to prevent shaking
             }
             
             const sections = Array.from(deckCardsEditor.children);
+            console.log('🔍 DEBUG: createTwoColumnLayout - found', sections.length, 'sections to distribute');
             if (sections.length === 0) return;
             
             // Create exactly two columns - never more, never less
@@ -5712,6 +5760,11 @@
                 }
             });
             
+            console.log('🔍 DEBUG: createTwoColumnLayout - distributed sections:', {
+                leftColumnSections: leftColumn.children.length,
+                rightColumnSections: rightColumn.children.length
+            });
+            
             // Clear and add exactly 2 columns
             deckCardsEditor.innerHTML = '';
             deckCardsEditor.appendChild(leftColumn);
@@ -5721,18 +5774,39 @@
             deckCardsEditor.style.setProperty('display', 'flex', 'important');
             deckCardsEditor.style.setProperty('gap', '20px', 'important');
             deckCardsEditor.style.setProperty('align-items', 'flex-start', 'important');
+            
+            // Log the final column widths
+            setTimeout(() => {
+                const finalColumns = deckCardsEditor.querySelectorAll('.deck-column');
+                console.log('🔍 DEBUG: createTwoColumnLayout - final column widths:', {
+                    leftColumnWidth: finalColumns[0] ? finalColumns[0].offsetWidth : 'none',
+                    rightColumnWidth: finalColumns[1] ? finalColumns[1].offsetWidth : 'none',
+                    containerWidth: deckCardsEditor.offsetWidth
+                });
+            }, 10);
         }
         
         function restoreSingleColumnLayout() {
             const deckCardsEditor = document.querySelector('.deck-cards-editor');
             if (!deckCardsEditor) return;
             
+            console.log('🔍 DEBUG: restoreSingleColumnLayout called', {
+                isListView: deckCardsEditor.classList.contains('list-view'),
+                hasTwoColumn: deckCardsEditor.classList.contains('two-column'),
+                allClasses: deckCardsEditor.className,
+                currentWidth: deckCardsEditor.offsetWidth,
+                currentDisplay: window.getComputedStyle(deckCardsEditor).display,
+                currentFlexDirection: window.getComputedStyle(deckCardsEditor).flexDirection
+            });
+            
             const columns = deckCardsEditor.querySelectorAll('.deck-column');
+            console.log('🔍 DEBUG: restoreSingleColumnLayout - found', columns.length, 'deck-column elements');
             if (columns.length === 0) return;
             
             // Move all sections back to main container
             const allSections = [];
             columns.forEach(column => {
+                console.log('🔍 DEBUG: restoreSingleColumnLayout - column width before removal:', column.offsetWidth);
                 allSections.push(...Array.from(column.children));
             });
             
@@ -5740,6 +5814,12 @@
             deckCardsEditor.innerHTML = '';
             allSections.forEach(section => {
                 deckCardsEditor.appendChild(section);
+            });
+            
+            console.log('🔍 DEBUG: restoreSingleColumnLayout - after reset', {
+                newDisplay: window.getComputedStyle(deckCardsEditor).display,
+                newFlexDirection: window.getComputedStyle(deckCardsEditor).flexDirection,
+                newWidth: deckCardsEditor.offsetWidth
             });
         }
 
@@ -7676,7 +7756,8 @@
                 
                 // Additional enforcement for list view to prevent 4-column layout
                 if (deckCardsEditor && deckCardsEditor.classList.contains('list-view')) {
-                    enforceTwoColumnLayoutInListView();
+                    // Don't call enforceTwoColumnLayoutInListView here - let the main layout system handle it
+                    // enforceTwoColumnLayoutInListView();
                 }
                 
                 // Restore the expansion state after re-rendering
@@ -9187,7 +9268,8 @@
             if (true) {
                 setTimeout(() => {
                     enforceListViewHorizontalLayout();
-                    enforceTwoColumnLayoutInListView();
+                    // Don't call enforceTwoColumnLayoutInListView here - let the main layout system handle it
+                    // enforceTwoColumnLayoutInListView();
                 }, 10);
             }
             
