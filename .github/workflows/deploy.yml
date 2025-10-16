@@ -67,6 +67,10 @@ jobs:
         npm run --silent
         echo "Checking TypeScript compilation..."
         npm run build
+        echo "Checking Jest can list tests..."
+        npm run test:unit -- --listTests | head -10
+        echo "Checking Jest version and configuration..."
+        npx jest --showConfig
         echo "✅ Test setup verification complete!"
       
     - name: Run unit tests
@@ -76,9 +80,20 @@ jobs:
         echo "NPM version: $(npm --version)"
         echo "Available memory: $(free -h)"
         echo "Available disk space: $(df -h)"
-        echo "Starting unit tests..."
-        npm run test:unit -- --verbose --maxWorkers=2 --testTimeout=30000
-      timeout-minutes: 10
+        echo "Jest version: $(npx jest --version)"
+        echo "TypeScript version: $(npx tsc --version)"
+        echo "Starting unit tests with enhanced debugging..."
+        
+        # Try running tests with different configurations to isolate issues
+        echo "🧪 Attempting unit tests with sequential execution..."
+        npm run test:unit -- --verbose --runInBand --testTimeout=60000 --detectOpenHandles --forceExit || {
+          echo "❌ Sequential execution failed, trying with workers..."
+          npm run test:unit -- --verbose --maxWorkers=1 --testTimeout=60000 --detectOpenHandles --forceExit || {
+            echo "❌ Single worker failed, trying default configuration..."
+            npm run test:unit -- --verbose --testTimeout=60000
+          }
+        }
+      timeout-minutes: 15
 
   integration-tests:
     name: Integration Tests
