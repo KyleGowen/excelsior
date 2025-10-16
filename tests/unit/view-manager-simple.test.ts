@@ -23,11 +23,11 @@ const mockDeckCardsEditor = {
   },
   querySelectorAll: jest.fn(() => []) as any,
   offsetHeight: 100
-};
+} as any;
 
 const mockListViewBtn = {
   textContent: 'List View'
-};
+} as any;
 
 // Mock document methods
 const mockGetElementById = jest.fn((id: string) => {
