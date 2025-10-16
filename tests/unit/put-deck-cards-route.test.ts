@@ -69,6 +69,10 @@ app.put('/api/decks/:id/cards', mockAuthenticateUser, async (req: any, res) => {
 describe('PUT /api/decks/:id/cards route logic', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Reset the mock implementations to ensure clean state
+    mockDeckRepository.userOwnsDeck.mockClear();
+    mockDeckRepository.replaceAllCardsInDeck.mockClear();
+    mockDeckRepository.getDeckById.mockClear();
   });
 
   it('should return 403 when user is guest', async () => {
@@ -117,7 +121,17 @@ describe('PUT /api/decks/:id/cards route logic', () => {
   });
 
   it('should return 403 when user does not own the deck', async () => {
+    // Ensure the mock is properly set up
     mockDeckRepository.userOwnsDeck.mockResolvedValue(false);
+    mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+    mockDeckRepository.getDeckById.mockResolvedValue({ 
+      id: 'test-deck-id', 
+      name: 'Test Deck',
+      user_id: 'user-id',
+      description: 'Test description',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    });
 
     const response = await request(app)
       .put('/api/decks/test-deck-id/cards')
