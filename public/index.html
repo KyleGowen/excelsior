@@ -744,6 +744,56 @@
     <div id="deckEditorModal" class="modal" data-close-handler="closeDeckEditor">
         <div class="modal-content deck-editor-modal" data-stop-propagation="true">
             <div class="modal-header">
+                <!-- Top row with deck summary on left and action buttons on right -->
+                <div class="deck-editor-top-row">
+                    <!-- Left side: Deck Summary Section -->
+                    <div class="deck-summary-section">
+                        <div class="deck-summary-content">
+                            <div class="deck-summary-stats">
+                                <div class="summary-stat">
+                                    <span class="stat-label">Total Cards:</span>
+                                    <span class="stat-value" id="deckTotalCards">0</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Max Energy:</span>
+                                    <span class="stat-value" id="deckMaxEnergy">0</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Max Combat:</span>
+                                    <span class="stat-value" id="deckMaxCombat">0</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Max Brute Force:</span>
+                                    <span class="stat-value" id="deckMaxBruteForce">0</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Max Intelligence:</span>
+                                    <span class="stat-value" id="deckMaxIntelligence">0</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Total Threat:</span>
+                                    <span class="stat-value" id="deckTotalThreat">0</span>
+                                </div>
+                            </div>
+                            <div class="summary-stat">
+                                <button class="remove-all-btn" id="drawHandBtn" data-click-handler="toggleDrawHand" disabled title="Deck must contain at least 8 playable cards.">Draw Hand</button>
+                                <button class="remove-all-btn" id="listViewBtn" data-click-handler="toggleListView">List View</button>
+                                <button class="remove-all-btn" id="screenshotViewBtn" data-click-handler="toggleScreenshotView" style="display: none;">Screenshot View</button>
+                            </div>
+                            <div class="deck-summary-validation" id="deckSummaryValidation">
+                                <!-- Validation content will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right side: Action Buttons -->
+                    <div class="deck-editor-actions">
+                        <button class="btn-secondary" data-click-handler="closeDeckEditor">Cancel</button>
+                        <button id="saveDeckButton" class="btn-primary" data-click-handler="saveDeckChanges">Save</button>
+                    </div>
+                </div>
+                
+                <!-- Second row with title and description -->
                 <div class="deck-editor-title-section">
                     <div class="deck-title-with-validation">
                         <h3 id="deckEditorTitle" class="editable-title" data-edit-handler="startEditingTitle">Edit Deck</h3>
@@ -754,51 +804,6 @@
                     <div id="readOnlyIndicator" class="read-only-indicator" style="display: none;">
                         <span class="read-only-text">📖 Read Only Mode</span>
                     </div>
-                </div>
-                
-                <!-- Deck Summary Section - Moved up to replace search bar position -->
-                <div class="deck-summary-section">
-                    <div class="deck-summary-content">
-                        <div class="deck-summary-stats">
-                            <div class="summary-stat">
-                                <span class="stat-label">Total Cards:</span>
-                                <span class="stat-value" id="deckTotalCards">0</span>
-                            </div>
-                            <div class="summary-stat">
-                                <span class="stat-label">Max Energy:</span>
-                                <span class="stat-value" id="deckMaxEnergy">0</span>
-                            </div>
-                            <div class="summary-stat">
-                                <span class="stat-label">Max Combat:</span>
-                                <span class="stat-value" id="deckMaxCombat">0</span>
-                            </div>
-                            <div class="summary-stat">
-                                <span class="stat-label">Max Brute Force:</span>
-                                <span class="stat-value" id="deckMaxBruteForce">0</span>
-                            </div>
-                            <div class="summary-stat">
-                                <span class="stat-label">Max Intelligence:</span>
-                                <span class="stat-value" id="deckMaxIntelligence">0</span>
-                            </div>
-                            <div class="summary-stat">
-                                <span class="stat-label">Total Threat:</span>
-                                <span class="stat-value" id="deckTotalThreat">0</span>
-                            </div>
-                        </div>
-                        <div class="summary-stat">
-                            <button class="remove-all-btn" id="drawHandBtn" data-click-handler="toggleDrawHand" disabled title="Deck must contain at least 8 playable cards.">Draw Hand</button>
-                            <button class="remove-all-btn" id="listViewBtn" data-click-handler="toggleListView">List View</button>
-                            <button class="remove-all-btn" id="screenshotViewBtn" data-click-handler="toggleScreenshotView" style="display: none;">Screenshot View</button>
-                        </div>
-                        <div class="deck-summary-validation" id="deckSummaryValidation">
-                            <!-- Validation content will be displayed here -->
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="deck-editor-actions">
-                    <button class="btn-secondary" data-click-handler="closeDeckEditor">Cancel</button>
-                    <button id="saveDeckButton" class="btn-primary" data-click-handler="saveDeckChanges">Save</button>
                 </div>
             </div>
             

@@ -2194,19 +2194,26 @@
             gap: 15px;
         }
         
-        .modal-header .deck-editor-title-section {
-            order: 1;
+        .deck-editor-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+            margin-bottom: 10px;
         }
         
         .modal-header .deck-summary-section {
-            order: 2;
-            margin-bottom: 0;
+            flex: 1;
+            margin-right: 20px;
         }
         
         .modal-header .deck-editor-actions {
-            order: 3;
-            align-self: flex-end;
-            margin-top: -40px; /* Position over the title section */
+            flex-shrink: 0;
+            margin-left: 20px;
+        }
+        
+        .modal-header .deck-editor-title-section {
+            width: 100%;
         }
         
         .modal-header h3 {
@@ -2338,6 +2345,12 @@
             border-radius: 8px;
             padding: 10px 20px;
             margin-bottom: 0;
+        }
+        
+        .deck-editor-top-row .deck-summary-section {
+            background: transparent;
+            border: none;
+            padding: 0;
         }
 
         .deck-summary-content {
