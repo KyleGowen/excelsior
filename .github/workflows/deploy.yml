@@ -59,11 +59,9 @@ jobs:
       run: |
         echo "🔧 Configuring Node.js for CI environment..."
         # Increase Node.js memory limit for CI
-        export NODE_OPTIONS="--max-old-space-size=4096"
-        echo "NODE_OPTIONS=$NODE_OPTIONS" >> $GITHUB_ENV
+        echo "NODE_OPTIONS=--max-old-space-size=4096" >> $GITHUB_ENV
         # Set Jest to use less memory
-        export JEST_WORKER_ID=1
-        echo "JEST_WORKER_ID=$JEST_WORKER_ID" >> $GITHUB_ENV
+        echo "JEST_WORKER_ID=1" >> $GITHUB_ENV
         echo "✅ Node.js configured for CI"
         
     - name: Install dependencies
@@ -97,11 +95,20 @@ jobs:
         
         # Try running tests with different configurations to isolate issues
         echo "🧪 Attempting unit tests with CI-optimized configuration..."
-        npx jest --config jest.ci.config.js --verbose || {
-          echo "❌ CI-optimized execution failed, trying with standard config..."
-          npm run test:unit -- --verbose --runInBand --testTimeout=60000 --detectOpenHandles --forceExit --maxWorkers=1 --logHeapUsage || {
-            echo "❌ Standard execution failed, trying basic configuration..."
-            npm run test:unit -- --verbose --testTimeout=60000 --maxWorkers=1
+        echo "Current NODE_OPTIONS: $NODE_OPTIONS"
+        echo "Current JEST_WORKER_ID: $JEST_WORKER_ID"
+        
+        npx jest --config jest.ci.config.js --verbose 2>&1 | tee test-output.log || {
+          echo "❌ CI-optimized execution failed, checking output..."
+          cat test-output.log | tail -50
+          echo "Trying with standard config..."
+          npm run test:unit -- --verbose --runInBand --testTimeout=60000 --detectOpenHandles --forceExit --maxWorkers=1 --logHeapUsage 2>&1 | tee test-output-2.log || {
+            echo "❌ Standard execution failed, checking output..."
+            cat test-output-2.log | tail -50
+            echo "Trying basic configuration..."
+            npm run test:unit -- --verbose --testTimeout=60000 --maxWorkers=1 2>&1 | tee test-output-3.log
+            echo "Final attempt output:"
+            cat test-output-3.log | tail -50
           }
         }
       timeout-minutes: 15
