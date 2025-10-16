@@ -3238,6 +3238,18 @@
             border-color: rgba(78, 205, 196, 0.2) !important;
         }
 
+        /* Save button - Blue styling */
+        .action-btn.save-btn {
+            background: rgba(0, 123, 255, 0.2) !important;
+            color: #007bff !important;
+            border: 1px solid rgba(0, 123, 255, 0.3) !important;
+        }
+
+        .action-btn.save-btn:hover {
+            background: rgba(0, 123, 255, 0.3) !important;
+            border-color: rgba(0, 123, 255, 0.4) !important;
+        }
+
         /* Cancel button - Black and white look */
         .action-btn.cancel-btn {
             background: rgba(255, 255, 255, 0.1) !important;
