@@ -2186,12 +2186,27 @@
         }
 
         .modal-header {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
+            display: flex;
+            flex-direction: column;
             padding: 12px 20px 15px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 15px;
+            gap: 15px;
+        }
+        
+        .modal-header .deck-editor-title-section {
+            order: 1;
+        }
+        
+        .modal-header .deck-summary-section {
+            order: 2;
+            margin-bottom: 0;
+        }
+        
+        .modal-header .deck-editor-actions {
+            order: 3;
+            align-self: flex-end;
+            margin-top: -40px; /* Position over the title section */
         }
         
         .modal-header h3 {
@@ -2319,9 +2334,10 @@
         /* Deck Summary Section */
         .deck-summary-section {
             background: rgba(255, 255, 255, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
             padding: 10px 20px;
-            margin-bottom: 15px;
+            margin-bottom: 0;
         }
 
         .deck-summary-content {
@@ -2924,6 +2940,11 @@
             flex: 1;
             min-width: 0; /* Allow flex shrinking */
             overflow: hidden; /* Prevent content overflow */
+        }
+        
+        .card-selector-pane .deck-editor-search-container {
+            margin-bottom: 15px;
+            flex-shrink: 0;
         }
 
         /* Resizable divider */

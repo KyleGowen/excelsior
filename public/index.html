@@ -755,55 +755,50 @@
                         <span class="read-only-text">📖 Read Only Mode</span>
                     </div>
                 </div>
-                <div class="deck-editor-search-container">
-                    <input type="text" id="deckEditorSearchInput" class="deck-editor-search-input" placeholder="Search by card name, character, or type...">
-                    <div id="deckEditorSearchResults" class="deck-editor-search-results" style="display: none;">
-                        <!-- Search results will appear here -->
+                
+                <!-- Deck Summary Section - Moved up to replace search bar position -->
+                <div class="deck-summary-section">
+                    <div class="deck-summary-content">
+                        <div class="deck-summary-stats">
+                            <div class="summary-stat">
+                                <span class="stat-label">Total Cards:</span>
+                                <span class="stat-value" id="deckTotalCards">0</span>
+                            </div>
+                            <div class="summary-stat">
+                                <span class="stat-label">Max Energy:</span>
+                                <span class="stat-value" id="deckMaxEnergy">0</span>
+                            </div>
+                            <div class="summary-stat">
+                                <span class="stat-label">Max Combat:</span>
+                                <span class="stat-value" id="deckMaxCombat">0</span>
+                            </div>
+                            <div class="summary-stat">
+                                <span class="stat-label">Max Brute Force:</span>
+                                <span class="stat-value" id="deckMaxBruteForce">0</span>
+                            </div>
+                            <div class="summary-stat">
+                                <span class="stat-label">Max Intelligence:</span>
+                                <span class="stat-value" id="deckMaxIntelligence">0</span>
+                            </div>
+                            <div class="summary-stat">
+                                <span class="stat-label">Total Threat:</span>
+                                <span class="stat-value" id="deckTotalThreat">0</span>
+                            </div>
+                        </div>
+                        <div class="summary-stat">
+                            <button class="remove-all-btn" id="drawHandBtn" data-click-handler="toggleDrawHand" disabled title="Deck must contain at least 8 playable cards.">Draw Hand</button>
+                            <button class="remove-all-btn" id="listViewBtn" data-click-handler="toggleListView">List View</button>
+                            <button class="remove-all-btn" id="screenshotViewBtn" data-click-handler="toggleScreenshotView" style="display: none;">Screenshot View</button>
+                        </div>
+                        <div class="deck-summary-validation" id="deckSummaryValidation">
+                            <!-- Validation content will be displayed here -->
+                        </div>
                     </div>
                 </div>
+                
                 <div class="deck-editor-actions">
                     <button class="btn-secondary" data-click-handler="closeDeckEditor">Cancel</button>
                     <button id="saveDeckButton" class="btn-primary" data-click-handler="saveDeckChanges">Save</button>
-                </div>
-            </div>
-            
-            <!-- Deck Summary Section -->
-            <div class="deck-summary-section">
-                <div class="deck-summary-content">
-                    <div class="deck-summary-stats">
-                        <div class="summary-stat">
-                            <span class="stat-label">Total Cards:</span>
-                            <span class="stat-value" id="deckTotalCards">0</span>
-                        </div>
-                        <div class="summary-stat">
-                            <span class="stat-label">Max Energy:</span>
-                            <span class="stat-value" id="deckMaxEnergy">0</span>
-                        </div>
-                        <div class="summary-stat">
-                            <span class="stat-label">Max Combat:</span>
-                            <span class="stat-value" id="deckMaxCombat">0</span>
-                        </div>
-                        <div class="summary-stat">
-                            <span class="stat-label">Max Brute Force:</span>
-                            <span class="stat-value" id="deckMaxBruteForce">0</span>
-                        </div>
-                        <div class="summary-stat">
-                            <span class="stat-label">Max Intelligence:</span>
-                            <span class="stat-value" id="deckMaxIntelligence">0</span>
-                        </div>
-                        <div class="summary-stat">
-                            <span class="stat-label">Total Threat:</span>
-                            <span class="stat-value" id="deckTotalThreat">0</span>
-                        </div>
-                    </div>
-                    <div class="summary-stat">
-                        <button class="remove-all-btn" id="drawHandBtn" data-click-handler="toggleDrawHand" disabled title="Deck must contain at least 8 playable cards.">Draw Hand</button>
-                        <button class="remove-all-btn" id="listViewBtn" data-click-handler="toggleListView">List View</button>
-                        <button class="remove-all-btn" id="screenshotViewBtn" data-click-handler="toggleScreenshotView" style="display: none;">Screenshot View</button>
-                    </div>
-                    <div class="deck-summary-validation" id="deckSummaryValidation">
-                        <!-- Validation content will be displayed here -->
-                    </div>
                 </div>
             </div>
             
@@ -841,7 +836,12 @@
                     
                     <!-- Right Pane: Card Selector -->
                     <div class="card-selector-pane">
-                        <h4>Available Cards</h4>
+                        <div class="deck-editor-search-container">
+                            <input type="text" id="deckEditorSearchInput" class="deck-editor-search-input" placeholder="Search by card name, character, or type...">
+                            <div id="deckEditorSearchResults" class="deck-editor-search-results" style="display: none;">
+                                <!-- Search results will appear here -->
+                            </div>
+                        </div>
                         <div class="card-categories" id="cardCategories">
                             <!-- Card categories will be loaded here -->
                         </div>
