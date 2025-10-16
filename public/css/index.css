@@ -2783,7 +2783,8 @@
         /* Deck Editor Styles */
         .deck-editor-actions {
             display: flex;
-            gap: 15px;
+            flex-direction: column;
+            gap: 8px;
             justify-self: end;
             padding-right: 20px;
             max-width: 200px;
@@ -3197,6 +3198,83 @@
         .remove-all-btn:disabled:hover {
             background: rgba(78, 205, 196, 0.1) !important;
             border-color: rgba(78, 205, 196, 0.2) !important;
+        }
+
+        /* Action Buttons (Save/Cancel) - Same styling as Draw Hand/List View buttons */
+        .action-btn {
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            width: 100%;
+            text-align: center;
+            display: block !important;
+            position: static !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .action-btn:hover {
+            background: rgba(78, 205, 196, 0.3);
+            border-color: rgba(78, 205, 196, 0.4);
+        }
+
+        .action-btn:disabled {
+            background: rgba(78, 205, 196, 0.1) !important;
+            color: rgba(78, 205, 196, 0.5) !important;
+            border-color: rgba(78, 205, 196, 0.2) !important;
+            cursor: not-allowed !important;
+            opacity: 0.5 !important;
+        }
+
+        .action-btn:disabled:hover {
+            background: rgba(78, 205, 196, 0.1) !important;
+            border-color: rgba(78, 205, 196, 0.2) !important;
+        }
+
+        /* Cancel button - Black and white look */
+        .action-btn.cancel-btn {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .action-btn.cancel-btn:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        /* Force cancel button to be visible */
+        .deck-editor-actions .action-btn.cancel-btn {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: static !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: 24px !important;
+            min-width: 60px !important;
+            padding: 4px 8px !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Additional specificity for cancel button */
+        .modal-header .deck-editor-actions .action-btn.cancel-btn {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: static !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: 24px !important;
+            min-width: 60px !important;
+            padding: 4px 8px !important;
+            box-sizing: border-box !important;
         }
         
         /* Power Cards Sort Toggle */

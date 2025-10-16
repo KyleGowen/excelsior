@@ -801,8 +801,8 @@
                     
                     <!-- Right side: Action Buttons -->
                     <div class="deck-editor-actions">
-                        <button class="btn-secondary" data-click-handler="closeDeckEditor">Cancel</button>
-                        <button id="saveDeckButton" class="btn-primary" data-click-handler="saveDeckChanges">Save</button>
+                        <button id="saveDeckButton" class="action-btn save-btn" data-click-handler="saveDeckChanges">Save</button>
+                        <button class="action-btn cancel-btn" data-click-handler="closeDeckEditor">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -3638,7 +3638,7 @@
             updateDeckTitleValidation(deckCards);
             
             // Always allow saving, but show validation status
-            const saveButton = document.querySelector('.deck-editor-actions .btn-primary');
+            const saveButton = document.querySelector('.deck-editor-actions .save-btn');
             if (saveButton) {
                 saveButton.disabled = false;
                 saveButton.textContent = 'Save';
