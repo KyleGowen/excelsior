@@ -588,6 +588,8 @@ describe('Reserve Character Threat Integration Tests', () => {
                 .get(`/api/decks/${deckId}`)
                 .set('Cookie', `sessionId=${testUser.sessionId}`);
 
+            expect(getResponse.status).toBe(200);
+            expect(getResponse.body.success).toBe(true);
             expect(getResponse.body.data.metadata.threat).toBe(38);
             expect(getResponse.body.data.metadata.reserve_character).toBe(specialCharacterIds['Victory Harben']);
         });
