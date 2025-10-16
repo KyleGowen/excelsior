@@ -55,6 +55,17 @@ jobs:
         node-version: '20'
         cache: 'npm'
         
+    - name: Configure Node.js for CI
+      run: |
+        echo "🔧 Configuring Node.js for CI environment..."
+        # Increase Node.js memory limit for CI
+        export NODE_OPTIONS="--max-old-space-size=4096"
+        echo "NODE_OPTIONS=$NODE_OPTIONS" >> $GITHUB_ENV
+        # Set Jest to use less memory
+        export JEST_WORKER_ID=1
+        echo "JEST_WORKER_ID=$JEST_WORKER_ID" >> $GITHUB_ENV
+        echo "✅ Node.js configured for CI"
+        
     - name: Install dependencies
       run: npm ci
       
@@ -85,12 +96,12 @@ jobs:
         echo "Starting unit tests with enhanced debugging..."
         
         # Try running tests with different configurations to isolate issues
-        echo "🧪 Attempting unit tests with sequential execution..."
-        npm run test:unit -- --verbose --runInBand --testTimeout=60000 --detectOpenHandles --forceExit || {
-          echo "❌ Sequential execution failed, trying with workers..."
-          npm run test:unit -- --verbose --maxWorkers=1 --testTimeout=60000 --detectOpenHandles --forceExit || {
-            echo "❌ Single worker failed, trying default configuration..."
-            npm run test:unit -- --verbose --testTimeout=60000
+        echo "🧪 Attempting unit tests with CI-optimized configuration..."
+        npx jest --config jest.ci.config.js --verbose || {
+          echo "❌ CI-optimized execution failed, trying with standard config..."
+          npm run test:unit -- --verbose --runInBand --testTimeout=60000 --detectOpenHandles --forceExit --maxWorkers=1 --logHeapUsage || {
+            echo "❌ Standard execution failed, trying basic configuration..."
+            npm run test:unit -- --verbose --testTimeout=60000 --maxWorkers=1
           }
         }
       timeout-minutes: 15
