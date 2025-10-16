@@ -104,31 +104,14 @@ jobs:
         echo "PostgreSQL is ready!"
       
     - name: Install Flyway
-      run: |
-        echo "Installing Flyway..."
-        
-        # Download and install Flyway directly from official source
-        echo "Downloading Flyway from official source..."
-        wget -q https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz
-        
-        echo "Extracting Flyway..."
-        tar -xzf flyway-commandline-9.22.3-linux-x64.tar.gz
-        
-        echo "Setting up Flyway..."
-        sudo mv flyway-9.22.3 /opt/flyway
-        sudo chmod +x /opt/flyway/flyway
-        
-        # Add Flyway to PATH
-        echo "/opt/flyway" >> $GITHUB_PATH
-        
-        # Verify installation
-        /opt/flyway/flyway --version
-        echo "✅ Flyway installed successfully!"
+      uses: flyway/flyway-action@v1
+      with:
+        version: '9.22.3'
       
     - name: Run database migrations
       run: |
         export DATABASE_URL="postgresql://postgres:password@localhost:1337/overpower"
-        export PATH="/opt/flyway:$PATH"
+        flyway --version
         npm run migrate
       
     - name: Run integration tests
@@ -138,9 +121,8 @@ jobs:
         echo "NPM version: $(npm --version)"
         echo "PostgreSQL status: $(pg_isready -h localhost -p 1337 -U postgres)"
         echo "Database URL: $DATABASE_URL"
-        echo "Flyway version: $(/opt/flyway/flyway --version)"
+        echo "Flyway version: $(flyway --version)"
         echo "Starting integration tests..."
-        export PATH="/opt/flyway:$PATH"
         npm run test:integration
       timeout-minutes: 15
       env:
