@@ -8,8 +8,9 @@
 5. [Screen-Specific Styling](#screen-specific-styling)
 6. [Images and Assets](#images-and-assets)
 7. [Layout and Spacing](#layout-and-spacing)
-8. [Interactive States](#interactive-states)
-9. [Responsive Design](#responsive-design)
+8. [Deck Editor Layout Specifications (2025)](#deck-editor-layout-specifications-2025)
+9. [Interactive States](#interactive-states)
+10. [Responsive Design](#responsive-design)
 
 ## Overview
 
@@ -224,6 +225,15 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
 - **Deck Statistics**: Gold text for values, teal for labels
 - **Drag and Drop**: Teal borders for drop zones
 
+### Deck Editor Modal Layout (Latest Design - 2025)
+- **Single Row Header Layout**: All elements in one horizontal row
+- **Left Section**: Deck title and description
+- **Center Section**: Summary statistics (perfectly centered in window width)
+- **Right Section**: Action buttons (Save/Cancel stacked vertically)
+- **Search Bar**: Replaces "Available Cards" text above card list
+- **Default Divider Position**: 67% deck pane / 33% available cards pane
+- **Minimal Spacing**: Reduced padding and margins for compact layout
+
 ### Database Management (database-view.html)
 - **Admin Interface**: Similar to database view with additional controls
 - **User Management**: Red accents for danger actions
@@ -286,6 +296,86 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
 - **Card Padding**: `1rem` to `1.5rem`
 - **Section Margins**: `1rem` to `2rem`
 - **Button Padding**: `6px 12px` to `8px 16px`
+
+## Deck Editor Layout Specifications (2025)
+
+### Modal Header Layout
+- **Container**: `.modal-header` with `display: flex`, `flex-direction: column`
+- **Top Row**: `.deck-editor-top-row` with `display: flex`, `justify-content: space-between`
+- **Padding**: `12px 20px 5px 20px` (reduced bottom padding for compact layout)
+- **Margin Bottom**: `4px` (minimal spacing below header)
+- **Gap**: `15px` between header elements
+- **Border Bottom**: `1px solid rgba(255, 255, 255, 0.2)` (horizontal divider)
+
+### Three-Section Layout
+#### Left Section - Deck Title & Description
+- **Container**: `.deck-editor-title-section`
+- **Flex Properties**: `flex: 0 0 auto` (fixed width, no growing)
+- **Margin Right**: `20px`
+- **Min Width**: `200px` (ensures adequate space for title)
+- **Content**: Deck title with validation badges, description text
+
+#### Center Section - Summary Statistics
+- **Container**: `.deck-summary-section`
+- **Positioning**: `position: absolute`, `left: 50%`, `transform: translateX(-50%)`
+- **Purpose**: Perfect centering in window width regardless of left/right content
+- **Content**: Draw Hand/List View buttons (left of stats), deck statistics (centered)
+- **Layout**: `.deck-summary-content` with `display: flex`, `justify-content: center`, `gap: 30px`
+
+#### Right Section - Action Buttons
+- **Container**: `.deck-editor-actions`
+- **Flex Properties**: `flex: 0 0 auto`, `margin-left: auto` (pushes to right)
+- **Layout**: `display: flex`, `flex-direction: column` (stacked vertically)
+- **Gap**: `8px` between Save and Cancel buttons
+- **Max Width**: `200px`
+
+### Button Specifications
+#### Action Buttons (Save/Cancel)
+- **Base Class**: `.action-btn`
+- **Height**: `auto` with `min-height: 24px`
+- **Padding**: `4px 8px`
+- **Box Sizing**: `border-box`
+- **Width**: `100%` of container
+- **Text Align**: `center`
+
+#### Save Button Styling
+- **Class**: `.action-btn.save-btn`
+- **Background**: `rgba(78, 205, 196, 0.2)` (teal/cyan)
+- **Color**: `#4ecdc4`
+- **Border**: `1px solid rgba(78, 205, 196, 0.3)`
+- **Hover**: `rgba(78, 205, 196, 0.3)` background, `rgba(78, 205, 196, 0.4)` border
+
+#### Cancel Button Styling
+- **Class**: `.action-btn.cancel-btn`
+- **Background**: `rgba(255, 255, 255, 0.1)` (black and white look)
+- **Color**: `#ffffff`
+- **Border**: `1px solid rgba(255, 255, 255, 0.2)`
+- **Hover**: `rgba(255, 255, 255, 0.2)` background, `rgba(255, 255, 255, 0.3)` border
+
+### Search Bar Integration
+- **Location**: Inside `.card-selector-pane`, replaces "Available Cards" heading
+- **Container**: `.deck-editor-search-container`
+- **Margins**: `margin-top: 7px`, `margin-bottom: 0px` (minimal spacing)
+- **Flex Properties**: `flex-shrink: 0`
+
+### Divider Configuration
+- **Default Position**: 67% deck pane / 33% available cards pane
+- **CSS Flex Values**: `.deck-pane` = `flex: 2`, `.card-selector-pane` = `flex: 1`
+- **Draggable**: Resizable divider with security checks for ownership
+- **Min Width**: Card selector pane has `min-width: 0` and `overflow: hidden`
+
+### Read-Only Mode Badges
+- **Limited Badge**: Inline with deck title
+- **Read-Only Badge**: Inline to the right of Limited badge
+- **Container**: `.deck-title-with-validation` with `display: flex`, `align-items: center`, `gap: 10px`
+- **Flex Wrap**: `nowrap` to keep badges on same line
+- **Badge Styling**: Content-based width (no fixed min-width)
+
+### CSS Specificity Requirements
+- **High Specificity**: Use `.modal-header .deck-editor-actions .action-btn.save-btn` for Save button
+- **Important Declarations**: All button styling uses `!important` for proper override
+- **Consistent Heights**: Both Save and Cancel buttons must have identical computed heights
+- **Responsive Properties**: Maintain layout integrity across different screen sizes
 
 ## Interactive States
 
