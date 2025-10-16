@@ -744,15 +744,21 @@
     <div id="deckEditorModal" class="modal" data-close-handler="closeDeckEditor">
         <div class="modal-content deck-editor-modal" data-stop-propagation="true">
             <div class="modal-header">
-                <!-- Single row with title/description on left, centered stats, and action buttons on right -->
-                <div class="deck-editor-top-row">
-                    <!-- Left side: Deck Title and Description -->
-                    <div class="deck-editor-title-section">
-                        <div class="deck-title-with-validation">
-                            <h3 id="deckEditorTitle" class="editable-title" data-edit-handler="startEditingTitle">Edit Deck</h3>
-                            <span id="deckTitleValidationBadge" class="deck-validation-badge"></span>
-                            <span id="readOnlyBadge" class="deck-validation-badge read-only" style="display: none;">Read-Only</span>
-                        </div>
+                <!-- Top section: Deck Title and Badges only -->
+                <div class="deck-editor-title-only">
+                    <div class="deck-title-with-validation">
+                        <h3 id="deckEditorTitle" class="editable-title" data-edit-handler="startEditingTitle">Edit Deck</h3>
+                        <span id="deckTitleValidationBadge" class="deck-validation-badge"></span>
+                        <span id="readOnlyBadge" class="deck-validation-badge read-only" style="display: none;">Read-Only</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Below horizontal divider: Description, Summary Stats, and Action Buttons -->
+            <div class="deck-editor-content-header">
+                <div class="deck-editor-content-row">
+                    <!-- Left side: Deck Description -->
+                    <div class="deck-editor-description-section">
                         <p id="deckEditorDescription" class="deck-description editable-description" data-edit-handler="startEditingDescription"></p>
                         <div id="readOnlyIndicator" class="read-only-indicator" style="display: none;">
                             <span class="read-only-text">📖 Read Only Mode</span>

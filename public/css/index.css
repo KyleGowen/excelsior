@@ -2194,21 +2194,32 @@
             gap: 15px;
         }
         
-        .deck-editor-top-row {
+        .deck-editor-title-only {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .deck-editor-content-header {
+            padding: 12px 20px 10px 20px;
+            margin-bottom: 4px;
+        }
+        
+        .deck-editor-content-row {
             display: flex;
             align-items: flex-start;
             width: 100%;
-            margin-bottom: 10px;
             position: relative;
         }
 
-        .modal-header .deck-editor-title-section {
+        .deck-editor-description-section {
             flex: 0 0 auto;
             margin-right: 20px;
             min-width: 200px;
         }
 
-        .modal-header .deck-summary-section {
+        .deck-editor-content-row .deck-summary-section {
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
@@ -2217,7 +2228,7 @@
             align-items: center;
         }
 
-        .modal-header .deck-editor-actions {
+        .deck-editor-content-row .deck-editor-actions {
             flex: 0 0 auto;
             margin-left: auto;
         }
@@ -2353,7 +2364,7 @@
             margin-bottom: 0;
         }
         
-        .deck-editor-top-row .deck-summary-section {
+        .deck-editor-content-row .deck-summary-section {
             background: transparent;
             border: none;
             padding: 0;
@@ -3269,7 +3280,7 @@
         }
 
         /* Additional specificity for save button */
-        .modal-header .deck-editor-actions .action-btn.save-btn {
+        .deck-editor-content-row .deck-editor-actions .action-btn.save-btn {
             background: rgba(78, 205, 196, 0.2) !important;
             color: #4ecdc4 !important;
             border: 1px solid rgba(78, 205, 196, 0.3) !important;
@@ -3279,7 +3290,7 @@
             box-sizing: border-box !important;
         }
 
-        .modal-header .deck-editor-actions .action-btn.save-btn:hover {
+        .deck-editor-content-row .deck-editor-actions .action-btn.save-btn:hover {
             background: rgba(78, 205, 196, 0.3) !important;
             border-color: rgba(78, 205, 196, 0.4) !important;
         }
@@ -3311,7 +3322,7 @@
         }
 
         /* Additional specificity for cancel button */
-        .modal-header .deck-editor-actions .action-btn.cancel-btn {
+        .deck-editor-content-row .deck-editor-actions .action-btn.cancel-btn {
             display: block !important;
             visibility: visible !important;
             opacity: 1 !important;
