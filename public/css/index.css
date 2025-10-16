@@ -3238,40 +3238,40 @@
             border-color: rgba(78, 205, 196, 0.2) !important;
         }
 
-        /* Save button - Blue styling */
+        /* Save button - Match Draw Hand/List View button styling */
         .action-btn.save-btn {
-            background: rgba(0, 123, 255, 0.2) !important;
-            color: #007bff !important;
-            border: 1px solid rgba(0, 123, 255, 0.3) !important;
+            background: rgba(78, 205, 196, 0.2) !important;
+            color: #4ecdc4 !important;
+            border: 1px solid rgba(78, 205, 196, 0.3) !important;
         }
 
         .action-btn.save-btn:hover {
-            background: rgba(0, 123, 255, 0.3) !important;
-            border-color: rgba(0, 123, 255, 0.4) !important;
+            background: rgba(78, 205, 196, 0.3) !important;
+            border-color: rgba(78, 205, 196, 0.4) !important;
         }
 
         /* Force save button styling with higher specificity */
         .deck-editor-actions .action-btn.save-btn {
-            background: rgba(0, 123, 255, 0.2) !important;
-            color: #007bff !important;
-            border: 1px solid rgba(0, 123, 255, 0.3) !important;
+            background: rgba(78, 205, 196, 0.2) !important;
+            color: #4ecdc4 !important;
+            border: 1px solid rgba(78, 205, 196, 0.3) !important;
         }
 
         .deck-editor-actions .action-btn.save-btn:hover {
-            background: rgba(0, 123, 255, 0.3) !important;
-            border-color: rgba(0, 123, 255, 0.4) !important;
+            background: rgba(78, 205, 196, 0.3) !important;
+            border-color: rgba(78, 205, 196, 0.4) !important;
         }
 
         /* Additional specificity for save button */
         .modal-header .deck-editor-actions .action-btn.save-btn {
-            background: rgba(0, 123, 255, 0.2) !important;
-            color: #007bff !important;
-            border: 1px solid rgba(0, 123, 255, 0.3) !important;
+            background: rgba(78, 205, 196, 0.2) !important;
+            color: #4ecdc4 !important;
+            border: 1px solid rgba(78, 205, 196, 0.3) !important;
         }
 
         .modal-header .deck-editor-actions .action-btn.save-btn:hover {
-            background: rgba(0, 123, 255, 0.3) !important;
-            border-color: rgba(0, 123, 255, 0.4) !important;
+            background: rgba(78, 205, 196, 0.3) !important;
+            border-color: rgba(78, 205, 196, 0.4) !important;
         }
 
         /* Cancel button - Black and white look */
