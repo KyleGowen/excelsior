@@ -2202,18 +2202,22 @@
             margin-bottom: 10px;
         }
         
+        .modal-header .deck-editor-title-section {
+            flex: 0 0 auto;
+            margin-right: 20px;
+            min-width: 200px;
+        }
+        
         .modal-header .deck-summary-section {
             flex: 1;
-            margin-right: 20px;
+            display: flex;
+            justify-content: center;
+            margin: 0 20px;
         }
         
         .modal-header .deck-editor-actions {
-            flex-shrink: 0;
+            flex: 0 0 auto;
             margin-left: 20px;
-        }
-        
-        .modal-header .deck-editor-title-section {
-            width: 100%;
         }
         
         .modal-header h3 {
@@ -2355,7 +2359,7 @@
 
         .deck-summary-content {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             gap: 30px;
         }
