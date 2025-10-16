@@ -3259,6 +3259,8 @@
             border: 1px solid rgba(78, 205, 196, 0.3) !important;
             height: auto !important;
             min-height: 24px !important;
+            padding: 4px 8px !important;
+            box-sizing: border-box !important;
         }
 
         .deck-editor-actions .action-btn.save-btn:hover {
@@ -3273,6 +3275,8 @@
             border: 1px solid rgba(78, 205, 196, 0.3) !important;
             height: auto !important;
             min-height: 24px !important;
+            padding: 4px 8px !important;
+            box-sizing: border-box !important;
         }
 
         .modal-header .deck-editor-actions .action-btn.save-btn:hover {
