@@ -5426,7 +5426,7 @@
             } else {
                 const htmlContent = results.map(card => `
                     <div class="deck-editor-search-result" 
-                         onclick="addCardToDeckFromSearch('${card.id}', '${card.type}')"
+                         onclick="addCardToDeckFromSearch('${card.id}', '${card.type}', '${card.name.replace(/'/g, "\\'")}')"
                          onmouseenter="showCardHoverModal('${card.image}', '${card.name.replace(/'/g, "\\'")}')"
                          onmouseleave="hideCardHoverModal()">
                         <div class="deck-editor-search-result-image" style="background-image: url('${card.image}')"></div>
@@ -5466,12 +5466,48 @@
         // showToast function moved to external file
 
         // Add card to deck from search
-        async function addCardToDeckFromSearch(cardId, cardType) {
-            
+        async function addCardToDeckFromSearch(cardId, cardType, cardName) {
             // Read-only mode removed - now handled by backend flag
             
+            // Check if we're creating a new deck (no currentDeckId)
             if (!currentDeckId) {
-                console.error('No current deck selected');
+                // For new decks, use addCardToEditor to add to local deckEditorCards array
+                console.log('🔍 Adding card to new deck via addCardToEditor');
+                
+                // Use the card name passed as parameter, or fallback to availableCardsMap
+                let finalCardName = cardName;
+                if (!finalCardName && availableCardsMap) {
+                    const cardData = availableCardsMap.get(cardId);
+                    finalCardName = cardData ? cardData.name : 'Unknown Card';
+                }
+                if (!finalCardName) {
+                    finalCardName = 'Unknown Card';
+                }
+                
+                // Check if addCardToEditor function exists
+                if (typeof addCardToEditor === 'function') {
+                    try {
+                        await addCardToEditor(cardType, cardId, finalCardName);
+                    } catch (error) {
+                        console.error('🔍 addCardToEditor failed:', error);
+                        showToast('Failed to add card to deck: ' + error.message, 'error');
+                        return;
+                    }
+                } else {
+                    console.error('🔍 addCardToEditor function does not exist!');
+                    showToast('addCardToEditor function not found', 'error');
+                    return;
+                }
+                
+                // Clear search and hide results
+                const searchInput = document.getElementById('deckEditorSearchInput');
+                if (searchInput) {
+                    searchInput.value = '';
+                }
+                hideDeckEditorSearchResults();
+                
+                // Show success message
+                showToast('Card added to deck!', 'success');
                 return;
             }
 
