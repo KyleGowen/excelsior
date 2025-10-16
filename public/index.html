@@ -6065,8 +6065,8 @@
             // Define type order and display names
             const typeOrder = [
                 'character', 'location', 'mission', 'event', 'special', 
-                'aspect', 'advanced-universe', 'teamwork', 'ally-universe', 
-                'training', 'basic-universe', 'power'
+                'aspect', 'advanced_universe', 'teamwork', 'ally_universe', 
+                'training', 'basic_universe', 'power'
             ];
             
             const typeDisplayNames = {
@@ -6076,11 +6076,11 @@
                 'event': 'Events',
                 'special': 'Special Cards',
                 'aspect': 'Aspects',
-                'advanced-universe': 'Advanced Universe',
+                'advanced_universe': 'Advanced Universe',
                 'teamwork': 'Universe: Teamwork',
-                'ally-universe': 'Universe: Ally',
+                'ally_universe': 'Universe: Ally',
                 'training': 'Universe: Training',
-                'basic-universe': 'Universe: Basic',
+                'basic_universe': 'Universe: Basic',
                 'power': 'Power Cards'
             };
             
@@ -6174,7 +6174,7 @@
                             let mapKeyType = card.type;
                             if (card.type === 'ally_universe') {
                                 mapKeyType = 'ally-universe';
-                            } else if (card.type === 'basic-universe') {
+                            } else if (card.type === 'basic_universe') {
                                 mapKeyType = 'basic-universe';
                             } else if (card.type === 'advanced_universe') {
                                 mapKeyType = 'advanced-universe';
@@ -6226,7 +6226,7 @@
                 let mapKeyType = card.type;
                 if (card.type === 'ally_universe') {
                     mapKeyType = 'ally-universe';
-                } else if (card.type === 'basic-universe') {
+                } else if (card.type === 'basic_universe') {
                     mapKeyType = 'basic-universe';
                 } else if (card.type === 'advanced_universe') {
                     mapKeyType = 'advanced-universe';
@@ -6259,7 +6259,7 @@
                                          ondragover="handleDeckCardDragOver(event)"
                                          ondrop="handleDeckCardDrop(event)">
                                         <div class="deck-card-editor-info">
-                                            <div class="deck-card-editor-name">${(card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally_universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic-universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))))))} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
+                                            <div class="deck-card-editor-name">${(card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally_universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic_universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))))))} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
                                             <div class="deck-card-editor-stats">${cardDetails}</div>
                                         </div>
                                         <div class="deck-card-editor-actions">
@@ -6470,7 +6470,7 @@
                             let mapKeyType = card.type;
                             if (card.type === 'ally_universe') {
                                 mapKeyType = 'ally-universe';
-                            } else if (card.type === 'basic-universe') {
+                            } else if (card.type === 'basic_universe') {
                                 mapKeyType = 'basic-universe';
                             } else if (card.type === 'advanced_universe') {
                                 mapKeyType = 'advanced-universe';
@@ -6530,7 +6530,7 @@
                         } else if (card.type === 'power') {
                                 // Power card details - no additional details needed
                                 cardDetails = '';
-                        } else if (card.type === 'basic-universe') {
+                        } else if (card.type === 'basic_universe') {
                             // Basic universe - no additional details (simple display)
                             cardDetails = '';
                         } else if (card.type === 'teamwork') {
@@ -6543,7 +6543,7 @@
                                     </div>
                                 `;
                             }
-                        } else if (card.type === 'ally-universe') {
+                        } else if (card.type === 'ally_universe') {
                             // Ally universe details
                             if (availableCard.one_per_deck) {
                                 cardDetails = `
@@ -6583,9 +6583,9 @@
                             const isEvent = card.type === 'event';
                             const isAspect = card.type === 'aspect';
                             const isTeamwork = card.type === 'teamwork';
-                            const isAllyUniverse = card.type === 'ally-universe';
-                            const isBasicUniverse = card.type === 'basic-universe';
-                            const isAdvancedUniverse = card.type === 'advanced-universe';
+                            const isAllyUniverse = card.type === 'ally_universe';
+                            const isBasicUniverse = card.type === 'basic_universe';
+                            const isAdvancedUniverse = card.type === 'advanced_universe';
                             const isTraining = card.type === 'training';
                             
                             const characterClass = isCharacter ? 'character-card' : '';
@@ -6601,7 +6601,7 @@
                             const trainingClass = isTraining ? 'training-card' : '';
                             
                             const selectedAlternateImage = card.selectedAlternateImage;
-                            const bgImageData = (isCharacter || isPower || isLocation || isMission || isEvent || isAspect || isTeamwork || card.type === 'ally-universe' || card.type === 'basic-universe' || card.type === 'advanced-universe' || card.type === 'training') ? `data-bg-image="${getCardImagePath(availableCard, card.type, selectedAlternateImage)}"` : '';
+                            const bgImageData = (isCharacter || isPower || isLocation || isMission || isEvent || isAspect || isTeamwork || card.type === 'ally_universe' || card.type === 'basic_universe' || card.type === 'advanced_universe' || card.type === 'training') ? `data-bg-image="${getCardImagePath(availableCard, card.type, selectedAlternateImage)}"` : '';
                             
                             // Add alternate art button for characters, special cards, and power cards with alternate images
                             let alternateArtButton = '';
@@ -6620,7 +6620,7 @@
                                  ondragover="handleDeckCardDragOver(event)"
                                  ondrop="handleDeckCardDrop(event)">
                                 <div class="deck-card-editor-info">
-                                        <div class="deck-card-editor-name">${card.type === 'power' ? `${availableCard.value} - ${availableCard.power_type}` : (card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally-universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic-universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))))))} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
+                                        <div class="deck-card-editor-name">${card.type === 'power' ? `${availableCard.value} - ${availableCard.power_type}` : (card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally_universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic_universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))))))} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
                                     ${cardDetails ? `<div class="deck-card-editor-stats">${cardDetails}</div>` : ''}
                                 </div>
                                 <div class="deck-card-editor-actions">
@@ -9130,6 +9130,7 @@
         }
 
         async function addCardToEditor(cardType, cardId, cardName, selectedAlternateImage = null) {
+            
             // Check character limit before adding
             if (cardType === 'character') {
                 // Check if we already have this character in the deck
@@ -9290,7 +9291,7 @@
                 if (selectedAlternateImage && (cardType === 'character' || cardType === 'special' || cardType === 'power')) {
                     newCard.selectedAlternateImage = selectedAlternateImage;
                 }
-                deckEditorCards.push(newCard);
+            deckEditorCards.push(newCard);
                 
                 // Show notification for adding first copy
                 if (cardType !== 'character') {
