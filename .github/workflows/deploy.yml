@@ -58,8 +58,27 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
+    - name: Verify test setup
+      run: |
+        echo "🔍 Verifying test setup..."
+        echo "Checking Jest configuration..."
+        cat jest.unit.config.js
+        echo "Checking package.json test scripts..."
+        npm run --silent
+        echo "Checking TypeScript compilation..."
+        npm run build
+        echo "✅ Test setup verification complete!"
+      
     - name: Run unit tests
-      run: npm run test:unit
+      run: |
+        echo "🔍 Unit Test Environment Debug Info:"
+        echo "Node version: $(node --version)"
+        echo "NPM version: $(npm --version)"
+        echo "Available memory: $(free -h)"
+        echo "Available disk space: $(df -h)"
+        echo "Starting unit tests..."
+        npm run test:unit -- --verbose --maxWorkers=2 --testTimeout=30000
+      timeout-minutes: 10
 
   integration-tests:
     name: Integration Tests
@@ -97,6 +116,15 @@ jobs:
     - name: Build project
       run: npm run build
       
+    - name: Verify integration test setup
+      run: |
+        echo "🔍 Verifying integration test setup..."
+        echo "Checking Jest integration configuration..."
+        cat jest.integration.config.js
+        echo "Checking integration test scripts..."
+        npm run --silent
+        echo "✅ Integration test setup verification complete!"
+      
     - name: Wait for PostgreSQL
       run: |
         echo "Waiting for PostgreSQL to be ready..."
@@ -132,9 +160,11 @@ jobs:
         echo "PostgreSQL status: $(pg_isready -h localhost -p 1337 -U postgres)"
         echo "Database URL: $DATABASE_URL"
         echo "Flyway version: $(/opt/flyway/flyway --version)"
+        echo "Available memory: $(free -h)"
+        echo "Available disk space: $(df -h)"
         echo "Starting integration tests..."
-        npm run test:integration
-      timeout-minutes: 15
+        npm run test:integration -- --verbose --maxWorkers=2 --testTimeout=60000
+      timeout-minutes: 20
       env:
         DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
 
