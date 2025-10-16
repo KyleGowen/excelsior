@@ -2950,11 +2950,11 @@
         }
 
         .deck-pane {
-            flex: 1;
+            flex: 2; /* Default to 67% (2/3) */
         }
 
         .card-selector-pane {
-            flex: 1;
+            flex: 1; /* Default to 33% (1/3) */
             min-width: 0; /* Allow flex shrinking */
             overflow: hidden; /* Prevent content overflow */
         }

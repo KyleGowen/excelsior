@@ -46,18 +46,20 @@ function showDeckEditor() {
         const uiPrefs = currentDeckData
             ? (currentDeckData.ui_preferences || (currentDeckData.metadata && currentDeckData.metadata.ui_preferences))
             : null;
-        if (uiPrefs && uiPrefs.dividerPosition) {
-            const percentage = uiPrefs.dividerPosition;
-            // Use a small delay to ensure the modal is rendered
-            setTimeout(() => {
-                const layout = document.querySelector('.deck-editor-layout');
-                const deckPane = document.querySelector('.deck-pane');
-                if (layout && deckPane) {
-                    const newWidth = (percentage / 100) * layout.offsetWidth;
-                    deckPane.style.flex = `0 0 ${newWidth}px`;
-                }
-            }, 10);
-        }
+        
+        // Default to 67% for deck pane (33% for available cards) for new decks
+        const defaultPercentage = 67;
+        const percentage = uiPrefs && uiPrefs.dividerPosition ? uiPrefs.dividerPosition : defaultPercentage;
+        
+        // Use a small delay to ensure the modal is rendered
+        setTimeout(() => {
+            const layout = document.querySelector('.deck-editor-layout');
+            const deckPane = document.querySelector('.deck-pane');
+            if (layout && deckPane) {
+                const newWidth = (percentage / 100) * layout.offsetWidth;
+                deckPane.style.flex = `0 0 ${newWidth}px`;
+            }
+        }, 10);
         
         // Read-only mode removed - now handled by backend flag
         
