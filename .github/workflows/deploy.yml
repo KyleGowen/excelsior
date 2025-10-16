@@ -195,8 +195,16 @@ jobs:
         echo "Flyway version: $(/opt/flyway/flyway --version)"
         echo "Available memory: $(free -h)"
         echo "Available disk space: $(df -h)"
+        echo "Checking database connection..."
+        psql -h localhost -p 1337 -U postgres -d overpower -c "SELECT version();" || echo "Database connection failed"
         echo "Starting integration tests..."
-        npm run test:integration -- --verbose --testTimeout=60000
+        npm run test:integration -- --verbose --testTimeout=60000 2>&1 | tee integration-test-output.log || {
+          echo "❌ Integration tests failed, checking output..."
+          cat integration-test-output.log | tail -100
+          echo "Checking database state..."
+          psql -h localhost -p 1337 -U postgres -d overpower -c "\dt" || echo "Failed to list tables"
+          exit 1
+        }
       timeout-minutes: 20
       env:
         DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
