@@ -9323,18 +9323,13 @@
             const isReserveCharacter = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character === cardId;
             const hasReserveCharacter = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
             
-            // Reserve character indicator always shown for selected character
-            if (isReserveCharacter) {
-                return `<span class="reserve-indicator">Reserve</span>`;
-            }
-            
             // If this card is the selected reserve character, show the "Reserve" button
             if (isReserveCharacter) {
                 const buttonText = 'Reserve';
                 const buttonClass = 'reserve-btn active';
                 const onclickFunction = `deselectReserveCharacter(${index})`;
                 return `<button class="${buttonClass}" onclick="${onclickFunction}">${buttonText}</button>`;
-            } 
+            }
             // If a reserve character is selected (but this isn't it), hide the button
             else if (hasReserveCharacter) {
                 return ''; 
