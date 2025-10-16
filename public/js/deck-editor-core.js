@@ -125,19 +125,7 @@ function showDeckEditor() {
 
 // Load deck for editing
 async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) {
-    
-    // Apply or remove read-only mode class based on parameter
-    if (isReadOnly) {
-        document.body.classList.add('read-only-mode');
-    } else {
-        document.body.classList.remove('read-only-mode');
-    }
-    
-                // Update Read-Only badge visibility
-                updateReadOnlyBadge();
-                
-                // Update Save button state based on read-only mode
-                updateSaveButtonState();
+    // Note: Read-only mode is now determined by API response and ownership checks below
     
     // Handle new deck creation
     if (deckId === 'new') {
@@ -203,8 +191,36 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
                 return { ...card, type: convertedType };
             });
             
+            // CRITICAL SECURITY FIX: Check if readonly=true query parameter is set - this takes precedence
+            const urlParams = new URLSearchParams(window.location.search);
+            const isReadOnlyFromQuery = urlParams.get('readonly') === 'true';
             
-            // Read-only mode removed - now handled by backend flag
+            if (isReadOnlyFromQuery) {
+                // Force read-only mode when readonly=true query parameter is present
+                isReadOnlyMode = true;
+                console.log('🔒 SECURITY: Forcing read-only mode due to readonly=true query parameter');
+            } else if (data.data.metadata && data.data.metadata.isOwner !== undefined) {
+                // Only use API response if no readonly query parameter is set
+                isReadOnlyMode = !data.data.metadata.isOwner;
+                console.log('🔒 SECURITY: Updated read-only mode from API:', isReadOnlyMode, 'isOwner:', data.data.metadata.isOwner);
+            } else {
+                // Fallback: if no ownership info, assume read-only for safety
+                isReadOnlyMode = true;
+                console.log('🔒 SECURITY: No ownership info available, defaulting to read-only mode for safety');
+            }
+            
+            // Update the body class to reflect the correct read-only mode
+            if (isReadOnlyMode) {
+                document.body.classList.add('read-only-mode');
+            } else {
+                document.body.classList.remove('read-only-mode');
+            }
+            
+            // Update Read-Only badge visibility
+            updateReadOnlyBadge();
+            
+            // Update Save button state based on read-only mode
+            updateSaveButtonState();
             
             // Now set up drag and drop based on the correct read-only mode
             setupDragAndDrop();
