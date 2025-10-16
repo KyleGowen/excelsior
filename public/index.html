@@ -762,6 +762,11 @@
                     <!-- Center: Deck Summary Section -->
                     <div class="deck-summary-section">
                         <div class="deck-summary-content">
+                            <div class="summary-stat">
+                                <button class="remove-all-btn" id="drawHandBtn" data-click-handler="toggleDrawHand" disabled title="Deck must contain at least 8 playable cards.">Draw Hand</button>
+                                <button class="remove-all-btn" id="listViewBtn" data-click-handler="toggleListView">List View</button>
+                                <button class="remove-all-btn" id="screenshotViewBtn" data-click-handler="toggleScreenshotView" style="display: none;">Screenshot View</button>
+                            </div>
                             <div class="deck-summary-stats">
                                 <div class="summary-stat">
                                     <span class="stat-label">Total Cards:</span>
@@ -787,11 +792,6 @@
                                     <span class="stat-label">Total Threat:</span>
                                     <span class="stat-value" id="deckTotalThreat">0</span>
                                 </div>
-                            </div>
-                            <div class="summary-stat">
-                                <button class="remove-all-btn" id="drawHandBtn" data-click-handler="toggleDrawHand" disabled title="Deck must contain at least 8 playable cards.">Draw Hand</button>
-                                <button class="remove-all-btn" id="listViewBtn" data-click-handler="toggleListView">List View</button>
-                                <button class="remove-all-btn" id="screenshotViewBtn" data-click-handler="toggleScreenshotView" style="display: none;">Screenshot View</button>
                             </div>
                             <div class="deck-summary-validation" id="deckSummaryValidation">
                                 <!-- Validation content will be displayed here -->
