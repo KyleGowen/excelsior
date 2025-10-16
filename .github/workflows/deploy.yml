@@ -163,7 +163,7 @@ jobs:
         echo "Available memory: $(free -h)"
         echo "Available disk space: $(df -h)"
         echo "Starting integration tests..."
-        npm run test:integration -- --verbose --maxWorkers=2 --testTimeout=60000
+        npm run test:integration -- --verbose --testTimeout=60000
       timeout-minutes: 20
       env:
         DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
