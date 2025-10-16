@@ -5562,7 +5562,8 @@
                 }
                 
                 // SECURITY: Check if user owns this deck before allowing divider dragging
-                if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isOwner) {
+                // Allow divider dragging for new decks (no currentDeckData or no metadata)
+                if (currentDeckData && currentDeckData.metadata && currentDeckData.metadata.isOwner === false) {
                     console.log('🔒 SECURITY: Blocking divider drag - user does not own this deck');
                     e.preventDefault();
                     return;
