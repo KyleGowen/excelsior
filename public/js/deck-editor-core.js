@@ -527,7 +527,7 @@ function exportDeckAsJson() {
         return;
     }
     
-    // Simple approach - open in new tab
+    // Show export overlay
     
     try {
         // Get current deck data
@@ -626,11 +626,9 @@ function exportDeckAsJson() {
             card_categories: cardCategories
         };
         
-        // Open JSON in new tab
+        // Show JSON in overlay
         const jsonString = JSON.stringify(exportData, null, 2);
-        const blob = new Blob([jsonString], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
+        showExportOverlay(jsonString);
         
     } catch (error) {
         console.error('Error exporting deck:', error);
@@ -662,4 +660,56 @@ async function closeDeckEditor() {
     switchToDeckBuilder();
 }
 
-// Export functions removed - using simple new tab approach
+// Export Overlay Functions
+function showExportOverlay(jsonString) {
+    const overlay = document.getElementById('exportJsonOverlay');
+    const content = document.getElementById('exportJsonContent');
+    
+    if (overlay && content) {
+        content.textContent = jsonString;
+        overlay.style.display = 'flex';
+        
+        // Store JSON for copying
+        overlay.dataset.jsonString = jsonString;
+        
+        // Add click outside to close
+        overlay.onclick = function(event) {
+            if (event.target === overlay) {
+                closeExportOverlay();
+            }
+        };
+    }
+}
+
+function closeExportOverlay() {
+    const overlay = document.getElementById('exportJsonOverlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+        overlay.onclick = null;
+    }
+}
+
+function copyJsonToClipboard() {
+    const overlay = document.getElementById('exportJsonOverlay');
+    const jsonString = overlay?.dataset.jsonString;
+    
+    if (jsonString) {
+        navigator.clipboard.writeText(jsonString).then(() => {
+            // Show temporary feedback
+            const copyBtn = document.querySelector('.copy-button');
+            const originalTitle = copyBtn.title;
+            copyBtn.title = 'Copied!';
+            copyBtn.style.background = 'rgba(78, 205, 196, 0.4)';
+            copyBtn.style.borderColor = 'rgba(78, 205, 196, 0.6)';
+
+            setTimeout(() => {
+                copyBtn.title = originalTitle;
+                copyBtn.style.background = 'rgba(78, 205, 196, 0.2)';
+                copyBtn.style.borderColor = 'rgba(78, 205, 196, 0.3)';
+            }, 1000);
+        }).catch(err => {
+            console.error('Failed to copy JSON: ', err);
+            showNotification('Failed to copy to clipboard', 'error');
+        });
+    }
+}
