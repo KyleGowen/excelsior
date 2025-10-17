@@ -535,6 +535,13 @@ function exportDeckAsJson() {
         return;
     }
     
+    // Check if modal is already open - if so, close it
+    const modal = document.getElementById('exportJsonModal');
+    if (modal && modal.style.display === 'flex') {
+        closeExportJsonModal();
+        return;
+    }
+    
     try {
         // Get current deck data
         const deckName = document.getElementById('deckNameInput')?.value || 'Untitled Deck';
