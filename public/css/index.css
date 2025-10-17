@@ -5300,14 +5300,16 @@
 /* Export JSON Modal Styles - Matching Page Design */
 .export-json-modal {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border: 1px solid #4ecdc4;
+    /* DEBUG: make border obvious while we tune positioning */
+    border: 2px solid #ff3b3b;
     border-radius: 10px;
     width: 600px;
     max-width: 90vw;
     max-height: 70vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+    /* DEBUG glow */
+    box-shadow: 0 0 0 2px rgba(255, 59, 59, 0.6), 0 0 20px rgba(255, 59, 59, 0.5);
     position: absolute;
     z-index: 10000;
     /* Position will be set dynamically by JavaScript */
