@@ -527,12 +527,7 @@ function exportDeckAsJson() {
         return;
     }
     
-    // Check if modal is already open - if so, close it
-    const modal = document.getElementById('exportJsonModal');
-    if (modal && modal.style.display === 'flex') {
-        closeExportJsonModal();
-        return;
-    }
+    // Simple approach - open in new tab
     
     try {
         // Get current deck data
@@ -631,9 +626,11 @@ function exportDeckAsJson() {
             card_categories: cardCategories
         };
         
-        // Show JSON in popup modal
+        // Open JSON in new tab
         const jsonString = JSON.stringify(exportData, null, 2);
-        showExportJsonModal(jsonString);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
         
     } catch (error) {
         console.error('Error exporting deck:', error);
@@ -665,84 +662,4 @@ async function closeDeckEditor() {
     switchToDeckBuilder();
 }
 
-// Export JSON Modal Functions
-function showExportJsonModal(jsonString) {
-    const modal = document.getElementById('exportJsonModal');
-    const content = document.getElementById('jsonContent');
-    const exportBtn = document.getElementById('exportBtn');
-    
-    if (modal && content && exportBtn) {
-        content.textContent = jsonString;
-        
-        // Position modal to the right of the Export button (like the mock)
-        const exportBtnRect = exportBtn.getBoundingClientRect();
-        const modalWidth = 600;
-        const modalHeight = Math.min(window.innerHeight * 0.7, 500);
-        
-        // Position modal to the right of the Export button, aligned with its top
-        let left = exportBtnRect.right + 10; // 10px gap to the right of the button
-        
-        // If modal would go off-screen to the right, position it to the left of the button
-        if (left + modalWidth > window.innerWidth - 10) {
-            left = exportBtnRect.left - modalWidth - 10;
-        }
-        
-        // Align modal top with the Export button top
-        const top = exportBtnRect.top;
-        
-        // If modal would go off bottom of screen, adjust position
-        let finalTop = top;
-        if (top + modalHeight > window.innerHeight - 10) {
-            finalTop = window.innerHeight - modalHeight - 10;
-        }
-        
-        modal.style.position = 'fixed';
-        modal.style.left = left + 'px';
-        modal.style.top = finalTop + 'px';
-        modal.style.width = modalWidth + 'px';
-        modal.style.display = 'flex';
-        
-        // Store the JSON string for copying
-        modal.dataset.jsonString = jsonString;
-
-        // Add click outside to close
-        modal.onclick = function(event) {
-            if (event.target === modal) {
-                closeExportJsonModal();
-            }
-        };
-    }
-}
-
-function closeExportJsonModal() {
-    const modal = document.getElementById('exportJsonModal');
-    if (modal) {
-        modal.style.display = 'none';
-        modal.onclick = null;
-    }
-}
-
-function copyJsonToClipboard() {
-    const modal = document.getElementById('exportJsonModal');
-    const jsonString = modal?.dataset.jsonString;
-    
-    if (jsonString) {
-                navigator.clipboard.writeText(jsonString).then(() => {
-                    // Show temporary feedback
-                    const copyBtn = document.getElementById('copyJsonBtn');
-                    const originalTitle = copyBtn.title;
-                    copyBtn.title = 'Copied!';
-                    copyBtn.style.background = 'rgba(78, 205, 196, 0.4)';
-                    copyBtn.style.borderColor = 'rgba(78, 205, 196, 0.6)';
-
-                    setTimeout(() => {
-                        copyBtn.title = originalTitle;
-                        copyBtn.style.background = 'rgba(78, 205, 196, 0.2)';
-                        copyBtn.style.borderColor = 'rgba(78, 205, 196, 0.3)';
-                    }, 1000);
-                }).catch(err => {
-            console.error('Failed to copy JSON: ', err);
-            alert('Failed to copy to clipboard');
-        });
-    }
-}
+// Export functions removed - using simple new tab approach
