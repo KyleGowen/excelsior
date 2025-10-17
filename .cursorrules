@@ -126,6 +126,18 @@
   └─────────────────────────────────────┴─────────┴─────────┴─────────┴─────────┘
   ```
 
+## Integration Test Categorization
+- **ALWAYS try to match new integration tests to the best category first before using "Remaining" as fallback**
+- **Use descriptive filename patterns that align with existing test categories:**
+  - **Security & Auth**: `*-security-*.test.ts`, `*-auth-*.test.ts`, `guest-*.test.ts`, `authentication*.test.ts`
+  - **Search & Filtering**: `*search*.test.ts`, `*filtering*.test.ts`, `stat-type-filtering*.test.ts`, `ally-search*.test.ts`
+  - **Game Logic & Deck Management**: `deck*.test.ts`, `reserve-character*.test.ts`, `limited*.test.ts`, `character*.test.ts`, `power*.test.ts`, `teamwork*.test.ts`
+  - **UI/UX & Frontend**: `*HTML*.test.ts`, `*Browser*.test.ts`, `*Clickability*.test.ts`, `*Editability*.test.ts`, `*Layout*.test.ts`, `*Navigation*.test.ts`, `*Tooltip*.test.ts`
+  - **Remaining**: Only use for tests that don't fit the above categories (e.g., `create*.test.ts`, `user*.test.ts`, `cross*.test.ts`, `new*.test.ts`, `auto*.test.ts`, `database*.test.ts`, `change*.test.ts`, `username*.test.ts`, `alternate*.test.ts`)
+- **Consider test execution time when categorizing** - aim for balanced groups (5-15 minutes each)
+- **Update the GitHub Actions workflow patterns** if adding new test categories or if existing patterns become imbalanced
+- **Document new categorization patterns** in commit messages when adding them
+
 ## Remember
 - Quality over speed
 - Test-driven development approach
