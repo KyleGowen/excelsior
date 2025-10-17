@@ -4169,13 +4169,11 @@
                     
                     cardItems.forEach(cardItem => {
                         const cardText = cardItem.textContent.trim().replace(/\s+/g, ' ').replace(/\s*\+$/, '');
-                        console.log(`  Processing power card: "${cardText}"`);
                         const match = cardText.match(/^(\d+) - (.+)$/);
                         
                         if (match) {
                             const cardValue = parseInt(match[1]);
                             const cardType = match[2];
-                            console.log(`    Parsed: value=${cardValue}, type="${cardType}"`);
                             
                             // Check if any deck character can use this power card
                             const canUse = deckCharacters.some(char => {
@@ -4203,8 +4201,6 @@
                                 }
                                 
                                 const usable = characterStat >= cardValue;
-                                console.log(`  ${char.name} (${cardType}: ${characterStat}) can use ${cardValue} ${cardType}: ${usable}`);
-                                console.log(`    Character stats: Energy=${char.energy}, Combat=${char.combat}, Brute Force=${char.brute_force}, Intelligence=${char.intelligence}`);
                                 return usable;
                             });
                             
@@ -4221,7 +4217,6 @@
                     // Show/hide the entire group based on whether any cards are visible
                     group.style.display = visibleCount > 0 ? 'block' : 'none';
                     totalVisibleCards += visibleCount;
-                    console.log(`  ${powerType}: ${visibleCount} cards visible`);
                 } else {
                     // Show all power cards and restore original counts
                     const cardItems = group.querySelectorAll('.card-item');
@@ -4403,7 +4398,6 @@
                                 }
                                 
                                 const usable = characterStat >= requiredValue;
-                                console.log(`  ${char.name} (${cardTypeValue}: ${characterStat}) can use ${cardName} (${valueToUse}): ${usable}`);
                                 return usable;
                             });
                             
@@ -4434,7 +4428,6 @@
                 categoryHeader.textContent = newText;
             }
             
-            console.log(`Basic universe filter applied: ${totalVisibleCards} cards visible`);
         }
 
         // Update basic universe filter when deck changes
@@ -4691,7 +4684,6 @@
                                 const type2Usable = type2Stat <= requiredValue;
                                 const usable = type1Usable || type2Usable;
                                 
-                                console.log(`  ${char.name} (${type1}: ${type1Stat}, ${type2}: ${type2Stat}) can use ${cardName} (${valueToUse}): ${usable} (${type1Usable} || ${type2Usable})`);
                                 return usable;
                             });
                             
@@ -4722,7 +4714,6 @@
                 categoryHeader.textContent = newText;
             }
             
-            console.log(`Training filter applied: ${totalVisibleCards} cards visible`);
         }
 
         // Update training filter when deck changes
@@ -4834,7 +4825,6 @@
                                 // Check if the character meets the requirement
                                 const usable = isLessThan ? characterStat <= requiredValue : characterStat >= requiredValue;
                                 
-                                console.log(`  ${char.name} (${statTypeToUse}: ${characterStat}) can use ${cardName} (${statToUse}): ${usable}`);
                                 return usable;
                             });
                             
@@ -4865,7 +4855,6 @@
                 categoryHeader.textContent = newText;
             }
             
-            console.log(`Ally universe filter applied: ${totalVisibleCards} cards visible`);
         }
 
         // Update ally universe filter when deck changes

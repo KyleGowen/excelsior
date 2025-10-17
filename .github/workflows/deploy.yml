@@ -113,10 +113,13 @@ jobs:
         }
       timeout-minutes: 15
 
-  integration-tests:
-    name: Integration Tests
+  # Shared setup for integration tests
+  integration-setup:
+    name: Integration Test Setup
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
+    outputs:
+      setup-complete: ${{ steps.setup-complete.outputs.complete }}
     
     services:
       postgres:
@@ -149,14 +152,70 @@ jobs:
     - name: Build project
       run: npm run build
       
-    - name: Verify integration test setup
+    - name: Wait for PostgreSQL
       run: |
-        echo "🔍 Verifying integration test setup..."
-        echo "Checking Jest integration configuration..."
-        cat jest.integration.config.js
-        echo "Checking integration test scripts..."
-        npm run --silent
-        echo "✅ Integration test setup verification complete!"
+        echo "Waiting for PostgreSQL to be ready..."
+        timeout 60s bash -c 'until pg_isready -h localhost -p 1337 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+      
+    - name: Install Flyway
+      run: |
+        echo "Installing Flyway..."
+        curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz -o flyway.tar.gz
+        tar -xzf flyway.tar.gz
+        sudo mv flyway-9.22.3 /opt/flyway
+        sudo chmod +x /opt/flyway/flyway
+        echo "/opt/flyway" >> $GITHUB_PATH
+        /opt/flyway/flyway --version
+        echo "✅ Flyway installed successfully!"
+      
+    - name: Run database migrations
+      run: |
+        export DATABASE_URL="postgresql://postgres:password@localhost:1337/overpower"
+        /opt/flyway/flyway --version
+        npm run migrate
+        echo "✅ Database setup complete!"
+      
+    - name: Setup complete
+      id: setup-complete
+      run: echo "complete=true" >> $GITHUB_OUTPUT
+
+  # Security and Authentication Tests (Parallel Group 1)
+  integration-tests-security:
+    name: Integration Tests - Security & Auth
+    runs-on: ubuntu-latest
+    needs: [integration-setup]
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: overpower
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 1337:5432
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
       
     - name: Wait for PostgreSQL
       run: |
@@ -167,15 +226,11 @@ jobs:
     - name: Install Flyway
       run: |
         echo "Installing Flyway..."
-        
-        # Install Flyway using a reliable method
         curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz -o flyway.tar.gz
         tar -xzf flyway.tar.gz
         sudo mv flyway-9.22.3 /opt/flyway
         sudo chmod +x /opt/flyway/flyway
         echo "/opt/flyway" >> $GITHUB_PATH
-        
-        # Verify installation
         /opt/flyway/flyway --version
         echo "✅ Flyway installed successfully!"
       
@@ -185,33 +240,370 @@ jobs:
         /opt/flyway/flyway --version
         npm run migrate
       
-    - name: Run integration tests
+    - name: Run Security & Auth Integration Tests
       run: |
-        echo "🔍 CI Environment Debug Info:"
-        echo "Node version: $(node --version)"
-        echo "NPM version: $(npm --version)"
-        echo "PostgreSQL status: $(pg_isready -h localhost -p 1337 -U postgres)"
-        echo "Database URL: $DATABASE_URL"
-        echo "Flyway version: $(/opt/flyway/flyway --version)"
-        echo "Available memory: $(free -h)"
-        echo "Available disk space: $(df -h)"
-        echo "Checking database connection..."
-        psql -h localhost -p 1337 -U postgres -d overpower -c "SELECT version();" || echo "Database connection failed"
-        echo "Starting integration tests..."
-        npm run test:integration -- --verbose --testTimeout=60000 2>&1 | tee integration-test-output.log || {
-          echo "❌ Integration tests failed, checking output..."
-          cat integration-test-output.log | tail -100
-          echo "Checking database state..."
-          psql -h localhost -p 1337 -U postgres -d overpower -c "\dt" || echo "Failed to list tables"
+        echo "🔒 Running Security & Authentication Integration Tests..."
+        echo "Test suites: deck-ownership-security*, bcrypt-authentication, guest-*, authentication*, auth-*"
+        
+        # Run security-related tests in parallel
+        npm run test:integration -- \
+          tests/integration/deck-ownership-security*.test.ts \
+          tests/integration/bcrypt-authentication.test.ts \
+          tests/integration/guest-*.test.ts \
+          tests/integration/authentication*.test.ts \
+          tests/integration/auth-*.test.ts \
+          --verbose --testTimeout=60000 --maxWorkers=2 2>&1 | tee security-test-output.log || {
+          echo "❌ Security & Auth tests failed, checking output..."
+          cat security-test-output.log | tail -100
           exit 1
         }
-      timeout-minutes: 20
+        echo "✅ Security & Auth tests completed successfully!"
+      timeout-minutes: 15
+      env:
+        DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
+
+  # Search and Filtering Tests (Parallel Group 2)
+  integration-tests-search:
+    name: Integration Tests - Search & Filtering
+    runs-on: ubuntu-latest
+    needs: [integration-setup]
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: overpower
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 1337:5432
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Wait for PostgreSQL
+      run: |
+        echo "Waiting for PostgreSQL to be ready..."
+        timeout 60s bash -c 'until pg_isready -h localhost -p 1337 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+      
+    - name: Install Flyway
+      run: |
+        echo "Installing Flyway..."
+        curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz -o flyway.tar.gz
+        tar -xzf flyway.tar.gz
+        sudo mv flyway-9.22.3 /opt/flyway
+        sudo chmod +x /opt/flyway/flyway
+        echo "/opt/flyway" >> $GITHUB_PATH
+        /opt/flyway/flyway --version
+        echo "✅ Flyway installed successfully!"
+      
+    - name: Run database migrations
+      run: |
+        export DATABASE_URL="postgresql://postgres:password@localhost:1337/overpower"
+        /opt/flyway/flyway --version
+        npm run migrate
+      
+    - name: Run Search & Filtering Integration Tests
+      run: |
+        echo "🔍 Running Search & Filtering Integration Tests..."
+        echo "Test suites: *search*, *filtering*, stat-type-filtering, ally-search"
+        
+        # Run search and filtering tests in parallel
+        npm run test:integration -- \
+          tests/integration/*search*.test.ts \
+          tests/integration/*filtering*.test.ts \
+          tests/integration/stat-type-filtering-integration.test.ts \
+          tests/integration/ally-search-integration.test.ts \
+          --verbose --testTimeout=60000 --maxWorkers=2 2>&1 | tee search-test-output.log || {
+          echo "❌ Search & Filtering tests failed, checking output..."
+          cat search-test-output.log | tail -100
+          exit 1
+        }
+        echo "✅ Search & Filtering tests completed successfully!"
+      timeout-minutes: 15
+      env:
+        DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
+
+  # Game Logic and Deck Management Tests (Parallel Group 3)
+  integration-tests-game-logic:
+    name: Integration Tests - Game Logic & Deck Management
+    runs-on: ubuntu-latest
+    needs: [integration-setup]
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: overpower
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 1337:5432
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Wait for PostgreSQL
+      run: |
+        echo "Waiting for PostgreSQL to be ready..."
+        timeout 60s bash -c 'until pg_isready -h localhost -p 1337 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+      
+    - name: Install Flyway
+      run: |
+        echo "Installing Flyway..."
+        curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz -o flyway.tar.gz
+        tar -xzf flyway.tar.gz
+        sudo mv flyway-9.22.3 /opt/flyway
+        sudo chmod +x /opt/flyway/flyway
+        echo "/opt/flyway" >> $GITHUB_PATH
+        /opt/flyway/flyway --version
+        echo "✅ Flyway installed successfully!"
+      
+    - name: Run database migrations
+      run: |
+        export DATABASE_URL="postgresql://postgres:password@localhost:1337/overpower"
+        /opt/flyway/flyway --version
+        npm run migrate
+      
+    - name: Run Game Logic & Deck Management Integration Tests
+      run: |
+        echo "🎮 Running Game Logic & Deck Management Integration Tests..."
+        echo "Test suites: deck*, reserve-character*, limited*, character*, power*, teamwork*"
+        
+        # Run game logic and deck management tests in parallel
+        npm run test:integration -- \
+          tests/integration/deck*.test.ts \
+          tests/integration/reserve-character*.test.ts \
+          tests/integration/limited*.test.ts \
+          tests/integration/character*.test.ts \
+          tests/integration/power*.test.ts \
+          tests/integration/teamwork*.test.ts \
+          tests/integration/event-mission-filtering-integration.test.ts \
+          --verbose --testTimeout=60000 --maxWorkers=2 2>&1 | tee game-logic-test-output.log || {
+          echo "❌ Game Logic & Deck Management tests failed, checking output..."
+          cat game-logic-test-output.log | tail -100
+          exit 1
+        }
+        echo "✅ Game Logic & Deck Management tests completed successfully!"
+      timeout-minutes: 15
+      env:
+        DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
+
+  # UI/UX and Frontend Tests (Parallel Group 4)
+  integration-tests-ui:
+    name: Integration Tests - UI/UX & Frontend
+    runs-on: ubuntu-latest
+    needs: [integration-setup]
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: overpower
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 1337:5432
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Wait for PostgreSQL
+      run: |
+        echo "Waiting for PostgreSQL to be ready..."
+        timeout 60s bash -c 'until pg_isready -h localhost -p 1337 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+      
+    - name: Install Flyway
+      run: |
+        echo "Installing Flyway..."
+        curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz -o flyway.tar.gz
+        tar -xzf flyway.tar.gz
+        sudo mv flyway-9.22.3 /opt/flyway
+        sudo chmod +x /opt/flyway/flyway
+        echo "/opt/flyway" >> $GITHUB_PATH
+        /opt/flyway/flyway --version
+        echo "✅ Flyway installed successfully!"
+      
+    - name: Run database migrations
+      run: |
+        export DATABASE_URL="postgresql://postgres:password@localhost:1337/overpower"
+        /opt/flyway/flyway --version
+        npm run migrate
+      
+    - name: Run UI/UX & Frontend Integration Tests
+      run: |
+        echo "🎨 Running UI/UX & Frontend Integration Tests..."
+        echo "Test suites: *HTML*, *Browser*, *Clickability*, *Editability*, *Layout*, *Navigation*, *Tooltip*"
+        
+        # Run UI/UX and frontend tests in parallel
+        npm run test:integration -- \
+          tests/integration/*HTML*.test.ts \
+          tests/integration/*Browser*.test.ts \
+          tests/integration/*Clickability*.test.ts \
+          tests/integration/*Editability*.test.ts \
+          tests/integration/*Layout*.test.ts \
+          tests/integration/*Navigation*.test.ts \
+          tests/integration/*Tooltip*.test.ts \
+          tests/integration/toast-notification-role-based.test.ts \
+          tests/integration/global-nav-integration.test.ts \
+          tests/integration/view-button-readonly.test.ts \
+          --verbose --testTimeout=60000 --maxWorkers=2 2>&1 | tee ui-test-output.log || {
+          echo "❌ UI/UX & Frontend tests failed, checking output..."
+          cat ui-test-output.log | tail -100
+          exit 1
+        }
+        echo "✅ UI/UX & Frontend tests completed successfully!"
+      timeout-minutes: 15
+      env:
+        DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
+
+  # Remaining Tests (Parallel Group 5)
+  integration-tests-remaining:
+    name: Integration Tests - Remaining
+    runs-on: ubuntu-latest
+    needs: [integration-setup]
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: overpower
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 1337:5432
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Wait for PostgreSQL
+      run: |
+        echo "Waiting for PostgreSQL to be ready..."
+        timeout 60s bash -c 'until pg_isready -h localhost -p 1337 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+      
+    - name: Install Flyway
+      run: |
+        echo "Installing Flyway..."
+        curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz -o flyway.tar.gz
+        tar -xzf flyway.tar.gz
+        sudo mv flyway-9.22.3 /opt/flyway
+        sudo chmod +x /opt/flyway/flyway
+        echo "/opt/flyway" >> $GITHUB_PATH
+        /opt/flyway/flyway --version
+        echo "✅ Flyway installed successfully!"
+      
+    - name: Run database migrations
+      run: |
+        export DATABASE_URL="postgresql://postgres:password@localhost:1337/overpower"
+        /opt/flyway/flyway --version
+        npm run migrate
+      
+    - name: Run Remaining Integration Tests
+      run: |
+        echo "🔧 Running Remaining Integration Tests..."
+        echo "Test suites: create*, user*, cross*, new*, auto*, database*, change*, username*"
+        
+        # Run remaining tests in parallel
+        npm run test:integration -- \
+          tests/integration/create*.test.ts \
+          tests/integration/user*.test.ts \
+          tests/integration/cross*.test.ts \
+          tests/integration/new*.test.ts \
+          tests/integration/auto*.test.ts \
+          tests/integration/database*.test.ts \
+          tests/integration/change*.test.ts \
+          tests/integration/username*.test.ts \
+          tests/integration/alternate*.test.ts \
+          tests/integration/card-duplication-bug.test.ts \
+          --verbose --testTimeout=60000 --maxWorkers=2 2>&1 | tee remaining-test-output.log || {
+          echo "❌ Remaining tests failed, checking output..."
+          cat remaining-test-output.log | tail -100
+          exit 1
+        }
+        echo "✅ Remaining tests completed successfully!"
+      timeout-minutes: 15
       env:
         DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
 
   build-docker:
     name: Build & Push Docker Image
-    needs: [build, unit-tests, integration-tests]
+    needs: [build, unit-tests, integration-tests-security, integration-tests-search, integration-tests-game-logic, integration-tests-ui, integration-tests-remaining]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
