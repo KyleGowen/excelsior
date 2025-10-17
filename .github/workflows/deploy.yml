@@ -1304,10 +1304,6 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
-    - name: Wait for deployment to stabilize
-      run: |
-        echo "⏳ Waiting for deployment to fully stabilize..."
-        sleep 30
         
     - name: Call health check endpoint
       run: |
