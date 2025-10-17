@@ -113,78 +113,12 @@ jobs:
         }
       timeout-minutes: 15
 
-  # Shared setup for integration tests
-  integration-setup:
-    name: Integration Test Setup
-    runs-on: ubuntu-latest
-    needs: [build, unit-tests]
-    outputs:
-      setup-complete: ${{ steps.setup-complete.outputs.complete }}
-    
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: overpower
-          POSTGRES_USER: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 1337:5432
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Build project
-      run: npm run build
-      
-    - name: Wait for PostgreSQL
-      run: |
-        echo "Waiting for PostgreSQL to be ready..."
-        timeout 60s bash -c 'until pg_isready -h localhost -p 1337 -U postgres; do sleep 1; done'
-        echo "PostgreSQL is ready!"
-      
-    - name: Install Flyway
-      run: |
-        echo "Installing Flyway..."
-        curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz -o flyway.tar.gz
-        tar -xzf flyway.tar.gz
-        sudo mv flyway-9.22.3 /opt/flyway
-        sudo chmod +x /opt/flyway/flyway
-        echo "/opt/flyway" >> $GITHUB_PATH
-        /opt/flyway/flyway --version
-        echo "✅ Flyway installed successfully!"
-      
-    - name: Run database migrations
-      run: |
-        export DATABASE_URL="postgresql://postgres:password@localhost:1337/overpower"
-        /opt/flyway/flyway --version
-        npm run migrate
-        echo "✅ Database setup complete!"
-      
-    - name: Setup complete
-      id: setup-complete
-      run: echo "complete=true" >> $GITHUB_OUTPUT
 
   # Security and Authentication Tests (Parallel Group 1)
   integration-tests-security:
     name: Integration Tests - Security & Auth
     runs-on: ubuntu-latest
-    needs: [integration-setup]
+    needs: [build, unit-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
@@ -267,7 +201,7 @@ jobs:
   integration-tests-search:
     name: Integration Tests - Search & Filtering
     runs-on: ubuntu-latest
-    needs: [integration-setup]
+    needs: [build, unit-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
@@ -349,7 +283,7 @@ jobs:
   integration-tests-deck-core:
     name: Integration Tests - Deck Core
     runs-on: ubuntu-latest
-    needs: [integration-setup]
+    needs: [build, unit-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
@@ -439,7 +373,7 @@ jobs:
   integration-tests-deck-security:
     name: Integration Tests - Deck Security
     runs-on: ubuntu-latest
-    needs: [integration-setup]
+    needs: [build, unit-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
@@ -524,7 +458,7 @@ jobs:
   integration-tests-game-logic:
     name: Integration Tests - Game Logic
     runs-on: ubuntu-latest
-    needs: [integration-setup]
+    needs: [build, unit-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
@@ -607,7 +541,7 @@ jobs:
   integration-tests-ui:
     name: Integration Tests - UI/UX & Frontend
     runs-on: ubuntu-latest
-    needs: [integration-setup]
+    needs: [build, unit-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
@@ -695,7 +629,7 @@ jobs:
   integration-tests-remaining:
     name: Integration Tests - Remaining
     runs-on: ubuntu-latest
-    needs: [integration-setup]
+    needs: [build, unit-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
