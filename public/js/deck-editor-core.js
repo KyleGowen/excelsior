@@ -316,11 +316,38 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
                 }, 100); // Small delay to ensure DOM is updated
             }
         } else {
-            showNotification('Failed to load deck for editing: ' + data.error, 'error');
+            console.error('Failed to load deck for editing:', data.error);
+            showNotification('Deck not found or access denied: ' + data.error, 'error');
+            
+            // Redirect to user's deck list if deck doesn't exist or access denied
+            const currentUser = getCurrentUser();
+            if (currentUser) {
+                setTimeout(() => {
+                    window.location.href = `/users/${currentUser.userId || currentUser.id}/decks`;
+                }, 2000);
+            } else {
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            }
+            return;
         }
     } catch (error) {
         console.error('Error loading deck for editing:', error);
         showNotification('Failed to load deck for editing', 'error');
+        
+        // Redirect to user's deck list on network errors too
+        const currentUser = getCurrentUser();
+        if (currentUser) {
+            setTimeout(() => {
+                window.location.href = `/users/${currentUser.userId || currentUser.id}/decks`;
+            }, 2000);
+        } else {
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+        }
+        return;
     }
 }
 
@@ -328,6 +355,21 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
 async function saveDeckChanges() {
     
     if (!currentDeckData) return;
+    
+    // SECURITY: Check if deck exists before attempting to save
+    if (currentDeckId && !currentDeckData.metadata?.id) {
+        console.error('🔒 SECURITY: Cannot save - deck does not exist or is invalid');
+        showNotification('Cannot save: Deck not found or invalid', 'error');
+        
+        // Redirect to user's deck list
+        const currentUser = getCurrentUser();
+        if (currentUser) {
+            setTimeout(() => {
+                window.location.href = `/users/${currentUser.userId || currentUser.id}/decks`;
+            }, 2000);
+        }
+        return;
+    }
     
     // SECURITY: Check for read-only mode first
     if (document.body.classList.contains('read-only-mode')) {
@@ -486,30 +528,67 @@ function exportDeckAsJson() {
         let totalThreat = 0;
         
         if (characterCards.length > 0) {
-            maxEnergy = Math.max(...characterCards.map(card => card.energy || 0));
-            maxCombat = Math.max(...characterCards.map(card => card.combat || 0));
-            maxBruteForce = Math.max(...characterCards.map(card => card.brute_force || 0));
-            maxIntelligence = Math.max(...characterCards.map(card => card.intelligence || 0));
+            maxEnergy = Math.max(...characterCards.map(card => {
+                const availableCard = availableCardsMap.get(card.cardId);
+                return availableCard ? (availableCard.energy || 0) : 0;
+            }));
+            maxCombat = Math.max(...characterCards.map(card => {
+                const availableCard = availableCardsMap.get(card.cardId);
+                return availableCard ? (availableCard.combat || 0) : 0;
+            }));
+            maxBruteForce = Math.max(...characterCards.map(card => {
+                const availableCard = availableCardsMap.get(card.cardId);
+                return availableCard ? (availableCard.brute_force || 0) : 0;
+            }));
+            maxIntelligence = Math.max(...characterCards.map(card => {
+                const availableCard = availableCardsMap.get(card.cardId);
+                return availableCard ? (availableCard.intelligence || 0) : 0;
+            }));
         }
         
         if (locationCards.length > 0) {
-            totalThreat = locationCards.reduce((sum, card) => sum + (card.threat_level || 0), 0);
+            totalThreat = locationCards.reduce((sum, card) => {
+                const availableCard = availableCardsMap.get(card.cardId);
+                return sum + (availableCard ? (availableCard.threat_level || 0) : 0);
+            }, 0);
         }
         
+        // Helper function to get card name from availableCardsMap
+        const getCardNameFromMap = (card) => {
+            const availableCard = availableCardsMap.get(card.cardId);
+            if (availableCard) {
+                // Handle different card types
+                if (card.type === 'power') {
+                    return `${availableCard.value} - ${availableCard.power_type}`;
+                } else if (card.type === 'teamwork') {
+                    return `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})`;
+                } else if (card.type === 'ally_universe') {
+                    return `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}`;
+                } else if (card.type === 'basic_universe') {
+                    return `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})`;
+                } else if (card.type === 'training') {
+                    return `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})`;
+                } else {
+                    return availableCard.name || availableCard.card_name || 'Unknown Card';
+                }
+            }
+            return 'Unknown Card';
+        };
+
         // Organize cards by category
         const cardCategories = {
-            characters: deckEditorCards.filter(card => card.type === 'character').map(card => card.name),
-            special_cards: deckEditorCards.filter(card => card.type === 'special').map(card => card.name),
-            locations: deckEditorCards.filter(card => card.type === 'location').map(card => card.name),
-            missions: deckEditorCards.filter(card => card.type === 'mission').map(card => card.name),
-            events: deckEditorCards.filter(card => card.type === 'event').map(card => card.name),
-            aspects: deckEditorCards.filter(card => card.type === 'aspect').map(card => card.name),
-            advanced_universe: deckEditorCards.filter(card => card.type === 'advanced_universe').map(card => card.name),
-            teamwork: deckEditorCards.filter(card => card.type === 'teamwork').map(card => card.name),
-            allies: deckEditorCards.filter(card => card.type === 'ally').map(card => card.name),
-            training: deckEditorCards.filter(card => card.type === 'training').map(card => card.name),
-            basic_universe: deckEditorCards.filter(card => card.type === 'basic_universe').map(card => card.name),
-            power_cards: deckEditorCards.filter(card => card.type === 'power').map(card => card.name)
+            characters: deckEditorCards.filter(card => card.type === 'character').map(card => getCardNameFromMap(card)),
+            special_cards: deckEditorCards.filter(card => card.type === 'special').map(card => getCardNameFromMap(card)),
+            locations: deckEditorCards.filter(card => card.type === 'location').map(card => getCardNameFromMap(card)),
+            missions: deckEditorCards.filter(card => card.type === 'mission').map(card => getCardNameFromMap(card)),
+            events: deckEditorCards.filter(card => card.type === 'event').map(card => getCardNameFromMap(card)),
+            aspects: deckEditorCards.filter(card => card.type === 'aspect').map(card => getCardNameFromMap(card)),
+            advanced_universe: deckEditorCards.filter(card => card.type === 'advanced_universe').map(card => getCardNameFromMap(card)),
+            teamwork: deckEditorCards.filter(card => card.type === 'teamwork').map(card => getCardNameFromMap(card)),
+            allies: deckEditorCards.filter(card => card.type === 'ally').map(card => getCardNameFromMap(card)),
+            training: deckEditorCards.filter(card => card.type === 'training').map(card => getCardNameFromMap(card)),
+            basic_universe: deckEditorCards.filter(card => card.type === 'basic_universe').map(card => getCardNameFromMap(card)),
+            power_cards: deckEditorCards.filter(card => card.type === 'power').map(card => getCardNameFromMap(card))
         };
         
         // Create export data structure
