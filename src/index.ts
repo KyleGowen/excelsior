@@ -857,7 +857,7 @@ app.delete('/api/decks/:id', authenticateUser, async (req: any, res) => {
   }
 });
 
-app.post('/api/decks/:id/cards', authenticateUser, /* securityMiddleware.csrfProtection, securityMiddleware.securityAudit('CARD_ADDITION'), */ async (req: any, res) => {
+app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
     // SECURITY: Rate limiting for card addition
     if (checkRateLimit(req, res, 'card addition')) {
