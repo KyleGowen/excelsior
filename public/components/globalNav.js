@@ -179,7 +179,6 @@ function createNewDeck() {
         
         if (titleElement) {
             titleElement.textContent = currentDeckData.metadata.name;
-            titleElement.contentEditable = 'true';
         }
         
         if (descriptionElement) {

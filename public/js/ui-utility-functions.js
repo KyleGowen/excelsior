@@ -127,7 +127,8 @@ function startEditingTitle() {
     }
     
     const titleElement = document.getElementById('deckEditorTitle');
-    const currentTitle = titleElement.textContent;
+    // Get the title from currentDeckData instead of textContent to ensure consistency
+    const currentTitle = currentDeckData?.metadata?.name || titleElement.textContent || 'Edit Deck';
     
     // Create input element
     const input = document.createElement('input');
@@ -166,7 +167,8 @@ function startEditingDescription() {
     }
     
     const descElement = document.getElementById('deckEditorDescription');
-    const currentDescription = descElement.textContent;
+    // Get the description from currentDeckData instead of textContent to avoid character counter interference
+    const currentDescription = currentDeckData?.metadata?.description || '';
     
     // Create textarea element
     const textarea = document.createElement('textarea');
@@ -221,25 +223,22 @@ function startEditingDescription() {
 function saveTitleEdit(input) {
     const newTitle = input.value.trim();
     const titleElement = document.getElementById('deckEditorTitle');
-    
+
+    // Always update the display with the current input value
+    titleElement.textContent = newTitle || currentDeckData?.metadata?.name || 'Edit Deck';
+    titleElement.classList.remove('editing');
+
+    // Only update deck data and show notification if the title actually changed
     if (newTitle && newTitle !== currentDeckData?.metadata?.name) {
         // Update the deck data
         if (currentDeckData) {
             currentDeckData.metadata.name = newTitle;
         }
-        
-        // Update the display
-        titleElement.textContent = newTitle;
-        titleElement.classList.remove('editing');
-        
+
         // Show save indicator only for non-guest users
         if (!isGuestUser()) {
             showNotification('Title updated - remember to save changes', 'info');
         }
-    } else {
-        // Revert to original
-        titleElement.textContent = currentDeckData?.metadata?.name || 'Edit Deck';
-        titleElement.classList.remove('editing');
     }
 }
 
@@ -253,12 +252,10 @@ function saveDescriptionEdit(textarea) {
     
     const descElement = document.getElementById('deckEditorDescription');
     
-    // Update the deck data
-    if (currentDeckData) {
-        currentDeckData.metadata.description = newDescription;
-    }
+    // Always update the display with the current input value
+    // Clear the innerHTML first to remove any textarea and counter elements
+    descElement.innerHTML = '';
     
-    // Update the display
     if (newDescription) {
         descElement.textContent = newDescription;
         descElement.classList.remove('placeholder');
@@ -271,9 +268,17 @@ function saveDescriptionEdit(textarea) {
     
     descElement.classList.remove('editing');
     
-    // Show save indicator only for non-guest users
-    if (!isGuestUser()) {
-        showNotification('Description updated - remember to save changes', 'info');
+    // Only update deck data and show notification if the description actually changed
+    if (newDescription !== currentDeckData?.metadata?.description) {
+        // Update the deck data
+        if (currentDeckData) {
+            currentDeckData.metadata.description = newDescription;
+        }
+        
+        // Show save indicator only for non-guest users
+        if (!isGuestUser()) {
+            showNotification('Description updated - remember to save changes', 'info');
+        }
     }
 }
 
@@ -285,6 +290,10 @@ function cancelTitleEdit(input, originalTitle) {
 
 function cancelDescriptionEdit(textarea, originalDescription) {
     const descElement = document.getElementById('deckEditorDescription');
+    
+    // Clear the innerHTML first to remove any textarea and counter elements
+    descElement.innerHTML = '';
+    
     if (originalDescription) {
         descElement.textContent = originalDescription;
         descElement.classList.remove('placeholder');
@@ -296,3 +305,4 @@ function cancelDescriptionEdit(textarea, originalDescription) {
     }
     descElement.classList.remove('editing');
 }
+
