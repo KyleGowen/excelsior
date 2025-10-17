@@ -670,14 +670,42 @@ async function closeDeckEditor() {
 function showExportJsonModal(jsonString) {
     const modal = document.getElementById('exportJsonModal');
     const content = document.getElementById('jsonContent');
+    const exportBtn = document.getElementById('exportBtn');
     
-    if (modal && content) {
+    if (modal && content && exportBtn) {
         content.textContent = jsonString;
+        
+        // Position modal below the Export button
+        const exportBtnRect = exportBtn.getBoundingClientRect();
+        const modalWidth = 800; // max-width from CSS
+        const modalHeight = Math.min(window.innerHeight * 0.8, 600); // max-height from CSS
+        
+        // Calculate position to center below the Export button
+        let left = exportBtnRect.left + (exportBtnRect.width / 2) - (modalWidth / 2);
+        
+        // Ensure modal doesn't go off-screen
+        if (left < 10) left = 10;
+        if (left + modalWidth > window.innerWidth - 10) {
+            left = window.innerWidth - modalWidth - 10;
+        }
+        
+        // Position below the Export button with some spacing
+        const top = exportBtnRect.bottom + 10;
+        
+        // If modal would go off bottom of screen, position it above the button
+        let finalTop = top;
+        if (top + modalHeight > window.innerHeight - 10) {
+            finalTop = exportBtnRect.top - modalHeight - 10;
+        }
+        
+        modal.style.position = 'fixed';
+        modal.style.left = left + 'px';
+        modal.style.top = finalTop + 'px';
         modal.style.display = 'flex';
         
         // Store the JSON string for copying
         modal.dataset.jsonString = jsonString;
-        
+
         // Add click outside to close
         modal.onclick = function(event) {
             if (event.target === modal) {
