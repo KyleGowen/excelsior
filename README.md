@@ -261,7 +261,12 @@ The health check endpoint is designed to work with monitoring systems:
 
 ### CI/CD Integration
 
-The health check is automatically called in the CI/CD pipeline during the "Post Production" step to verify successful deployment and system health.
+The application uses a comprehensive CI/CD pipeline with:
+- **9 parallel integration test categories** for optimal performance
+- **Simplified database migration process** with robust error handling
+- **Automated health checks** during deployment verification
+- **Production deployment** with Docker containerization
+- **Database migration verification** to ensure schema consistency
 
 ## Project Structure
 
@@ -411,9 +416,16 @@ private readonly DECK_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 This project includes comprehensive testing with both unit and integration tests:
 
 ### Test Coverage
-- **331 Integration Tests** - Full end-to-end testing with PostgreSQL
+- **62+ Integration Tests** - Full end-to-end testing with PostgreSQL across 9 parallel categories
 - **Unit Tests** - Individual component testing with mocks
-- **Authentication Tests** - bcrypt password hashing and verification
+- **Security Tests** - Deck ownership, save security, role-based restrictions
+- **Authentication Tests** - bcrypt password hashing, login/logout, guest users
+- **Search & Filtering Tests** - Card search, stat filtering, ally search
+- **Deck Core Tests** - Deck building, management, navigation, editing
+- **Deck Security Tests** - Save validation, API security, role access
+- **Game Logic Tests** - Character mechanics, power cards, teamwork
+- **UI/UX Tests** - Clickability, editability, layout, navigation
+- **User Management Tests** - User creation, cross-user interactions
 - **API Tests** - All endpoints tested with different user roles
 - **Database Tests** - Repository and migration testing
 

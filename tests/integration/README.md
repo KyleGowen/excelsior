@@ -65,21 +65,30 @@ Integration tests in this project test complete user workflows and API interacti
 
 ## Test Categories & Parallelization
 
-Integration tests are organized into **7 parallel categories** for optimal CI/CD performance. Each category runs independently with its own database instance.
+Integration tests are organized into **9 parallel categories** for optimal CI/CD performance. Each category runs independently with its own database instance.
 
-### 1. Security & Authentication Tests
-**Patterns**: `*-security-*.test.ts`, `*-auth-*.test.ts`, `guest-*.test.ts`, `authentication*.test.ts`, `auth-*.test.ts`
+### 1. Security Tests
+**Patterns**: `deck-ownership-security*.test.ts`, `deck-save-security*.test.ts`, `role-based-restrictions.test.ts`
 
 **Examples**:
 - `deck-ownership-security*.test.ts` - Deck ownership validation
+- `deck-save-security*.test.ts` - Save operation security
+- `role-based-restrictions.test.ts` - Role-based access control
+
+**Focus**: Deck security, ownership validation, save operation security, role-based restrictions
+
+### 2. Authentication Tests
+**Patterns**: `bcrypt-authentication.test.ts`, `guest-*.test.ts`, `authentication*.test.ts`, `auth-*.test.ts`
+
+**Examples**:
 - `bcrypt-authentication.test.ts` - Password hashing verification
 - `guest-*.test.ts` - Guest user functionality
 - `authentication*.test.ts` - Login/logout workflows
 - `auth-*.test.ts` - Authentication middleware
 
-**Focus**: User authentication, authorization, security vulnerabilities, role-based access control
+**Focus**: User authentication, authorization, password security, guest user functionality
 
-### 2. Search & Filtering Tests
+### 3. Search & Filtering Tests
 **Patterns**: `*search*.test.ts`, `*filtering*.test.ts`, `stat-type-filtering*.test.ts`, `ally-search*.test.ts`
 
 **Examples**:
@@ -89,7 +98,7 @@ Integration tests are organized into **7 parallel categories** for optimal CI/CD
 
 **Focus**: Search algorithms, filtering logic, card discovery, user interface interactions
 
-### 3. Deck Core Tests
+### 4. Deck Core Tests
 **Patterns**: `deckBuilding.test.ts`, `deckManagement.test.ts`, `deck-navigation-flow.test.ts`, `deck-editor-search-new-deck.test.ts`, `deckClickability.test.ts`, `deckEditabilityBrowser.test.ts`, `deckEditabilityHTML.test.ts`, `deckTitleDescriptionEditability.test.ts`, `deck-validation-unusable-cards.test.ts`, `limitedDeckIntegration.test.ts`, `limitedDeckSaveAndLoad.test.ts`, `limitedDeckSimpleIntegration.test.ts`
 
 **Examples**:
@@ -102,7 +111,7 @@ Integration tests are organized into **7 parallel categories** for optimal CI/CD
 
 **Focus**: Basic deck operations, deck construction, navigation, editing, limited deck functionality
 
-### 4. Deck Security Tests
+### 5. Deck Security Tests
 **Patterns**: `deck-editor-role-access.test.ts`, `deck-ownership-security-simple.test.ts`, `deck-ownership-security.test.ts`, `deck-save-frontend-validation.test.ts`, `deck-save-security-api.test.ts`, `deck-save-security-comprehensive.test.ts`, `deck-save-security-simple.test.ts`
 
 **Examples**:
@@ -113,7 +122,7 @@ Integration tests are organized into **7 parallel categories** for optimal CI/CD
 
 **Focus**: Deck security, ownership validation, role-based access control, save operation security
 
-### 5. Game Logic Tests
+### 6. Game Logic Tests
 **Patterns**: `reserve-character*.test.ts`, `character*.test.ts`, `power*.test.ts`, `teamwork*.test.ts`, `event-mission-filtering*.test.ts`
 
 **Examples**:
@@ -125,7 +134,7 @@ Integration tests are organized into **7 parallel categories** for optimal CI/CD
 
 **Focus**: Game rules, card interactions, validation logic, game mechanics
 
-### 6. UI/UX & Frontend Tests
+### 7. UI/UX & Frontend Tests
 **Patterns**: `*HTML*.test.ts`, `*Browser*.test.ts`, `*Clickability*.test.ts`, `*Editability*.test.ts`, `*Layout*.test.ts`, `*Navigation*.test.ts`, `*Tooltip*.test.ts`
 
 **Examples**:
@@ -138,18 +147,26 @@ Integration tests are organized into **7 parallel categories** for optimal CI/CD
 
 **Focus**: User interface, user experience, browser interactions, layout rendering
 
-### 7. Remaining Tests
-**Patterns**: `create*.test.ts`, `user*.test.ts`, `cross*.test.ts`, `new*.test.ts`, `auto*.test.ts`, `database*.test.ts`, `change*.test.ts`, `username*.test.ts`, `alternate*.test.ts`
+### 8. User Management Tests
+**Patterns**: `create*.test.ts`, `user*.test.ts`, `cross*.test.ts`, `change*.test.ts`, `username*.test.ts`
 
 **Examples**:
 - `createUserIntegration.test.ts` - User creation workflows
 - `create-deck-scenarios.test.ts` - Deck creation scenarios
 - `cross-user-deck-viewing.test.ts` - Cross-user interactions
-- `autoGuestLogin.test.ts` - Automatic guest login
-- `databaseView.test.ts` - Database view functionality
 - `change-password.test.ts` - Password change workflows
 - `username-persistence-flow.test.ts` - Username persistence
+
+**Focus**: User creation, user management, cross-user interactions, password management
+
+### 9. Remaining Tests
+**Patterns**: `new*.test.ts`, `auto*.test.ts`, `database*.test.ts`, `alternate*.test.ts`, `card-duplication-bug.test.ts`
+
+**Examples**:
+- `autoGuestLogin.test.ts` - Automatic guest login
+- `databaseView.test.ts` - Database view functionality
 - `alternatePowerCards.test.ts` - Alternate card functionality
+- `card-duplication-bug.test.ts` - Bug fix verification
 
 **Focus**: Miscellaneous functionality, cross-cutting concerns, utility features
 
@@ -176,16 +193,17 @@ npm run test:integration -- tests/integration/deckManagement.test.ts
 
 ### CI/CD Pipeline
 
-Integration tests run in **7 parallel jobs** in GitHub Actions:
+Integration tests run in **9 parallel jobs** in GitHub Actions:
 
-1. **integration-setup**: Shared setup (checkout, build, database setup)
-2. **integration-tests-security**: Security & Authentication tests
+1. **integration-tests-security**: Security tests
+2. **integration-tests-auth**: Authentication tests
 3. **integration-tests-search**: Search & Filtering tests  
 4. **integration-tests-deck-core**: Deck Core tests
 5. **integration-tests-deck-security**: Deck Security tests
 6. **integration-tests-game-logic**: Game Logic tests
 7. **integration-tests-ui**: UI/UX & Frontend tests
-8. **integration-tests-remaining**: Remaining tests
+8. **integration-tests-user-management**: User Management tests
+9. **integration-tests-remaining**: Remaining tests
 
 Each parallel job:
 - Runs independently with its own PostgreSQL service
@@ -197,17 +215,19 @@ Each parallel job:
 ### Performance Metrics
 
 **Typical Execution Times** (as of latest optimization):
-- Security & Auth: ~1:44
+- Security: ~1:00-1:30
+- Authentication: ~1:00-1:30
 - Search & Filtering: ~1:27
 - Deck Core: ~1:00-1:30
 - Deck Security: ~1:00-1:30
 - Game Logic: ~1:00-1:30
 - UI/UX & Frontend: ~1:21
-- Remaining: ~1:42
+- User Management: ~1:00-1:30
+- Remaining: ~1:00-1:30
 
-**Total Pipeline Time**: ~1:44 (limited by longest category)
+**Total Pipeline Time**: ~1:30 (limited by longest category)
 
-**Performance Improvement**: The subdivision of Deck Management into Deck Core and Deck Security categories allows these tests to run in parallel, reducing the overall pipeline execution time from the previous single large category.
+**Performance Improvement**: The subdivision of Security & Auth into separate Security and Authentication categories, plus the extraction of User Management from Remaining tests, provides better load balancing and reduces overall pipeline execution time through improved parallelization.
 
 ## Test Structure & Patterns
 
@@ -366,7 +386,12 @@ Certain production data is protected from deletion:
 Follow the categorization patterns to place your test in the appropriate category:
 
 ```typescript
-// Security & Auth
+// Security
+describe('Deck Ownership Validation', () => {
+  // Test deck security and permissions
+});
+
+// Authentication
 describe('User Role Validation', () => {
   // Test role-based access control
 });
@@ -382,8 +407,8 @@ describe('Deck Creation Workflow', () => {
 });
 
 // Deck Security
-describe('Deck Ownership Validation', () => {
-  // Test deck security and permissions
+describe('Deck Save Security', () => {
+  // Test save operation security
 });
 
 // Game Logic
@@ -396,8 +421,13 @@ describe('Button Click Interactions', () => {
   // Test user interface interactions
 });
 
+// User Management
+describe('User Creation Workflow', () => {
+  // Test user management functionality
+});
+
 // Remaining
-describe('User Management', () => {
+describe('Database View Functionality', () => {
   // Test miscellaneous functionality
 });
 ```
@@ -405,13 +435,15 @@ describe('User Management', () => {
 ### 2. Follow Naming Conventions
 
 **File Naming**: Use descriptive names that match category patterns:
-- `deck-ownership-security.test.ts` (Security & Auth)
+- `deck-ownership-security.test.ts` (Security)
+- `bcrypt-authentication.test.ts` (Authentication)
 - `search-functionality-integration.test.ts` (Search & Filtering)
 - `deck-management.test.ts` (Deck Core)
 - `deck-save-security-api.test.ts` (Deck Security)
 - `power-card-validation.test.ts` (Game Logic)
 - `button-clickability.test.ts` (UI/UX)
-- `user-creation.test.ts` (Remaining)
+- `user-creation.test.ts` (User Management)
+- `database-view.test.ts` (Remaining)
 
 **Test Naming**: Use descriptive test names:
 ```typescript

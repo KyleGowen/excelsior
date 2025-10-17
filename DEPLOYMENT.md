@@ -82,21 +82,36 @@ FLYWAY_PASSWORD=TempPassword123!
 - Installs dependencies and builds TypeScript
 - Copies application files and resources
 
-### 2. Push Phase
+### 2. Test Phase
+- Runs unit tests to verify code quality
+- Executes 9 parallel integration test categories:
+  - Security, Authentication, Search & Filtering
+  - Deck Core, Deck Security, Game Logic
+  - UI/UX, User Management, Remaining tests
+- Each test category runs independently with its own database
+
+### 3. Migration Phase
+- Runs production database migrations via SSM
+- Uses simplified command execution for reliability
+- Handles "no new migrations" scenarios gracefully
+- Verifies database schema and connectivity
+
+### 4. Push Phase
 - Tags image for ECR repository
 - Authenticates with ECR
 - Pushes image to AWS ECR
 
-### 3. Deploy Phase
+### 5. Deploy Phase
 - Creates environment file on EC2 instance
 - Pulls latest image from ECR
 - Stops and removes existing container
 - Starts new container with environment variables
 
-### 4. Verification Phase
+### 6. Verification Phase
 - Checks container status
 - Displays application logs
 - Verifies server is running
+- Performs health check validation
 
 ## Application Features
 
@@ -105,6 +120,8 @@ FLYWAY_PASSWORD=TempPassword123!
 - Creates database schema and populates initial data
 - Loads 43 characters and 8 locations from resources
 - **Performance optimizations**: Includes V141 migration with database indexes for faster deck loading
+- **Deployment process**: Uses simplified SSM command execution for reliability
+- **Error handling**: Gracefully handles "no new migrations" scenarios
 
 ### Server Features
 - Express.js server on port 3000
