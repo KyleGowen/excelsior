@@ -751,11 +751,26 @@ jobs:
           echo "❌ Main index.html file NOT found in source files"
           exit 1
         fi
-        echo "🧹 Cleaning up any existing images..."
-        docker system prune -f || true
-        docker builder prune -f || true
-        echo "🔨 Building with --no-cache --pull --force-rm and git information..."
-        docker build --platform linux/amd64 --no-cache --pull --force-rm \
+        echo "🧹 FORCE CLEANING Docker environment..."
+        # Remove all containers, networks, images, and build cache
+        docker system prune -a -f --volumes || true
+        docker builder prune -a -f || true
+        docker image prune -a -f || true
+        docker container prune -f || true
+        docker volume prune -f || true
+        docker network prune -f || true
+        
+        # Remove any existing images for this repository
+        docker images | grep $ECR_REPOSITORY | awk '{print $3}' | xargs -r docker rmi -f || true
+        
+        echo "🔨 FORCE BUILDING with maximum cache busting..."
+        # Add timestamp to bust any remaining caches
+        BUILD_TIMESTAMP=$(date +%s)
+        docker build --platform linux/amd64 \
+          --no-cache \
+          --pull \
+          --force-rm \
+          --build-arg BUILDKIT_INLINE_CACHE=0 \
           --build-arg GIT_COMMIT="${{ github.sha }}" \
           --build-arg GIT_SHORT_COMMIT="$(git rev-parse --short HEAD)" \
           --build-arg GIT_BRANCH="$(git branch --show-current)" \
@@ -763,6 +778,7 @@ jobs:
           --build-arg GIT_COMMIT_MESSAGE="$(git log -1 --format=%s)" \
           --build-arg GIT_COMMIT_AUTHOR="$(git log -1 --format=%an)" \
           --build-arg GIT_COMMIT_EMAIL="$(git log -1 --format=%ae)" \
+          --build-arg BUILD_TIMESTAMP="$BUILD_TIMESTAMP" \
           -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         echo "✅ Docker build completed"
         
@@ -775,7 +791,11 @@ jobs:
         docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG grep -c "replaceAllCardsInDeck" /app/src/database/PostgreSQLDeckRepository.ts || echo "0"
         
         echo "🔍 Verifying git information in container..."
-        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG sh -c 'echo "GIT_COMMIT: $GIT_COMMIT"; echo "GIT_SHORT_COMMIT: $GIT_SHORT_COMMIT"; echo "GIT_BRANCH: $GIT_BRANCH"; echo "GIT_COMMIT_MESSAGE: $GIT_COMMIT_MESSAGE"'
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG sh -c 'echo "Git commit: $GIT_COMMIT"; echo "Git short: $GIT_SHORT_COMMIT"; echo "Git branch: $GIT_BRANCH"; echo "Build timestamp: $BUILD_TIMESTAMP"'
+        
+        echo "🔍 Verifying API routes exist..."
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG grep -c "PUT.*decks.*cards" /app/dist/index.js || echo "0"
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG grep -c "replaceAllCardsInDeck" /app/dist/index.js || echo "0"
         
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
@@ -960,9 +980,12 @@ jobs:
             \"echo 'AWS Region:' ${{ env.AWS_REGION }}\",
             \"echo ''\",
             \"echo '🧹 NUCLEAR OPTION: Cleaning everything...'\",
-            \"docker system prune -af || true\",
+            \"docker system prune -af --volumes || true\",
             \"docker volume prune -f || true\",
             \"docker network prune -f || true\",
+            \"docker image prune -af || true\",
+            \"docker container prune -f || true\",
+            \"docker builder prune -af || true\",
             \"echo '🔐 Logging into ECR...'\",
             \"aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_URI\",
             \"echo '📥 FORCE pulling latest image (no cache)...'\",
@@ -1012,7 +1035,14 @@ jobs:
             "echo \"=== FILE VERIFICATION ===\"",
             "ls -la /app/public/index.html",
             "grep -c \"replaceAllCardsInDeck\" /app/src/database/PostgreSQLDeckRepository.ts || echo \"0\"",
-            "grep -c \"Victory Harben.*20\" /app/public/index.html || echo \"0\""
+            "grep -c \"Victory Harben.*20\" /app/public/index.html || echo \"0\"",
+            "echo \"=== API ROUTE VERIFICATION ===\"",
+            "grep -c \"PUT.*decks.*cards\" /app/dist/index.js || echo \"0\"",
+            "grep -c \"replaceAllCardsInDeck\" /app/dist/index.js || echo \"0\"",
+            "echo \"=== GIT INFO VERIFICATION ===\"",
+            "echo \"GIT_COMMIT: $GIT_COMMIT\"",
+            "echo \"GIT_SHORT_COMMIT: $GIT_SHORT_COMMIT\"",
+            "echo \"BUILD_TIMESTAMP: $BUILD_TIMESTAMP\""
           ]' \
           --output text --query 'Command.CommandId'
         echo "✅ Deployment logs command sent successfully"

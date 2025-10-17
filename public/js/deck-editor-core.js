@@ -14,6 +14,16 @@ function showDeckEditor() {
         // Add body class for deck editor specific styling
         document.body.classList.add('deck-editor-active');
         
+        // Show/hide Export button based on admin role
+        const exportBtn = document.getElementById('exportBtn');
+        if (exportBtn) {
+            if (currentUser && currentUser.role === 'ADMIN') {
+                exportBtn.style.display = 'inline-block';
+            } else {
+                exportBtn.style.display = 'none';
+            }
+        }
+        
         // Apply layout immediately to prevent flash
         setTimeout(() => {
             const layout = document.querySelector('.deck-editor-layout');
@@ -448,6 +458,97 @@ async function saveDeckChanges() {
     } catch (error) {
         console.error('Error saving deck changes:', error);
         showNotification('Failed to save deck changes', 'error');
+    }
+}
+
+// Export deck as JSON (Admin only)
+function exportDeckAsJson() {
+    // Security check - only allow ADMIN users
+    if (!currentUser || currentUser.role !== 'ADMIN') {
+        showNotification('Access denied: Admin privileges required', 'error');
+        return;
+    }
+    
+    try {
+        // Get current deck data
+        const deckName = document.getElementById('deckNameInput')?.value || 'Untitled Deck';
+        const deckDescription = document.getElementById('deckDescriptionInput')?.value || '';
+        
+        // Calculate deck statistics
+        const totalCards = deckEditorCards
+            .filter(card => !['mission', 'character', 'location'].includes(card.type))
+            .reduce((sum, card) => sum + card.quantity, 0);
+        
+        const characterCards = deckEditorCards.filter(card => card.type === 'character');
+        const locationCards = deckEditorCards.filter(card => card.type === 'location');
+        
+        let maxEnergy = 0, maxCombat = 0, maxBruteForce = 0, maxIntelligence = 0;
+        let totalThreat = 0;
+        
+        if (characterCards.length > 0) {
+            maxEnergy = Math.max(...characterCards.map(card => card.energy || 0));
+            maxCombat = Math.max(...characterCards.map(card => card.combat || 0));
+            maxBruteForce = Math.max(...characterCards.map(card => card.brute_force || 0));
+            maxIntelligence = Math.max(...characterCards.map(card => card.intelligence || 0));
+        }
+        
+        if (locationCards.length > 0) {
+            totalThreat = locationCards.reduce((sum, card) => sum + (card.threat_level || 0), 0);
+        }
+        
+        // Organize cards by category
+        const cardCategories = {
+            characters: deckEditorCards.filter(card => card.type === 'character').map(card => card.name),
+            special_cards: deckEditorCards.filter(card => card.type === 'special').map(card => card.name),
+            locations: deckEditorCards.filter(card => card.type === 'location').map(card => card.name),
+            missions: deckEditorCards.filter(card => card.type === 'mission').map(card => card.name),
+            events: deckEditorCards.filter(card => card.type === 'event').map(card => card.name),
+            aspects: deckEditorCards.filter(card => card.type === 'aspect').map(card => card.name),
+            advanced_universe: deckEditorCards.filter(card => card.type === 'advanced_universe').map(card => card.name),
+            teamwork: deckEditorCards.filter(card => card.type === 'teamwork').map(card => card.name),
+            allies: deckEditorCards.filter(card => card.type === 'ally').map(card => card.name),
+            training: deckEditorCards.filter(card => card.type === 'training').map(card => card.name),
+            basic_universe: deckEditorCards.filter(card => card.type === 'basic_universe').map(card => card.name),
+            power_cards: deckEditorCards.filter(card => card.type === 'power').map(card => card.name)
+        };
+        
+        // Create export data structure
+        const exportData = {
+            deck_metadata: {
+                name: deckName,
+                description: deckDescription,
+                total_cards: totalCards,
+                max_energy: maxEnergy,
+                max_combat: maxCombat,
+                max_brute_force: maxBruteForce,
+                max_intelligence: maxIntelligence,
+                total_threat: totalThreat,
+                export_timestamp: new Date().toISOString(),
+                exported_by: currentUser.name || currentUser.username || 'Admin'
+            },
+            card_categories: cardCategories
+        };
+        
+        // Create and open JSON in new tab
+        const jsonString = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        // Open in new tab
+        const newTab = window.open(url, '_blank');
+        if (newTab) {
+            newTab.document.title = `${deckName} - Deck Export`;
+            showNotification('Deck exported successfully!', 'success');
+        } else {
+            showNotification('Failed to open export - popup blocked?', 'error');
+        }
+        
+        // Clean up the URL object
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        
+    } catch (error) {
+        console.error('Error exporting deck:', error);
+        showNotification('Error exporting deck: ' + error.message, 'error');
     }
 }
 

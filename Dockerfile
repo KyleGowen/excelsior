@@ -1,6 +1,6 @@
 # Multi-stage build for OP Deckbuilder
 
-# Build arguments for git information
+# Build arguments for git information and cache busting
 ARG GIT_COMMIT=unknown
 ARG GIT_SHORT_COMMIT=unknown
 ARG GIT_BRANCH=unknown
@@ -8,10 +8,14 @@ ARG GIT_COMMIT_DATE=unknown
 ARG GIT_COMMIT_MESSAGE=unknown
 ARG GIT_COMMIT_AUTHOR=unknown
 ARG GIT_COMMIT_EMAIL=unknown
+ARG BUILD_TIMESTAMP=0
 
 # 1) Build stage - install deps and compile TypeScript
 FROM node:20-alpine AS build
 WORKDIR /app
+
+# Cache busting - this ensures no layer caching
+RUN echo "Build timestamp: ${BUILD_TIMESTAMP}" > /tmp/build_info.txt
 
 # Install OS deps used during build (git optional)
 RUN apk add --no-cache python3 make g++
@@ -35,6 +39,10 @@ ARG GIT_COMMIT_DATE=unknown
 ARG GIT_COMMIT_MESSAGE=unknown
 ARG GIT_COMMIT_AUTHOR=unknown
 ARG GIT_COMMIT_EMAIL=unknown
+ARG BUILD_TIMESTAMP=0
+
+# Cache busting - this ensures no layer caching
+RUN echo "Runtime build timestamp: ${BUILD_TIMESTAMP}" > /tmp/runtime_build_info.txt
 
 ENV NODE_ENV=production \
     PORT=3000 \
