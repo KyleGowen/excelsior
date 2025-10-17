@@ -5403,8 +5403,19 @@
     word-wrap: break-word;
 }
 
-/* Export Button Styling - Match Limited icon color */
+/* Deck Editor Actions - L-shaped layout */
+.deck-editor-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: 1fr 1fr !important;
+    gap: 8px 6px !important;
+    align-items: start !important;
+}
+
+/* Export Button - Top Left */
 .deck-editor-actions #exportBtn {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
     background: rgba(100, 149, 237, 0.2) !important;
     color: #6495ed !important;
     border: 1px solid rgba(100, 149, 237, 0.3) !important;
@@ -5422,6 +5433,18 @@
 .deck-editor-actions #exportBtn:hover {
     background: rgba(100, 149, 237, 0.3) !important;
     border-color: rgba(100, 149, 237, 0.4) !important;
+}
+
+/* Save Button - Top Right */
+.deck-editor-actions #saveDeckButton {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+}
+
+/* Cancel Button - Bottom Right */
+.deck-editor-actions .cancel-btn {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
 }
 
 
