@@ -5313,43 +5313,6 @@
     /* Position will be set dynamically by JavaScript */
 }
 
-.export-json-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid #333333;
-    background: #111111;
-    border-radius: 12px 12px 0 0;
-}
-
-.export-json-header h3 {
-    color: #ffffff;
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.export-json-header .close-btn {
-    background: none;
-    border: none;
-    color: #ffffff;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
-}
-
-.export-json-header .close-btn:hover {
-    background: #333333;
-}
-
 .export-json-content {
     flex: 1;
     padding: 20px;

@@ -675,32 +675,32 @@ function showExportJsonModal(jsonString) {
     if (modal && content && exportBtn) {
         content.textContent = jsonString;
         
-        // Position modal below the Export button
+        // Position modal tightly below the Export button
         const exportBtnRect = exportBtn.getBoundingClientRect();
-        const modalWidth = 800; // max-width from CSS
-        const modalHeight = Math.min(window.innerHeight * 0.8, 600); // max-height from CSS
+        const modalWidth = 600; // Smaller width for tighter positioning
+        const modalHeight = Math.min(window.innerHeight * 0.6, 500); // Smaller height
         
-        // Calculate position to center below the Export button
-        let left = exportBtnRect.left + (exportBtnRect.width / 2) - (modalWidth / 2);
+        // Position directly below the Export button, aligned to its left edge
+        let left = exportBtnRect.left;
         
-        // Ensure modal doesn't go off-screen
-        if (left < 10) left = 10;
+        // Ensure modal doesn't go off-screen to the right
         if (left + modalWidth > window.innerWidth - 10) {
             left = window.innerWidth - modalWidth - 10;
         }
         
-        // Position below the Export button with some spacing
-        const top = exportBtnRect.bottom + 10;
+        // Position tightly below the Export button (minimal spacing)
+        const top = exportBtnRect.bottom + 5;
         
         // If modal would go off bottom of screen, position it above the button
         let finalTop = top;
         if (top + modalHeight > window.innerHeight - 10) {
-            finalTop = exportBtnRect.top - modalHeight - 10;
+            finalTop = exportBtnRect.top - modalHeight - 5;
         }
         
         modal.style.position = 'fixed';
         modal.style.left = left + 'px';
         modal.style.top = finalTop + 'px';
+        modal.style.width = modalWidth + 'px';
         modal.style.display = 'flex';
         
         // Store the JSON string for copying
