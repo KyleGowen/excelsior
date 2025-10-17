@@ -5403,4 +5403,25 @@
     word-wrap: break-word;
 }
 
+/* Export Button Styling - Match Limited icon color */
+.deck-editor-actions #exportBtn {
+    background: rgba(100, 149, 237, 0.2) !important;
+    color: #6495ed !important;
+    border: 1px solid rgba(100, 149, 237, 0.3) !important;
+    height: auto !important;
+    min-height: 24px !important;
+    padding: 4px 8px !important;
+    box-sizing: border-box !important;
+    white-space: nowrap;
+    min-width: 80px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.deck-editor-actions #exportBtn:hover {
+    background: rgba(100, 149, 237, 0.3) !important;
+    border-color: rgba(100, 149, 237, 0.4) !important;
+}
+
 
