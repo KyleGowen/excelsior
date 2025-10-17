@@ -608,22 +608,9 @@ function exportDeckAsJson() {
             card_categories: cardCategories
         };
         
-        // Create and open JSON in new tab
+        // Show JSON in popup modal
         const jsonString = JSON.stringify(exportData, null, 2);
-        const blob = new Blob([jsonString], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        
-        // Open in new tab
-        const newTab = window.open(url, '_blank');
-        if (newTab) {
-            newTab.document.title = `${deckName} - Deck Export`;
-            showNotification('Deck exported successfully!', 'success');
-        } else {
-            showNotification('Failed to open export - popup blocked?', 'error');
-        }
-        
-        // Clean up the URL object
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showExportJsonModal(jsonString);
         
     } catch (error) {
         console.error('Error exporting deck:', error);
@@ -653,4 +640,58 @@ async function closeDeckEditor() {
     
     // Return to deck builder selection screen
     switchToDeckBuilder();
+}
+
+// Export JSON Modal Functions
+function showExportJsonModal(jsonString) {
+    const modal = document.getElementById('exportJsonModal');
+    const content = document.getElementById('jsonContent');
+    
+    if (modal && content) {
+        content.textContent = jsonString;
+        modal.style.display = 'flex';
+        
+        // Store the JSON string for copying
+        modal.dataset.jsonString = jsonString;
+        
+        // Add click outside to close
+        modal.onclick = function(event) {
+            if (event.target === modal) {
+                closeExportJsonModal();
+            }
+        };
+    }
+}
+
+function closeExportJsonModal() {
+    const modal = document.getElementById('exportJsonModal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.onclick = null;
+    }
+}
+
+function copyJsonToClipboard() {
+    const modal = document.getElementById('exportJsonModal');
+    const jsonString = modal?.dataset.jsonString;
+    
+    if (jsonString) {
+        navigator.clipboard.writeText(jsonString).then(() => {
+            // Show temporary feedback
+            const copyBtn = document.getElementById('copyJsonBtn');
+            const originalTitle = copyBtn.title;
+            copyBtn.title = 'Copied!';
+            copyBtn.style.background = '#4CAF50';
+            copyBtn.style.borderColor = '#4CAF50';
+            
+            setTimeout(() => {
+                copyBtn.title = originalTitle;
+                copyBtn.style.background = '#333333';
+                copyBtn.style.borderColor = '#555555';
+            }, 1000);
+        }).catch(err => {
+            console.error('Failed to copy JSON: ', err);
+            alert('Failed to copy to clipboard');
+        });
+    }
 }

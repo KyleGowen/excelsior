@@ -5297,4 +5297,110 @@
             font-size: 1rem;
         }
 
+/* Export JSON Modal Styles */
+.export-json-modal {
+    background: #000000;
+    border: 1px solid #333333;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 800px;
+    max-height: 80%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+}
+
+.export-json-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #333333;
+    background: #111111;
+    border-radius: 12px 12px 0 0;
+}
+
+.export-json-header h3 {
+    color: #ffffff;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.export-json-header .close-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.export-json-header .close-btn:hover {
+    background: #333333;
+}
+
+.export-json-content {
+    flex: 1;
+    padding: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.json-display {
+    position: relative;
+    background: #000000;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.copy-icon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #333333;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    padding: 8px;
+    cursor: pointer;
+    color: #ffffff;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.copy-icon:hover {
+    background: #444444;
+    border-color: #666666;
+}
+
+.copy-icon svg {
+    display: block;
+}
+
+.json-display pre {
+    flex: 1;
+    background: #000000;
+    color: #888888;
+    padding: 20px;
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
 
