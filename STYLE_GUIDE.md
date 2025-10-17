@@ -11,6 +11,7 @@
 8. [Deck Editor Layout Specifications (2025)](#deck-editor-layout-specifications-2025)
 9. [Interactive States](#interactive-states)
 10. [Responsive Design](#responsive-design)
+11. [Global Navigation](#global-navigation)
 
 ## Overview
 
@@ -155,6 +156,22 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
 - **Text Color**: `#ffffff`
 - **Border**: `1px solid #e74c3c`
 - <span style="display: inline-block; width: 20px; height: 20px; background-color: #e74c3c; border: 1px solid #ccc; vertical-align: middle; margin-right: 4px;"></span> → <span style="display: inline-block; width: 20px; height: 20px; background-color: #c0392b; border: 1px solid #ccc; vertical-align: middle;"></span>
+
+#### Deck Editor Utility Buttons (Draw Hand / List View)
+- **Class**: `.remove-all-btn`
+- **Background**: `rgba(78, 205, 196, 0.2)`
+- **Text Color**: `#4ecdc4`
+- **Border**: `1px solid rgba(78, 205, 196, 0.3)`
+- **Height**: `28px` (fixed)
+- **Min-Height**: `28px`
+- **Min-Width**: `80px`
+- **Padding**: `4px 8px`
+- **Display**: `inline-flex`; `align-items: center`; `justify-content: center`
+- **Text Wrapping**: `white-space: nowrap` (prevents multi-line labels)
+- **Border Radius**: `4px`
+- **Font**: `0.8rem`, `500`
+- **Hover**: `background: rgba(78, 205, 196, 0.3)`; `border-color: rgba(78, 205, 196, 0.4)`
+- These specs keep Draw Hand and List View visually identical.
 
 ### Cards
 
@@ -462,3 +479,45 @@ Consider implementing CSS custom properties for easier theme management:
 ---
 
 *This style guide should be updated as the application evolves and new components are added.*
+
+## Global Navigation
+
+### Structure
+- **Components**: Logo (left), navigation links/tabs (center/left), user menu and status (right)
+- **Z-Index**: `9999` to ensure nav, dropdowns, and tooltips always render above page content
+- **Stacking Context**: Create a new stacking context on the nav container to avoid overlap issues with modals/content
+
+### Layout
+- **Container**: Full-width bar pinned to the top
+- **Height**: 56–64px depending on content
+- **Padding**: `0 16px`
+- **Display**: `flex`; `align-items: center`; `justify-content: space-between`
+
+### Colors
+- **Background**: `linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)`
+- **Borders/Dividers**: `1px solid rgba(255, 255, 255, 0.2)` at bottom edge
+- **Primary Accent (active/hover)**: `#4ecdc4`
+- **Inactive Link**: `#bdc3c7`
+- **Notification/Badge**: Limited badge color `#d2b48c` on dark base
+
+### Links & Tabs
+- **Default**: `color: #bdc3c7`
+- **Active**: `color: #4ecdc4`; underline or bottom border with `rgba(78, 205, 196, 0.4)`
+- **Hover**: Lighter teal text with subtle glow `text-shadow: 0 0 4px rgba(78, 205, 196, 0.35)`
+
+### Dropdowns & Tooltips
+- **Z-Index**: `9999` (must be above main content)
+- **Background**: `rgba(0,0,0,0.9)` or nav gradient
+- **Border**: `1px solid rgba(78, 205, 196, 0.3)`
+- **Shadow**: `0 10px 24px rgba(0, 0, 0, 0.45)`
+- **Spacing**: Minimum 8px from trigger; pointer caret optional
+
+### Buttons in Global Nav
+- **Style**: Match page buttons (primary teal treatment) or limited-badge style for special actions
+- **Sizing**: `28px` min-height; `white-space: nowrap`
+- **Interaction**: Hover teal brighten; active press state with reduced translateY
+
+### Accessibility
+- **Contrast**: All nav text must meet WCAG AA on dark gradient
+- **Focus**: Visible teal focus ring `0 0 0 2px rgba(78, 205, 196, 0.5)`
+- **Hit Area**: Minimum 44px height for interactive items
