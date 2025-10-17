@@ -3310,7 +3310,7 @@
                 return;
             }
             
-            console.log('🔍 DEBUG: enforceTwoColumnLayoutInListView - forcing two-column layout for list view');
+            // Enforcing two-column layout for list view
             
             // List view ALWAYS uses exactly 2 columns - no responsive behavior
             // Force exactly 2 columns with CSS
@@ -3321,9 +3321,9 @@
             
             // Ensure we have exactly 2 columns
             const columns = deckCardsEditor.querySelectorAll('.deck-column');
-            console.log('🔍 DEBUG: enforceTwoColumnLayoutInListView - found', columns.length, 'deck-column elements');
+            // Found deck-column elements
             if (columns.length !== 2) {
-                console.log('🔍 DEBUG: enforceTwoColumnLayoutInListView - recreating layout (not exactly 2 columns)');
+                // Recreating layout (not exactly 2 columns)
                 // If we don't have exactly 2 columns, recreate the layout
                 createTwoColumnLayout();
             }
@@ -3331,7 +3331,7 @@
             // Force each column to be exactly 50% width
             const finalColumns = deckCardsEditor.querySelectorAll('.deck-column');
             finalColumns.forEach((column, index) => {
-                console.log('🔍 DEBUG: enforceTwoColumnLayoutInListView - setting column', index, 'styles');
+                // Setting column styles
                 column.style.setProperty('flex', '1', 'important');
                 column.style.setProperty('display', 'flex', 'important');
                 column.style.setProperty('flex-direction', 'column', 'important');
@@ -3339,13 +3339,7 @@
                 
                 // Log the computed styles
                 const computedStyle = window.getComputedStyle(column);
-                console.log('🔍 DEBUG: enforceTwoColumnLayoutInListView - column', index, 'computed styles:', {
-                    width: computedStyle.width,
-                    flex: computedStyle.flex,
-                    minWidth: computedStyle.minWidth,
-                    maxWidth: computedStyle.maxWidth,
-                    actualWidth: column.offsetWidth
-                });
+                // Column computed styles logged for debugging
             });
         }
         
@@ -5472,7 +5466,7 @@
             // Check if we're creating a new deck (no currentDeckId)
             if (!currentDeckId) {
                 // For new decks, use addCardToEditor to add to local deckEditorCards array
-                console.log('🔍 Adding card to new deck via addCardToEditor');
+                // Adding card to new deck via addCardToEditor
                 
                 // Use the card name passed as parameter, or fallback to availableCardsMap
                 let finalCardName = cardName;
@@ -5489,12 +5483,12 @@
                     try {
                         await addCardToEditor(cardType, cardId, finalCardName);
                     } catch (error) {
-                        console.error('🔍 addCardToEditor failed:', error);
+                        console.error('addCardToEditor failed:', error);
                         showToast('Failed to add card to deck: ' + error.message, 'error');
                         return;
                     }
                 } else {
-                    console.error('🔍 addCardToEditor function does not exist!');
+                    console.error('addCardToEditor function does not exist!');
                     showToast('addCardToEditor function not found', 'error');
                     return;
                 }
@@ -5690,31 +5684,21 @@
             const isListView = deckCardsEditor.classList.contains('list-view');
             const hasTwoColumn = deckCardsEditor.classList.contains('two-column');
             
-            console.log('🔍 DEBUG: updateDeckLayout called', {
-                deckWidth: deckWidth,
-                totalWidth: totalWidth,
-                deckPercentage: deckPercentage.toFixed(2),
-                isListView: isListView,
-                hasTwoColumn: hasTwoColumn,
-                threshold: isListView ? 'always-two' : 33,
-                willAddTwoColumn: isListView ? true : deckPercentage >= 33,
-                willRemoveTwoColumn: isListView ? false : deckPercentage < 33
-            });
             
             if (isListView) {
                 // List view: always keep two columns; only widths shrink/expand
-                console.log('🔍 DEBUG: List view - forcing two-column layout regardless of width');
+                
                 manageDeckLayout('addClass', { className: 'two-column' });
                 createTwoColumnLayout();
             } else {
                 // Tile view: normal responsive behavior
-                console.log('🔍 DEBUG: Tile view - checking percentage >= 33:', deckPercentage >= 33);
+                
                 if (deckPercentage >= 33) {
-                    console.log('🔍 DEBUG: Tile view - adding two-column');
+                    
                     manageDeckLayout('addClass', { className: 'two-column' });
                     createTwoColumnLayout();
                 } else {
-                    console.log('🔍 DEBUG: Tile view - removing two-column');
+                    
                     manageDeckLayout('removeClass', { className: 'two-column' });
                     restoreSingleColumnLayout();
                 }
@@ -5722,7 +5706,7 @@
             
             // Log final state
             const finalHasTwoColumn = deckCardsEditor.classList.contains('two-column');
-            console.log('🔍 DEBUG: Final state - hasTwoColumn:', finalHasTwoColumn);
+            
         }
         
         // Generic layout management function to consolidate duplicate patterns
@@ -5765,22 +5749,15 @@
             const deckCardsEditor = document.querySelector('.deck-cards-editor');
             if (!deckCardsEditor) return;
             
-            console.log('🔍 DEBUG: createTwoColumnLayout called', {
-                hasTwoColumn: deckCardsEditor.classList.contains('two-column'),
-                isListView: deckCardsEditor.classList.contains('list-view'),
-                allClasses: deckCardsEditor.className,
-                currentWidth: deckCardsEditor.offsetWidth,
-                hasExistingColumns: !!deckCardsEditor.querySelector('.deck-column')
-            });
             
             // If already in two-column mode, don't redistribute - keep categories stable
             if (deckCardsEditor.querySelector('.deck-column')) {
-                console.log('🔍 DEBUG: createTwoColumnLayout - already has deck-column, returning');
+                
                 return; // Don't redistribute existing content to prevent shaking
             }
             
             const sections = Array.from(deckCardsEditor.children);
-            console.log('🔍 DEBUG: createTwoColumnLayout - found', sections.length, 'sections to distribute');
+            
             if (sections.length === 0) return;
             
             // Create exactly two columns - never more, never less
@@ -5802,10 +5779,6 @@
                 }
             });
             
-            console.log('🔍 DEBUG: createTwoColumnLayout - distributed sections:', {
-                leftColumnSections: leftColumn.children.length,
-                rightColumnSections: rightColumn.children.length
-            });
             
             // Clear and add exactly 2 columns
             deckCardsEditor.innerHTML = '';
@@ -5820,11 +5793,6 @@
             // Log the final column widths
             setTimeout(() => {
                 const finalColumns = deckCardsEditor.querySelectorAll('.deck-column');
-                console.log('🔍 DEBUG: createTwoColumnLayout - final column widths:', {
-                    leftColumnWidth: finalColumns[0] ? finalColumns[0].offsetWidth : 'none',
-                    rightColumnWidth: finalColumns[1] ? finalColumns[1].offsetWidth : 'none',
-                    containerWidth: deckCardsEditor.offsetWidth
-                });
             }, 10);
         }
         
@@ -5832,23 +5800,15 @@
             const deckCardsEditor = document.querySelector('.deck-cards-editor');
             if (!deckCardsEditor) return;
             
-            console.log('🔍 DEBUG: restoreSingleColumnLayout called', {
-                isListView: deckCardsEditor.classList.contains('list-view'),
-                hasTwoColumn: deckCardsEditor.classList.contains('two-column'),
-                allClasses: deckCardsEditor.className,
-                currentWidth: deckCardsEditor.offsetWidth,
-                currentDisplay: window.getComputedStyle(deckCardsEditor).display,
-                currentFlexDirection: window.getComputedStyle(deckCardsEditor).flexDirection
-            });
             
             const columns = deckCardsEditor.querySelectorAll('.deck-column');
-            console.log('🔍 DEBUG: restoreSingleColumnLayout - found', columns.length, 'deck-column elements');
+            
             if (columns.length === 0) return;
             
             // Move all sections back to main container
             const allSections = [];
             columns.forEach(column => {
-                console.log('🔍 DEBUG: restoreSingleColumnLayout - column width before removal:', column.offsetWidth);
+                
                 allSections.push(...Array.from(column.children));
             });
             
@@ -5858,11 +5818,6 @@
                 deckCardsEditor.appendChild(section);
             });
             
-            console.log('🔍 DEBUG: restoreSingleColumnLayout - after reset', {
-                newDisplay: window.getComputedStyle(deckCardsEditor).display,
-                newFlexDirection: window.getComputedStyle(deckCardsEditor).flexDirection,
-                newWidth: deckCardsEditor.offsetWidth
-            });
         }
 
         // Force character cards to single column layout (only in edit mode)
