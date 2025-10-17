@@ -530,9 +530,49 @@ function exportDeckAsJson() {
     // Show export overlay
     
     try {
-        // Get current deck data
-        const deckName = document.getElementById('deckNameInput')?.value || 'Untitled Deck';
-        const deckDescription = document.getElementById('deckDescriptionInput')?.value || '';
+        // Get current deck data from currentDeckData object, fallback to UI elements
+        let deckName = 'Untitled Deck';
+        let deckDescription = '';
+        
+        // Try to get from currentDeckData first
+        if (currentDeckData && currentDeckData.metadata) {
+            deckName = currentDeckData.metadata.name || 'Untitled Deck';
+            deckDescription = currentDeckData.metadata.description || '';
+        }
+        
+        // Always try to get from UI elements as fallback
+        const deckTitleElement = document.querySelector('h4') || document.querySelector('.deck-title');
+        if (deckTitleElement && deckTitleElement.textContent.trim()) {
+            // Extract just the deck name, excluding legality badges
+            let titleText = deckTitleElement.textContent.trim();
+            
+            // Remove common legality suffixes that are dynamically added
+            titleText = titleText.replace(/\s+(Not Legal|Legal|Invalid|Valid)$/i, '');
+            
+            // Also try to get just the text content without the legality span
+            const legalityBadge = deckTitleElement.querySelector('.deck-validation-badge, .legality-badge');
+            if (legalityBadge) {
+                // Clone the element and remove the legality badge to get clean text
+                const cleanElement = deckTitleElement.cloneNode(true);
+                const cleanBadge = cleanElement.querySelector('.deck-validation-badge, .legality-badge');
+                if (cleanBadge) {
+                    cleanBadge.remove();
+                }
+                titleText = cleanElement.textContent.trim();
+            }
+            
+            if (titleText) {
+                deckName = titleText;
+            }
+        }
+        
+        const deckDescElement = document.querySelector('.deck-description') || 
+                              document.querySelector('.deck-desc') ||
+                              document.querySelector('[data-deck-description]');
+        if (deckDescElement && deckDescElement.textContent.trim()) {
+            deckDescription = deckDescElement.textContent.trim();
+        }
+        
         
         // Calculate deck statistics
         const totalCards = deckEditorCards
@@ -580,9 +620,9 @@ function exportDeckAsJson() {
                     return `${availableCard.value} - ${availableCard.power_type}`;
                 } else if (card.type === 'teamwork') {
                     return `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})`;
-                } else if (card.type === 'ally_universe') {
+                } else if (card.type === 'ally-universe') {
                     return `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}`;
-                } else if (card.type === 'basic_universe') {
+                } else if (card.type === 'basic-universe') {
                     return `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})`;
                 } else if (card.type === 'training') {
                     return `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})`;
@@ -593,25 +633,44 @@ function exportDeckAsJson() {
             return 'Unknown Card';
         };
 
-        // Organize cards by category
+        // Helper function to create repeated cards array based on quantity
+        const createRepeatedCards = (cards, cardType) => {
+            const result = [];
+            cards.filter(card => card.type === cardType).forEach(card => {
+                const cardName = getCardNameFromMap(card);
+                const quantity = card.quantity || 1;
+                for (let i = 0; i < quantity; i++) {
+                    result.push(cardName);
+                }
+            });
+            return result;
+        };
+
+        // Organize cards by category with repeated cards for multiple quantities
+        // Note: deckEditorCards uses frontend format (e.g., 'ally-universe', 'basic-universe', 'advanced-universe')
         const cardCategories = {
-            characters: deckEditorCards.filter(card => card.type === 'character').map(card => getCardNameFromMap(card)),
-            special_cards: deckEditorCards.filter(card => card.type === 'special').map(card => getCardNameFromMap(card)),
-            locations: deckEditorCards.filter(card => card.type === 'location').map(card => getCardNameFromMap(card)),
-            missions: deckEditorCards.filter(card => card.type === 'mission').map(card => getCardNameFromMap(card)),
-            events: deckEditorCards.filter(card => card.type === 'event').map(card => getCardNameFromMap(card)),
-            aspects: deckEditorCards.filter(card => card.type === 'aspect').map(card => getCardNameFromMap(card)),
-            advanced_universe: deckEditorCards.filter(card => card.type === 'advanced_universe').map(card => getCardNameFromMap(card)),
-            teamwork: deckEditorCards.filter(card => card.type === 'teamwork').map(card => getCardNameFromMap(card)),
-            allies: deckEditorCards.filter(card => card.type === 'ally').map(card => getCardNameFromMap(card)),
-            training: deckEditorCards.filter(card => card.type === 'training').map(card => getCardNameFromMap(card)),
-            basic_universe: deckEditorCards.filter(card => card.type === 'basic_universe').map(card => getCardNameFromMap(card)),
-            power_cards: deckEditorCards.filter(card => card.type === 'power').map(card => getCardNameFromMap(card))
+            characters: createRepeatedCards(deckEditorCards, 'character'),
+            special_cards: createRepeatedCards(deckEditorCards, 'special'),
+            locations: createRepeatedCards(deckEditorCards, 'location'),
+            missions: createRepeatedCards(deckEditorCards, 'mission'),
+            events: createRepeatedCards(deckEditorCards, 'event'),
+            aspects: createRepeatedCards(deckEditorCards, 'aspect'),
+            advanced_universe: createRepeatedCards(deckEditorCards, 'advanced-universe'),
+            teamwork: createRepeatedCards(deckEditorCards, 'teamwork'),
+            allies: createRepeatedCards(deckEditorCards, 'ally-universe'),
+            training: createRepeatedCards(deckEditorCards, 'training'),
+            basic_universe: createRepeatedCards(deckEditorCards, 'basic-universe'),
+            power_cards: createRepeatedCards(deckEditorCards, 'power')
         };
         
-        // Create export data structure
+        // Determine if deck is legal and limited using the actual validation logic
+        const validation = validateDeck(deckEditorCards);
+        const isLegal = validation.errors.length === 0;
+        const isLimited = isDeckLimited; // Use the global limited state variable
+        
+        // Create export data structure matching the sample format
         const exportData = {
-            deck_metadata: {
+            data: {
                 name: deckName,
                 description: deckDescription,
                 total_cards: totalCards,
@@ -620,10 +679,12 @@ function exportDeckAsJson() {
                 max_brute_force: maxBruteForce,
                 max_intelligence: maxIntelligence,
                 total_threat: totalThreat,
+                legal: isLegal,
+                limited: isLimited,
                 export_timestamp: new Date().toISOString(),
                 exported_by: currentUser.name || currentUser.username || 'Admin'
             },
-            card_categories: cardCategories
+            Cards: cardCategories
         };
         
         // Show JSON in overlay
