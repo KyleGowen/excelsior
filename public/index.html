@@ -1932,51 +1932,68 @@
         // loadGlobalNav function moved to external file
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Load global navigation first
-            await loadGlobalNav();
-            
-            const authResult = await checkAuthentication();
-            currentUser = authResult.currentUser; // Update global currentUser after checkAuthentication
+            try {
+                console.log('🚀 Page initialization started');
+                
+                // Load global navigation first
+                await loadGlobalNav();
+                console.log('✅ Global navigation loaded');
+                
+                const authResult = await checkAuthentication();
+                console.log('🔐 Authentication result:', authResult);
+                currentUser = authResult.currentUser; // Update global currentUser after checkAuthentication
 
-            // Initialize ViewManager
-            viewManager.initialize();
+                // Initialize ViewManager
+                viewManager.initialize();
+                console.log('✅ ViewManager initialized');
 
-            // Update user welcome message and show/hide Create User button based on role
-            if (typeof updateUserWelcome === 'function') {
-                updateUserWelcome();
-            }
-
-            if (authResult.isAuthenticated) {
-                if (authResult.deckId) {
-                    // Going directly to deck editor - skip showing main app to avoid flash
-                    
-                    // Ensure database view is hidden to prevent flash
-                    const databaseView = document.getElementById('database-view');
-                    if (databaseView) {
-                        databaseView.style.display = 'none';
-                    }
-                    
-                    // Read-only mode removed - now handled by backend flag
-                    
-                    // Add guest class if user is a guest
-                    if (currentUser && currentUser.role === 'GUEST') {
-                        document.body.classList.add('guest-user');
-                    }
-                    
-                    // Load main app data in background (without showing the UI) for when user navigates back
-                    loadMainAppDataInBackground();
-                    
-                    // Check if readonly=true parameter is set - this takes precedence
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const isReadOnlyFromQuery = urlParams.get('readonly') === 'true';
-                    
-                    await loadDeckForEditing(authResult.deckId, authResult.urlUserId, isReadOnlyFromQuery);
-                    showDeckEditor();
-                } else {
-                    // No deck ID - show main app normally
-                    showMainApp(); // This will load general app data (characters, etc.)
+                // Update user welcome message and show/hide Create User button based on role
+                if (typeof updateUserWelcome === 'function') {
+                    updateUserWelcome();
                 }
-            } else {
+
+                if (authResult.isAuthenticated) {
+                    console.log('✅ User is authenticated');
+                    if (authResult.deckId) {
+                        console.log('🎯 Deck ID detected:', authResult.deckId);
+                        // Going directly to deck editor - skip showing main app to avoid flash
+                        
+                        // Ensure database view is hidden to prevent flash
+                        const databaseView = document.getElementById('database-view');
+                        if (databaseView) {
+                            databaseView.style.display = 'none';
+                        }
+                        
+                        // Read-only mode removed - now handled by backend flag
+                        
+                        // Add guest class if user is a guest
+                        if (currentUser && currentUser.role === 'GUEST') {
+                            document.body.classList.add('guest-user');
+                        }
+                        
+                        // Load main app data in background (without showing the UI) for when user navigates back
+                        loadMainAppDataInBackground();
+                        
+                        // Check if readonly=true parameter is set - this takes precedence
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const isReadOnlyFromQuery = urlParams.get('readonly') === 'true';
+                        
+                        console.log('📥 Loading deck for editing...');
+                        await loadDeckForEditing(authResult.deckId, authResult.urlUserId, isReadOnlyFromQuery);
+                        console.log('✅ Deck loaded, showing editor');
+                        showDeckEditor();
+                    } else {
+                        console.log('📋 No deck ID - showing main app');
+                        // No deck ID - show main app normally
+                        showMainApp(); // This will load general app data (characters, etc.)
+                    }
+                } else {
+                    console.log('🔒 User not authenticated - showing login modal');
+                    showLoginModal();
+                }
+            } catch (error) {
+                console.error('❌ Error during page initialization:', error);
+                // Fallback: show login modal if initialization fails
                 showLoginModal();
             }
             

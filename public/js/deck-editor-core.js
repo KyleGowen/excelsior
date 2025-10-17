@@ -135,6 +135,8 @@ function showDeckEditor() {
 
 // Load deck for editing
 async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) {
+    console.log('🔄 loadDeckForEditing called with:', { deckId, urlUserId, isReadOnly });
+    
     // Note: Read-only mode is now determined by API response and ownership checks below
     
     // Handle new deck creation
@@ -179,14 +181,19 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
     
     currentDeckId = deckId; // Set the current deck ID
     try {
+        console.log('🌐 Fetching deck data from API...');
         const response = await fetch(`/api/decks/${deckId}`, {
             credentials: 'include'
         });
+        console.log('📡 API response status:', response.status);
         const data = await response.json();
+        console.log('📦 API response data:', data);
         
         if (data.success) {
+            console.log('✅ Deck data loaded successfully');
             currentDeckData = data.data;
             deckEditorCards = [...data.data.cards]; // Create working copy
+            console.log('🎴 Deck cards loaded:', deckEditorCards.length, 'cards');
             
             // Convert database type format to frontend format
             deckEditorCards = deckEditorCards.map(card => {
@@ -333,7 +340,7 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             return;
         }
     } catch (error) {
-        console.error('Error loading deck for editing:', error);
+        console.error('❌ Error loading deck for editing:', error);
         showNotification('Failed to load deck for editing', 'error');
         
         // Redirect to user's deck list on network errors too
@@ -353,8 +360,17 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
 
 // Save deck changes
 async function saveDeckChanges() {
+    console.log('💾 saveDeckChanges called');
+    console.log('📊 Current state:', {
+        currentDeckId,
+        currentDeckData: currentDeckData ? 'loaded' : 'not loaded',
+        deckEditorCards: deckEditorCards ? deckEditorCards.length : 0
+    });
     
-    if (!currentDeckData) return;
+    if (!currentDeckData) {
+        console.error('❌ Cannot save - no deck data loaded');
+        return;
+    }
     
     // SECURITY: Check if deck exists before attempting to save
     if (currentDeckId && !currentDeckData.metadata?.id) {
@@ -446,6 +462,12 @@ async function saveDeckChanges() {
             return cardData;
         });
         
+        console.log('📤 Sending cards data to API:', {
+            deckId,
+            cardsCount: cardsData.length,
+            cardsData: cardsData.slice(0, 3) // Show first 3 cards for debugging
+        });
+        
         // Bulk replace all cards in one atomic operation
         const replaceResponse = await fetch(`/api/decks/${deckId}/cards`, {
             method: 'PUT',
@@ -455,6 +477,8 @@ async function saveDeckChanges() {
             credentials: 'include',
             body: JSON.stringify({ cards: cardsData })
         });
+        
+        console.log('📡 Save API response status:', replaceResponse.status);
         
         if (!replaceResponse.ok) {
             throw new Error('Failed to save deck cards');
