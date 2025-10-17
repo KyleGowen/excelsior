@@ -1003,10 +1003,16 @@ app.put('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
+    console.log('Attempting to replace cards in deck:', req.params.id);
+    console.log('Cards to replace:', JSON.stringify(cards, null, 2));
+    
     const success = await deckRepository.replaceAllCardsInDeck(req.params.id, cards);
     if (!success) {
+      console.error('Failed to replace cards in deck:', req.params.id);
       return res.status(404).json({ success: false, error: 'Deck not found or failed to replace cards' });
     }
+    
+    console.log('Successfully replaced cards in deck:', req.params.id);
     
     // Return the updated deck
     const updatedDeck = await deckRepository.getDeckById(req.params.id);

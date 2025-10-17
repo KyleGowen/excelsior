@@ -706,6 +706,8 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       // Rollback on error
       await client.query('ROLLBACK');
       console.error('Error replacing all cards in deck:', error);
+      console.error('Deck ID:', deckId);
+      console.error('Cards being inserted:', JSON.stringify(cards, null, 2));
       return false;
     } finally {
       client.release();
