@@ -194,6 +194,20 @@ const authService = new AuthenticationService(userRepository);
 
 // Function to get git information
 function getGitInfo() {
+  // In production (Docker), use environment variables set during build
+  if (process.env.NODE_ENV === 'production') {
+    return {
+      commit: process.env.GIT_COMMIT || 'unknown',
+      shortCommit: process.env.GIT_SHORT_COMMIT || 'unknown',
+      branch: process.env.GIT_BRANCH || 'unknown',
+      commitDate: process.env.GIT_COMMIT_DATE || 'unknown',
+      commitMessage: process.env.GIT_COMMIT_MESSAGE || 'unknown',
+      commitAuthor: process.env.GIT_COMMIT_AUTHOR || 'unknown',
+      commitEmail: process.env.GIT_COMMIT_EMAIL || 'unknown'
+    };
+  }
+  
+  // In development, try to run git commands
   try {
     const commit = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
     const branch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();

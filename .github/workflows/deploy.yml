@@ -266,6 +266,9 @@ jobs:
         echo "🔍 PRE-BUILD VERIFICATION:"
         echo "Building from commit: $(git rev-parse HEAD)"
         echo "Building from branch: $(git branch --show-current)"
+        echo "Git commit message: $(git log -1 --pretty=format:'%s')"
+        echo "Git commit author: $(git log -1 --pretty=format:'%an <%ae>')"
+        echo "Git commit date: $(git log -1 --pretty=format:'%ad')"
         echo "Checking source files before build:"
         if grep -q "replaceAllCardsInDeck" src/database/PostgreSQLDeckRepository.ts; then
           echo "✅ Card duplication bug fix found in source files"
@@ -282,8 +285,16 @@ jobs:
         echo "🧹 Cleaning up any existing images..."
         docker system prune -f || true
         docker builder prune -f || true
-        echo "🔨 Building with --no-cache --pull --force-rm..."
-        docker build --platform linux/amd64 --no-cache --pull --force-rm -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        echo "🔨 Building with --no-cache --pull --force-rm and git information..."
+        docker build --platform linux/amd64 --no-cache --pull --force-rm \
+          --build-arg GIT_COMMIT="${{ github.sha }}" \
+          --build-arg GIT_SHORT_COMMIT="$(git rev-parse --short HEAD)" \
+          --build-arg GIT_BRANCH="$(git branch --show-current)" \
+          --build-arg GIT_COMMIT_DATE="$(git log -1 --format=%ci)" \
+          --build-arg GIT_COMMIT_MESSAGE="$(git log -1 --format=%s)" \
+          --build-arg GIT_COMMIT_AUTHOR="$(git log -1 --format=%an)" \
+          --build-arg GIT_COMMIT_EMAIL="$(git log -1 --format=%ae)" \
+          -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         echo "✅ Docker build completed"
         
         echo "🏷️ Tagging image..."
@@ -293,6 +304,9 @@ jobs:
         echo "📋 Verifying build contents..."
         docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ls -la /app/public/index.html
         docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG grep -c "replaceAllCardsInDeck" /app/src/database/PostgreSQLDeckRepository.ts || echo "0"
+        
+        echo "🔍 Verifying git information in container..."
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG sh -c 'echo "GIT_COMMIT: $GIT_COMMIT"; echo "GIT_SHORT_COMMIT: $GIT_SHORT_COMMIT"; echo "GIT_BRANCH: $GIT_BRANCH"; echo "GIT_COMMIT_MESSAGE: $GIT_COMMIT_MESSAGE"'
         
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
@@ -555,6 +569,13 @@ jobs:
             "echo \"Code Verification:\"",
             "grep -q \"replaceAllCardsInDeck\" /app/src/database/PostgreSQLDeckRepository.ts && echo \"✅ Card duplication bug fix found in production\" || echo \"❌ Card duplication bug fix NOT found in production\"",
             "test -d /app/public/js && echo \"✅ Refactored JavaScript directory found in production\" || echo \"❌ Refactored JavaScript directory NOT found in production\"",
+            "echo \"\"",
+            "echo \"Git Information Verification:\"",
+            "echo \"GIT_COMMIT: $GIT_COMMIT\"",
+            "echo \"GIT_SHORT_COMMIT: $GIT_SHORT_COMMIT\"",
+            "echo \"GIT_BRANCH: $GIT_BRANCH\"",
+            "echo \"GIT_COMMIT_MESSAGE: $GIT_COMMIT_MESSAGE\"",
+            "if [ \"$GIT_COMMIT\" != \"unknown\" ]; then echo \"✅ Git information properly embedded in production container\"; else echo \"❌ Git information NOT properly embedded in production container\"; fi",
             "echo \"\"",
             "echo \"=== END VERIFICATION ===\""
           ]' \

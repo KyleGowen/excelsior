@@ -1,5 +1,14 @@
 # Multi-stage build for OP Deckbuilder
 
+# Build arguments for git information
+ARG GIT_COMMIT=unknown
+ARG GIT_SHORT_COMMIT=unknown
+ARG GIT_BRANCH=unknown
+ARG GIT_COMMIT_DATE=unknown
+ARG GIT_COMMIT_MESSAGE=unknown
+ARG GIT_COMMIT_AUTHOR=unknown
+ARG GIT_COMMIT_EMAIL=unknown
+
 # 1) Build stage - install deps and compile TypeScript
 FROM node:20-alpine AS build
 WORKDIR /app
@@ -18,9 +27,25 @@ RUN npm run build
 FROM node:20-alpine
 WORKDIR /app
 
+# Accept build arguments from build stage
+ARG GIT_COMMIT=unknown
+ARG GIT_SHORT_COMMIT=unknown
+ARG GIT_BRANCH=unknown
+ARG GIT_COMMIT_DATE=unknown
+ARG GIT_COMMIT_MESSAGE=unknown
+ARG GIT_COMMIT_AUTHOR=unknown
+ARG GIT_COMMIT_EMAIL=unknown
+
 ENV NODE_ENV=production \
     PORT=3000 \
-    FLYWAY_VERSION=9.22.3
+    FLYWAY_VERSION=9.22.3 \
+    GIT_COMMIT=${GIT_COMMIT} \
+    GIT_SHORT_COMMIT=${GIT_SHORT_COMMIT} \
+    GIT_BRANCH=${GIT_BRANCH} \
+    GIT_COMMIT_DATE=${GIT_COMMIT_DATE} \
+    GIT_COMMIT_MESSAGE=${GIT_COMMIT_MESSAGE} \
+    GIT_COMMIT_AUTHOR=${GIT_COMMIT_AUTHOR} \
+    GIT_COMMIT_EMAIL=${GIT_COMMIT_EMAIL}
 
 # Install runtime tools:
 # - bash (Flyway scripts may invoke bash)
