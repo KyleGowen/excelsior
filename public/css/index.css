@@ -5297,17 +5297,17 @@
             font-size: 1rem;
         }
 
-/* Export JSON Modal Styles */
+/* Export JSON Modal Styles - Matching Page Design */
 .export-json-modal {
-    background: #000000;
-    border: 1px solid #333333;
-    border-radius: 8px;
-    width: 80%;
-    max-width: 800px;
-    max-height: 80%;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid #4ecdc4;
+    border-radius: 10px;
+    width: 600px;
+    max-width: 90vw;
+    max-height: 70vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
     position: absolute;
     z-index: 10000;
     /* Position will be set dynamically by JavaScript */
@@ -5323,9 +5323,10 @@
 
 .json-display {
     position: relative;
-    background: #000000;
-    border: none;
-    border-radius: 0;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(78, 205, 196, 0.3);
+    border-radius: 8px;
+    margin: 15px;
     flex: 1;
     overflow: hidden;
     display: flex;
@@ -5334,21 +5335,21 @@
 
 .copy-icon {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    background: #333333;
-    border: 1px solid #555555;
+    top: 10px;
+    right: 10px;
+    background: rgba(78, 205, 196, 0.2);
+    border: 1px solid rgba(78, 205, 196, 0.3);
     border-radius: 4px;
-    padding: 6px;
+    padding: 8px;
     cursor: pointer;
-    color: #ffffff;
+    color: #4ecdc4;
     transition: all 0.2s ease;
     z-index: 10;
 }
 
 .copy-icon:hover {
-    background: #444444;
-    border-color: #666666;
+    background: rgba(78, 205, 196, 0.3);
+    border-color: rgba(78, 205, 196, 0.4);
 }
 
 .copy-icon svg {
@@ -5357,13 +5358,13 @@
 
 .json-display pre {
     flex: 1;
-    background: #000000;
-    color: #888888;
-    padding: 12px;
+    background: transparent;
+    color: #ffffff;
+    padding: 15px;
     margin: 0;
     font-family: 'Courier New', monospace;
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 13px;
+    line-height: 1.4;
     overflow: auto;
     white-space: pre-wrap;
     word-wrap: break-word;

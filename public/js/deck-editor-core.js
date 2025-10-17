@@ -674,26 +674,28 @@ function showExportJsonModal(jsonString) {
     if (modal && content && exportBtn) {
         content.textContent = jsonString;
         
-        // Position modal tightly below the Export button
+        // Position modal centered below the Export button
         const exportBtnRect = exportBtn.getBoundingClientRect();
-        const modalWidth = 600; // Smaller width for tighter positioning
-        const modalHeight = Math.min(window.innerHeight * 0.6, 500); // Smaller height
+        const modalWidth = 600;
+        const modalHeight = Math.min(window.innerHeight * 0.7, 500);
         
-        // Position directly below the Export button, aligned to its left edge
-        let left = exportBtnRect.left;
+        // Center the modal horizontally relative to the Export button
+        let left = exportBtnRect.left + (exportBtnRect.width / 2) - (modalWidth / 2);
         
-        // Ensure modal doesn't go off-screen to the right
-        if (left + modalWidth > window.innerWidth - 10) {
+        // Ensure modal doesn't go off-screen
+        if (left < 10) {
+            left = 10;
+        } else if (left + modalWidth > window.innerWidth - 10) {
             left = window.innerWidth - modalWidth - 10;
         }
         
-        // Position tightly below the Export button (minimal spacing)
-        const top = exportBtnRect.bottom + 2;
+        // Position below the Export button with comfortable spacing
+        const top = exportBtnRect.bottom + 8;
         
         // If modal would go off bottom of screen, position it above the button
         let finalTop = top;
         if (top + modalHeight > window.innerHeight - 10) {
-            finalTop = exportBtnRect.top - modalHeight - 2;
+            finalTop = exportBtnRect.top - modalHeight - 8;
         }
         
         modal.style.position = 'fixed';
@@ -727,20 +729,20 @@ function copyJsonToClipboard() {
     const jsonString = modal?.dataset.jsonString;
     
     if (jsonString) {
-        navigator.clipboard.writeText(jsonString).then(() => {
-            // Show temporary feedback
-            const copyBtn = document.getElementById('copyJsonBtn');
-            const originalTitle = copyBtn.title;
-            copyBtn.title = 'Copied!';
-            copyBtn.style.background = '#4CAF50';
-            copyBtn.style.borderColor = '#4CAF50';
-            
-            setTimeout(() => {
-                copyBtn.title = originalTitle;
-                copyBtn.style.background = '#333333';
-                copyBtn.style.borderColor = '#555555';
-            }, 1000);
-        }).catch(err => {
+                navigator.clipboard.writeText(jsonString).then(() => {
+                    // Show temporary feedback
+                    const copyBtn = document.getElementById('copyJsonBtn');
+                    const originalTitle = copyBtn.title;
+                    copyBtn.title = 'Copied!';
+                    copyBtn.style.background = 'rgba(78, 205, 196, 0.4)';
+                    copyBtn.style.borderColor = 'rgba(78, 205, 196, 0.6)';
+
+                    setTimeout(() => {
+                        copyBtn.title = originalTitle;
+                        copyBtn.style.background = 'rgba(78, 205, 196, 0.2)';
+                        copyBtn.style.borderColor = 'rgba(78, 205, 196, 0.3)';
+                    }, 1000);
+                }).catch(err => {
             console.error('Failed to copy JSON: ', err);
             alert('Failed to copy to clipboard');
         });
