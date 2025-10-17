@@ -465,20 +465,84 @@ async function saveDeckChanges() {
         console.log('📤 Sending cards data to API:', {
             deckId,
             cardsCount: cardsData.length,
-            cardsData: cardsData.slice(0, 3) // Show first 3 cards for debugging
+            cardsData: cardsData.slice(0, 3), // Show first 3 cards for debugging
+            requestUrl: `/api/decks/${deckId}/cards`,
+            requestMethod: 'PUT'
         });
         
+        // Test if the API endpoint exists by making a simple GET request first
+        console.log('🔍 Testing if API endpoint exists...');
+        try {
+            const testResponse = await fetch(`/api/decks/${deckId}/cards`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            console.log('🧪 GET test response:', {
+                status: testResponse.status,
+                statusText: testResponse.statusText,
+                url: testResponse.url
+            });
+        } catch (error) {
+            console.log('❌ GET test failed:', error);
+        }
+        
+        // Test other deck-related endpoints to see what's available
+        console.log('🔍 Testing other deck endpoints...');
+        const endpointsToTest = [
+            `/api/decks/${deckId}`,
+            `/api/decks/${deckId}/full`,
+            `/api/decks/${deckId}/ui-preferences`
+        ];
+        
+        for (const endpoint of endpointsToTest) {
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                console.log(`🧪 ${endpoint}:`, {
+                    status: response.status,
+                    statusText: response.statusText
+                });
+            } catch (error) {
+                console.log(`❌ ${endpoint} failed:`, error);
+            }
+        }
+        
         // Bulk replace all cards in one atomic operation
-        const replaceResponse = await fetch(`/api/decks/${deckId}/cards`, {
+        const requestUrl = `/api/decks/${deckId}/cards`;
+        const requestBody = JSON.stringify({ cards: cardsData });
+        
+        console.log('🌐 Making API request:', {
+            url: requestUrl,
+            method: 'PUT',
+            bodySize: requestBody.length,
+            bodyPreview: requestBody.substring(0, 200) + '...'
+        });
+        
+        const replaceResponse = await fetch(requestUrl, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
             credentials: 'include',
-            body: JSON.stringify({ cards: cardsData })
+            body: requestBody
         });
         
-        console.log('📡 Save API response status:', replaceResponse.status);
+        console.log('📡 Save API response details:', {
+            status: replaceResponse.status,
+            statusText: replaceResponse.statusText,
+            url: replaceResponse.url,
+            headers: Object.fromEntries(replaceResponse.headers.entries())
+        });
+        
+        // Try to get response body for debugging
+        try {
+            const responseText = await replaceResponse.text();
+            console.log('📄 Response body:', responseText);
+        } catch (error) {
+            console.log('❌ Could not read response body:', error);
+        }
         
         if (!replaceResponse.ok) {
             throw new Error('Failed to save deck cards');
