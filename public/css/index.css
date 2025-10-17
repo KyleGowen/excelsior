@@ -3181,6 +3181,14 @@
             transition: background 0.2s ease;
             margin-left: auto;
             margin-right: 8px;
+            white-space: nowrap;
+            min-width: 80px;
+            height: 28px;
+            min-height: 28px;
+            box-sizing: border-box;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .remove-all-btn:hover {
