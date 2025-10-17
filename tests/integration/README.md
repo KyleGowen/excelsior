@@ -65,7 +65,7 @@ Integration tests in this project test complete user workflows and API interacti
 
 ## Test Categories & Parallelization
 
-Integration tests are organized into **6 parallel categories** for optimal CI/CD performance. Each category runs independently with its own database instance.
+Integration tests are organized into **7 parallel categories** for optimal CI/CD performance. Each category runs independently with its own database instance.
 
 ### 1. Security & Authentication Tests
 **Patterns**: `*-security-*.test.ts`, `*-auth-*.test.ts`, `guest-*.test.ts`, `authentication*.test.ts`, `auth-*.test.ts`
@@ -89,18 +89,31 @@ Integration tests are organized into **6 parallel categories** for optimal CI/CD
 
 **Focus**: Search algorithms, filtering logic, card discovery, user interface interactions
 
-### 3. Deck Management Tests
-**Patterns**: `deck*.test.ts`, `limited*.test.ts`
+### 3. Deck Core Tests
+**Patterns**: `deckBuilding.test.ts`, `deckManagement.test.ts`, `deck-navigation-flow.test.ts`, `deck-editor-search-new-deck.test.ts`, `deckClickability.test.ts`, `deckEditabilityBrowser.test.ts`, `deckEditabilityHTML.test.ts`, `deckTitleDescriptionEditability.test.ts`, `deck-validation-unusable-cards.test.ts`, `limitedDeckIntegration.test.ts`, `limitedDeckSaveAndLoad.test.ts`, `limitedDeckSimpleIntegration.test.ts`
 
 **Examples**:
 - `deckManagement.test.ts` - Core deck operations
 - `deckBuilding.test.ts` - Deck construction workflows
 - `limitedDeckIntegration.test.ts` - Limited deck functionality
 - `deck-editor-search-new-deck.test.ts` - New deck creation
+- `deckClickability.test.ts` - Deck interaction functionality
+- `deckEditabilityHTML.test.ts` - HTML-based deck editing
 
-**Focus**: Deck CRUD operations, deck validation, deck persistence, deck sharing
+**Focus**: Basic deck operations, deck construction, navigation, editing, limited deck functionality
 
-### 4. Game Logic Tests
+### 4. Deck Security Tests
+**Patterns**: `deck-editor-role-access.test.ts`, `deck-ownership-security-simple.test.ts`, `deck-ownership-security.test.ts`, `deck-save-frontend-validation.test.ts`, `deck-save-security-api.test.ts`, `deck-save-security-comprehensive.test.ts`, `deck-save-security-simple.test.ts`
+
+**Examples**:
+- `deck-ownership-security.test.ts` - Deck ownership validation
+- `deck-save-security-api.test.ts` - API-level save security
+- `deck-editor-role-access.test.ts` - Role-based editor access
+- `deck-save-frontend-validation.test.ts` - Frontend save validation
+
+**Focus**: Deck security, ownership validation, role-based access control, save operation security
+
+### 5. Game Logic Tests
 **Patterns**: `reserve-character*.test.ts`, `character*.test.ts`, `power*.test.ts`, `teamwork*.test.ts`, `event-mission-filtering*.test.ts`
 
 **Examples**:
@@ -112,7 +125,7 @@ Integration tests are organized into **6 parallel categories** for optimal CI/CD
 
 **Focus**: Game rules, card interactions, validation logic, game mechanics
 
-### 5. UI/UX & Frontend Tests
+### 6. UI/UX & Frontend Tests
 **Patterns**: `*HTML*.test.ts`, `*Browser*.test.ts`, `*Clickability*.test.ts`, `*Editability*.test.ts`, `*Layout*.test.ts`, `*Navigation*.test.ts`, `*Tooltip*.test.ts`
 
 **Examples**:
@@ -125,7 +138,7 @@ Integration tests are organized into **6 parallel categories** for optimal CI/CD
 
 **Focus**: User interface, user experience, browser interactions, layout rendering
 
-### 6. Remaining Tests
+### 7. Remaining Tests
 **Patterns**: `create*.test.ts`, `user*.test.ts`, `cross*.test.ts`, `new*.test.ts`, `auto*.test.ts`, `database*.test.ts`, `change*.test.ts`, `username*.test.ts`, `alternate*.test.ts`
 
 **Examples**:
@@ -163,15 +176,16 @@ npm run test:integration -- tests/integration/deckManagement.test.ts
 
 ### CI/CD Pipeline
 
-Integration tests run in **6 parallel jobs** in GitHub Actions:
+Integration tests run in **7 parallel jobs** in GitHub Actions:
 
 1. **integration-setup**: Shared setup (checkout, build, database setup)
 2. **integration-tests-security**: Security & Authentication tests
 3. **integration-tests-search**: Search & Filtering tests  
-4. **integration-tests-deck-management**: Deck Management tests
-5. **integration-tests-game-logic**: Game Logic tests
-6. **integration-tests-ui**: UI/UX & Frontend tests
-7. **integration-tests-remaining**: Remaining tests
+4. **integration-tests-deck-core**: Deck Core tests
+5. **integration-tests-deck-security**: Deck Security tests
+6. **integration-tests-game-logic**: Game Logic tests
+7. **integration-tests-ui**: UI/UX & Frontend tests
+8. **integration-tests-remaining**: Remaining tests
 
 Each parallel job:
 - Runs independently with its own PostgreSQL service
@@ -185,12 +199,15 @@ Each parallel job:
 **Typical Execution Times** (as of latest optimization):
 - Security & Auth: ~1:44
 - Search & Filtering: ~1:27
-- Deck Management: ~1:00-1:30
+- Deck Core: ~1:00-1:30
+- Deck Security: ~1:00-1:30
 - Game Logic: ~1:00-1:30
 - UI/UX & Frontend: ~1:21
 - Remaining: ~1:42
 
 **Total Pipeline Time**: ~1:44 (limited by longest category)
+
+**Performance Improvement**: The subdivision of Deck Management into Deck Core and Deck Security categories allows these tests to run in parallel, reducing the overall pipeline execution time from the previous single large category.
 
 ## Test Structure & Patterns
 
@@ -359,9 +376,14 @@ describe('Card Search Functionality', () => {
   // Test search algorithms
 });
 
-// Deck Management
+// Deck Core
 describe('Deck Creation Workflow', () => {
-  // Test deck CRUD operations
+  // Test basic deck operations
+});
+
+// Deck Security
+describe('Deck Ownership Validation', () => {
+  // Test deck security and permissions
 });
 
 // Game Logic
@@ -385,7 +407,8 @@ describe('User Management', () => {
 **File Naming**: Use descriptive names that match category patterns:
 - `deck-ownership-security.test.ts` (Security & Auth)
 - `search-functionality-integration.test.ts` (Search & Filtering)
-- `deck-management.test.ts` (Deck Management)
+- `deck-management.test.ts` (Deck Core)
+- `deck-save-security-api.test.ts` (Deck Security)
 - `power-card-validation.test.ts` (Game Logic)
 - `button-clickability.test.ts` (UI/UX)
 - `user-creation.test.ts` (Remaining)
