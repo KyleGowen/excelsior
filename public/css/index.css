@@ -5378,13 +5378,13 @@
     align-items: start !important;
 }
 
-/* Export Button - Top Left - Match Limited icon color */
+/* Export Button - Top Left - Dark modal styling */
 .deck-editor-actions #exportBtn {
     grid-column: 1 !important;
     grid-row: 1 !important;
-    background: rgba(210, 180, 140, 0.2) !important;
-    color: #d2b48c !important;
-    border: 1px solid rgba(210, 180, 140, 0.3) !important;
+    background: #333333 !important;
+    color: #ffffff !important;
+    border: 1px solid #555555 !important;
     height: auto !important;
     min-height: 24px !important;
     padding: 4px 8px !important;
@@ -5394,11 +5394,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s ease;
 }
 
 .deck-editor-actions #exportBtn:hover {
-    background: rgba(210, 180, 140, 0.3) !important;
-    border-color: rgba(210, 180, 140, 0.4) !important;
+    background: #444444 !important;
+    border-color: #666666 !important;
 }
 
 /* Save Button - Top Right */
