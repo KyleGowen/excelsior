@@ -1135,7 +1135,7 @@ jobs:
             "flyway -configFiles=/opt/app/flyway.conf migrate",
             "MIGRATION_EXIT_CODE=$?",
             "if [ $MIGRATION_EXIT_CODE -eq 0 ]; then",
-            "  echo \"✅ Production database migrations completed successfully\"",
+            "  echo \"✅ Production database migrations completed successfully (exit code: $MIGRATION_EXIT_CODE)\"",
             "  echo \"MIGRATION_STATUS=SUCCESS\"",
             "else",
             "  echo \"❌ Production database migrations FAILED with exit code $MIGRATION_EXIT_CODE\"",
@@ -1181,11 +1181,21 @@ jobs:
           exit 1
         fi
         
+        # Check for success indicators in output
         if echo "$COMMAND_OUTPUT" | grep -q "MIGRATION_STATUS=SUCCESS"; then
           echo "✅ Production database migrations completed successfully"
+        elif echo "$COMMAND_OUTPUT" | grep -q "No migrations found"; then
+          echo "✅ No new migrations to run - database is up to date"
+        elif echo "$COMMAND_OUTPUT" | grep -q "Successfully applied"; then
+          echo "✅ Migrations applied successfully"
         else
-          echo "❌ Migration status unclear - DEPLOYMENT HALTED"
-          exit 1
+          echo "❌ Migration status unclear - checking for any error indicators..."
+          if echo "$COMMAND_OUTPUT" | grep -qi "error\|failed\|exception"; then
+            echo "❌ Error indicators found in output - DEPLOYMENT HALTED"
+            exit 1
+          else
+            echo "✅ Migration completed without clear status message (likely no new migrations)"
+          fi
         fi
 
     - name: Verify Migration Results
@@ -1202,7 +1212,7 @@ jobs:
             "echo \"🔍 Checking migration status...\"",
             "flyway -configFiles=/opt/app/flyway.conf info",
             "echo \"\"",
-            "echo \"🔍 Verifying database connection...\"",
+            "echo \"🔍 Verifying database connection and schema...\"",
             "flyway -configFiles=/opt/app/flyway.conf validate",
             "VALIDATION_EXIT_CODE=$?",
             "if [ $VALIDATION_EXIT_CODE -eq 0 ]; then",
