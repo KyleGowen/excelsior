@@ -3223,6 +3223,47 @@
             border-color: rgba(78, 205, 196, 0.2) !important;
         }
 
+        /* Export/Import buttons with brown color scheme */
+        .export-import-btn {
+            background: rgba(139, 69, 19, 0.3);
+            color: #d2b48c;
+            border: 1px solid rgba(139, 69, 19, 0.4);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            margin-left: auto;
+            margin-right: 8px;
+            white-space: nowrap;
+            min-width: 80px;
+            height: 28px;
+            min-height: 28px;
+            box-sizing: border-box;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .export-import-btn:hover {
+            background: rgba(139, 69, 19, 0.4);
+            border-color: rgba(139, 69, 19, 0.5);
+        }
+
+        .export-import-btn:disabled {
+            background: rgba(139, 69, 19, 0.1) !important;
+            color: rgba(210, 180, 140, 0.5) !important;
+            border-color: rgba(139, 69, 19, 0.2) !important;
+            cursor: not-allowed !important;
+            opacity: 0.5 !important;
+        }
+
+        .export-import-btn:disabled:hover {
+            background: rgba(139, 69, 19, 0.1) !important;
+            border-color: rgba(139, 69, 19, 0.2) !important;
+        }
+
         /* Action Buttons (Save/Cancel) - Same styling as Draw Hand/List View buttons */
         .action-btn {
             background: rgba(78, 205, 196, 0.2);
