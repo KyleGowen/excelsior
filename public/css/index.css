@@ -5520,6 +5520,34 @@
                 0 3px 8px rgba(0, 0, 0, 0.45);
 }
 
+/* Import Button - Bottom Left - Match Export Button styling */
+.deck-editor-actions #importBtn {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    background: #2b2b2b !important; /* dark base to match export button */
+    color: #d2b48c !important;      /* Limited yellow text */
+    border: 1px solid rgba(210, 180, 140, 0.35) !important; /* Limited yellow border */
+    height: auto !important;
+    min-height: 28px !important;
+    padding: 6px 14px !important;   /* a bit more padding like mockup */
+    box-sizing: border-box !important;
+    white-space: nowrap;
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), /* subtle top inset */
+                0 2px 6px rgba(0, 0, 0, 0.35);           /* outer shadow */
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.deck-editor-actions #importBtn:hover {
+    background: #343434 !important;
+    border-color: rgba(210, 180, 140, 0.5) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                0 3px 8px rgba(0, 0, 0, 0.45);
+}
+
 /* Save Button - Top Right */
 .deck-editor-actions #saveDeckButton {
     grid-column: 2 !important;
