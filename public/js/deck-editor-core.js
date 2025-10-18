@@ -24,6 +24,16 @@ function showDeckEditor() {
             }
         }
         
+        // Show/hide Import button based on admin role
+        const importBtn = document.getElementById('importBtn');
+        if (importBtn) {
+            if (currentUser && currentUser.role === 'ADMIN') {
+                importBtn.style.display = 'inline-block';
+            } else {
+                importBtn.style.display = 'none';
+            }
+        }
+        
         // Apply layout immediately to prevent flash
         setTimeout(() => {
             const layout = document.querySelector('.deck-editor-layout');
@@ -695,6 +705,18 @@ function exportDeckAsJson() {
         console.error('Error exporting deck:', error);
         showNotification('Error exporting deck: ' + error.message, 'error');
     }
+}
+
+// Import deck from JSON (Admin only)
+function importDeckFromJson() {
+    // Security check - only allow ADMIN users
+    if (!currentUser || currentUser.role !== 'ADMIN') {
+        showNotification('Access denied: Admin privileges required', 'error');
+        return;
+    }
+    
+    // TODO: Implement import functionality
+    showNotification('Import functionality will be implemented soon', 'info');
 }
 
 // Close deck editor modal
