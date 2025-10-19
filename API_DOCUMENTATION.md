@@ -330,10 +330,11 @@ Get all power cards.
     {
       "id": "string",
       "name": "string",
-      "description": "string",
+      "power_type": "string",
+      "value": "number",
       "image": "string",
-      "alternateImages": ["string"],
-      "threat": "number"
+      "one_per_deck": "boolean",
+      "alternateImages": ["string"]
     }
   ]
 }
@@ -771,6 +772,47 @@ Remove a card from a deck.
 }
 ```
 
+### PATCH /api/decks/:id/cards/:cardType/:cardId
+Update a specific card's quantity or alternate image in a deck.
+
+**Authentication:** Required (USER or ADMIN role, not GUEST)
+**Security:**
+- Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
+- Rate limiting: 10 requests per minute per IP
+- Ownership validation required
+- Input validation: quantity 1-10, selectedAlternateImage max 200 chars
+
+**Parameters:**
+- `id` (string): Deck ID
+- `cardType` (string): Card type (e.g., "character", "power", "mission")
+- `cardId` (string): Card ID
+
+**Request Body:**
+```json
+{
+  "quantity": "number",
+  "selectedAlternateImage": "string"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "string",
+    "name": "string",
+    "description": "string",
+    "user_id": "string",
+    "created_at": "string",
+    "updated_at": "string",
+    "cards": []
+  }
+}
+```
+
+**Note:** This endpoint is available at the repository level but may not be exposed via a dedicated API route. Use the bulk replace endpoint (`PUT /api/decks/:id/cards`) for updating card quantities.
+
 ---
 
 ## Deck Validation Endpoint
@@ -1143,6 +1185,20 @@ Test endpoint for development (returns sample data).
 }
 ```
 
+### GET /api/debug/clear-cache
+Clear the deck cache (development/debugging endpoint).
+
+**Authentication:** Required
+**Security:** Development use only
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Deck cache cleared"
+}
+```
+
 ---
 
 ## Static File Endpoints
@@ -1208,3 +1264,15 @@ Card images are served from the following static endpoints:
 - Deck validation includes business rules (e.g., maximum 4 characters per deck)
 - UI preferences are stored per deck and persist across sessions
 - The health check endpoint provides comprehensive system status information
+- **Import functionality is currently disabled** - The import deck feature has been removed from the backend while keeping the button visible for ADMIN users as a placeholder
+
+## Card Quantity Management
+
+The API supports card quantity management through several approaches:
+
+1. **Add with Quantity**: Use `POST /api/decks/:id/cards` with a `quantity` parameter
+2. **Remove with Quantity**: Use `DELETE /api/decks/:id/cards` with a `quantity` parameter to reduce or remove cards
+3. **Bulk Replace**: Use `PUT /api/decks/:id/cards` to replace all cards with new quantities
+4. **Individual Update**: The repository supports `updateCardInDeck()` but no dedicated API endpoint exists yet
+
+For updating individual card quantities, the recommended approach is to use the bulk replace endpoint (`PUT /api/decks/:id/cards`) with the complete deck state.
