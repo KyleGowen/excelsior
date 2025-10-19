@@ -878,6 +878,29 @@
             </div>
         </div>
     </div>
+    
+    <!-- Import JSON Overlay -->
+    <div id="importJsonOverlay" class="import-overlay" style="display: none;" onclick="closeImportOverlayOnBackground(event)">
+        <div class="import-overlay-content" onclick="event.stopPropagation()">
+            <div class="import-overlay-header">
+                <h3>Deck Import</h3>
+                <button class="import-close-btn" onclick="closeImportOverlay()">&times;</button>
+            </div>
+            <div class="import-overlay-body">
+                <div class="import-instructions">
+                    <p>Paste the JSON deck data below. This will replace all cards in the current deck.</p>
+                    <p><strong>Warning:</strong> This action cannot be undone until you save the deck.</p>
+                </div>
+                <div class="json-input-container">
+                    <textarea id="importJsonInput" placeholder="Paste your deck JSON here..." rows="20"></textarea>
+                </div>
+                <div class="import-actions">
+                    <button class="import-btn" onclick="processImportJson()">Import Deck</button>
+                    <button class="import-cancel-btn" onclick="closeImportOverlay()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
     </div> <!-- Close mainContainer -->
     <script>
         
@@ -2526,7 +2549,7 @@
                 
                 if (card.type === 'character') {
                     // Direct lookup using UUID
-                    const character = availableCardsMap.get(card.cardId);
+                    const character = window.availableCardsMap.get(card.cardId);
                     if (character && character.image) {
                         const imagePath = getCardImagePath(character, 'character', card.selectedAlternateImage);
                         cardImage = `<div class="deck-card-image" style="background-image: url('${imagePath}')" title="${character.name}"></div>`;
@@ -2742,7 +2765,7 @@
         let currentDeckId = null;
         let currentDeckData = null;
         let deckEditorCards = []; // Working copy of deck cards
-        let availableCardsMap = new Map(); // Cache for available cards data
+        window.availableCardsMap = new Map(); // Cache for available cards data
         let deckEditorExpansionState = {}; // Track expansion state of deck type sections
         let characterGroupExpansionState = {}; // Track expansion state of character groups within special cards
         let powerCardsSortMode = 'type'; // Track power cards sort mode: 'type' or 'value'
@@ -2787,7 +2810,7 @@
         const startY = (containerHeight - cardHeight) / 2; // Center vertically
         
         characterCards.forEach((cardData, index) => {
-            const availableCard = availableCardsMap.get(cardData.cardId);
+            const availableCard = window.availableCardsMap.get(cardData.cardId);
             
             if (availableCard) {
                 const imagePath = getCardImagePath(availableCard, cardData.type, cardData.selectedAlternateImage);
@@ -3047,7 +3070,7 @@
                     const characterGroups = {};
                     
                     cards.forEach(card => {
-                        const availableCard = availableCardsMap.get(card.cardId);
+                        const availableCard = window.availableCardsMap.get(card.cardId);
                         if (!availableCard) return;
                         
                         const characterName = availableCard.character || availableCard.character_name || 'Any Character';
@@ -3078,7 +3101,7 @@
                         `;
                         
                         characterCards.forEach((card, index) => {
-                            const availableCard = availableCardsMap.get(card.cardId);
+                            const availableCard = window.availableCardsMap.get(card.cardId);
                             if (!availableCard) return;
                             
                             const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
@@ -3118,15 +3141,15 @@
                     // Regular handling for other card types (including characters)
                     // Sort cards by name for consistent display
                     cards.sort((a, b) => {
-                        const availableCardA = availableCardsMap.get(a.cardId);
-                        const availableCardB = availableCardsMap.get(b.cardId);
+                        const availableCardA = window.availableCardsMap.get(a.cardId);
+                        const availableCardB = window.availableCardsMap.get(b.cardId);
                         const nameA = availableCardA?.name || availableCardA?.card_name || 'Unknown';
                         const nameB = availableCardB?.name || availableCardB?.card_name || 'Unknown';
                         return nameA.localeCompare(nameB);
                     });
 
                     cards.forEach((card, index) => {
-                        const availableCard = availableCardsMap.get(card.cardId);
+                        const availableCard = window.availableCardsMap.get(card.cardId);
                         
                         if (!availableCard) {
                             return;
@@ -3482,7 +3505,7 @@
                 }
                 
                 // Get the card image path
-                const availableCard = availableCardsMap.get(card.cardId);
+                const availableCard = window.availableCardsMap.get(card.cardId);
                 if (availableCard) {
                     const imagePath = getCardImagePath(availableCard, card.type, card.selectedAlternateImage);
                     cardElement.style.backgroundImage = `url('${imagePath}')`;
@@ -3627,7 +3650,7 @@
             // Calculate character stats
             if (characterCards.length > 0) {
                 characterCards.forEach(card => {
-                    const characterData = availableCardsMap.get(card.cardId);
+                    const characterData = window.availableCardsMap.get(card.cardId);
                     if (characterData) {
                         if (characterData.energy > maxEnergy) maxEnergy = characterData.energy;
                         if (characterData.combat > maxCombat) maxCombat = characterData.combat;
@@ -3878,7 +3901,7 @@
             const deckMissionSets = new Set();
             
             deckMissionCards.forEach(card => {
-                const mission = availableCardsMap.get(card.cardId);
+                const mission = window.availableCardsMap.get(card.cardId);
                 if (mission && mission.mission_set) {
                     deckMissionSets.add(mission.mission_set);
                 }
@@ -3959,7 +3982,7 @@
             const deckCharacterCards = deckEditorCards.filter(card => card.type === 'character');
             const deckCharacterNames = deckCharacterCards.map(card => {
                 // Direct lookup using UUID
-                const character = availableCardsMap.get(card.cardId);
+                const character = window.availableCardsMap.get(card.cardId);
                 return character ? character.name : null;
             }).filter(name => name); // Remove any undefined names
             
@@ -4089,7 +4112,7 @@
                     .filter(card => card.type === 'character')
                     .map(card => {
                         // Direct lookup using UUID
-                        const availableCard = availableCardsMap.get(card.cardId);
+                        const availableCard = window.availableCardsMap.get(card.cardId);
                         return availableCard ? availableCard.name : null;
                     })
                     .filter(name => name !== null);
@@ -4171,7 +4194,7 @@
                 .filter(card => card.type === 'character')
                 .map(card => {
                     // Direct lookup using UUID
-                    return availableCardsMap.get(card.cardId);
+                    return window.availableCardsMap.get(card.cardId);
                 })
                 .filter(char => char); // Remove undefined entries
             
@@ -4389,7 +4412,7 @@
                 .filter(card => card.type === 'character')
                 .map(card => {
                     // Direct lookup using UUID
-                    return availableCardsMap.get(card.cardId);
+                    return window.availableCardsMap.get(card.cardId);
                 })
                 .filter(char => char); // Remove undefined entries
             
@@ -4406,7 +4429,7 @@
                 if (cardType === 'basic-universe') {
                     // Get the card data from the available cards map
                     // Direct lookup using UUID
-                    const availableCard = availableCardsMap.get(cardId);
+                    const availableCard = window.availableCardsMap.get(cardId);
                     
                     if (availableCard) {
                         const cardName = availableCard.card_name;
@@ -4529,7 +4552,7 @@
                         if (deckCard.type !== 'character') return false;
                         
                         // Direct lookup using UUID
-                        const availableCard = availableCardsMap.get(deckCard.cardId);
+                        const availableCard = window.availableCardsMap.get(deckCard.cardId);
                         if (!availableCard) return false;
                         
                         // Check the specific stat type
@@ -4652,7 +4675,7 @@
                 .filter(card => card.type === 'character')
                 .map(card => {
                     // Direct lookup using UUID
-                    return availableCardsMap.get(card.cardId);
+                    return window.availableCardsMap.get(card.cardId);
                 })
                 .filter(char => char); // Remove undefined entries
             
@@ -4669,7 +4692,7 @@
                 if (cardType === 'training') {
                     // Get the card data from the available cards map
                     // Direct lookup using UUID
-                    const availableCard = availableCardsMap.get(cardId);
+                    const availableCard = window.availableCardsMap.get(cardId);
                     
                     if (availableCard) {
                         const cardName = availableCard.card_name;
@@ -4812,7 +4835,7 @@
                 .filter(card => card.type === 'character')
                 .map(card => {
                     // Direct lookup using UUID
-                    return availableCardsMap.get(card.cardId);
+                    return window.availableCardsMap.get(card.cardId);
                 })
                 .filter(char => char); // Remove undefined entries
             
@@ -4829,7 +4852,7 @@
                 if (cardType === 'ally-universe') {
                     // Get the card data from the available cards map
                     // Direct lookup using UUID
-                    const availableCard = availableCardsMap.get(cardId);
+                    const availableCard = window.availableCardsMap.get(cardId);
                     
                     if (availableCard) {
                         const cardName = availableCard.card_name;
@@ -5500,7 +5523,7 @@
                 // Use the card name passed as parameter, or fallback to availableCardsMap
                 let finalCardName = cardName;
                 if (!finalCardName && availableCardsMap) {
-                    const cardData = availableCardsMap.get(cardId);
+                    const cardData = window.availableCardsMap.get(cardId);
                     finalCardName = cardData ? cardData.name : 'Unknown Card';
                 }
                 if (!finalCardName) {
@@ -6082,7 +6105,7 @@
                         const missionSetCounts = {};
                         typeCards.forEach(cardData => {
                             // Since deck_cards.card_id now contains UUIDs, we can look up directly
-                            const availableCard = availableCardsMap.get(cardData.cardId);
+                            const availableCard = window.availableCardsMap.get(cardData.cardId);
                             if (availableCard && availableCard.mission_set) {
                                 missionSetCounts[availableCard.mission_set] = (missionSetCounts[availableCard.mission_set] || 0) + 1;
                             }
@@ -6163,7 +6186,7 @@
                                 mapKeyType = 'advanced-universe';
                             }
                             // Direct lookup using UUID
-                            const availableCard = availableCardsMap.get(card.cardId);
+                            const availableCard = window.availableCardsMap.get(card.cardId);
                             
                             if (!availableCard) {
                                 console.warn('Special card not found in availableCardsMap:', card);
@@ -6215,7 +6238,7 @@
                     mapKeyType = 'advanced-universe';
                 }
                 // Direct lookup using UUID
-                const availableCard = availableCardsMap.get(card.cardId);
+                const availableCard = window.availableCardsMap.get(card.cardId);
                                 
                                 if (!availableCard) {
                                     console.warn('Card not found in availableCardsMap:', card);
@@ -6276,7 +6299,7 @@
                                     mapKeyType = 'advanced-universe';
                                 }
                                 // Direct lookup using UUID
-                            const availableCard = availableCardsMap.get(card.cardId);
+                            const availableCard = window.availableCardsMap.get(card.cardId);
                                 
                                 if (!availableCard) {
                                     console.warn('Power card not found in availableCardsMap:', card);
@@ -6340,7 +6363,7 @@
                                         mapKeyType = 'advanced-universe';
                                     }
                                     // Direct lookup using UUID
-                            const availableCard = availableCardsMap.get(card.cardId);
+                            const availableCard = window.availableCardsMap.get(card.cardId);
                                     
                                     if (!availableCard) {
                                         console.warn('Card not found in availableCardsMap:', card);
@@ -6389,8 +6412,8 @@
                             // Value sorted view - sort all power cards by value
                             const sortedCards = typeCards.sort((a, b) => {
                                 // Direct lookup using UUID
-                                const cardA = availableCardsMap.get(a.cardId);
-                                const cardB = availableCardsMap.get(b.cardId);
+                                const cardA = window.availableCardsMap.get(a.cardId);
+                                const cardB = window.availableCardsMap.get(b.cardId);
                                 
                                 if (!cardA || !cardB) return 0;
                                 
@@ -6404,7 +6427,7 @@
                                 const card = cardData;
                                 const index = cardData.originalIndex;
                                 // Direct lookup using UUID
-                                const availableCard = availableCardsMap.get(card.cardId);
+                                const availableCard = window.availableCardsMap.get(card.cardId);
                                 
                                 if (!availableCard) {
                                     console.warn('Card not found in availableCardsMap:', card);
@@ -6459,7 +6482,7 @@
                                 mapKeyType = 'advanced-universe';
                             }
                             // Direct lookup using UUID
-                            const availableCard = availableCardsMap.get(card.cardId);
+                            const availableCard = window.availableCardsMap.get(card.cardId);
                         
                         if (!availableCard) {
                             console.warn('Card not found in availableCardsMap:', card);
@@ -7586,13 +7609,13 @@
                         if (data.success && data.data.length > 0) {
                             data.data.forEach(card => {
                                 // Store with database UUID format (primary key)
-                                availableCardsMap.set(card.id, card);
+                                window.availableCardsMap.set(card.id, card);
                                 
                                 // Store with category prefix for compatibility
-                                availableCardsMap.set(`${category.type}_${card.id}`, card);
+                                window.availableCardsMap.set(`${category.type}_${card.id}`, card);
                                 
                                 // Store by name for easy lookup
-                                availableCardsMap.set(card.name, card);
+                                window.availableCardsMap.set(card.name, card);
                                 
                                 // For characters, create a mapping from deck card IDs to database UUIDs
                                 if (category.type === 'character') {
@@ -7606,7 +7629,7 @@
                                     };
                                     const deckCardId = charMappings[card.name];
                                     if (deckCardId) {
-                                        availableCardsMap.set(deckCardId, card);
+                                        window.availableCardsMap.set(deckCardId, card);
                                     }
                                 }
                             });
@@ -7967,7 +7990,7 @@
             // Get character names
             const characterNames = selectedCharacters.map(charCard => {
                 // Direct lookup using UUID
-                const availableCard = availableCardsMap.get(charCard.cardId);
+                const availableCard = window.availableCardsMap.get(charCard.cardId);
                 return availableCard ? (availableCard.name || availableCard.card_name) : null;
             }).filter(name => name);
             
@@ -7982,7 +8005,7 @@
             // Find unusable special cards (those that don't belong to any selected character)
             const unusableCards = specialCards.filter(specialCard => {
                 // Direct lookup using UUID
-                const availableCard = availableCardsMap.get(specialCard.cardId);
+                const availableCard = window.availableCardsMap.get(specialCard.cardId);
                 if (!availableCard) return true; // Remove if card not found
                 
                 // Check if this is an "Any Character" special card - these should never be removed
@@ -8230,14 +8253,17 @@
                         if (data.success && data.data.length > 0) {
                             // Populate the global map for deck editor use
                             data.data.forEach(card => {
+                                // Add the category type to the card data for easy lookup
+                                card.cardType = category.type;
+                                
                                 // Store with database UUID format (primary key)
-                                availableCardsMap.set(card.id, card);
+                                window.window.availableCardsMap.set(card.id, card);
                                 
                                 // Store with category prefix for compatibility
-                                availableCardsMap.set(`${category.type}_${card.id}`, card);
+                                window.window.availableCardsMap.set(`${category.type}_${card.id}`, card);
                                 
                                 // Store by name for easy lookup
-                                availableCardsMap.set(card.name, card);
+                                window.window.availableCardsMap.set(card.name, card);
                                 
                                 // For characters, create a mapping from deck card IDs to database UUIDs
                                 if (category.type === 'character') {
@@ -8251,7 +8277,7 @@
                                     };
                                     const deckCardId = charMappings[card.name];
                                     if (deckCardId) {
-                                        availableCardsMap.set(deckCardId, card);
+                                        window.availableCardsMap.set(deckCardId, card);
                                     }
                                 }
                             });
@@ -9071,7 +9097,7 @@
         // Function to show alternate art selection for existing card
         function showAlternateArtSelectionForExistingCard(cardId, cardIndex) {
             // First try to get the card directly from availableCardsMap
-            let card = availableCardsMap.get(cardId);
+            let card = window.availableCardsMap.get(cardId);
             let cardType = 'character';
             
             // Always try to get card type from deck card data first (most reliable)
@@ -9135,7 +9161,7 @@
                 }
                 
                 // Check if character has alternate images and none selected
-                const character = availableCardsMap.get(cardId);
+                const character = window.availableCardsMap.get(cardId);
                 if (character && character.alternateImages && character.alternateImages.length > 0 && !selectedAlternateImage) {
                     showAlternateArtSelection(character, cardId, cardName, null, 'character');
                     return;
@@ -9164,7 +9190,7 @@
             
             // Check "One Per Deck" limit before adding
             if (cardType === 'special') {
-                const specialCard = availableCardsMap.get(cardId);
+                const specialCard = window.availableCardsMap.get(cardId);
                 if (specialCard && specialCard.one_per_deck) {
                     // Check if we already have this "One Per Deck" card in the deck
                     const existingOnePerDeckCard = deckEditorCards.find(card => 
@@ -9180,7 +9206,7 @@
             
             // Check "One Per Deck" limit for power cards
             if (cardType === 'power') {
-                const powerCard = availableCardsMap.get(cardId);
+                const powerCard = window.availableCardsMap.get(cardId);
                 if (powerCard && powerCard.one_per_deck) {
                     // Check if we already have this "One Per Deck" power card in the deck
                     const existingOnePerDeckCard = deckEditorCards.find(card => 
@@ -9210,7 +9236,7 @@
             
             // Check if special card has alternate images and none selected
             if (cardType === 'special') {
-                const specialCard = availableCardsMap.get(cardId);
+                const specialCard = window.availableCardsMap.get(cardId);
                 if (specialCard && specialCard.alternateImages && specialCard.alternateImages.length > 0 && !selectedAlternateImage) {
                     showAlternateArtSelection(specialCard, cardId, cardName, null, 'special');
                     return;
@@ -9219,7 +9245,7 @@
             
             // Check if power card has alternate images and none selected
             if (cardType === 'power') {
-                const powerCard = availableCardsMap.get(cardId);
+                const powerCard = window.availableCardsMap.get(cardId);
                 if (powerCard && powerCard.alternateImages && powerCard.alternateImages.length > 0 && !selectedAlternateImage) {
                     showAlternateArtSelection(powerCard, cardId, cardName, null, 'power');
                     return;
@@ -9249,7 +9275,7 @@
                 }
                 
                 // Check if this is a "One Per Deck" card
-                const card = availableCardsMap.get(cardId);
+                const card = window.availableCardsMap.get(cardId);
                 if (card && card.one_per_deck) {
                     showNotification(`Cannot add more than 1 copy of "${cardName}" - One Per Deck`, 'error');
                     return;
@@ -9383,7 +9409,7 @@
                 const cardName = cardInfo.textContent.trim();
                 const matchingCard = deckEditorCards.find(card => {
                     if (card.type !== 'character') return false;
-                    const character = availableCardsMap.get(card.cardId);
+                    const character = window.availableCardsMap.get(card.cardId);
                     return character && character.name === cardName;
                 });
                 
@@ -9416,7 +9442,7 @@
                 // Find the corresponding character card in deckEditorCards by name
                 const matchingCard = deckEditorCards.find(card => {
                     if (card.type !== 'character') return false;
-                    const character = availableCardsMap.get(card.cardId);
+                    const character = window.availableCardsMap.get(card.cardId);
                     return character && character.name === cardName;
                 });
                 

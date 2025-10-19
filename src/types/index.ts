@@ -156,6 +156,7 @@ export interface BasicUniverse {
 
 export interface PowerCard {
   id: string;
+  name: string;         // Formatted name like "4 - Brute Force"
   power_type: string;   // Energy | Combat | Brute Force | Intelligence | Any-Power | Multi-Power
   value: number;        // 1..8, or 3..5 for Multi-Power
   image: string;

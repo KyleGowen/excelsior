@@ -206,6 +206,7 @@ export class PostgreSQLCardRepository implements CardRepository {
       
       return result.rows.map(card => ({
         id: card.id,
+        name: card.name,
         power_type: card.power_type,
         value: card.value,
         image: card.image_path,

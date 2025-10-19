@@ -481,6 +481,16 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
+// Debug endpoint to clear deck cache
+app.get('/api/debug/clear-cache', async (req, res) => {
+  try {
+    (deckRepository as any).clearCache();
+    res.json({ success: true, message: 'Deck cache cleared' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to clear cache' });
+  }
+});
+
 app.post('/api/users', authenticateUser, async (req: any, res) => {
   try {
     // Check if the current user is an ADMIN

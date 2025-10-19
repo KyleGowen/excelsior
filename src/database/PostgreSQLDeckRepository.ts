@@ -8,6 +8,12 @@ export class PostgreSQLDeckRepository implements DeckRepository {
   // Caching for frequently accessed deck data
   private deckCache: Map<string, { deck: Deck; timestamp: number }> = new Map();
   private readonly DECK_CACHE_TTL = 2 * 60 * 1000; // 2 minutes
+  
+  // Debug method to clear cache
+  public clearCache(): void {
+    this.deckCache.clear();
+    console.log('🧹 Deck cache cleared');
+  }
 
   constructor(pool: Pool) {
     this.pool = pool;
@@ -117,6 +123,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       
       const deck = deckResult.rows[0];
       
+      
       // Fetch the cards for this deck
       const cardsResult = await client.query(
         'SELECT * FROM deck_cards WHERE deck_id = $1',
@@ -144,6 +151,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         updated_at: deck.updated_at,
         cards: cards
       };
+      
       
       // Cache the result
       this.deckCache.set(id, { deck: fullDeck, timestamp: now });
