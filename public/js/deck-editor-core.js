@@ -165,7 +165,7 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             },
             cards: []
         };
-        deckEditorCards = [];
+        window.window.deckEditorCards = [];
         // Read-only mode removed - now handled by backend flag
         
         // Show the deck editor modal
@@ -183,7 +183,7 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
         
         // Update deck summary to set proper button states
         if (typeof updateDeckSummary === 'function') {
-            updateDeckSummary(deckEditorCards);
+            updateDeckSummary(window.deckEditorCards);
         }
         
         return;
@@ -202,11 +202,11 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
         if (data.success) {
             console.log('✅ Deck data loaded successfully');
             currentDeckData = data.data;
-            deckEditorCards = [...data.data.cards]; // Create working copy
-            console.log('🎴 Deck cards loaded:', deckEditorCards.length, 'cards');
+            window.deckEditorCards = [...data.data.cards]; // Create working copy
+            console.log('🎴 Deck cards loaded:', window.deckEditorCards.length, 'cards');
             
             // Convert database type format to frontend format
-            deckEditorCards = deckEditorCards.map(card => {
+            window.deckEditorCards = window.deckEditorCards.map(card => {
                 let convertedType = card.type;
                 if (card.type === 'ally_universe') {
                     convertedType = 'ally-universe';
@@ -253,12 +253,12 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             setupDragAndDrop();
             
             // Validate and fix location count (max 1 location allowed)
-            const locationCards = deckEditorCards.filter(card => card.type === 'location');
+            const locationCards = window.deckEditorCards.filter(card => card.type === 'location');
             if (locationCards.length > 1) {
                 console.log(`Found ${locationCards.length} location cards, removing extra ones`);
                 // Keep only the first location card
-                const firstLocationIndex = deckEditorCards.findIndex(card => card.type === 'location');
-                deckEditorCards = deckEditorCards.filter((card, index) => 
+                const firstLocationIndex = window.deckEditorCards.findIndex(card => card.type === 'location');
+                window.deckEditorCards = window.deckEditorCards.filter((card, index) => 
                     card.type !== 'location' || index === firstLocationIndex
                 );
                 showNotification(`Removed ${locationCards.length - 1} extra location card(s) - only 1 location allowed per deck`, 'warning');
@@ -322,7 +322,7 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             updateDeckEditorCardCount();
             
             // Auto-activate special cards character filter if deck has characters
-            const hasCharacters = deckEditorCards.some(card => card.type === 'character');
+            const hasCharacters = window.deckEditorCards.some(card => card.type === 'character');
             if (hasCharacters) {
                 setTimeout(async () => {
                     const filterCheckbox = document.getElementById('specialCardsCharacterFilter');
@@ -374,7 +374,7 @@ async function saveDeckChanges() {
     console.log('📊 Current state:', {
         currentDeckId,
         currentDeckData: currentDeckData ? 'loaded' : 'not loaded',
-        deckEditorCards: deckEditorCards ? deckEditorCards.length : 0
+        deckEditorCards: window.deckEditorCards ? window.deckEditorCards.length : 0
     });
     
     if (!currentDeckData) {
@@ -457,7 +457,7 @@ async function saveDeckChanges() {
         }
         
         // Prepare cards data for bulk replacement
-        const cardsData = deckEditorCards.map(card => {
+        const cardsData = window.deckEditorCards.map(card => {
             const cardData = {
                 cardType: card.type,
                 cardId: card.cardId,
@@ -487,7 +487,7 @@ async function saveDeckChanges() {
         }
         
         // Check validation status before saving
-        const validation = validateDeck(deckEditorCards);
+        const validation = validateDeck(window.deckEditorCards);
         const isDeckValid = validation.errors.length === 0;
         
         // Save deck metadata (name, description, is_limited, is_valid, and reserve_character)
@@ -635,12 +635,12 @@ async function exportDeckAsJson() {
         console.log('🔍 Final export values:', { deckName, deckDescription });
         
         // Calculate deck statistics
-        const totalCards = deckEditorCards
+        const totalCards = window.deckEditorCards
             .filter(card => !['mission', 'character', 'location'].includes(card.type))
             .reduce((sum, card) => sum + card.quantity, 0);
         
-        const characterCards = deckEditorCards.filter(card => card.type === 'character');
-        const locationCards = deckEditorCards.filter(card => card.type === 'location');
+        const characterCards = window.deckEditorCards.filter(card => card.type === 'character');
+        const locationCards = window.deckEditorCards.filter(card => card.type === 'location');
         
         let maxEnergy = 0, maxCombat = 0, maxBruteForce = 0, maxIntelligence = 0;
         let totalThreat = 0;
@@ -697,24 +697,24 @@ async function exportDeckAsJson() {
         };
 
         // Organize cards by category with repeated cards for multiple quantities
-        // Note: deckEditorCards uses frontend format (e.g., 'ally-universe', 'basic-universe', 'advanced-universe')
+        // Note: window.deckEditorCards uses frontend format (e.g., 'ally-universe', 'basic-universe', 'advanced-universe')
         const cardCategories = {
-            characters: createRepeatedCards(deckEditorCards, 'character'),
-            special_cards: createRepeatedCards(deckEditorCards, 'special'),
-            locations: createRepeatedCards(deckEditorCards, 'location'),
-            missions: createRepeatedCards(deckEditorCards, 'mission'),
-            events: createRepeatedCards(deckEditorCards, 'event'),
-            aspects: createRepeatedCards(deckEditorCards, 'aspect'),
-            advanced_universe: createRepeatedCards(deckEditorCards, 'advanced-universe'),
-            teamwork: createRepeatedCards(deckEditorCards, 'teamwork'),
-            allies: createRepeatedCards(deckEditorCards, 'ally-universe'),
-            training: createRepeatedCards(deckEditorCards, 'training'),
-            basic_universe: createRepeatedCards(deckEditorCards, 'basic-universe'),
-            power_cards: createRepeatedCards(deckEditorCards, 'power')
+            characters: createRepeatedCards(window.deckEditorCards, 'character'),
+            special_cards: createRepeatedCards(window.deckEditorCards, 'special'),
+            locations: createRepeatedCards(window.deckEditorCards, 'location'),
+            missions: createRepeatedCards(window.deckEditorCards, 'mission'),
+            events: createRepeatedCards(window.deckEditorCards, 'event'),
+            aspects: createRepeatedCards(window.deckEditorCards, 'aspect'),
+            advanced_universe: createRepeatedCards(window.deckEditorCards, 'advanced-universe'),
+            teamwork: createRepeatedCards(window.deckEditorCards, 'teamwork'),
+            allies: createRepeatedCards(window.deckEditorCards, 'ally-universe'),
+            training: createRepeatedCards(window.deckEditorCards, 'training'),
+            basic_universe: createRepeatedCards(window.deckEditorCards, 'basic-universe'),
+            power_cards: createRepeatedCards(window.deckEditorCards, 'power')
         };
         
         // Determine if deck is legal and limited using the actual validation logic
-        const validation = validateDeck(deckEditorCards);
+        const validation = validateDeck(window.deckEditorCards);
         const isLegal = validation.errors.length === 0;
         const isLimited = isDeckLimited; // Use the global limited state variable
         
@@ -747,449 +747,19 @@ async function exportDeckAsJson() {
     }
 }
 
-// Import deck from JSON (Admin only)
+// Import deck from JSON (Admin only) - DISABLED
 function importDeckFromJson() {
-    // Security check - only allow ADMIN users
-    if (!currentUser || currentUser.role !== 'ADMIN') {
-        showNotification('Access denied: Admin privileges required', 'error');
-        return;
-    }
-    
-    // Show import overlay
-    showImportOverlay();
+    // Import functionality has been disabled
+    console.log('🔒 Import functionality is disabled');
+    showNotification('Import functionality is currently disabled', 'info');
 }
 
-// Show import overlay
-function showImportOverlay() {
-    const overlay = document.getElementById('importJsonOverlay');
-    if (overlay) {
-        overlay.style.display = 'flex';
-        
-        // Clear any existing content
-        const textarea = document.getElementById('importJsonInput');
-        if (textarea) {
-            textarea.value = '';
-            textarea.focus();
-        }
-    }
-}
 
-// Close import overlay
-function closeImportOverlay() {
-    const overlay = document.getElementById('importJsonOverlay');
-    if (overlay) {
-        overlay.style.display = 'none';
-    }
-}
 
-// Close import overlay when clicking on background
-function closeImportOverlayOnBackground(event) {
-    if (event.target.id === 'importJsonOverlay') {
-        closeImportOverlay();
-    }
-}
 
-// Process imported JSON
-async function processImportJson() {
-    const textarea = document.getElementById('importJsonInput');
-    if (!textarea) {
-        showNotification('Import textarea not found', 'error');
-        return;
-    }
-    
-    const jsonText = textarea.value.trim();
-    if (!jsonText) {
-        showNotification('Please paste JSON data to import', 'error');
-        return;
-    }
-    
-    try {
-        // Parse and validate JSON
-        const importData = JSON.parse(jsonText);
-        
-        // Validate the structure
-        if (!importData.data || !importData.Cards) {
-            showNotification('Invalid JSON format: Missing required data or Cards sections', 'error');
-            return;
-        }
-        
-        // Confirm the import action
-        const confirmMessage = `This will replace all cards in the current deck with ${Object.keys(importData.Cards).length} card types from the imported deck. Continue?`;
-        if (!confirm(confirmMessage)) {
-            return;
-        }
-        
-        // Clear current deck
-        await clearAllCardsFromDeck();
-        
-        // Import cards from JSON
-        await importCardsFromJson(importData.Cards);
-        
-        // Close overlay and show success message
-        closeImportOverlay();
-        showNotification('Deck imported successfully! Remember to save your changes.', 'success');
-        
-    } catch (error) {
-        console.error('Error importing deck:', error);
-        if (error instanceof SyntaxError) {
-            showNotification('Invalid JSON format: ' + error.message, 'error');
-        } else {
-            showNotification('Error importing deck: ' + error.message, 'error');
-        }
-    }
-}
 
-// Clear all cards from current deck
-async function clearAllCardsFromDeck() {
-    // Clear the local deckEditorCards array
-    deckEditorCards = [];
-    
-    // Update the UI to reflect empty deck
-    await displayDeckCardsForEditing();
-    updateDeckEditorCardCount();
-    
-    console.log('Cleared all cards from deck');
-}
 
-// Import cards from JSON data
-async function importCardsFromJson(cardsData) {
-    let importedCount = 0;
-    let errorCount = 0;
-    
-    // For now, let's create a simplified import that just shows the functionality is working
-    // We'll create placeholder cards for demonstration purposes
-    console.log('Starting import process...');
-    console.log('Import data received:', Object.keys(cardsData));
-    
-    // Use the existing loadAvailableCards function
-    console.log('Loading card data for import...');
-    try {
-        // Check if availableCardsMap is loaded, if not, load it first
-        if (!window.availableCardsMap || window.availableCardsMap.size === 0) {
-            console.log('Calling existing loadAvailableCards function...');
-            console.log('Before loadAvailableCards - availableCardsMap exists:', !!window.availableCardsMap);
-            console.log('Before loadAvailableCards - availableCardsMap size:', window.availableCardsMap ? window.availableCardsMap.size : 'undefined');
-            
-            // Check if loadAvailableCards function exists
-            console.log('loadAvailableCards function exists:', typeof loadAvailableCards === 'function');
-            
-            if (typeof loadAvailableCards === 'function') {
-                try {
-                    const result = await loadAvailableCards();
-                    console.log('loadAvailableCards result:', result);
-                } catch (error) {
-                    console.error('Error calling loadAvailableCards:', error);
-                }
-            } else {
-                console.error('loadAvailableCards function not found!');
-                showNotification('Card loading function not available. Please refresh the page.', 'error');
-                return;
-            }
-            
-            // Wait a bit for the function to complete
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            console.log('After loadAvailableCards - availableCardsMap exists:', !!window.availableCardsMap);
-            console.log('After loadAvailableCards - availableCardsMap size:', window.availableCardsMap ? window.availableCardsMap.size : 'undefined');
-            
-            if (!window.availableCardsMap || window.availableCardsMap.size === 0) {
-                console.error('No card data loaded after calling loadAvailableCards');
-                console.log('Trying to load cards directly...');
-                
-                // Fallback: Load cards directly
-                await loadCardsDirectly();
-            }
-        }
-        
-        // Debug: Show some sample card names for each type
-        const sampleCards = {};
-        for (const [cardId, cardData] of window.availableCardsMap.entries()) {
-            const cardType = cardData.cardType || cardData.type || 'unknown';
-            if (!sampleCards[cardType]) {
-                sampleCards[cardType] = [];
-            }
-            if (sampleCards[cardType].length < 3) {
-                sampleCards[cardType].push(cardData.name || cardData.card_name);
-            }
-        }
-        console.log('Sample card names by type:', sampleCards);
-        
-        // Debug: Show the actual structure of a few cards
-        console.log('Sample card data structure:');
-        let count = 0;
-        for (const [cardId, cardData] of window.availableCardsMap.entries()) {
-            if (count < 5) {
-                console.log(`Card ${count + 1}:`, {
-                    id: cardId,
-                    cardType: cardData.cardType,
-                    type: cardData.type,
-                    name: cardData.name,
-                    card_name: cardData.card_name,
-                    keys: Object.keys(cardData)
-                });
-                count++;
-            }
-        }
-        
-        // Debug: Show what types are actually in the map
-        console.log('🔍 Checking card types in map...');
-        const typeCounts = {};
-        for (const [cardId, cardData] of window.availableCardsMap.entries()) {
-            const cardType = cardData.cardType || cardData.type || 'undefined';
-            typeCounts[cardType] = (typeCounts[cardType] || 0) + 1;
-        }
-        console.log('📊 Card type counts:', typeCounts);
-        
-        // Debug: Show some character cards specifically
-        console.log('🎭 Character cards in map:');
-        let charCount = 0;
-        for (const [cardId, cardData] of window.availableCardsMap.entries()) {
-            if (cardData.cardType === 'character' && charCount < 5) {
-                console.log(`  - "${cardData.name}" (cardType: ${cardData.cardType}, type: ${cardData.type})`);
-                charCount++;
-            }
-        }
-    } catch (error) {
-        console.error('Failed to load card data:', error);
-        showNotification('Failed to load card data for import', 'error');
-        return;
-    }
-    
-    // Fallback function to load cards directly
-    async function loadCardsDirectly() {
-        console.log('Loading cards directly as fallback...');
-        
-        // Initialize availableCardsMap if it doesn't exist
-        if (!window.availableCardsMap) {
-            window.availableCardsMap = new Map();
-        }
-        
-        // Load all card categories directly
-        const categories = [
-            { type: 'character', api: '/api/characters' },
-            { type: 'location', api: '/api/locations' },
-            { type: 'special', api: '/api/special-cards' },
-            { type: 'mission', api: '/api/missions' },
-            { type: 'event', api: '/api/events' },
-            { type: 'aspect', api: '/api/aspects' },
-            { type: 'advanced-universe', api: '/api/advanced-universe' },
-            { type: 'teamwork', api: '/api/teamwork' },
-            { type: 'ally-universe', api: '/api/ally-universe' },
-            { type: 'training', api: '/api/training' },
-            { type: 'basic-universe', api: '/api/basic-universe' },
-            { type: 'power', api: '/api/power-cards' }
-        ];
-        
-        // Load all card data
-        for (const category of categories) {
-            try {
-                console.log(`Loading ${category.type} cards from ${category.api}...`);
-                const response = await fetch(category.api);
-                const data = await response.json();
-                
-                console.log(`${category.type} API response:`, data.success ? `Success - ${data.data.length} cards` : 'Failed');
-                
-                if (data.success && data.data.length > 0) {
-                    console.log(`📋 Sample ${category.type} card data:`, data.data[0]);
-                    data.data.forEach(card => {
-                        // Add the category type to the card data for easy lookup
-                        card.cardType = category.type;
-                        
-                        // Debug: Show what we're adding
-                        if (data.data.indexOf(card) < 2) {
-                            console.log(`🔍 Adding ${category.type} card:`, {
-                                id: card.id,
-                                name: card.name,
-                                cardType: card.cardType,
-                                originalType: card.type,
-                                keys: Object.keys(card)
-                            });
-                        }
-                        
-                        // Store with database UUID format (primary key)
-                        window.availableCardsMap.set(card.id, card);
-                        
-                        // Store with category prefix for compatibility
-                        window.availableCardsMap.set(`${category.type}_${card.id}`, card);
-                        
-                        // Store by name for easy lookup
-                        window.availableCardsMap.set(card.name, card);
-                    });
-                    console.log(`✅ Added ${data.data.length} ${category.type} cards to map`);
-                }
-            } catch (error) {
-                console.warn(`Failed to load ${category.type} cards:`, error);
-            }
-        }
-        
-        console.log('Direct loading complete, availableCardsMap size:', window.availableCardsMap.size);
-    }
-    
-    // Helper function to find cardId from card name
-    const findCardIdByName = (cardName, cardType) => {
-        // Convert frontend card type to backend card type for lookup
-        const backendCardType = cardType === 'ally-universe' ? 'ally_universe' : 
-                               cardType === 'basic-universe' ? 'basic_universe' : 
-                               cardType === 'advanced-universe' ? 'advanced_universe' : 
-                               cardType === 'power' ? 'power_card' : 
-                               cardType === 'special' ? 'special_card' : 
-                               cardType === 'mission' ? 'mission' : 
-                               cardType === 'event' ? 'event' : 
-                               cardType === 'character' ? 'character' : 
-                               cardType === 'location' ? 'location' : 
-                               cardType === 'aspect' ? 'aspect' : 
-                               cardType === 'teamwork' ? 'teamwork' : 
-                               cardType === 'training' ? 'training' : cardType;
-        
-        // First, try exact name match using database names
-        console.log(`🔍 Searching for "${cardName}" with backendType "${backendCardType}"`);
-        let searchCount = 0;
-        let totalCards = 0;
-        for (const [cardId, cardData] of availableCardsMap.entries()) {
-            totalCards++;
-            const cardTypeField = cardData.cardType || cardData.type;
-            if (cardTypeField === backendCardType) {
-                searchCount++;
-                const cardNameField = cardData.name || cardData.card_name;
-                if (cardNameField === cardName) {
-                    console.log(`✅ Found exact match: "${cardName}" with cardId: ${cardId}`);
-                    return cardId;
-                }
-            }
-        }
-        console.log(`📊 Searched ${searchCount} cards of type ${backendCardType} out of ${totalCards} total cards, no exact match found`);
-        
-        // Debug: Show what types we actually have
-        if (searchCount === 0) {
-            console.log(`🔍 No cards found with type "${backendCardType}". Available types:`);
-            const availableTypes = new Set();
-            for (const [cardId, cardData] of availableCardsMap.entries()) {
-                availableTypes.add(cardData.cardType || cardData.type || 'undefined');
-            }
-            console.log(`📋 Available types:`, Array.from(availableTypes));
-        }
-        
-        // Debug: Show what we're looking for vs what's available
-        if (cardName === 'Mina Harker' || cardName === 'Book of the Dead') {
-            console.log(`🔍 Looking for: "${cardName}" (type: ${cardType}, backendType: ${backendCardType})`);
-            console.log(`📊 Available cards of type ${backendCardType}:`);
-            let found = 0;
-            for (const [cardId, cardData] of availableCardsMap.entries()) {
-                const cardTypeField = cardData.cardType || cardData.type;
-                if (cardTypeField === backendCardType && found < 10) {
-                    console.log(`  - "${cardData.name || cardData.card_name}" (id: ${cardId})`);
-                    found++;
-                }
-            }
-            console.log(`✅ Found ${found} cards of type ${backendCardType}`);
-            
-            // Also show all card types available
-            const allTypes = new Set();
-            for (const [cardId, cardData] of availableCardsMap.entries()) {
-                allTypes.add(cardData.cardType || cardData.type);
-            }
-            console.log(`📋 All available card types:`, Array.from(allTypes));
-            
-            // Show total card count
-            console.log(`📈 Total cards in map: ${availableCardsMap.size}`);
-            
-            // Show sample of all cards
-            console.log(`🎴 Sample of all cards:`);
-            let sampleCount = 0;
-            for (const [cardId, cardData] of availableCardsMap.entries()) {
-                if (sampleCount < 5) {
-                    console.log(`  - "${cardData.name || cardData.card_name}" (cardType: ${cardData.cardType}, type: ${cardData.type})`);
-                    sampleCount++;
-                }
-            }
-        }
-        
-        // If no exact match, try partial matching for characters and special cards
-        if (cardType === 'characters' || cardType === 'special_cards') {
-            console.log(`🔍 Trying partial match for "${cardName}"`);
-            for (const [cardId, cardData] of availableCardsMap.entries()) {
-                const cardTypeField = cardData.cardType || cardData.type;
-                if (cardTypeField === backendCardType) {
-                    const cardNameField = cardData.name || cardData.card_name;
-                    if (cardNameField && cardNameField.includes(cardName.split(' ')[0])) {
-                        console.log(`✅ Found partial match: ${cardNameField} for ${cardName}`);
-                        return cardId;
-                    }
-                }
-            }
-        }
-        
-        return null;
-    };
-    
-    // Process each card type
-    for (const [cardType, cards] of Object.entries(cardsData)) {
-        if (!Array.isArray(cards)) {
-            console.warn(`❌ Invalid card type data for ${cardType}:`, cards);
-            continue;
-        }
 
-        console.log(`🔄 Processing ${cardType} cards:`, cards.slice(0, 3), cards.length > 3 ? `... and ${cards.length - 3} more` : '');
-
-        // Process each card individually (one card per line item)
-        for (const cardName of cards) {
-            if (typeof cardName !== 'string') {
-                console.warn(`❌ Invalid card name:`, cardName);
-                errorCount++;
-                continue;
-            }
-
-            try {
-                console.log(`🔍 Looking for: "${cardName}" (type: ${cardType})`);
-                
-                // Find the cardId for this card name
-                const cardId = findCardIdByName(cardName, cardType);
-
-                if (!cardId) {
-                    console.warn(`❌ Could not find cardId for card: ${cardName} (type: ${cardType})`);
-                    errorCount++;
-                    continue;
-                }
-                
-                console.log(`✅ Found cardId: ${cardId} for "${cardName}"`);
-                
-                // Add one card to deck (using default image, no alternate art)
-                const newCard = {
-                    id: `deckcard_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                    type: cardType,
-                    cardId: cardId,
-                    quantity: 1  // Always add one card per line item
-                    // Note: Not importing selectedAlternateImage - using default images only
-                };
-                
-                deckEditorCards.push(newCard);
-                importedCount++;
-                
-            } catch (error) {
-                console.error(`Error importing card ${cardName}:`, error);
-                errorCount++;
-            }
-        }
-    }
-    
-    // Update the display and stats
-    await displayDeckCardsForEditing();
-    updateDeckEditorCardCount();
-    
-    console.log(`🎉 Import complete: ${importedCount} cards imported, ${errorCount} errors`);
-    console.log(`📈 Final deck size: ${deckEditorCards.length} cards`);
-    console.log(`📊 Import summary:`);
-    console.log(`  - Total line items processed: ${Object.values(cardsData).flat().length}`);
-    console.log(`  - Successfully imported: ${importedCount} cards (one per line item)`);
-    console.log(`  - Errors: ${errorCount}`);
-    console.log(`  - Success rate: ${Math.round((importedCount / (importedCount + errorCount)) * 100)}%`);
-    
-    if (errorCount > 0) {
-        showNotification(`Import completed with ${errorCount} errors. Check console for details.`, 'warning');
-    } else {
-        showNotification(`Successfully imported ${importedCount} cards!`, 'success');
-    }
-}
 
 // Close deck editor modal
 async function closeDeckEditor() {
@@ -1209,7 +779,7 @@ async function closeDeckEditor() {
     
     currentDeckId = null;
     currentDeckData = null;
-    deckEditorCards = [];
+    window.deckEditorCards = [];
     
     // Return to deck builder selection screen
     switchToDeckBuilder();

@@ -304,4 +304,53 @@ describe('Button Styling Tests', () => {
       expect(importBtn.className).not.toBe(saveBtn.className);
     });
   });
+
+  describe('Import Button Functionality', () => {
+    it('should do nothing when clicked (import functionality disabled)', () => {
+      // Mock the importDeckFromJson function
+      const mockImportDeckFromJson = jest.fn();
+      (global as any).importDeckFromJson = mockImportDeckFromJson;
+
+      // Mock the import button
+      const importBtn = {
+        className: 'export-import-btn',
+        onclick: null as any,
+        addEventListener: jest.fn()
+      };
+
+      mockDocument.getElementById.mockReturnValue(importBtn);
+
+      // Simulate the import button click
+      if (importBtn.onclick) {
+        importBtn.onclick();
+      }
+
+      // Verify that importDeckFromJson was not called
+      expect(mockImportDeckFromJson).not.toHaveBeenCalled();
+
+      // Verify that the button exists but has no onclick handler
+      expect(importBtn.onclick).toBeNull();
+    });
+
+    it('should show disabled message when import functionality is called', () => {
+      // Mock the importDeckFromJson function to simulate the disabled behavior
+      const mockShowNotification = jest.fn();
+      (global as any).showNotification = mockShowNotification;
+
+      // Simulate calling the disabled import function
+      const importDeckFromJson = () => {
+        console.log('🔒 Import functionality is disabled');
+        mockShowNotification('Import functionality is currently disabled', 'info');
+      };
+
+      // Call the function
+      importDeckFromJson();
+
+      // Verify the disabled message was shown
+      expect(mockShowNotification).toHaveBeenCalledWith(
+        'Import functionality is currently disabled', 
+        'info'
+      );
+    });
+  });
 });

@@ -100,6 +100,7 @@ const mockSpecialCards: SpecialCard[] = [
 const mockPowerCards: PowerCard[] = [
   {
     id: 'power-1',
+    name: '6 - Energy',
     value: 6,
     power_type: 'Energy',
     image: '/images/energy_6.jpg',
@@ -108,6 +109,7 @@ const mockPowerCards: PowerCard[] = [
   },
   {
     id: 'power-2',
+    name: '7 - Combat',
     value: 7,
     power_type: 'Combat',
     image: '/images/combat_7.jpg',

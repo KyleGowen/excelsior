@@ -879,28 +879,6 @@
         </div>
     </div>
     
-    <!-- Import JSON Overlay -->
-    <div id="importJsonOverlay" class="import-overlay" style="display: none;" onclick="closeImportOverlayOnBackground(event)">
-        <div class="import-overlay-content" onclick="event.stopPropagation()">
-            <div class="import-overlay-header">
-                <h3>Deck Import</h3>
-                <button class="import-close-btn" onclick="closeImportOverlay()">&times;</button>
-            </div>
-            <div class="import-overlay-body">
-                <div class="import-instructions">
-                    <p>Paste the JSON deck data below. This will replace all cards in the current deck.</p>
-                    <p><strong>Warning:</strong> This action cannot be undone until you save the deck.</p>
-                </div>
-                <div class="json-input-container">
-                    <textarea id="importJsonInput" placeholder="Paste your deck JSON here..." rows="20"></textarea>
-                </div>
-                <div class="import-actions">
-                    <button class="import-btn" onclick="processImportJson()">Import Deck</button>
-                    <button class="import-cancel-btn" onclick="closeImportOverlay()">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
     </div> <!-- Close mainContainer -->
     <script>
         
