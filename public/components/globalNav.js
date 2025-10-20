@@ -146,8 +146,8 @@ function createNewDeck() {
             cards: []
         };
     }
-    if (typeof deckEditorCards !== 'undefined') {
-        deckEditorCards = [];
+    if (typeof window.deckEditorCards !== 'undefined') {
+        window.deckEditorCards = [];
     }
 
     // Update URL to indicate we're creating a new deck
@@ -201,7 +201,7 @@ function createNewDeck() {
         
         // Update deck summary to set proper button states
         if (typeof updateDeckSummary === 'function') {
-            updateDeckSummary(deckEditorCards);
+            updateDeckSummary(window.deckEditorCards);
         }
         
         // Reset the flag after a short delay to allow the deck editor to fully initialize

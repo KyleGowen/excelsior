@@ -2742,7 +2742,7 @@
         // Global variables for deck management
         let currentDeckId = null;
         let currentDeckData = null;
-        let deckEditorCards = []; // Working copy of deck cards
+        window.deckEditorCards = []; // Working copy of deck cards
         window.availableCardsMap = new Map(); // Cache for available cards data
         let deckEditorExpansionState = {}; // Track expansion state of deck type sections
         let characterGroupExpansionState = {}; // Track expansion state of character groups within special cards
@@ -2770,7 +2770,7 @@
         if (!screenshotContent) return;
         
         // Filter for character cards only
-        const characterCards = deckEditorCards.filter(card => card.type === 'character');
+        const characterCards = window.window.deckEditorCards.filter(card => card.type === 'character');
         
         if (characterCards.length === 0) {
             screenshotContent.innerHTML = '<div class="screenshot-blank-screen">No character cards in deck</div>';
@@ -2997,7 +2997,7 @@
 
             // Group cards by type
             const cardsByType = {};
-            deckEditorCards.forEach(card => {
+            window.window.deckEditorCards.forEach(card => {
                 const type = card.type;
                 if (!cardsByType[type]) {
                     cardsByType[type] = [];
@@ -3094,16 +3094,16 @@
                                     <div class="deck-list-item-actions">
                                         ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `
                                             <div class="deck-list-item-quantity-control">
-                                                <button class="deck-list-item-quantity-btn" onclick="removeOneCardFromEditor(${deckEditorCards.indexOf(card)})">-1</button>
-                                                <button class="deck-list-item-quantity-btn" onclick="addOneCardToEditor(${deckEditorCards.indexOf(card)})">+1</button>
+                                                <button class="deck-list-item-quantity-btn" onclick="removeOneCardFromEditor(${window.window.deckEditorCards.indexOf(card)})">-1</button>
+                                                <button class="deck-list-item-quantity-btn" onclick="addOneCardToEditor(${window.window.deckEditorCards.indexOf(card)})">+1</button>
                                             </div>
                                         ` : ''}
                                         ${type === 'character' ? `
-                                            ${getReserveCharacterButton(card.cardId, deckEditorCards.indexOf(card))}
-                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
+                                            ${getReserveCharacterButton(card.cardId, window.window.deckEditorCards.indexOf(card))}
+                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${window.window.deckEditorCards.indexOf(card)})">-</button>
                                         ` : ''}
                                         ${(type === 'location' || type === 'mission') && type !== 'character' ? `
-                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
+                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${window.window.deckEditorCards.indexOf(card)})">-</button>
                                         ` : ''}
                                     </div>
                                 </div>
@@ -3159,16 +3159,16 @@
                                 <div class="deck-list-item-actions">
                                     ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `
                                         <div class="deck-list-item-quantity-control">
-                                            <button class="deck-list-item-quantity-btn" onclick="removeOneCardFromEditor(${deckEditorCards.indexOf(card)})">-1</button>
-                                            <button class="deck-list-item-quantity-btn" onclick="addOneCardToEditor(${deckEditorCards.indexOf(card)})">+1</button>
+                                            <button class="deck-list-item-quantity-btn" onclick="removeOneCardFromEditor(${window.window.deckEditorCards.indexOf(card)})">-1</button>
+                                            <button class="deck-list-item-quantity-btn" onclick="addOneCardToEditor(${window.window.deckEditorCards.indexOf(card)})">+1</button>
                                         </div>
                                     ` : ''}
                                         ${type === 'character' ? `
-                                            ${getReserveCharacterButton(card.cardId, deckEditorCards.indexOf(card))}
-                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
+                                            ${getReserveCharacterButton(card.cardId, window.window.deckEditorCards.indexOf(card))}
+                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${window.window.deckEditorCards.indexOf(card)})">-</button>
                                         ` : ''}
                                         ${(type === 'location' || type === 'mission') && type !== 'character' ? `
-                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${deckEditorCards.indexOf(card)})">-</button>
+                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${window.window.deckEditorCards.indexOf(card)})">-</button>
                                         ` : ''}
                                 </div>
                             </div>
@@ -3418,7 +3418,7 @@
         }
 
         function drawHand() {
-            const deckCards = deckEditorCards;
+            const deckCards = window.deckEditorCards;
             const totalCards = deckCards.reduce((sum, card) => sum + card.quantity, 0);
             
             // Filter out characters, locations, and missions to create draw pile
@@ -3787,7 +3787,7 @@
             console.log(`Adding all cards from mission set: ${missionSetName}`, cards);
             
             // Check mission limit first
-            const currentMissionCount = deckEditorCards
+            const currentMissionCount = window.deckEditorCards
                 .filter(card => card.type === 'mission')
                 .reduce((total, card) => total + card.quantity, 0);
             
@@ -3800,7 +3800,7 @@
             
             cards.forEach(card => {
                 // Check if card is already in deck
-                const existingCard = deckEditorCards.find(deckCard => 
+                const existingCard = window.window.deckEditorCards.find(deckCard => 
                     deckCard.type === 'mission' && deckCard.cardId === card.id
                 );
                 
@@ -3830,7 +3830,7 @@
             
             cards.forEach(card => {
                 // Check if card is already in deck
-                const existingCard = deckEditorCards.find(deckCard => 
+                const existingCard = window.window.deckEditorCards.find(deckCard => 
                     deckCard.type === 'power' && deckCard.cardId === card.id
                 );
                 
@@ -3875,7 +3875,7 @@
             }
             
             // Get mission set names from current deck missions
-            const deckMissionCards = deckEditorCards.filter(card => card.type === 'mission');
+            const deckMissionCards = window.window.deckEditorCards.filter(card => card.type === 'mission');
             const deckMissionSets = new Set();
             
             deckMissionCards.forEach(card => {
@@ -3957,7 +3957,7 @@
                 });
             }
             
-            const deckCharacterCards = deckEditorCards.filter(card => card.type === 'character');
+            const deckCharacterCards = window.window.deckEditorCards.filter(card => card.type === 'character');
             const deckCharacterNames = deckCharacterCards.map(card => {
                 // Direct lookup using UUID
                 const character = window.availableCardsMap.get(card.cardId);
@@ -4031,10 +4031,10 @@
         
         // Update deck editor card count display
         function updateDeckEditorCardCount() {
-            const totalCards = deckEditorCards.reduce((total, card) => total + card.quantity, 0);
-            const characterCount = deckEditorCards.filter(card => card.type === 'character').length;
-            const powerCardCount = deckEditorCards.filter(card => card.type === 'power').reduce((total, card) => total + card.quantity, 0);
-            const specialCardCount = deckEditorCards.filter(card => card.type === 'special').reduce((total, card) => total + card.quantity, 0);
+            const totalCards = window.window.deckEditorCards.reduce((total, card) => total + card.quantity, 0);
+            const characterCount = window.window.deckEditorCards.filter(card => card.type === 'character').length;
+            const powerCardCount = window.window.deckEditorCards.filter(card => card.type === 'power').reduce((total, card) => total + card.quantity, 0);
+            const specialCardCount = window.window.deckEditorCards.filter(card => card.type === 'special').reduce((total, card) => total + card.quantity, 0);
             
             // Update any card count displays in the deck editor
             const cardCountElements = document.querySelectorAll('.deck-card-count');
@@ -4086,7 +4086,7 @@
             
             if (isChecked) {
                 // Filter to show only cards for characters in the deck
-                const deckCharacterNames = deckEditorCards
+                const deckCharacterNames = window.deckEditorCards
                     .filter(card => card.type === 'character')
                     .map(card => {
                         // Direct lookup using UUID
@@ -4168,7 +4168,7 @@
                 });
             }
             
-            const deckCharacters = deckEditorCards
+            const deckCharacters = window.deckEditorCards
                 .filter(card => card.type === 'character')
                 .map(card => {
                     // Direct lookup using UUID
@@ -4280,8 +4280,8 @@
             // Update the main Power Cards header count
             const mainHeader = powerCardsCategory.querySelector('.card-category-header span');
             if (mainHeader) {
-                // Calculate total power card count from deckEditorCards instead of using totalVisibleCards
-                const totalPowerCardCount = deckEditorCards
+                // Calculate total power card count from window.deckEditorCards instead of using totalVisibleCards
+                const totalPowerCardCount = window.deckEditorCards
                     .filter(card => card.type === 'power')
                     .reduce((total, card) => total + card.quantity, 0);
                 
@@ -4386,7 +4386,7 @@
                 });
             }
             
-            const deckCharacters = deckEditorCards
+            const deckCharacters = window.deckEditorCards
                 .filter(card => card.type === 'character')
                 .map(card => {
                     // Direct lookup using UUID
@@ -4526,7 +4526,7 @@
                     const requiredType = toUseMatch[2];
                     
                     // Check if any character in the deck meets this requirement
-                    const hasUsableCharacter = deckEditorCards.some(deckCard => {
+                    const hasUsableCharacter = window.window.deckEditorCards.some(deckCard => {
                         if (deckCard.type !== 'character') return false;
                         
                         // Direct lookup using UUID
@@ -4649,7 +4649,7 @@
                 });
             }
             
-            const deckCharacters = deckEditorCards
+            const deckCharacters = window.deckEditorCards
                 .filter(card => card.type === 'character')
                 .map(card => {
                     // Direct lookup using UUID
@@ -4809,7 +4809,7 @@
                 });
             }
             
-            const deckCharacters = deckEditorCards
+            const deckCharacters = window.deckEditorCards
                 .filter(card => card.type === 'character')
                 .map(card => {
                     // Direct lookup using UUID
@@ -5495,7 +5495,7 @@
             
             // Check if we're creating a new deck (no currentDeckId)
             if (!currentDeckId) {
-                // For new decks, use addCardToEditor to add to local deckEditorCards array
+                // For new decks, use addCardToEditor to add to local window.deckEditorCards array
                 // Adding card to new deck via addCardToEditor
                 
                 // Use the card name passed as parameter, or fallback to availableCardsMap
@@ -5978,7 +5978,7 @@
                 cards: []
             };
             
-            deckEditorCards = [];
+            window.deckEditorCards = [];
             currentDeckId = null;
             
             // Update modal title and description
@@ -6020,7 +6020,7 @@
         async function displayDeckCardsForEditing() {
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             
-            if (window.deckEditorCards.length === 0) {
+            if (window.window.window.deckEditorCards.length === 0) {
                 deckCardsEditor.innerHTML = `
                     <div class="empty-deck-message">
                         <p>No cards in this deck yet.</p>
@@ -6029,16 +6029,16 @@
                 `;
                 
                 // Validate empty deck
-                await showDeckValidation(window.deckEditorCards);
+                await showDeckValidation(window.window.deckEditorCards);
                 return;
             }
             
             // Validate deck and show results
-            await showDeckValidation(window.deckEditorCards);
+            await showDeckValidation(window.window.deckEditorCards);
             
             // Group cards by type
             const cardsByType = {};
-            window.deckEditorCards.forEach((card, index) => {
+            window.window.window.deckEditorCards.forEach((card, index) => {
                 const type = card.type;
                 if (!cardsByType[type]) {
                     cardsByType[type] = [];
@@ -7632,7 +7632,7 @@
             const deckCardsEditor = document.querySelector('.deck-cards-editor');
             const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
             
-            deckEditorCards.splice(index, 1);
+            window.window.window.deckEditorCards.splice(index, 1);
             await displayDeckCardsForEditing();
             
             // Restore scroll position after re-rendering
@@ -7682,11 +7682,11 @@
             
             
             // Validate deck after removing card
-            await showDeckValidation(deckEditorCards);
+            await showDeckValidation(window.deckEditorCards);
         }
 
         async function removeOneCardFromEditor(index) {
-            if (deckEditorCards[index]) {
+            if (window.window.deckEditorCards[index]) {
                 // Capture current expansion state before re-rendering
                 const currentExpansionState = getExpansionState();
                 
@@ -7694,12 +7694,12 @@
                 const deckCardsEditor = document.querySelector('.deck-cards-editor');
                 const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
                 
-                if (deckEditorCards[index].quantity > 1) {
+                if (window.window.deckEditorCards[index].quantity > 1) {
                     // If there are multiple cards, decrease quantity by 1
-                    deckEditorCards[index].quantity -= 1;
+                    window.window.deckEditorCards[index].quantity -= 1;
                 } else {
                     // If there's only 1 card, remove the entire card
-                    deckEditorCards.splice(index, 1);
+                    window.window.window.deckEditorCards.splice(index, 1);
                 }
                 
                 await displayDeckCardsForEditing();
@@ -7746,7 +7746,7 @@
                 updateAllyUniverseFilter();
                 
                 // Validate deck after removing card
-                await showDeckValidation(deckEditorCards);
+                await showDeckValidation(window.deckEditorCards);
                 
                 // Preserve scroll position after card changes
                 setTimeout(() => {
@@ -7757,7 +7757,7 @@
         }
 
         async function addOneCardToEditor(index) {
-            if (deckEditorCards[index]) {
+            if (window.window.deckEditorCards[index]) {
                 // Capture current expansion state before re-rendering
                 const currentExpansionState = getExpansionState();
                 
@@ -7766,7 +7766,7 @@
                 const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
                 
                 // Check "One Per Deck" limit before increasing quantity
-                const card = deckEditorCards[index];
+                const card = window.window.deckEditorCards[index];
                 const cardData = window.availableCardsMap.get(card.cardId);
                 console.log('🔍 One-per-deck check for +1 button on', card.type, card.cardId, ':', cardData);
                 const isOnePerDeck = cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
@@ -7778,7 +7778,7 @@
                 }
                 
                 // Increase quantity by 1
-                deckEditorCards[index].quantity += 1;
+                window.window.deckEditorCards[index].quantity += 1;
                 
                 await displayDeckCardsForEditing();
                 
@@ -7830,7 +7830,7 @@
                 updateAllyUniverseFilter();
                 
                 // Validate deck after adding card
-                await showDeckValidation(deckEditorCards);
+                await showDeckValidation(window.deckEditorCards);
                 
                 // Preserve scroll position after card changes
                 setTimeout(() => {
@@ -7841,7 +7841,7 @@
         }
 
         async function removeAllMissionsFromDeck() {
-            const missionCount = deckEditorCards.filter(card => card.type === 'mission').length;
+            const missionCount = window.window.deckEditorCards.filter(card => card.type === 'mission').length;
             
             if (missionCount === 0) {
                 showNotification('No missions to remove', 'info');
@@ -7856,7 +7856,7 @@
             const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
             
             // Remove all mission cards
-            deckEditorCards = deckEditorCards.filter(card => card.type !== 'mission');
+            window.deckEditorCards = window.window.deckEditorCards.filter(card => card.type !== 'mission');
             
             await displayDeckCardsForEditing();
             
@@ -7895,13 +7895,13 @@
             
             
             // Validate deck after removing missions
-            await showDeckValidation(deckEditorCards);
+            await showDeckValidation(window.deckEditorCards);
             
             showNotification(`Removed ${missionCount} mission cards from deck`, 'success');
         }
 
         async function removeAllCardsFromDeck(cardType) {
-            const cardCount = deckEditorCards.filter(card => card.type === cardType).length;
+            const cardCount = window.window.deckEditorCards.filter(card => card.type === cardType).length;
             
             if (cardCount === 0) {
                 showNotification(`No ${cardType} cards to remove`, 'info');
@@ -7916,7 +7916,7 @@
             const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
             
             // Remove all cards of this type
-            deckEditorCards = deckEditorCards.filter(card => card.type !== cardType);
+            window.deckEditorCards = window.window.deckEditorCards.filter(card => card.type !== cardType);
             
             await displayDeckCardsForEditing();
             
@@ -7962,7 +7962,7 @@
             
             
             // Validate deck after removing cards
-            await showDeckValidation(deckEditorCards);
+            await showDeckValidation(window.deckEditorCards);
             
             const typeName = formatCardType(cardType);
             showNotification(`Removed ${cardCount} ${typeName.toLowerCase()} from deck`, 'success');
@@ -7970,7 +7970,7 @@
 
         async function removeUnusableSpecialCards() {
             // Get all selected characters
-            const selectedCharacters = deckEditorCards.filter(card => card.type === 'character');
+            const selectedCharacters = window.window.deckEditorCards.filter(card => card.type === 'character');
             
             if (selectedCharacters.length === 0) {
                 showNotification('No characters selected - cannot determine usable special cards', 'info');
@@ -7985,7 +7985,7 @@
             }).filter(name => name);
             
             // Get all special cards
-            const specialCards = deckEditorCards.filter(card => card.type === 'special');
+            const specialCards = window.window.deckEditorCards.filter(card => card.type === 'special');
             
             if (specialCards.length === 0) {
                 showNotification('No special cards to check', 'info');
@@ -8024,7 +8024,7 @@
             
             // Remove unusable special cards
             const unusableIndices = unusableCards.map(card => 
-                deckEditorCards.findIndex(deckCard => 
+                window.window.deckEditorCards.findIndex(deckCard => 
                     deckCard.type === card.type && deckCard.cardId === card.cardId
                 )
             ).sort((a, b) => b - a); // Sort in descending order to remove from end first
@@ -8033,7 +8033,7 @@
             const currentExpansionState = getExpansionState();
             
             unusableIndices.forEach(index => {
-                deckEditorCards.splice(index, 1);
+                window.window.deckEditorCards.splice(index, 1);
             });
             
             await displayDeckCardsForEditing();
@@ -8047,7 +8047,7 @@
             
             
             // Validate deck after removing cards
-            await showDeckValidation(deckEditorCards);
+            await showDeckValidation(window.deckEditorCards);
             
             showNotification(`Removed ${unusableCards.length} unusable special cards`, 'success');
         }
@@ -8078,7 +8078,7 @@
                     
                     characterCards.forEach(card => {
                         // Check if card is already in deck
-                        const existingCard = deckEditorCards.find(deckCard => 
+                        const existingCard = window.window.deckEditorCards.find(deckCard => 
                             deckCard.type === 'special' && deckCard.cardId === card.id
                         );
                         
@@ -8126,7 +8126,7 @@
                     
                     characterCards.forEach(card => {
                         // Check if card is already in deck
-                        const existingCard = deckEditorCards.find(deckCard => 
+                        const existingCard = window.window.deckEditorCards.find(deckCard => 
                             deckCard.type === 'advanced-universe' && deckCard.cardId === card.id
                         );
                         
@@ -8153,13 +8153,13 @@
         // Function to update just the character limit status without affecting collapse state
         function updateCharacterLimitStatus() {
             const characterCards = document.querySelectorAll('.card-item.character-card');
-            const uniqueCharacterCount = deckEditorCards
+            const uniqueCharacterCount = window.deckEditorCards
                 .filter(card => card.type === 'character')
                 .length;
             
             characterCards.forEach(card => {
                 const cardId = card.dataset.id; // Fixed: changed from dataset.cardId to dataset.id
-                const isExistingCharacter = deckEditorCards.some(deckCard => 
+                const isExistingCharacter = window.window.deckEditorCards.some(deckCard => 
                     deckCard.type === 'character' && deckCard.cardId === cardId
                 );
             
@@ -8185,11 +8185,11 @@
         // Function to update just the mission limit status without affecting collapse state
         function updateMissionLimitStatus() {
             const missionCards = document.querySelectorAll('.card-item[data-type="mission"]');
-            const currentMissionCount = deckEditorCards
+            const currentMissionCount = window.deckEditorCards
                 .filter(card => card.type === 'mission')
                 .reduce((total, card) => total + card.quantity, 0);
             
-            console.log('updateMissionLimitStatus - Current mission count:', currentMissionCount, 'deckEditorCards:', deckEditorCards);
+            console.log('updateMissionLimitStatus - Current mission count:', currentMissionCount, 'window.deckEditorCards:', window.deckEditorCards);
             
             const isMissionLimitReached = currentMissionCount >= 7;
             
@@ -8247,13 +8247,13 @@
                                 card.cardType = category.type;
                                 
                                 // Store with database UUID format (primary key)
-                                window.window.availableCardsMap.set(card.id, card);
+                                window.availableCardsMap.set(card.id, card);
                                 
                                 // Store with category prefix for compatibility
-                                window.window.availableCardsMap.set(`${category.type}_${card.id}`, card);
+                                window.availableCardsMap.set(`${category.type}_${card.id}`, card);
                                 
                                 // Store by name for easy lookup
-                                window.window.availableCardsMap.set(card.name, card);
+                                window.availableCardsMap.set(card.name, card);
                                 
                                 // For characters, create a mapping from deck card IDs to database UUIDs
                                 if (category.type === 'character') {
@@ -8276,7 +8276,7 @@
                             
                             if (category.type === 'character') {
                                 // Special handling for characters with stats
-                                const currentCharacterCount = deckEditorCards
+                                const currentCharacterCount = window.deckEditorCards
                                     .filter(card => card.type === 'character')
                                     .reduce((total, card) => total + card.quantity, 0);
                                 
@@ -8335,7 +8335,7 @@
                                 const cards = missionSetGroups[missionSetName];
                                 
                                 // Check mission limit
-                                const currentMissionCount = deckEditorCards
+                                const currentMissionCount = window.deckEditorCards
                                     .filter(card => card.type === 'mission')
                                     .reduce((total, card) => total + card.quantity, 0);
                                 const isMissionLimitReached = currentMissionCount >= 7;
@@ -9012,8 +9012,8 @@
         function showAlternateArtSelection(card, cardId, cardName, cardIndex = null, cardType = 'character') {
             // Get current selected image
             let currentSelectedImage = card.image;
-            if (cardIndex !== null && deckEditorCards[cardIndex] && deckEditorCards[cardIndex].selectedAlternateImage) {
-                currentSelectedImage = deckEditorCards[cardIndex].selectedAlternateImage;
+            if (cardIndex !== null && window.deckEditorCards[cardIndex] && window.deckEditorCards[cardIndex].selectedAlternateImage) {
+                currentSelectedImage = window.deckEditorCards[cardIndex].selectedAlternateImage;
             }
             
             // Use getCardImagePath to construct proper image paths
@@ -9071,11 +9071,11 @@
 
         // Function to update alternate image for existing card
         async function updateCardAlternateImage(cardIndex, selectedImage) {
-            if (deckEditorCards[cardIndex]) {
+            if (window.deckEditorCards[cardIndex]) {
                 // Capture current expansion state before re-rendering
                 const currentExpansionState = getExpansionState();
                 
-                deckEditorCards[cardIndex].selectedAlternateImage = selectedImage;
+                window.deckEditorCards[cardIndex].selectedAlternateImage = selectedImage;
                 await displayDeckCardsForEditing();
                 
                 // Restore the expansion state after re-rendering
@@ -9091,8 +9091,8 @@
             let cardType = 'character';
             
             // Always try to get card type from deck card data first (most reliable)
-            if (cardIndex !== null && deckEditorCards[cardIndex]) {
-                cardType = deckEditorCards[cardIndex].type;
+            if (cardIndex !== null && window.deckEditorCards[cardIndex]) {
+                cardType = window.deckEditorCards[cardIndex].type;
             } else if (cardId.startsWith('char_')) {
                 cardType = 'character';
             } else if (cardId.startsWith('special_')) {
@@ -9133,7 +9133,7 @@
             // Check character limit before adding
             if (cardType === 'character') {
                 // Check if we already have this character in the deck
-                const existingCharacter = deckEditorCards.find(card => card.type === 'character' && card.cardId === cardId);
+                const existingCharacter = window.window.window.deckEditorCards.find(card => card.type === 'character' && card.cardId === cardId);
                 
                 if (existingCharacter) {
                     showNotification('This character is already in your deck', 'error');
@@ -9141,7 +9141,7 @@
                 }
                 
                 // Check if we already have 4 different characters
-                const uniqueCharacterCount = deckEditorCards
+                const uniqueCharacterCount = window.deckEditorCards
                     .filter(card => card.type === 'character')
                     .length;
                 
@@ -9170,7 +9170,7 @@
             // Check location limit before adding
             if (cardType === 'location') {
                 // Check if we already have a location in the deck
-                const existingLocation = deckEditorCards.find(card => card.type === 'location');
+                const existingLocation = window.window.window.deckEditorCards.find(card => card.type === 'location');
                 
                 if (existingLocation) {
                     showNotification('Cannot add more than 1 location to a deck', 'error');
@@ -9185,7 +9185,7 @@
             if (isOnePerDeck) {
                 console.log('🚫 Card is one-per-deck, checking if already in deck');
                 // Check if we already have this "One Per Deck" card in the deck
-                const existingOnePerDeckCard = deckEditorCards.find(card => 
+                const existingOnePerDeckCard = window.window.window.deckEditorCards.find(card => 
                     card.type === cardType && card.cardId === cardId
                 );
                 
@@ -9198,11 +9198,11 @@
             
             // Check mission limit before adding
             if (cardType === 'mission') {
-                const currentMissionCount = deckEditorCards
+                const currentMissionCount = window.window.deckEditorCards
                     .filter(card => card.type === 'mission')
                     .reduce((total, card) => total + card.quantity, 0);
                 
-                console.log('Adding mission. Current count:', currentMissionCount, 'deckEditorCards:', deckEditorCards);
+                console.log('Adding mission. Current count:', currentMissionCount, 'window.deckEditorCards:', window.window.deckEditorCards);
                 
                 if (currentMissionCount >= 7) {
                     showNotification('Cannot add more than 7 missions to a deck', 'error');
@@ -9239,7 +9239,7 @@
             }
             
             // Check if card already exists in deck
-            const existingCardIndex = deckEditorCards.findIndex(card => 
+            const existingCardIndex = window.window.window.deckEditorCards.findIndex(card => 
                 card.type === internalCardType && card.cardId === cardId
             );
             
@@ -9259,9 +9259,9 @@
                 }
                 
                 // For other card types, increase quantity and update alternate image if provided
-                deckEditorCards[existingCardIndex].quantity += 1;
+                window.window.deckEditorCards[existingCardIndex].quantity += 1;
                 if (selectedAlternateImage && (cardType === 'special' || cardType === 'power')) {
-                    deckEditorCards[existingCardIndex].selectedAlternateImage = selectedAlternateImage;
+                    window.window.deckEditorCards[existingCardIndex].selectedAlternateImage = selectedAlternateImage;
                 }
                 // Show notification for adding additional copies
                     showNotification(`Added another copy of ${cardName}`, 'success');
@@ -9277,7 +9277,7 @@
                 if (selectedAlternateImage && (cardType === 'character' || cardType === 'special' || cardType === 'power')) {
                     newCard.selectedAlternateImage = selectedAlternateImage;
                 }
-            deckEditorCards.push(newCard);
+            window.window.window.deckEditorCards.push(newCard);
                 
                 // Show notification for adding first copy
                 if (cardType !== 'character') {
@@ -9335,7 +9335,7 @@
             
             
             // Validate deck after adding card
-            await showDeckValidation(deckEditorCards);
+            await showDeckValidation(window.deckEditorCards);
             
             // Force layout recalculation after adding card
             requestAnimationFrame(() => {
@@ -9382,9 +9382,9 @@
                 const cardInfo = cardElement.querySelector('.deck-card-editor-name');
                 if (!cardInfo) return;
                 
-                // Find the card ID from the deckEditorCards array by matching the card name
+                // Find the card ID from the window.deckEditorCards array by matching the card name
                 const cardName = cardInfo.textContent.trim();
-                const matchingCard = deckEditorCards.find(card => {
+                const matchingCard = window.window.deckEditorCards.find(card => {
                     if (card.type !== 'character') return false;
                     const character = window.availableCardsMap.get(card.cardId);
                     return character && character.name === cardName;
@@ -9392,7 +9392,7 @@
                 
                 if (matchingCard) {
                     const cardId = matchingCard.cardId;
-                    const cardIndex = deckEditorCards.indexOf(matchingCard);
+                    const cardIndex = window.window.deckEditorCards.indexOf(matchingCard);
                     const reserveContainer = cardElement.querySelector('.deck-card-editor-reserve');
                     
                     if (reserveContainer) {
@@ -9416,8 +9416,8 @@
                 
                 const cardName = cardNameElement.textContent.trim();
                 
-                // Find the corresponding character card in deckEditorCards by name
-                const matchingCard = deckEditorCards.find(card => {
+                // Find the corresponding character card in window.deckEditorCards by name
+                const matchingCard = window.window.deckEditorCards.find(card => {
                     if (card.type !== 'character') return false;
                     const character = window.availableCardsMap.get(card.cardId);
                     return character && character.name === cardName;
@@ -9425,7 +9425,7 @@
                 
                 if (matchingCard) {
                     const cardId = matchingCard.cardId;
-                    const originalIndex = deckEditorCards.indexOf(matchingCard);
+                    const originalIndex = window.window.deckEditorCards.indexOf(matchingCard);
                     const actionsContainer = listItem.querySelector('.deck-list-item-actions');
                     
                     if (actionsContainer) {
@@ -9481,9 +9481,9 @@
             
             console.log('🔧 Updating deck summary');
             // Update deck summary to reflect new threat calculation
-            // Use deckEditorCards which is the working copy of deck cards
-            console.log('🔧 Current deckEditorCards:', deckEditorCards.length);
-            await updateDeckSummary(deckEditorCards);
+            // Use window.deckEditorCards which is the working copy of deck cards
+            console.log('🔧 Current window.deckEditorCards:', window.window.deckEditorCards.length);
+            await updateDeckSummary(window.deckEditorCards);
             
         }
 
@@ -9519,9 +9519,9 @@
             
             console.log('🔧 Updating deck summary');
             // Update deck summary to reflect new threat calculation
-            // Use deckEditorCards which is the working copy of deck cards
-            console.log('🔧 Current deckEditorCards:', deckEditorCards.length);
-            await updateDeckSummary(deckEditorCards);
+            // Use window.deckEditorCards which is the working copy of deck cards
+            console.log('🔧 Current window.deckEditorCards:', window.window.deckEditorCards.length);
+            await updateDeckSummary(window.deckEditorCards);
             
         }
 
@@ -9532,7 +9532,7 @@
             updateDeckEditorCardCount();
             // Also update deck summary to ensure button states are correct
             if (typeof updateDeckSummary === 'function') {
-                updateDeckSummary(deckEditorCards);
+                updateDeckSummary(window.deckEditorCards);
             } else {
             }
         };

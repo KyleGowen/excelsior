@@ -165,7 +165,7 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             },
             cards: []
         };
-        window.window.deckEditorCards = [];
+        window.deckEditorCards = [];
         // Read-only mode removed - now handled by backend flag
         
         // Show the deck editor modal
