@@ -7659,6 +7659,9 @@
             // Update mission limit status without affecting collapse state
             updateMissionLimitStatus();
             
+            // Update One Per Deck limit status
+            updateOnePerDeckLimitStatus();
+            
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
             
@@ -7872,6 +7875,9 @@
             // Update mission limit status
             updateMissionLimitStatus();
             
+            // Update One Per Deck limit status
+            updateOnePerDeckLimitStatus();
+            
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
             
@@ -7938,6 +7944,9 @@
             if (cardType === 'mission') {
                 updateMissionLimitStatus();
             }
+            
+            // Update One Per Deck limit status
+            updateOnePerDeckLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
@@ -8205,6 +8214,51 @@
                 }
             });
         }
+
+        // Function to update One Per Deck card dimming status
+        function updateOnePerDeckLimitStatus() {
+            console.log('updateOnePerDeckLimitStatus - Starting One Per Deck status update');
+            
+            // Get all One Per Deck cards currently in the deck
+            const onePerDeckCardsInDeck = new Set();
+            window.deckEditorCards.forEach(card => {
+                const cardData = window.availableCardsMap.get(card.cardId);
+                if (cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true)) {
+                    onePerDeckCardsInDeck.add(card.cardId);
+                }
+            });
+            
+            console.log('updateOnePerDeckLimitStatus - One Per Deck cards in deck:', Array.from(onePerDeckCardsInDeck));
+            
+            // Update all card items for all card types
+            const allCardItems = document.querySelectorAll('.card-item[data-id]');
+            allCardItems.forEach(cardElement => {
+                const cardId = cardElement.getAttribute('data-id');
+                const cardType = cardElement.getAttribute('data-type');
+                
+                if (cardId) {
+                    const cardData = window.availableCardsMap.get(cardId);
+                    const isOnePerDeck = cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
+                    const isInDeck = onePerDeckCardsInDeck.has(cardId);
+                    
+                    if (isOnePerDeck && isInDeck) {
+                        // This is a One Per Deck card that's already in the deck - dim it
+                        cardElement.classList.add('disabled');
+                        cardElement.setAttribute('draggable', 'false');
+                        cardElement.title = 'One Per Deck - already in deck';
+                        console.log('updateOnePerDeckLimitStatus - Dimming One Per Deck card:', cardId, cardType);
+                    } else {
+                        // This card is not One Per Deck or not in deck - ensure it's not dimmed
+                        cardElement.classList.remove('disabled');
+                        cardElement.setAttribute('draggable', 'true');
+                        cardElement.title = '';
+                    }
+                }
+            });
+            
+            console.log('updateOnePerDeckLimitStatus - Completed One Per Deck status update');
+        }
+
         async function loadAvailableCards() {
             try {
                 const cardCategories = document.getElementById('cardCategories');
@@ -8295,12 +8349,23 @@
                                         `<span class="character-stat"><span class="stat-label">${stat.label}</span><span class="stat-value" style="color: ${stat.color};">${stat.value}</span></span>`
                                     ).join(' ');
                                     
-                                    const disabledClass = isCharacterLimitReached ? 'disabled' : '';
-                                    const disabledTitle = isCharacterLimitReached ? 'Character limit reached (max 4)' : '';
+                                    // Check if this character is One Per Deck and already in deck
+                                    const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
+                                    const isOnePerDeckInDeck = isOnePerDeck && window.deckEditorCards.some(deckCard => 
+                                        deckCard.type === 'character' && deckCard.cardId === card.id
+                                    );
+                                    
+                                    const disabledClass = (isCharacterLimitReached || isOnePerDeckInDeck) ? 'disabled' : '';
+                                    let disabledTitle = '';
+                                    if (isCharacterLimitReached) {
+                                        disabledTitle = 'Character limit reached (max 4)';
+                                    } else if (isOnePerDeckInDeck) {
+                                        disabledTitle = 'One Per Deck - already in deck';
+                                    }
                                     
                                     return `
                                         <div class="card-item character-card ${disabledClass}" 
-                                             draggable="${!isCharacterLimitReached}" 
+                                             draggable="${!(isCharacterLimitReached || isOnePerDeckInDeck)}" 
                                              data-type="${category.type}" 
                                              data-id="${card.id}"
                                              onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
@@ -8341,12 +8406,23 @@
                                 const isMissionLimitReached = currentMissionCount >= 7;
                                 
                                 const cardItems = cards.map(card => {
-                                    const disabledClass = isMissionLimitReached ? 'disabled' : '';
-                                    const disabledTitle = isMissionLimitReached ? 'Mission limit reached (max 7)' : '';
+                                    // Check if this mission is One Per Deck and already in deck
+                                    const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
+                                    const isOnePerDeckInDeck = isOnePerDeck && window.deckEditorCards.some(deckCard => 
+                                        deckCard.type === 'mission' && deckCard.cardId === card.id
+                                    );
+                                    
+                                    const disabledClass = (isMissionLimitReached || isOnePerDeckInDeck) ? 'disabled' : '';
+                                    let disabledTitle = '';
+                                    if (isMissionLimitReached) {
+                                        disabledTitle = 'Mission limit reached (max 7)';
+                                    } else if (isOnePerDeckInDeck) {
+                                        disabledTitle = 'One Per Deck - already in deck';
+                                    }
                                     
                                     return `
                                         <div class="card-item ${disabledClass}" 
-                                             draggable="${!isMissionLimitReached}" 
+                                             draggable="${!(isMissionLimitReached || isOnePerDeckInDeck)}" 
                                              data-type="${category.type}" 
                                              data-id="${card.id}"
                                              onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
@@ -8392,20 +8468,31 @@
                             
                             missionSetNames.forEach(missionSetName => {
                                 const cards = missionSetGroups[missionSetName];
-                                const cardItems = cards.map(card => `
-                                    <div class="card-item" 
-                                         draggable="true" 
-                                         data-type="${category.type}" 
-                                         data-id="${card.id}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
-                                         onmouseleave="hideCardHoverModal()"
-                                         onclick="handleCardClick(event, '${category.type}', '${card.id}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
-                                         onclick="handleCardClick(event, '${category.type}', '${card.id}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
-                                         data-name="${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}">
-                                        <div class="card-item-content">${card[category.nameField]}</div>
-                                        <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
-                                    </div>
-                                `).join('');
+                                const cardItems = cards.map(card => {
+                                    // Check if this event is One Per Deck and already in deck
+                                    const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
+                                    const isOnePerDeckInDeck = isOnePerDeck && window.deckEditorCards.some(deckCard => 
+                                        deckCard.type === 'event' && deckCard.cardId === card.id
+                                    );
+                                    
+                                    const disabledClass = isOnePerDeckInDeck ? 'disabled' : '';
+                                    const disabledTitle = isOnePerDeckInDeck ? 'One Per Deck - already in deck' : '';
+                                    
+                                    return `
+                                        <div class="card-item ${disabledClass}" 
+                                             draggable="${!isOnePerDeckInDeck}" 
+                                             data-type="${category.type}" 
+                                             data-id="${card.id}"
+                                             onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
+                                             onmouseleave="hideCardHoverModal()"
+                                             onclick="handleCardClick(event, '${category.type}', '${card.id}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
+                                             data-name="${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}"
+                                             title="${disabledTitle}">
+                                            <div class="card-item-content">${card[category.nameField]}</div>
+                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
+                                        </div>
+                                    `;
+                                }).join('');
                                 
                                 cardsHtml += `
                                     <div class="mission-set-group">
@@ -8436,19 +8523,31 @@
                             
                             characterNames.forEach(characterName => {
                                 const cards = characterGroups[characterName].sort((a, b) => a.name.localeCompare(b.name));
-                                const cardItems = cards.map(card => `
-                                    <div class="card-item" 
-                                         draggable="true" 
-                                         data-type="${category.type}" 
-                                         data-id="${card.id}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
-                                         onmouseleave="hideCardHoverModal()"
-                                         onclick="handleCardClick(event, '${category.type}', '${card.id}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
-                                         data-name="${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}">
-                                        <div class="card-item-content">${card[category.nameField]}</div>
-                                        <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
-                                    </div>
-                                `).join('');
+                                const cardItems = cards.map(card => {
+                                    // Check if this special card is One Per Deck and already in deck
+                                    const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
+                                    const isOnePerDeckInDeck = isOnePerDeck && window.deckEditorCards.some(deckCard => 
+                                        deckCard.type === 'special' && deckCard.cardId === card.id
+                                    );
+                                    
+                                    const disabledClass = isOnePerDeckInDeck ? 'disabled' : '';
+                                    const disabledTitle = isOnePerDeckInDeck ? 'One Per Deck - already in deck' : '';
+                                    
+                                    return `
+                                        <div class="card-item ${disabledClass}" 
+                                             draggable="${!isOnePerDeckInDeck}" 
+                                             data-type="${category.type}" 
+                                             data-id="${card.id}"
+                                             onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
+                                             onmouseleave="hideCardHoverModal()"
+                                             onclick="handleCardClick(event, '${category.type}', '${card.id}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
+                                             data-name="${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}"
+                                             title="${disabledTitle}">
+                                            <div class="card-item-content">${card[category.nameField]}</div>
+                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
+                                        </div>
+                                    `;
+                                }).join('');
                                 
                                 cardsHtml += `
                                     <div class="character-group">
@@ -8480,19 +8579,31 @@
                             
                             characterNames.forEach(characterName => {
                                 const cards = characterGroups[characterName];
-                                const cardItems = cards.map(card => `
-                                    <div class="card-item" 
-                                         draggable="true" 
-                                         data-type="${category.type}" 
-                                         data-id="${card.id}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
-                                         onmouseleave="hideCardHoverModal()"
-                                         onclick="handleCardClick(event, '${category.type}', '${card.id}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
-                                         data-name="${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}">
-                                        <div class="card-item-content">${card[category.nameField]}</div>
-                                        <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
-                                    </div>
-                                `).join('');
+                                const cardItems = cards.map(card => {
+                                    // Check if this advanced-universe card is One Per Deck and already in deck
+                                    const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
+                                    const isOnePerDeckInDeck = isOnePerDeck && window.deckEditorCards.some(deckCard => 
+                                        deckCard.type === 'advanced-universe' && deckCard.cardId === card.id
+                                    );
+                                    
+                                    const disabledClass = isOnePerDeckInDeck ? 'disabled' : '';
+                                    const disabledTitle = isOnePerDeckInDeck ? 'One Per Deck - already in deck' : '';
+                                    
+                                    return `
+                                        <div class="card-item ${disabledClass}" 
+                                             draggable="${!isOnePerDeckInDeck}" 
+                                             data-type="${category.type}" 
+                                             data-id="${card.id}"
+                                             onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
+                                             onmouseleave="hideCardHoverModal()"
+                                             onclick="handleCardClick(event, '${category.type}', '${card.id}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
+                                             data-name="${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}"
+                                             title="${disabledTitle}">
+                                            <div class="card-item-content">${card[category.nameField]}</div>
+                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
+                                        </div>
+                                    `;
+                                }).join('');
                                 
                                 cardsHtml += `
                                     <div class="character-group">
@@ -8543,15 +8654,26 @@
                                 const cards = typeGroups[typeName];
                                 const cardItems = cards.map(card => {
                                     const summary = `${card.to_use} To Use -> ${card.followup_attack_types} (${card.first_attack_bonus}/${card.second_attack_bonus})`;
+                                    
+                                    // Check if this teamwork card is One Per Deck and already in deck
+                                    const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
+                                    const isOnePerDeckInDeck = isOnePerDeck && window.deckEditorCards.some(deckCard => 
+                                        deckCard.type === 'teamwork' && deckCard.cardId === card.id
+                                    );
+                                    
+                                    const disabledClass = isOnePerDeckInDeck ? 'disabled' : '';
+                                    const disabledTitle = isOnePerDeckInDeck ? 'One Per Deck - already in deck' : '';
+                                    
                                     return `
-                                        <div class="card-item" 
-                                             draggable="true" 
+                                        <div class="card-item ${disabledClass}" 
+                                             draggable="${!isOnePerDeckInDeck}" 
                                              data-type="${category.type}" 
                                              data-id="${card.id}"
                                              onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${summary}')"
                                              onmouseleave="hideCardHoverModal()"
                                              onclick="handleCardClick(event, '${category.type}', '${card.id}', '${summary}')"
-                                             data-name="${summary}">
+                                             data-name="${summary}"
+                                             title="${disabledTitle}">
                                             <div class="card-item-content">${summary}</div>
                                             <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${summary}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
                                         </div>
@@ -8574,15 +8696,26 @@
                             // Special handling for ally cards - show summary with stat requirements and attack info
                             cardsHtml = data.data.map(card => {
                                 const summary = `${card.card_name} - ${card.stat_to_use} ${card.stat_type_to_use} → ${card.attack_value} ${card.attack_type}`;
+                                
+                                // Check if this ally-universe card is One Per Deck and already in deck
+                                const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
+                                const isOnePerDeckInDeck = isOnePerDeck && window.deckEditorCards.some(deckCard => 
+                                    deckCard.type === 'ally-universe' && deckCard.cardId === card.id
+                                );
+                                
+                                const disabledClass = isOnePerDeckInDeck ? 'disabled' : '';
+                                const disabledTitle = isOnePerDeckInDeck ? 'One Per Deck - already in deck' : '';
+                                
                                 return `
-                                    <div class="card-item" 
-                                         draggable="true" 
+                                    <div class="card-item ${disabledClass}" 
+                                         draggable="${!isOnePerDeckInDeck}" 
                                          data-type="${category.type}" 
                                          data-id="${card.id}"
                                          onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${summary}')"
                                          onmouseleave="hideCardHoverModal()"
                                          onclick="handleCardClick(event, '${category.type}', '${card.id}', '${summary}')"
-                                         data-name="${summary}">
+                                         data-name="${summary}"
+                                         title="${disabledTitle}">
                                         <div class="card-item-content">${summary}</div>
                                         <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${summary}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
                                     </div>
@@ -8592,15 +8725,26 @@
                             // Special handling for training cards - show summary with types and bonus
                             cardsHtml = data.data.map(card => {
                                 const summary = `${card.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${card.type_1} + ${card.type_2} (${card.value_to_use} → ${card.bonus})`;
+                                
+                                // Check if this training card is One Per Deck and already in deck
+                                const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
+                                const isOnePerDeckInDeck = isOnePerDeck && window.deckEditorCards.some(deckCard => 
+                                    deckCard.type === 'training' && deckCard.cardId === card.id
+                                );
+                                
+                                const disabledClass = isOnePerDeckInDeck ? 'disabled' : '';
+                                const disabledTitle = isOnePerDeckInDeck ? 'One Per Deck - already in deck' : '';
+                                
                                 return `
-                                    <div class="card-item" 
-                                         draggable="true" 
+                                    <div class="card-item ${disabledClass}" 
+                                         draggable="${!isOnePerDeckInDeck}" 
                                          data-type="${category.type}" 
                                          data-id="${card.id}"
                                          onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${summary}')"
                                          onmouseleave="hideCardHoverModal()"
                                          onclick="handleCardClick(event, '${category.type}', '${card.id}', '${summary}')"
-                                         data-name="${summary}">
+                                         data-name="${summary}"
+                                         title="${disabledTitle}">
                                         <div class="card-item-content">${summary}</div>
                                         <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${summary}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
                                     </div>
@@ -8612,15 +8756,26 @@
                                 const summary = `${card.card_name} - ${card.type} (${card.value_to_use} → ${card.bonus})`;
                                 const escapedSummary = summary.replace(/'/g, "\\'").replace(/"/g, '\\"');
                                 const escapedImagePath = getCardImagePath(card, category.type).replace(/'/g, "\\'").replace(/"/g, '\\"');
+                                
+                                // Check if this basic-universe card is One Per Deck and already in deck
+                                const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
+                                const isOnePerDeckInDeck = isOnePerDeck && window.deckEditorCards.some(deckCard => 
+                                    deckCard.type === 'basic-universe' && deckCard.cardId === card.id
+                                );
+                                
+                                const disabledClass = isOnePerDeckInDeck ? 'disabled' : '';
+                                const disabledTitle = isOnePerDeckInDeck ? 'One Per Deck - already in deck' : '';
+                                
                                 return `
-                                    <div class="card-item" 
-                                         draggable="true" 
+                                    <div class="card-item ${disabledClass}" 
+                                         draggable="${!isOnePerDeckInDeck}" 
                                          data-type="${category.type}" 
                                          data-id="${card.id}"
                                          onmouseenter="showCardHoverModal('${escapedImagePath}', '${escapedSummary}')"
                                          onmouseleave="hideCardHoverModal()"
                                          onclick="handleCardClick(event, '${category.type}', '${card.id}', '${escapedSummary}')"
-                                         data-name="${summary}">
+                                         data-name="${summary}"
+                                         title="${disabledTitle}">
                                         <div class="card-item-content">${summary}</div>
                                         <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${escapedSummary}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
                                     </div>
@@ -8669,15 +8824,26 @@
                                 
                                 const cardItems = cards.map(card => {
                                     const summary = `${card.value} - ${card.power_type}`;
+                                    
+                                    // Check if this power card is One Per Deck and already in deck
+                                    const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
+                                    const isOnePerDeckInDeck = isOnePerDeck && window.deckEditorCards.some(deckCard => 
+                                        deckCard.type === 'power' && deckCard.cardId === card.id
+                                    );
+                                    
+                                    const disabledClass = isOnePerDeckInDeck ? 'disabled' : '';
+                                    const disabledTitle = isOnePerDeckInDeck ? 'One Per Deck - already in deck' : '';
+                                    
                                     return `
-                                        <div class="card-item" 
-                                             draggable="true" 
+                                        <div class="card-item ${disabledClass}" 
+                                             draggable="${!isOnePerDeckInDeck}" 
                                              data-type="${category.type}" 
                                              data-id="${card.id}"
                                              onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${summary}')"
                                              onmouseleave="hideCardHoverModal()"
                                              onclick="handleCardClick(event, '${category.type}', '${card.id}', '${summary}')"
-                                             data-name="${summary}">
+                                             data-name="${summary}"
+                                             title="${disabledTitle}">
                                             <div class="card-item-content">${summary}</div>
                                             <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${summary}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
                                         </div>
@@ -9311,6 +9477,9 @@
             
             // Update mission limit status without affecting collapse state
             updateMissionLimitStatus();
+            
+            // Update One Per Deck limit status
+            updateOnePerDeckLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();

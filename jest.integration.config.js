@@ -13,7 +13,10 @@ module.exports = {
     '.*/tests/integration/teamwork.*\\.test\\.ts$',
     '.*/tests/integration/event-mission-filtering-integration\\.test\\.ts$',
     '.*/tests/integration/special-character-threat-display\\.test\\.ts$',
-    '.*/tests/integration/guest-reserve-character-integration\\.test\\.ts$'
+    '.*/tests/integration/guest-reserve-character-integration\\.test\\.ts$',
+    '.*/tests/integration/deck-ownership-security.*\\.test\\.ts$',
+    '.*/tests/integration/deck-save-security.*\\.test\\.ts$',
+    '.*/tests/integration/deck-save-frontend-validation\\.test\\.ts$'
   ],
   transform: {
     '^.+\\.ts$': 'ts-jest',
