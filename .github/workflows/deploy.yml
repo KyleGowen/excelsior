@@ -534,9 +534,9 @@ jobs:
       env:
         DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
 
-  # Game Logic Tests (Parallel Group 6)
-  integration-tests-game-logic:
-    name: Integration Tests - Game Logic
+  # Game Logic - Characters Tests (Parallel Group 6A)
+  integration-tests-game-logic-characters:
+    name: Integration Tests - Game Logic Characters
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -595,25 +595,176 @@ jobs:
         /opt/flyway/flyway --version
         npm run migrate
       
-    - name: Run Game Logic Integration Tests
+    - name: Run Game Logic Characters Integration Tests
       run: |
-        echo "🎮 Running Game Logic Integration Tests..."
-        echo "Test suites: reserve-character*, character*, power*, teamwork*, event-mission-filtering"
+        echo "🎮 Running Game Logic Characters Integration Tests..."
+        echo "Test suites: character*, special-character-threat-display"
         
-        # Run game logic tests in parallel
-        npm run test:integration -- \
-          tests/integration/reserve-character*.test.ts \
-          tests/integration/character*.test.ts \
-          tests/integration/power*.test.ts \
-          tests/integration/teamwork*.test.ts \
-          tests/integration/event-mission-filtering-integration.test.ts \
-          --verbose --testTimeout=60000 --maxWorkers=2 2>&1 | tee game-logic-test-output.log || {
-          echo "❌ Game Logic tests failed, checking output..."
-          cat game-logic-test-output.log | tail -100
+        # Run character tests
+        npm run test:integration:game-logic-characters -- \
+          --verbose --testTimeout=60000 --maxWorkers=2 2>&1 | tee game-logic-characters-test-output.log || {
+          echo "❌ Game Logic Characters tests failed, checking output..."
+          cat game-logic-characters-test-output.log | tail -100
           exit 1
         }
-        echo "✅ Game Logic tests completed successfully!"
-      timeout-minutes: 15
+        echo "✅ Game Logic Characters tests completed successfully!"
+      timeout-minutes: 10
+      env:
+        DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
+
+  # Game Logic - Reserve Characters Tests (Parallel Group 6B)
+  integration-tests-game-logic-reserve:
+    name: Integration Tests - Game Logic Reserve Characters
+    runs-on: ubuntu-latest
+    needs: [build, unit-tests]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: overpower
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 1337:5432
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Wait for PostgreSQL
+      run: |
+        echo "Waiting for PostgreSQL to be ready..."
+        timeout 60s bash -c 'until pg_isready -h localhost -p 1337 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+      
+    - name: Install Flyway
+      run: |
+        echo "Installing Flyway..."
+        curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz -o flyway.tar.gz
+        tar -xzf flyway.tar.gz
+        sudo mv flyway-9.22.3 /opt/flyway
+        sudo chmod +x /opt/flyway/flyway
+        echo "/opt/flyway" >> $GITHUB_PATH
+        /opt/flyway/flyway --version
+        echo "✅ Flyway installed successfully!"
+      
+    - name: Run database migrations
+      run: |
+        export DATABASE_URL="postgresql://postgres:password@localhost:1337/overpower"
+        /opt/flyway/flyway --version
+        npm run migrate
+      
+    - name: Run Game Logic Reserve Characters Integration Tests
+      run: |
+        echo "🎮 Running Game Logic Reserve Characters Integration Tests..."
+        echo "Test suites: reserve-character*, guest-reserve-character-integration"
+        
+        # Run reserve character tests
+        npm run test:integration:game-logic-reserve -- \
+          --verbose --testTimeout=60000 --maxWorkers=2 2>&1 | tee game-logic-reserve-test-output.log || {
+          echo "❌ Game Logic Reserve Characters tests failed, checking output..."
+          cat game-logic-reserve-test-output.log | tail -100
+          exit 1
+        }
+        echo "✅ Game Logic Reserve Characters tests completed successfully!"
+      timeout-minutes: 10
+      env:
+        DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
+
+  # Game Logic - Power & Teamwork Tests (Parallel Group 6C)
+  integration-tests-game-logic-power-teamwork:
+    name: Integration Tests - Game Logic Power & Teamwork
+    runs-on: ubuntu-latest
+    needs: [build, unit-tests]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: overpower
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 1337:5432
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Wait for PostgreSQL
+      run: |
+        echo "Waiting for PostgreSQL to be ready..."
+        timeout 60s bash -c 'until pg_isready -h localhost -p 1337 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+      
+    - name: Install Flyway
+      run: |
+        echo "Installing Flyway..."
+        curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz -o flyway.tar.gz
+        tar -xzf flyway.tar.gz
+        sudo mv flyway-9.22.3 /opt/flyway
+        sudo chmod +x /opt/flyway/flyway
+        echo "/opt/flyway" >> $GITHUB_PATH
+        /opt/flyway/flyway --version
+        echo "✅ Flyway installed successfully!"
+      
+    - name: Run database migrations
+      run: |
+        export DATABASE_URL="postgresql://postgres:password@localhost:1337/overpower"
+        /opt/flyway/flyway --version
+        npm run migrate
+      
+    - name: Run Game Logic Power & Teamwork Integration Tests
+      run: |
+        echo "🎮 Running Game Logic Power & Teamwork Integration Tests..."
+        echo "Test suites: power*, teamwork*, event-mission-filtering"
+        
+        # Run power and teamwork tests
+        npm run test:integration:game-logic-power-teamwork -- \
+          --verbose --testTimeout=60000 --maxWorkers=2 2>&1 | tee game-logic-power-teamwork-test-output.log || {
+          echo "❌ Game Logic Power & Teamwork tests failed, checking output..."
+          cat game-logic-power-teamwork-test-output.log | tail -100
+          exit 1
+        }
+        echo "✅ Game Logic Power & Teamwork tests completed successfully!"
+      timeout-minutes: 10
       env:
         DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
 
@@ -873,7 +1024,7 @@ jobs:
 
   build-docker:
     name: Build & Push Docker Image
-    needs: [build, unit-tests, integration-tests-security, integration-tests-auth, integration-tests-search, integration-tests-deck-core, integration-tests-deck-security, integration-tests-game-logic, integration-tests-ui, integration-tests-user-management, integration-tests-remaining]
+    needs: [build, unit-tests, integration-tests-security, integration-tests-auth, integration-tests-search, integration-tests-deck-core, integration-tests-deck-security, integration-tests-game-logic-characters, integration-tests-game-logic-reserve, integration-tests-game-logic-power-teamwork, integration-tests-ui, integration-tests-user-management, integration-tests-remaining]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     

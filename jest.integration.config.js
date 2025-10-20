@@ -6,6 +6,15 @@ module.exports = {
     '**/tests/integration/**/*.test.ts',
     '**/tests/integration/**/*.spec.ts'
   ],
+  testPathIgnorePatterns: [
+    '.*/tests/integration/character.*\\.test\\.ts$',
+    '.*/tests/integration/reserve-character.*\\.test\\.ts$',
+    '.*/tests/integration/power.*\\.test\\.ts$',
+    '.*/tests/integration/teamwork.*\\.test\\.ts$',
+    '.*/tests/integration/event-mission-filtering-integration\\.test\\.ts$',
+    '.*/tests/integration/special-character-threat-display\\.test\\.ts$',
+    '.*/tests/integration/guest-reserve-character-integration\\.test\\.ts$'
+  ],
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
