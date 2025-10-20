@@ -6020,7 +6020,7 @@
         async function displayDeckCardsForEditing() {
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             
-            if (deckEditorCards.length === 0) {
+            if (window.deckEditorCards.length === 0) {
                 deckCardsEditor.innerHTML = `
                     <div class="empty-deck-message">
                         <p>No cards in this deck yet.</p>
@@ -6029,16 +6029,16 @@
                 `;
                 
                 // Validate empty deck
-                await showDeckValidation(deckEditorCards);
+                await showDeckValidation(window.deckEditorCards);
                 return;
             }
             
             // Validate deck and show results
-            await showDeckValidation(deckEditorCards);
+            await showDeckValidation(window.deckEditorCards);
             
             // Group cards by type
             const cardsByType = {};
-            deckEditorCards.forEach((card, index) => {
+            window.deckEditorCards.forEach((card, index) => {
                 const type = card.type;
                 if (!cardsByType[type]) {
                     cardsByType[type] = [];
