@@ -6020,7 +6020,7 @@
         async function displayDeckCardsForEditing() {
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             
-            if (window.window.window.deckEditorCards.length === 0) {
+            if (window.deckEditorCards.length === 0) {
                 deckCardsEditor.innerHTML = `
                     <div class="empty-deck-message">
                         <p>No cards in this deck yet.</p>
@@ -6038,7 +6038,7 @@
             
             // Group cards by type
             const cardsByType = {};
-            window.window.window.deckEditorCards.forEach((card, index) => {
+            window.deckEditorCards.forEach((card, index) => {
                 const type = card.type;
                 if (!cardsByType[type]) {
                     cardsByType[type] = [];
@@ -7635,7 +7635,7 @@
             const deckCardsEditor = document.querySelector('.deck-cards-editor');
             const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
             
-            window.window.window.deckEditorCards.splice(index, 1);
+            window.deckEditorCards.splice(index, 1);
             await displayDeckCardsForEditing();
             
             // Restore scroll position after re-rendering
@@ -7708,7 +7708,7 @@
                     window.window.deckEditorCards[index].quantity -= 1;
                 } else {
                     // If there's only 1 card, remove the entire card
-                    window.window.window.deckEditorCards.splice(index, 1);
+                    window.deckEditorCards.splice(index, 1);
                 }
                 
                 await displayDeckCardsForEditing();
@@ -8177,27 +8177,33 @@
                 .filter(card => card.type === 'character')
                 .length;
             
-            characterCards.forEach(card => {
-                const cardId = card.dataset.id; // Fixed: changed from dataset.cardId to dataset.id
-                const isExistingCharacter = window.window.deckEditorCards.some(deckCard => 
-                    deckCard.type === 'character' && deckCard.cardId === cardId
-                );
-            
-                // Disable if we have 4 different characters OR if this character is already in the deck
-                const shouldDisable = uniqueCharacterCount >= 4 || isExistingCharacter;
-            
-                if (shouldDisable) {
-                    card.classList.add('disabled');
-                    card.setAttribute('draggable', 'false');
-                    if (isExistingCharacter) {
-                        card.title = 'This character is already in your deck';
+            characterCards.forEach((card, index) => {
+                try {
+                    const cardId = card.dataset.id;
+                    const cardName = card.querySelector('.character-name')?.textContent?.trim() || 'Unknown';
+                    
+                    const isExistingCharacter = window.deckEditorCards.some(deckCard => 
+                        deckCard.type === 'character' && deckCard.cardId === cardId
+                    );
+                
+                    // Disable if we have 4 different characters OR if this character is already in the deck
+                    const shouldDisable = uniqueCharacterCount >= 4 || isExistingCharacter;
+                
+                    if (shouldDisable) {
+                        card.classList.add('disabled');
+                        card.setAttribute('draggable', 'false');
+                        if (isExistingCharacter) {
+                            card.title = 'This character is already in your deck';
+                        } else {
+                            card.title = 'Character limit reached (max 4 different characters)';
+                        }
                     } else {
-                        card.title = 'Character limit reached (max 4 different characters)';
+                        card.classList.remove('disabled');
+                        card.setAttribute('draggable', 'true');
+                        card.title = '';
                     }
-                } else {
-                    card.classList.remove('disabled');
-                    card.setAttribute('draggable', 'true');
-                    card.title = '';
+                } catch (error) {
+                    console.error(`Error processing character card ${index + 1}:`, error);
                 }
             });
         }
@@ -8261,8 +8267,6 @@
                 .filter(card => card.type === 'mission')
                 .reduce((total, card) => total + card.quantity, 0);
             
-            console.log('updateMissionLimitStatus - Current mission count:', currentMissionCount, 'window.deckEditorCards:', window.deckEditorCards);
-            
             const isMissionLimitReached = currentMissionCount >= 7;
             
             missionCards.forEach(card => {
@@ -8280,8 +8284,6 @@
 
         // Function to update One Per Deck card dimming status
         function updateOnePerDeckLimitStatus() {
-            console.log('updateOnePerDeckLimitStatus - Starting One Per Deck status update');
-            
             // Get all One Per Deck cards currently in the deck
             const onePerDeckCardsInDeck = new Set();
             window.deckEditorCards.forEach(card => {
@@ -8290,8 +8292,6 @@
                     onePerDeckCardsInDeck.add(card.cardId);
                 }
             });
-            
-            console.log('updateOnePerDeckLimitStatus - One Per Deck cards in deck:', Array.from(onePerDeckCardsInDeck));
             
             // Update all card items for all card types
             const allCardItems = document.querySelectorAll('.card-item[data-id]');
@@ -8309,17 +8309,15 @@
                         cardElement.classList.add('disabled');
                         cardElement.setAttribute('draggable', 'false');
                         cardElement.title = 'One Per Deck - already in deck';
-                        console.log('updateOnePerDeckLimitStatus - Dimming One Per Deck card:', cardId, cardType);
-                    } else {
-                        // This card is not One Per Deck or not in deck - ensure it's not dimmed
+                    } else if (cardType !== 'character' && cardType !== 'mission') {
+                        // Only update non-character/non-mission cards here
+                        // Character and mission dimming is handled by updateCharacterLimitStatus() and updateMissionLimitStatus()
                         cardElement.classList.remove('disabled');
                         cardElement.setAttribute('draggable', 'true');
                         cardElement.title = '';
                     }
                 }
             });
-            
-            console.log('updateOnePerDeckLimitStatus - Completed One Per Deck status update');
         }
 
         async function loadAvailableCards() {
@@ -9358,26 +9356,26 @@
         }
 
         async function addCardToEditor(cardType, cardId, cardName, selectedAlternateImage = null) {
-            
-            // Check character limit before adding
-            if (cardType === 'character') {
-                // Check if we already have this character in the deck
-                const existingCharacter = window.window.window.deckEditorCards.find(card => card.type === 'character' && card.cardId === cardId);
-                
-                if (existingCharacter) {
-                    showNotification('This character is already in your deck', 'error');
-                    return;
-                }
-                
-                // Check if we already have 4 different characters
-                const uniqueCharacterCount = window.deckEditorCards
-                    .filter(card => card.type === 'character')
-                    .length;
-                
-                if (uniqueCharacterCount >= 4) {
-                    showNotification('Cannot add more than 4 different characters to a deck', 'error');
-                    return;
-                }
+            try {
+                // Check character limit before adding
+                if (cardType === 'character') {
+                    // Check if we already have this character in the deck
+                    const existingCharacter = window.deckEditorCards.find(card => card.type === 'character' && card.cardId === cardId);
+                    
+                    if (existingCharacter) {
+                        showNotification('This character is already in your deck', 'error');
+                        return;
+                    }
+                    
+                    // Check if we already have 4 different characters
+                    const uniqueCharacterCount = window.deckEditorCards
+                        .filter(card => card.type === 'character')
+                        .length;
+                    
+                    if (uniqueCharacterCount >= 4) {
+                        showNotification('Cannot add more than 4 different characters to a deck', 'error');
+                        return;
+                    }
                 
                 // Check if character has alternate images and none selected
                 const character = window.availableCardsMap.get(cardId);
@@ -9399,7 +9397,7 @@
             // Check location limit before adding
             if (cardType === 'location') {
                 // Check if we already have a location in the deck
-                const existingLocation = window.window.window.deckEditorCards.find(card => card.type === 'location');
+                const existingLocation = window.deckEditorCards.find(card => card.type === 'location');
                 
                 if (existingLocation) {
                     showNotification('Cannot add more than 1 location to a deck', 'error');
@@ -9409,17 +9407,14 @@
             
             // Check "One Per Deck" limit for all card types
             const cardData = window.availableCardsMap.get(cardId);
-            console.log('🔍 One-per-deck check for', cardType, cardId, ':', cardData);
             const isOnePerDeck = cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
             if (isOnePerDeck) {
-                console.log('🚫 Card is one-per-deck, checking if already in deck');
                 // Check if we already have this "One Per Deck" card in the deck
-                const existingOnePerDeckCard = window.window.window.deckEditorCards.find(card => 
+                const existingOnePerDeckCard = window.deckEditorCards.find(card => 
                     card.type === cardType && card.cardId === cardId
                 );
                 
                 if (existingOnePerDeckCard) {
-                    console.log('❌ Card already exists in deck, blocking addition');
                     showNotification(`Cannot add more than 1 copy of "${cardName}" - One Per Deck`, 'error');
                     return;
                 }
@@ -9427,11 +9422,9 @@
             
             // Check mission limit before adding
             if (cardType === 'mission') {
-                const currentMissionCount = window.window.deckEditorCards
+                const currentMissionCount = window.deckEditorCards
                     .filter(card => card.type === 'mission')
                     .reduce((total, card) => total + card.quantity, 0);
-                
-                console.log('Adding mission. Current count:', currentMissionCount, 'window.deckEditorCards:', window.window.deckEditorCards);
                 
                 if (currentMissionCount >= 7) {
                     showNotification('Cannot add more than 7 missions to a deck', 'error');
@@ -9468,7 +9461,7 @@
             }
             
             // Check if card already exists in deck
-            const existingCardIndex = window.window.window.deckEditorCards.findIndex(card => 
+            const existingCardIndex = window.deckEditorCards.findIndex(card => 
                 card.type === internalCardType && card.cardId === cardId
             );
             
@@ -9506,7 +9499,7 @@
                 if (selectedAlternateImage && (cardType === 'character' || cardType === 'special' || cardType === 'power')) {
                     newCard.selectedAlternateImage = selectedAlternateImage;
                 }
-            window.window.window.deckEditorCards.push(newCard);
+            window.deckEditorCards.push(newCard);
                 
                 // Show notification for adding first copy
                 if (cardType !== 'character') {
@@ -9580,6 +9573,9 @@
                     deckCardsEditor.offsetHeight;
                 }
             });
+            } catch (error) {
+                console.error('❌ Error in addCardToEditor:', error);
+            }
         }
 
         // Reserve Character Functions
