@@ -15,6 +15,7 @@ const mockDeckRepository: jest.Mocked<DeckRepository> = {
   removeAllCardsFromDeck: jest.fn(),
   replaceAllCardsInDeck: jest.fn(),
   getDeckCards: jest.fn(),
+  doesCardExistInDeck: jest.fn(),
   userOwnsDeck: jest.fn(),
   updateUIPreferences: jest.fn(),
   getUIPreferences: jest.fn(),

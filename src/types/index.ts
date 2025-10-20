@@ -86,6 +86,7 @@ export interface Event {
   game_effect: string;
   flavor_text: string;
   image: string;
+  one_per_deck: boolean;
 }
 
 export interface Aspect {
@@ -121,6 +122,7 @@ export interface Teamwork {
   first_attack_bonus: string;
   second_attack_bonus: string;
   image: string;
+  one_per_deck: boolean;
 }
 
 export interface AllyUniverse {
@@ -133,6 +135,7 @@ export interface AllyUniverse {
   attack_type: string;          // Combat | Brute Force | Intelligence
   card_text: string;
   image: string;
+  one_per_deck: boolean;
 }
 
 export interface TrainingCard {
@@ -143,6 +146,7 @@ export interface TrainingCard {
   value_to_use: string; // e.g., "5 or less"
   bonus: string;        // e.g., "+4"
   image: string;
+  one_per_deck: boolean;
 }
 
 export interface BasicUniverse {
@@ -152,6 +156,7 @@ export interface BasicUniverse {
   value_to_use: string; // e.g., "6 or greater", "7 or greater"
   bonus: string;        // e.g., "+2", "+3"
   image: string;
+  one_per_deck: boolean;
 }
 
 export interface PowerCard {

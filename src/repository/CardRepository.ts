@@ -41,12 +41,15 @@ export interface CardRepository {
   getAllTeamwork(): Promise<Teamwork[]>;
 
   // Ally Universe management
+  getAllyUniverseById(id: string): Promise<AllyUniverse | undefined>;
   getAllAllyUniverse(): Promise<AllyUniverse[]>;
 
   // Training management
+  getTrainingById(id: string): Promise<TrainingCard | undefined>;
   getAllTraining(): Promise<TrainingCard[]>;
 
   // Basic Universe management
+  getBasicUniverseById(id: string): Promise<BasicUniverse | undefined>;
   getAllBasicUniverse(): Promise<BasicUniverse[]>;
 
   // Image management

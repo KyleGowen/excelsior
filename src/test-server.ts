@@ -659,6 +659,28 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
     }
     
     const { cardType, cardId, quantity, selectedAlternateImage } = req.body;
+    
+    // Import validation functions from main index
+    const { validateCardAddition, checkIfCardIsOnePerDeck } = require('./index');
+    
+    // Validate deck building rules before adding card
+    const validationError = await validateCardAddition(deck.cards || [], cardType, cardId, quantity || 1);
+    if (validationError) {
+      return res.status(400).json({ success: false, error: validationError });
+    }
+    
+    // Additional validation: Check if card is one-per-deck and already exists in deck
+    const isOnePerDeck = await checkIfCardIsOnePerDeck(cardType, cardId);
+    if (isOnePerDeck) {
+      const cardExists = await deckRepository.doesCardExistInDeck(req.params.id, cardType, cardId);
+      if (cardExists) {
+        return res.status(400).json({ 
+          success: false, 
+          error: `Cannot add more copies of this card - it is limited to one per deck` 
+        });
+      }
+    }
+    
     const success = await deckRepository.addCardToDeck(req.params.id, cardType, cardId, quantity, selectedAlternateImage);
     if (!success) {
       return res.status(400).json({ success: false, error: 'Failed to add card to deck' });

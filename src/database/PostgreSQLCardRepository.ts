@@ -188,6 +188,7 @@ export class PostgreSQLCardRepository implements CardRepository {
       const card = result.rows[0];
       return {
         id: card.id,
+        name: card.name, // Added name field
         power_type: card.power_type,
         value: card.value,
         image: card.image_path,
@@ -345,7 +346,8 @@ export class PostgreSQLCardRepository implements CardRepository {
         mission_set: event.mission_set,
         game_effect: event.game_effect,
         flavor_text: event.flavor_text,
-        image: event.image_path
+        image: event.image_path,
+        one_per_deck: event.one_per_deck || false
       };
     } finally {
       client.release();
@@ -363,7 +365,8 @@ export class PostgreSQLCardRepository implements CardRepository {
         mission_set: event.mission_set,
         game_effect: event.game_effect,
         flavor_text: event.flavor_text,
-        image: event.image_path
+        image: event.image_path,
+        one_per_deck: event.one_per_deck || false
       }));
     } finally {
       client.release();
@@ -491,7 +494,8 @@ export class PostgreSQLCardRepository implements CardRepository {
         followup_attack_types: card.followup_attack_types,
         first_attack_bonus: card.first_attack_bonus,
         second_attack_bonus: card.second_attack_bonus,
-        image: card.image_path
+        image: card.image_path,
+        one_per_deck: card.one_per_deck || false
       };
     } finally {
       client.release();
@@ -512,7 +516,8 @@ export class PostgreSQLCardRepository implements CardRepository {
         followup_attack_types: card.followup_attack_types,
         first_attack_bonus: card.first_attack_bonus,
         second_attack_bonus: card.second_attack_bonus,
-        image: card.image_path
+        image: card.image_path,
+        one_per_deck: card.one_per_deck || false
       }));
     } finally {
       client.release();
@@ -520,6 +525,33 @@ export class PostgreSQLCardRepository implements CardRepository {
   }
 
   // Ally Universe methods
+  async getAllyUniverseById(id: string): Promise<AllyUniverse | undefined> {
+    const client = await this.pool.connect();
+    try {
+      const result = await client.query('SELECT * FROM ally_universe_cards WHERE id = $1', [id]);
+      
+      if (result.rows.length === 0) {
+        return undefined;
+      }
+      
+      const card = result.rows[0];
+      return {
+        id: card.id,
+        card_name: card.name,
+        card_type: card.card_type,
+        stat_to_use: card.stat_to_use,
+        stat_type_to_use: card.stat_type_to_use,
+        attack_value: card.attack_value,
+        attack_type: card.attack_type,
+        card_text: card.card_text,
+        image: card.image_path,
+        one_per_deck: card.one_per_deck || false
+      };
+    } finally {
+      client.release();
+    }
+  }
+
   async getAllAllyUniverse(): Promise<AllyUniverse[]> {
     const client = await this.pool.connect();
     try {
@@ -534,7 +566,8 @@ export class PostgreSQLCardRepository implements CardRepository {
         attack_value: card.attack_value,
         attack_type: card.attack_type,
         card_text: card.card_text,
-        image: card.image_path
+        image: card.image_path,
+        one_per_deck: card.one_per_deck || false
       }));
     } finally {
       client.release();
@@ -542,10 +575,35 @@ export class PostgreSQLCardRepository implements CardRepository {
   }
 
   // Training methods
+  async getTrainingById(id: string): Promise<TrainingCard | undefined> {
+    const client = await this.pool.connect();
+    try {
+      const result = await client.query('SELECT id, name, type_1, type_2, value_to_use, bonus, image_path, one_per_deck FROM training_cards WHERE id = $1', [id]);
+      
+      if (result.rows.length === 0) {
+        return undefined;
+      }
+      
+      const card = result.rows[0];
+      return {
+        id: card.id,
+        card_name: card.name,
+        type_1: card.type_1,
+        type_2: card.type_2,
+        value_to_use: card.value_to_use,
+        bonus: card.bonus,
+        image: card.image_path,
+        one_per_deck: card.one_per_deck || false
+      };
+    } finally {
+      client.release();
+    }
+  }
+
   async getAllTraining(): Promise<TrainingCard[]> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query('SELECT id, name, type_1, type_2, value_to_use, bonus, image_path FROM training_cards ORDER BY universe, name');
+      const result = await client.query('SELECT id, name, type_1, type_2, value_to_use, bonus, image_path, one_per_deck FROM training_cards ORDER BY universe, name');
       
       return result.rows.map(card => ({
         id: card.id,
@@ -554,7 +612,8 @@ export class PostgreSQLCardRepository implements CardRepository {
         type_2: card.type_2,
         value_to_use: card.value_to_use,
         bonus: card.bonus,
-        image: card.image_path
+        image: card.image_path,
+        one_per_deck: card.one_per_deck || false
       }));
     } finally {
       client.release();
@@ -562,6 +621,30 @@ export class PostgreSQLCardRepository implements CardRepository {
   }
 
   // Basic Universe methods
+  async getBasicUniverseById(id: string): Promise<BasicUniverse | undefined> {
+    const client = await this.pool.connect();
+    try {
+      const result = await client.query('SELECT * FROM basic_universe_cards WHERE id = $1', [id]);
+      
+      if (result.rows.length === 0) {
+        return undefined;
+      }
+      
+      const card = result.rows[0];
+      return {
+        id: card.id,
+        card_name: card.name,
+        type: card.type,
+        value_to_use: card.value_to_use,
+        bonus: card.bonus,
+        image: card.image_path,
+        one_per_deck: card.one_per_deck || false
+      };
+    } finally {
+      client.release();
+    }
+  }
+
   async getAllBasicUniverse(): Promise<BasicUniverse[]> {
     const client = await this.pool.connect();
     try {
@@ -573,7 +656,8 @@ export class PostgreSQLCardRepository implements CardRepository {
         type: card.type,
         value_to_use: card.value_to_use,
         bonus: card.bonus,
-        image: card.image_path
+        image: card.image_path,
+        one_per_deck: card.one_per_deck || false
       }));
     } finally {
       client.release();

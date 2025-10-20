@@ -67,6 +67,10 @@ class MockDeckRepository {
     return [];
   }
 
+  async doesCardExistInDeck(deckId: string, cardType: string, cardId: string): Promise<boolean> {
+    return false;
+  }
+
   async userOwnsDeck(deckId: string, userId: string): Promise<boolean> {
     const deck = this.decks.get(deckId);
     return deck && deck.user_id === userId;

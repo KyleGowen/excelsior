@@ -558,6 +558,30 @@ export class PostgreSQLDeckRepository implements DeckRepository {
     }
   }
 
+  /**
+   * Check if a specific card already exists in a deck
+   * @param deckId - The deck ID to check
+   * @param cardType - The card type (character, special, power, etc.)
+   * @param cardId - The card ID to check for
+   * @returns Promise<boolean> - true if card exists in deck, false otherwise
+   */
+  async doesCardExistInDeck(deckId: string, cardType: string, cardId: string): Promise<boolean> {
+    const client = await this.pool.connect();
+    try {
+      const result = await client.query(
+        'SELECT 1 FROM deck_cards WHERE deck_id = $1 AND card_type = $2 AND card_id = $3 LIMIT 1',
+        [deckId, cardType, cardId]
+      );
+      
+      return result.rows.length > 0;
+    } catch (error) {
+      console.error('Error checking if card exists in deck:', error);
+      return false;
+    } finally {
+      client.release();
+    }
+  }
+
   async removeCardFromDeck(deckId: string, cardType: string, cardId: string, quantity: number = 1): Promise<boolean> {
     const client = await this.pool.connect();
     try {

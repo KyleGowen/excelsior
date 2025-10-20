@@ -7765,6 +7765,18 @@
                 const deckCardsEditor = document.querySelector('.deck-cards-editor');
                 const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
                 
+                // Check "One Per Deck" limit before increasing quantity
+                const card = deckEditorCards[index];
+                const cardData = window.availableCardsMap.get(card.cardId);
+                console.log('🔍 One-per-deck check for +1 button on', card.type, card.cardId, ':', cardData);
+                const isOnePerDeck = cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
+                if (isOnePerDeck) {
+                    console.log('🚫 Card is one-per-deck, blocking quantity increase');
+                    const cardName = cardData.name || cardData.card_name || 'Unknown Card';
+                    showNotification(`Cannot add more than 1 copy of "${cardName}" - One Per Deck`, 'error');
+                    return;
+                }
+                
                 // Increase quantity by 1
                 deckEditorCards[index].quantity += 1;
                 
@@ -9166,35 +9178,21 @@
                 }
             }
             
-            // Check "One Per Deck" limit before adding
-            if (cardType === 'special') {
-                const specialCard = window.availableCardsMap.get(cardId);
-                if (specialCard && specialCard.one_per_deck) {
-                    // Check if we already have this "One Per Deck" card in the deck
-                    const existingOnePerDeckCard = deckEditorCards.find(card => 
-                        card.type === 'special' && card.cardId === cardId
-                    );
-                    
-                    if (existingOnePerDeckCard) {
-                        showNotification(`Cannot add more than 1 copy of "${cardName}" - One Per Deck`, 'error');
-                        return;
-                    }
-                }
-            }
-            
-            // Check "One Per Deck" limit for power cards
-            if (cardType === 'power') {
-                const powerCard = window.availableCardsMap.get(cardId);
-                if (powerCard && powerCard.one_per_deck) {
-                    // Check if we already have this "One Per Deck" power card in the deck
-                    const existingOnePerDeckCard = deckEditorCards.find(card => 
-                        card.type === 'power' && card.cardId === cardId
-                    );
-                    
-                    if (existingOnePerDeckCard) {
-                        showNotification(`Cannot add more than 1 copy of "${cardName}" - One Per Deck`, 'error');
-                        return;
-                    }
+            // Check "One Per Deck" limit for all card types
+            const cardData = window.availableCardsMap.get(cardId);
+            console.log('🔍 One-per-deck check for', cardType, cardId, ':', cardData);
+            const isOnePerDeck = cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
+            if (isOnePerDeck) {
+                console.log('🚫 Card is one-per-deck, checking if already in deck');
+                // Check if we already have this "One Per Deck" card in the deck
+                const existingOnePerDeckCard = deckEditorCards.find(card => 
+                    card.type === cardType && card.cardId === cardId
+                );
+                
+                if (existingOnePerDeckCard) {
+                    console.log('❌ Card already exists in deck, blocking addition');
+                    showNotification(`Cannot add more than 1 copy of "${cardName}" - One Per Deck`, 'error');
+                    return;
                 }
             }
             
@@ -9254,7 +9252,8 @@
                 
                 // Check if this is a "One Per Deck" card
                 const card = window.availableCardsMap.get(cardId);
-                if (card && card.one_per_deck) {
+                const isOnePerDeck = card && (card.one_per_deck === true || card.is_one_per_deck === true);
+                if (isOnePerDeck) {
                     showNotification(`Cannot add more than 1 copy of "${cardName}" - One Per Deck`, 'error');
                     return;
                 }

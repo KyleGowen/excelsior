@@ -27,8 +27,62 @@ const DECK_RULES = {
   MAX_LOCATIONS: 1
 };
 
+// Helper function to check if a card is one-per-deck
+export async function checkIfCardIsOnePerDeck(cardType: string, cardId: string): Promise<boolean> {
+  try {
+    // Get the card data from the appropriate repository based on card type
+    let cardData: any = null;
+    
+    switch (cardType) {
+      case 'character':
+        cardData = await cardRepository.getCharacterById(cardId);
+        break;
+      case 'special':
+        cardData = await cardRepository.getSpecialCardById(cardId);
+        break;
+      case 'power':
+        cardData = await cardRepository.getPowerCardById(cardId);
+        break;
+      case 'mission':
+        cardData = await cardRepository.getMissionById(cardId);
+        break;
+      case 'event':
+        cardData = await cardRepository.getEventById(cardId);
+        break;
+      case 'aspect':
+        cardData = await cardRepository.getAspectById(cardId);
+        break;
+      case 'location':
+        cardData = await cardRepository.getLocationById(cardId);
+        break;
+      case 'advanced-universe':
+        cardData = await cardRepository.getAdvancedUniverseById(cardId);
+        break;
+      case 'teamwork':
+        cardData = await cardRepository.getTeamworkById(cardId);
+        break;
+      case 'ally-universe':
+        cardData = await cardRepository.getAllyUniverseById(cardId);
+        break;
+      case 'training':
+        cardData = await cardRepository.getTrainingById(cardId);
+        break;
+      case 'basic-universe':
+        cardData = await cardRepository.getBasicUniverseById(cardId);
+        break;
+      default:
+        return false; // Unknown card type, not one-per-deck
+    }
+    
+    return cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
+  } catch (error) {
+    console.error('Error checking if card is one-per-deck:', error);
+    return false; // Default to not one-per-deck if we can't determine
+  }
+}
+
 // Function to validate adding a single card to a deck
-async function validateCardAddition(currentCards: any[], cardType: string, cardId: string, quantity: number): Promise<string | null> {
+export async function validateCardAddition(currentCards: any[], cardType: string, cardId: string, quantity: number): Promise<string | null> {
   // Create a copy of current cards and add the new card
   const testCards = [...currentCards];
   
@@ -82,26 +136,30 @@ async function validateCardAddition(currentCards: any[], cardType: string, cardI
   }
   
   // Rule 4: Check for "One Per Deck" cards
+  // Check if the card being added is one-per-deck
+  const isOnePerDeck = await checkIfCardIsOnePerDeck(cardType, cardId);
+  if (isOnePerDeck) {
+    // Check if this card already exists in the current deck (before adding)
+    const existingCard = currentCards.find(card => card.type === cardType && card.cardId === cardId);
+    if (existingCard && existingCard.quantity > 0) {
+      return `Cannot add more copies of "${cardId}" - this card is limited to one per deck`;
+    }
+  }
+  
+  // Check all cards in the test deck for one-per-deck violations
   const onePerDeckCards: { [key: string]: number } = {};
-  testCards.forEach(card => {
-    // This is a simplified check - in a real implementation, you'd need to check the card database
-    // for the "one_per_deck" property, but for now we'll assume certain cards are one per deck
-    if (card.type === 'character' || card.type === 'location') {
+  for (const card of testCards) {
+    const isOnePerDeck = await checkIfCardIsOnePerDeck(card.type, card.cardId);
+    if (isOnePerDeck) {
       const cardKey = `${card.type}_${card.cardId}`;
       onePerDeckCards[cardKey] = (onePerDeckCards[cardKey] || 0) + card.quantity;
     }
-  });
+  }
   
   for (const [cardKey, count] of Object.entries(onePerDeckCards)) {
     if (count > DECK_RULES.MAX_COPIES_ONE_PER_DECK) {
-      // Provide user-friendly error messages based on card type
-      if (cardKey.startsWith('character_')) {
-        return 'Unable to add character, may only have 1 of each character.';
-      } else if (cardKey.startsWith('location_')) {
-        return 'Unable to add location, may only have 1 per deck.';
-      } else {
-        return `Card can only have ${DECK_RULES.MAX_COPIES_ONE_PER_DECK} copy per deck (would have ${count})`;
-      }
+      const [type, cardId] = cardKey.split('_', 2);
+      return `Cannot add more copies of "${cardId}" - this ${type} card is limited to one per deck`;
     }
   }
   
@@ -942,6 +1000,18 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
     const validationError = await validateCardAddition(currentDeck.cards || [], cardType, cardId, quantity || 1);
     if (validationError) {
       return res.status(400).json({ success: false, error: validationError });
+    }
+    
+    // Additional validation: Check if card is one-per-deck and already exists in deck
+    const isOnePerDeck = await checkIfCardIsOnePerDeck(cardType, cardId);
+    if (isOnePerDeck) {
+      const cardExists = await deckRepository.doesCardExistInDeck(req.params.id, cardType, cardId);
+      if (cardExists) {
+        return res.status(400).json({ 
+          success: false, 
+          error: `Cannot add more copies of this card - it is limited to one per deck` 
+        });
+      }
     }
     
     const success = await deckRepository.addCardToDeck(req.params.id, cardType, cardId, quantity || 1, selectedAlternateImage);

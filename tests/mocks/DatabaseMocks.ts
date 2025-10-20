@@ -157,7 +157,8 @@ const mockEvents: Event[] = [
     mission_set: 'Greek Mythology',
     game_effect: 'All characters gain +1 energy',
     flavor_text: 'The ancient games begin',
-    image: '/images/olympic_games.jpg'
+    image: '/images/olympic_games.jpg',
+    one_per_deck: false
   }
 ];
 
@@ -196,7 +197,8 @@ const mockTeamwork: Teamwork[] = [
     followup_attack_types: 'Combat',
     first_attack_bonus: '2',
     second_attack_bonus: '1',
-    image: '/images/teamwork_energy.jpg'
+    image: '/images/teamwork_energy.jpg',
+    one_per_deck: false
   }
 ];
 
@@ -210,7 +212,8 @@ const mockAllyUniverse: AllyUniverse[] = [
     attack_value: '3',
     attack_type: 'Combat',
     card_text: 'Gain wisdom from Athena',
-    image: '/images/athena_wisdom.jpg'
+    image: '/images/athena_wisdom.jpg',
+    one_per_deck: false
   }
 ];
 
@@ -222,7 +225,8 @@ const mockTrainingCards: TrainingCard[] = [
     type_2: 'Combat',
     value_to_use: '5 or less',
     bonus: '+2',
-    image: '/images/combat_training.jpg'
+    image: '/images/combat_training.jpg',
+    one_per_deck: false
   }
 ];
 
@@ -233,7 +237,8 @@ const mockBasicUniverse: BasicUniverse[] = [
     type: 'Energy',
     value_to_use: '6 or greater',
     bonus: '+2',
-    image: '/images/basic_energy.jpg'
+    image: '/images/basic_energy.jpg',
+    one_per_deck: false
   }
 ];
 

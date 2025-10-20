@@ -250,7 +250,30 @@ export class DeckValidationService {
             }
         }
 
-        // Rule 8: Power and universe cards must be usable by characters
+        // Rule 8: One-per-deck cards validation
+        const onePerDeckCards: { [key: string]: number } = {};
+        for (const card of cards) {
+            const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+            const isOnePerDeck = availableCard && (availableCard.one_per_deck === true || availableCard.is_one_per_deck === true);
+            if (isOnePerDeck) {
+                const cardKey = `${card.type}_${card.cardId}`;
+                onePerDeckCards[cardKey] = (onePerDeckCards[cardKey] || 0) + (card.quantity || 1);
+            }
+        }
+        
+        for (const [cardKey, count] of Object.entries(onePerDeckCards)) {
+            if (count > 1) {
+                const [type, cardId] = cardKey.split('_', 2);
+                const availableCard = availableCardsMap.get(cardKey);
+                const cardName = availableCard ? availableCard.name : cardId;
+                errors.push({
+                    rule: 'one_per_deck_violation',
+                    message: `"${cardName}" is limited to one per deck (found ${count})`
+                });
+            }
+        }
+
+        // Rule 9: Power and universe cards must be usable by characters
         const deckPowerCards = cards.filter(card => card.type === 'power');
         const universeCards = cards.filter(card => 
             ['basic_universe', 'advanced_universe', 'teamwork', 'ally_universe', 'training'].includes(card.type)

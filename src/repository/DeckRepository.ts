@@ -29,6 +29,7 @@ export interface DeckRepository {
   removeAllCardsFromDeck(deckId: string): Promise<boolean>;
   replaceAllCardsInDeck(deckId: string, cards: Array<{cardType: string, cardId: string, quantity: number, selectedAlternateImage?: string}>): Promise<boolean>;
   getDeckCards(deckId: string): Promise<DeckCard[]>;
+  doesCardExistInDeck(deckId: string, cardType: string, cardId: string): Promise<boolean>;
   
   // Authorization
   userOwnsDeck(deckId: string, userId: string): Promise<boolean>;
