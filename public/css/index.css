@@ -5064,6 +5064,24 @@
             box-shadow: none;
         }
 
+        /* Disabled location rows when limit reached */
+        #locations-tbody tr.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        #locations-tbody tr.disabled .add-to-deck-btn {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
+
+        #locations-tbody tr.disabled img {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
+
         .empty-deck-message {
             position: absolute;
             top: 50%;

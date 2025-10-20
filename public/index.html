@@ -6703,6 +6703,9 @@
                 
                 // Update power cards filter to show correct counts after deck display
                 updatePowerCardsFilter();
+                
+                // Update location limit status after deck display
+                updateLocationLimitStatus();
             });
         }
         // Apply background images to character, power, location, special, mission, and aspect cards in deck editor
@@ -7659,6 +7662,9 @@
             // Update mission limit status without affecting collapse state
             updateMissionLimitStatus();
             
+            // Update location limit status without affecting collapse state
+            updateLocationLimitStatus();
+            
             // Update One Per Deck limit status
             updateOnePerDeckLimitStatus();
             
@@ -7940,6 +7946,11 @@
                 updateCharacterLimitStatus();
             }
             
+            // Update location limit status if removing locations
+            if (cardType === 'location') {
+                updateLocationLimitStatus();
+            }
+            
             // Update mission limit status if removing missions
             if (cardType === 'mission') {
                 updateMissionLimitStatus();
@@ -8187,6 +8198,58 @@
                     card.classList.remove('disabled');
                     card.setAttribute('draggable', 'true');
                     card.title = '';
+                }
+            });
+        }
+
+        // Function to update just the location limit status without affecting collapse state
+        function updateLocationLimitStatus() {
+            const locationRows = document.querySelectorAll('#locations-tbody tr');
+            const currentLocationCount = window.deckEditorCards
+                .filter(card => card.type === 'location')
+                .length;
+            
+            console.log('updateLocationLimitStatus - Current location count:', currentLocationCount, 'deckEditorCards:', window.deckEditorCards);
+            
+            const isLocationLimitReached = currentLocationCount >= 1;
+            
+            locationRows.forEach(row => {
+                // Skip the loading row - check if the row itself has the loading class
+                if (row.classList.contains('loading')) {
+                    return;
+                }
+                
+                const addButton = row.querySelector('.add-to-deck-btn');
+                const img = row.querySelector('img');
+                
+                if (isLocationLimitReached) {
+                    // Disable the row
+                    row.classList.add('disabled');
+                    if (addButton) {
+                        addButton.disabled = true;
+                        addButton.style.opacity = '0.5';
+                        addButton.style.cursor = 'not-allowed';
+                        addButton.title = 'Location limit reached (max 1)';
+                    }
+                    if (img) {
+                        img.style.opacity = '0.5';
+                        img.style.cursor = 'not-allowed';
+                        img.title = 'Location limit reached (max 1)';
+                    }
+                } else {
+                    // Enable the row
+                    row.classList.remove('disabled');
+                    if (addButton) {
+                        addButton.disabled = false;
+                        addButton.style.opacity = '1';
+                        addButton.style.cursor = 'pointer';
+                        addButton.title = '';
+                    }
+                    if (img) {
+                        img.style.opacity = '1';
+                        img.style.cursor = 'pointer';
+                        img.title = '';
+                    }
                 }
             });
         }
@@ -9477,6 +9540,9 @@
             
             // Update mission limit status without affecting collapse state
             updateMissionLimitStatus();
+            
+            // Update location limit status without affecting collapse state
+            updateLocationLimitStatus();
             
             // Update One Per Deck limit status
             updateOnePerDeckLimitStatus();
