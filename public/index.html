@@ -7662,6 +7662,7 @@
             // Update Assist limit status
             updateAssistLimitStatus();
             updateAmbushLimitStatus();
+            updateFortificationLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
@@ -7893,6 +7894,7 @@
             // Update Assist limit status
             updateAssistLimitStatus();
             updateAmbushLimitStatus();
+            updateFortificationLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
@@ -7975,6 +7977,7 @@
             // Update Assist limit status
             updateAssistLimitStatus();
             updateAmbushLimitStatus();
+            updateFortificationLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
@@ -8470,6 +8473,49 @@
                             }
                         } else if (isAmbush && !hasOtherAmbush) {
                             // This is an Ambush card but no ambush is in the deck - enable it
+                            cardElement.classList.remove('disabled');
+                            cardElement.setAttribute('draggable', 'true');
+                            cardElement.title = '';
+                        }
+                    }
+                });
+            }
+        }
+
+        // Function to update Fortification card dimming status
+        function updateFortificationLimitStatus() {
+            // Get all Fortification cards currently in the deck
+            const fortificationCardsInDeck = new Set();
+            window.deckEditorCards.forEach(card => {
+                const cardData = window.availableCardsMap.get(card.cardId);
+                if (cardData && cardData.is_fortification === true) {
+                    fortificationCardsInDeck.add(card.cardId);
+                }
+            });
+            
+            // Update all aspect card items for fortification dimming
+            const aspectCardItems = document.querySelectorAll('.card-item[data-type="aspect"][data-id]');
+            if (aspectCardItems && aspectCardItems.forEach) {
+                aspectCardItems.forEach(cardElement => {
+                    const cardId = cardElement.getAttribute('data-id');
+                    
+                    if (cardId) {
+                        const cardData = window.availableCardsMap.get(cardId);
+                        const isFortification = cardData && cardData.is_fortification === true;
+                        const isInDeck = fortificationCardsInDeck.has(cardId);
+                        const hasOtherFortification = fortificationCardsInDeck.size > 0;
+                        
+                        if (isFortification && (isInDeck || hasOtherFortification)) {
+                            // This is a Fortification card and either it's in the deck or another fortification is in the deck - dim it
+                            cardElement.classList.add('disabled');
+                            cardElement.setAttribute('draggable', 'false');
+                            if (isInDeck) {
+                                cardElement.title = 'Fortification - already in deck';
+                            } else {
+                                cardElement.title = 'Fortification - another fortification already selected';
+                            }
+                        } else if (isFortification && !hasOtherFortification) {
+                            // This is a Fortification card but no fortification is in the deck - enable it
                             cardElement.classList.remove('disabled');
                             cardElement.setAttribute('draggable', 'true');
                             cardElement.title = '';
@@ -9624,6 +9670,21 @@
                 }
             }
             
+            // Check Fortification limit for aspect cards
+            const isFortification = cardData && cardData.is_fortification === true;
+            if (isFortification) {
+                // Check if we already have any fortification card in the deck
+                const hasExistingFortification = window.deckEditorCards.some(card => {
+                    const cardData = window.availableCardsMap.get(card.cardId);
+                    return cardData && cardData.is_fortification === true;
+                });
+                
+                if (hasExistingFortification) {
+                    showNotification(`Cannot add more than 1 Fortification to a deck`, 'error');
+                    return;
+                }
+            }
+            
             // Check mission limit before adding
             if (cardType === 'mission') {
                 const currentMissionCount = window.deckEditorCards
@@ -9750,6 +9811,7 @@
             // Update Assist limit status
             updateAssistLimitStatus();
             updateAmbushLimitStatus();
+            updateFortificationLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();

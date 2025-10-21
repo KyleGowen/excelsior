@@ -17,6 +17,7 @@
 14. [Cataclysm Card Dimming](#cataclysm-card-dimming)
 15. [Assist Card Dimming](#assist-card-dimming)
 16. [Ambush Card Dimming](#ambush-card-dimming)
+17. [Fortification Card Dimming](#fortification-card-dimming)
 
 ## Overview
 
@@ -1088,3 +1089,127 @@ function updateAmbushLimitStatus() {
 - **Unit Tests**: `tests/unit/ambush-backend-validation.test.ts`
 - **Frontend Tests**: `tests/unit/ambush-frontend-validation.test.ts`
 - **Test Scenarios**: Adding/removing ambush cards, multiple ambush handling, visual state consistency
+```
+
+## Fortification Card Dimming
+
+### Overview
+Aspect cards marked with `fortifications=TRUE` in the database receive visual dimming when added to a deck, enforcing the "one fortification per deck" rule.
+
+### Visual Dimming System
+When a "Fortification" card is added to the deck, all available aspect cards with `fortifications=TRUE` are visually dimmed to indicate they cannot be selected again.
+
+#### Dimmed State Styling
+- **CSS Class**: `.disabled` applied to card elements
+- **Opacity**: `0.5` (50% transparency)
+- **Cursor**: `not-allowed` (indicates non-interactive)
+- **Draggable**: Set to `false` (prevents drag operations)
+- **Tooltip**: Shows "Fortification - already in deck" or "Fortification - another fortification already selected"
+
+#### Implementation Details
+- **Function**: `updateFortificationLimitStatus()` in `public/index.html`
+- **Trigger**: Called after adding/removing cards and when displaying deck
+- **Scope**: Affects only aspect cards with `fortifications=TRUE`
+- **Database Field**: Uses `fortifications` boolean column from aspects table
+
+### Fortification Card Examples
+The following aspect cards are marked as fortification cards:
+- **Amaru: Dragon Legend**: Legendary dragon fortification
+- **Mallku**: Ancient fortification guardian
+- **Supay**: Underworld fortification spirit
+- **Cheshire Cat**: Mystical fortification entity
+- **Isis**: Divine fortification goddess
+
+### Visual State Management
+#### Adding Cards
+1. Card is added to `window.deckEditorCards` array
+2. `updateFortificationLimitStatus()` is called
+3. All fortification cards in available section are dimmed
+4. Tooltips are updated to show limit status
+
+#### Removing Cards
+1. Card is removed from `window.deckEditorCards` array
+2. `updateFortificationLimitStatus()` is called
+3. Previously dimmed fortification cards are re-enabled
+4. Tooltips are cleared or updated
+
+#### Deck Display
+1. `displayDeckCardsForEditing()` is called
+2. `updateFortificationLimitStatus()` is called at the end
+3. Ensures dimming state is consistent with current deck contents
+
+### CSS Implementation
+```css
+.card-item.disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+.card-item.disabled:hover {
+    /* Maintain dimmed appearance on hover */
+    opacity: 0.5 !important;
+}
+```
+
+### JavaScript Integration
+```javascript
+function updateFortificationLimitStatus() {
+    // Get all Fortification cards currently in the deck
+    const fortificationCardsInDeck = new Set();
+    window.deckEditorCards.forEach(card => {
+        const cardData = window.availableCardsMap.get(card.cardId);
+        if (cardData && cardData.is_fortification === true) {
+            fortificationCardsInDeck.add(card.cardId);
+        }
+    });
+    
+    // Update all aspect card items for fortification dimming
+    const aspectCardItems = document.querySelectorAll('.card-item[data-type="aspect"][data-id]');
+    if (aspectCardItems && aspectCardItems.forEach) {
+        aspectCardItems.forEach(cardElement => {
+            const cardId = cardElement.getAttribute('data-id');
+            
+            if (cardId) {
+                const cardData = window.availableCardsMap.get(cardId);
+                const isFortification = cardData && cardData.is_fortification === true;
+                const isInDeck = fortificationCardsInDeck.has(cardId);
+                const hasOtherFortification = fortificationCardsInDeck.size > 0;
+                
+                if (isFortification && (isInDeck || hasOtherFortification)) {
+                    // This is a Fortification card and either it's in the deck or another fortification is in the deck - dim it
+                    cardElement.classList.add('disabled');
+                    cardElement.setAttribute('draggable', 'false');
+                    if (isInDeck) {
+                        cardElement.title = 'Fortification - already in deck';
+                    } else {
+                        cardElement.title = 'Fortification - another fortification already selected';
+                    }
+                } else if (isFortification && !hasOtherFortification) {
+                    // This is a Fortification card but no fortification is in the deck - enable it
+                    cardElement.classList.remove('disabled');
+                    cardElement.setAttribute('draggable', 'true');
+                    cardElement.title = '';
+                }
+            }
+        });
+    }
+}
+```
+
+### Backend Validation
+- **API Endpoint**: `/api/decks/:id/cards` (POST)
+- **Validation Function**: `checkIfCardIsFortification()` in `src/index.ts`
+- **Error Message**: "Cannot add more than 1 Fortification to a deck"
+- **Database Query**: Checks `fortifications` column in `aspects` table
+
+### Integration Points
+- **Card Addition**: Called after `addCardToEditor()`
+- **Card Removal**: Called after `removeCardFromEditor()`
+- **Deck Display**: Called after `displayDeckCardsForEditing()`
+- **Filter Updates**: Called after `updateAspectCardsFilter()`
+
+### Testing Coverage
+- **Unit Tests**: `tests/unit/fortification-backend-validation.test.ts`
+- **Frontend Tests**: `tests/unit/fortification-frontend-validation.test.ts`
+- **Test Scenarios**: Adding/removing fortification cards, multiple fortification handling, visual state consistency

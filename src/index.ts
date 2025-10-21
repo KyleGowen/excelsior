@@ -75,6 +75,22 @@ export async function checkIfCardIsAmbush(cardType: string, cardId: string): Pro
   }
 }
 
+// Helper function to check if a card is fortification
+export async function checkIfCardIsFortification(cardType: string, cardId: string): Promise<boolean> {
+  try {
+    // Only aspect cards can be fortification
+    if (cardType !== 'aspect') {
+      return false;
+    }
+    
+    const cardData = await cardRepository.getAspectById(cardId);
+    return !!(cardData && cardData.is_fortification === true);
+  } catch (error) {
+    console.error('Error checking if card is fortification:', error);
+    return false; // Default to not fortification if we can't determine
+  }
+}
+
 // Helper function to check if a card is one-per-deck
 export async function checkIfCardIsOnePerDeck(cardType: string, cardId: string): Promise<boolean> {
   try {
@@ -248,6 +264,19 @@ export async function validateCardAddition(currentCards: any[], cardType: string
   
   if (ambushCards.length > 1) {
     return `Cannot add more than 1 Ambush to a deck (would have ${ambushCards.length})`;
+  }
+  
+  // Rule 8: Check for Fortification cards (only one fortification per deck)
+  const fortificationCards: any[] = [];
+  for (const card of testCards) {
+    const isFortification = await checkIfCardIsFortification(card.type, card.cardId);
+    if (isFortification) {
+      fortificationCards.push(card);
+    }
+  }
+  
+  if (fortificationCards.length > 1) {
+    return `Cannot add more than 1 Fortification to a deck (would have ${fortificationCards.length})`;
   }
   
   return null; // No validation errors
@@ -1166,6 +1195,29 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
             return res.status(400).json({ 
               success: false, 
               error: `Cannot add more than 1 Ambush to a deck` 
+            });
+          }
+        }
+
+        // Additional validation: Check if card is fortification and deck already has a fortification
+        const isFortification = await checkIfCardIsFortification(cardType, cardId);
+        if (isFortification) {
+          // Check if deck already has any fortification card
+          let hasExistingFortification = false;
+          if (currentDeck.cards) {
+            for (const card of currentDeck.cards) {
+              const cardIsFortification = await checkIfCardIsFortification(card.type, card.cardId);
+              if (cardIsFortification) {
+                hasExistingFortification = true;
+                break;
+              }
+            }
+          }
+          
+          if (hasExistingFortification) {
+            return res.status(400).json({ 
+              success: false, 
+              error: `Cannot add more than 1 Fortification to a deck` 
             });
           }
         }
