@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excelsior Deckbuilder - Characters Database</title>
+    <!-- Database View CSS - Step 2 Refactoring -->
+    <link rel="stylesheet" href="/css/database-view.css">
+    <!-- Original embedded styles removed and moved to database-view.css -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            margin: 0;
+            padding: 20px;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #B0BEC5;
+            margin-top: 5px;
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+        }
+
+        .tab-container {
+            margin-bottom: 20px;
+        }
+
+        .tab-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-button.active {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+        .search-input::placeholder {
+            color: #B0BEC5;
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #ffffff;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .filter-row th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+        }
+
+        .filter-input, .header-filter, .filter-select {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 0.8rem;
+        }
+
+        .filter-input::placeholder, .header-filter::placeholder {
+            color: #B0BEC5;
+        }
+
+        .column-filters {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .range-inputs {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .range-inputs input {
+            flex: 1;
+        }
+
+        .range-inputs span {
+            color: #B0BEC5;
+            font-size: 0.8rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: #ffffff;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .power-cards-checkbox-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .checkbox-column {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .clear-filters-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .clear-filters-btn:hover {
+            background: #d32f2f;
+        }
+
+        .toggle-button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .toggle-button:hover {
+            background: #1976D2;
+        }
+
+        .advanced-universe-controls, .aspects-controls {
+            margin-bottom: 15px;
+        }
+
+        .inherent-abilities-filters {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: #ffffff;
+        }
+
+        .toggle-label input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .toggle-text {
+            color: #ffffff;
+        }
+
+        .loading {
+            text-align: center;
+            color: #B0BEC5;
+            font-style: italic;
+        }
+
+        .error {
+            color: #f44336;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background-color: #1a1a2e;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            width: 80%;
+            max-width: 800px;
+            color: #ffffff;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #ffffff;
+        }
+
+        /* Login form styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #4CAF50;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #B0BEC5;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+        .form-group input::placeholder {
+            color: #B0BEC5;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: #45a049;
+        }
+
+        .login-error {
+            color: #f44336;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .logout-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: #d32f2f;
+        }
+
+        .user-welcome {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        .create-user-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+
+        .create-user-btn:hover {
+            background: #1976D2;
+        }
+    <!-- Embedded styles removed - now using database-view.css -->
+</head>
+<body>
+    <!-- Login Form -->
+    <div id="loginContainer" class="login-container">
+        <form id="loginForm" class="login-form">
+            <h2>🔐 Login to Database</h2>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
+            </div>
+            <button type="submit" class="login-btn">Log In</button>
+            <div id="loginError" class="login-error">Invalid username or password</div>
+        </form>
+    </div>
+
+    <div class="container" id="mainContainer" style="display: none;">
+        <!-- Global Navigation Component -->
+        <div id="globalNav"></div>
+
+        <!-- Database View Section - Loaded from template -->
+        <div id="database-view-container">
+            <!-- Database view content will be loaded here -->
+        </div>
+
+        <!-- Deck Builder Section -->
+        <div id="deck-builder" class="deck-builder-section" style="display: none;">
+            <!-- Deck List -->
+            <div class="deck-list-container">
+                <div class="deck-stats">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <div class="stat-number" id="total-decks">-</div>
+                            <div class="stat-label">Total Decks</div>
+                        </div>
+                        <button class="create-deck-btn" onclick="showCreateDeckModal()">Create New Deck</button>
+                    </div>
+                </div>
+                
+                <div class="deck-list" id="deck-list">
+                    <!-- Decks will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modalImage" src="" alt="Card Image">
+            <div id="modalCaption"></div>
+        </div>
+    </div>
+
+    <!-- Create Deck Modal -->
+    <div id="createDeckModal" class="modal" onclick="closeCreateDeckModal()">
+        <div class="modal-content create-deck-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+            <h3>Create New Deck</h3>
+            </div>
+            <form id="createDeckForm">
+                <div class="form-row">
+                <div class="form-group">
+                    <label for="deckName">Deck Name:</label>
+                    <input type="text" id="deckName" name="deckName" required placeholder="Enter deck name">
+                </div>
+                </div>
+                <div class="form-row">
+                <div class="form-group">
+                        <label for="deckDescription">Deck Description:</label>
+                    <textarea id="deckDescription" name="deckDescription" placeholder="Enter deck description"></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="characterSelect">Characters:</label>
+                        <div class="character-selection">
+                            <select id="characterSelect" class="character-dropdown">
+                                <option value="">Select a character to add...</option>
+                            </select>
+                            <div id="selectedCharacters" class="selected-characters">
+                                <!-- Selected characters will appear here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeCreateDeckModal()" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View/Edit Deck Modal -->
+    <div id="viewDeckModal" class="modal" onclick="closeViewDeckModal()">
+        <div class="modal-content large-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="viewDeckTitle">Deck Details</h3>
+                <button class="close-btn" onclick="closeViewDeckModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="deck-info-section">
+                    <div class="deck-metadata">
+                        <div class="metadata-item">
+                            <label>Description:</label>
+                            <span id="viewDeckDescription">-</span>
+                        </div>
+                        <div class="metadata-item">
+                            <label>Created:</label>
+                            <span id="viewDeckCreated">-</span>
+                        </div>
+                        <div class="metadata-item">
+                            <label>Last Modified:</label>
+                            <span id="viewDeckModified">-</span>
+                        </div>
+                        <div class="metadata-item">
+                            <label>Total Cards:</label>
+                            <span id="viewDeckCardCount">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="deck-cards-section">
+                    <div class="section-header">
+                        <h4>Cards in Deck</h4>
+                        <button class="add-cards-btn" onclick="showAddCardsModal()">Add Cards</button>
+                    </div>
+                    <div class="deck-cards-list" id="deckCardsList">
+                        <!-- Cards will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Add Cards Modal -->
+    <div id="addCardsModal" class="modal" onclick="closeAddCardsModal()">
+        <div class="modal-content large-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Add Cards to Deck</h3>
+                <button class="close-btn" onclick="closeAddCardsModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="card-search-section">
+                    <div class="search-controls">
+                        <select id="cardTypeFilter" class="card-type-select">
+                            <option value="">All Card Types</option>
+                            <option value="character">Characters</option>
+                            <option value="special">Special Cards</option>
+                            <option value="location">Locations</option>
+                            <option value="mission">Missions</option>
+                            <option value="event">Events</option>
+                            <option value="aspect">Aspects</option>
+                            <option value="advanced-universe">Advanced Universe</option>
+                            <option value="teamwork">Universe: Teamwork</option>
+                            <option value="ally-universe">Universe: Ally</option>
+                            <option value="training">Universe: Training</option>
+                            <option value="basic-universe">Universe: Basic</option>
+                            <option value="power">Power Cards</option>
+                        </select>
+                        <input type="text" id="cardSearchInput" class="card-search-input" placeholder="Search cards...">
+                    </div>
+                    <div class="card-results" id="cardResults">
+                        <!-- Search results will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Hover Modal -->
+    <div id="cardHoverModal" class="card-hover-modal">
+        <div class="card-hover-content">
+            <img id="cardHoverImage" src="" alt="Card" class="card-hover-image">
+            <div id="cardHoverCaption" class="card-hover-caption"></div>
+        </div>
+    </div>
+
+    <!-- Deck Editor Modal -->
+    <div id="deckEditorModal" class="modal" onclick="closeDeckEditor()">
+        <div class="modal-content large-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="deck-editor-title-section">
+                    <div class="deck-title-with-validation">
+                        <h3 id="deckEditorTitle">Edit Deck</h3>
+                        <span id="deckTitleValidationBadge" class="deck-validation-badge"></span>
+                    </div>
+                    <p id="deckEditorDescription" class="deck-description"></p>
+                </div>
+                <div class="deck-editor-actions">
+                    <button class="btn-secondary" onclick="closeDeckEditor()">Cancel</button>
+                    <button id="saveDeckButton" class="btn-primary" onclick="saveDeckChanges()">Save Changes</button>
+                </div>
+            </div>
+            
+            <!-- Deck Summary Section -->
+            <div class="deck-summary-section">
+                <div class="deck-summary-content">
+                    <div class="deck-summary-stats">
+                        <div class="summary-stat">
+                            <span class="stat-label">Total Cards:</span>
+                            <span class="stat-value" id="deckTotalCards">0</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-label">Max Energy:</span>
+                            <span class="stat-value" id="deckMaxEnergy">0</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-label">Max Combat:</span>
+                            <span class="stat-value" id="deckMaxCombat">0</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-label">Max Brute Force:</span>
+                            <span class="stat-value" id="deckMaxBruteForce">0</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-label">Max Intelligence:</span>
+                            <span class="stat-value" id="deckMaxIntelligence">0</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-label">Total Threat:</span>
+                            <span class="stat-value" id="deckTotalThreat">0</span>
+                        </div>
+                    </div>
+                    <div class="deck-summary-validation" id="deckSummaryValidation">
+                        <!-- Validation content will be displayed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="deck-editor-layout">
+                                           <!-- Left Pane: Deck List View -->
+                       <div class="deck-pane">
+                           <div class="deck-cards-editor" id="deckCardsEditor">
+                               <!-- Deck cards will be displayed here -->
+                           </div>
+
+                       </div>
+                    
+                    <!-- Resizable Divider -->
+                    <div class="resizable-divider" id="resizableDivider"></div>
+                    
+                    <!-- Right Pane: Card Selector -->
+                    <div class="card-selector-pane">
+                        <h4>Available Cards</h4>
+                        <div class="card-categories" id="cardCategories">
+                            <!-- Card categories will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div> <!-- Close mainContainer -->
+
+    <script>
+        // Utility function
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Top-level app tab switching
+        function switchAppTab(tabId) {
+            const databaseView = document.getElementById('database-view');
+            const deckBuilder = document.getElementById('deck-builder');
+
+            // Hide both, then show selected
+            databaseView.style.display = 'none';
+            deckBuilder.style.display = 'none';
+            document.getElementById(tabId).style.display = 'block';
+
+            // Update active styles
+            document.querySelectorAll('.app-tab-button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Load decks when switching to deck builder tab
+            if (tabId === 'deck-builder') {
+                loadDecks();
+            }
+        }
+
+        // Load and display characters
+        async function loadCharacters() {
+            try {
+                const response = await fetch('/api/characters');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayCharacters(data.data);
+                    updateStats(data.data);
+                } else {
+                    throw new Error('Failed to load characters');
+                }
+            } catch (error) {
+                console.error('Error loading characters:', error);
+                document.getElementById('characters-tbody').innerHTML = 
+                    '<tr><td colspan="8" class="error">Error loading characters. Please try again.</td></tr>';
+            }
+        }
+
+        // Load and display special cards
+        async function loadSpecialCards() {
+            try {
+                const response = await fetch('/api/special-cards');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displaySpecialCards(data.data);
+                    updateStats(data.data);
+                } else {
+                    throw new Error('Failed to load special cards');
+                }
+            } catch (error) {
+                console.error('Error loading special cards:', error);
+                document.getElementById('special-cards-tbody').innerHTML = 
+                    '<tr><td colspan="5" class="error">Error loading special cards. Please try again.</td></tr>';
+            }
+        }
+
+        // Load and display advanced universe cards
+        async function loadAdvancedUniverse() {
+            try {
+                const response = await fetch('/api/advanced-universe');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayAdvancedUniverse(data.data);
+                    updateStats(data.data);
+                } else {
+                    throw new Error('Failed to load advanced universe cards');
+                }
+            } catch (error) {
+                console.error('Error loading advanced universe cards:', error);
+                document.getElementById('advanced-universe-tbody').innerHTML = 
+                    '<tr><td colspan="5" class="error">Error loading advanced universe cards. Please try again.</td></tr>';
+            }
+        }
+
+        // Load and display locations
+        async function loadLocations() {
+            try {
+                const response = await fetch('/api/locations');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayLocations(data.data);
+                    updateStats(data.data);
+                } else {
+                    throw new Error('Failed to load locations');
+                }
+            } catch (error) {
+                console.error('Error loading locations:', error);
+                document.getElementById('locations-tbody').innerHTML = 
+                    '<tr><td colspan="4" class="error">Error loading locations. Please try again.</td></tr>';
+            }
+        }
+
+        // Load and display aspects
+        async function loadAspects() {
+            try {
+                const response = await fetch('/api/aspects');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayAspects(data.data);
+                    updateStats(data.data);
+                } else {
+                    throw new Error('Failed to load aspects');
+                }
+            } catch (error) {
+                console.error('Error loading aspects:', error);
+                document.getElementById('aspects-tbody').innerHTML = 
+                    '<tr><td colspan="6" class="error">Error loading aspects. Please try again.</td></tr>';
+            }
+        }
+
+        // Load and display missions
+        async function loadMissions() {
+            try {
+                const response = await fetch('/api/missions');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayMissions(data.data);
+                    updateStats(data.data);
+                } else {
+                    throw new Error('Failed to load missions');
+                }
+            } catch (error) {
+                console.error('Error loading missions:', error);
+                document.getElementById('missions-tbody').innerHTML = 
+                    '<tr><td colspan="3" class="error">Error loading missions. Please try again.</td></tr>';
+            }
+        }
+
+        // Load and display events
+        async function loadEvents() {
+            try {
+                const response = await fetch('/api/events');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayEvents(data.data);
+                    updateStats(data.data);
+                } else {
+                    throw new Error('Failed to load events');
+                }
+            } catch (error) {
+                console.error('Error loading events:', error);
+                document.getElementById('events-tbody').innerHTML = 
+                    '<tr><td colspan="5" class="error">Error loading events. Please try again.</td></tr>';
+            }
+        }
+
+        // Load and display teamwork cards
+        async function loadTeamwork() {
+            try {
+                const response = await fetch('/api/teamwork');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayTeamwork(data.data);
+                    updateStats(data.data);
+                } else {
+                    throw new Error('Failed to load teamwork cards');
+                }
+            } catch (error) {
+                console.error('Error loading teamwork cards:', error);
+                document.getElementById('teamwork-tbody').innerHTML = 
+                    '<tr><td colspan="7" class="error">Error loading teamwork cards. Please try again.</td></tr>';
+            }
+        }
+
+        // Load and display ally universe cards
+        async function loadAllyUniverse() {
+            try {
+                const response = await fetch('/api/ally-universe');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayAllyUniverse(data.data);
+                    updateStats(data.data);
+                } else {
+                    throw new Error('Failed to load ally universe cards');
+                }
+            } catch (error) {
+                console.error('Error loading ally universe cards:', error);
+                document.getElementById('ally-universe-tbody').innerHTML = 
+                    '<tr><td colspan="7" class="error">Error loading ally universe cards. Please try again.</td></tr>';
+            }
+        }
+
+        // Load and display training cards
+        async function loadTraining() {
+            try {
+                const response = await fetch('/api/training');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayTraining(data.data);
+                    updateStats(data.data);
+                } else {
+                    throw new Error('Failed to load training cards');
+                }
+            } catch (error) {
+                console.error('Error loading training cards:', error);
+                document.getElementById('training-tbody').innerHTML = 
+                    '<tr><td colspan="6" class="error">Error loading training cards. Please try again.</td></tr>';
+            }
+        }
+
+        // Load and display basic universe cards
+        async function loadBasicUniverse() {
+            try {
+                const response = await fetch('/api/basic-universe');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayBasicUniverse(data.data);
+                    updateStats(data.data);
+                } else {
+                    throw new Error('Failed to load basic universe cards');
+                }
+            } catch (error) {
+                console.error('Error loading basic universe cards:', error);
+                document.getElementById('basic-universe-tbody').innerHTML = 
+                    '<tr><td colspan="5" class="error">Error loading basic universe cards. Please try again.</td></tr>';
+            }
+        }
+
+        // Load and display power cards
+        async function loadPowerCards() {
+            try {
+                const response = await fetch('/api/power-cards');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayPowerCards(data.data);
+                    updateStats(data.data);
+                } else {
+                    throw new Error('Failed to load power cards');
+                }
+            } catch (error) {
+                console.error('Error loading power cards:', error);
+                document.getElementById('power-cards-tbody').innerHTML = 
+                    '<tr><td colspan="3" class="error">Error loading power cards. Please try again.</td></tr>';
+            }
+        }
+
+        // Load and display user decks
+        async function loadDecks() {
+            try {
+                const response = await fetch('/api/decks');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayDecks(data.data);
+                    updateStats(data.data);
+                } else {
+                    throw new Error('Failed to load decks');
+                }
+            } catch (error) {
+                console.error('Error loading decks:', error);
+                document.getElementById('deck-list').innerHTML = 
+                    '<div class="error">Error loading decks. Please try again.</div>';
+            }
+        }
+
+        // Display functions for each card type
+        function displayCharacters(characters) {
+            const tbody = document.getElementById('characters-tbody');
+            tbody.innerHTML = '';
+            
+            characters.forEach(character => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="/resources/cards/images/characters/${character.image}" alt="${character.name}" style="width: 50px; height: auto; cursor: pointer;" onclick="showModal('/resources/cards/images/characters/${character.image}', '${character.name}')"></td>
+                    <td>${character.name}</td>
+                    <td>${character.energy}</td>
+                    <td>${character.combat}</td>
+                    <td>${character.brute_force}</td>
+                    <td>${character.intelligence}</td>
+                    <td>${character.threat_level}</td>
+                    <td>${character.inherent_ability || 'None'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displaySpecialCards(specialCards) {
+            const tbody = document.getElementById('special-cards-tbody');
+            tbody.innerHTML = '';
+            
+            specialCards.forEach(card => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="/resources/cards/images/special/${card.image}" alt="${card.name}" style="width: 50px; height: auto; cursor: pointer;" onclick="showModal('/resources/cards/images/special/${card.image}', '${card.name}')"></td>
+                    <td>${card.name}</td>
+                    <td>${card.character}</td>
+                    <td>${card.card_effect}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayAdvancedUniverse(cards) {
+            const tbody = document.getElementById('advanced-universe-tbody');
+            tbody.innerHTML = '';
+            
+            cards.forEach(card => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="/resources/cards/images/advanced-universe/${card.image}" alt="${card.name}" style="width: 50px; height: auto; cursor: pointer;" onclick="showModal('/resources/cards/images/advanced-universe/${card.image}', '${card.name}')"></td>
+                    <td>${card.name}</td>
+                    <td>${card.character}</td>
+                    <td>${card.card_effect}</td>
+                    <td class="one-per-deck-advanced-column">${card.one_per_deck ? 'Yes' : 'No'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayLocations(locations) {
+            const tbody = document.getElementById('locations-tbody');
+            tbody.innerHTML = '';
+            
+            locations.forEach(location => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="/resources/cards/images/locations/${location.image}" alt="${location.name}" style="width: 50px; height: auto; cursor: pointer;" onclick="showModal('/resources/cards/images/locations/${location.image}', '${location.name}')"></td>
+                    <td>${location.name}</td>
+                    <td>${location.threat_level}</td>
+                    <td>${location.special_ability || 'None'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayAspects(aspects) {
+            const tbody = document.getElementById('aspects-tbody');
+            tbody.innerHTML = '';
+            
+            aspects.forEach(aspect => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="/resources/cards/images/aspects/${aspect.image}" alt="${aspect.card_name}" style="width: 50px; height: auto; cursor: pointer;" onclick="showModal('/resources/cards/images/aspects/${aspect.image}', '${aspect.card_name}')"></td>
+                    <td>${aspect.card_name}</td>
+                    <td>${aspect.location}</td>
+                    <td>${aspect.card_effect}</td>
+                    <td class="fortifications-column hidden">${aspect.fortifications || 'N/A'}</td>
+                    <td class="one-per-deck-column hidden">${aspect.one_per_deck ? 'Yes' : 'No'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayMissions(missions) {
+            const tbody = document.getElementById('missions-tbody');
+            tbody.innerHTML = '';
+            
+            missions.forEach(mission => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="/resources/cards/images/missions/${mission.image}" alt="${mission.card_name}" style="width: 50px; height: auto; cursor: pointer;" onclick="showModal('/resources/cards/images/missions/${mission.image}', '${mission.card_name}')"></td>
+                    <td>${mission.mission_set}</td>
+                    <td>${mission.card_name}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayEvents(events) {
+            const tbody = document.getElementById('events-tbody');
+            tbody.innerHTML = '';
+            
+            events.forEach(event => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="/resources/cards/images/events/${event.image}" alt="${event.name}" style="width: 50px; height: auto; cursor: pointer;" onclick="showModal('/resources/cards/images/events/${event.image}', '${event.name}')"></td>
+                    <td>${event.name}</td>
+                    <td>${event.mission_set}</td>
+                    <td>${event.game_effect}</td>
+                    <td>${event.flavor_text || 'None'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayTeamwork(teamwork) {
+            const tbody = document.getElementById('teamwork-tbody');
+            tbody.innerHTML = '';
+            
+            teamwork.forEach(card => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="/resources/cards/images/teamwork/${card.image}" alt="${card.card_type}" style="width: 50px; height: auto; cursor: pointer;" onclick="showModal('/resources/cards/images/teamwork/${card.image}', '${card.card_type}')"></td>
+                    <td>${card.card_type}</td>
+                    <td>${card.to_use}</td>
+                    <td>${card.acts_as}</td>
+                    <td>${card.followup_attack_types || 'N/A'}</td>
+                    <td>${card.first_attack_bonus || 'N/A'}</td>
+                    <td>${card.second_attack_bonus || 'N/A'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayAllyUniverse(allyUniverse) {
+            const tbody = document.getElementById('ally-universe-tbody');
+            tbody.innerHTML = '';
+            
+            allyUniverse.forEach(card => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="/resources/cards/images/ally-universe/${card.image}" alt="${card.card_name}" style="width: 50px; height: auto; cursor: pointer;" onclick="showModal('/resources/cards/images/ally-universe/${card.image}', '${card.card_name}')"></td>
+                    <td>${card.card_name}</td>
+                    <td>${card.stat_to_use}</td>
+                    <td>${card.stat_type}</td>
+                    <td>${card.attack_value}</td>
+                    <td>${card.attack_type}</td>
+                    <td>${card.card_text}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayTraining(training) {
+            const tbody = document.getElementById('training-tbody');
+            tbody.innerHTML = '';
+            
+            training.forEach(card => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="/resources/cards/images/training/${card.image}" alt="${card.card_name}" style="width: 50px; height: auto; cursor: pointer;" onclick="showModal('/resources/cards/images/training/${card.image}', '${card.card_name}')"></td>
+                    <td>${card.card_name}</td>
+                    <td>${card.type_1}</td>
+                    <td>${card.type_2 || 'N/A'}</td>
+                    <td>${card.value_to_use}</td>
+                    <td>${card.bonus}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayBasicUniverse(basicUniverse) {
+            const tbody = document.getElementById('basic-universe-tbody');
+            tbody.innerHTML = '';
+            
+            basicUniverse.forEach(card => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="/resources/cards/images/basic-universe/${card.image}" alt="${card.card_name}" style="width: 50px; height: auto; cursor: pointer;" onclick="showModal('/resources/cards/images/basic-universe/${card.image}', '${card.card_name}')"></td>
+                    <td>${card.card_name}</td>
+                    <td>${card.type}</td>
+                    <td>${card.value}</td>
+                    <td>${card.bonus}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayPowerCards(powerCards) {
+            const tbody = document.getElementById('power-cards-tbody');
+            tbody.innerHTML = '';
+            
+            powerCards.forEach(card => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="/resources/cards/images/power/${card.image}" alt="${card.power_type}" style="width: 50px; height: auto; cursor: pointer;" onclick="showModal('/resources/cards/images/power/${card.image}', '${card.power_type}')"></td>
+                    <td>${card.power_type}</td>
+                    <td>${card.value}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayDecks(decks) {
+            const deckList = document.getElementById('deck-list');
+            deckList.innerHTML = '';
+            
+            if (decks.length === 0) {
+                deckList.innerHTML = '<div class="no-decks">No decks found. Create your first deck!</div>';
+                return;
+            }
+            
+            decks.forEach(deck => {
+                const deckElement = document.createElement('div');
+                deckElement.className = 'deck-item';
+                deckElement.innerHTML = `
+                    <div class="deck-info">
+                        <h3>${deck.name}</h3>
+                        <p>${deck.description || 'No description'}</p>
+                        <div class="deck-stats">
+                            <span>Cards: ${deck.cards ? deck.cards.length : 0}</span>
+                            <span>Created: ${new Date(deck.created_at).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                    <div class="deck-actions">
+                        <button onclick="viewDeck('${deck.id}')" class="btn-primary">View</button>
+                        <button onclick="editDeck('${deck.id}')" class="btn-secondary">Edit</button>
+                        <button onclick="deleteDeck('${deck.id}')" class="btn-danger">Delete</button>
+                    </div>
+                `;
+                deckList.appendChild(deckElement);
+            });
+        }
+
+        // Update statistics
+        function updateStats(data) {
+            // This function would update the statistics display
+            // Implementation depends on the specific data structure
+        }
+
+        // Tab switching function
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.table-container').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            const selectedTab = document.getElementById(tabName + '-tab');
+            if (selectedTab) {
+                selectedTab.style.display = 'block';
+            }
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Modal functions
+        function showModal(imageSrc, caption) {
+            document.getElementById('modalImage').src = imageSrc;
+            document.getElementById('modalCaption').textContent = caption;
+            document.getElementById('imageModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // Authentication functions
+        let currentUser = null;
+
+        async function checkAuthentication() {
+            try {
+                const response = await fetch('/api/auth/check');
+                const data = await response.json();
+                
+                if (data.success && data.user) {
+                    currentUser = data.user;
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('mainContainer').style.display = 'block';
+                    return { currentUser: data.user };
+                } else {
+                    document.getElementById('loginContainer').style.display = 'flex';
+                    document.getElementById('mainContainer').style.display = 'none';
+                    return { currentUser: null };
+                }
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                document.getElementById('loginContainer').style.display = 'flex';
+                document.getElementById('mainContainer').style.display = 'none';
+                return { currentUser: null };
+            }
+        }
+
+        async function login(username, password) {
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentUser = data.user;
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('mainContainer').style.display = 'block';
+                    await loadUserData();
+                } else {
+                    showLoginError(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showLoginError('Login failed. Please try again.');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('mainContainer').style.display = 'none';
+        }
+
+        function showLoginError(message) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideLoginError() {
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        async function loadUserData() {
+            // Load user-specific data
+            loadCharacters();
+            loadSpecialCards();
+            loadAdvancedUniverse();
+            loadMissions();
+            loadLocations();
+            loadEvents();
+            loadAspects();
+            loadTeamwork();
+            loadAllyUniverse();
+            loadTraining();
+            loadBasicUniverse();
+            loadPowerCards();
+            loadDecks();
+            updateStats();
+        }
+
+        // Load and initialize global navigation component
+        async function loadGlobalNav() {
+            try {
+                const response = await fetch('/components/globalNav.html');
+                const html = await response.text();
+                document.getElementById('globalNav').innerHTML = html;
+                
+                // Initialize the global navigation
+                initializeGlobalNav();
+            } catch (error) {
+                console.error('Failed to load global navigation:', error);
+            }
+        }
+
+        // Load database view template
+        async function loadDatabaseViewTemplate() {
+            try {
+                const response = await fetch('/templates/database-view-complete.html');
+                const html = await response.text();
+                document.getElementById('database-view-container').innerHTML = html;
+                console.log('✅ Database view template loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading database view template:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load database view template first
+            await loadDatabaseViewTemplate();
+            
+            // Load global navigation
+            await loadGlobalNav();
+            
+            // Check authentication first
+            const authResult = await checkAuthentication();
+            currentUser = authResult.currentUser; // Update global currentUser after checkAuthentication
+
+            // Update user welcome message and show/hide Create User button based on role
+            if (typeof updateUserWelcome === 'function') {
+                updateUserWelcome();
+            }
+            
+            // Login form event listener
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                hideLoginError();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (!username || !password) {
+                    showLoginError('Please enter both username and password');
+                    return;
+                }
+                
+                await login(username, password);
+            });
+            
+            // Logout button event listener
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            
+            // Load data only if authenticated
+            if (currentUser) {
+            loadAspects();
+            loadEvents();
+            loadTeamwork();
+            loadAllyUniverse();
+            loadTraining();
+            loadBasicUniverse();
+            loadPowerCards();
+            setupSearch();
+            }
+            
+            // Add location filter event listeners
+            document.getElementById('location-threat-min').addEventListener('input', applyLocationFilters);
+            document.getElementById('location-threat-max').addEventListener('input', applyLocationFilters);
+            
+            // Update all stats after loading data
+            updateStats();
+        });
+
+        // Filter functions
+        function applyLocationFilters() {
+            const minThreat = document.getElementById('location-threat-min').value;
+            const maxThreat = document.getElementById('location-threat-max').value;
+            
+            const rows = document.querySelectorAll('#locations-tbody tr');
+            rows.forEach(row => {
+                const threatLevel = parseInt(row.cells[2].textContent);
+                let show = true;
+                
+                if (minThreat && threatLevel < parseInt(minThreat)) {
+                    show = false;
+                }
+                if (maxThreat && threatLevel > parseInt(maxThreat)) {
+                    show = false;
+                }
+                
+                row.style.display = show ? '' : 'none';
+            });
+        }
+
+        function clearLocationFilters() {
+            document.getElementById('location-threat-min').value = '';
+            document.getElementById('location-threat-max').value = '';
+            applyLocationFilters();
+        }
+
+        function setupSearch() {
+            // Setup search functionality
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', debounce(performSearch, 300));
+            }
+        }
+
+        function performSearch() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const activeTab = document.querySelector('.table-container[style*="block"]');
+            
+            if (!activeTab) return;
+            
+            const rows = activeTab.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // Deck management functions
+        function showCreateDeckModal() {
+            document.getElementById('createDeckModal').style.display = 'block';
+        }
+
+        function closeCreateDeckModal() {
+            document.getElementById('createDeckModal').style.display = 'none';
+        }
+
+        function showViewDeckModal() {
+            document.getElementById('viewDeckModal').style.display = 'block';
+        }
+
+        function closeViewDeckModal() {
+            document.getElementById('viewDeckModal').style.display = 'none';
+        }
+
+        function showAddCardsModal() {
+            document.getElementById('addCardsModal').style.display = 'block';
+        }
+
+        function closeAddCardsModal() {
+            document.getElementById('addCardsModal').style.display = 'none';
+        }
+
+        function showDeckEditor() {
+            document.getElementById('deckEditorModal').style.display = 'block';
+        }
+
+        function closeDeckEditor() {
+            document.getElementById('deckEditorModal').style.display = 'none';
+        }
+
+        function viewDeck(deckId) {
+            // Implementation for viewing a deck
+            console.log('Viewing deck:', deckId);
+        }
+
+        function editDeck(deckId) {
+            // Implementation for editing a deck
+            console.log('Editing deck:', deckId);
+        }
+
+        function deleteDeck(deckId) {
+            // Implementation for deleting a deck
+            console.log('Deleting deck:', deckId);
+        }
+
+        function saveDeckChanges() {
+            // Implementation for saving deck changes
+            console.log('Saving deck changes');
+        }
+
+        // Initialize global navigation
+        function initializeGlobalNav() {
+            // Implementation for initializing global navigation
+            console.log('Global navigation initialized');
+        }
+
+        // Filter functions for different card types
+        function clearSpecialCardFilters() {
+            // Implementation for clearing special card filters
+            console.log('Clearing special card filters');
+        }
+
+        function filterSpecialCardsByCharacter() {
+            // Implementation for filtering special cards by character
+            console.log('Filtering special cards by character');
+        }
+
+        function clearAdvancedUniverseFilters() {
+            // Implementation for clearing advanced universe filters
+            console.log('Clearing advanced universe filters');
+        }
+
+        function filterAdvancedUniverse() {
+            // Implementation for filtering advanced universe cards
+            console.log('Filtering advanced universe cards');
+        }
+
+        function clearAspectsFilters() {
+            // Implementation for clearing aspects filters
+            console.log('Clearing aspects filters');
+        }
+
+        function clearMissionsFilters() {
+            // Implementation for clearing missions filters
+            console.log('Clearing missions filters');
+        }
+
+        function clearEventsFilters() {
+            // Implementation for clearing events filters
+            console.log('Clearing events filters');
+        }
+
+        function clearTeamworkFilters() {
+            // Implementation for clearing teamwork filters
+            console.log('Clearing teamwork filters');
+        }
+
+        function clearAllyUniverseFilters() {
+            // Implementation for clearing ally universe filters
+            console.log('Clearing ally universe filters');
+        }
+
+        function clearTrainingFilters() {
+            // Implementation for clearing training filters
+            console.log('Clearing training filters');
+        }
+
+        function clearBasicUniverseFilters() {
+            // Implementation for clearing basic universe filters
+            console.log('Clearing basic universe filters');
+        }
+
+        function clearPowerCardFilters() {
+            // Implementation for clearing power card filters
+            console.log('Clearing power card filters');
+        }
+
+        // Toggle functions for column visibility
+        function toggleOnePerDeckAdvancedColumn() {
+            // Implementation for toggling one per deck column in advanced universe
+            console.log('Toggling one per deck advanced column');
+        }
+
+        function toggleFortificationsColumn() {
+            // Implementation for toggling fortifications column
+            console.log('Toggling fortifications column');
+        }
+
+        function toggleOnePerDeckColumn() {
+            // Implementation for toggling one per deck column
+            console.log('Toggling one per deck column');
+        }
+
+        // Load available cards for deck editor
+        async function loadAvailableCards() {
+            try {
+                const cardCategories = document.getElementById('cardCategories');
+                
+                // Save current collapse state before refreshing
+                const currentCollapseState = {};
+                const existingHeaders = cardCategories.querySelectorAll('.card-category-header');
+                existingHeaders.forEach(header => {
+                    const categoryName = header.textContent.split(' (')[0]; // Extract name without count
+                    currentCollapseState[categoryName] = header.classList.contains('collapsed');
+                });
+                
+                cardCategories.innerHTML = '<div class="drag-instructions">Loading available cards...</div>';
+                
+                const categories = [
+                    { type: 'character', name: 'Characters', api: '/api/characters', nameField: 'name' },
+                    { type: 'location', name: 'Locations', api: '/api/locations', nameField: 'name' },
+                    { type: 'special', name: 'Special Cards', api: '/api/special-cards', nameField: 'name' },
+                    { type: 'mission', name: 'Missions', api: '/api/missions', nameField: 'card_name' },
+                    { type: 'event', name: 'Events', api: '/api/events', nameField: 'name' },
+                    { type: 'aspect', name: 'Aspects', api: '/api/aspects', nameField: 'card_name' },
+                    { type: 'advanced-universe', name: 'Advanced Universe', api: '/api/advanced-universe', nameField: 'name' },
+                    { type: 'teamwork', name: 'Universe: Teamwork', api: '/api/teamwork', nameField: 'card_type' },
+                    { type: 'ally-universe', name: 'Universe: Ally', api: '/api/ally-universe', nameField: 'card_name' },
+                    { type: 'training', name: 'Universe: Training', api: '/api/training', nameField: 'card_name' },
+                    { type: 'basic-universe', name: 'Universe: Basic', api: '/api/basic-universe', nameField: 'card_name' },
+                    { type: 'power', name: 'Power Cards', api: '/api/power-cards', nameField: 'power_type' }
+                ];
+                
+                let allCardsLoaded = true;
+                
+                for (const category of categories) {
+                    try {
+                        const response = await fetch(category.api);
+                        const data = await response.json();
+                        
+                        if (data.success && data.data) {
+                            const categoryDiv = document.createElement('div');
+                            categoryDiv.className = 'card-category';
+                            
+                            const header = document.createElement('div');
+                            header.className = 'card-category-header';
+                            if (currentCollapseState[category.name]) {
+                                header.classList.add('collapsed');
+                            }
+                            header.innerHTML = `
+                                <span class="category-name">${category.name}</span>
+                                <span class="card-count">(${data.data.length})</span>
+                                <span class="collapse-indicator">▼</span>
+                            `;
+                            
+                            const content = document.createElement('div');
+                            content.className = 'card-category-content';
+                            if (currentCollapseState[category.name]) {
+                                content.style.display = 'none';
+                            }
+                            
+                            data.data.forEach(card => {
+                                const cardElement = document.createElement('div');
+                                cardElement.className = 'card-item';
+                                cardElement.draggable = true;
+                                cardElement.dataset.type = category.type;
+                                cardElement.dataset.id = card.id;
+                                cardElement.dataset.name = card[category.nameField];
+                                
+                                // Add card-specific attributes
+                                if (category.type === 'character') {
+                                    cardElement.dataset.energy = card.energy;
+                                    cardElement.dataset.combat = card.combat;
+                                    cardElement.dataset.bruteForce = card.brute_force;
+                                    cardElement.dataset.intelligence = card.intelligence;
+                                    cardElement.dataset.threatLevel = card.threat_level;
+                                } else if (category.type === 'location') {
+                                    cardElement.dataset.threatLevel = card.threat_level;
+                                }
+                                
+                                cardElement.innerHTML = `
+                                    <div class="card-content">
+                                        <div class="card-name">${card[category.nameField]}</div>
+                                        <div class="card-stats">
+                                            ${category.type === 'character' ? `
+                                                <div class="stat-row">
+                                                    <span class="stat-label">E:</span>
+                                                    <span class="stat-value">${card.energy}</span>
+                                                </div>
+                                                <div class="stat-row">
+                                                    <span class="stat-label">C:</span>
+                                                    <span class="stat-value">${card.combat}</span>
+                                                </div>
+                                                <div class="stat-row">
+                                                    <span class="stat-label">BF:</span>
+                                                    <span class="stat-value">${card.brute_force}</span>
+                                                </div>
+                                                <div class="stat-row">
+                                                    <span class="stat-label">I:</span>
+                                                    <span class="stat-value">${card.intelligence}</span>
+                                                </div>
+                                                <div class="stat-row">
+                                                    <span class="stat-label">TL:</span>
+                                                    <span class="stat-value">${card.threat_level}</span>
+                                                </div>
+                                            ` : category.type === 'location' ? `
+                                                <div class="stat-row">
+                                                    <span class="stat-label">TL:</span>
+                                                    <span class="stat-value">${card.threat_level}</span>
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                `;
+                                
+                                content.appendChild(cardElement);
+                            });
+                            
+                            categoryDiv.appendChild(header);
+                            categoryDiv.appendChild(content);
+                            cardCategories.appendChild(categoryDiv);
+                            
+                            // Add click handler for collapse/expand
+                            header.addEventListener('click', () => {
+                                header.classList.toggle('collapsed');
+                                content.style.display = content.style.display === 'none' ? 'block' : 'none';
+                            });
+                        }
+                    } catch (error) {
+                        console.error(`Error loading ${category.name}:`, error);
+                        allCardsLoaded = false;
+                    }
+                }
+                
+                if (allCardsLoaded) {
+                    console.log('✅ All available cards loaded successfully');
+                } else {
+                    console.warn('⚠️ Some cards failed to load');
+                }
+                
+            } catch (error) {
+                console.error('Error loading available cards:', error);
+                document.getElementById('cardCategories').innerHTML = 
+                    '<div class="error">Error loading available cards. Please try again.</div>';
+            }
+        }
+    </script>
+</body>
+</html>
