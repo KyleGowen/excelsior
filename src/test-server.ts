@@ -652,16 +652,266 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
-    // Check if user owns this deck
+    // Check if deck exists and if user owns this deck
     const deck = await deckRepository.getDeckById(req.params.id);
-    if (!deck || deck.user_id !== req.user.id) {
+    if (!deck) {
+      return res.status(404).json({ success: false, error: 'Deck not found.' });
+    }
+    if (deck.user_id !== req.user.id) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
     const { cardType, cardId, quantity, selectedAlternateImage } = req.body;
     
-    // Import validation functions from main index
-    const { validateCardAddition, checkIfCardIsOnePerDeck, checkIfCardIsCataclysm } = require('./index');
+    // Validation functions (copied from main index to avoid importing main server)
+    const validateCardAddition = async (currentCards: any[], cardType: string, cardId: string, quantity: number): Promise<string | null> => {
+      // Create a copy of current cards and add the new card
+      const testCards = [...currentCards];
+      
+      // Add the new card to test deck
+      const existingCardIndex = testCards.findIndex(card => card.type === cardType && card.cardId === cardId);
+      if (existingCardIndex >= 0) {
+        testCards[existingCardIndex] = {
+          ...testCards[existingCardIndex],
+          quantity: testCards[existingCardIndex].quantity + quantity
+        };
+      } else {
+        testCards.push({
+          type: cardType,
+          cardId: cardId,
+          quantity: quantity
+        });
+      }
+      
+      // Count card types
+      const cardCounts: { [key: string]: number } = {};
+      const characterCards: any[] = [];
+      const missionCards: any[] = [];
+      const locationCards: any[] = [];
+      
+      testCards.forEach(card => {
+        const type = card.type;
+        cardCounts[type] = (cardCounts[type] || 0) + card.quantity;
+        
+        if (type === 'character') {
+          characterCards.push(card);
+        } else if (type === 'mission') {
+          missionCards.push(card);
+        } else if (type === 'location') {
+          locationCards.push(card);
+        }
+      });
+      
+      // Rule 1: Exactly 4 characters
+      if (characterCards.length > 4) {
+        return `Deck cannot have more than 4 characters (would have ${characterCards.length})`;
+      }
+      
+      // Rule 2: Exactly 7 mission cards
+      if (missionCards.length > 7) {
+        return `Deck cannot have more than 7 mission cards (would have ${missionCards.length})`;
+      }
+      
+      // Rule 3: Maximum 1 location
+      if (locationCards.length > 1) {
+        return `Deck cannot have more than 1 location (would have ${locationCards.length})`;
+      }
+      
+      // Rule 4: Check for "One Per Deck" cards
+      // Check if the card being added is one-per-deck
+      const isOnePerDeck = await checkIfCardIsOnePerDeck(cardType, cardId);
+      if (isOnePerDeck) {
+        // Check if this card already exists in the current deck (before adding)
+        const existingCard = currentCards.find(card => card.type === cardType && card.cardId === cardId);
+        if (existingCard && existingCard.quantity > 0) {
+          return `Cannot add more copies of "${cardId}" - this card is limited to one per deck`;
+        }
+      }
+      
+      // Check all cards in the test deck for one-per-deck violations
+      const onePerDeckCards: { [key: string]: number } = {};
+      for (const card of testCards) {
+        const isOnePerDeck = await checkIfCardIsOnePerDeck(card.type, card.cardId);
+        if (isOnePerDeck) {
+          const cardKey = `${card.type}_${card.cardId}`;
+          onePerDeckCards[cardKey] = (onePerDeckCards[cardKey] || 0) + card.quantity;
+        }
+      }
+      
+      for (const [cardKey, count] of Object.entries(onePerDeckCards)) {
+        if (count > 1) {
+          const [type, cardId] = cardKey.split('_', 2);
+          return `Cannot add more copies of "${cardId}" - this ${type} card is limited to one per deck`;
+        }
+      }
+      
+      // Rule 5: Check for Cataclysm cards (only one cataclysm per deck)
+      const cataclysmCards: any[] = [];
+      for (const card of testCards) {
+        const isCataclysm = await checkIfCardIsCataclysm(card.type, card.cardId);
+        if (isCataclysm) {
+          cataclysmCards.push(card);
+        }
+      }
+      
+      if (cataclysmCards.length > 1) {
+        return `Cannot add more than 1 Cataclysm to a deck (would have ${cataclysmCards.length})`;
+      }
+      
+      // Rule 6: Check for Assist cards (only one assist per deck)
+      const assistCards: any[] = [];
+      for (const card of testCards) {
+        const isAssist = await checkIfCardIsAssist(card.type, card.cardId);
+        if (isAssist) {
+          assistCards.push(card);
+        }
+      }
+      
+      if (assistCards.length > 1) {
+        return `Cannot add more than 1 Assist to a deck (would have ${assistCards.length})`;
+      }
+      
+      // Rule 7: Check for Ambush cards (only one ambush per deck)
+      const ambushCards: any[] = [];
+      for (const card of testCards) {
+        const isAmbush = await checkIfCardIsAmbush(card.type, card.cardId);
+        if (isAmbush) {
+          ambushCards.push(card);
+        }
+      }
+      
+      if (ambushCards.length > 1) {
+        return `Cannot add more than 1 Ambush to a deck (would have ${ambushCards.length})`;
+      }
+      
+      // Rule 8: Check for Fortification cards (only one fortification per deck)
+      const fortificationCards: any[] = [];
+      for (const card of testCards) {
+        const isFortification = await checkIfCardIsFortification(card.type, card.cardId);
+        if (isFortification) {
+          fortificationCards.push(card);
+        }
+      }
+      
+      if (fortificationCards.length > 1) {
+        return `Cannot add more than 1 Fortification to a deck (would have ${fortificationCards.length})`;
+      }
+      
+      return null; // No validation errors
+    };
+
+    const checkIfCardIsOnePerDeck = async (cardType: string, cardId: string): Promise<boolean> => {
+      try {
+        // Get the card data from the appropriate repository based on card type
+        let cardData: any = null;
+        
+        switch (cardType) {
+          case 'character':
+            cardData = await cardRepository.getCharacterById(cardId);
+            break;
+          case 'special':
+            cardData = await cardRepository.getSpecialCardById(cardId);
+            break;
+          case 'power':
+            cardData = await cardRepository.getPowerCardById(cardId);
+            break;
+          case 'mission':
+            cardData = await cardRepository.getMissionById(cardId);
+            break;
+          case 'event':
+            cardData = await cardRepository.getEventById(cardId);
+            break;
+          case 'aspect':
+            cardData = await cardRepository.getAspectById(cardId);
+            break;
+          case 'location':
+            cardData = await cardRepository.getLocationById(cardId);
+            break;
+          case 'advanced-universe':
+            cardData = await cardRepository.getAdvancedUniverseById(cardId);
+            break;
+          case 'teamwork':
+            cardData = await cardRepository.getTeamworkById(cardId);
+            break;
+          case 'ally-universe':
+            cardData = await cardRepository.getAllyUniverseById(cardId);
+            break;
+          case 'training':
+            cardData = await cardRepository.getTrainingById(cardId);
+            break;
+          case 'basic-universe':
+            cardData = await cardRepository.getBasicUniverseById(cardId);
+            break;
+          default:
+            return false; // Unknown card type, not one-per-deck
+        }
+        
+        return cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
+      } catch (error) {
+        console.error('Error checking if card is one-per-deck:', error);
+        return false; // Default to not one-per-deck if we can't determine
+      }
+    };
+
+    const checkIfCardIsCataclysm = async (cardType: string, cardId: string): Promise<boolean> => {
+      try {
+        // Only special cards can be cataclysm
+        if (cardType !== 'special') {
+          return false;
+        }
+        
+        const cardData = await cardRepository.getSpecialCardById(cardId);
+        return !!(cardData && cardData.is_cataclysm === true);
+      } catch (error) {
+        console.error('Error checking if card is cataclysm:', error);
+        return false; // Default to not cataclysm if we can't determine
+      }
+    };
+
+    const checkIfCardIsAssist = async (cardType: string, cardId: string): Promise<boolean> => {
+      try {
+        // Only special cards can be assist
+        if (cardType !== 'special') {
+          return false;
+        }
+        
+        const cardData = await cardRepository.getSpecialCardById(cardId);
+        return !!(cardData && cardData.is_assist === true);
+      } catch (error) {
+        console.error('Error checking if card is assist:', error);
+        return false; // Default to not assist if we can't determine
+      }
+    };
+
+    const checkIfCardIsAmbush = async (cardType: string, cardId: string): Promise<boolean> => {
+      try {
+        // Only special cards can be ambush
+        if (cardType !== 'special') {
+          return false;
+        }
+        
+        const cardData = await cardRepository.getSpecialCardById(cardId);
+        return !!(cardData && cardData.is_ambush === true);
+      } catch (error) {
+        console.error('Error checking if card is ambush:', error);
+        return false; // Default to not ambush if we can't determine
+      }
+    };
+
+    const checkIfCardIsFortification = async (cardType: string, cardId: string): Promise<boolean> => {
+      try {
+        // Only aspect cards can be fortification
+        if (cardType !== 'aspect') {
+          return false;
+        }
+        
+        const cardData = await cardRepository.getAspectById(cardId);
+        return !!(cardData && cardData.is_fortification === true);
+      } catch (error) {
+        console.error('Error checking if card is fortification:', error);
+        return false; // Default to not fortification if we can't determine
+      }
+    };
     
     // Validate deck building rules before adding card
     const validationError = await validateCardAddition(deck.cards || [], cardType, cardId, quantity || 1);

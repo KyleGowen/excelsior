@@ -1,0 +1,553 @@
+<!-- ========================================
+     DATABASE VIEW COMPLETE TEMPLATE
+     ========================================
+     
+     This file contains the complete database view HTML structure extracted from
+     database.html during the database view refactoring project.
+     
+     Purpose: Complete database view HTML structure
+     Created: Database view refactoring - Step 1
+     Contains: Complete HTML for the database view section with all card type tables
+     
+     ======================================== -->
+
+<div id="database-view" class="database-section" style="display: block;">
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-number" id="total-characters">-</div>
+            <div class="stat-label">Characters</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="total-special-cards">-</div>
+            <div class="stat-label">Special Cards</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="total-missions">-</div>
+            <div class="stat-label">Missions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="total-events">-</div>
+            <div class="stat-label">Events</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="total-locations">-</div>
+            <div class="stat-label">Locations</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="db-total-decks">-</div>
+            <div class="stat-label">Decks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="total-users">-</div>
+            <div class="stat-label">Users</div>
+        </div>
+    </div>
+    <div class="section-header">
+    </div>
+    
+    <div class="tab-container">
+        <div class="tab-row">
+            <button class="tab-button active" onclick="switchTab('characters')">Characters</button>
+            <button class="tab-button" onclick="switchTab('special-cards')">Special Cards</button>
+            <button class="tab-button" onclick="switchTab('advanced-universe')">Advanced Universe</button>
+            <button class="tab-button" onclick="switchTab('locations')">Locations</button>
+            <button class="tab-button" onclick="switchTab('aspects')">Aspects</button>
+            <button class="tab-button" onclick="switchTab('missions')">Missions</button>
+        </div>
+        <div class="tab-row">
+            <button class="tab-button" onclick="switchTab('events')">Events</button>
+            <button class="tab-button" onclick="switchTab('teamwork')">Universe: Teamwork</button>
+            <button class="tab-button" onclick="switchTab('ally-universe')">Universe: Ally</button>
+            <button class="tab-button" onclick="switchTab('training')">Universe: Training</button>
+            <button class="tab-button" onclick="switchTab('basic-universe')">Universe: Basic</button>
+            <button class="tab-button" onclick="switchTab('power-cards')">Power Cards</button>
+        </div>
+    </div>
+
+    <div class="search-container" id="search-container" style="display: none;">
+        <input type="text" class="search-input" id="search-input" placeholder="Search...">
+    </div>
+
+    <div class="table-container" id="characters-tab">
+        <table id="characters-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Energy</th>
+                    <th>Combat</th>
+                    <th>Brute Force</th>
+                    <th>Intelligence</th>
+                    <th>Threat Level</th>
+                    <th>Inherent Abilities</th>
+                </tr>
+                <tr class="filter-row">
+                    <th>
+                        <button id="clear-filters" class="clear-filters-btn">Clear All Filters</button>
+                    </th>
+                    <th>
+                        <input type="text" class="header-filter" placeholder="Search names...">
+                    </th>
+                    <th>
+                        <div class="column-filters">
+                            <input type="number" class="filter-input equals" data-column="energy" placeholder="=" min="0" max="8">
+                            <input type="number" class="filter-input min" data-column="energy" placeholder="Min" min="0" max="8">
+                            <input type="number" class="filter-input max" data-column="energy" placeholder="Max" min="0" max="8">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="column-filters">
+                            <input type="number" class="filter-input equals" data-column="combat" placeholder="=" min="0" max="8">
+                            <input type="number" class="filter-input min" data-column="combat" placeholder="Min" min="0" max="8">
+                            <input type="number" class="filter-input max" data-column="combat" placeholder="Max" min="0" max="8">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="column-filters">
+                            <input type="number" class="filter-input equals" data-column="brute_force" placeholder="=" min="0" max="8">
+                            <input type="number" class="filter-input min" data-column="brute_force" placeholder="Min" min="0" max="8">
+                            <input type="number" class="filter-input max" data-column="brute_force" placeholder="Max" min="0" max="8">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="column-filters">
+                            <input type="number" class="filter-input equals" data-column="intelligence" placeholder="=" min="0" max="8">
+                            <input type="number" class="filter-input min" data-column="intelligence" placeholder="Min" min="0" max="8">
+                            <input type="number" class="filter-input max" data-column="intelligence" placeholder="Max" min="0" max="8">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="column-filters">
+                            <input type="number" class="filter-input equals" data-column="threat_level" placeholder="=" min="0">
+                            <input type="number" class="filter-input min" data-column="threat_level" placeholder="Min" min="0">
+                            <input type="number" class="filter-input max" data-column="threat_level" placeholder="Max" min="0">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="inherent-abilities-filters">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="has-inherent-ability" class="ability-toggle">
+                                <span class="toggle-text">Has Inherent Ability</span>
+                            </label>
+                            <label class="toggle-label">
+                                <input type="checkbox" id="has-no-inherent-ability" class="ability-toggle">
+                                <span class="toggle-text">Has No Inherent Ability</span>
+                            </label>
+                            <input type="text" class="header-filter" placeholder="Search abilities...">
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="characters-tbody">
+                <tr>
+                    <td colspan="8" class="loading">Loading characters...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" id="special-cards-tab" style="display: none;">
+        <table id="special-cards-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Character</th>
+                    <th>Card Effect</th>
+                </tr>
+                <tr class="filter-row">
+                    <th>
+                        <button class="clear-filters-btn" onclick="clearSpecialCardFilters()">Clear All Filters</button>
+                    </th>
+                    <th></th>
+                    <th>
+                        <div class="column-filters">
+                            <select id="character-filter" class="filter-select" onchange="filterSpecialCardsByCharacter()">
+                                <option value="">All Characters</option>
+                            </select>
+                        </div>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="special-cards-tbody">
+                <tr>
+                    <td colspan="5" class="loading">Loading special cards...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" id="advanced-universe-tab" style="display: none;">
+        <div class="advanced-universe-controls">
+            <button id="toggle-one-per-deck-advanced" class="toggle-button" onclick="toggleOnePerDeckAdvancedColumn()">
+                <span id="one-per-deck-advanced-toggle-text">Hide</span> One Per Deck Column
+            </button>
+        </div>
+        <table id="advanced-universe-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Character</th>
+                    <th>Card Effect</th>
+                    <th class="one-per-deck-advanced-column">One Per Deck</th>
+                </tr>
+                <tr class="filter-row">
+                    <th>
+                        <button class="clear-filters-btn" onclick="clearAdvancedUniverseFilters()">Clear All Filters</button>
+                    </th>
+                    <th>
+                        <input type="text" id="advanced-universe-name-filter" placeholder="Search names..." onkeyup="filterAdvancedUniverse()">
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th class="one-per-deck-advanced-column"></th>
+                </tr>
+            </thead>
+            <tbody id="advanced-universe-tbody">
+                <tr>
+                    <td colspan="5" class="loading">Loading advanced universe cards...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" id="locations-tab" style="display: none;">
+        <table id="locations-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Threat Level</th>
+                    <th>Special Ability</th>
+                </tr>
+                <tr class="filter-row">
+                    <th>
+                        <button class="clear-filters-btn" onclick="clearLocationFilters()">Clear All Filters</button>
+                    </th>
+                    <th></th>
+                    <th>
+                        <div class="column-filters">
+                            <div class="range-inputs">
+                                <input type="number" id="location-threat-min" placeholder="Min" min="0" max="3" class="filter-input">
+                                <span>-</span>
+                                <input type="number" id="location-threat-max" placeholder="Max" min="0" max="3" class="filter-input">
+                            </div>
+                        </div>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="locations-tbody">
+                <tr>
+                    <td colspan="4" class="loading">Loading locations...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" id="aspects-tab" style="display: none;">
+        <div class="aspects-controls">
+            <button id="toggle-fortifications" class="toggle-button" onclick="toggleFortificationsColumn()">
+                <span id="fortifications-toggle-text">Show</span> Fortifications Column
+            </button>
+            <button id="toggle-one-per-deck" class="toggle-button" onclick="toggleOnePerDeckColumn()">
+                <span id="one-per-deck-toggle-text">Show</span> One Per Deck Column
+            </button>
+        </div>
+        <table id="aspects-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Card Name</th>
+                    <th>Location</th>
+                    <th>Card Effect</th>
+                    <th class="fortifications-column hidden">Fortifications</th>
+                    <th class="one-per-deck-column hidden">One Per Deck</th>
+                </tr>
+                <tr class="filter-row">
+                    <th>
+                        <button class="clear-filters-btn" onclick="clearAspectsFilters()">Clear All Filters</button>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th class="fortifications-column hidden"></th>
+                    <th class="one-per-deck-column hidden"></th>
+                </tr>
+            </thead>
+            <tbody id="aspects-tbody">
+                <tr>
+                    <td colspan="6" class="loading">Loading aspects...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" id="missions-tab" style="display: none;">
+        <table id="missions-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Mission Set</th>
+                    <th>Card Name</th>
+                </tr>
+                <tr class="filter-row">
+                    <th>
+                        <button class="clear-filters-btn" onclick="clearMissionsFilters()">Clear All Filters</button>
+                    </th>
+                    <th>
+                        <div class="column-filters">
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" value="King of the Jungle" checked> King of the Jungle</label>
+                                <label><input type="checkbox" value="The Call of Cthulhu" checked> The Call of Cthulhu</label>
+                                <label><input type="checkbox" value="Time Wars: Rise of the Gods" checked> Time Wars: Rise of the Gods</label>
+                                <label><input type="checkbox" value="Warlord of Mars" checked> Warlord of Mars</label>
+                            </div>
+                        </div>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="missions-tbody">
+                <tr>
+                    <td colspan="3" class="loading">Loading missions...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" id="events-tab" style="display: none;">
+        <table id="events-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Mission Set</th>
+                    <th>Game Effect</th>
+                    <th>Flavor Text</th>
+                </tr>
+                <tr class="filter-row">
+                    <th>
+                        <button class="clear-filters-btn" onclick="clearEventsFilters()">Clear All Filters</button>
+                    </th>
+                    <th></th>
+                    <th>
+                        <div class="column-filters">
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" value="King of the Jungle" checked> King of the Jungle</label>
+                                <label><input type="checkbox" value="The Call of Cthulhu" checked> The Call of Cthulhu</label>
+                                <label><input type="checkbox" value="Time Wars: Rise of the Gods" checked> Time Wars: Rise of the Gods</label>
+                                <label><input type="checkbox" value="Warlord of Mars" checked> Warlord of Mars</label>
+                            </div>
+                        </div>
+                    </th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="events-tbody">
+                <tr>
+                    <td colspan="5" class="loading">Loading events...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" id="teamwork-tab" style="display: none;">
+        <table id="teamwork-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Card Type</th>
+                    <th>To Use</th>
+                    <th>Acts As</th>
+                    <th>Followup Attack Types</th>
+                    <th>1st Attack Bonus</th>
+                    <th>2nd Attack Bonus</th>
+                </tr>
+                <tr class="filter-row">
+                    <th>
+                        <button class="clear-filters-btn" onclick="clearTeamworkFilters()">Clear All Filters</button>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="teamwork-tbody">
+                <tr>
+                    <td colspan="7" class="loading">Loading teamwork cards...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" id="ally-universe-tab" style="display: none;">
+        <table id="ally-universe-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Card Name</th>
+                    <th>Stat to Use</th>
+                    <th>Stat Type</th>
+                    <th>Attack Value</th>
+                    <th>Attack Type</th>
+                    <th>Card Text</th>
+                </tr>
+                <tr class="filter-row">
+                    <th>
+                        <button class="clear-filters-btn" onclick="clearAllyUniverseFilters()">Clear All Filters</button>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="ally-universe-tbody">
+                <tr>
+                    <td colspan="7" class="loading">Loading allies...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" id="training-tab" style="display: none;">
+        <table id="training-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Card Name</th>
+                    <th>Type 1</th>
+                    <th>Type 2</th>
+                    <th>Value to Use</th>
+                    <th>Bonus</th>
+                </tr>
+                <tr class="filter-row">
+                    <th>
+                        <button class="clear-filters-btn" onclick="clearTrainingFilters()">Clear All Filters</button>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="training-tbody">
+                <tr>
+                    <td colspan="6" class="loading">Loading training...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" id="basic-universe-tab" style="display: none;">
+        <table id="basic-universe-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Card Name</th>
+                    <th>Type</th>
+                    <th>Value to Use</th>
+                    <th>Bonus</th>
+                </tr>
+                <tr class="filter-row">
+                    <th>
+                        <button class="clear-filters-btn" onclick="clearBasicUniverseFilters()">Clear All Filters</button>
+                    </th>
+                    <th></th>
+                    <th>
+                        <div class="column-filters">
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" value="Energy" checked> Energy</label>
+                                <label><input type="checkbox" value="Combat" checked> Combat</label>
+                                <label><input type="checkbox" value="Brute Force" checked> Brute Force</label>
+                                <label><input type="checkbox" value="Intelligence" checked> Intelligence</label>
+                            </div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="column-filters">
+                            <input type="number" class="filter-input equals" data-column="value" placeholder="=" min="6" max="7">
+                            <div class="range-inputs">
+                                <input type="number" id="basic-value-min" placeholder="Min" min="6" max="7" class="filter-input">
+                                <span>-</span>
+                                <input type="number" id="basic-value-max" placeholder="Max" min="6" max="7" class="filter-input">
+                            </div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="column-filters">
+                            <input type="number" class="filter-input equals" data-column="bonus" placeholder="=" min="2" max="3">
+                            <div class="range-inputs">
+                                <input type="number" id="basic-bonus-min" placeholder="Min" min="2" max="3" class="filter-input">
+                                <span>-</span>
+                                <input type="number" id="basic-bonus-max" placeholder="Max" min="2" max="3" class="filter-input">
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="basic-universe-tbody">
+                <tr>
+                    <td colspan="5" class="loading">Loading basic universe...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" id="power-cards-tab" style="display: none;">
+        <table id="power-cards-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Power Type</th>
+                    <th>Value</th>
+                </tr>
+                <tr class="filter-row">
+                    <th>
+                        <button class="clear-filters-btn" onclick="clearPowerCardFilters()">Clear All Filters</button>
+                    </th>
+                    <th>
+                        <div class="column-filters">
+                            <div class="checkbox-group power-cards-checkbox-group">
+                                <div class="checkbox-column">
+                                    <label><input type="checkbox" value="Energy" checked> Energy</label>
+                                    <label><input type="checkbox" value="Combat" checked> Combat</label>
+                                    <label><input type="checkbox" value="Brute Force" checked> Brute Force</label>
+                                </div>
+                                <div class="checkbox-column">
+                                    <label><input type="checkbox" value="Intelligence" checked> Intelligence</label>
+                                    <label><input type="checkbox" value="Any-Power" checked> Any-Power</label>
+                                    <label><input type="checkbox" value="Multi-Power" checked> Multi-Power</label>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="column-filters">
+                            <div class="range-inputs">
+                                <input type="number" id="power-value-min" placeholder="Min" min="1" max="8" class="filter-input">
+                                <span>-</span>
+                                <input type="number" id="power-value-max" placeholder="Max" min="1" max="8" class="filter-input">
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="power-cards-tbody">
+                <tr>
+                    <td colspan="3" class="loading">Loading power cards...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

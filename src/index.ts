@@ -1558,6 +1558,11 @@ app.get('/data', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public/index.html'));
 });
 
+// Database View route - serve database.html
+app.get('/database', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'public/database.html'));
+});
+
 // Static file serving for non-conflicting paths
 app.use('/public', express.static('public'));
 // Serve static files with cache-busting for JS files

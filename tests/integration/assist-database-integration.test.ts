@@ -105,6 +105,12 @@ describe('Assist Database Integration Tests', () => {
 
   describe('End-to-End Assist Validation Flow', () => {
     it('should complete full flow: database -> API -> validation -> database storage', async () => {
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Assist DB Test Deck 1',
+        description: 'Testing assist database integration flow'
+      });
+
       // Step 1: Get an assist card from database
       const assistResult = await pool.query(
         'SELECT id, name FROM special_cards WHERE assist = true LIMIT 1'
@@ -115,10 +121,10 @@ describe('Assist Database Integration Tests', () => {
 
       // Step 2: Add the assist card via API
       const addResponse = await request(app)
-        .post(`/api/decks/${testDeckId}/cards`)
+        .post(`/api/decks/${testDeck.id}/cards`)
         .set('Cookie', authCookie)
         .send({
-          type: 'special',
+          cardType: 'special',
           cardId: assistCard.id,
           quantity: 1
         });
@@ -129,7 +135,7 @@ describe('Assist Database Integration Tests', () => {
       // Step 3: Verify card was stored in database
       const deckCardsResult = await pool.query(
         'SELECT * FROM deck_cards WHERE deck_id = $1 AND card_id = $2',
-        [testDeckId, assistCard.id]
+        [testDeck.id, assistCard.id]
       );
 
       expect(deckCardsResult.rows.length).toBe(1);
@@ -146,10 +152,10 @@ describe('Assist Database Integration Tests', () => {
         const secondAssistCard = secondAssistResult.rows[0];
 
         const secondAddResponse = await request(app)
-          .post(`/api/decks/${testDeckId}/cards`)
+          .post(`/api/decks/${testDeck.id}/cards`)
           .set('Cookie', authCookie)
           .send({
-            type: 'special',
+            cardType: 'special',
             cardId: secondAssistCard.id,
             quantity: 1
           });
@@ -161,7 +167,7 @@ describe('Assist Database Integration Tests', () => {
         // Step 5: Verify second card was NOT stored in database
         const secondDeckCardsResult = await pool.query(
           'SELECT * FROM deck_cards WHERE deck_id = $1 AND card_id = $2',
-          [testDeckId, secondAssistCard.id]
+          [testDeck.id, secondAssistCard.id]
         );
 
         expect(secondDeckCardsResult.rows.length).toBe(0);
@@ -169,6 +175,12 @@ describe('Assist Database Integration Tests', () => {
     });
 
     it('should allow adding regular special cards after assist', async () => {
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Assist DB Test Deck 2',
+        description: 'Testing regular special cards after assist'
+      });
+
       // Get a non-assist special card
       const regularSpecialResult = await pool.query(
         'SELECT id, name FROM special_cards WHERE assist = false LIMIT 1'
@@ -179,10 +191,10 @@ describe('Assist Database Integration Tests', () => {
 
         // Add the regular special card
         const addResponse = await request(app)
-          .post(`/api/decks/${testDeckId}/cards`)
+          .post(`/api/decks/${testDeck.id}/cards`)
           .set('Cookie', authCookie)
           .send({
-            type: 'special',
+            cardType: 'special',
             cardId: regularSpecialCard.id,
             quantity: 1
           });
@@ -193,7 +205,7 @@ describe('Assist Database Integration Tests', () => {
         // Verify card was stored in database
         const deckCardsResult = await pool.query(
           'SELECT * FROM deck_cards WHERE deck_id = $1 AND card_id = $2',
-          [testDeckId, regularSpecialCard.id]
+          [testDeck.id, regularSpecialCard.id]
         );
 
         expect(deckCardsResult.rows.length).toBe(1);
@@ -204,24 +216,40 @@ describe('Assist Database Integration Tests', () => {
 
   describe('Database Consistency Tests', () => {
     it('should maintain data consistency when removing assist cards', async () => {
-      // Get current assist cards in deck
-      const currentAssistCards = await pool.query(`
-        SELECT dc.card_id, sc.name 
-        FROM deck_cards dc 
-        JOIN special_cards sc ON dc.card_id = sc.id 
-        WHERE dc.deck_id = $1 AND sc.assist = true
-      `, [testDeckId]);
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Assist DB Test Deck 3',
+        description: 'Testing data consistency when removing assist cards'
+      });
 
-      if (currentAssistCards.rows.length > 0) {
-        const assistCard = currentAssistCards.rows[0];
+      // First, add an assist card to the deck
+      const assistResult = await pool.query(
+        'SELECT id, name FROM special_cards WHERE assist = true LIMIT 1'
+      );
+      
+      if (assistResult.rows.length > 0) {
+        const assistCard = assistResult.rows[0];
 
-        // Remove the assist card via API
-        const removeResponse = await request(app)
-          .delete(`/api/decks/${testDeckId}/cards`)
+        // Add the assist card via API
+        const addResponse = await request(app)
+          .post(`/api/decks/${testDeck.id}/cards`)
           .set('Cookie', authCookie)
           .send({
-            type: 'special',
-            cardId: assistCard.card_id
+            cardType: 'special',
+            cardId: assistCard.id,
+            quantity: 1
+          });
+
+        expect(addResponse.status).toBe(200);
+        expect(addResponse.body.success).toBe(true);
+
+        // Now remove the assist card via API
+        const removeResponse = await request(app)
+          .delete(`/api/decks/${testDeck.id}/cards`)
+          .set('Cookie', authCookie)
+          .send({
+            cardType: 'special',
+            cardId: assistCard.id
           });
 
         expect(removeResponse.status).toBe(200);
@@ -230,7 +258,7 @@ describe('Assist Database Integration Tests', () => {
         // Verify card was removed from database
         const deckCardsResult = await pool.query(
           'SELECT * FROM deck_cards WHERE deck_id = $1 AND card_id = $2',
-          [testDeckId, assistCard.card_id]
+          [testDeck.id, assistCard.id]
         );
 
         expect(deckCardsResult.rows.length).toBe(0);
@@ -238,17 +266,17 @@ describe('Assist Database Integration Tests', () => {
         // Now should be able to add a different assist card
         const otherAssistResult = await pool.query(
           'SELECT id, name FROM special_cards WHERE assist = true AND id != $1 LIMIT 1',
-          [assistCard.card_id]
+          [assistCard.id]
         );
 
         if (otherAssistResult.rows.length > 0) {
           const otherAssistCard = otherAssistResult.rows[0];
 
           const addResponse = await request(app)
-            .post(`/api/decks/${testDeckId}/cards`)
+            .post(`/api/decks/${testDeck.id}/cards`)
             .set('Cookie', authCookie)
             .send({
-              type: 'special',
+              cardType: 'special',
               cardId: otherAssistCard.id,
               quantity: 1
             });
@@ -260,27 +288,40 @@ describe('Assist Database Integration Tests', () => {
     });
 
     it('should handle database transactions correctly for assist validation', async () => {
-      // This test verifies that database transactions are handled correctly
-      // when assist validation fails
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Assist DB Test Deck 4',
+        description: 'Testing database transactions for assist validation'
+      });
 
-      // Get an assist card that's already in the deck
-      const existingAssistCards = await pool.query(`
-        SELECT dc.card_id, sc.name 
-        FROM deck_cards dc 
-        JOIN special_cards sc ON dc.card_id = sc.id 
-        WHERE dc.deck_id = $1 AND sc.assist = true
-      `, [testDeckId]);
+      // First, add an assist card to the deck
+      const assistResult = await pool.query(
+        'SELECT id, name FROM special_cards WHERE assist = true LIMIT 1'
+      );
+      
+      if (assistResult.rows.length > 0) {
+        const assistCard = assistResult.rows[0];
 
-      if (existingAssistCards.rows.length > 0) {
-        const existingCard = existingAssistCards.rows[0];
-
-        // Try to add the same assist card again (should fail)
-        const addResponse = await request(app)
-          .post(`/api/decks/${testDeckId}/cards`)
+        // Add the assist card via API
+        const firstAddResponse = await request(app)
+          .post(`/api/decks/${testDeck.id}/cards`)
           .set('Cookie', authCookie)
           .send({
-            type: 'special',
-            cardId: existingCard.card_id,
+            cardType: 'special',
+            cardId: assistCard.id,
+            quantity: 1
+          });
+
+        expect(firstAddResponse.status).toBe(200);
+        expect(firstAddResponse.body.success).toBe(true);
+
+        // Now try to add the same assist card again (should fail)
+        const addResponse = await request(app)
+          .post(`/api/decks/${testDeck.id}/cards`)
+          .set('Cookie', authCookie)
+          .send({
+            cardType: 'special',
+            cardId: assistCard.id,
             quantity: 1
           });
 
@@ -290,7 +331,7 @@ describe('Assist Database Integration Tests', () => {
         // Verify no duplicate was created in database
         const duplicateCheck = await pool.query(
           'SELECT COUNT(*) as count FROM deck_cards WHERE deck_id = $1 AND card_id = $2',
-          [testDeckId, existingCard.card_id]
+          [testDeck.id, assistCard.id]
         );
 
         expect(parseInt(duplicateCheck.rows[0].count)).toBe(1); // Should still be only 1
@@ -300,6 +341,12 @@ describe('Assist Database Integration Tests', () => {
 
   describe('Database Performance Tests', () => {
     it('should handle assist validation efficiently with large datasets', async () => {
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Assist DB Test Deck 5',
+        description: 'Testing assist validation performance with large datasets'
+      });
+
       // This test verifies that assist validation performs well
       // even with many cards in the deck
 
@@ -310,10 +357,10 @@ describe('Assist Database Integration Tests', () => {
 
       for (const card of regularCards.rows) {
         const addResponse = await request(app)
-          .post(`/api/decks/${testDeckId}/cards`)
+          .post(`/api/decks/${testDeck.id}/cards`)
           .set('Cookie', authCookie)
           .send({
-            type: 'special',
+            cardType: 'special',
             cardId: card.id,
             quantity: 1
           });
@@ -331,10 +378,10 @@ describe('Assist Database Integration Tests', () => {
         const startTime = Date.now();
         
         const addResponse = await request(app)
-          .post(`/api/decks/${testDeckId}/cards`)
+          .post(`/api/decks/${testDeck.id}/cards`)
           .set('Cookie', authCookie)
           .send({
-            type: 'special',
+            cardType: 'special',
             cardId: assistCard.rows[0].id,
             quantity: 1
           });
@@ -353,15 +400,21 @@ describe('Assist Database Integration Tests', () => {
 
   describe('Database Error Handling', () => {
     it('should handle database connection errors gracefully', async () => {
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Assist DB Test Deck 6',
+        description: 'Testing database connection error handling'
+      });
+
       // This test would require temporarily breaking the database connection
       // For now, we'll just ensure the system handles errors without crashing
       
       const response = await request(app)
-        .post(`/api/decks/${testDeckId}/cards`)
+        .post(`/api/decks/${testDeck.id}/cards`)
         .set('Cookie', authCookie)
         .send({
-          type: 'special',
-          cardId: 'test_card',
+          cardType: 'special',
+          cardId: '12345678-1234-1234-1234-123456789012', // Valid UUID format but doesn't exist
           quantity: 1
         });
 
@@ -370,12 +423,18 @@ describe('Assist Database Integration Tests', () => {
     });
 
     it('should handle invalid card IDs gracefully', async () => {
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Assist DB Test Deck 7',
+        description: 'Testing invalid card ID handling'
+      });
+
       const response = await request(app)
-        .post(`/api/decks/${testDeckId}/cards`)
+        .post(`/api/decks/${testDeck.id}/cards`)
         .set('Cookie', authCookie)
         .send({
-          type: 'special',
-          cardId: 'definitely_does_not_exist_in_database',
+          cardType: 'special',
+          cardId: '12345678-1234-1234-1234-123456789012', // Valid UUID format but doesn't exist
           quantity: 1
         });
 

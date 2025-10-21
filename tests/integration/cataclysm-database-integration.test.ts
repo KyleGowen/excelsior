@@ -6,7 +6,7 @@
 import { Pool } from 'pg';
 import request from 'supertest';
 import { app } from '../setup-integration';
-import { integrationTestUtils } from '../helpers/integrationTestUtils';
+import { integrationTestUtils } from '../setup-integration';
 
 describe('Cataclysm Database Integration Tests', () => {
   let pool: Pool;
@@ -21,15 +21,24 @@ describe('Cataclysm Database Integration Tests', () => {
     });
 
     // Create test user
-    testUserId = await integrationTestUtils.createTestUser();
+    const testUser = await integrationTestUtils.createTestUser({
+      name: 'cataclysm-test-user',
+      email: 'cataclysm-test@example.com',
+      password: 'password123'
+    });
+    testUserId = testUser.id;
     
     // Create test deck
-    testDeckId = await integrationTestUtils.createTrackedDeck(testUserId, 'Cataclysm DB Test Deck', 'Testing cataclysm database integration');
+    const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+      name: 'Cataclysm DB Test Deck',
+      description: 'Testing cataclysm database integration'
+    });
+    testDeckId = testDeck.id;
 
     // Login to get auth cookie
     const loginResponse = await request(app)
       .post('/api/auth/login')
-      .send({ username: 'testuser', password: 'testpass' });
+      .send({ username: testUser.username, password: 'password123' });
     
     if (loginResponse.status === 200 && loginResponse.headers['set-cookie']) {
       authCookie = loginResponse.headers['set-cookie'][0].split(';')[0];
@@ -96,6 +105,12 @@ describe('Cataclysm Database Integration Tests', () => {
 
   describe('End-to-End Cataclysm Validation Flow', () => {
     it('should complete full flow: database -> API -> validation -> database storage', async () => {
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Cataclysm DB Test Deck 1',
+        description: 'Testing cataclysm database integration flow'
+      });
+
       // Step 1: Get a cataclysm card from database
       const cataclysmResult = await pool.query(
         'SELECT id, name FROM special_cards WHERE cataclysm = true LIMIT 1'
@@ -106,10 +121,10 @@ describe('Cataclysm Database Integration Tests', () => {
 
       // Step 2: Add the cataclysm card via API
       const addResponse = await request(app)
-        .post(`/api/decks/${testDeckId}/cards`)
+        .post(`/api/decks/${testDeck.id}/cards`)
         .set('Cookie', authCookie)
         .send({
-          type: 'special',
+          cardType: 'special',
           cardId: cataclysmCard.id,
           quantity: 1
         });
@@ -120,7 +135,7 @@ describe('Cataclysm Database Integration Tests', () => {
       // Step 3: Verify card was stored in database
       const deckCardsResult = await pool.query(
         'SELECT * FROM deck_cards WHERE deck_id = $1 AND card_id = $2',
-        [testDeckId, cataclysmCard.id]
+        [testDeck.id, cataclysmCard.id]
       );
 
       expect(deckCardsResult.rows.length).toBe(1);
@@ -137,10 +152,10 @@ describe('Cataclysm Database Integration Tests', () => {
         const secondCataclysmCard = secondCataclysmResult.rows[0];
 
         const secondAddResponse = await request(app)
-          .post(`/api/decks/${testDeckId}/cards`)
+          .post(`/api/decks/${testDeck.id}/cards`)
           .set('Cookie', authCookie)
           .send({
-            type: 'special',
+            cardType: 'special',
             cardId: secondCataclysmCard.id,
             quantity: 1
           });
@@ -152,7 +167,7 @@ describe('Cataclysm Database Integration Tests', () => {
         // Step 5: Verify second card was NOT stored in database
         const secondDeckCardsResult = await pool.query(
           'SELECT * FROM deck_cards WHERE deck_id = $1 AND card_id = $2',
-          [testDeckId, secondCataclysmCard.id]
+          [testDeck.id, secondCataclysmCard.id]
         );
 
         expect(secondDeckCardsResult.rows.length).toBe(0);
@@ -160,6 +175,12 @@ describe('Cataclysm Database Integration Tests', () => {
     });
 
     it('should allow adding regular special cards after cataclysm', async () => {
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Cataclysm DB Test Deck 2',
+        description: 'Testing regular special cards after cataclysm'
+      });
+
       // Get a non-cataclysm special card
       const regularSpecialResult = await pool.query(
         'SELECT id, name FROM special_cards WHERE cataclysm = false LIMIT 1'
@@ -170,10 +191,10 @@ describe('Cataclysm Database Integration Tests', () => {
 
         // Add the regular special card
         const addResponse = await request(app)
-          .post(`/api/decks/${testDeckId}/cards`)
+          .post(`/api/decks/${testDeck.id}/cards`)
           .set('Cookie', authCookie)
           .send({
-            type: 'special',
+            cardType: 'special',
             cardId: regularSpecialCard.id,
             quantity: 1
           });
@@ -184,7 +205,7 @@ describe('Cataclysm Database Integration Tests', () => {
         // Verify card was stored in database
         const deckCardsResult = await pool.query(
           'SELECT * FROM deck_cards WHERE deck_id = $1 AND card_id = $2',
-          [testDeckId, regularSpecialCard.id]
+          [testDeck.id, regularSpecialCard.id]
         );
 
         expect(deckCardsResult.rows.length).toBe(1);
@@ -195,24 +216,40 @@ describe('Cataclysm Database Integration Tests', () => {
 
   describe('Database Consistency Tests', () => {
     it('should maintain data consistency when removing cataclysm cards', async () => {
-      // Get current cataclysm cards in deck
-      const currentCataclysmCards = await pool.query(`
-        SELECT dc.card_id, sc.name 
-        FROM deck_cards dc 
-        JOIN special_cards sc ON dc.card_id = sc.id 
-        WHERE dc.deck_id = $1 AND sc.cataclysm = true
-      `, [testDeckId]);
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Cataclysm DB Test Deck 3',
+        description: 'Testing data consistency when removing cataclysm cards'
+      });
 
-      if (currentCataclysmCards.rows.length > 0) {
-        const cataclysmCard = currentCataclysmCards.rows[0];
+      // First, add a cataclysm card to the deck
+      const cataclysmResult = await pool.query(
+        'SELECT id, name FROM special_cards WHERE cataclysm = true LIMIT 1'
+      );
+      
+      if (cataclysmResult.rows.length > 0) {
+        const cataclysmCard = cataclysmResult.rows[0];
 
-        // Remove the cataclysm card via API
-        const removeResponse = await request(app)
-          .delete(`/api/decks/${testDeckId}/cards`)
+        // Add the cataclysm card via API
+        const addResponse = await request(app)
+          .post(`/api/decks/${testDeck.id}/cards`)
           .set('Cookie', authCookie)
           .send({
-            type: 'special',
-            cardId: cataclysmCard.card_id
+            cardType: 'special',
+            cardId: cataclysmCard.id,
+            quantity: 1
+          });
+
+        expect(addResponse.status).toBe(200);
+        expect(addResponse.body.success).toBe(true);
+
+        // Now remove the cataclysm card via API
+        const removeResponse = await request(app)
+          .delete(`/api/decks/${testDeck.id}/cards`)
+          .set('Cookie', authCookie)
+          .send({
+            cardType: 'special',
+            cardId: cataclysmCard.id
           });
 
         expect(removeResponse.status).toBe(200);
@@ -221,7 +258,7 @@ describe('Cataclysm Database Integration Tests', () => {
         // Verify card was removed from database
         const deckCardsResult = await pool.query(
           'SELECT * FROM deck_cards WHERE deck_id = $1 AND card_id = $2',
-          [testDeckId, cataclysmCard.card_id]
+          [testDeck.id, cataclysmCard.id]
         );
 
         expect(deckCardsResult.rows.length).toBe(0);
@@ -229,17 +266,17 @@ describe('Cataclysm Database Integration Tests', () => {
         // Now should be able to add a different cataclysm card
         const otherCataclysmResult = await pool.query(
           'SELECT id, name FROM special_cards WHERE cataclysm = true AND id != $1 LIMIT 1',
-          [cataclysmCard.card_id]
+          [cataclysmCard.id]
         );
 
         if (otherCataclysmResult.rows.length > 0) {
           const otherCataclysmCard = otherCataclysmResult.rows[0];
 
           const addResponse = await request(app)
-            .post(`/api/decks/${testDeckId}/cards`)
+            .post(`/api/decks/${testDeck.id}/cards`)
             .set('Cookie', authCookie)
             .send({
-              type: 'special',
+              cardType: 'special',
               cardId: otherCataclysmCard.id,
               quantity: 1
             });
@@ -251,27 +288,40 @@ describe('Cataclysm Database Integration Tests', () => {
     });
 
     it('should handle database transactions correctly for cataclysm validation', async () => {
-      // This test verifies that database transactions are handled correctly
-      // when cataclysm validation fails
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Cataclysm DB Test Deck 4',
+        description: 'Testing database transactions for cataclysm validation'
+      });
 
-      // Get a cataclysm card that's already in the deck
-      const existingCataclysmCards = await pool.query(`
-        SELECT dc.card_id, sc.name 
-        FROM deck_cards dc 
-        JOIN special_cards sc ON dc.card_id = sc.id 
-        WHERE dc.deck_id = $1 AND sc.cataclysm = true
-      `, [testDeckId]);
+      // First, add a cataclysm card to the deck
+      const cataclysmResult = await pool.query(
+        'SELECT id, name FROM special_cards WHERE cataclysm = true LIMIT 1'
+      );
+      
+      if (cataclysmResult.rows.length > 0) {
+        const cataclysmCard = cataclysmResult.rows[0];
 
-      if (existingCataclysmCards.rows.length > 0) {
-        const existingCard = existingCataclysmCards.rows[0];
-
-        // Try to add the same cataclysm card again (should fail)
-        const addResponse = await request(app)
-          .post(`/api/decks/${testDeckId}/cards`)
+        // Add the cataclysm card via API
+        const firstAddResponse = await request(app)
+          .post(`/api/decks/${testDeck.id}/cards`)
           .set('Cookie', authCookie)
           .send({
-            type: 'special',
-            cardId: existingCard.card_id,
+            cardType: 'special',
+            cardId: cataclysmCard.id,
+            quantity: 1
+          });
+
+        expect(firstAddResponse.status).toBe(200);
+        expect(firstAddResponse.body.success).toBe(true);
+
+        // Now try to add the same cataclysm card again (should fail)
+        const addResponse = await request(app)
+          .post(`/api/decks/${testDeck.id}/cards`)
+          .set('Cookie', authCookie)
+          .send({
+            cardType: 'special',
+            cardId: cataclysmCard.id,
             quantity: 1
           });
 
@@ -281,7 +331,7 @@ describe('Cataclysm Database Integration Tests', () => {
         // Verify no duplicate was created in database
         const duplicateCheck = await pool.query(
           'SELECT COUNT(*) as count FROM deck_cards WHERE deck_id = $1 AND card_id = $2',
-          [testDeckId, existingCard.card_id]
+          [testDeck.id, cataclysmCard.id]
         );
 
         expect(parseInt(duplicateCheck.rows[0].count)).toBe(1); // Should still be only 1
@@ -291,6 +341,12 @@ describe('Cataclysm Database Integration Tests', () => {
 
   describe('Database Performance Tests', () => {
     it('should handle cataclysm validation efficiently with large datasets', async () => {
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Cataclysm DB Test Deck 5',
+        description: 'Testing cataclysm validation performance with large datasets'
+      });
+
       // This test verifies that cataclysm validation performs well
       // even with many cards in the deck
 
@@ -301,10 +357,10 @@ describe('Cataclysm Database Integration Tests', () => {
 
       for (const card of regularCards.rows) {
         const addResponse = await request(app)
-          .post(`/api/decks/${testDeckId}/cards`)
+          .post(`/api/decks/${testDeck.id}/cards`)
           .set('Cookie', authCookie)
           .send({
-            type: 'special',
+            cardType: 'special',
             cardId: card.id,
             quantity: 1
           });
@@ -322,10 +378,10 @@ describe('Cataclysm Database Integration Tests', () => {
         const startTime = Date.now();
         
         const addResponse = await request(app)
-          .post(`/api/decks/${testDeckId}/cards`)
+          .post(`/api/decks/${testDeck.id}/cards`)
           .set('Cookie', authCookie)
           .send({
-            type: 'special',
+            cardType: 'special',
             cardId: cataclysmCard.rows[0].id,
             quantity: 1
           });
@@ -344,15 +400,21 @@ describe('Cataclysm Database Integration Tests', () => {
 
   describe('Database Error Handling', () => {
     it('should handle database connection errors gracefully', async () => {
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Cataclysm DB Test Deck 6',
+        description: 'Testing database connection error handling'
+      });
+
       // This test would require temporarily breaking the database connection
       // For now, we'll just ensure the system handles errors without crashing
       
       const response = await request(app)
-        .post(`/api/decks/${testDeckId}/cards`)
+        .post(`/api/decks/${testDeck.id}/cards`)
         .set('Cookie', authCookie)
         .send({
-          type: 'special',
-          cardId: 'test_card',
+          cardType: 'special',
+          cardId: '12345678-1234-1234-1234-123456789012', // Valid UUID format but doesn't exist
           quantity: 1
         });
 
@@ -361,12 +423,18 @@ describe('Cataclysm Database Integration Tests', () => {
     });
 
     it('should handle invalid card IDs gracefully', async () => {
+      // Create a fresh deck for this test
+      const testDeck = await integrationTestUtils.createTestDeck(testUserId, {
+        name: 'Cataclysm DB Test Deck 7',
+        description: 'Testing invalid card ID handling'
+      });
+
       const response = await request(app)
-        .post(`/api/decks/${testDeckId}/cards`)
+        .post(`/api/decks/${testDeck.id}/cards`)
         .set('Cookie', authCookie)
         .send({
-          type: 'special',
-          cardId: 'definitely_does_not_exist_in_database',
+          cardType: 'special',
+          cardId: '12345678-1234-1234-1234-123456789012', // Valid UUID format but doesn't exist
           quantity: 1
         });
 

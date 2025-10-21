@@ -2,6 +2,7 @@ import request from 'supertest';
 import { app } from '../../src/test-server';
 import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 import { integrationTestUtils } from '../setup-integration';
+import { Pool } from 'pg';
 
 describe('Guest Deck Editing Restrictions Integration Tests', () => {
   let guestCookie: string;
@@ -10,12 +11,22 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
   let testDeckId: string;
   let testUser: any;
   let testAdmin: any;
+  let pool: Pool;
+  let testCharacterId: string;
 
   beforeAll(async () => {
-    // Database initialization is handled by the test setup
+    // Initialize database connection
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower'
+    });
   });
 
   beforeEach(async () => {
+    // Get a test character ID from the database
+    const characterResult = await pool.query('SELECT id FROM characters LIMIT 1');
+    expect(characterResult.rows.length).toBeGreaterThan(0);
+    testCharacterId = characterResult.rows[0].id;
+
     // Create fresh test users for each test
     testUser = await integrationTestUtils.createTestUser({
       name: `testuser_${Date.now()}`,
@@ -97,6 +108,9 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
         // Ignore cleanup errors
       }
     }
+    
+    // Close database connection
+    await pool.end();
     
     // Users are cleaned up by tracked ID utilities
   });
@@ -202,7 +216,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
         .set('Cookie', guestCookie)
         .send({
           cardType: 'character',
-          cardId: 'leonidas',
+          cardId: testCharacterId,
           quantity: 1
         });
 
@@ -217,7 +231,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
         .set('Cookie', userCookie)
         .send({
           cardType: 'character',
-          cardId: 'leonidas',
+          cardId: testCharacterId,
           quantity: 1
         });
 
@@ -231,7 +245,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
         .set('Cookie', adminCookie)
         .send({
           cardType: 'character',
-          cardId: 'leonidas',
+          cardId: testCharacterId,
           quantity: 1
         });
 
@@ -249,7 +263,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
         .set('Cookie', userCookie)
         .send({
           cardType: 'character',
-          cardId: 'leonidas',
+          cardId: testCharacterId,
           quantity: 1
         });
     });
@@ -260,7 +274,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
         .set('Cookie', guestCookie)
         .send({
           cardType: 'character',
-          cardId: 'leonidas',
+          cardId: testCharacterId,
           quantity: 1
         });
 
@@ -275,7 +289,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
         .set('Cookie', userCookie)
         .send({
           cardType: 'character',
-          cardId: 'leonidas',
+          cardId: testCharacterId,
           quantity: 1
         });
 
@@ -289,7 +303,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
         .set('Cookie', adminCookie)
         .send({
           cardType: 'character',
-          cardId: 'leonidas',
+          cardId: testCharacterId,
           quantity: 1
         });
 
@@ -401,8 +415,8 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
       const modificationEndpoints = [
         { method: 'POST', path: '/api/decks', data: { name: 'Test Deck' } },
         { method: 'PUT', path: `/api/decks/${testDeckId}`, data: { name: 'Updated Deck' } },
-        { method: 'POST', path: `/api/decks/${testDeckId}/cards`, data: { cardType: 'character', cardId: 'leonidas' } },
-        { method: 'DELETE', path: `/api/decks/${testDeckId}/cards`, data: { cardType: 'character', cardId: 'leonidas' } },
+        { method: 'POST', path: `/api/decks/${testDeckId}/cards`, data: { cardType: 'character', cardId: testCharacterId } },
+        { method: 'DELETE', path: `/api/decks/${testDeckId}/cards`, data: { cardType: 'character', cardId: testCharacterId } },
         { method: 'PUT', path: `/api/decks/${testDeckId}/ui-preferences`, data: { expansionState: {} } }
       ];
 

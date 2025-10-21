@@ -520,6 +520,67 @@ export class PostgreSQLDeckRepository implements DeckRepository {
   async addCardToDeck(deckId: string, cardType: string, cardId: string, quantity: number = 1, selectedAlternateImage?: string): Promise<boolean> {
     const client = await this.pool.connect();
     try {
+      // First, validate that the card exists in the appropriate card table
+      let cardExists = false;
+      switch (cardType) {
+        case 'character':
+          const characterResult = await client.query('SELECT id FROM characters WHERE id = $1', [cardId]);
+          cardExists = characterResult.rows.length > 0;
+          break;
+        case 'special':
+          const specialResult = await client.query('SELECT id FROM special_cards WHERE id = $1', [cardId]);
+          cardExists = specialResult.rows.length > 0;
+          break;
+        case 'power':
+          const powerResult = await client.query('SELECT id FROM power_cards WHERE id = $1', [cardId]);
+          cardExists = powerResult.rows.length > 0;
+          break;
+        case 'mission':
+          const missionResult = await client.query('SELECT id FROM mission_objectives WHERE id = $1', [cardId]);
+          cardExists = missionResult.rows.length > 0;
+          break;
+        case 'event':
+          const eventResult = await client.query('SELECT id FROM events WHERE id = $1', [cardId]);
+          cardExists = eventResult.rows.length > 0;
+          break;
+        case 'aspect':
+          const aspectResult = await client.query('SELECT id FROM aspects WHERE id = $1', [cardId]);
+          cardExists = aspectResult.rows.length > 0;
+          break;
+        case 'location':
+          const locationResult = await client.query('SELECT id FROM locations WHERE id = $1', [cardId]);
+          cardExists = locationResult.rows.length > 0;
+          break;
+        case 'teamwork':
+          const teamworkResult = await client.query('SELECT id FROM teamwork_cards WHERE id = $1', [cardId]);
+          cardExists = teamworkResult.rows.length > 0;
+          break;
+        case 'ally-universe':
+          const allyResult = await client.query('SELECT id FROM ally_universe_cards WHERE id = $1', [cardId]);
+          cardExists = allyResult.rows.length > 0;
+          break;
+        case 'training':
+          const trainingResult = await client.query('SELECT id FROM training_cards WHERE id = $1', [cardId]);
+          cardExists = trainingResult.rows.length > 0;
+          break;
+        case 'basic-universe':
+          const basicResult = await client.query('SELECT id FROM basic_universe_cards WHERE id = $1', [cardId]);
+          cardExists = basicResult.rows.length > 0;
+          break;
+        case 'advanced-universe':
+          const advancedResult = await client.query('SELECT id FROM advanced_universe_cards WHERE id = $1', [cardId]);
+          cardExists = advancedResult.rows.length > 0;
+          break;
+        default:
+          console.error(`Unknown card type: ${cardType}`);
+          return false;
+      }
+
+      if (!cardExists) {
+        console.error(`Card with ID ${cardId} does not exist in ${cardType} table`);
+        return false;
+      }
+
       // Check if card already exists in deck
       const existingCard = await client.query(
         'SELECT * FROM deck_cards WHERE deck_id = $1 AND card_type = $2 AND card_id = $3',
