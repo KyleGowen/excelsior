@@ -6038,10 +6038,19 @@
             // Validate deck and show results
             await showDeckValidation(window.window.deckEditorCards);
             
-            // Group cards by type
+            // Group cards by type (normalize underscore format to hyphen format)
             const cardsByType = {};
             window.deckEditorCards.forEach((card, index) => {
-                const type = card.type;
+                let type = card.type;
+                // Convert underscore format to hyphen format for consistency
+                if (type === 'ally_universe') {
+                    type = 'ally-universe';
+                } else if (type === 'basic_universe') {
+                    type = 'basic-universe';
+                } else if (type === 'advanced_universe') {
+                    type = 'advanced-universe';
+                }
+                
                 if (!cardsByType[type]) {
                     cardsByType[type] = [];
                 }
@@ -9725,9 +9734,9 @@
                 internalCardType = 'advanced_universe';
             }
             
-            // Check if card already exists in deck
+            // Check if card already exists in deck (use frontend format for consistency)
             const existingCardIndex = window.deckEditorCards.findIndex(card => 
-                card.type === internalCardType && card.cardId === cardId
+                card.type === cardType && card.cardId === cardId
             );
             
             if (existingCardIndex >= 0) {
@@ -9753,10 +9762,10 @@
                 // Show notification for adding additional copies
                     showNotification(`Added another copy of ${cardName}`, 'success');
             } else {
-                // Add new card
+                // Add new card (use frontend format for consistency with display function)
                 const newCard = {
                     id: `deckcard_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                    type: internalCardType,
+                    type: cardType,
                     cardId: cardId,
                     quantity: 1
                 };
