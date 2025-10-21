@@ -7659,6 +7659,9 @@
             // Update Cataclysm limit status
             updateCataclysmLimitStatus();
             
+            // Update Assist limit status
+            updateAssistLimitStatus();
+            
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
             
@@ -7886,6 +7889,9 @@
             // Update Cataclysm limit status
             updateCataclysmLimitStatus();
             
+            // Update Assist limit status
+            updateAssistLimitStatus();
+            
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
             
@@ -7963,6 +7969,9 @@
             
             // Update Cataclysm limit status
             updateCataclysmLimitStatus();
+            
+            // Update Assist limit status
+            updateAssistLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
@@ -8375,6 +8384,47 @@
                         }
                     } else if (isCataclysm && !hasOtherCataclysm) {
                         // This is a Cataclysm card but no cataclysm is in the deck - enable it
+                        cardElement.classList.remove('disabled');
+                        cardElement.setAttribute('draggable', 'true');
+                        cardElement.title = '';
+                    }
+                }
+            });
+        }
+
+        // Function to update Assist card dimming status
+        function updateAssistLimitStatus() {
+            // Get all Assist cards currently in the deck
+            const assistCardsInDeck = new Set();
+            window.deckEditorCards.forEach(card => {
+                const cardData = window.availableCardsMap.get(card.cardId);
+                if (cardData && cardData.is_assist === true) {
+                    assistCardsInDeck.add(card.cardId);
+                }
+            });
+            
+            // Update all special card items for assist dimming
+            const specialCardItems = document.querySelectorAll('.card-item[data-type="special"][data-id]');
+            specialCardItems.forEach(cardElement => {
+                const cardId = cardElement.getAttribute('data-id');
+                
+                if (cardId) {
+                    const cardData = window.availableCardsMap.get(cardId);
+                    const isAssist = cardData && cardData.is_assist === true;
+                    const isInDeck = assistCardsInDeck.has(cardId);
+                    const hasOtherAssist = assistCardsInDeck.size > 0;
+                    
+                    if (isAssist && (isInDeck || hasOtherAssist)) {
+                        // This is an Assist card and either it's in the deck or another assist is in the deck - dim it
+                        cardElement.classList.add('disabled');
+                        cardElement.setAttribute('draggable', 'false');
+                        if (isInDeck) {
+                            cardElement.title = 'Assist - already in deck';
+                        } else {
+                            cardElement.title = 'Assist - another assist already selected';
+                        }
+                    } else if (isAssist && !hasOtherAssist) {
+                        // This is an Assist card but no assist is in the deck - enable it
                         cardElement.classList.remove('disabled');
                         cardElement.setAttribute('draggable', 'true');
                         cardElement.title = '';
@@ -9498,6 +9548,21 @@
                 }
             }
             
+            // Check Assist limit for special cards
+            const isAssist = cardData && cardData.is_assist === true;
+            if (isAssist) {
+                // Check if we already have any assist card in the deck
+                const hasExistingAssist = window.deckEditorCards.some(card => {
+                    const cardData = window.availableCardsMap.get(card.cardId);
+                    return cardData && cardData.is_assist === true;
+                });
+                
+                if (hasExistingAssist) {
+                    showNotification(`Cannot add more than 1 Assist to a deck`, 'error');
+                    return;
+                }
+            }
+            
             // Check mission limit before adding
             if (cardType === 'mission') {
                 const currentMissionCount = window.deckEditorCards
@@ -9620,6 +9685,9 @@
             
             // Update Cataclysm limit status
             updateCataclysmLimitStatus();
+            
+            // Update Assist limit status
+            updateAssistLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();

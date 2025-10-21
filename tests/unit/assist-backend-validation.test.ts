@@ -1,9 +1,9 @@
 /**
- * Unit tests for backend Cataclysm validation functionality
- * Tests the checkIfCardIsCataclysm function and related backend logic
+ * Unit tests for backend Assist validation functionality
+ * Tests the checkIfCardIsAssist function and related backend logic
  */
 
-import { checkIfCardIsCataclysm, validateCardAddition } from '../../src/index';
+import { checkIfCardIsAssist, validateCardAddition } from '../../src/index';
 import { PostgreSQLCardRepository } from '../../src/database/PostgreSQLCardRepository';
 import { Pool } from 'pg';
 
@@ -19,7 +19,7 @@ jest.mock('pg', () => ({
 // Mock the card repository
 jest.mock('../../src/database/PostgreSQLCardRepository');
 
-describe('Backend Cataclysm Validation', () => {
+describe('Backend Assist Validation', () => {
   let mockPool: jest.Mocked<Pool>;
   let mockCardRepository: jest.Mocked<PostgreSQLCardRepository>;
 
@@ -37,30 +37,30 @@ describe('Backend Cataclysm Validation', () => {
     (global as any).cardRepository = mockCardRepository;
   });
 
-  describe('checkIfCardIsCataclysm', () => {
-    it('should return true for cataclysm special cards', async () => {
-      // Mock special card with cataclysm=true
+  describe('checkIfCardIsAssist', () => {
+    it('should return true for assist special cards', async () => {
+      // Mock special card with assist=true
       mockCardRepository.getSpecialCardById.mockResolvedValue({
-        id: 'special_heimdall',
-        name: 'Heimdall',
+        id: 'special_assist_card',
+        name: 'Assist Card',
         card_type: 'Special Card',
         character: 'Any Character',
-        card_effect: '**Cataclysm!** Any Character may avoid 1 attack...',
-        image: 'specials/heimdall.webp',
-        is_cataclysm: true,
-        is_assist: false,
+        card_effect: '**Assist!** Provides assistance to any character...',
+        image: 'specials/assist_card.webp',
+        is_cataclysm: false,
+        is_assist: true,
         one_per_deck: false,
         alternateImages: []
       });
 
-      const result = await checkIfCardIsCataclysm('special', 'special_heimdall');
+      const result = await checkIfCardIsAssist('special', 'special_assist_card');
       
       expect(result).toBe(true);
-      expect(mockCardRepository.getSpecialCardById).toHaveBeenCalledWith('special_heimdall');
+      expect(mockCardRepository.getSpecialCardById).toHaveBeenCalledWith('special_assist_card');
     });
 
-    it('should return false for non-cataclysm special cards', async () => {
-      // Mock special card with cataclysm=false
+    it('should return false for non-assist special cards', async () => {
+      // Mock special card with assist=false
       mockCardRepository.getSpecialCardById.mockResolvedValue({
         id: 'special_regular',
         name: 'Regular Special',
@@ -74,14 +74,14 @@ describe('Backend Cataclysm Validation', () => {
         alternateImages: []
       });
 
-      const result = await checkIfCardIsCataclysm('special', 'special_regular');
+      const result = await checkIfCardIsAssist('special', 'special_regular');
       
       expect(result).toBe(false);
       expect(mockCardRepository.getSpecialCardById).toHaveBeenCalledWith('special_regular');
     });
 
     it('should return false for non-special card types', async () => {
-      const result = await checkIfCardIsCataclysm('character', 'char1');
+      const result = await checkIfCardIsAssist('character', 'char1');
       
       expect(result).toBe(false);
       expect(mockCardRepository.getSpecialCardById).not.toHaveBeenCalled();
@@ -90,7 +90,7 @@ describe('Backend Cataclysm Validation', () => {
     it('should return false when card is not found', async () => {
       mockCardRepository.getSpecialCardById.mockResolvedValue(undefined);
 
-      const result = await checkIfCardIsCataclysm('special', 'nonexistent');
+      const result = await checkIfCardIsAssist('special', 'nonexistent');
       
       expect(result).toBe(false);
       expect(mockCardRepository.getSpecialCardById).toHaveBeenCalledWith('nonexistent');
@@ -99,7 +99,7 @@ describe('Backend Cataclysm Validation', () => {
     it('should return false when card data is null', async () => {
       mockCardRepository.getSpecialCardById.mockResolvedValue(null as any);
 
-      const result = await checkIfCardIsCataclysm('special', 'null_card');
+      const result = await checkIfCardIsAssist('special', 'null_card');
       
       expect(result).toBe(false);
     });
@@ -107,105 +107,105 @@ describe('Backend Cataclysm Validation', () => {
     it('should handle database errors gracefully', async () => {
       mockCardRepository.getSpecialCardById.mockRejectedValue(new Error('Database connection failed'));
 
-      const result = await checkIfCardIsCataclysm('special', 'error_card');
+      const result = await checkIfCardIsAssist('special', 'error_card');
       
       expect(result).toBe(false);
     });
 
-    it('should handle undefined is_cataclysm property', async () => {
+    it('should handle undefined is_assist property', async () => {
       mockCardRepository.getSpecialCardById.mockResolvedValue({
         id: 'special_undefined',
-        name: 'Undefined Cataclysm',
+        name: 'Undefined Assist',
         card_type: 'Special Card',
         character: 'Any Character',
-        card_effect: 'Card with undefined cataclysm property',
+        card_effect: 'Card with undefined assist property',
         image: 'specials/undefined.webp',
-        is_cataclysm: undefined as any,
-        is_assist: false,
+        is_cataclysm: false,
+        is_assist: undefined as any,
         one_per_deck: false,
         alternateImages: []
       });
 
-      const result = await checkIfCardIsCataclysm('special', 'special_undefined');
+      const result = await checkIfCardIsAssist('special', 'special_undefined');
       
       expect(result).toBe(false);
     });
 
-    it('should handle null is_cataclysm property', async () => {
+    it('should handle null is_assist property', async () => {
       mockCardRepository.getSpecialCardById.mockResolvedValue({
         id: 'special_null',
-        name: 'Null Cataclysm',
+        name: 'Null Assist',
         card_type: 'Special Card',
         character: 'Any Character',
-        card_effect: 'Card with null cataclysm property',
+        card_effect: 'Card with null assist property',
         image: 'specials/null.webp',
-        is_cataclysm: null as any,
-        is_assist: false,
+        is_cataclysm: false,
+        is_assist: null as any,
         one_per_deck: false,
         alternateImages: []
       });
 
-      const result = await checkIfCardIsCataclysm('special', 'special_null');
+      const result = await checkIfCardIsAssist('special', 'special_null');
       
       expect(result).toBe(false);
     });
   });
 
-  describe('validateCardAddition - Cataclysm Rules', () => {
-    it('should allow adding first cataclysm card', async () => {
+  describe('validateCardAddition - Assist Rules', () => {
+    it('should allow adding first assist card', async () => {
       const currentCards = [
         { type: 'character', cardId: 'char1', quantity: 1 },
         { type: 'mission', cardId: 'mission1', quantity: 1 }
       ];
 
-      // Mock cataclysm card
+      // Mock assist card
       mockCardRepository.getSpecialCardById.mockResolvedValue({
-        id: 'special_heimdall',
-        name: 'Heimdall',
+        id: 'special_assist_card',
+        name: 'Assist Card',
         card_type: 'Special Card',
         character: 'Any Character',
-        card_effect: '**Cataclysm!** Any Character may avoid 1 attack...',
-        image: 'specials/heimdall.webp',
-        is_cataclysm: true,
-        is_assist: false,
+        card_effect: '**Assist!** Provides assistance to any character...',
+        image: 'specials/assist_card.webp',
+        is_cataclysm: false,
+        is_assist: true,
         one_per_deck: false,
         alternateImages: []
       });
 
-      const result = await validateCardAddition(currentCards, 'special', 'special_heimdall', 1);
+      const result = await validateCardAddition(currentCards, 'special', 'special_assist_card', 1);
       
       expect(result).toBeNull(); // No validation errors
     });
 
-    it('should prevent adding second cataclysm card', async () => {
+    it('should prevent adding second assist card', async () => {
       const currentCards = [
         { type: 'character', cardId: 'char1', quantity: 1 },
-        { type: 'special', cardId: 'special_heimdall', quantity: 1 } // Already has one cataclysm
+        { type: 'special', cardId: 'special_assist_card', quantity: 1 } // Already has one assist
       ];
 
-      // Mock second cataclysm card
+      // Mock second assist card
       mockCardRepository.getSpecialCardById.mockResolvedValue({
-        id: 'special_loki',
-        name: 'Loki',
+        id: 'special_another_assist',
+        name: 'Another Assist Card',
         card_type: 'Special Card',
         character: 'Any Character',
-        card_effect: '**Cataclysm!** Opponent is -3 to Venture Total...',
-        image: 'specials/loki.webp',
-        is_cataclysm: true,
-        is_assist: false,
+        card_effect: '**Assist!** Another assist card...',
+        image: 'specials/another_assist.webp',
+        is_cataclysm: false,
+        is_assist: true,
         one_per_deck: false,
         alternateImages: []
       });
 
-      const result = await validateCardAddition(currentCards, 'special', 'special_loki', 1);
+      const result = await validateCardAddition(currentCards, 'special', 'special_another_assist', 1);
       
-      expect(result).toContain('Cannot add more than 1 Cataclysm to a deck');
+      expect(result).toContain('Cannot add more than 1 Assist to a deck');
     });
 
-    it('should allow adding regular special cards when cataclysm is present', async () => {
+    it('should allow adding regular special cards when assist is present', async () => {
       const currentCards = [
         { type: 'character', cardId: 'char1', quantity: 1 },
-        { type: 'special', cardId: 'special_heimdall', quantity: 1 } // Has cataclysm
+        { type: 'special', cardId: 'special_assist_card', quantity: 1 } // Has assist
       ];
 
       // Mock regular special card
@@ -227,33 +227,33 @@ describe('Backend Cataclysm Validation', () => {
       expect(result).toBeNull(); // No validation errors
     });
 
-    it('should handle multiple cataclysm cards in test deck correctly', async () => {
+    it('should handle multiple assist cards in test deck correctly', async () => {
       const currentCards = [
         { type: 'character', cardId: 'char1', quantity: 1 },
-        { type: 'special', cardId: 'special_heimdall', quantity: 1 }
+        { type: 'special', cardId: 'special_assist_card', quantity: 1 }
       ];
 
-      // Mock second cataclysm card
+      // Mock second assist card
       mockCardRepository.getSpecialCardById.mockResolvedValue({
-        id: 'special_loki',
-        name: 'Loki',
+        id: 'special_another_assist',
+        name: 'Another Assist Card',
         card_type: 'Special Card',
         character: 'Any Character',
-        card_effect: '**Cataclysm!** Opponent is -3 to Venture Total...',
-        image: 'specials/loki.webp',
-        is_cataclysm: true,
-        is_assist: false,
+        card_effect: '**Assist!** Another assist card...',
+        image: 'specials/another_assist.webp',
+        is_cataclysm: false,
+        is_assist: true,
         one_per_deck: false,
         alternateImages: []
       });
 
-      const result = await validateCardAddition(currentCards, 'special', 'special_loki', 1);
+      const result = await validateCardAddition(currentCards, 'special', 'special_another_assist', 1);
       
-      expect(result).toContain('Cannot add more than 1 Cataclysm to a deck');
-      expect(result).toContain('would have 2'); // Should show it would have 2 cataclysm cards
+      expect(result).toContain('Cannot add more than 1 Assist to a deck');
+      expect(result).toContain('would have 2'); // Should show it would have 2 assist cards
     });
 
-    it('should handle database errors during cataclysm validation', async () => {
+    it('should handle database errors during assist validation', async () => {
       const currentCards = [
         { type: 'character', cardId: 'char1', quantity: 1 }
       ];
@@ -261,12 +261,12 @@ describe('Backend Cataclysm Validation', () => {
       // Mock database error
       mockCardRepository.getSpecialCardById.mockRejectedValue(new Error('Database connection failed'));
 
-      const result = await validateCardAddition(currentCards, 'special', 'special_heimdall', 1);
+      const result = await validateCardAddition(currentCards, 'special', 'special_assist_card', 1);
       
       expect(result).toBeNull(); // Should not throw, but return null (no validation errors)
     });
 
-    it('should handle missing card data during cataclysm validation', async () => {
+    it('should handle missing card data during assist validation', async () => {
       const currentCards = [
         { type: 'character', cardId: 'char1', quantity: 1 }
       ];
@@ -285,25 +285,25 @@ describe('Backend Cataclysm Validation', () => {
       const currentCards: any[] = [];
 
       mockCardRepository.getSpecialCardById.mockResolvedValue({
-        id: 'special_heimdall',
-        name: 'Heimdall',
+        id: 'special_assist_card',
+        name: 'Assist Card',
         card_type: 'Special Card',
         character: 'Any Character',
-        card_effect: '**Cataclysm!** Any Character may avoid 1 attack...',
-        image: 'specials/heimdall.webp',
-        is_cataclysm: true,
-        is_assist: false,
+        card_effect: '**Assist!** Provides assistance to any character...',
+        image: 'specials/assist_card.webp',
+        is_cataclysm: false,
+        is_assist: true,
         one_per_deck: false,
         alternateImages: []
       });
 
-      const result = await validateCardAddition(currentCards, 'special', 'special_heimdall', 1);
+      const result = await validateCardAddition(currentCards, 'special', 'special_assist_card', 1);
       
-      expect(result).toBeNull(); // Should allow adding first cataclysm
+      expect(result).toBeNull(); // Should allow adding first assist
     });
 
-    it('should handle invalid card type for cataclysm check', async () => {
-      const result = await checkIfCardIsCataclysm('invalid_type', 'some_id');
+    it('should handle invalid card type for assist check', async () => {
+      const result = await checkIfCardIsAssist('invalid_type', 'some_id');
       
       expect(result).toBe(false);
       expect(mockCardRepository.getSpecialCardById).not.toHaveBeenCalled();
@@ -313,7 +313,7 @@ describe('Backend Cataclysm Validation', () => {
       // Mock empty card ID to return undefined
       mockCardRepository.getSpecialCardById.mockResolvedValue(undefined);
       
-      const result = await checkIfCardIsCataclysm('special', '');
+      const result = await checkIfCardIsAssist('special', '');
       
       expect(result).toBe(false);
       expect(mockCardRepository.getSpecialCardById).toHaveBeenCalledWith('');
@@ -323,7 +323,7 @@ describe('Backend Cataclysm Validation', () => {
       // Mock null card ID to return undefined
       mockCardRepository.getSpecialCardById.mockResolvedValue(undefined);
       
-      const result = await checkIfCardIsCataclysm('special', null as any);
+      const result = await checkIfCardIsAssist('special', null as any);
       
       expect(result).toBe(false);
       expect(mockCardRepository.getSpecialCardById).toHaveBeenCalledWith(null);

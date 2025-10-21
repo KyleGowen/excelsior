@@ -15,6 +15,7 @@
 12. [Import/Export Button Styling](#importexport-button-styling)
 13. [One Per Deck Card Dimming](#one-per-deck-card-dimming)
 14. [Cataclysm Card Dimming](#cataclysm-card-dimming)
+15. [Assist Card Dimming](#assist-card-dimming)
 
 ## Overview
 
@@ -844,3 +845,125 @@ function updateCataclysmLimitStatus() {
 - **Unit Tests**: `tests/unit/cataclysm-validation.test.ts`
 - **Integration Tests**: `tests/unit/cataclysm-integration.test.ts`
 - **Test Scenarios**: Adding/removing cataclysm cards, multiple cataclysm handling, visual state consistency
+
+## Assist Card Dimming
+
+### Overview
+Special cards marked with `assist=TRUE` in the database receive visual dimming when added to a deck, enforcing the "one assist per deck" rule.
+
+### Visual Dimming System
+When an "Assist" card is added to the deck, all available special cards with `assist=TRUE` are visually dimmed to indicate they cannot be selected again.
+
+#### Dimmed State Styling
+- **CSS Class**: `.disabled` applied to card elements
+- **Opacity**: `0.5` (50% transparency)
+- **Cursor**: `not-allowed` (indicates non-interactive)
+- **Draggable**: Set to `false` (prevents drag operations)
+- **Tooltip**: Shows "Assist - already in deck" or "Assist - another assist already selected"
+
+#### Implementation Details
+- **Function**: `updateAssistLimitStatus()` in `public/index.html`
+- **Trigger**: Called after adding/removing cards and when displaying deck
+- **Scope**: Affects only special cards with `assist=TRUE`
+- **Database Field**: Uses `assist` boolean column from special_cards table
+
+### Assist Card Examples
+The following special cards are marked as assist cards:
+- **Teamwork**: Any Character may assist another Character in battle
+- **Alliance**: Characters may share abilities and work together
+- **Support**: Provides assistance to any Character in the deck
+- **Cooperation**: Enables Character collaboration and mutual support
+- **Unity**: Strengthens Character bonds and teamwork abilities
+
+### Visual State Management
+#### Adding Cards
+1. Card is added to `window.deckEditorCards` array
+2. `updateAssistLimitStatus()` is called
+3. All assist cards in available section are dimmed
+4. Tooltips are updated to show limit status
+
+#### Removing Cards
+1. Card is removed from `window.deckEditorCards` array
+2. `updateAssistLimitStatus()` is called
+3. Previously dimmed assist cards are re-enabled
+4. Tooltips are cleared or updated
+
+#### Deck Display
+1. `displayDeckCardsForEditing()` is called
+2. `updateAssistLimitStatus()` is called at the end
+3. Ensures dimming state is consistent with current deck contents
+
+### CSS Implementation
+```css
+.card-item.disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+.card-item.disabled:hover {
+    /* Maintain dimmed appearance on hover */
+    opacity: 0.5 !important;
+}
+```
+
+### JavaScript Integration
+```javascript
+function updateAssistLimitStatus() {
+    // Get all Assist cards currently in the deck
+    const assistCardsInDeck = new Set();
+    window.deckEditorCards.forEach(card => {
+        const cardData = window.availableCardsMap.get(card.cardId);
+        if (cardData && cardData.is_assist === true) {
+            assistCardsInDeck.add(card.cardId);
+        }
+    });
+
+    // Update all special card items for assist dimming
+    const specialCardItems = document.querySelectorAll('.card-item[data-type="special"][data-id]');
+    specialCardItems.forEach(cardElement => {
+        const cardId = cardElement.getAttribute('data-id');
+
+        if (cardId) {
+            const cardData = window.availableCardsMap.get(cardId);
+            const isAssist = cardData && cardData.is_assist === true;
+            const isInDeck = assistCardsInDeck.has(cardId);
+            const hasOtherAssist = assistCardsInDeck.size > 0;
+
+            if (isAssist && (isInDeck || hasOtherAssist)) {
+                // This is an Assist card and either it's in the deck or another assist is in the deck - dim it
+                cardElement.classList.add('disabled');
+                cardElement.setAttribute('draggable', 'false');
+                if (isInDeck) {
+                    cardElement.title = 'Assist - already in deck';
+                } else {
+                    cardElement.title = 'Assist - another assist already selected';
+                }
+            } else if (isAssist && !hasOtherAssist) {
+                // This is an Assist card but no assist is in the deck - enable it
+                cardElement.classList.remove('disabled');
+                cardElement.setAttribute('draggable', 'true');
+                cardElement.title = '';
+            }
+        }
+    });
+}
+```
+
+### Backend Validation
+- **API Endpoint**: `/api/decks/:id/cards` (POST)
+- **Validation Function**: `checkIfCardIsAssist()` in `src/index.ts`
+- **Error Message**: "Cannot add more than 1 Assist to a deck"
+- **Database Query**: Checks `assist` column in `special_cards` table
+
+### Integration Points
+- **Card Addition**: Called after `addCardToEditor()`
+- **Card Removal**: Called after `removeCardFromEditor()`
+- **Deck Display**: Called after `displayDeckCardsForEditing()`
+- **Filter Updates**: Called after `updateSpecialCardsFilter()`
+
+### Testing Coverage
+- **Unit Tests**: `tests/unit/assist-backend-validation.test.ts`
+- **Integration Tests**: `tests/integration/assist-api-validation.test.ts`
+- **Database Tests**: `tests/integration/assist-database-integration.test.ts`
+- **Test Scenarios**: Adding/removing assist cards, multiple assist handling, visual state consistency

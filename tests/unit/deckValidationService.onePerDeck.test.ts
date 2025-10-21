@@ -66,6 +66,7 @@ describe('DeckValidationService - One Per Deck Validation', () => {
                 card_effect: 'Test effect',
                 image: 'special1.jpg',
                 is_cataclysm: false,
+                is_assist: false,
                 one_per_deck: true
             };
             
@@ -136,6 +137,7 @@ describe('DeckValidationService - One Per Deck Validation', () => {
                 card_effect: 'Test effect',
                 image: 'special1.jpg',
                 is_cataclysm: false,
+                is_assist: false,
                 one_per_deck: true
             };
             
@@ -212,6 +214,7 @@ describe('DeckValidationService - One Per Deck Validation', () => {
                 card_effect: 'Test effect',
                 image: 'special1.jpg',
                 is_cataclysm: false,
+                is_assist: false,
                 one_per_deck: true
             };
             
@@ -275,6 +278,7 @@ describe('DeckValidationService - One Per Deck Validation', () => {
                 card_effect: 'Test effect',
                 image: 'special1.jpg',
                 is_cataclysm: false,
+                is_assist: false,
                 one_per_deck: false // Explicitly false
             };
             

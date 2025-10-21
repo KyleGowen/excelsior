@@ -81,6 +81,7 @@ const mockSpecialCards: SpecialCard[] = [
     card_effect: 'Deal 2 damage',
     image: '/images/lightning_strike.jpg',
     is_cataclysm: false,
+    is_assist: false,
     one_per_deck: true,
     alternateImages: []
   },
@@ -92,6 +93,7 @@ const mockSpecialCards: SpecialCard[] = [
     card_effect: 'Deal 3 damage',
     image: '/images/spartan_charge.jpg',
     is_cataclysm: false,
+    is_assist: false,
     one_per_deck: false,
     alternateImages: []
   }

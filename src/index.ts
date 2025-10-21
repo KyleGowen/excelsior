@@ -43,6 +43,22 @@ export async function checkIfCardIsCataclysm(cardType: string, cardId: string): 
   }
 }
 
+// Helper function to check if a card is assist
+export async function checkIfCardIsAssist(cardType: string, cardId: string): Promise<boolean> {
+  try {
+    // Only special cards can be assist
+    if (cardType !== 'special') {
+      return false;
+    }
+    
+    const cardData = await cardRepository.getSpecialCardById(cardId);
+    return !!(cardData && cardData.is_assist === true);
+  } catch (error) {
+    console.error('Error checking if card is assist:', error);
+    return false; // Default to not assist if we can't determine
+  }
+}
+
 // Helper function to check if a card is one-per-deck
 export async function checkIfCardIsOnePerDeck(cardType: string, cardId: string): Promise<boolean> {
   try {
@@ -190,6 +206,19 @@ export async function validateCardAddition(currentCards: any[], cardType: string
   
   if (cataclysmCards.length > 1) {
     return `Cannot add more than 1 Cataclysm to a deck (would have ${cataclysmCards.length})`;
+  }
+  
+  // Rule 6: Check for Assist cards (only one assist per deck)
+  const assistCards: any[] = [];
+  for (const card of testCards) {
+    const isAssist = await checkIfCardIsAssist(card.type, card.cardId);
+    if (isAssist) {
+      assistCards.push(card);
+    }
+  }
+  
+  if (assistCards.length > 1) {
+    return `Cannot add more than 1 Assist to a deck (would have ${assistCards.length})`;
   }
   
   return null; // No validation errors
@@ -1062,6 +1091,29 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
         return res.status(400).json({ 
           success: false, 
           error: `Cannot add more than 1 Cataclysm to a deck` 
+        });
+      }
+    }
+    
+    // Additional validation: Check if card is assist and deck already has an assist
+    const isAssist = await checkIfCardIsAssist(cardType, cardId);
+    if (isAssist) {
+      // Check if deck already has any assist card
+      let hasExistingAssist = false;
+      if (currentDeck.cards) {
+        for (const card of currentDeck.cards) {
+          const cardIsAssist = await checkIfCardIsAssist(card.type, card.cardId);
+          if (cardIsAssist) {
+            hasExistingAssist = true;
+            break;
+          }
+        }
+      }
+      
+      if (hasExistingAssist) {
+        return res.status(400).json({ 
+          success: false, 
+          error: `Cannot add more than 1 Assist to a deck` 
         });
       }
     }
