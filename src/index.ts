@@ -27,6 +27,22 @@ const DECK_RULES = {
   MAX_LOCATIONS: 1
 };
 
+// Helper function to check if a card is cataclysm
+export async function checkIfCardIsCataclysm(cardType: string, cardId: string): Promise<boolean> {
+  try {
+    // Only special cards can be cataclysm
+    if (cardType !== 'special') {
+      return false;
+    }
+    
+    const cardData = await cardRepository.getSpecialCardById(cardId);
+    return !!(cardData && cardData.is_cataclysm === true);
+  } catch (error) {
+    console.error('Error checking if card is cataclysm:', error);
+    return false; // Default to not cataclysm if we can't determine
+  }
+}
+
 // Helper function to check if a card is one-per-deck
 export async function checkIfCardIsOnePerDeck(cardType: string, cardId: string): Promise<boolean> {
   try {
@@ -161,6 +177,19 @@ export async function validateCardAddition(currentCards: any[], cardType: string
       const [type, cardId] = cardKey.split('_', 2);
       return `Cannot add more copies of "${cardId}" - this ${type} card is limited to one per deck`;
     }
+  }
+  
+  // Rule 5: Check for Cataclysm cards (only one cataclysm per deck)
+  const cataclysmCards: any[] = [];
+  for (const card of testCards) {
+    const isCataclysm = await checkIfCardIsCataclysm(card.type, card.cardId);
+    if (isCataclysm) {
+      cataclysmCards.push(card);
+    }
+  }
+  
+  if (cataclysmCards.length > 1) {
+    return `Cannot add more than 1 Cataclysm to a deck (would have ${cataclysmCards.length})`;
   }
   
   return null; // No validation errors
@@ -1010,6 +1039,29 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
         return res.status(400).json({ 
           success: false, 
           error: `Cannot add more copies of this card - it is limited to one per deck` 
+        });
+      }
+    }
+    
+    // Additional validation: Check if card is cataclysm and deck already has a cataclysm
+    const isCataclysm = await checkIfCardIsCataclysm(cardType, cardId);
+    if (isCataclysm) {
+      // Check if deck already has any cataclysm card
+      let hasExistingCataclysm = false;
+      if (currentDeck.cards) {
+        for (const card of currentDeck.cards) {
+          const cardIsCataclysm = await checkIfCardIsCataclysm(card.type, card.cardId);
+          if (cardIsCataclysm) {
+            hasExistingCataclysm = true;
+            break;
+          }
+        }
+      }
+      
+      if (hasExistingCataclysm) {
+        return res.status(400).json({ 
+          success: false, 
+          error: `Cannot add more than 1 Cataclysm to a deck` 
         });
       }
     }

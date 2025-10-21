@@ -6046,11 +6046,11 @@
                 cardsByType[type].push({ ...card, originalIndex: index });
             });
             
-            // Define type order and display names
+            // Define type order and display names (using frontend format with hyphens)
             const typeOrder = [
                 'character', 'location', 'mission', 'event', 'special', 
-                'aspect', 'advanced_universe', 'teamwork', 'ally_universe', 
-                'training', 'basic_universe', 'power'
+                'aspect', 'advanced-universe', 'teamwork', 'ally-universe', 
+                'training', 'basic-universe', 'power'
             ];
             
             const typeDisplayNames = {
@@ -6060,11 +6060,11 @@
                 'event': 'Events',
                 'special': 'Special Cards',
                 'aspect': 'Aspects',
-                'advanced_universe': 'Advanced Universe',
+                'advanced-universe': 'Advanced Universe',
                 'teamwork': 'Universe: Teamwork',
-                'ally_universe': 'Universe: Ally',
+                'ally-universe': 'Universe: Ally',
                 'training': 'Universe: Training',
-                'basic_universe': 'Universe: Basic',
+                'basic-universe': 'Universe: Basic',
                 'power': 'Power Cards'
             };
             
@@ -6233,8 +6233,22 @@
                                     alternateArtButton = `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>`;
                                 }
                                 
+                                // Determine the correct CSS class based on card type
+                                let cardClass = 'special-card';
+                                if (card.type === 'ally-universe') {
+                                    cardClass = 'ally-universe-card';
+                                } else if (card.type === 'basic-universe') {
+                                    cardClass = 'basic-universe-card';
+                                } else if (card.type === 'advanced-universe') {
+                                    cardClass = 'advanced-universe-card';
+                                } else if (card.type === 'training') {
+                                    cardClass = 'training-card';
+                                } else if (card.type === 'teamwork') {
+                                    cardClass = 'teamwork-card';
+                                }
+                                
                                 cardsHtml += `
-                                    <div class="deck-card-editor-item preview-view special-card" draggable="true" data-index="${index}" data-type="${card.type}"
+                                    <div class="deck-card-editor-item preview-view ${cardClass}" draggable="true" data-index="${index}" data-type="${card.type}"
                                          data-bg-image="${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}"
                                          onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}', '${(card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))).replace(/'/g, "\\'")}')"
                                          onmouseleave="hideCardHoverModal()"
@@ -6567,9 +6581,9 @@
                             const isEvent = card.type === 'event';
                             const isAspect = card.type === 'aspect';
                             const isTeamwork = card.type === 'teamwork';
-                            const isAllyUniverse = card.type === 'ally_universe';
-                            const isBasicUniverse = card.type === 'basic_universe';
-                            const isAdvancedUniverse = card.type === 'advanced_universe';
+                            const isAllyUniverse = card.type === 'ally-universe';
+                            const isBasicUniverse = card.type === 'basic-universe';
+                            const isAdvancedUniverse = card.type === 'advanced-universe';
                             const isTraining = card.type === 'training';
                             
                             const characterClass = isCharacter ? 'character-card' : '';
@@ -6585,7 +6599,7 @@
                             const trainingClass = isTraining ? 'training-card' : '';
                             
                             const selectedAlternateImage = card.selectedAlternateImage;
-                            const bgImageData = (isCharacter || isPower || isLocation || isMission || isEvent || isAspect || isTeamwork || card.type === 'ally_universe' || card.type === 'basic_universe' || card.type === 'advanced_universe' || card.type === 'training') ? `data-bg-image="${getCardImagePath(availableCard, card.type, selectedAlternateImage)}"` : '';
+                            const bgImageData = (isCharacter || isPower || isLocation || isMission || isEvent || isAspect || isTeamwork || isAllyUniverse || isBasicUniverse || isAdvancedUniverse || isTraining) ? `data-bg-image="${getCardImagePath(availableCard, card.type, selectedAlternateImage)}"` : '';
                             
                             // Add alternate art button for characters, special cards, and power cards with alternate images
                             let alternateArtButton = '';
@@ -6604,7 +6618,7 @@
                                  ondragover="handleDeckCardDragOver(event)"
                                  ondrop="handleDeckCardDrop(event)">
                                 <div class="deck-card-editor-info">
-                                        <div class="deck-card-editor-name">${card.type === 'power' ? `${availableCard.value} - ${availableCard.power_type}` : (card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally_universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic_universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))))))} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
+                                        <div class="deck-card-editor-name">${card.type === 'power' ? `${availableCard.value} - ${availableCard.power_type}` : (card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally-universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic-universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))))))} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
                                     ${cardDetails ? `<div class="deck-card-editor-stats">${cardDetails}</div>` : ''}
                                 </div>
                                 <div class="deck-card-editor-actions">
@@ -7668,6 +7682,9 @@
             // Update One Per Deck limit status
             updateOnePerDeckLimitStatus();
             
+            // Update Cataclysm limit status
+            updateCataclysmLimitStatus();
+            
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
             
@@ -7786,6 +7803,14 @@
                     return;
                 }
                 
+                // Check Cataclysm limit before increasing quantity
+                const isCataclysm = cardData && cardData.is_cataclysm === true;
+                if (isCataclysm) {
+                    console.log('🚫 Card is cataclysm, blocking quantity increase');
+                    showNotification(`Cannot add more than 1 Cataclysm to a deck`, 'error');
+                    return;
+                }
+                
                 // Increase quantity by 1
                 window.window.deckEditorCards[index].quantity += 1;
                 
@@ -7884,6 +7909,9 @@
             // Update One Per Deck limit status
             updateOnePerDeckLimitStatus();
             
+            // Update Cataclysm limit status
+            updateCataclysmLimitStatus();
+            
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
             
@@ -7958,6 +7986,9 @@
             
             // Update One Per Deck limit status
             updateOnePerDeckLimitStatus();
+            
+            // Update Cataclysm limit status
+            updateCataclysmLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
@@ -8312,6 +8343,47 @@
                     } else if (cardType !== 'character' && cardType !== 'mission') {
                         // Only update non-character/non-mission cards here
                         // Character and mission dimming is handled by updateCharacterLimitStatus() and updateMissionLimitStatus()
+                        cardElement.classList.remove('disabled');
+                        cardElement.setAttribute('draggable', 'true');
+                        cardElement.title = '';
+                    }
+                }
+            });
+        }
+
+        // Function to update Cataclysm card dimming status
+        function updateCataclysmLimitStatus() {
+            // Get all Cataclysm cards currently in the deck
+            const cataclysmCardsInDeck = new Set();
+            window.deckEditorCards.forEach(card => {
+                const cardData = window.availableCardsMap.get(card.cardId);
+                if (cardData && cardData.is_cataclysm === true) {
+                    cataclysmCardsInDeck.add(card.cardId);
+                }
+            });
+            
+            // Update all special card items for cataclysm dimming
+            const specialCardItems = document.querySelectorAll('.card-item[data-type="special"][data-id]');
+            specialCardItems.forEach(cardElement => {
+                const cardId = cardElement.getAttribute('data-id');
+                
+                if (cardId) {
+                    const cardData = window.availableCardsMap.get(cardId);
+                    const isCataclysm = cardData && cardData.is_cataclysm === true;
+                    const isInDeck = cataclysmCardsInDeck.has(cardId);
+                    const hasOtherCataclysm = cataclysmCardsInDeck.size > 0;
+                    
+                    if (isCataclysm && (isInDeck || hasOtherCataclysm)) {
+                        // This is a Cataclysm card and either it's in the deck or another cataclysm is in the deck - dim it
+                        cardElement.classList.add('disabled');
+                        cardElement.setAttribute('draggable', 'false');
+                        if (isInDeck) {
+                            cardElement.title = 'Cataclysm - already in deck';
+                        } else {
+                            cardElement.title = 'Cataclysm - another cataclysm already selected';
+                        }
+                    } else if (isCataclysm && !hasOtherCataclysm) {
+                        // This is a Cataclysm card but no cataclysm is in the deck - enable it
                         cardElement.classList.remove('disabled');
                         cardElement.setAttribute('draggable', 'true');
                         cardElement.title = '';
@@ -9420,6 +9492,21 @@
                 }
             }
             
+            // Check Cataclysm limit for special cards
+            const isCataclysm = cardData && cardData.is_cataclysm === true;
+            if (isCataclysm) {
+                // Check if we already have any cataclysm card in the deck
+                const hasExistingCataclysm = window.deckEditorCards.some(card => {
+                    const cardData = window.availableCardsMap.get(card.cardId);
+                    return cardData && cardData.is_cataclysm === true;
+                });
+                
+                if (hasExistingCataclysm) {
+                    showNotification(`Cannot add more than 1 Cataclysm to a deck`, 'error');
+                    return;
+                }
+            }
+            
             // Check mission limit before adding
             if (cardType === 'mission') {
                 const currentMissionCount = window.deckEditorCards
@@ -9539,6 +9626,9 @@
             
             // Update One Per Deck limit status
             updateOnePerDeckLimitStatus();
+            
+            // Update Cataclysm limit status
+            updateCataclysmLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();

@@ -661,7 +661,7 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
     const { cardType, cardId, quantity, selectedAlternateImage } = req.body;
     
     // Import validation functions from main index
-    const { validateCardAddition, checkIfCardIsOnePerDeck } = require('./index');
+    const { validateCardAddition, checkIfCardIsOnePerDeck, checkIfCardIsCataclysm } = require('./index');
     
     // Validate deck building rules before adding card
     const validationError = await validateCardAddition(deck.cards || [], cardType, cardId, quantity || 1);
