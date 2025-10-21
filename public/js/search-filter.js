@@ -42,7 +42,7 @@ function clearAllFiltersGlobally() {
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
         // Check if this is a mission set checkbox by looking at its value
-        const missionSetValues = ['King of the Jungle', 'The Call of Cthulhu', 'Time Wars: Rise of the Gods', 'Warlord of Mars'];
+        const missionSetValues = ['King of the Jungle', 'The Call of Cthulhu', 'Time Wars: Rise of the Gods', 'The Warlord of Mars'];
         if (missionSetValues.includes(checkbox.value)) {
             // Keep mission set checkboxes checked by default
             checkbox.checked = true;
