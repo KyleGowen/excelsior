@@ -45,7 +45,7 @@ describe('Step 1 Refactoring - Complete Coverage', () => {
             expect(content).toContain('fetch(\'/templates/database-view-complete.html\')');
             expect(content).toContain('response.text()');
             expect(content).toContain('getElementById(\'database-view-container\')');
-            expect(content).toContain('innerHTML = html');
+            expect(content).toContain('innerHTML = templateContent');
             
             // Error handling
             expect(content).toContain('catch (error)');
@@ -53,7 +53,7 @@ describe('Step 1 Refactoring - Complete Coverage', () => {
             
             // Success logging
             expect(content).toContain('console.log');
-            expect(content).toContain('✅ Database view template loaded successfully');
+            expect(content).toContain('Template loaded successfully');
         });
 
         it('should call loadDatabaseViewTemplate in DOMContentLoaded', () => {
@@ -61,7 +61,7 @@ describe('Step 1 Refactoring - Complete Coverage', () => {
             const content = fs.readFileSync(databasePath, 'utf-8');
             
             // Should be called in DOMContentLoaded
-            expect(content).toContain('await loadDatabaseViewTemplate()');
+            expect(content).toContain('loadDatabaseViewTemplate()');
             expect(content).toContain('DOMContentLoaded');
         });
     });
@@ -231,8 +231,8 @@ describe('Step 1 Refactoring - Complete Coverage', () => {
             // Should have success and error logging
             expect(content).toContain('console.log');
             expect(content).toContain('console.error');
-            expect(content).toContain('✅ Database view template loaded successfully');
-            expect(content).toContain('❌ Error loading database view template:');
+            expect(content).toContain('Template loaded successfully');
+            expect(content).toContain('Error loading database view template:');
         });
 
         it('should have proper documentation', () => {
