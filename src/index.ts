@@ -59,6 +59,22 @@ export async function checkIfCardIsAssist(cardType: string, cardId: string): Pro
   }
 }
 
+// Helper function to check if a card is ambush
+export async function checkIfCardIsAmbush(cardType: string, cardId: string): Promise<boolean> {
+  try {
+    // Only special cards can be ambush
+    if (cardType !== 'special') {
+      return false;
+    }
+    
+    const cardData = await cardRepository.getSpecialCardById(cardId);
+    return !!(cardData && cardData.is_ambush === true);
+  } catch (error) {
+    console.error('Error checking if card is ambush:', error);
+    return false; // Default to not ambush if we can't determine
+  }
+}
+
 // Helper function to check if a card is one-per-deck
 export async function checkIfCardIsOnePerDeck(cardType: string, cardId: string): Promise<boolean> {
   try {
@@ -219,6 +235,19 @@ export async function validateCardAddition(currentCards: any[], cardType: string
   
   if (assistCards.length > 1) {
     return `Cannot add more than 1 Assist to a deck (would have ${assistCards.length})`;
+  }
+  
+  // Rule 7: Check for Ambush cards (only one ambush per deck)
+  const ambushCards: any[] = [];
+  for (const card of testCards) {
+    const isAmbush = await checkIfCardIsAmbush(card.type, card.cardId);
+    if (isAmbush) {
+      ambushCards.push(card);
+    }
+  }
+  
+  if (ambushCards.length > 1) {
+    return `Cannot add more than 1 Ambush to a deck (would have ${ambushCards.length})`;
   }
   
   return null; // No validation errors
@@ -1095,28 +1124,51 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
       }
     }
     
-    // Additional validation: Check if card is assist and deck already has an assist
-    const isAssist = await checkIfCardIsAssist(cardType, cardId);
-    if (isAssist) {
-      // Check if deck already has any assist card
-      let hasExistingAssist = false;
-      if (currentDeck.cards) {
-        for (const card of currentDeck.cards) {
-          const cardIsAssist = await checkIfCardIsAssist(card.type, card.cardId);
-          if (cardIsAssist) {
-            hasExistingAssist = true;
-            break;
+        // Additional validation: Check if card is assist and deck already has an assist
+        const isAssist = await checkIfCardIsAssist(cardType, cardId);
+        if (isAssist) {
+          // Check if deck already has any assist card
+          let hasExistingAssist = false;
+          if (currentDeck.cards) {
+            for (const card of currentDeck.cards) {
+              const cardIsAssist = await checkIfCardIsAssist(card.type, card.cardId);
+              if (cardIsAssist) {
+                hasExistingAssist = true;
+                break;
+              }
+            }
+          }
+          
+          if (hasExistingAssist) {
+            return res.status(400).json({ 
+              success: false, 
+              error: `Cannot add more than 1 Assist to a deck` 
+            });
           }
         }
-      }
-      
-      if (hasExistingAssist) {
-        return res.status(400).json({ 
-          success: false, 
-          error: `Cannot add more than 1 Assist to a deck` 
-        });
-      }
-    }
+
+        // Additional validation: Check if card is ambush and deck already has an ambush
+        const isAmbush = await checkIfCardIsAmbush(cardType, cardId);
+        if (isAmbush) {
+          // Check if deck already has any ambush card
+          let hasExistingAmbush = false;
+          if (currentDeck.cards) {
+            for (const card of currentDeck.cards) {
+              const cardIsAmbush = await checkIfCardIsAmbush(card.type, card.cardId);
+              if (cardIsAmbush) {
+                hasExistingAmbush = true;
+                break;
+              }
+            }
+          }
+          
+          if (hasExistingAmbush) {
+            return res.status(400).json({ 
+              success: false, 
+              error: `Cannot add more than 1 Ambush to a deck` 
+            });
+          }
+        }
     
     const success = await deckRepository.addCardToDeck(req.params.id, cardType, cardId, quantity || 1, selectedAlternateImage);
     if (!success) {

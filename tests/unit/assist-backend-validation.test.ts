@@ -48,6 +48,7 @@ describe('Backend Assist Validation', () => {
         card_effect: '**Assist!** Provides assistance to any character...',
         image: 'specials/assist_card.webp',
         is_cataclysm: false,
+        is_ambush: false,
         is_assist: true,
         one_per_deck: false,
         alternateImages: []
@@ -69,6 +70,7 @@ describe('Backend Assist Validation', () => {
         card_effect: 'Regular special card effect',
         image: 'specials/regular.webp',
         is_cataclysm: false,
+        is_ambush: false,
         is_assist: false,
         one_per_deck: false,
         alternateImages: []
@@ -121,6 +123,7 @@ describe('Backend Assist Validation', () => {
         card_effect: 'Card with undefined assist property',
         image: 'specials/undefined.webp',
         is_cataclysm: false,
+        is_ambush: false,
         is_assist: undefined as any,
         one_per_deck: false,
         alternateImages: []
@@ -140,6 +143,7 @@ describe('Backend Assist Validation', () => {
         card_effect: 'Card with null assist property',
         image: 'specials/null.webp',
         is_cataclysm: false,
+        is_ambush: false,
         is_assist: null as any,
         one_per_deck: false,
         alternateImages: []
@@ -167,6 +171,7 @@ describe('Backend Assist Validation', () => {
         card_effect: '**Assist!** Provides assistance to any character...',
         image: 'specials/assist_card.webp',
         is_cataclysm: false,
+        is_ambush: false,
         is_assist: true,
         one_per_deck: false,
         alternateImages: []
@@ -192,6 +197,7 @@ describe('Backend Assist Validation', () => {
         card_effect: '**Assist!** Another assist card...',
         image: 'specials/another_assist.webp',
         is_cataclysm: false,
+        is_ambush: false,
         is_assist: true,
         one_per_deck: false,
         alternateImages: []
@@ -217,6 +223,7 @@ describe('Backend Assist Validation', () => {
         card_effect: 'Regular special card effect',
         image: 'specials/regular.webp',
         is_cataclysm: false,
+        is_ambush: false,
         is_assist: false,
         one_per_deck: false,
         alternateImages: []
@@ -242,6 +249,7 @@ describe('Backend Assist Validation', () => {
         card_effect: '**Assist!** Another assist card...',
         image: 'specials/another_assist.webp',
         is_cataclysm: false,
+        is_ambush: false,
         is_assist: true,
         one_per_deck: false,
         alternateImages: []
@@ -292,6 +300,7 @@ describe('Backend Assist Validation', () => {
         card_effect: '**Assist!** Provides assistance to any character...',
         image: 'specials/assist_card.webp',
         is_cataclysm: false,
+        is_ambush: false,
         is_assist: true,
         one_per_deck: false,
         alternateImages: []

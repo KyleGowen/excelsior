@@ -67,6 +67,7 @@ describe('DeckValidationService - One Per Deck Validation', () => {
                 image: 'special1.jpg',
                 is_cataclysm: false,
                 is_assist: false,
+        is_ambush: false,
                 one_per_deck: true
             };
             
@@ -138,6 +139,7 @@ describe('DeckValidationService - One Per Deck Validation', () => {
                 image: 'special1.jpg',
                 is_cataclysm: false,
                 is_assist: false,
+        is_ambush: false,
                 one_per_deck: true
             };
             
@@ -215,6 +217,7 @@ describe('DeckValidationService - One Per Deck Validation', () => {
                 image: 'special1.jpg',
                 is_cataclysm: false,
                 is_assist: false,
+        is_ambush: false,
                 one_per_deck: true
             };
             
@@ -279,6 +282,7 @@ describe('DeckValidationService - One Per Deck Validation', () => {
                 image: 'special1.jpg',
                 is_cataclysm: false,
                 is_assist: false,
+        is_ambush: false,
                 one_per_deck: false // Explicitly false
             };
             

@@ -16,6 +16,7 @@
 13. [One Per Deck Card Dimming](#one-per-deck-card-dimming)
 14. [Cataclysm Card Dimming](#cataclysm-card-dimming)
 15. [Assist Card Dimming](#assist-card-dimming)
+16. [Ambush Card Dimming](#ambush-card-dimming)
 
 ## Overview
 
@@ -967,3 +968,123 @@ function updateAssistLimitStatus() {
 - **Integration Tests**: `tests/integration/assist-api-validation.test.ts`
 - **Database Tests**: `tests/integration/assist-database-integration.test.ts`
 - **Test Scenarios**: Adding/removing assist cards, multiple assist handling, visual state consistency
+
+## Ambush Card Dimming
+
+### Overview
+Special cards marked with `ambush=TRUE` in the database receive visual dimming when added to a deck, enforcing the "one ambush per deck" rule.
+
+### Visual Dimming System
+When an "Ambush" card is added to the deck, all available special cards with `ambush=TRUE` are visually dimmed to indicate they cannot be selected again.
+
+#### Dimmed State Styling
+- **CSS Class**: `.disabled` applied to card elements
+- **Opacity**: `0.5` (50% transparency)
+- **Cursor**: `not-allowed` (indicates non-interactive)
+- **Draggable**: Set to `false` (prevents drag operations)
+- **Tooltip**: Shows "Ambush - already in deck" or "Ambush - another ambush already selected"
+
+#### Implementation Details
+- **Function**: `updateAmbushLimitStatus()` in `public/index.html`
+- **Trigger**: Called after adding/removing cards and when displaying deck
+- **Scope**: Affects only special cards with `ambush=TRUE`
+- **Database Field**: Uses `ambush` boolean column from special_cards table
+
+### Ambush Card Examples
+The following special cards are marked as ambush cards:
+- **Wrath of Ra**: Devastating attack that can be used as an ambush
+- **Valkyrie Skeggjold**: Norse warrior ambush tactics
+- **Oni and Succubus**: Demonic ambush combination
+- **Bodhisattva: Enlightened One**: Spiritual ambush capabilities
+
+### Visual State Management
+#### Adding Cards
+1. Card is added to `window.deckEditorCards` array
+2. `updateAmbushLimitStatus()` is called
+3. All ambush cards in available section are dimmed
+4. Tooltips are updated to show limit status
+
+#### Removing Cards
+1. Card is removed from `window.deckEditorCards` array
+2. `updateAmbushLimitStatus()` is called
+3. Previously dimmed ambush cards are re-enabled
+4. Tooltips are cleared or updated
+
+#### Deck Display
+1. `displayDeckCardsForEditing()` is called
+2. `updateAmbushLimitStatus()` is called at the end
+3. Ensures dimming state is consistent with current deck contents
+
+### CSS Implementation
+```css
+.card-item.disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+.card-item.disabled:hover {
+    /* Maintain dimmed appearance on hover */
+    opacity: 0.5 !important;
+}
+```
+
+### JavaScript Integration
+```javascript
+function updateAmbushLimitStatus() {
+    // Get all Ambush cards currently in the deck
+    const ambushCardsInDeck = new Set();
+    window.deckEditorCards.forEach(card => {
+        const cardData = window.availableCardsMap.get(card.cardId);
+        if (cardData && cardData.is_ambush === true) {
+            ambushCardsInDeck.add(card.cardId);
+        }
+    });
+    
+    // Update all special card items for ambush dimming
+    const specialCardItems = document.querySelectorAll('.card-item[data-type="special"][data-id]');
+    specialCardItems.forEach(cardElement => {
+        const cardId = cardElement.getAttribute('data-id');
+        
+        if (cardId) {
+            const cardData = window.availableCardsMap.get(cardId);
+            const isAmbush = cardData && cardData.is_ambush === true;
+            const isInDeck = ambushCardsInDeck.has(cardId);
+            const hasOtherAmbush = ambushCardsInDeck.size > 0;
+            
+            if (isAmbush && (isInDeck || hasOtherAmbush)) {
+                // This is an Ambush card and either it's in the deck or another ambush is in the deck - dim it
+                cardElement.classList.add('disabled');
+                cardElement.setAttribute('draggable', 'false');
+                if (isInDeck) {
+                    cardElement.title = 'Ambush - already in deck';
+                } else {
+                    cardElement.title = 'Ambush - another ambush already selected';
+                }
+            } else if (isAmbush && !hasOtherAmbush) {
+                // This is an Ambush card but no ambush is in the deck - enable it
+                cardElement.classList.remove('disabled');
+                cardElement.setAttribute('draggable', 'true');
+                cardElement.title = '';
+            }
+        }
+    });
+}
+```
+
+### Backend Validation
+- **API Endpoint**: `/api/decks/:id/cards` (POST)
+- **Validation Function**: `checkIfCardIsAmbush()` in `src/index.ts`
+- **Error Message**: "Cannot add more than 1 Ambush to a deck"
+- **Database Query**: Checks `ambush` column in `special_cards` table
+
+### Integration Points
+- **Card Addition**: Called after `addCardToEditor()`
+- **Card Removal**: Called after `removeCardFromEditor()`
+- **Deck Display**: Called after `displayDeckCardsForEditing()`
+- **Filter Updates**: Called after `updateSpecialCardsFilter()`
+
+### Testing Coverage
+- **Unit Tests**: `tests/unit/ambush-backend-validation.test.ts`
+- **Frontend Tests**: `tests/unit/ambush-frontend-validation.test.ts`
+- **Test Scenarios**: Adding/removing ambush cards, multiple ambush handling, visual state consistency

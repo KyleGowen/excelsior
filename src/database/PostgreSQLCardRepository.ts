@@ -124,18 +124,19 @@ export class PostgreSQLCardRepository implements CardRepository {
       }
       
       const card = result.rows[0];
-      return {
-        id: card.id,
-        name: card.name,
-        card_type: card.card_type,
-        character: card.character_name,
-        card_effect: card.card_effect,
-        image: card.image_path,
-        is_cataclysm: card.cataclysm || false,
-        is_assist: card.assist || false,
-        one_per_deck: card.one_per_deck || false,
-        alternateImages: card.alternate_images || []
-      };
+            return {
+              id: card.id,
+              name: card.name,
+              card_type: card.card_type,
+              character: card.character_name,
+              card_effect: card.card_effect,
+              image: card.image_path,
+              is_cataclysm: card.cataclysm || false,
+              is_assist: card.assist || false,
+              is_ambush: card.ambush || false,
+              one_per_deck: card.one_per_deck || false,
+              alternateImages: card.alternate_images || []
+            };
     } finally {
       client.release();
     }
@@ -146,18 +147,19 @@ export class PostgreSQLCardRepository implements CardRepository {
     try {
       const result = await client.query('SELECT * FROM special_cards ORDER BY character_name, name');
       
-      return result.rows.map(card => ({
-        id: card.id,
-        name: card.name,
-        card_type: card.card_type,
-        character: card.character_name,
-        card_effect: card.card_effect,
-        image: card.image_path,
-        is_cataclysm: card.cataclysm || false,
-        is_assist: card.assist || false,
-        one_per_deck: card.one_per_deck || false,
-        alternateImages: card.alternate_images || []
-      }));
+            return result.rows.map(card => ({
+              id: card.id,
+              name: card.name,
+              card_type: card.card_type,
+              character: card.character_name,
+              card_effect: card.card_effect,
+              image: card.image_path,
+              is_cataclysm: card.cataclysm || false,
+              is_assist: card.assist || false,
+              is_ambush: card.ambush || false,
+              one_per_deck: card.one_per_deck || false,
+              alternateImages: card.alternate_images || []
+            }));
     } finally {
       client.release();
     }

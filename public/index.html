@@ -7661,6 +7661,7 @@
             
             // Update Assist limit status
             updateAssistLimitStatus();
+            updateAmbushLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
@@ -7891,6 +7892,7 @@
             
             // Update Assist limit status
             updateAssistLimitStatus();
+            updateAmbushLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
@@ -7972,6 +7974,7 @@
             
             // Update Assist limit status
             updateAssistLimitStatus();
+            updateAmbushLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();
@@ -8431,6 +8434,49 @@
                     }
                 }
             });
+        }
+
+        // Function to update Ambush card dimming status
+        function updateAmbushLimitStatus() {
+            // Get all Ambush cards currently in the deck
+            const ambushCardsInDeck = new Set();
+            window.deckEditorCards.forEach(card => {
+                const cardData = window.availableCardsMap.get(card.cardId);
+                if (cardData && cardData.is_ambush === true) {
+                    ambushCardsInDeck.add(card.cardId);
+                }
+            });
+            
+            // Update all special card items for ambush dimming
+            const specialCardItems = document.querySelectorAll('.card-item[data-type="special"][data-id]');
+            if (specialCardItems && specialCardItems.forEach) {
+                specialCardItems.forEach(cardElement => {
+                    const cardId = cardElement.getAttribute('data-id');
+                    
+                    if (cardId) {
+                        const cardData = window.availableCardsMap.get(cardId);
+                        const isAmbush = cardData && cardData.is_ambush === true;
+                        const isInDeck = ambushCardsInDeck.has(cardId);
+                        const hasOtherAmbush = ambushCardsInDeck.size > 0;
+                        
+                        if (isAmbush && (isInDeck || hasOtherAmbush)) {
+                            // This is an Ambush card and either it's in the deck or another ambush is in the deck - dim it
+                            cardElement.classList.add('disabled');
+                            cardElement.setAttribute('draggable', 'false');
+                            if (isInDeck) {
+                                cardElement.title = 'Ambush - already in deck';
+                            } else {
+                                cardElement.title = 'Ambush - another ambush already selected';
+                            }
+                        } else if (isAmbush && !hasOtherAmbush) {
+                            // This is an Ambush card but no ambush is in the deck - enable it
+                            cardElement.classList.remove('disabled');
+                            cardElement.setAttribute('draggable', 'true');
+                            cardElement.title = '';
+                        }
+                    }
+                });
+            }
         }
 
         async function loadAvailableCards() {
@@ -9563,6 +9609,21 @@
                 }
             }
             
+            // Check Ambush limit for special cards
+            const isAmbush = cardData && cardData.is_ambush === true;
+            if (isAmbush) {
+                // Check if we already have any ambush card in the deck
+                const hasExistingAmbush = window.deckEditorCards.some(card => {
+                    const cardData = window.availableCardsMap.get(card.cardId);
+                    return cardData && cardData.is_ambush === true;
+                });
+                
+                if (hasExistingAmbush) {
+                    showNotification(`Cannot add more than 1 Ambush to a deck`, 'error');
+                    return;
+                }
+            }
+            
             // Check mission limit before adding
             if (cardType === 'mission') {
                 const currentMissionCount = window.deckEditorCards
@@ -9688,6 +9749,7 @@
             
             // Update Assist limit status
             updateAssistLimitStatus();
+            updateAmbushLimitStatus();
             
             // Update special cards filter if it's active
             updateSpecialCardsFilter();

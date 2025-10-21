@@ -82,6 +82,7 @@ const mockSpecialCards: SpecialCard[] = [
     image: '/images/lightning_strike.jpg',
     is_cataclysm: false,
     is_assist: false,
+    is_ambush: false,
     one_per_deck: true,
     alternateImages: []
   },
@@ -94,6 +95,7 @@ const mockSpecialCards: SpecialCard[] = [
     image: '/images/spartan_charge.jpg',
     is_cataclysm: false,
     is_assist: false,
+    is_ambush: false,
     one_per_deck: false,
     alternateImages: []
   }

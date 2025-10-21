@@ -49,6 +49,7 @@ describe('Backend Cataclysm Validation', () => {
         image: 'specials/heimdall.webp',
         is_cataclysm: true,
         is_assist: false,
+        is_ambush: false,
         one_per_deck: false,
         alternateImages: []
       });
@@ -70,6 +71,7 @@ describe('Backend Cataclysm Validation', () => {
         image: 'specials/regular.webp',
         is_cataclysm: false,
         is_assist: false,
+        is_ambush: false,
         one_per_deck: false,
         alternateImages: []
       });
@@ -122,6 +124,7 @@ describe('Backend Cataclysm Validation', () => {
         image: 'specials/undefined.webp',
         is_cataclysm: undefined as any,
         is_assist: false,
+        is_ambush: false,
         one_per_deck: false,
         alternateImages: []
       });
@@ -141,6 +144,7 @@ describe('Backend Cataclysm Validation', () => {
         image: 'specials/null.webp',
         is_cataclysm: null as any,
         is_assist: false,
+        is_ambush: false,
         one_per_deck: false,
         alternateImages: []
       });
@@ -168,6 +172,7 @@ describe('Backend Cataclysm Validation', () => {
         image: 'specials/heimdall.webp',
         is_cataclysm: true,
         is_assist: false,
+        is_ambush: false,
         one_per_deck: false,
         alternateImages: []
       });
@@ -193,6 +198,7 @@ describe('Backend Cataclysm Validation', () => {
         image: 'specials/loki.webp',
         is_cataclysm: true,
         is_assist: false,
+        is_ambush: false,
         one_per_deck: false,
         alternateImages: []
       });
@@ -218,6 +224,7 @@ describe('Backend Cataclysm Validation', () => {
         image: 'specials/regular.webp',
         is_cataclysm: false,
         is_assist: false,
+        is_ambush: false,
         one_per_deck: false,
         alternateImages: []
       });
@@ -243,6 +250,7 @@ describe('Backend Cataclysm Validation', () => {
         image: 'specials/loki.webp',
         is_cataclysm: true,
         is_assist: false,
+        is_ambush: false,
         one_per_deck: false,
         alternateImages: []
       });
@@ -293,6 +301,7 @@ describe('Backend Cataclysm Validation', () => {
         image: 'specials/heimdall.webp',
         is_cataclysm: true,
         is_assist: false,
+        is_ambush: false,
         one_per_deck: false,
         alternateImages: []
       });
