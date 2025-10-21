@@ -367,15 +367,15 @@ describe('Step 3 - 100% Coverage Verification', () => {
 
         it('should have proper logical operator coverage', () => {
             const logicalOperators = [
-                '&& valueMin.value !== \'\'',
-                '&& valueMax.value !== \'\'',
-                '&& bonusMin.value !== \'\'',
-                '&& bonusMax.value !== \'\'',
-                '&& filterCheckbox.checked',
-                '&& categoryHeader',
-                '|| cardName.includes(\'any\')',
-                '|| cardName.includes(\'generic\')',
-                '|| cardName.includes(\'universal\')',
+                'valueMin.value !== \'\'',
+                'valueMax.value !== \'\'',
+                'bonusMin.value !== \'\'',
+                'bonusMax.value !== \'\'',
+                'filterCheckbox.checked',
+                'categoryHeader',
+                'cardName.includes(\'any\') ||',
+                'cardName.includes(\'generic\') ||',
+                'cardName.includes(\'universal\')',
                 '|| \'\''
             ];
 

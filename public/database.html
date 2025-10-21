@@ -91,6 +91,9 @@
     <script src="/js/search-filter.js"></script>
     <script src="/js/search-filter-functions.js"></script>
     <script src="/js/filter-functions.js"></script>
+    <!-- Step 4: New Filter System -->
+    <script src="/js/filter-utilities.js"></script>
+    <script src="/js/filter-manager.js"></script>
     <script src="/js/deck-editor-simple.js"></script>
     <script src="/js/database-view.js"></script>
     <script src="/js/ui-utility-functions.js"></script>
@@ -131,7 +134,15 @@
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Database page DOM loaded');
-            loadDatabaseViewTemplate();
+            loadDatabaseViewTemplate().then(() => {
+                // Initialize the new filter system after template is loaded
+                if (window.filterManager) {
+                    console.log('Initializing new filter system...');
+                    window.filterManager.initialize();
+                } else {
+                    console.warn('Filter manager not available');
+                }
+            });
         });
     </script>
 </body>

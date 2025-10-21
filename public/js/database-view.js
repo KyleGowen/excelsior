@@ -114,6 +114,11 @@ function switchTab(tabName) {
         selectedTabButton.classList.add('active');
     }
 
+    // Notify filter manager of tab switch
+    if (window.filterManager) {
+        window.filterManager.handleTabSwitch({ detail: { tabName } });
+    }
+
     // Update search functionality and reload data based on tab
     if (tabName === 'characters') {
         setupSearch();
@@ -250,11 +255,40 @@ function clearTrainingFilters() {
 
 /**
  * Clear basic universe filters
+ * Now delegates to the new filter system
  */
 function clearBasicUniverseFilters() {
-    // Clear basic universe filters
-    // Add specific filter clearing logic here if needed
-    applyFilters();
+    if (window.filterManager) {
+        window.filterManager.clearFilters('basic-universe');
+    } else {
+        console.warn('New filter system not available, using fallback');
+        clearBasicUniverseFiltersFallback();
+    }
+}
+
+/**
+ * Fallback clear basic universe filters implementation
+ * (kept for backward compatibility)
+ */
+function clearBasicUniverseFiltersFallback() {
+    // Clear all filter inputs
+    const checkboxes = document.querySelectorAll('#basic-universe-tab input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = true; // Default to checked
+    });
+
+    const valueMin = document.getElementById('basic-universe-value-min');
+    const valueMax = document.getElementById('basic-universe-value-max');
+    const bonusMin = document.getElementById('basic-universe-bonus-min');
+    const bonusMax = document.getElementById('basic-universe-bonus-max');
+
+    if (valueMin) valueMin.value = '';
+    if (valueMax) valueMax.value = '';
+    if (bonusMin) bonusMin.value = '';
+    if (bonusMax) bonusMax.value = '';
+
+    // Apply filters after clearing
+    applyBasicUniverseFilters();
 }
 
 /**
@@ -398,8 +432,22 @@ function displayBasicUniverse(cards) {
 
 /**
  * Apply basic universe filters
+ * Now delegates to the new filter system
  */
 async function applyBasicUniverseFilters() {
+    if (window.FilterPatterns && window.FilterPatterns.applyBasicUniverseFilters) {
+        await window.FilterPatterns.applyBasicUniverseFilters();
+    } else {
+        console.warn('New filter system not available, using fallback');
+        await applyBasicUniverseFiltersFallback();
+    }
+}
+
+/**
+ * Fallback basic universe filter implementation
+ * (kept for backward compatibility)
+ */
+async function applyBasicUniverseFiltersFallback() {
     try {
         const resp = await fetch('/api/basic-universe');
         const data = await resp.json();
