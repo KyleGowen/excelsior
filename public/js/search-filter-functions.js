@@ -265,6 +265,30 @@ function setupEventSearch() {
             console.error('Error searching events:', error);
         }
     });
+
+    // Set up checkbox event listeners for mission set filtering
+    document.querySelectorAll('#events-tab input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', applyEventsFilters);
+    });
+}
+
+function applyEventsFilters() {
+    const selectedMissionSets = Array.from(document.querySelectorAll('#events-tab input[type="checkbox"]:checked'))
+        .map(checkbox => checkbox.value);
+    
+    if (selectedMissionSets.length === 0) {
+        // If no mission sets selected, show none
+        document.getElementById('events-tbody').innerHTML = '<tr><td colspan="5" class="no-results">No mission sets selected</td></tr>';
+        return;
+    }
+    
+    // Filter events based on selected mission sets
+    const events = window.eventsData || [];
+    const filteredEvents = events.filter(event => 
+        selectedMissionSets.includes(event.mission_set)
+    );
+    
+    displayEvents(filteredEvents);
 }
 
 function setupAllyUniverseSearch() {
