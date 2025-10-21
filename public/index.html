@@ -6516,16 +6516,18 @@
                                 </div>
                             `;
                         } else if (card.type === 'location') {
-                            // Location threat level
+                            // Location threat level and special ability
+                            const specialAbility = availableCard.special_ability || '';
                             cardDetails = `
                                 <div class="location-stats">
-                                        <div class="stat-labels">
-                                            <span class="stat-label">TL:</span>
+                                    <div class="stat-labels">
+                                        <span class="stat-label">TL:</span>
+                                    </div>
+                                    <div class="stat-values">
+                                        <span class="stat-value" style="color: #808080;">${availableCard.threat_level || 0}</span>
+                                    </div>
                                 </div>
-                                        <div class="stat-values">
-                                            <span class="stat-value" style="color: #FF6B6B;">${availableCard.threat_level || 0}</span>
-                                </div>
-                                </div>
+                                ${specialAbility ? `<div class="location-special-ability">${specialAbility}</div>` : ''}
                             `;
                             } else if (card.type === 'mission') {
                                 // Mission - no additional details
@@ -7656,6 +7658,9 @@
             // Update character limit status without affecting collapse state
             updateCharacterLimitStatus();
             
+            // Update location limit status without affecting collapse state
+            updateLocationLimitStatus();
+            
             // Update mission limit status without affecting collapse state
             updateMissionLimitStatus();
             
@@ -7734,6 +7739,12 @@
                 
                 // Update character limit status without affecting collapse state
                 updateCharacterLimitStatus();
+            
+            // Update location limit status without affecting collapse state
+            updateLocationLimitStatus();
+                
+                // Update location limit status without affecting collapse state
+                updateLocationLimitStatus();
                 
                 // Update mission limit status without affecting collapse state
                 updateMissionLimitStatus();
@@ -7826,6 +7837,12 @@
                 
                 // Update character limit status without affecting collapse state
                 updateCharacterLimitStatus();
+            
+            // Update location limit status without affecting collapse state
+            updateLocationLimitStatus();
+                
+                // Update location limit status without affecting collapse state
+                updateLocationLimitStatus();
                 
                 // Update mission limit status without affecting collapse state
                 updateMissionLimitStatus();
@@ -7965,6 +7982,12 @@
             // Update character limit status if removing characters
             if (cardType === 'character') {
                 updateCharacterLimitStatus();
+            
+            // Update location limit status without affecting collapse state
+            updateLocationLimitStatus();
+                
+                // Update location limit status without affecting collapse state
+                updateLocationLimitStatus();
             }
             
             // Update location limit status if removing locations
@@ -8239,72 +8262,42 @@
 
         // Function to update just the location limit status without affecting collapse state
         function updateLocationLimitStatus() {
-            const locationRows = document.querySelectorAll('#locations-tbody tr');
+            const locationCards = document.querySelectorAll('.card-item.location-card');
             const currentLocationCount = window.deckEditorCards
                 .filter(card => card.type === 'location')
                 .length;
             
-            console.log('updateLocationLimitStatus - Current location count:', currentLocationCount, 'deckEditorCards:', window.deckEditorCards);
-            
-            const isLocationLimitReached = currentLocationCount >= 1;
-            
-            locationRows.forEach(row => {
-                // Skip the loading row - check if the row itself has the loading class
-                if (row.classList.contains('loading')) {
-                    return;
-                }
+            locationCards.forEach((card, index) => {
+                try {
+                    const cardId = card.dataset.id;
+                    const cardName = card.querySelector('.location-name')?.textContent?.trim() || 'Unknown';
+                    
+                    const isExistingLocation = window.deckEditorCards.some(deckCard => 
+                        deckCard.type === 'location' && deckCard.cardId === cardId
+                    );
                 
-                const addButton = row.querySelector('.add-to-deck-btn');
-                const img = row.querySelector('img');
-                const locationId = row.dataset.id; // Get the location ID from the row
+                    // Disable if we have 1 location OR if this location is already in the deck
+                    const shouldDisable = currentLocationCount >= 1 || isExistingLocation;
                 
-                // Check if this specific location is already in the deck
-                const isExistingLocation = window.deckEditorCards.some(deckCard => 
-                    deckCard.type === 'location' && deckCard.cardId === locationId
-                );
-                
-                // Disable if we have 1 location OR if this location is already in the deck
-                const shouldDisable = isLocationLimitReached || isExistingLocation;
-                
-                if (shouldDisable) {
-                    // Disable the row
-                    row.classList.add('disabled');
-                    if (addButton) {
-                        addButton.disabled = true;
-                        addButton.style.opacity = '0.5';
-                        addButton.style.cursor = 'not-allowed';
+                    if (shouldDisable) {
+                        card.classList.add('disabled');
+                        card.setAttribute('draggable', 'false');
                         if (isExistingLocation) {
-                            addButton.title = 'This location is already in your deck';
+                            card.title = 'This location is already in your deck';
                         } else {
-                            addButton.title = 'Location limit reached (max 1)';
+                            card.title = 'Location limit reached (max 1 location)';
                         }
+                    } else {
+                        card.classList.remove('disabled');
+                        card.setAttribute('draggable', 'true');
+                        card.title = '';
                     }
-                    if (img) {
-                        img.style.opacity = '0.5';
-                        img.style.cursor = 'not-allowed';
-                        if (isExistingLocation) {
-                            img.title = 'This location is already in your deck';
-                        } else {
-                            img.title = 'Location limit reached (max 1)';
-                        }
-                    }
-                } else {
-                    // Enable the row
-                    row.classList.remove('disabled');
-                    if (addButton) {
-                        addButton.disabled = false;
-                        addButton.style.opacity = '1';
-                        addButton.style.cursor = 'pointer';
-                        addButton.title = '';
-                    }
-                    if (img) {
-                        img.style.opacity = '1';
-                        img.style.cursor = 'pointer';
-                        img.title = '';
-                    }
+                } catch (error) {
+                    console.error(`Error processing location card ${index + 1}:`, error);
                 }
             });
         }
+
 
         // Function to update just the mission limit status without affecting collapse state
         function updateMissionLimitStatus() {
@@ -8355,9 +8348,9 @@
                         cardElement.classList.add('disabled');
                         cardElement.setAttribute('draggable', 'false');
                         cardElement.title = 'One Per Deck - already in deck';
-                    } else if (cardType !== 'character' && cardType !== 'mission') {
-                        // Only update non-character/non-mission cards here
-                        // Character and mission dimming is handled by updateCharacterLimitStatus() and updateMissionLimitStatus()
+                    } else if (cardType !== 'character' && cardType !== 'mission' && cardType !== 'location') {
+                        // Only update non-character/non-mission/non-location cards here
+                        // Character, mission, and location dimming is handled by updateCharacterLimitStatus(), updateMissionLimitStatus(), and updateLocationLimitStatus()
                         cardElement.classList.remove('disabled');
                         cardElement.setAttribute('draggable', 'true');
                         cardElement.title = '';
@@ -9145,6 +9138,54 @@
                                     </div>
                                 `;
                             });
+                        } else if (category.type === 'location') {
+                            // Special handling for locations with threat level and validation
+                            const currentLocationCount = window.deckEditorCards
+                                .filter(card => card.type === 'location')
+                                .reduce((total, card) => total + card.quantity, 0);
+                            
+                            const isLocationLimitReached = currentLocationCount >= 1;
+                            
+                            cardsHtml = data.data.map(card => {
+                                const stats = [
+                                    { label: 'TL:', value: card.threat_level || 0, color: '#808080' } // Gray - Threat Level (same as character TL)
+                                ];
+                                
+                                const statsHtml = stats.map(stat => 
+                                    `<span class="location-stat"><span class="stat-label">${stat.label}</span><span class="stat-value" style="color: ${stat.color};">${stat.value}</span></span>`
+                                ).join(' ');
+                                
+                                // Locations are inherently One Per Deck (max 1 per deck)
+                                const isLocationInDeck = window.deckEditorCards.some(deckCard => 
+                                    deckCard.type === 'location' && deckCard.cardId === card.id
+                                );
+                                
+                                const disabledClass = (isLocationLimitReached || isLocationInDeck) ? 'disabled' : '';
+                                let disabledTitle = '';
+                                if (isLocationLimitReached) {
+                                    disabledTitle = 'Location limit reached (max 1)';
+                                } else if (isLocationInDeck) {
+                                    disabledTitle = 'One Per Deck - already in deck';
+                                }
+                                
+                                return `
+                                    <div class="card-item location-card ${disabledClass}" 
+                                         draggable="${!(isLocationLimitReached || isLocationInDeck)}" 
+                                         data-type="${category.type}" 
+                                         data-id="${card.id}"
+                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
+                                         onmouseleave="hideCardHoverModal()"
+                                         onclick="handleCardClick(event, '${category.type}', '${card.id}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
+                                         data-name="${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}"
+                                         title="${disabledTitle}">
+                                        <div class="card-item-content">
+                                            <div class="location-name">${card[category.nameField]}</div>
+                                            <div class="location-stats">${statsHtml}</div>
+                                        </div>
+                                        <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')" title="Add to deck (max 1 location)">+</div>
+                                    </div>
+                                `;
+                            }).join('');
                         } else {
                             // Regular handling for other card types
                             cardsHtml = data.data.map(card => `
@@ -9804,6 +9845,9 @@
             
             // Update character limit status without affecting collapse state
             updateCharacterLimitStatus();
+            
+            // Update location limit status without affecting collapse state
+            updateLocationLimitStatus();
             
             // Update mission limit status without affecting collapse state
             updateMissionLimitStatus();
