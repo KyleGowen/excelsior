@@ -6532,45 +6532,17 @@
                             // Basic universe - no additional details (simple display)
                             cardDetails = '';
                         } else if (card.type === 'teamwork') {
-                            // Teamwork details
-                            if (availableCard.one_per_deck) {
-                                cardDetails = `
-                                    <div class="teamwork-stats">
-                                        <div class="stat-label">One Per Deck:</div>
-                                        <div class="stat-value" style="color: #4ECDC4;">Yes</div>
-                                    </div>
-                                `;
-                            }
+                            // Teamwork details - no additional details needed
+                            cardDetails = '';
                         } else if (card.type === 'ally_universe') {
-                            // Ally universe details
-                            if (availableCard.one_per_deck) {
-                                cardDetails = `
-                                    <div class="ally-universe-stats">
-                                        <div class="stat-label">One Per Deck:</div>
-                                        <div class="stat-value" style="color: #4ECDC4;">Yes</div>
-                                    </div>
-                                `;
-                            }
+                            // Ally universe details - no additional details needed
+                            cardDetails = '';
                         } else if (card.type === 'training') {
-                            // Training details
-                            if (availableCard.one_per_deck) {
-                                cardDetails = `
-                                    <div class="training-stats">
-                                        <div class="stat-label">One Per Deck:</div>
-                                        <div class="stat-value" style="color: #4ECDC4;">Yes</div>
-                                    </div>
-                                `;
-                            }
+                            // Training details - no additional details needed
+                            cardDetails = '';
                         } else if (card.type === 'advanced_universe') {
-                            // Advanced universe details
-                            if (availableCard.one_per_deck) {
-                                cardDetails = `
-                                    <div class="advanced-universe-stats">
-                                        <div class="stat-label">One Per Deck:</div>
-                                        <div class="stat-value" style="color: #4ECDC4;">Yes</div>
-                                    </div>
-                                `;
-                            }
+                            // Advanced universe details - no additional details needed
+                            cardDetails = '';
                         }
                         
                         // Preview mode - show detailed info with hover effect
