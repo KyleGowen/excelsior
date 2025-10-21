@@ -7620,6 +7620,8 @@
             }
         }
         async function removeCardFromEditor(index) {
+            console.log('🗑️ removeCardFromEditor called with index:', index);
+            console.log('📊 Before removal - deckEditorCards:', window.deckEditorCards);
             
             const layout = document.querySelector('.deck-editor-layout');
             const deckPane = document.querySelector('.deck-pane');
@@ -7633,6 +7635,9 @@
             // Capture current scroll position before re-rendering
             const deckCardsEditor = document.querySelector('.deck-cards-editor');
             const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
+            
+            const removedCard = window.deckEditorCards[index];
+            console.log('🎯 Removing card:', removedCard);
             
             window.deckEditorCards.splice(index, 1);
             await displayDeckCardsForEditing();
@@ -7705,6 +7710,9 @@
         }
 
         async function removeOneCardFromEditor(index) {
+            console.log('🗑️ removeOneCardFromEditor called with index:', index);
+            console.log('📊 Before removal - deckEditorCards:', window.deckEditorCards);
+            
             if (window.window.deckEditorCards[index]) {
                 // Capture current expansion state before re-rendering
                 const currentExpansionState = getExpansionState();
@@ -8323,17 +8331,25 @@
 
         // Function to update One Per Deck card dimming status
         function updateOnePerDeckLimitStatus() {
+            console.log('🔍 updateOnePerDeckLimitStatus called');
+            console.log('📊 Current deckEditorCards:', window.deckEditorCards);
+            
             // Get all One Per Deck cards currently in the deck
             const onePerDeckCardsInDeck = new Set();
             window.deckEditorCards.forEach(card => {
                 const cardData = window.availableCardsMap.get(card.cardId);
                 if (cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true)) {
                     onePerDeckCardsInDeck.add(card.cardId);
+                    console.log(`✅ Found OPD card in deck: ${cardData.name} (ID: ${card.cardId})`);
                 }
             });
             
+            console.log('🎯 One Per Deck cards in deck:', Array.from(onePerDeckCardsInDeck));
+            
             // Update all card items for all card types
             const allCardItems = document.querySelectorAll('.card-item[data-id]');
+            console.log(`🔍 Found ${allCardItems.length} card items to process`);
+            
             allCardItems.forEach(cardElement => {
                 const cardId = cardElement.getAttribute('data-id');
                 const cardType = cardElement.getAttribute('data-type');
@@ -8343,17 +8359,25 @@
                     const isOnePerDeck = cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
                     const isInDeck = onePerDeckCardsInDeck.has(cardId);
                     
+                    console.log(`🎯 Processing card: ${cardData ? cardData.name : 'Unknown'} (ID: ${cardId}, Type: ${cardType}, isOnePerDeck: ${isOnePerDeck}, isInDeck: ${isInDeck})`);
+                    
                     if (isOnePerDeck && isInDeck) {
                         // This is a One Per Deck card that's already in the deck - dim it
-                        cardElement.classList.add('disabled');
-                        cardElement.setAttribute('draggable', 'false');
-                        cardElement.title = 'One Per Deck - already in deck';
+                        if (!cardElement.classList.contains('disabled')) {
+                            cardElement.classList.add('disabled');
+                            cardElement.setAttribute('draggable', 'false');
+                            cardElement.title = 'One Per Deck - already in deck';
+                            console.log(`🔴 Dimming card: ${cardData.name}`);
+                        }
                     } else if (cardType !== 'character' && cardType !== 'mission' && cardType !== 'location') {
                         // Only update non-character/non-mission/non-location cards here
                         // Character, mission, and location dimming is handled by updateCharacterLimitStatus(), updateMissionLimitStatus(), and updateLocationLimitStatus()
-                        cardElement.classList.remove('disabled');
-                        cardElement.setAttribute('draggable', 'true');
-                        cardElement.title = '';
+                        if (cardElement.classList.contains('disabled')) {
+                            cardElement.classList.remove('disabled');
+                            cardElement.setAttribute('draggable', 'true');
+                            cardElement.title = '';
+                            console.log(`🟢 Un-dimming card: ${cardData ? cardData.name : 'Unknown'}`);
+                        }
                     }
                 }
             });
