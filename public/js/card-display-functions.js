@@ -76,7 +76,7 @@ function displayEvents(events) {
             <td><strong>${event.name}</strong></td>
             <td>${event.mission_set}</td>
             <td>${event.game_effect}</td>
-            <td><em>${event.flavor_text}</em></td>
+            <td><em>${event.flavor_text.replace(/^\*|\*$/g, '')}</em></td>
         </tr>
     `).join('');
 }
