@@ -172,6 +172,9 @@ function displayLocations(locations) {
     locations.forEach(location => {
         const row = document.createElement('tr');
         
+        // Set the data-id attribute for location identification
+        row.dataset.id = location.id;
+        
         // Determine threat level class
         let threatClass = 'threat-low';
         if (location.threat_level >= 3) threatClass = 'threat-high';

@@ -8232,20 +8232,37 @@
                 
                 const addButton = row.querySelector('.add-to-deck-btn');
                 const img = row.querySelector('img');
+                const locationId = row.dataset.id; // Get the location ID from the row
                 
-                if (isLocationLimitReached) {
+                // Check if this specific location is already in the deck
+                const isExistingLocation = window.deckEditorCards.some(deckCard => 
+                    deckCard.type === 'location' && deckCard.cardId === locationId
+                );
+                
+                // Disable if we have 1 location OR if this location is already in the deck
+                const shouldDisable = isLocationLimitReached || isExistingLocation;
+                
+                if (shouldDisable) {
                     // Disable the row
                     row.classList.add('disabled');
                     if (addButton) {
                         addButton.disabled = true;
                         addButton.style.opacity = '0.5';
                         addButton.style.cursor = 'not-allowed';
-                        addButton.title = 'Location limit reached (max 1)';
+                        if (isExistingLocation) {
+                            addButton.title = 'This location is already in your deck';
+                        } else {
+                            addButton.title = 'Location limit reached (max 1)';
+                        }
                     }
                     if (img) {
                         img.style.opacity = '0.5';
                         img.style.cursor = 'not-allowed';
-                        img.title = 'Location limit reached (max 1)';
+                        if (isExistingLocation) {
+                            img.title = 'This location is already in your deck';
+                        } else {
+                            img.title = 'Location limit reached (max 1)';
+                        }
                     }
                 } else {
                     // Enable the row

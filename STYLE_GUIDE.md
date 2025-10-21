@@ -14,6 +14,7 @@
 11. [Global Navigation](#global-navigation)
 12. [Import/Export Button Styling](#importexport-button-styling)
 13. [One Per Deck Card Dimming](#one-per-deck-card-dimming)
+14. [Cataclysm Card Dimming](#cataclysm-card-dimming)
 
 ## Overview
 
@@ -721,3 +722,125 @@ function updateOnePerDeckLimitStatus() {
 - **Frontend Validation**: UI prevents selection of dimmed cards
 - **Toast Notifications**: Error messages when attempting to add duplicates
 - **Deck Statistics**: One-per-deck cards count toward deck limits appropriately
+
+## Cataclysm Card Dimming
+
+### Overview
+Special cards marked with `cataclysm=TRUE` in the database receive visual dimming when added to a deck, enforcing the "one cataclysm per deck" rule.
+
+### Visual Dimming System
+When a "Cataclysm" card is added to the deck, all available special cards with `cataclysm=TRUE` are visually dimmed to indicate they cannot be selected again.
+
+#### Dimmed State Styling
+- **CSS Class**: `.disabled` applied to card elements
+- **Opacity**: `0.5` (50% transparency)
+- **Cursor**: `not-allowed` (indicates non-interactive)
+- **Draggable**: Set to `false` (prevents drag operations)
+- **Tooltip**: Shows "Cataclysm - already in deck" or "Cataclysm - another cataclysm already selected"
+
+#### Implementation Details
+- **Function**: `updateCataclysmLimitStatus()` in `public/index.html`
+- **Trigger**: Called after adding/removing cards and when displaying deck
+- **Scope**: Affects only special cards with `cataclysm=TRUE`
+- **Database Field**: Uses `cataclysm` boolean column from special_cards table
+
+### Cataclysm Card Examples
+The following special cards are marked as cataclysm cards:
+- **Heimdall**: Any Character may avoid 1 attack made with a Special card
+- **Lady of the Lake**: Draw three cards, discard duplicates
+- **Robin Hood: Master Thief**: Discard one Special card to draw and reveal 4 cards
+- **Tunupa: Mountain God**: Acts as level 10 MultiPower attack
+- **Fairy Protection**: Any Character may avoid 1 attack, may not be attacked for remainder of battle
+- **Loki**: Opponent is -3 to Venture Total, must reveal hand and play open handed
+
+### Visual State Management
+#### Adding Cards
+1. Card is added to `window.deckEditorCards` array
+2. `updateCataclysmLimitStatus()` is called
+3. All cataclysm cards in available section are dimmed
+4. Tooltips are updated to show limit status
+
+#### Removing Cards
+1. Card is removed from `window.deckEditorCards` array
+2. `updateCataclysmLimitStatus()` is called
+3. Previously dimmed cataclysm cards are re-enabled
+4. Tooltips are cleared or updated
+
+#### Deck Display
+1. `displayDeckCardsForEditing()` is called
+2. `updateCataclysmLimitStatus()` is called at the end
+3. Ensures dimming state is consistent with current deck contents
+
+### CSS Implementation
+```css
+.card-item.disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+.card-item.disabled:hover {
+    /* Maintain dimmed appearance on hover */
+    opacity: 0.5 !important;
+}
+```
+
+### JavaScript Integration
+```javascript
+function updateCataclysmLimitStatus() {
+    // Get all Cataclysm cards currently in the deck
+    const cataclysmCardsInDeck = new Set();
+    window.deckEditorCards.forEach(card => {
+        const cardData = window.availableCardsMap.get(card.cardId);
+        if (cardData && cardData.is_cataclysm === true) {
+            cataclysmCardsInDeck.add(card.cardId);
+        }
+    });
+    
+    // Update all special card items for cataclysm dimming
+    const specialCardItems = document.querySelectorAll('.card-item[data-type="special"][data-id]');
+    specialCardItems.forEach(cardElement => {
+        const cardId = cardElement.getAttribute('data-id');
+        
+        if (cardId) {
+            const cardData = window.availableCardsMap.get(cardId);
+            const isCataclysm = cardData && cardData.is_cataclysm === true;
+            const isInDeck = cataclysmCardsInDeck.has(cardId);
+            const hasOtherCataclysm = cataclysmCardsInDeck.size > 0;
+            
+            if (isCataclysm && (isInDeck || hasOtherCataclysm)) {
+                // This is a Cataclysm card and either it's in the deck or another cataclysm is in the deck - dim it
+                cardElement.classList.add('disabled');
+                cardElement.setAttribute('draggable', 'false');
+                if (isInDeck) {
+                    cardElement.title = 'Cataclysm - already in deck';
+                } else {
+                    cardElement.title = 'Cataclysm - another cataclysm already selected';
+                }
+            } else if (isCataclysm && !hasOtherCataclysm) {
+                // This is a Cataclysm card but no cataclysm is in the deck - enable it
+                cardElement.classList.remove('disabled');
+                cardElement.setAttribute('draggable', 'true');
+                cardElement.title = '';
+            }
+        }
+    });
+}
+```
+
+### Backend Validation
+- **API Endpoint**: `/api/decks/:id/cards` (POST)
+- **Validation Function**: `checkIfCardIsCataclysm()` in `src/index.ts`
+- **Error Message**: "Cannot add more than 1 Cataclysm to a deck"
+- **Database Query**: Checks `cataclysm` column in `special_cards` table
+
+### Integration Points
+- **Card Addition**: Called after `addCardToEditor()`
+- **Card Removal**: Called after `removeCardFromEditor()`
+- **Deck Display**: Called after `displayDeckCardsForEditing()`
+- **Filter Updates**: Called after `updateSpecialCardsFilter()`
+
+### Testing Coverage
+- **Unit Tests**: `tests/unit/cataclysm-validation.test.ts`
+- **Integration Tests**: `tests/unit/cataclysm-integration.test.ts`
+- **Test Scenarios**: Adding/removing cataclysm cards, multiple cataclysm handling, visual state consistency
