@@ -218,16 +218,22 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
                 return { ...card, type: convertedType };
             });
             
-            // CRITICAL SECURITY FIX: Check if readonly=true query parameter is set - this takes precedence
+            // SECURITY: Check if readonly=true query parameter is set, but only allow it if user is deck owner
             const urlParams = new URLSearchParams(window.location.search);
             const isReadOnlyFromQuery = urlParams.get('readonly') === 'true';
+            const isDeckOwner = data.data.metadata && data.data.metadata.isOwner === true;
             
-            if (isReadOnlyFromQuery) {
-                // Force read-only mode when readonly=true query parameter is present
+            if (isReadOnlyFromQuery && isDeckOwner) {
+                // Only allow read-only mode from URL parameter if user is the deck owner
                 isReadOnlyMode = true;
-                console.log('🔒 SECURITY: Forcing read-only mode due to readonly=true query parameter');
+                console.log('🔒 SECURITY: Allowing read-only mode from URL parameter - user is deck owner');
+            } else if (isReadOnlyFromQuery && !isDeckOwner) {
+                // Security violation: non-owner trying to use readonly=true parameter
+                isReadOnlyMode = false; // Force edit mode to prevent unauthorized access
+                console.log('🚨 SECURITY VIOLATION: Non-owner attempted to use readonly=true parameter - forcing edit mode');
+                console.log('🚨 SECURITY: Current user is not deck owner, ignoring readonly=true parameter');
             } else if (data.data.metadata && data.data.metadata.isOwner !== undefined) {
-                // Only use API response if no readonly query parameter is set
+                // Use API response for ownership-based read-only mode
                 isReadOnlyMode = !data.data.metadata.isOwner;
                 console.log('🔒 SECURITY: Updated read-only mode from API:', isReadOnlyMode, 'isOwner:', data.data.metadata.isOwner);
             } else {

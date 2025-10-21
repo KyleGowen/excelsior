@@ -140,6 +140,9 @@
 - **Update the GitHub Actions workflow patterns** if adding new test categories or if existing patterns become imbalanced
 - **Document new categorization patterns** in commit messages when adding them
 
+## Acronyms and Terminology
+- **OPD** = "One Per Deck" - Cards that can only appear once in a deck (marked with `one_per_deck=TRUE` in database)
+
 ## Remember
 - Quality over speed
 - Test-driven development approach

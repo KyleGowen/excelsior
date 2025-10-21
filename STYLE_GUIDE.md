@@ -12,6 +12,8 @@
 9. [Interactive States](#interactive-states)
 10. [Responsive Design](#responsive-design)
 11. [Global Navigation](#global-navigation)
+12. [Import/Export Button Styling](#importexport-button-styling)
+13. [One Per Deck Card Dimming](#one-per-deck-card-dimming)
 
 ## Overview
 
@@ -521,3 +523,201 @@ Consider implementing CSS custom properties for easier theme management:
 - **Contrast**: All nav text must meet WCAG AA on dark gradient
 - **Focus**: Visible teal focus ring `0 0 0 2px rgba(78, 205, 196, 0.5)`
 - **Hit Area**: Minimum 44px height for interactive items
+
+## Import/Export Button Styling
+
+### Overview
+Import and Export buttons are admin-only utility buttons in the deck editor that share identical styling for visual consistency.
+
+### Grid Layout
+- **Container**: `.deck-editor-actions` with `display: grid`
+- **Grid Template**: `grid-template-columns: 88px 88px`, `grid-template-rows: 24.5px 24.5px`
+- **Gap**: `8px 6px` between grid items
+- **Export Button**: `grid-column: 1`, `grid-row: 1` (top-left)
+- **Import Button**: `grid-column: 1`, `grid-row: 2` (bottom-left)
+
+### Shared Styling
+Both buttons use identical visual styling:
+
+#### Base Properties
+- **Background**: `#2b2b2b` (dark gray to match app background)
+- **Text Color**: `#d2b48c` (light tan/beige)
+- **Border**: `1px solid rgba(210, 180, 140, 0.35)` (subtle tan border)
+- **Height**: `auto` with `min-height: 24px`
+- **Padding**: `4px 8px`
+- **Width**: `100%` of grid cell
+- **Box Sizing**: `border-box`
+- **Border Radius**: `4px`
+- **Font**: `12px`, `500` weight
+- **Cursor**: `pointer`
+
+#### Visual Effects
+- **Box Shadow**: 
+  - Inset: `inset 0 1px 0 rgba(255, 255, 255, 0.06)` (subtle top highlight)
+  - Outer: `0 2px 6px rgba(0, 0, 0, 0.35)` (depth shadow)
+- **Transition**: `background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease`
+
+#### Hover States
+- **Background**: `#343434` (slightly lighter gray)
+- **Border**: `rgba(210, 180, 140, 0.5)` (brighter tan border)
+- **Box Shadow**: 
+  - Inset: `inset 0 1px 0 rgba(255, 255, 255, 0.08)` (enhanced highlight)
+  - Outer: `0 3px 8px rgba(0, 0, 0, 0.45)` (deeper shadow)
+
+### CSS Selectors
+```css
+/* Export Button */
+.deck-editor-actions #exportBtn {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    background: #2b2b2b !important;
+    color: #d2b48c !important;
+    border: 1px solid rgba(210, 180, 140, 0.35) !important;
+    /* ... other properties ... */
+}
+
+/* Import Button */
+.deck-editor-actions #importBtn {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    background: #2b2b2b !important;
+    color: #d2b48c !important;
+    border: 1px solid rgba(210, 180, 140, 0.35) !important;
+    /* ... other properties ... */
+}
+```
+
+### Visibility Control
+- **Admin Only**: Both buttons are hidden by default (`display: none`)
+- **Show Logic**: JavaScript shows buttons when `currentUser.role === 'ADMIN'`
+- **Display**: Set to `inline-block` when visible
+
+## One Per Deck Card Dimming
+
+### Overview
+Cards marked with `one_per_deck=TRUE` in the database receive visual dimming when added to a deck, preventing multiple copies from being selected.
+
+### Visual Dimming System
+When a "One Per Deck" card is added to the deck, all available cards of that type with `one_per_deck=TRUE` are visually dimmed to indicate they cannot be selected again.
+
+#### Dimmed State Styling
+- **CSS Class**: `.disabled` applied to card elements
+- **Opacity**: `0.5` (50% transparency)
+- **Cursor**: `not-allowed` (indicates non-interactive)
+- **Draggable**: Set to `false` (prevents drag operations)
+- **Tooltip**: Shows "One Per Deck - already in deck" or "One Per Deck - limit reached"
+
+#### Implementation Details
+- **Function**: `updateOnePerDeckLimitStatus()` in `public/index.html`
+- **Trigger**: Called after adding/removing cards and when displaying deck
+- **Scope**: Affects all card types (characters, specials, powers, events, etc.)
+- **Database Field**: Uses `one_per_deck` boolean column from card tables
+
+### Card Type Coverage
+The dimming system applies to ALL card types that have `one_per_deck=TRUE`:
+
+#### Character Cards
+- **Selector**: `.card-item[data-type="character"][data-id]`
+- **Logic**: Dims when character limit (3) is reached OR when specific character is already in deck
+- **Special Case**: Character cards also dim when deck has reached the 3-character limit
+
+#### Special Cards
+- **Selector**: `.card-item[data-type="special"][data-id]`
+- **Logic**: Dims when the specific card is already in deck
+- **Examples**: Grim Reaper, Advanced Universe, Training, Teamwork
+
+#### Power Cards
+- **Selector**: `.card-item[data-type="power"][data-id]`
+- **Logic**: Dims when the specific power card is already in deck
+- **Examples**: Any-Power power cards, Universe power cards
+
+#### Event Cards
+- **Selector**: `.card-item[data-type="event"][data-id]`
+- **Logic**: Dims when the specific event card is already in deck
+
+#### Mission Cards
+- **Selector**: `.card-item[data-type="mission"][data-id]`
+- **Logic**: Dims when the specific mission card is already in deck
+
+### Visual State Management
+#### Adding Cards
+1. Card is added to `window.deckEditorCards` array
+2. `updateOnePerDeckLimitStatus()` is called
+3. All matching cards in available section are dimmed
+4. Tooltips are updated to show limit status
+
+#### Removing Cards
+1. Card is removed from `window.deckEditorCards` array
+2. `updateOnePerDeckLimitStatus()` is called
+3. Previously dimmed cards are re-enabled
+4. Tooltips are cleared or updated
+
+#### Deck Display
+1. `displayDeckCardsForEditing()` is called
+2. `updateOnePerDeckLimitStatus()` is called at the end
+3. Ensures dimming state is consistent with current deck contents
+
+### CSS Implementation
+```css
+.card-item.disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+.card-item.disabled:hover {
+    /* Maintain dimmed appearance on hover */
+    opacity: 0.5 !important;
+}
+```
+
+### JavaScript Integration
+```javascript
+function updateOnePerDeckLimitStatus() {
+    // Get all one-per-deck cards currently in deck
+    const onePerDeckCardsInDeck = new Set();
+    window.deckEditorCards.forEach(card => {
+        const cardData = window.availableCardsMap.get(card.cardId);
+        if (cardData && cardData.one_per_deck === true) {
+            onePerDeckCardsInDeck.add(card.cardId);
+        }
+    });
+
+    // Update all card types for one-per-deck dimming
+    const cardTypes = ['character', 'special', 'power', 'event', 'mission'];
+    cardTypes.forEach(cardType => {
+        const cardItems = document.querySelectorAll(`.card-item[data-type="${cardType}"][data-id]`);
+        cardItems.forEach(cardElement => {
+            const cardId = cardElement.getAttribute('data-id');
+            if (cardId) {
+                const cardData = window.availableCardsMap.get(cardId);
+                const isOnePerDeck = cardData && cardData.one_per_deck === true;
+                const isInDeck = onePerDeckCardsInDeck.has(cardId);
+
+                if (isOnePerDeck && isInDeck) {
+                    cardElement.classList.add('disabled');
+                    cardElement.setAttribute('draggable', 'false');
+                    cardElement.title = 'One Per Deck - already in deck';
+                } else if (isOnePerDeck && !isInDeck) {
+                    cardElement.classList.remove('disabled');
+                    cardElement.setAttribute('draggable', 'true');
+                    cardElement.title = '';
+                }
+            }
+        });
+    });
+}
+```
+
+### User Experience
+- **Immediate Feedback**: Cards dim instantly when added to deck
+- **Clear Indication**: Dimmed cards are visually distinct and non-interactive
+- **Informative Tooltips**: Hover text explains why card cannot be selected
+- **Consistent Behavior**: Same dimming pattern across all card types
+- **Reversible**: Cards become available again when removed from deck
+
+### Integration Points
+- **Backend Validation**: API prevents adding multiple one-per-deck cards
+- **Frontend Validation**: UI prevents selection of dimmed cards
+- **Toast Notifications**: Error messages when attempting to add duplicates
+- **Deck Statistics**: One-per-deck cards count toward deck limits appropriately

@@ -1776,12 +1776,14 @@
         // Authentication functions
         let currentUser = null;
         
-        // Check for readOnly=true parameter and apply read-only mode class
+        // Check for readOnly=true parameter - but don't apply read-only mode class yet
+        // Security: We need to verify deck ownership first in loadDeckForEditing()
         const urlParams = new URLSearchParams(window.location.search);
         const isReadOnlyFromQuery = urlParams.get('readonly') === 'true';
         
+        // Note: Read-only mode class will be applied in loadDeckForEditing() after ownership verification
         if (isReadOnlyFromQuery) {
-            document.body.classList.add('read-only-mode');
+            console.log('🔍 Read-only parameter detected in URL - will verify ownership in loadDeckForEditing()');
         }
         
         // Show/hide Read-Only badge based on read-only mode
