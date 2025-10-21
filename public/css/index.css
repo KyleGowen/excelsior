@@ -5064,22 +5064,35 @@
             box-shadow: none;
         }
 
-        /* Disabled location rows when limit reached */
+        /* Disabled location rows when limit reached - EXTREMELY SPECIFIC */
         #locations-tbody tr.disabled {
-            opacity: 0.5;
-            pointer-events: none;
+            opacity: 0.3 !important;
+            pointer-events: none !important;
+            background: rgba(255, 0, 0, 0.3) !important;
+            border: 2px solid rgba(255, 0, 0, 0.8) !important;
+            filter: grayscale(100%) !important;
         }
 
         #locations-tbody tr.disabled .add-to-deck-btn {
-            opacity: 0.5 !important;
+            opacity: 0.3 !important;
             cursor: not-allowed !important;
-            pointer-events: none;
+            pointer-events: none !important;
+            background: rgba(255, 0, 0, 0.3) !important;
+            border: 2px solid rgba(255, 0, 0, 0.8) !important;
+            color: #ffffff !important;
         }
 
         #locations-tbody tr.disabled img {
-            opacity: 0.5 !important;
+            opacity: 0.3 !important;
             cursor: not-allowed !important;
-            pointer-events: none;
+            pointer-events: none !important;
+            filter: grayscale(100%) !important;
+        }
+
+        /* Override any conflicting rules */
+        #locations-tbody tr.disabled * {
+            opacity: 0.3 !important;
+            pointer-events: none !important;
         }
 
         .empty-deck-message {
