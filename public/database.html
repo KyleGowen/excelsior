@@ -94,6 +94,12 @@
     <!-- Step 4: New Filter System -->
     <script src="/js/filter-utilities.js"></script>
     <script src="/js/filter-manager.js"></script>
+    <!-- Step 5: New Component Structure -->
+    <script src="/js/database-view-core.js"></script>
+    <script src="/js/database-view-tabs.js"></script>
+    <script src="/js/database-view-search.js"></script>
+    <script src="/js/database-view-display.js"></script>
+    <script src="/js/data-loading-core.js"></script>
     <script src="/js/deck-editor-simple.js"></script>
     <script src="/js/database-view.js"></script>
     <script src="/js/ui-utility-functions.js"></script>
@@ -135,12 +141,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Database page DOM loaded');
             loadDatabaseViewTemplate().then(() => {
-                // Initialize the new filter system after template is loaded
-                if (window.filterManager) {
-                    console.log('Initializing new filter system...');
-                    window.filterManager.initialize();
+                // Initialize the new component structure after template is loaded
+                if (window.databaseViewCore) {
+                    console.log('Initializing new component structure...');
+                    window.databaseViewCore.initialize();
                 } else {
-                    console.warn('Filter manager not available');
+                    console.warn('Database view core not available');
                 }
             });
         });

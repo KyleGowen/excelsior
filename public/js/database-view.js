@@ -20,6 +20,27 @@
  * Handles tab visibility, search setup, and data loading
  */
 function switchTab(tabName) {
+    console.log(`switchTab called with: ${tabName}`);
+
+    // Use new component structure if available
+    if (window.databaseViewCore && window.databaseViewCore.isInitialized()) {
+        const tabsComponent = window.databaseViewCore.getComponent('tabs');
+        if (tabsComponent) {
+            console.log('Using new component structure for tab switch');
+            return tabsComponent.switchTab(tabName);
+        }
+    }
+
+    // Fallback to original implementation
+    console.log('Using fallback tab switch implementation');
+    return switchTabFallback(tabName);
+}
+
+/**
+ * Fallback tab switching implementation
+ * Original implementation for backward compatibility
+ */
+function switchTabFallback(tabName) {
     const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
 
     // Removed overly aggressive tab switching protection
@@ -643,6 +664,7 @@ function updateTeamworkFilter() {
 
 // Make functions globally available
 window.switchTab = switchTab;
+window.switchTabFallback = switchTabFallback;
 window.clearLocationFilters = clearLocationFilters;
 window.clearSpecialCardFilters = clearSpecialCardFilters;
 window.clearAdvancedUniverseFilters = clearAdvancedUniverseFilters;
