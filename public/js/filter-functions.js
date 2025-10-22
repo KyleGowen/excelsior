@@ -77,7 +77,7 @@ function clearAdvancedUniverseFilters() {
     if (characterSearchInput) {
         characterSearchInput.value = '';
     }
-    
+
     // Clear advanced universe card effect search input
     const effectSearchInput = document.querySelector('#advanced-universe-table .header-filter[data-column="card_effect"]');
     if (effectSearchInput) {
@@ -91,10 +91,21 @@ function clearAdvancedUniverseFilters() {
 }
 
 function clearAspectsFilters() {
-    // Clear aspects filters
-    // Add specific filter clearing logic here if needed
-    applyFilters();
+    // Clear aspects search inputs
+    const nameSearchInput = document.querySelector('#aspects-table .header-filter[data-column="card_name"]');
+    const locationSearchInput = document.querySelector('#aspects-table .header-filter[data-column="location"]');
+    const effectSearchInput = document.querySelector('#aspects-table .header-filter[data-column="card_effect"]');
+
+    if (nameSearchInput) nameSearchInput.value = '';
+    if (locationSearchInput) locationSearchInput.value = '';
+    if (effectSearchInput) effectSearchInput.value = '';
+
+    // Reload all aspects
+    if (typeof loadAspects === 'function') {
+        loadAspects();
+    }
 }
+
 
 function clearMissionsFilters() {
     // Clear missions filters

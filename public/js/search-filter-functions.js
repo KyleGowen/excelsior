@@ -133,33 +133,118 @@ function setupLocationSearch() {
 }
 
 function setupAspectSearch() {
+    // Set up main search input functionality (if it exists)
     const searchInput = document.getElementById('search-input');
-    searchInput.addEventListener('input', async (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        
-        if (searchTerm.length === 0) {
-            // Reload all aspects
-            await loadAspects();
-            return;
-        }
-
-        try {
-            const response = await fetch('/api/aspects');
-            const data = await response.json();
+    if (searchInput) {
+        searchInput.addEventListener('input', async (e) => {
+            const searchTerm = e.target.value.toLowerCase();
             
-            if (data.success) {
-                const filteredAspects = data.data.filter(aspect => 
-                    aspect.card_name.toLowerCase().includes(searchTerm) ||
-                    aspect.location.toLowerCase().includes(searchTerm) ||
-                    (aspect.aspect_description && aspect.aspect_description.toLowerCase().includes(searchTerm)) ||
-                    (aspect.card_effect && aspect.card_effect.toLowerCase().includes(searchTerm))
-                );
-                displayAspects(filteredAspects);
+            if (searchTerm.length === 0) {
+                // Reload all aspects
+                await loadAspects();
+                return;
             }
-        } catch (error) {
-            console.error('Error searching aspects:', error);
-        }
-    });
+
+            try {
+                const response = await fetch('/api/aspects');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const filteredAspects = data.data.filter(aspect => 
+                        aspect.card_name.toLowerCase().includes(searchTerm) ||
+                        aspect.location.toLowerCase().includes(searchTerm) ||
+                        (aspect.aspect_description && aspect.aspect_description.toLowerCase().includes(searchTerm)) ||
+                        (aspect.card_effect && aspect.card_effect.toLowerCase().includes(searchTerm))
+                    );
+                    displayAspects(filteredAspects);
+                }
+            } catch (error) {
+                console.error('Error searching aspects:', error);
+            }
+        });
+    }
+
+    // Set up card name search input functionality
+    const nameSearchInput = document.querySelector('#aspects-table .header-filter[data-column="card_name"]');
+    if (nameSearchInput) {
+        nameSearchInput.addEventListener('input', async (e) => {
+            const nameTerm = e.target.value.toLowerCase();
+
+            if (nameTerm.length === 0) {
+                await loadAspects();
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/aspects');
+                const data = await response.json();
+
+                if (data.success) {
+                    const filteredAspects = data.data.filter(aspect =>
+                        aspect.card_name.toLowerCase().includes(nameTerm)
+                    );
+                    displayAspects(filteredAspects);
+                }
+            } catch (error) {
+                console.error('Error searching aspects by name:', error);
+            }
+        });
+    }
+
+    // Set up location search input functionality
+    const locationSearchInput = document.querySelector('#aspects-table .header-filter[data-column="location"]');
+    if (locationSearchInput) {
+        locationSearchInput.addEventListener('input', async (e) => {
+            const locationTerm = e.target.value.toLowerCase();
+
+            if (locationTerm.length === 0) {
+                await loadAspects();
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/aspects');
+                const data = await response.json();
+
+                if (data.success) {
+                    const filteredAspects = data.data.filter(aspect =>
+                        aspect.location.toLowerCase().includes(locationTerm)
+                    );
+                    displayAspects(filteredAspects);
+                }
+            } catch (error) {
+                console.error('Error searching aspects by location:', error);
+            }
+        });
+    }
+
+    // Set up card effect search input functionality
+    const effectSearchInput = document.querySelector('#aspects-table .header-filter[data-column="card_effect"]');
+    if (effectSearchInput) {
+        effectSearchInput.addEventListener('input', async (e) => {
+            const effectTerm = e.target.value.toLowerCase();
+
+            if (effectTerm.length === 0) {
+                await loadAspects();
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/aspects');
+                const data = await response.json();
+
+                if (data.success) {
+                    const filteredAspects = data.data.filter(aspect => {
+                        const effectText = (aspect.aspect_description || aspect.card_effect || '').toString();
+                        return effectText.toLowerCase().includes(effectTerm);
+                    });
+                    displayAspects(filteredAspects);
+                }
+            } catch (error) {
+                console.error('Error searching aspects by card effect:', error);
+            }
+        });
+    }
 }
 
 function setupAdvancedUniverseSearch() {

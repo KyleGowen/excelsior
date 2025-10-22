@@ -27,6 +27,17 @@
             display: block;
             box-sizing: border-box;
         }
+        
+        /* Aspects Search Input Styling - Direct override */
+        #aspects-table .header-filter[data-column="card_name"],
+        #aspects-table .header-filter[data-column="location"],
+        #aspects-table .header-filter[data-column="card_effect"] {
+            width: 480px !important;
+            max-width: 480px !important;
+            margin: 0 auto;
+            display: block;
+            box-sizing: border-box;
+        }
     </style>
     <!-- Authentication Service -->
     <script src="/js/auth-service.js"></script>
@@ -351,9 +362,15 @@
                                 <button class="clear-filters-btn" onclick="clearAspectsFilters()">Clear All Filters</button>
                             </th>
                             <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
+                            <th>
+                                <input type="text" class="header-filter" placeholder="Search names..." data-column="card_name">
+                            </th>
+                            <th>
+                                <input type="text" class="header-filter" placeholder="Search locations..." data-column="location">
+                            </th>
+                            <th>
+                                <input type="text" class="header-filter" placeholder="Search effects..." data-column="card_effect">
+                            </th>
                             <th class="fortifications-column"></th>
                             <th class="one-per-deck-column"></th>
                         </tr>
