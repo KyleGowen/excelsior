@@ -31,24 +31,6 @@ function disableAddToDeckButtons() {
     }
 }
 
-/**
- * Toggle visibility of one per deck column
- */
-function toggleOnePerDeckColumn() {
-    const onePerDeckColumn = document.querySelectorAll('.one-per-deck-column');
-    const toggleButton = document.getElementById('toggle-one-per-deck');
-    const toggleText = document.getElementById('one-per-deck-toggle-text');
-    
-    onePerDeckColumn.forEach(col => {
-        col.classList.toggle('hidden');
-    });
-    
-    if (onePerDeckColumn[0].classList.contains('hidden')) {
-        toggleText.textContent = 'Show';
-    } else {
-        toggleText.textContent = 'Hide';
-    }
-}
 
 
 /**

@@ -66,10 +66,8 @@ describe('Database View JavaScript Functions', () => {
         });
 
         it('should contain all toggle column functions', () => {
-            const toggleFunctions = [
-                'toggleFortificationsColumn',
-                'toggleOnePerDeckColumn'
-                // Note: toggleOnePerDeckAdvancedColumn removed - column is now always visible
+            const toggleFunctions: string[] = [
+                // Note: All toggle functions removed - columns are now always visible
             ];
 
             toggleFunctions.forEach(func => {
@@ -127,10 +125,8 @@ describe('Database View JavaScript Functions', () => {
         });
 
         it('should have proper column toggle implementations', () => {
-            expect(content).toContain('toggleFortificationsColumn()');
-            expect(content).toContain('.fortifications-column');
-            expect(content).toContain('toggle-fortifications');
-            expect(content).toContain('fortifications-toggle-text');
+            // Note: All toggle functions removed - columns are now always visible
+            // No toggle implementations to test
         });
 
         it('should have proper basic universe implementations', () => {
@@ -162,9 +158,7 @@ describe('Database View JavaScript Functions', () => {
                 'window.clearTrainingFilters = clearTrainingFilters',
                 'window.clearBasicUniverseFilters = clearBasicUniverseFilters',
                 'window.clearPowerCardFilters = clearPowerCardFilters',
-                'window.toggleFortificationsColumn = toggleFortificationsColumn',
-                'window.toggleOnePerDeckColumn = toggleOnePerDeckColumn'
-                // Note: window.toggleOnePerDeckAdvancedColumn removed - column is now always visible
+                // Note: All toggle functions removed - columns are now always visible
             ];
 
             globalRegistrations.forEach(registration => {
@@ -222,7 +216,7 @@ describe('Database View JavaScript Functions', () => {
             expect(content).toContain('/**');
             expect(content).toContain('Main tab switching function for database view');
             expect(content).toContain('Clear location-specific filters');
-            expect(content).toContain('Toggle fortifications column visibility');
+            // Note: Toggle function documentation removed - columns are now always visible
             expect(content).toContain('Load and display basic universe cards');
         });
 

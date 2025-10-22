@@ -187,10 +187,8 @@ describe('Database View JavaScript - Comprehensive Coverage', () => {
 
     describe('Column Toggle Functions - Complete Coverage', () => {
         it('should contain all toggle column functions', () => {
-            const toggleFunctions = [
-                'toggleFortificationsColumn',
-                'toggleOnePerDeckColumn'
-                // Note: toggleOnePerDeckAdvancedColumn removed - column is now always visible
+            const toggleFunctions: string[] = [
+                // Note: All toggle functions removed - columns are now always visible
             ];
 
             toggleFunctions.forEach(func => {
@@ -199,26 +197,23 @@ describe('Database View JavaScript - Comprehensive Coverage', () => {
         });
 
         it('should handle fortifications column toggle', () => {
-            expect(content).toContain('.fortifications-column');
-            expect(content).toContain('toggle-fortifications');
-            expect(content).toContain('fortifications-toggle-text');
-            expect(content).toContain('table-cell');
+            // Note: Toggle functionality removed - columns are now always visible
+            // No toggle logic to test
         });
 
         it('should handle one per deck column toggle', () => {
-            expect(content).toContain('.one-per-deck-column');
-            expect(content).toContain('toggle-one-per-deck');
-            expect(content).toContain('one-per-deck-toggle-text');
+            // Note: Toggle functionality removed - columns are now always visible
+            // No toggle logic to test
         });
 
-        it('should handle one per deck advanced column (always visible)', () => {
-            // Note: toggle button and function removed - column is now always visible
-            // The CSS class .one-per-deck-advanced-column is only in HTML, not in this JS file
+        it('should handle fortifications and one per deck columns (always visible)', () => {
+            // Note: toggle buttons and functions removed - columns are now always visible
+            // The CSS classes .fortifications-column and .one-per-deck-column are only in HTML, not in this JS file
         });
 
         it('should handle column visibility logic', () => {
-            expect(content).toContain('style.display === \'none\'');
-            expect(content).toContain('textContent = isHidden ? \'Hide\' : \'Show\'');
+            // Note: Column visibility logic removed - columns are now always visible
+            // No toggle logic to test
         });
     });
 
@@ -321,9 +316,7 @@ describe('Database View JavaScript - Comprehensive Coverage', () => {
                 'window.clearTrainingFilters = clearTrainingFilters',
                 'window.clearBasicUniverseFilters = clearBasicUniverseFilters',
                 'window.clearPowerCardFilters = clearPowerCardFilters',
-                'window.toggleFortificationsColumn = toggleFortificationsColumn',
-                'window.toggleOnePerDeckColumn = toggleOnePerDeckColumn'
-                // Note: window.toggleOnePerDeckAdvancedColumn removed - column is now always visible
+                // Note: All toggle functions removed - columns are now always visible
             ];
 
             globalRegistrations.forEach(registration => {
@@ -379,7 +372,7 @@ describe('Database View JavaScript - Comprehensive Coverage', () => {
         it('should handle element existence checks', () => {
             expect(content).toContain('if (locationThreatMin)');
             expect(content).toContain('if (locationThreatMax)');
-            expect(content).toContain('if (toggleText)');
+            // Note: toggleText checks removed - toggle functions no longer exist
         });
     });
 
@@ -445,10 +438,10 @@ describe('Database View JavaScript - Comprehensive Coverage', () => {
             expect(functionMatches!.length).toBeGreaterThanOrEqual(22);
         });
 
-        it('should contain at least 22 global registrations', () => {
+        it('should contain at least 20 global registrations', () => {
             const globalMatches = content.match(/window\.\w+\s*=\s*\w+/g);
             expect(globalMatches).not.toBeNull();
-            expect(globalMatches!.length).toBeGreaterThanOrEqual(22);
+            expect(globalMatches!.length).toBeGreaterThanOrEqual(20);
         });
 
         it('should have proper function documentation', () => {

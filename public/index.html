@@ -273,14 +273,6 @@
             </div>
 
             <div class="table-container" id="aspects-tab" style="display: none;">
-                <div class="aspects-controls">
-                    <button id="toggle-fortifications" class="toggle-button" onclick="toggleFortificationsColumn()">
-                        <span id="fortifications-toggle-text">Show</span> Fortifications Column
-                    </button>
-                    <button id="toggle-one-per-deck" class="toggle-button" onclick="toggleOnePerDeckColumn()">
-                        <span id="one-per-deck-toggle-text">Show</span> One Per Deck Column
-                    </button>
-                </div>
                 <table id="aspects-table">
                     <thead>
                         <tr>
@@ -289,8 +281,8 @@
                             <th>Card Name</th>
                             <th>Location</th>
                             <th>Card Effect</th>
-                            <th class="fortifications-column hidden">Fortifications</th>
-                            <th class="one-per-deck-column hidden">One Per Deck</th>
+                            <th class="fortifications-column">Fortifications</th>
+                            <th class="one-per-deck-column">One Per Deck</th>
                         </tr>
                         <tr class="filter-row">
                             <th>
@@ -300,8 +292,8 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th class="fortifications-column hidden"></th>
-                            <th class="one-per-deck-column hidden"></th>
+                            <th class="fortifications-column"></th>
+                            <th class="one-per-deck-column"></th>
                         </tr>
                     </thead>
                     <tbody id="aspects-tbody">

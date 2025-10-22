@@ -325,47 +325,6 @@ function clearPowerCardFilters() {
  * COLUMN TOGGLE FUNCTIONS
  * ======================================== */
 
-/**
- * Toggle fortifications column visibility
- */
-function toggleFortificationsColumn() {
-    const fortificationsColumn = document.querySelectorAll('.fortifications-column');
-    const toggleButton = document.getElementById('toggle-fortifications');
-    const toggleText = document.getElementById('fortifications-toggle-text');
-
-    if (fortificationsColumn.length > 0) {
-        const isHidden = fortificationsColumn[0].style.display === 'none';
-
-        fortificationsColumn.forEach(col => {
-            col.style.display = isHidden ? 'table-cell' : 'none';
-        });
-
-        if (toggleText) {
-            toggleText.textContent = isHidden ? 'Hide' : 'Show';
-        }
-    }
-}
-
-/**
- * Toggle one per deck column visibility
- */
-function toggleOnePerDeckColumn() {
-    const onePerDeckColumn = document.querySelectorAll('.one-per-deck-column');
-    const toggleButton = document.getElementById('toggle-one-per-deck');
-    const toggleText = document.getElementById('one-per-deck-toggle-text');
-
-    if (onePerDeckColumn.length > 0) {
-        const isHidden = onePerDeckColumn[0].style.display === 'none';
-
-        onePerDeckColumn.forEach(col => {
-            col.style.display = isHidden ? 'table-cell' : 'none';
-        });
-
-        if (toggleText) {
-            toggleText.textContent = isHidden ? 'Hide' : 'Show';
-        }
-    }
-}
 
 
 /* ========================================
@@ -656,8 +615,6 @@ window.clearAllyUniverseFilters = clearAllyUniverseFilters;
 window.clearTrainingFilters = clearTrainingFilters;
 window.clearBasicUniverseFilters = clearBasicUniverseFilters;
 window.clearPowerCardFilters = clearPowerCardFilters;
-window.toggleFortificationsColumn = toggleFortificationsColumn;
-window.toggleOnePerDeckColumn = toggleOnePerDeckColumn;
 window.loadBasicUniverse = loadBasicUniverse;
 window.displayBasicUniverse = displayBasicUniverse;
 window.applyBasicUniverseFilters = applyBasicUniverseFilters;

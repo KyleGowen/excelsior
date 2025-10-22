@@ -109,8 +109,8 @@ function displayAspects(aspects) {
             <td><strong>${aspect.card_name}</strong></td>
             <td>${aspect.location}</td>
             <td>${formatSpecialCardEffect(aspect.aspect_description || aspect.card_effect || 'No description available')}</td>
-            <td class="fortifications-column hidden">${aspect.is_fortification ? 'Yes' : 'No'}</td>
-            <td class="one-per-deck-column hidden">${aspect.is_one_per_deck ? 'Yes' : 'No'}</td>
+            <td class="fortifications-column">${aspect.is_fortification ? 'Yes' : 'No'}</td>
+            <td class="one-per-deck-column">${aspect.is_one_per_deck ? 'Yes' : 'No'}</td>
         </tr>
     `).join('');
 }
