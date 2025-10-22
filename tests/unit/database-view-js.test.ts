@@ -68,8 +68,8 @@ describe('Database View JavaScript Functions', () => {
         it('should contain all toggle column functions', () => {
             const toggleFunctions = [
                 'toggleFortificationsColumn',
-                'toggleOnePerDeckColumn',
-                'toggleOnePerDeckAdvancedColumn'
+                'toggleOnePerDeckColumn'
+                // Note: toggleOnePerDeckAdvancedColumn removed - column is now always visible
             ];
 
             toggleFunctions.forEach(func => {
@@ -163,8 +163,8 @@ describe('Database View JavaScript Functions', () => {
                 'window.clearBasicUniverseFilters = clearBasicUniverseFilters',
                 'window.clearPowerCardFilters = clearPowerCardFilters',
                 'window.toggleFortificationsColumn = toggleFortificationsColumn',
-                'window.toggleOnePerDeckColumn = toggleOnePerDeckColumn',
-                'window.toggleOnePerDeckAdvancedColumn = toggleOnePerDeckAdvancedColumn'
+                'window.toggleOnePerDeckColumn = toggleOnePerDeckColumn'
+                // Note: window.toggleOnePerDeckAdvancedColumn removed - column is now always visible
             ];
 
             globalRegistrations.forEach(registration => {

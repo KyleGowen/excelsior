@@ -189,8 +189,8 @@ describe('Database View JavaScript - Comprehensive Coverage', () => {
         it('should contain all toggle column functions', () => {
             const toggleFunctions = [
                 'toggleFortificationsColumn',
-                'toggleOnePerDeckColumn',
-                'toggleOnePerDeckAdvancedColumn'
+                'toggleOnePerDeckColumn'
+                // Note: toggleOnePerDeckAdvancedColumn removed - column is now always visible
             ];
 
             toggleFunctions.forEach(func => {
@@ -211,10 +211,9 @@ describe('Database View JavaScript - Comprehensive Coverage', () => {
             expect(content).toContain('one-per-deck-toggle-text');
         });
 
-        it('should handle one per deck advanced column toggle', () => {
-            expect(content).toContain('.one-per-deck-advanced-column');
-            expect(content).toContain('toggle-one-per-deck-advanced');
-            expect(content).toContain('one-per-deck-advanced-toggle-text');
+        it('should handle one per deck advanced column (always visible)', () => {
+            // Note: toggle button and function removed - column is now always visible
+            // The CSS class .one-per-deck-advanced-column is only in HTML, not in this JS file
         });
 
         it('should handle column visibility logic', () => {
@@ -323,8 +322,8 @@ describe('Database View JavaScript - Comprehensive Coverage', () => {
                 'window.clearBasicUniverseFilters = clearBasicUniverseFilters',
                 'window.clearPowerCardFilters = clearPowerCardFilters',
                 'window.toggleFortificationsColumn = toggleFortificationsColumn',
-                'window.toggleOnePerDeckColumn = toggleOnePerDeckColumn',
-                'window.toggleOnePerDeckAdvancedColumn = toggleOnePerDeckAdvancedColumn'
+                'window.toggleOnePerDeckColumn = toggleOnePerDeckColumn'
+                // Note: window.toggleOnePerDeckAdvancedColumn removed - column is now always visible
             ];
 
             globalRegistrations.forEach(registration => {

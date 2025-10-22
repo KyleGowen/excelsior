@@ -367,26 +367,6 @@ function toggleOnePerDeckColumn() {
     }
 }
 
-/**
- * Toggle one per deck advanced column visibility
- */
-function toggleOnePerDeckAdvancedColumn() {
-    const onePerDeckAdvancedColumn = document.querySelectorAll('.one-per-deck-advanced-column');
-    const toggleButton = document.getElementById('toggle-one-per-deck-advanced');
-    const toggleText = document.getElementById('one-per-deck-advanced-toggle-text');
-
-    if (onePerDeckAdvancedColumn.length > 0) {
-        const isHidden = onePerDeckAdvancedColumn[0].style.display === 'none';
-
-        onePerDeckAdvancedColumn.forEach(col => {
-            col.style.display = isHidden ? 'table-cell' : 'none';
-        });
-
-        if (toggleText) {
-            toggleText.textContent = isHidden ? 'Hide' : 'Show';
-        }
-    }
-}
 
 /* ========================================
  * DATABASE VIEW SPECIFIC FUNCTIONS
@@ -678,7 +658,6 @@ window.clearBasicUniverseFilters = clearBasicUniverseFilters;
 window.clearPowerCardFilters = clearPowerCardFilters;
 window.toggleFortificationsColumn = toggleFortificationsColumn;
 window.toggleOnePerDeckColumn = toggleOnePerDeckColumn;
-window.toggleOnePerDeckAdvancedColumn = toggleOnePerDeckAdvancedColumn;
 window.loadBasicUniverse = loadBasicUniverse;
 window.displayBasicUniverse = displayBasicUniverse;
 window.applyBasicUniverseFilters = applyBasicUniverseFilters;
