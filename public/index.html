@@ -75,7 +75,7 @@
                 <div class="tab-row">
                     <button class="tab-button active" data-click-handler="switchTab" data-tab="characters">Characters</button>
                     <button class="tab-button" data-click-handler="switchTab" data-tab="special-cards">Special Cards</button>
-                    <button class="tab-button" data-click-handler="switchTab" data-tab="advanced-universe">Advanced Universe</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="advanced-universe">Universe: Advanced</button>
                     <button class="tab-button" data-click-handler="switchTab" data-tab="locations">Locations</button>
                     <button class="tab-button" data-click-handler="switchTab" data-tab="aspects">Aspects</button>
                     <button class="tab-button" data-click-handler="switchTab" data-tab="missions">Missions</button>
@@ -716,7 +716,7 @@
                             <option value="mission">Missions</option>
                             <option value="event">Events</option>
                             <option value="aspect">Aspects</option>
-                            <option value="advanced-universe">Advanced Universe</option>
+                            <option value="advanced-universe">Universe: Advanced</option>
                             <option value="teamwork">Universe: Teamwork</option>
                             <option value="ally-universe">Universe: Ally</option>
                             <option value="training">Universe: Training</option>
@@ -3080,7 +3080,7 @@
                 'teamwork': 'Teamwork Cards',
                 'ally-universe': 'Ally Universe',
                 'basic-universe': 'Basic Universe',
-                'advanced-universe': 'Advanced Universe',
+                'advanced-universe': 'Universe: Advanced',
                 'training': 'Training Cards',
                 'mission': 'Missions',
                 'event': 'Events',
@@ -4134,7 +4134,7 @@
             
             for (const category of allCategories) {
                 const header = category.querySelector('.card-category-header span');
-                if (header && header.textContent.includes('Advanced Universe')) {
+                if (header && header.textContent.includes('Universe: Advanced')) {
                     advancedUniverseCategory = category;
                     break;
                 }
@@ -6133,7 +6133,7 @@
                 'event': 'Events',
                 'special': 'Special Cards',
                 'aspect': 'Aspects',
-                'advanced-universe': 'Advanced Universe',
+                'advanced-universe': 'Universe: Advanced',
                 'teamwork': 'Universe: Teamwork',
                 'ally-universe': 'Universe: Ally',
                 'training': 'Universe: Training',
@@ -8640,7 +8640,7 @@
                     { type: 'mission', name: 'Missions', api: '/api/missions', nameField: 'card_name' },
                     { type: 'event', name: 'Events', api: '/api/events', nameField: 'name' },
                     { type: 'aspect', name: 'Aspects', api: '/api/aspects', nameField: 'card_name' },
-                    { type: 'advanced-universe', name: 'Advanced Universe', api: '/api/advanced-universe', nameField: 'name' },
+                    { type: 'advanced-universe', name: 'Universe: Advanced', api: '/api/advanced-universe', nameField: 'name' },
                     { type: 'teamwork', name: 'Universe: Teamwork', api: '/api/teamwork', nameField: 'card_type' },
                     { type: 'ally-universe', name: 'Universe: Ally', api: '/api/ally-universe', nameField: 'card_name' },
                     { type: 'training', name: 'Universe: Training', api: '/api/training', nameField: 'card_name' },

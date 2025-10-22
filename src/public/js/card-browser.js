@@ -25,7 +25,7 @@ class CardBrowser {
             { type: 'mission', name: 'Missions', count: this.deckManager.getAvailableCardsByType('mission').length },
             { type: 'event', name: 'Events', count: this.deckManager.getAvailableCardsByType('event').length },
             { type: 'aspect', name: 'Aspects', count: this.deckManager.getAvailableCardsByType('aspect').length },
-            { type: 'advanced-universe', name: 'Advanced Universe', count: this.deckManager.getAvailableCardsByType('advanced-universe').length },
+            { type: 'advanced-universe', name: 'Universe: Advanced', count: this.deckManager.getAvailableCardsByType('advanced-universe').length },
             { type: 'teamwork', name: 'Universe: Teamwork', count: this.deckManager.getAvailableCardsByType('teamwork').length },
             { type: 'ally-universe', name: 'Universe: Ally', count: (() => {
                 const cards = this.deckManager.getAvailableCardsByType('ally-universe');

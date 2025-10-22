@@ -628,7 +628,7 @@ The dimming system applies to ALL card types that have `one_per_deck=TRUE`:
 #### Special Cards
 - **Selector**: `.card-item[data-type="special"][data-id]`
 - **Logic**: Dims when the specific card is already in deck
-- **Examples**: Grim Reaper, Advanced Universe, Training, Teamwork
+- **Examples**: Grim Reaper, Universe: Advanced, Training, Teamwork
 
 #### Power Cards
 - **Selector**: `.card-item[data-type="power"][data-id]`

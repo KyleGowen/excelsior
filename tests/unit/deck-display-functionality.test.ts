@@ -108,7 +108,7 @@ const mockDisplayDeckCardsForEditing = async () => {
         'event': 'Events',
         'special': 'Special Cards',
         'aspect': 'Aspects',
-        'advanced_universe': 'Advanced Universe',
+        'advanced_universe': 'Universe: Advanced',
         'teamwork': 'Teamwork',
         'ally_universe': 'Ally Universe',
         'training': 'Training',

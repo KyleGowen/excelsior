@@ -263,11 +263,11 @@ describe('One Per Deck Card Rendering Integration', () => {
         });
     });
 
-    describe('Advanced Universe card rendering with One Per Deck dimming', () => {
+    describe('Universe: Advanced card rendering with One Per Deck dimming', () => {
         it('should include One Per Deck dimming in advanced universe card HTML generation', () => {
             const mockAdvanced = {
                 id: 'adv_1',
-                name: 'Advanced Universe Card',
+                name: 'Universe: Advanced Card',
                 one_per_deck: true,
                 character: 'Any Character'
             };

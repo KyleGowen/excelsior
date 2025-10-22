@@ -56,20 +56,20 @@ describe('One Per Deck Validation Integration Tests', () => {
     await pool.end();
   });
 
-  describe('Advanced Universe Cards (is_one_per_deck)', () => {
-    it('should prevent adding multiple copies of one-per-deck Advanced Universe cards', async () => {
-      // Get a one-per-deck Advanced Universe card
+  describe('Universe: Advanced Cards (is_one_per_deck)', () => {
+    it('should prevent adding multiple copies of one-per-deck Universe: Advanced cards', async () => {
+      // Get a one-per-deck Universe: Advanced card
       const cardResult = await pool.query(
         'SELECT id, name FROM advanced_universe_cards WHERE one_per_deck = true LIMIT 1'
       );
       
       if (cardResult.rows.length === 0) {
-        console.log('No one-per-deck Advanced Universe cards found, skipping test');
+        console.log('No one-per-deck Universe: Advanced cards found, skipping test');
         return;
       }
 
       const card = cardResult.rows[0];
-      console.log(`Testing Advanced Universe card: ${card.name}`);
+      console.log(`Testing Universe: Advanced card: ${card.name}`);
 
       // Add the card once - should succeed
       const addResponse1 = await request(app)
@@ -300,13 +300,13 @@ describe('One Per Deck Validation Integration Tests', () => {
 
   describe('Quantity Increase Validation', () => {
     it('should prevent increasing quantity of one-per-deck cards via +1 button', async () => {
-      // Get a one-per-deck Advanced Universe card
+      // Get a one-per-deck Universe: Advanced card
       const cardResult = await pool.query(
         'SELECT id, name FROM advanced_universe_cards WHERE one_per_deck = true LIMIT 1'
       );
       
       if (cardResult.rows.length === 0) {
-        console.log('No one-per-deck Advanced Universe cards found, skipping test');
+        console.log('No one-per-deck Universe: Advanced cards found, skipping test');
         return;
       }
 
@@ -354,7 +354,7 @@ describe('One Per Deck Validation Integration Tests', () => {
       );
       
       if (cardResult.rows.length === 0) {
-        console.log('No one-per-deck Advanced Universe cards found, skipping test');
+        console.log('No one-per-deck Universe: Advanced cards found, skipping test');
         return;
       }
 

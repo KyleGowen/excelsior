@@ -6,6 +6,36 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
+// Helper function to extract complete function body by counting braces
+function extractFunctionBody(content: string, functionName: string): string | null {
+    const functionRegex = new RegExp(`function\\s+${functionName}\\s*\\([^)]*\\)\\s*\\{`);
+    const match = content.match(functionRegex);
+    
+    if (!match) {
+        return null;
+    }
+    
+    const startIndex = match.index! + match[0].length - 1; // -1 to include the opening brace
+    let braceCount = 1;
+    let currentIndex = startIndex + 1;
+    
+    while (currentIndex < content.length && braceCount > 0) {
+        const char = content[currentIndex];
+        if (char === '{') {
+            braceCount++;
+        } else if (char === '}') {
+            braceCount--;
+        }
+        currentIndex++;
+    }
+    
+    if (braceCount === 0) {
+        return content.substring(match.index!, currentIndex);
+    }
+    
+    return null;
+}
+
 describe('Basic Universe Type Filter', () => {
     let indexHtmlContent: string;
     let mockDocument: any;
@@ -62,41 +92,36 @@ describe('Basic Universe Type Filter', () => {
             mockDocument.querySelectorAll.mockReturnValue(mockCheckboxes);
 
             // Extract and execute the setupBasicUniverseSearch function
-            const functionMatch = indexHtmlContent.match(/function setupBasicUniverseSearch\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'setupBasicUniverseSearch');
+            expect(functionCode).toBeTruthy();
             expect(functionCode).toContain('checkbox.checked = true');
             expect(functionCode).toContain('checkboxes.forEach(checkbox => {');
         });
 
         it('should add event listeners to checkboxes', () => {
-            const functionMatch = indexHtmlContent.match(/function setupBasicUniverseSearch\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
+            const functionCode = extractFunctionBody(indexHtmlContent, 'setupBasicUniverseSearch');
+            expect(functionCode).toBeTruthy();
             
-            const functionCode = functionMatch![0];
-            expect(functionCode).toContain('addEventListener(\'change\', applyBasicUniverseFilters)');
+            expect(functionCode).toContain('checkbox.addEventListener(\'change\', applyBasicUniverseFilters)');
         });
 
         it('should add event listeners to other filter inputs', () => {
-            const functionMatch = indexHtmlContent.match(/function setupBasicUniverseSearch\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
+            const functionCode = extractFunctionBody(indexHtmlContent, 'setupBasicUniverseSearch');
+            expect(functionCode).toBeTruthy();
             
-            const functionCode = functionMatch![0];
-            expect(functionCode).toContain('valueEquals.addEventListener(\'input\', applyBasicUniverseFilters)');
-            expect(functionCode).toContain('valueMin.addEventListener(\'input\', applyBasicUniverseFilters)');
-            expect(functionCode).toContain('valueMax.addEventListener(\'input\', applyBasicUniverseFilters)');
-            expect(functionCode).toContain('bonusEquals.addEventListener(\'input\', applyBasicUniverseFilters)');
-            expect(functionCode).toContain('bonusMin.addEventListener(\'input\', applyBasicUniverseFilters)');
-            expect(functionCode).toContain('bonusMax.addEventListener(\'input\', applyBasicUniverseFilters)');
+            expect(functionCode).toContain('if (valueEquals) valueEquals.addEventListener(\'input\', applyBasicUniverseFilters)');
+            expect(functionCode).toContain('if (valueMin) valueMin.addEventListener(\'input\', applyBasicUniverseFilters)');
+            expect(functionCode).toContain('if (valueMax) valueMax.addEventListener(\'input\', applyBasicUniverseFilters)');
+            expect(functionCode).toContain('if (bonusEquals) bonusEquals.addEventListener(\'input\', applyBasicUniverseFilters)');
+            expect(functionCode).toContain('if (bonusMin) bonusMin.addEventListener(\'input\', applyBasicUniverseFilters)');
+            expect(functionCode).toContain('if (bonusMax) bonusMax.addEventListener(\'input\', applyBasicUniverseFilters)');
         });
 
         it('should setup search functionality', () => {
-            const functionMatch = indexHtmlContent.match(/function setupBasicUniverseSearch\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
+            const functionCode = extractFunctionBody(indexHtmlContent, 'setupBasicUniverseSearch');
+            expect(functionCode).toBeTruthy();
             
-            const functionCode = functionMatch![0];
-            expect(functionCode).toContain('searchInput.addEventListener(\'input\'');
+            expect(functionCode).toContain('searchInput.addEventListener(\'input\', async (e) => {');
             expect(functionCode).toContain('await applyBasicUniverseFilters()');
         });
     });
@@ -107,75 +132,60 @@ describe('Basic Universe Type Filter', () => {
         });
 
         it('should fetch data from /api/basic-universe', () => {
-            const functionMatch = indexHtmlContent.match(/async function applyBasicUniverseFilters\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
+            expect(functionCode).toBeTruthy();
             expect(functionCode).toContain('fetch(\'/api/basic-universe\')');
         });
 
         it('should filter by selected types', () => {
-            const functionMatch = indexHtmlContent.match(/async function applyBasicUniverseFilters\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
+            const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
+            expect(functionCode).toBeTruthy();
             
-            const functionCode = functionMatch![0];
             expect(functionCode).toContain('input[type="checkbox"]:checked');
-            expect(functionCode).toContain('selectedTypes.includes(card.type)');
+            expect(functionCode).toContain('filtered.filter(card => selectedTypes.includes(card.type))');
         });
 
         it('should show no cards when no types are selected', () => {
-            const functionMatch = indexHtmlContent.match(/async function applyBasicUniverseFilters\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
+            expect(functionCode).toBeTruthy();
             expect(functionCode).toContain('if (selectedTypes.length === 0)');
             expect(functionCode).toContain('filtered = []');
             expect(functionCode).toContain('No types selected - showing no cards');
         });
 
         it('should include console logging for debugging', () => {
-            const functionMatch = indexHtmlContent.match(/async function applyBasicUniverseFilters\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
+            expect(functionCode).toBeTruthy();
             expect(functionCode).toContain('console.log(\'Selected types for filtering:\', selectedTypes)');
             expect(functionCode).toContain('console.log(\'Filtered cards count:\', filtered.length)');
             expect(functionCode).toContain('console.log(\'No types selected - showing no cards\')');
         });
 
         it('should handle value range filtering', () => {
-            const functionMatch = indexHtmlContent.match(/async function applyBasicUniverseFilters\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
+            expect(functionCode).toBeTruthy();
             expect(functionCode).toContain('basic-value-min');
             expect(functionCode).toContain('basic-value-max');
             expect(functionCode).toContain('value_to_use');
         });
 
         it('should handle bonus range filtering', () => {
-            const functionMatch = indexHtmlContent.match(/async function applyBasicUniverseFilters\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
+            expect(functionCode).toBeTruthy();
             expect(functionCode).toContain('basic-bonus-min');
             expect(functionCode).toContain('basic-bonus-max');
             expect(functionCode).toContain('card.bonus');
         });
 
         it('should call displayBasicUniverse with filtered results', () => {
-            const functionMatch = indexHtmlContent.match(/async function applyBasicUniverseFilters\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
+            expect(functionCode).toBeTruthy();
             expect(functionCode).toContain('displayBasicUniverse(filtered)');
         });
 
         it('should handle errors gracefully', () => {
-            const functionMatch = indexHtmlContent.match(/async function applyBasicUniverseFilters\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
+            expect(functionCode).toBeTruthy();
             expect(functionCode).toContain('catch (err)');
             expect(functionCode).toContain('console.error(\'Error applying basic universe filters:\', err)');
         });
@@ -203,10 +213,8 @@ describe('Basic Universe Type Filter', () => {
 
     describe('Filter Logic Validation', () => {
         it('should handle empty selected types correctly', () => {
-            const functionMatch = indexHtmlContent.match(/async function applyBasicUniverseFilters\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
+            expect(functionCode).toBeTruthy();
             
             // Should check for empty array
             expect(functionCode).toContain('selectedTypes.length === 0');
@@ -216,10 +224,8 @@ describe('Basic Universe Type Filter', () => {
         });
 
         it('should filter cards by type when types are selected', () => {
-            const functionMatch = indexHtmlContent.match(/async function applyBasicUniverseFilters\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
+            expect(functionCode).toBeTruthy();
             
             // Should filter by selected types
             expect(functionCode).toContain('filtered.filter(card => selectedTypes.includes(card.type))');
@@ -236,18 +242,14 @@ describe('Basic Universe Type Filter', () => {
 
     describe('Error Handling', () => {
         it('should handle API fetch errors', () => {
-            const functionMatch = indexHtmlContent.match(/async function applyBasicUniverseFilters\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
+            expect(functionCode).toBeTruthy();
             expect(functionCode).toContain('if (!data.success) return');
         });
 
         it('should handle missing DOM elements gracefully', () => {
-            const functionMatch = indexHtmlContent.match(/function setupBasicUniverseSearch\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'setupBasicUniverseSearch');
+            expect(functionCode).toBeTruthy();
             expect(functionCode).toContain('if (valueEquals)');
             expect(functionCode).toContain('if (valueMin)');
             expect(functionCode).toContain('if (valueMax)');
@@ -260,20 +262,16 @@ describe('Basic Universe Type Filter', () => {
 
     describe('Performance Considerations', () => {
         it('should use efficient DOM queries', () => {
-            const functionMatch = indexHtmlContent.match(/async function applyBasicUniverseFilters\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
+            expect(functionCode).toBeTruthy();
             
             // Should use efficient selectors
             expect(functionCode).toContain('#basic-universe-tab input[type="checkbox"]:checked');
         });
 
         it('should avoid redundant API calls', () => {
-            const functionMatch = indexHtmlContent.match(/function setupBasicUniverseSearch\(\)\s*\{[\s\S]*?\n\s*\}/);
-            expect(functionMatch).toBeTruthy();
-            
-            const functionCode = functionMatch![0];
+            const functionCode = extractFunctionBody(indexHtmlContent, 'setupBasicUniverseSearch');
+            expect(functionCode).toBeTruthy();
             
             // Should only fetch when search term is empty
             expect(functionCode).toContain('if (searchTerm.length === 0)');

@@ -10,7 +10,7 @@ const dom = new JSDOM(`
         <div class="card-item" data-type="character" data-id="char_1">Character 1</div>
         <div class="card-item" data-type="special" data-id="special_1">Grim Reaper</div>
         <div class="card-item" data-type="power" data-id="power_1">Any-Power Card</div>
-        <div class="card-item" data-type="advanced-universe" data-id="adv_1">Advanced Universe Card</div>
+        <div class="card-item" data-type="advanced-universe" data-id="adv_1">Universe: Advanced Card</div>
         <div class="card-item" data-type="teamwork" data-id="team_1">Teamwork Card</div>
         <div class="card-item" data-type="event" data-id="event_1">Event Card</div>
         <div class="card-item" data-type="mission" data-id="mission_1">Mission Card</div>
@@ -35,7 +35,7 @@ const mockCards = {
     'char_1': { id: 'char_1', name: 'Character 1', one_per_deck: false },
     'special_1': { id: 'special_1', name: 'Grim Reaper', one_per_deck: true },
     'power_1': { id: 'power_1', name: 'Any-Power Card', one_per_deck: true },
-    'adv_1': { id: 'adv_1', name: 'Advanced Universe Card', one_per_deck: true },
+    'adv_1': { id: 'adv_1', name: 'Universe: Advanced Card', one_per_deck: true },
     'team_1': { id: 'team_1', name: 'Teamwork Card', one_per_deck: true },
     'event_1': { id: 'event_1', name: 'Event Card', one_per_deck: true },
     'mission_1': { id: 'mission_1', name: 'Mission Card', one_per_deck: true },

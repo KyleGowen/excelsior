@@ -183,7 +183,7 @@ const mockAdvancedUniverse: AdvancedUniverse[] = [
   {
     id: 'advanced-1',
     name: 'Divine Intervention',
-    card_type: 'Advanced Universe',
+    card_type: 'Universe: Advanced',
     character: 'Zeus',
     card_effect: 'Intervene in battle',
     image: '/images/divine_intervention.jpg',

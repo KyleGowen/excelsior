@@ -155,7 +155,7 @@ class DeckEditor {
             'mission': 'Missions',
             'event': 'Events',
             'aspect': 'Aspects',
-            'advanced-universe': 'Advanced Universe',
+            'advanced-universe': 'Universe: Advanced',
             'teamwork': 'Teamwork',
             'ally-universe': 'Ally Universe',
             'training': 'Training',
