@@ -36,7 +36,8 @@ function performMainSearch() {
 
 // Search and filter setup functions
 function setupSearch() {
-    const headerFilters = document.querySelectorAll('.header-filter');
+    // Only target header filters within the characters tab, not all header filters
+    const headerFilters = document.querySelectorAll('#characters-tab .header-filter');
     // Only target filter inputs within the characters tab, not all filter inputs
     const filterInputs = document.querySelectorAll('#characters-tab .filter-input');
     const clearFiltersBtn = document.getElementById('clear-filters');
@@ -49,7 +50,7 @@ function setupSearch() {
         searchInput.addEventListener('input', debounce(performMainSearch, 300));
     }
     
-    // Setup header text search filters
+    // Setup header text search filters - only for characters tab
     headerFilters.forEach(input => {
         input.addEventListener('input', applyFilters);
     });
@@ -194,35 +195,81 @@ function setupTeamworkSearch() {
 }
 
 function setupSpecialCardSearch() {
-    const searchInput = document.getElementById('search-input');
-    searchInput.addEventListener('input', async (e) => {
-        const searchTerm = e.target.value.toLowerCase();
+    console.log('🔍 DEBUG: setupSpecialCardSearch called');
+    
+    // Set up column-specific search inputs
+    const nameSearchInput = document.querySelector('#special-cards-table .header-filter[data-column="name"]');
+    const characterSearchInput = document.querySelector('#special-cards-table .header-filter[data-column="character"]');
+    const effectSearchInput = document.querySelector('#special-cards-table .header-filter[data-column="card_effect"]');
+    
+    console.log('🔍 DEBUG: Found search inputs:', {
+        nameSearchInput: !!nameSearchInput,
+        characterSearchInput: !!characterSearchInput,
+        effectSearchInput: !!effectSearchInput
+    });
+    
+    // Function to perform search with current filter values
+    async function performSpecialCardSearch() {
+        console.log('🔍 DEBUG: performSpecialCardSearch called');
         
-        if (searchTerm.length === 0) {
-            // Reload all special cards
+        const nameTerm = nameSearchInput ? nameSearchInput.value.toLowerCase() : '';
+        const characterTerm = characterSearchInput ? characterSearchInput.value.toLowerCase() : '';
+        const effectTerm = effectSearchInput ? effectSearchInput.value.toLowerCase() : '';
+        
+        console.log('🔍 DEBUG: Search terms:', { nameTerm, characterTerm, effectTerm });
+        
+        // If all search terms are empty, reload all cards
+        if (nameTerm.length === 0 && characterTerm.length === 0 && effectTerm.length === 0) {
+            console.log('🔍 DEBUG: All search terms empty, calling loadSpecialCards()');
             await loadSpecialCards();
             return;
         }
 
         try {
+            console.log('🔍 DEBUG: Fetching special cards from API...');
             const response = await fetch('/api/special-cards');
             const data = await response.json();
             
             if (data.success) {
-                const filteredSpecialCards = data.data.filter(card => 
-                    card.name.toLowerCase().includes(searchTerm) ||
-                    card.character.toLowerCase().includes(searchTerm) ||
-                    card.card_effect.toLowerCase().includes(searchTerm) ||
-                    (searchTerm.includes('cataclysm') && card.is_cataclysm) ||
-                    (searchTerm.includes('yes') && card.is_cataclysm) ||
-                    (searchTerm.includes('no') && !card.is_cataclysm)
-                );
-                displaySpecialCards(filteredSpecialCards);
+                console.log('🔍 DEBUG: API response successful, filtering cards...');
+                const filteredSpecialCards = data.data.filter(card => {
+                    const nameMatch = nameTerm.length === 0 || card.name.toLowerCase().includes(nameTerm);
+                    const characterMatch = characterTerm.length === 0 || card.character.toLowerCase().includes(characterTerm);
+                    const effectMatch = effectTerm.length === 0 || card.card_effect.toLowerCase().includes(effectTerm);
+                    
+                    return nameMatch && characterMatch && effectMatch;
+                });
+                
+                console.log('🔍 DEBUG: Filtered cards count:', filteredSpecialCards.length);
+                console.log('🔍 DEBUG: About to call displaySpecialCards with:', filteredSpecialCards);
+                
+                // Check if displaySpecialCards function exists
+                if (typeof displaySpecialCards === 'function') {
+                    console.log('🔍 DEBUG: displaySpecialCards function exists, calling it...');
+                    displaySpecialCards(filteredSpecialCards);
+                } else {
+                    console.error('❌ DEBUG: displaySpecialCards function does not exist!');
+                    console.log('🔍 DEBUG: Available functions:', Object.keys(window).filter(key => key.includes('display')));
+                }
             }
         } catch (error) {
             console.error('Error searching special cards:', error);
         }
-    });
+    }
+    
+    // Add event listeners to each search input
+    if (nameSearchInput) {
+        console.log('🔍 DEBUG: Adding event listener to name search input');
+        nameSearchInput.addEventListener('input', debounce(performSpecialCardSearch, 300));
+    }
+    if (characterSearchInput) {
+        console.log('🔍 DEBUG: Adding event listener to character search input');
+        characterSearchInput.addEventListener('input', debounce(performSpecialCardSearch, 300));
+    }
+    if (effectSearchInput) {
+        console.log('🔍 DEBUG: Adding event listener to effect search input');
+        effectSearchInput.addEventListener('input', debounce(performSpecialCardSearch, 300));
+    }
 }
 
 function setupMissionSearch() {

@@ -132,8 +132,27 @@ function formatSpecialCardEffect(effectText, cardData = null) {
  * Display special cards in the special cards table
  */
 function displaySpecialCards(specialCards) {
+    console.log('🔍 DEBUG: displaySpecialCards called with:', specialCards);
+    console.log('🔍 DEBUG: specialCards length:', specialCards ? specialCards.length : 'null/undefined');
+    
     const tbody = document.getElementById('special-cards-tbody');
+    console.log('🔍 DEBUG: Found special-cards-tbody:', !!tbody);
+    
+    if (!tbody) {
+        console.error('❌ DEBUG: special-cards-tbody element not found!');
+        return;
+    }
+    
     tbody.innerHTML = '';
+    console.log('🔍 DEBUG: Cleared tbody, about to add cards...');
+    
+    // Check tab visibility after clearing
+    const specialCardsTab = document.getElementById('special-cards-tab');
+    const charactersTab = document.getElementById('characters-tab');
+    console.log('🔍 DEBUG: Tab visibility after clearing tbody:', {
+        specialCardsTabDisplay: specialCardsTab ? specialCardsTab.style.display : 'not found',
+        charactersTabDisplay: charactersTab ? charactersTab.style.display : 'not found'
+    });
 
     specialCards.forEach(card => {
         const row = document.createElement('tr');
@@ -159,6 +178,14 @@ function displaySpecialCards(specialCards) {
         `;
         
         tbody.appendChild(row);
+    });
+    
+    // Final check of tab visibility after adding all cards
+    console.log('🔍 DEBUG: Final tab visibility after adding cards:', {
+        specialCardsTabDisplay: specialCardsTab ? specialCardsTab.style.display : 'not found',
+        charactersTabDisplay: charactersTab ? charactersTab.style.display : 'not found',
+        specialCardsTabVisible: specialCardsTab ? specialCardsTab.offsetParent !== null : false,
+        charactersTabVisible: charactersTab ? charactersTab.offsetParent !== null : false
     });
 }
 
@@ -203,3 +230,9 @@ function displayLocations(locations) {
         tbody.appendChild(row);
     });
 }
+
+// Make functions globally available
+window.displayCharacters = displayCharacters;
+window.displaySpecialCards = displaySpecialCards;
+window.displayLocations = displayLocations;
+window.formatSpecialCardEffect = formatSpecialCardEffect;

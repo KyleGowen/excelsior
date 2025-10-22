@@ -224,9 +224,15 @@
                                 <button class="clear-filters-btn" onclick="clearSpecialCardFilters()">Clear All Filters</button>
                             </th>
                             <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
+                            <th>
+                                <input type="text" class="header-filter" placeholder="Search names..." data-column="name">
+                            </th>
+                            <th>
+                                <input type="text" class="header-filter" placeholder="Search characters..." data-column="character">
+                            </th>
+                            <th>
+                                <input type="text" class="header-filter" placeholder="Search effects..." data-column="card_effect">
+                            </th>
                         </tr>
                     </thead>
                     <tbody id="special-cards-tbody">
@@ -1199,8 +1205,8 @@
             document.getElementById('basic-universe-tab').style.display = 'none';
             document.getElementById('power-cards-tab').style.display = 'none';
             
-            // Show search container for all tabs including characters
-            document.getElementById('search-container').style.display = 'block';
+            // Hide search container for all tabs
+            document.getElementById('search-container').style.display = 'none';
             
             // Remove active class from all buttons
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
@@ -1214,9 +1220,13 @@
             
             // Show selected tab
             const selectedTab = document.getElementById(tabName + '-tab');
+            console.log('🔍 DEBUG: Tab switching - tabName:', tabName, 'selectedTab:', !!selectedTab);
             if (selectedTab) {
+                console.log('🔍 DEBUG: Setting', tabName + '-tab', 'to display: block');
                 selectedTab.style.display = 'block';
+                console.log('🔍 DEBUG: After setting, display style is:', selectedTab.style.display);
             } else {
+                console.error('❌ DEBUG: Tab element not found:', tabName + '-tab');
             }
             
             // Update search placeholder for all tabs
@@ -1258,7 +1268,9 @@
                 setupSearch();
                 loadCharacters();
             } else if (tabName === 'special-cards') {
+                console.log('🔍 DEBUG: Switching to special-cards tab, calling setupSpecialCardSearch()');
                 setupSpecialCardSearch();
+                console.log('🔍 DEBUG: Calling loadSpecialCards()');
                 loadSpecialCards();
             } else if (tabName === 'advanced-universe') {
                 setupAdvancedUniverseSearch();

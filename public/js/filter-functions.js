@@ -48,9 +48,19 @@ function clearLocationFilters() {
 }
 
 function clearSpecialCardFilters() {
-    // Clear special card filters
-    // Add specific filter clearing logic here if needed
-    applyFilters();
+    // Clear special card search inputs
+    const nameSearchInput = document.querySelector('#special-cards-table .header-filter[data-column="name"]');
+    const characterSearchInput = document.querySelector('#special-cards-table .header-filter[data-column="character"]');
+    const effectSearchInput = document.querySelector('#special-cards-table .header-filter[data-column="card_effect"]');
+    
+    if (nameSearchInput) nameSearchInput.value = '';
+    if (characterSearchInput) characterSearchInput.value = '';
+    if (effectSearchInput) effectSearchInput.value = '';
+    
+    // Reload all special cards
+    if (typeof loadSpecialCards === 'function') {
+        loadSpecialCards();
+    }
 }
 
 function clearAdvancedUniverseFilters() {
