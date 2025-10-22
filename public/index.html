@@ -1563,6 +1563,61 @@
             } catch (e) { console.error('Error loading basic universe:', e); }
         }
 
+        function setupBasicUniverseSearch() {
+            // Initialize checkboxes to checked by default
+            const checkboxes = document.querySelectorAll('#basic-universe-tab input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+
+            // Add event listeners for filters
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', applyBasicUniverseFilters);
+            });
+
+            // Add event listeners for other filter inputs
+            const valueEquals = document.querySelector('#basic-universe-tab input[data-column="value"].equals');
+            const valueMin = document.getElementById('basic-value-min');
+            const valueMax = document.getElementById('basic-value-max');
+            const bonusEquals = document.querySelector('#basic-universe-tab input[data-column="bonus"].equals');
+            const bonusMin = document.getElementById('basic-bonus-min');
+            const bonusMax = document.getElementById('basic-bonus-max');
+
+            if (valueEquals) valueEquals.addEventListener('input', applyBasicUniverseFilters);
+            if (valueMin) valueMin.addEventListener('input', applyBasicUniverseFilters);
+            if (valueMax) valueMax.addEventListener('input', applyBasicUniverseFilters);
+            if (bonusEquals) bonusEquals.addEventListener('input', applyBasicUniverseFilters);
+            if (bonusMin) bonusMin.addEventListener('input', applyBasicUniverseFilters);
+            if (bonusMax) bonusMax.addEventListener('input', applyBasicUniverseFilters);
+
+            // Setup search functionality
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', async (e) => {
+                    const searchTerm = e.target.value.toLowerCase();
+                    if (searchTerm.length === 0) { 
+                        await applyBasicUniverseFilters(); 
+                        return; 
+                    }
+                    try {
+                        const resp = await fetch('/api/basic-universe');
+                        const data = await resp.json();
+                        if (data.success) {
+                            const filtered = data.data.filter(card =>
+                                card.card_name.toLowerCase().includes(searchTerm) ||
+                                card.type.toLowerCase().includes(searchTerm) ||
+                                card.value_to_use.toLowerCase().includes(searchTerm) ||
+                                card.bonus.toLowerCase().includes(searchTerm)
+                            );
+                            displayBasicUniverse(filtered);
+                        }
+                    } catch (err) { 
+                        console.error('Error searching basic universe:', err); 
+                    }
+                });
+            }
+        }
+
         function displayBasicUniverse(cards) {
             const tbody = document.getElementById('basic-universe-tbody');
             if (!cards || cards.length === 0) {
@@ -1635,8 +1690,15 @@
                 // Filter by type
                 const selectedTypes = Array.from(document.querySelectorAll('#basic-universe-tab input[type="checkbox"]:checked'))
                     .map(cb => cb.value);
-                if (selectedTypes.length > 0) {
+                console.log('Selected types for filtering:', selectedTypes);
+                
+                // If no types are selected, show no cards
+                if (selectedTypes.length === 0) {
+                    filtered = [];
+                    console.log('No types selected - showing no cards');
+                } else {
                     filtered = filtered.filter(card => selectedTypes.includes(card.type));
+                    console.log('Filtered cards count:', filtered.length);
                 }
 
                 // Filter by value range

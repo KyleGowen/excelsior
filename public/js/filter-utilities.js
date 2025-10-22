@@ -238,15 +238,29 @@ class FilterPatterns {
      */
     static async applyBasicUniverseFilters() {
         try {
-            const response = await fetch('/api/basic-universe');
-            const data = await response.json();
-            if (!data.success) return;
+            // Use cached data if available, otherwise fetch from API
+            let data;
+            if (window.basicUniverseData) {
+                data = window.basicUniverseData;
+            } else {
+                const response = await fetch('/api/basic-universe');
+                data = await response.json();
+                if (!data.success) return;
+                // Cache the data for future use
+                window.basicUniverseData = data;
+            }
 
             let filtered = data.data;
 
-            // Apply type filter
-            const selectedTypes = FilterUtilities.getSelectedCheckboxValues('#basic-universe-tab input[type="checkbox"]');
-            filtered = FilterUtilities.applyCheckboxFilter(filtered, 'type', selectedTypes);
+            // Apply type filter - get selected types directly from DOM
+            const selectedTypes = Array.from(document.querySelectorAll('#basic-universe-tab input[type="checkbox"]:checked'))
+                .map(cb => cb.value);
+            console.log('Selected types for filtering:', selectedTypes);
+            
+            if (selectedTypes.length > 0) {
+                filtered = filtered.filter(item => selectedTypes.includes(item.type));
+                console.log('Filtered cards count:', filtered.length);
+            }
 
             // Apply value to use filter
             const valueFilter = FilterUtilities.getNumericFilterValues('#basic-universe-value-min', '#basic-universe-value-max');

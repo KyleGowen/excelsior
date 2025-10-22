@@ -15,6 +15,9 @@
  *
  * ======================================== */
 
+// Global variable for filter clearing state
+let isClearingFilters = false;
+
 /**
  * Data Loading Core Component
  * Coordinates all data loading operations for the database view
