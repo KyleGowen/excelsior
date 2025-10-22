@@ -31,10 +31,12 @@ class TemplateLoader {
             const modalHtml = await modalResponse.text();
             this.templates.set('modals', modalHtml);
 
-            // Load database view template
-            const dbViewResponse = await fetch('/templates/database-view-template.html');
+            // Load database view template (use complete version instead of template version)
+            const dbViewResponse = await fetch('/templates/database-view-complete.html');
             const dbViewHtml = await dbViewResponse.text();
             this.templates.set('database-view', dbViewHtml);
+            console.log('🔍 DEBUG: Loaded database-view-complete template, search-container in template:', dbViewHtml.includes('search-container'));
+            console.log('🔍 DEBUG: Loaded database-view-complete template, total-characters in template:', dbViewHtml.includes('total-characters'));
 
             this.loaded = true;
         } catch (error) {

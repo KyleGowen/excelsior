@@ -29,8 +29,15 @@ async function loadDatabaseViewData(forceCharactersTab = false) {
         
         // Set characters tab as active
         document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-        const charactersButton = document.querySelector('[onclick="switchTab(\'characters\')"]');
-        charactersButton.classList.add('active');
+        const charactersButton = document.querySelector('[data-tab="characters"]');
+        if (charactersButton) {
+            charactersButton.classList.add('active');
+        }
+        
+        // Call switchTab to set up search container and other tab-specific functionality
+        if (typeof switchTab === 'function') {
+            switchTab('characters');
+        }
     }
     
     try {

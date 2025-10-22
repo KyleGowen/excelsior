@@ -20,19 +20,22 @@
  * Handles tab visibility, search setup, and data loading
  */
 function switchTab(tabName) {
-    console.log(`switchTab called with: ${tabName}`);
+    console.log(`🔍 DEBUG: switchTab called with: ${tabName}`);
+    console.log(`🔍 DEBUG: window.databaseViewCore exists:`, !!window.databaseViewCore);
+    console.log(`🔍 DEBUG: databaseViewCore.isInitialized():`, window.databaseViewCore?.isInitialized?.());
 
     // Use new component structure if available
     if (window.databaseViewCore && window.databaseViewCore.isInitialized()) {
         const tabsComponent = window.databaseViewCore.getComponent('tabs');
+        console.log(`🔍 DEBUG: tabsComponent found:`, !!tabsComponent);
         if (tabsComponent) {
-            console.log('Using new component structure for tab switch');
+            console.log('🔍 DEBUG: Using new component structure for tab switch');
             return tabsComponent.switchTab(tabName);
         }
     }
 
     // Fallback to original implementation
-    console.log('Using fallback tab switch implementation');
+    console.log('🔍 DEBUG: Using fallback tab switch implementation');
     return switchTabFallback(tabName);
 }
 
@@ -41,6 +44,7 @@ function switchTab(tabName) {
  * Original implementation for backward compatibility
  */
 function switchTabFallback(tabName) {
+    console.log(`🔍 DEBUG: switchTabFallback called with: ${tabName}`);
     const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
 
     // Removed overly aggressive tab switching protection
@@ -77,8 +81,13 @@ function switchTabFallback(tabName) {
     document.getElementById('basic-universe-tab').style.display = 'none';
     document.getElementById('power-cards-tab').style.display = 'none';
 
-    // Hide search container for characters tab (uses inline filters)
-    document.getElementById('search-container').style.display = 'none';
+    // Show search container for all tabs including characters
+    const searchContainer = document.getElementById('search-container');
+    console.log(`🔍 DEBUG: Fallback - searchContainer found:`, !!searchContainer);
+    if (searchContainer) {
+        searchContainer.style.display = 'block';
+        console.log(`🔍 DEBUG: Fallback - Set search container display to:`, searchContainer.style.display);
+    }
 
     // Remove active class from all buttons
     document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
@@ -99,14 +108,13 @@ function switchTabFallback(tabName) {
         console.warn(`Tab '${tabName}' not found`);
     }
 
-    // Show search container for non-character tabs
-    if (tabName !== 'characters') {
-        document.getElementById('search-container').style.display = 'block';
-        // Update search placeholder
-        const searchInput = document.getElementById('search-input');
-        if (tabName === 'special-cards') {
-            searchInput.placeholder = 'Search special cards by name, character, or effect...';
-        } else if (tabName === 'advanced-universe') {
+    // Update search placeholder for all tabs
+    const searchInput = document.getElementById('search-input');
+    if (tabName === 'characters') {
+        searchInput.placeholder = 'Search characters by name or abilities...';
+    } else if (tabName === 'special-cards') {
+        searchInput.placeholder = 'Search special cards by name, character, or effect...';
+    } else if (tabName === 'advanced-universe') {
             searchInput.placeholder = 'Search advanced universe by name, character, or effect...';
         } else if (tabName === 'locations') {
             searchInput.placeholder = 'Search locations by name or abilities...';
@@ -127,7 +135,6 @@ function switchTabFallback(tabName) {
         } else if (tabName === 'power-cards') {
             searchInput.placeholder = 'Search power cards by type or value...';
         }
-    }
 
     // Add active class to selected tab button programmatically-safe
     const selectedTabButton = document.querySelector(`[onclick="switchTab('${tabName}')"]`);

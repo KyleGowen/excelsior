@@ -68,8 +68,8 @@ class DatabaseViewTabs {
     initializeTabConfigs() {
         const tabConfigs = {
             'characters': {
-                hasSearch: false,
-                searchPlaceholder: '',
+                hasSearch: true,
+                searchPlaceholder: 'Search characters by name or abilities...',
                 dataLoader: 'loadCharacters',
                 searchSetup: 'setupSearch'
             },
@@ -143,6 +143,7 @@ class DatabaseViewTabs {
 
         this.tabConfigs = new Map(Object.entries(tabConfigs));
         console.log(`Initialized ${this.tabConfigs.size} tab configurations`);
+        console.log('🔍 DEBUG: Characters tab config:', this.tabConfigs.get('characters'));
     }
 
     /**
@@ -173,6 +174,9 @@ class DatabaseViewTabs {
      * Switch to a specific tab
      */
     async switchTab(tabName) {
+        console.log(`🔍 DEBUG: DatabaseViewTabs.switchTab called with: ${tabName}`);
+        console.log(`🔍 DEBUG: tabConfigs has ${tabName}:`, this.tabConfigs.has(tabName));
+        
         if (!this.tabConfigs.has(tabName)) {
             console.warn(`Unknown tab: ${tabName}`);
             return;
@@ -284,12 +288,25 @@ class DatabaseViewTabs {
         const searchInput = document.getElementById('search-input');
         const config = this.tabConfigs.get(tabName);
 
-        if (!searchContainer || !searchInput || !config) return;
+        console.log(`🔍 DEBUG: updateSearchContainer called for tab: ${tabName}`);
+        console.log('🔍 DEBUG: searchContainer found:', !!searchContainer);
+        console.log('🔍 DEBUG: searchInput found:', !!searchInput);
+        console.log('🔍 DEBUG: config found:', !!config);
+        console.log('🔍 DEBUG: config.hasSearch:', config?.hasSearch);
+        console.log('🔍 DEBUG: config.searchPlaceholder:', config?.searchPlaceholder);
+
+        if (!searchContainer || !searchInput || !config) {
+            console.log('🔍 DEBUG: Missing elements or config, returning early');
+            return;
+        }
 
         if (config.hasSearch) {
+            console.log('🔍 DEBUG: Setting search container to display: block');
             searchContainer.style.display = 'block';
             searchInput.placeholder = config.searchPlaceholder;
+            console.log('🔍 DEBUG: Search container display after setting:', searchContainer.style.display);
         } else {
+            console.log('🔍 DEBUG: Setting search container to display: none');
             searchContainer.style.display = 'none';
         }
     }

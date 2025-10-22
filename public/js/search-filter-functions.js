@@ -1,6 +1,39 @@
 // Search and Filter Functions
 // Extracted from index.html as part of Phase 10C refactoring
 
+// Debounce function for search input
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Main search functionality for characters
+function performMainSearch() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    const activeTab = document.querySelector('.table-container[style*="block"]');
+    
+    if (!activeTab) return;
+    
+    const rows = activeTab.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        if (searchTerm.length === 0) {
+            // Show all rows when search is empty
+            row.style.display = '';
+        } else {
+            // Filter rows based on search term
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        }
+    });
+}
+
 // Search and filter setup functions
 function setupSearch() {
     const headerFilters = document.querySelectorAll('.header-filter');
@@ -9,6 +42,12 @@ function setupSearch() {
     const clearFiltersBtn = document.getElementById('clear-filters');
     const hasInherentAbilityToggle = document.getElementById('has-inherent-ability');
     const hasNoInherentAbilityToggle = document.getElementById('has-no-inherent-ability');
+    
+    // Setup main search input functionality
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(performMainSearch, 300));
+    }
     
     // Setup header text search filters
     headerFilters.forEach(input => {

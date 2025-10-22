@@ -27,7 +27,9 @@ function switchToDatabaseView() {
     if (createDeckSection) createDeckSection.style.display = 'none';
     
     // Load database data if not already loaded
-    if (document.getElementById('total-characters') && document.getElementById('total-characters').textContent === '-') {
+    const totalCharacters = document.getElementById('total-characters');
+    
+    if (totalCharacters && totalCharacters.textContent === '-') {
         if (typeof loadDatabaseViewData === 'function') {
             loadDatabaseViewData(true); // Force characters tab when user explicitly switches to database view
         }

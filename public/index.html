@@ -68,6 +68,37 @@
 
 
         <div id="database-view" class="database-section" style="display: none;">
+            <!-- Hidden stats elements for functionality (not displayed) -->
+            <div class="stats" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-characters">-</div>
+                    <div class="stat-label">Characters</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-special-cards">-</div>
+                    <div class="stat-label">Special Cards</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-missions">-</div>
+                    <div class="stat-label">Missions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-events">-</div>
+                    <div class="stat-label">Events</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-locations">-</div>
+                    <div class="stat-label">Locations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="db-total-decks">-</div>
+                    <div class="stat-label">Decks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-users">-</div>
+                    <div class="stat-label">Users</div>
+                </div>
+            </div>
             <div class="section-header">
             </div>
             
@@ -1168,8 +1199,8 @@
             document.getElementById('basic-universe-tab').style.display = 'none';
             document.getElementById('power-cards-tab').style.display = 'none';
             
-            // Hide search container for characters tab (uses inline filters)
-            document.getElementById('search-container').style.display = 'none';
+            // Show search container for all tabs including characters
+            document.getElementById('search-container').style.display = 'block';
             
             // Remove active class from all buttons
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
@@ -1188,34 +1219,32 @@
             } else {
             }
             
-            // Show search container for non-character tabs
-            if (tabName !== 'characters') {
-                document.getElementById('search-container').style.display = 'block';
-                // Update search placeholder
-                const searchInput = document.getElementById('search-input');
-                if (tabName === 'special-cards') {
-                    searchInput.placeholder = 'Search special cards by name, character, or effect...';
-                } else if (tabName === 'advanced-universe') {
-                    searchInput.placeholder = 'Search advanced universe by name, character, or effect...';
-                } else if (tabName === 'locations') {
-                    searchInput.placeholder = 'Search locations by name or abilities...';
-                } else if (tabName === 'aspects') {
-                    searchInput.placeholder = 'Search aspects by name, type, or effect...';
-                } else if (tabName === 'missions') {
-                    searchInput.placeholder = 'Search missions by name or mission set...';
-                } else if (tabName === 'events') {
-                    searchInput.placeholder = 'Search events by name, mission set, or effect...';
-                } else if (tabName === 'teamwork') {
-                    searchInput.placeholder = 'Search teamwork by requirements or effects...';
-                } else if (tabName === 'ally-universe') {
-                    searchInput.placeholder = 'Search allies by name, stat, or text...';
-                } else if (tabName === 'training') {
-                    searchInput.placeholder = 'Search training by name or types...';
-                } else if (tabName === 'basic-universe') {
-                    searchInput.placeholder = 'Search basic universe by name, type, or bonus...';
-                } else if (tabName === 'power-cards') {
-                    searchInput.placeholder = 'Search power cards by type or value...';
-                }
+            // Update search placeholder for all tabs
+            const searchInput = document.getElementById('search-input');
+            if (tabName === 'characters') {
+                searchInput.placeholder = 'Search characters by name or abilities...';
+            } else if (tabName === 'special-cards') {
+                searchInput.placeholder = 'Search special cards by name, character, or effect...';
+            } else if (tabName === 'advanced-universe') {
+                searchInput.placeholder = 'Search advanced universe by name, character, or effect...';
+            } else if (tabName === 'locations') {
+                searchInput.placeholder = 'Search locations by name or abilities...';
+            } else if (tabName === 'aspects') {
+                searchInput.placeholder = 'Search aspects by name, type, or effect...';
+            } else if (tabName === 'missions') {
+                searchInput.placeholder = 'Search missions by name or mission set...';
+            } else if (tabName === 'events') {
+                searchInput.placeholder = 'Search events by name, mission set, or effect...';
+            } else if (tabName === 'teamwork') {
+                searchInput.placeholder = 'Search teamwork by requirements or effects...';
+            } else if (tabName === 'ally-universe') {
+                searchInput.placeholder = 'Search allies by name, stat, or text...';
+            } else if (tabName === 'training') {
+                searchInput.placeholder = 'Search training by name or types...';
+            } else if (tabName === 'basic-universe') {
+                searchInput.placeholder = 'Search basic universe by name, type, or bonus...';
+            } else if (tabName === 'power-cards') {
+                searchInput.placeholder = 'Search power cards by type or value...';
             }
             
             // Add active class to selected tab button programmatically-safe
