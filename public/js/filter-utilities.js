@@ -256,7 +256,6 @@ class FilterPatterns {
             const selectedTypes = Array.from(document.querySelectorAll('#basic-universe-tab input[type="checkbox"]:checked'))
                 .map(cb => cb.value);
             console.log('Selected types for filtering:', selectedTypes);
-            
             if (selectedTypes.length > 0) {
                 filtered = filtered.filter(item => selectedTypes.includes(item.type));
                 console.log('Filtered cards count:', filtered.length);
