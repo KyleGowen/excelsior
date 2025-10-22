@@ -43,8 +43,16 @@ function clearLocationFilters() {
     if (locationThreatMin) locationThreatMin.value = '';
     if (locationThreatMax) locationThreatMax.value = '';
     
-    // Apply filters after clearing
-    applyFilters();
+    // Clear location special ability search input
+    const abilitySearchInput = document.querySelector('#locations-table .header-filter[data-column="special_ability"]');
+    if (abilitySearchInput) {
+        abilitySearchInput.value = '';
+    }
+    
+    // Reload all locations
+    if (typeof loadLocations === 'function') {
+        loadLocations();
+    }
 }
 
 function clearSpecialCardFilters() {

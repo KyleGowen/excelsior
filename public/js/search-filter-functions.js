@@ -75,31 +75,61 @@ function setupSearch() {
 }
 
 function setupLocationSearch() {
+    // Set up main search input functionality (if it exists)
     const searchInput = document.getElementById('search-input');
-    searchInput.addEventListener('input', async (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        
-        if (searchTerm.length === 0) {
-            // Reload all locations
-            await loadLocations();
-            return;
-        }
-
-        try {
-            const response = await fetch('/api/locations');
-            const data = await response.json();
+    if (searchInput) {
+        searchInput.addEventListener('input', async (e) => {
+            const searchTerm = e.target.value.toLowerCase();
             
-            if (data.success) {
-                const filteredLocations = data.data.filter(location => 
-                    location.name.toLowerCase().includes(searchTerm) ||
-                    location.special_ability.toLowerCase().includes(searchTerm)
-                );
-                displayLocations(filteredLocations);
+            if (searchTerm.length === 0) {
+                // Reload all locations
+                await loadLocations();
+                return;
             }
-        } catch (error) {
-            console.error('Error searching locations:', error);
-        }
-    });
+
+            try {
+                const response = await fetch('/api/locations');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const filteredLocations = data.data.filter(location => 
+                        location.name.toLowerCase().includes(searchTerm) ||
+                        location.special_ability.toLowerCase().includes(searchTerm)
+                    );
+                    displayLocations(filteredLocations);
+                }
+            } catch (error) {
+                console.error('Error searching locations:', error);
+            }
+        });
+    }
+
+    // Set up special ability search input functionality
+    const abilitySearchInput = document.querySelector('#locations-table .header-filter[data-column="special_ability"]');
+    if (abilitySearchInput) {
+        abilitySearchInput.addEventListener('input', async (e) => {
+            const abilityTerm = e.target.value.toLowerCase();
+
+            if (abilityTerm.length === 0) {
+                await loadLocations();
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/locations');
+                const data = await response.json();
+
+                if (data.success) {
+                    const filteredLocations = data.data.filter(location =>
+                        location.special_ability.toLowerCase().includes(abilityTerm)
+                    );
+                    displayLocations(filteredLocations);
+                }
+            } catch (error) {
+                console.error('Error searching locations by special ability:', error);
+            }
+        });
+    }
 }
 
 function setupAspectSearch() {
