@@ -94,9 +94,19 @@ app.get('/components/globalNav.js', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'components', 'globalNav.js'));
 });
 
+// Global server reference for cleanup
+let testServer: any = null;
+let serverInitialized = false;
+
 // Initialize database for tests
 export async function initializeTestServer() {
   try {
+    // Prevent multiple server initializations
+    if (serverInitialized && testServer) {
+      console.log('🔄 Test server already initialized, returning existing instance');
+      return { app, server: testServer };
+    }
+
     console.log('🔄 Starting test server initialization...');
     console.log('🔍 CI_DEBUG_2025_01_07_V2 - Test server code is being used');
     
@@ -112,12 +122,33 @@ export async function initializeTestServer() {
     
     console.log('✅ Test server repositories initialized');
     
-    // Return the app without starting the server
-    return app;
+    // Start the server for integration tests
+    testServer = app.listen(PORT, () => {
+      console.log(`🌐 Test server is listening on port ${PORT}`);
+    });
+    
+    serverInitialized = true;
+    
+    // Return both app and server
+    return { app, server: testServer };
     
   } catch (error) {
     console.error('❌ Test server initialization failed:', error);
     throw error;
+  }
+}
+
+// Cleanup function to close the test server
+export async function closeTestServer() {
+  if (testServer) {
+    return new Promise<void>((resolve) => {
+      testServer.close(() => {
+        console.log('🔌 Test server closed');
+        testServer = null;
+        serverInitialized = false;
+        resolve();
+      });
+    });
   }
 }
 

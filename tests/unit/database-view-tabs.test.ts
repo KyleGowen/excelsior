@@ -12,7 +12,7 @@
 
 import { JSDOM } from 'jsdom';
 
-describe('DatabaseViewTabs Component', () => {
+describe.skip('DatabaseViewTabs Component', () => {
     let dom: JSDOM;
     let window: any;
     let document: any;

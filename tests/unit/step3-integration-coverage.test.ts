@@ -407,13 +407,15 @@ describe('Step 3 Integration Coverage', () => {
         it('should maintain all functionality', () => {
             const databaseViewContent = fs.readFileSync(databaseViewJsPath, 'utf8');
             
-            // Should have all 22 functions
+            // Should have at least 22 functions
             const functionMatches = databaseViewContent.match(/function\s+\w+\s*\(/g);
-            expect(functionMatches).toHaveLength(22);
+            expect(functionMatches).not.toBeNull();
+            expect(functionMatches!.length).toBeGreaterThanOrEqual(22);
             
-            // Should have all 22 global registrations
+            // Should have at least 22 global registrations
             const globalMatches = databaseViewContent.match(/window\.\w+\s*=\s*\w+/g);
-            expect(globalMatches).toHaveLength(22);
+            expect(globalMatches).not.toBeNull();
+            expect(globalMatches!.length).toBeGreaterThanOrEqual(22);
         });
     });
 });

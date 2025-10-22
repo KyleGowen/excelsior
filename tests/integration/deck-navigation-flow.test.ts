@@ -4,16 +4,21 @@
  */
 
 import request from 'supertest';
-import { app } from '../../src/test-server';
+import { app, initializeTestServer } from '../../src/test-server';
 import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 import { integrationTestUtils } from '../setup-integration';
 
 describe('Deck Navigation Flow Integration Tests', () => {
+  let server: any;
   let testUser: any;
   let testDeck: any;
   let authCookie: string;
 
   beforeAll(async () => {
+    // Initialize test server
+    const { server: initializedServer } = await initializeTestServer();
+    server = initializedServer;
+    
     // Ensure guest user exists
     await integrationTestUtils.ensureGuestUser();
   });
@@ -46,7 +51,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
     integrationTestUtils.trackTestDeck(testDeck.id);
 
     // Login and get auth cookie
-    const loginResponse = await request(app)
+    const loginResponse = await request(server)
       .post('/api/auth/login')
       .send({
         username: testUser.name,
@@ -77,7 +82,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
   describe('Deck Editor Navigation Flow', () => {
     it('should successfully navigate to deck editor without database view flash', async () => {
       // Test the deck editor page load
-      const deckEditorResponse = await request(app)
+      const deckEditorResponse = await request(server)
         .get(`/users/${testUser.id}/decks/${testDeck.id}`)
         .set('Cookie', authCookie);
 
@@ -95,7 +100,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
 
     it('should load deck data correctly in editor', async () => {
       // Get deck data via API
-      const deckDataResponse = await request(app)
+      const deckDataResponse = await request(server)
         .get(`/api/decks/${testDeck.id}`)
         .set('Cookie', authCookie)
         .set('x-test-user-id', testUser.id);
@@ -108,7 +113,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
 
     it('should handle deck editor modal opening and closing', async () => {
       // Test opening deck editor
-      const openResponse = await request(app)
+      const openResponse = await request(server)
         .get(`/users/${testUser.id}/decks/${testDeck.id}`)
         .set('Cookie', authCookie);
 
@@ -124,7 +129,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
 
     it('should load available cards for deck editor', async () => {
       // Test that characters are available for the deck editor
-      const charactersResponse = await request(app)
+      const charactersResponse = await request(server)
         .get('/api/characters')
         .set('Cookie', authCookie);
 
@@ -133,7 +138,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
       expect(charactersResponse.body.data.length).toBeGreaterThan(0);
 
       // Test other card types
-      const locationsResponse = await request(app)
+      const locationsResponse = await request(server)
         .get('/api/locations')
         .set('Cookie', authCookie);
 
@@ -143,7 +148,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
 
     it('should handle read-only mode correctly for deck owners', async () => {
       // Test deck ownership verification
-      const deckResponse = await request(app)
+      const deckResponse = await request(server)
         .get(`/api/decks/${testDeck.id}`)
         .set('Cookie', authCookie)
         .set('x-test-user-id', testUser.id);
@@ -166,7 +171,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
       );
 
       // Login as the other user to get proper authentication
-      const loginResponse = await request(app)
+      const loginResponse = await request(server)
         .post('/api/auth/login')
         .send({ username: otherUser.name, password: 'testpass123' });
 
@@ -176,7 +181,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
         : loginResponse.headers['set-cookie']?.startsWith('sessionId=') ? loginResponse.headers['set-cookie'] : null;
 
       // Try to access the deck as non-owner with proper authentication
-      const deckResponse = await request(app)
+      const deckResponse = await request(server)
         .get(`/api/decks/${testDeck.id}`)
         .set('Cookie', otherUserAuthCookie);
 
@@ -191,7 +196,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
 
   describe('Deck Editor UI Elements', () => {
     it('should render deck editor with proper layout structure', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .get(`/users/${testUser.id}/decks/${testDeck.id}`)
         .set('Cookie', authCookie);
 
@@ -209,7 +214,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
     });
 
     it('should include search functionality in deck editor', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .get(`/users/${testUser.id}/decks/${testDeck.id}`)
         .set('Cookie', authCookie);
 
@@ -221,7 +226,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
     });
 
     it('should include deck management controls', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .get(`/users/${testUser.id}/decks/${testDeck.id}`)
         .set('Cookie', authCookie);
 
@@ -236,7 +241,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
   describe('Navigation Between Views', () => {
     it('should handle navigation from main app to deck editor', async () => {
       // First, access the main app
-      const mainAppResponse = await request(app)
+      const mainAppResponse = await request(server)
         .get('/')
         .set('Cookie', authCookie);
 
@@ -244,7 +249,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
       expect(mainAppResponse.text).toContain('database-view');
 
       // Then navigate to deck editor
-      const deckEditorResponse = await request(app)
+      const deckEditorResponse = await request(server)
         .get(`/users/${testUser.id}/decks/${testDeck.id}`)
         .set('Cookie', authCookie);
 
@@ -254,7 +259,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
 
     it('should maintain session across navigation', async () => {
       // Test session validation
-      const sessionResponse = await request(app)
+      const sessionResponse = await request(server)
         .get('/api/auth/me')
         .set('Cookie', authCookie);
 
@@ -263,7 +268,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
       expect(sessionResponse.body.data.id).toBe(testUser.id);
 
       // Navigate to deck editor and verify session is maintained
-      const deckEditorResponse = await request(app)
+      const deckEditorResponse = await request(server)
         .get(`/users/${testUser.id}/decks/${testDeck.id}`)
         .set('Cookie', authCookie);
 
@@ -275,7 +280,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
     it('should handle non-existent deck gracefully', async () => {
       const fakeDeckId = '00000000-0000-0000-0000-000000000000';
       
-      const response = await request(app)
+      const response = await request(server)
         .get(`/users/${testUser.id}/decks/${fakeDeckId}`)
         .set('Cookie', authCookie);
 
@@ -286,7 +291,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
     it('should handle invalid user ID in deck URL', async () => {
       const fakeUserId = '00000000-0000-0000-0000-000000000000';
       
-      const response = await request(app)
+      const response = await request(server)
         .get(`/users/${fakeUserId}/decks/${testDeck.id}`)
         .set('Cookie', authCookie);
 
@@ -295,7 +300,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
     });
 
     it('should require authentication for deck access', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .get(`/users/${testUser.id}/decks/${testDeck.id}`);
 
       // Should redirect to login or return 401/403
@@ -307,7 +312,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
     it('should load deck editor within reasonable time', async () => {
       const startTime = Date.now();
       
-      const response = await request(app)
+      const response = await request(server)
         .get(`/users/${testUser.id}/decks/${testDeck.id}`)
         .set('Cookie', authCookie);
 
@@ -320,7 +325,7 @@ describe('Deck Navigation Flow Integration Tests', () => {
     it('should load available cards efficiently', async () => {
       const startTime = Date.now();
       
-      const charactersResponse = await request(app)
+      const charactersResponse = await request(server)
         .get('/api/characters')
         .set('Cookie', authCookie);
 

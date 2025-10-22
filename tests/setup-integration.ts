@@ -15,7 +15,7 @@ global.TextDecoder = TextDecoder;
 // tests may fail fast, which is acceptable; CI provides the database service.
 
 // Import test server
-import { app, initializeTestServer } from '../src/test-server';
+import { app, initializeTestServer, closeTestServer } from '../src/test-server';
 
 // Track test-created deck and user IDs to ensure we only delete what tests create
 const testCreatedDeckIds = new Set<string>();
@@ -385,6 +385,13 @@ afterAll(async () => {
     }
     
     await pool.end();
+    
+    // Close test server
+    try {
+      await closeTestServer();
+    } catch (err: any) {
+      console.warn('⚠️ Could not close test server:', err?.message || err);
+    }
     
     // Close any remaining database connections
     try {

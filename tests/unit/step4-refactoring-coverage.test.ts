@@ -183,14 +183,14 @@ describe('Step 4 Refactoring Coverage', () => {
             expect(databaseHtmlContent).toContain('<!-- Step 4: New Filter System -->');
         });
 
-        it('should initialize filter system after template loading', () => {
+        it('should initialize component system after template loading', () => {
             expect(databaseHtmlContent).toContain('loadDatabaseViewTemplate().then(() => {');
-            expect(databaseHtmlContent).toContain('if (window.filterManager)');
-            expect(databaseHtmlContent).toContain('window.filterManager.initialize()');
+            expect(databaseHtmlContent).toContain('if (window.databaseViewCore)');
+            expect(databaseHtmlContent).toContain('window.databaseViewCore.initialize()');
         });
 
         it('should have proper error handling', () => {
-            expect(databaseHtmlContent).toContain('console.warn(\'Filter manager not available\')');
+            expect(databaseHtmlContent).toContain('console.warn(\'Database view core not available\')');
         });
     });
 

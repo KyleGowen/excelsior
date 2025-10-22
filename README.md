@@ -692,6 +692,17 @@ Terraform creates these SSM parameters for configuration:
 - Regular security updates for EC2 instance
 - Monitor CloudTrail logs for suspicious activity
 
+## Documentation
+
+- [API Documentation](API_DOCUMENTATION.md)
+- [Security Documentation](SECURITY.md)
+- [Testing Guide](TESTING_GUIDE.md)
+- [Deployment Strategy](DEPLOYMENT_STRATEGY.md)
+- [Project Layout](PROJECT_LAYOUT.md)
+- [Refactoring Summary](REFACTORING_SUMMARY.md)
+- [Server Startup Guide](SERVER_STARTUP.md)
+- [Database View Refactoring](DATABASE_VIEW_REFACTORING.md) - Comprehensive documentation of the 6-step database view refactoring
+
 ## Contributing
 
 This is a personal project for learning purposes. No contributions needed.

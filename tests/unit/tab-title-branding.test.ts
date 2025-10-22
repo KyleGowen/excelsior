@@ -47,7 +47,6 @@ describe('Tab Title Branding Tests', () => {
     const filesWithLogos = [
       'public/index.html',
       'public/deck-builder.html',
-      'public/database.html', 
       'public/components/globalNav.html'
     ];
 

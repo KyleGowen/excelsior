@@ -11,8 +11,8 @@ describe('Global Nav Integration Tests', () => {
 
   beforeAll(async () => {
     // Initialize test server
-    const testApp = await initializeTestServer();
-    server = testApp.listen(0); // Use random available port
+    const testServer = await initializeTestServer();
+    server = testServer.server; // Use the already started server
     agent = request(server);
 
     // Create a unique test user for this test suite

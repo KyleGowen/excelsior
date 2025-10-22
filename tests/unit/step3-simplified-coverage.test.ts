@@ -52,12 +52,14 @@ describe('Step 3 - Simplified Coverage Verification', () => {
 
         it('should have at least 22 function definitions', () => {
             const functionMatches = content.match(/function\s+\w+\s*\(/g);
-            expect(functionMatches.length).toBeGreaterThanOrEqual(22);
+            expect(functionMatches).not.toBeNull();
+            expect(functionMatches!.length).toBeGreaterThanOrEqual(22);
         });
 
         it('should have at least 22 global registrations', () => {
             const globalMatches = content.match(/window\.\w+\s*=\s*\w+/g);
-            expect(globalMatches.length).toBeGreaterThanOrEqual(22);
+            expect(globalMatches).not.toBeNull();
+            expect(globalMatches!.length).toBeGreaterThanOrEqual(22);
         });
 
         it('should have proper section headers', () => {
@@ -413,11 +415,13 @@ describe('Step 3 - Simplified Coverage Verification', () => {
             
             // Should have at least 22 functions (may have more with fallback functions)
             const functionMatches = databaseViewContent.match(/function\s+\w+\s*\(/g);
-            expect(functionMatches.length).toBeGreaterThanOrEqual(22);
+            expect(functionMatches).not.toBeNull();
+            expect(functionMatches!.length).toBeGreaterThanOrEqual(22);
             
             // Should have at least 22 global registrations
             const globalMatches = databaseViewContent.match(/window\.\w+\s*=\s*\w+/g);
-            expect(globalMatches.length).toBeGreaterThanOrEqual(22);
+            expect(globalMatches).not.toBeNull();
+            expect(globalMatches!.length).toBeGreaterThanOrEqual(22);
         });
 
         it('should have proper file sizes', () => {

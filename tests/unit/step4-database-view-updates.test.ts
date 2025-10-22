@@ -68,14 +68,14 @@ describe('Step 4 Database View Updates', () => {
             expect(databaseHtmlContent).toContain('<!-- Step 4: New Filter System -->');
         });
 
-        it('should initialize filter system after template loading', () => {
+        it('should initialize component system after template loading', () => {
             expect(databaseHtmlContent).toContain('loadDatabaseViewTemplate().then(() => {');
-            expect(databaseHtmlContent).toContain('if (window.filterManager)');
-            expect(databaseHtmlContent).toContain('window.filterManager.initialize()');
+            expect(databaseHtmlContent).toContain('if (window.databaseViewCore)');
+            expect(databaseHtmlContent).toContain('window.databaseViewCore.initialize()');
         });
 
-        it('should have proper error handling for filter system initialization', () => {
-            expect(databaseHtmlContent).toContain('console.warn(\'Filter manager not available\')');
+        it('should have proper error handling for component system initialization', () => {
+            expect(databaseHtmlContent).toContain('console.warn(\'Database view core not available\')');
         });
     });
 
@@ -158,7 +158,7 @@ describe('Step 4 Database View Updates', () => {
 
         it('should provide meaningful error messages', () => {
             expect(databaseViewContent).toContain('console.warn(\'New filter system not available, using fallback\')');
-            expect(databaseHtmlContent).toContain('console.warn(\'Filter manager not available\')');
+            expect(databaseHtmlContent).toContain('console.warn(\'Database view core not available\')');
         });
 
         it('should maintain existing error handling in fallback functions', () => {
