@@ -76,6 +76,31 @@ describe('Basic Universe Type Filter', () => {
         jest.clearAllMocks();
     });
 
+    // Helper function to extract complete function body by counting braces
+    function extractFunctionBody(content: string, functionName: string): string | null {
+        const functionRegex = new RegExp(`function\\s+${functionName}\\s*\\([^)]*\\)\\s*\\{`);
+        const match = content.match(functionRegex);
+        if (!match) return null;
+
+        const startIndex = match.index! + match[0].length - 1; // Start at the opening brace
+        let braceCount = 0;
+        let i = startIndex;
+
+        while (i < content.length) {
+            if (content[i] === '{') {
+                braceCount++;
+            } else if (content[i] === '}') {
+                braceCount--;
+                if (braceCount === 0) {
+                    return content.substring(startIndex, i + 1);
+                }
+            }
+            i++;
+        }
+
+        return null;
+    }
+
     describe('setupBasicUniverseSearch function', () => {
         it('should be defined in index.html', () => {
             expect(indexHtmlContent).toContain('function setupBasicUniverseSearch()');
@@ -148,6 +173,7 @@ describe('Basic Universe Type Filter', () => {
         it('should show no cards when no types are selected', () => {
             const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
             expect(functionCode).toBeTruthy();
+            
             expect(functionCode).toContain('if (selectedTypes.length === 0)');
             expect(functionCode).toContain('filtered = []');
             expect(functionCode).toContain('No types selected - showing no cards');
@@ -156,6 +182,7 @@ describe('Basic Universe Type Filter', () => {
         it('should include console logging for debugging', () => {
             const functionCode = extractFunctionBody(indexHtmlContent, 'applyBasicUniverseFilters');
             expect(functionCode).toBeTruthy();
+            
             expect(functionCode).toContain('console.log(\'Selected types for filtering:\', selectedTypes)');
             expect(functionCode).toContain('console.log(\'Filtered cards count:\', filtered.length)');
             expect(functionCode).toContain('console.log(\'No types selected - showing no cards\')');
