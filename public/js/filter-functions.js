@@ -64,9 +64,22 @@ function clearSpecialCardFilters() {
 }
 
 function clearAdvancedUniverseFilters() {
-    // Clear advanced universe filters
-    // Add specific filter clearing logic here if needed
-    applyFilters();
+    // Clear advanced universe character search input
+    const characterSearchInput = document.querySelector('#advanced-universe-table .header-filter[data-column="character"]');
+    if (characterSearchInput) {
+        characterSearchInput.value = '';
+    }
+    
+    // Clear advanced universe card effect search input
+    const effectSearchInput = document.querySelector('#advanced-universe-table .header-filter[data-column="card_effect"]');
+    if (effectSearchInput) {
+        effectSearchInput.value = '';
+    }
+    
+    // Reload all advanced universe cards
+    if (typeof loadAdvancedUniverse === 'function') {
+        loadAdvancedUniverse();
+    }
 }
 
 function clearAspectsFilters() {

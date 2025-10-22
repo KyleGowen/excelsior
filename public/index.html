@@ -8,7 +8,17 @@
     <meta http-equiv="Expires" content="0">
     <link rel="icon" href="/public/resources/images/icons/threat.png" type="image/png">
     <title>Excelsior Deckbuilder - Characters Database</title>
-    <link rel="stylesheet" href="/css/index.css">    
+    <link rel="stylesheet" href="/css/index.css">
+    <style>
+        /* Advanced Universe Search Input Styling - Direct override */
+        #advanced-universe-table .header-filter[data-column="card_effect"] {
+            width: 480px !important;
+            max-width: 480px !important;
+            margin: 0 auto;
+            display: block;
+            box-sizing: border-box;
+        }
+    </style>
     <!-- Authentication Service -->
     <script src="/js/auth-service.js"></script>
     
@@ -260,8 +270,12 @@
                             </th>
                             <th></th>
                             <th></th>
-                            <th></th>
-                            <th></th>
+                            <th>
+                                <input type="text" class="header-filter" placeholder="Search characters..." data-column="character">
+                            </th>
+                            <th>
+                                <input type="text" class="header-filter" placeholder="Search effects..." data-column="card_effect">
+                            </th>
                             <th class="one-per-deck-advanced-column"></th>
                         </tr>
                     </thead>

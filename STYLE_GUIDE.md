@@ -241,6 +241,11 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
 - **Stat Cards**: `rgba(255, 255, 255, 0.1)` background with teal numbers
 - **Tab Navigation**: Teal active states with white inactive states
 - **Search Results**: Gold highlights for matching text
+- **Search Bar Styling**: 
+  - **Advanced Universe Card Effect Search**: 480px width with centered alignment
+  - **CSS Implementation**: `width: 480px !important; max-width: 480px !important; margin: 0 auto; display: block; box-sizing: border-box;`
+  - **Specificity**: Inline styles in `index.html` for highest CSS specificity override
+  - **Responsive**: Maintains consistent width across different screen sizes
 
 ### Deck Builder (deck-builder.html)
 - **Two-Column Layout**: Card browser and deck viewer side by side

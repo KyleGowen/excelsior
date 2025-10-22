@@ -229,3 +229,15 @@ function displayPowerCards(cards) {
         </tr>
     `).join('');
 }
+
+// Make functions globally available
+window.displayAdvancedUniverse = displayAdvancedUniverse;
+window.displayTeamwork = displayTeamwork;
+window.displayAllyUniverse = displayAllyUniverse;
+window.displayTraining = displayTraining;
+window.displayBasicUniverse = displayBasicUniverse;
+window.displayPowerCards = displayPowerCards;
+window.displayAspects = displayAspects;
+window.displayMissions = displayMissions;
+window.displayEvents = displayEvents;
+window.displayLocations = displayLocations;

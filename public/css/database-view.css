@@ -682,6 +682,43 @@ td:last-child {
     table-layout: auto;
 }
 
+/* Advanced Universe Table Column Widths */
+#advanced-universe-table {
+    table-layout: fixed;
+}
+
+#advanced-universe-table th:nth-child(1), /* Image column */
+#advanced-universe-table td:nth-child(1) {
+    width: 20%;
+}
+
+#advanced-universe-table th:nth-child(2), /* Empty column */
+#advanced-universe-table td:nth-child(2) {
+    width: 5%;
+}
+
+#advanced-universe-table th:nth-child(3), /* Name column */
+#advanced-universe-table td:nth-child(3) {
+    width: 20%;
+}
+
+#advanced-universe-table th:nth-child(4), /* Character column - increased width */
+#advanced-universe-table td:nth-child(4) {
+    width: 25%;
+}
+
+#advanced-universe-table th:nth-child(5), /* Card Effect column - decreased width */
+#advanced-universe-table td:nth-child(5) {
+    width: 20%;
+}
+
+#advanced-universe-table th:nth-child(6), /* One Per Deck column */
+#advanced-universe-table td:nth-child(6) {
+    width: 10%;
+}
+
+/* Advanced Universe Search Input Styling - Moved to inline CSS in index.html for higher specificity */
+
 /* Enable text wrapping for all table cells */
 #missions-table th,
 #missions-table td,

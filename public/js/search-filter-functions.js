@@ -133,33 +133,93 @@ function setupAspectSearch() {
 }
 
 function setupAdvancedUniverseSearch() {
+    // Set up main search input functionality
     const searchInput = document.getElementById('search-input');
-    searchInput.addEventListener('input', async (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        
-        if (searchTerm.length === 0) {
-            // Reload all advanced universe
-            await loadAdvancedUniverse();
-            return;
-        }
-
-        try {
-            const response = await fetch('/api/advanced-universe');
-            const data = await response.json();
+    if (searchInput) {
+        searchInput.addEventListener('input', async (e) => {
+            const searchTerm = e.target.value.toLowerCase();
             
-            if (data.success) {
-                const filteredAdvancedUniverse = data.data.filter(card => 
-                    card.name.toLowerCase().includes(searchTerm) ||
-                    card.character.toLowerCase().includes(searchTerm) ||
-                    (card.card_description && card.card_description.toLowerCase().includes(searchTerm)) ||
-                    (card.card_effect && card.card_effect.toLowerCase().includes(searchTerm))
-                );
-                displayAdvancedUniverse(filteredAdvancedUniverse);
+            if (searchTerm.length === 0) {
+                // Reload all advanced universe
+                await loadAdvancedUniverse();
+                return;
             }
-        } catch (error) {
-            console.error('Error searching advanced universe:', error);
-        }
-    });
+
+            try {
+                const response = await fetch('/api/advanced-universe');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const filteredAdvancedUniverse = data.data.filter(card => 
+                        card.name.toLowerCase().includes(searchTerm) ||
+                        card.character.toLowerCase().includes(searchTerm) ||
+                        (card.card_description && card.card_description.toLowerCase().includes(searchTerm)) ||
+                        (card.card_effect && card.card_effect.toLowerCase().includes(searchTerm))
+                    );
+                    displayAdvancedUniverse(filteredAdvancedUniverse);
+                }
+            } catch (error) {
+                console.error('Error searching advanced universe:', error);
+            }
+        });
+    }
+
+    // Set up character search input functionality
+    const characterSearchInput = document.querySelector('#advanced-universe-table .header-filter[data-column="character"]');
+    if (characterSearchInput) {
+        characterSearchInput.addEventListener('input', async (e) => {
+            const characterTerm = e.target.value.toLowerCase();
+            
+            if (characterTerm.length === 0) {
+                // Reload all advanced universe
+                await loadAdvancedUniverse();
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/advanced-universe');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const filteredAdvancedUniverse = data.data.filter(card => 
+                        card.character.toLowerCase().includes(characterTerm)
+                    );
+                    displayAdvancedUniverse(filteredAdvancedUniverse);
+                }
+            } catch (error) {
+                console.error('Error searching advanced universe by character:', error);
+            }
+        });
+    }
+
+    // Set up card effect search input functionality
+    const effectSearchInput = document.querySelector('#advanced-universe-table .header-filter[data-column="card_effect"]');
+    if (effectSearchInput) {
+        effectSearchInput.addEventListener('input', async (e) => {
+            const effectTerm = e.target.value.toLowerCase();
+            
+            if (effectTerm.length === 0) {
+                // Reload all advanced universe
+                await loadAdvancedUniverse();
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/advanced-universe');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const filteredAdvancedUniverse = data.data.filter(card => {
+                        const effectText = (card.card_description || card.card_effect || '').toString();
+                        return effectText.toLowerCase().includes(effectTerm);
+                    });
+                    displayAdvancedUniverse(filteredAdvancedUniverse);
+                }
+            } catch (error) {
+                console.error('Error searching advanced universe by card effect:', error);
+            }
+        });
+    }
 }
 
 function setupTeamworkSearch() {
