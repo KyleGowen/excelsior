@@ -101,10 +101,103 @@ function clearBasicUniverseFilters() {
     applyFilters();
 }
 
-function clearPowerCardFilters() {
-    // Clear power card filters
-    // Add specific filter clearing logic here if needed
-    applyFilters();
+// Simple debounce utility
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Power Cards filtering functions
+window.applyPowerCardFilters = async function applyPowerCardFilters() {
+    try {
+        const resp = await fetch('/api/power-cards');
+        const data = await resp.json();
+        if (!data.success) return;
+
+        let filtered = data.data;
+
+        // Filter by power type
+        const selectedTypes = Array.from(document.querySelectorAll('#power-cards-tab input[type="checkbox"]:checked'))
+            .map(cb => cb.value);
+        console.log('Selected power types for filtering:', selectedTypes);
+
+        // If no types are selected, show no cards
+        if (selectedTypes.length === 0) {
+            filtered = [];
+            console.log('No power types selected - showing no cards');
+        } else {
+            filtered = filtered.filter(card => selectedTypes.includes(card.power_type));
+            console.log('Filtered power cards count:', filtered.length);
+        }
+
+        // Filter by value range
+        const minValue = document.getElementById('power-value-min');
+        const maxValue = document.getElementById('power-value-max');
+        
+        if (minValue && minValue.value && !isNaN(minValue.value)) {
+            filtered = filtered.filter(card => card.value >= parseInt(minValue.value));
+        }
+        if (maxValue && maxValue.value && !isNaN(maxValue.value)) {
+            filtered = filtered.filter(card => card.value <= parseInt(maxValue.value));
+        }
+
+        // Display results
+        if (window.displayPowerCards) {
+            window.displayPowerCards(filtered);
+        } else {
+            console.error('displayPowerCards function not found');
+        }
+    } catch (err) {
+        console.error('Error applying power card filters:', err);
+    }
+}
+
+window.setupPowerCardsSearch = function setupPowerCardsSearch() {
+    // Initialize checkboxes to checked by default
+    const checkboxes = document.querySelectorAll('#power-cards-tab input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = true;
+        checkbox.addEventListener('change', applyPowerCardFilters);
+    });
+
+    // Add event listeners for value range inputs
+    const minValue = document.getElementById('power-value-min');
+    const maxValue = document.getElementById('power-value-max');
+    
+    if (minValue) {
+        minValue.addEventListener('input', debounce(applyPowerCardFilters, 300));
+    }
+    if (maxValue) {
+        maxValue.addEventListener('input', debounce(applyPowerCardFilters, 300));
+    }
+
+    // Initial filter application
+    applyPowerCardFilters();
+}
+
+window.clearPowerCardFilters = function clearPowerCardFilters() {
+    // Reset all checkboxes to checked
+    const checkboxes = document.querySelectorAll('#power-cards-tab input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = true;
+    });
+
+    // Clear value range inputs
+    const minValue = document.getElementById('power-value-min');
+    const maxValue = document.getElementById('power-value-max');
+    
+    if (minValue) minValue.value = '';
+    if (maxValue) maxValue.value = '';
+
+    // Reapply filters
+    applyPowerCardFilters();
 }
 
 // Toggle column visibility functions
