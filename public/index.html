@@ -1335,10 +1335,9 @@
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             
             // Add active class to the selected tab button
-            const selectedButton = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
+            const selectedButton = document.querySelector(`[data-tab="${tabName}"]`);
             if (selectedButton) {
                 selectedButton.classList.add('active');
-            } else {
             }
             
             // Show selected tab
@@ -1380,11 +1379,6 @@
                 searchInput.placeholder = 'Search power cards by type or value...';
             }
             
-            // Add active class to selected tab button programmatically-safe
-            const selectedTabButton = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
-            if (selectedTabButton) {
-                selectedTabButton.classList.add('active');
-            }
             
             // Update search functionality and reload data based on tab
             if (tabName === 'characters') {
