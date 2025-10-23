@@ -12,6 +12,19 @@ describe('Aspects Search Functionality', () => {
             <html>
             <head>
                 <style>
+                    #aspects-table {
+                        table-layout: fixed !important;
+                        width: 100% !important;
+                    }
+                    
+                    #aspects-table th:nth-child(1), #aspects-table td:nth-child(1) { width: 15%; } /* Image */
+                    #aspects-table th:nth-child(2), #aspects-table td:nth-child(2) { width: 8%; }  /* Add to Deck */
+                    #aspects-table th:nth-child(3), #aspects-table td:nth-child(3) { width: 18%; } /* Card Name */
+                    #aspects-table th:nth-child(4), #aspects-table td:nth-child(4) { width: 12%; } /* Location */
+                    #aspects-table th:nth-child(5), #aspects-table td:nth-child(5) { width: 25%; } /* Card Effect */
+                    #aspects-table th:nth-child(6), #aspects-table td:nth-child(6) { width: 10%; } /* Fortifications */
+                    #aspects-table th:nth-child(7), #aspects-table td:nth-child(7) { width: 12%; } /* One Per Deck */
+                    
                     #aspects-table .header-filter[data-column="card_name"],
                     #aspects-table .header-filter[data-column="location"],
                     #aspects-table .header-filter[data-column="card_effect"] {
@@ -246,6 +259,29 @@ describe('Aspects Search Functionality', () => {
 
     afterEach(() => {
         jest.clearAllMocks();
+    });
+
+    describe('Table Layout and Column Widths', () => {
+        test('should have fixed table layout with 100% width', () => {
+            const table = document.querySelector('#aspects-table') as HTMLTableElement;
+            expect(table).toBeTruthy();
+            
+            const tableStyle = window.getComputedStyle(table);
+            expect(tableStyle.tableLayout).toBe('fixed');
+            expect(tableStyle.width).toBe('100%');
+        });
+
+        test('should have correct column width percentages', () => {
+            const table = document.querySelector('#aspects-table') as HTMLTableElement;
+            const headerCells = table.querySelectorAll('thead tr:first-child th');
+            
+            expect(headerCells.length).toBe(7);
+            
+            // Check that column width styles are applied
+            const firstCell = headerCells[0] as HTMLTableCellElement;
+            const firstCellStyle = window.getComputedStyle(firstCell);
+            expect(firstCellStyle.width).toBe('15%');
+        });
     });
 
     describe('Search Bar Width Styling', () => {
