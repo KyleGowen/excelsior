@@ -69,6 +69,18 @@ function displayCharacters(characters) {
         `;
         
         tbody.appendChild(row);
+        
+        // Immediately disable Add to Deck button for guest users to prevent flash
+        if (typeof isGuestUser === 'function' && isGuestUser()) {
+            const addToDeckBtn = row.querySelector('.add-to-deck-btn');
+            if (addToDeckBtn) {
+                addToDeckBtn.disabled = true;
+                addToDeckBtn.style.opacity = '0.5';
+                addToDeckBtn.style.cursor = 'not-allowed';
+                addToDeckBtn.title = 'Log in to add to decks...';
+                addToDeckBtn.setAttribute('data-guest-disabled', 'true');
+            }
+        }
     });
 }
 
@@ -178,6 +190,18 @@ function displaySpecialCards(specialCards) {
         `;
         
         tbody.appendChild(row);
+        
+        // Immediately disable Add to Deck button for guest users to prevent flash
+        if (typeof isGuestUser === 'function' && isGuestUser()) {
+            const addToDeckBtn = row.querySelector('.add-to-deck-btn');
+            if (addToDeckBtn) {
+                addToDeckBtn.disabled = true;
+                addToDeckBtn.style.opacity = '0.5';
+                addToDeckBtn.style.cursor = 'not-allowed';
+                addToDeckBtn.title = 'Log in to add to decks...';
+                addToDeckBtn.setAttribute('data-guest-disabled', 'true');
+            }
+        }
     });
     
     // Final check of tab visibility after adding all cards
@@ -228,6 +252,18 @@ function displayLocations(locations) {
         `;
         
         tbody.appendChild(row);
+        
+        // Immediately disable Add to Deck button for guest users to prevent flash
+        if (typeof isGuestUser === 'function' && isGuestUser()) {
+            const addToDeckBtn = row.querySelector('.add-to-deck-btn');
+            if (addToDeckBtn) {
+                addToDeckBtn.disabled = true;
+                addToDeckBtn.style.opacity = '0.5';
+                addToDeckBtn.style.cursor = 'not-allowed';
+                addToDeckBtn.title = 'Log in to add to decks...';
+                addToDeckBtn.setAttribute('data-guest-disabled', 'true');
+            }
+        }
     });
 }
 

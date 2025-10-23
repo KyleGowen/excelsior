@@ -57,8 +57,11 @@ function displayEvents(events) {
         return a.name.localeCompare(b.name);
     });
     
-    tbody.innerHTML = sortedEvents.map(event => `
-        <tr>
+    tbody.innerHTML = '';
+    
+    sortedEvents.forEach(event => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
             <td>
                 <img src="/src/resources/cards/images/events/${mapImagePathToActualFile(event.image)}" 
                      alt="${event.name}" 
@@ -77,8 +80,22 @@ function displayEvents(events) {
             <td>${event.mission_set}</td>
             <td>${event.game_effect}</td>
             <td><em>${event.flavor_text.replace(/^\*|\*$/g, '')}</em></td>
-        </tr>
-    `).join('');
+        `;
+        
+        tbody.appendChild(row);
+        
+        // Immediately disable Add to Deck button for guest users to prevent flash
+        if (typeof isGuestUser === 'function' && isGuestUser()) {
+            const addToDeckBtn = row.querySelector('.add-to-deck-btn');
+            if (addToDeckBtn) {
+                addToDeckBtn.disabled = true;
+                addToDeckBtn.style.opacity = '0.5';
+                addToDeckBtn.style.cursor = 'not-allowed';
+                addToDeckBtn.title = 'Log in to add to decks...';
+                addToDeckBtn.setAttribute('data-guest-disabled', 'true');
+            }
+        }
+    });
 }
 
 // Display aspects
