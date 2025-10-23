@@ -43,11 +43,25 @@
         #aspects-table th:nth-child(7), #aspects-table td:nth-child(7) { width: 12%; } /* One Per Deck */
         
         /* Aspects Search Input Styling - Direct override */
-        #aspects-table .header-filter[data-column="card_name"],
-        #aspects-table .header-filter[data-column="location"],
+        #aspects-table .header-filter[data-column="card_name"] {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 auto;
+            display: block;
+            box-sizing: border-box;
+        }
+        
+        #aspects-table .header-filter[data-column="location"] {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 auto;
+            display: block;
+            box-sizing: border-box;
+        }
+        
         #aspects-table .header-filter[data-column="card_effect"] {
-            width: 300px !important;
-            max-width: 300px !important;
+            width: 100% !important;
+            max-width: 100% !important;
             margin: 0 auto;
             display: block;
             box-sizing: border-box;

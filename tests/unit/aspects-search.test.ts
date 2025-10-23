@@ -25,11 +25,25 @@ describe('Aspects Search Functionality', () => {
                     #aspects-table th:nth-child(6), #aspects-table td:nth-child(6) { width: 10%; } /* Fortifications */
                     #aspects-table th:nth-child(7), #aspects-table td:nth-child(7) { width: 12%; } /* One Per Deck */
                     
-                    #aspects-table .header-filter[data-column="card_name"],
-                    #aspects-table .header-filter[data-column="location"],
+                    #aspects-table .header-filter[data-column="card_name"] {
+                        width: 100% !important;
+                        max-width: 100% !important;
+                        margin: 0 auto;
+                        display: block;
+                        box-sizing: border-box;
+                    }
+                    
+                    #aspects-table .header-filter[data-column="location"] {
+                        width: 100% !important;
+                        max-width: 100% !important;
+                        margin: 0 auto;
+                        display: block;
+                        box-sizing: border-box;
+                    }
+                    
                     #aspects-table .header-filter[data-column="card_effect"] {
-                        width: 300px !important;
-                        max-width: 300px !important;
+                        width: 100% !important;
+                        max-width: 100% !important;
                         margin: 0 auto;
                         display: block;
                         box-sizing: border-box;
@@ -285,7 +299,7 @@ describe('Aspects Search Functionality', () => {
     });
 
     describe('Search Bar Width Styling', () => {
-        test('should apply 300px width to all aspects search inputs', () => {
+        test('should apply 100% width to all aspects search inputs', () => {
             const nameInput = document.querySelector('#aspects-table .header-filter[data-column="card_name"]') as HTMLInputElement;
             const locationInput = document.querySelector('#aspects-table .header-filter[data-column="location"]') as HTMLInputElement;
             const effectInput = document.querySelector('#aspects-table .header-filter[data-column="card_effect"]') as HTMLInputElement;
@@ -298,9 +312,9 @@ describe('Aspects Search Functionality', () => {
             const locationStyle = window.getComputedStyle(locationInput);
             const effectStyle = window.getComputedStyle(effectInput);
 
-            expect(nameStyle.width).toBe('300px');
-            expect(locationStyle.width).toBe('300px');
-            expect(effectStyle.width).toBe('300px');
+            expect(nameStyle.width).toBe('100%');
+            expect(locationStyle.width).toBe('100%');
+            expect(effectStyle.width).toBe('100%');
         });
 
         test('should center all search inputs within their columns', () => {
@@ -561,9 +575,9 @@ describe('Aspects Search Functionality', () => {
             const locationStyle = window.getComputedStyle(locationInput);
             const effectStyle = window.getComputedStyle(effectInput);
 
-            expect(nameStyle.width).toBe('300px');
-            expect(locationStyle.width).toBe('300px');
-            expect(effectStyle.width).toBe('300px');
+            expect(nameStyle.width).toBe('100%');
+            expect(locationStyle.width).toBe('100%');
+            expect(effectStyle.width).toBe('100%');
         });
 
         test('should not affect other tables or search inputs', () => {
@@ -581,7 +595,7 @@ describe('Aspects Search Functionality', () => {
             const otherInput = document.querySelector('#other-table .header-filter[data-column="other"]') as HTMLInputElement;
             const computedStyle = window.getComputedStyle(otherInput);
 
-            expect(computedStyle.width).not.toBe('300px');
+            expect(computedStyle.width).not.toBe('100%');
         });
     });
 
