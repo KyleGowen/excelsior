@@ -114,9 +114,15 @@ function clearMissionsFilters() {
 }
 
 function clearEventsFilters() {
-    // Clear events filters
-    // Add specific filter clearing logic here if needed
-    applyFilters();
+    // Clear events search inputs
+    const gameEffectSearchInput = document.querySelector('#events-table .header-filter[data-column="game_effect"]');
+    
+    if (gameEffectSearchInput) gameEffectSearchInput.value = '';
+
+    // Reload all events
+    if (typeof loadEvents === 'function') {
+        loadEvents();
+    }
 }
 
 function clearTeamworkFilters() {

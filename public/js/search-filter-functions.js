@@ -500,32 +500,62 @@ function applyMissionFilters() {
 }
 
 function setupEventSearch() {
+    // Set up main search input functionality (if it exists)
     const searchInput = document.getElementById('search-input');
-    searchInput.addEventListener('input', async (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        
-        if (searchTerm.length === 0) {
-            // Reload all events
-            await loadEvents();
-            return;
-        }
-
-        try {
-            const response = await fetch('/api/events');
-            const data = await response.json();
+    if (searchInput) {
+        searchInput.addEventListener('input', async (e) => {
+            const searchTerm = e.target.value.toLowerCase();
             
-            if (data.success) {
-                const filteredEvents = data.data.filter(event => 
-                    event.name.toLowerCase().includes(searchTerm) ||
-                    event.mission_set.toLowerCase().includes(searchTerm) ||
-                    event.game_effect.toLowerCase().includes(searchTerm)
-                );
-                displayEvents(filteredEvents);
+            if (searchTerm.length === 0) {
+                // Reload all events
+                await loadEvents();
+                return;
             }
-        } catch (error) {
-            console.error('Error searching events:', error);
-        }
-    });
+
+            try {
+                const response = await fetch('/api/events');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const filteredEvents = data.data.filter(event => 
+                        event.name.toLowerCase().includes(searchTerm) ||
+                        event.mission_set.toLowerCase().includes(searchTerm) ||
+                        event.game_effect.toLowerCase().includes(searchTerm)
+                    );
+                    displayEvents(filteredEvents);
+                }
+            } catch (error) {
+                console.error('Error searching events:', error);
+            }
+        });
+    }
+
+    // Set up Game Effect search input functionality
+    const gameEffectSearchInput = document.querySelector('#events-table .header-filter[data-column="game_effect"]');
+    if (gameEffectSearchInput) {
+        gameEffectSearchInput.addEventListener('input', async (e) => {
+            const effectTerm = e.target.value.toLowerCase();
+
+            if (effectTerm.length === 0) {
+                await loadEvents();
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/events');
+                const data = await response.json();
+
+                if (data.success) {
+                    const filteredEvents = data.data.filter(event =>
+                        event.game_effect.toLowerCase().includes(effectTerm)
+                    );
+                    displayEvents(filteredEvents);
+                }
+            } catch (error) {
+                console.error('Error searching events by game effect:', error);
+            }
+        });
+    }
 
     // Set up checkbox event listeners for mission set filtering
     document.querySelectorAll('#events-tab input[type="checkbox"]').forEach(checkbox => {

@@ -108,6 +108,15 @@
         #missions-table th:nth-child(2), #missions-table td:nth-child(2) { width: 15%; } /* Add to Deck - Wider */
         #missions-table th:nth-child(3), #missions-table td:nth-child(3) { width: 25%; } /* Mission Set */
         #missions-table th:nth-child(4), #missions-table td:nth-child(4) { width: 45%; } /* Card Name - Adjusted for wider Add to Deck column */
+        
+        /* Events Table Game Effect Search Input Styling */
+        #events-table .header-filter[data-column="game_effect"] {
+            width: 320px !important;
+            max-width: 320px !important;
+            margin: 0 auto;
+            display: block;
+            box-sizing: border-box;
+        }
     </style>
     <!-- Authentication Service -->
     <script src="/js/auth-service.js"></script>
@@ -515,7 +524,9 @@
                                     </div>
                                 </div>
                             </th>
-                            <th></th>
+                            <th>
+                                <input type="text" class="header-filter" placeholder="Search effects..." data-column="game_effect">
+                            </th>
                             <th></th>
                         </tr>
                     </thead>
