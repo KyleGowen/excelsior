@@ -109,6 +109,44 @@
         #missions-table th:nth-child(3), #missions-table td:nth-child(3) { width: 25%; } /* Mission Set */
         #missions-table th:nth-child(4), #missions-table td:nth-child(4) { width: 45%; } /* Card Name - Adjusted for wider Add to Deck column */
         
+        /* Special Cards Table Column Width Control */
+        #special-cards-table {
+            table-layout: fixed !important;
+            width: 100% !important;
+        }
+        
+        #special-cards-table th:nth-child(1), #special-cards-table td:nth-child(1) { width: 10%; } /* Image - reduced by 15% */
+        #special-cards-table th:nth-child(2), #special-cards-table td:nth-child(2) { width: 6%; }  /* Add to Deck - reduced by 25% */
+        #special-cards-table th:nth-child(3), #special-cards-table td:nth-child(3) { width: 16%; } /* Name - reduced by 10% */
+        #special-cards-table th:nth-child(4), #special-cards-table td:nth-child(4) { width: 17%; } /* Character - reduced by 15% */
+        #special-cards-table th:nth-child(5), #special-cards-table td:nth-child(5) { width: 20%; } /* Card Effect - reduced to fit within frame */
+        
+        
+        /* Center and resize Special Cards search inputs */
+        #special-cards-table .header-filter[data-column="name"] {
+            width: 85% !important; /* Reduced by 15% from 100% */
+            max-width: 85% !important;
+            margin: 0 auto !important;
+            display: block !important;
+            box-sizing: border-box !important;
+        }
+        
+        #special-cards-table .header-filter[data-column="character"] {
+            width: 85% !important; /* Reduced by 15% from 100% */
+            max-width: 85% !important;
+            margin: 0 auto !important;
+            display: block !important;
+            box-sizing: border-box !important;
+        }
+        
+        #special-cards-table .header-filter[data-column="card_effect"] {
+            width: 85% !important; /* Reduced by 15% from 100% */
+            max-width: 85% !important;
+            margin: 0 auto !important;
+            display: block !important;
+            box-sizing: border-box !important;
+        }
+        
         /* Events Table Game Effect Search Input Styling */
         #events-table .header-filter[data-column="game_effect"] {
             width: 320px !important;

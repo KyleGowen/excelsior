@@ -644,6 +644,36 @@ td:last-child {
     max-width: 300px;
 }
 
+/* Special Cards Table Column Widths */
+#special-cards-table {
+    table-layout: fixed;
+}
+
+#special-cards-table th:nth-child(1), /* Image */
+#special-cards-table td:nth-child(1) {
+    width: 20%;
+}
+
+#special-cards-table th:nth-child(2), /* Add to Deck - reduced by 10% */
+#special-cards-table td:nth-child(2) {
+    width: 9%;
+}
+
+#special-cards-table th:nth-child(3), /* Name - reduced by 10% */
+#special-cards-table td:nth-child(3) {
+    width: 16%;
+}
+
+#special-cards-table th:nth-child(4), /* Character */
+#special-cards-table td:nth-child(4) {
+    width: 20%;
+}
+
+#special-cards-table th:nth-child(5), /* Card Effect - gets the extra space */
+#special-cards-table td:nth-child(5) {
+    width: 35%;
+}
+
 /* All other tables - center aligned */
 #special-cards-table th,
 #special-cards-table td,
@@ -671,8 +701,6 @@ td:last-child {
 #events-table,
 #locations-table,
 #characters-table,
-#special-cards-table,
-#advanced-universe-table,
 #aspects-table,
 #ally-universe-table,
 #training-table,
