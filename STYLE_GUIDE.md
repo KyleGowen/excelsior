@@ -1233,9 +1233,9 @@ The Card View is an admin-only deck visualization mode that displays cards in a 
 
 ### Container Styling
 - **Main Container**: `.deck-cards-editor.card-view`
-- **Background**: `rgba(0, 0, 0, 0.3)` (semi-transparent dark overlay)
+- **Background**: `rgba(255, 255, 255, 0.05)` (standard secondary background)
 - **Padding**: `20px`
-- **Layout**: `display: block !important` with `flex-direction: column !important`
+- **Layout**: `display: flex !important` with `flex-direction: column !important`
 - **Width**: `100%` with `min-width: 100%`
 - **Box Sizing**: `border-box` for all child elements
 
@@ -1244,7 +1244,7 @@ The Card View is an admin-only deck visualization mode that displays cards in a 
 - **Container**: `.deck-card-card-view-item`
 - **Dimensions**: `175px × 250px` (7:10 aspect ratio)
 - **Background**: `rgba(255, 255, 255, 0.1)`
-- **Border**: `1px solid rgba(255, 215, 0, 0.3)` (gold border)
+- **Border**: `1px solid rgba(255, 255, 255, 0.2)` (standard primary border)
 - **Border Radius**: `8px`
 - **Layout**: `display: flex`, `flex-direction: column`, `align-items: center`
 - **Transition**: `all 0.2s ease`
@@ -1257,8 +1257,8 @@ The Card View is an admin-only deck visualization mode that displays cards in a 
 - **Alignment**: `align-items: center`
 
 ### Hover Effects
-- **Background**: `rgba(255, 215, 0, 0.2)` (gold highlight)
-- **Border**: `#ffd700` (solid gold)
+- **Background**: `rgba(78, 205, 196, 0.2)` (teal highlight)
+- **Border**: `#4ecdc4` (solid teal)
 - **Transform**: `translateY(-2px)` (lift effect)
 - **Box Shadow**: `0 4px 12px rgba(0, 0, 0, 0.3)` (depth shadow)
 
@@ -1330,8 +1330,8 @@ The Card View is an admin-only deck visualization mode that displays cards in a 
 
 #### Category Header
 - **Class**: `.card-view-category-header`
-- **Background**: `rgba(255, 215, 0, 0.1)` (gold tint)
-- **Border**: `1px solid rgba(255, 215, 0, 0.3)`
+- **Background**: `rgba(78, 205, 196, 0.1)` (teal tint)
+- **Border**: `1px solid rgba(78, 205, 196, 0.3)`
 - **Border Radius**: `6px`
 - **Padding**: `12px 16px`
 - **Margin Bottom**: `12px`
@@ -1339,7 +1339,7 @@ The Card View is an admin-only deck visualization mode that displays cards in a 
 
 #### Category Name
 - **Class**: `.card-view-category-name`
-- **Color**: `#ffd700` (gold)
+- **Color**: `#4ecdc4` (primary teal)
 - **Font Weight**: `600`
 - **Font Size**: `1.2rem`
 
@@ -1367,11 +1367,11 @@ The Card View is an admin-only deck visualization mode that displays cards in a 
 /* Card View Container */
 .deck-cards-editor.card-view {
     padding: 20px;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.05);
     width: 100%;
     min-width: 100%;
     box-sizing: border-box;
-    display: block !important;
+    display: flex !important;
     flex-direction: column !important;
     align-items: stretch !important;
 }
@@ -1384,7 +1384,7 @@ The Card View is an admin-only deck visualization mode that displays cards in a 
     width: 175px;
     height: 250px;
     background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
     box-sizing: border-box;
     transition: all 0.2s ease;
