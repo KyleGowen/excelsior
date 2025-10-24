@@ -348,7 +348,7 @@
         
         /* Card View Category Sections - Vertical Stack */
         .card-view-category-section {
-            width: 100%;
+            width: 100% !important;
             margin-bottom: 40px;
             padding-bottom: 10px;
             display: block;
@@ -3551,6 +3551,7 @@
                 
                 if (this.deckCardsEditor) {
                     this.deckCardsEditor.classList.remove('list-view');
+                    this.deckCardsEditor.classList.remove('two-column'); // Remove two-column class that interferes with Card View
                     this.deckCardsEditor.classList.add('card-view');
                 }
                 
@@ -4007,6 +4008,15 @@
             });
 
             deckCardsEditor.innerHTML = cardsHtml;
+            
+            // Force Card View category sections to be 100% width to prevent layout issues
+            // This fixes the issue where cycling through views causes categories to display horizontally
+            const categorySections = deckCardsEditor.querySelectorAll('.card-view-category-section');
+            categorySections.forEach(section => {
+                section.style.width = '100%';
+                section.style.maxWidth = '100%';
+                section.style.minWidth = '100%';
+            });
         }
 
         // Function to enforce horizontal layout in list view
@@ -6539,8 +6549,9 @@
                 manageDeckLayout('addClass', { className: 'two-column' });
                 createTwoColumnLayout();
             } else if (isCardView) {
-                // Card view: completely independent - do nothing with layout system
+                // Card view: completely independent - remove any layout classes that interfere
                 // Card View manages its own layout internally
+                manageDeckLayout('removeClass', { className: 'two-column' });
             } else {
                 // Tile view: normal responsive behavior
                 
