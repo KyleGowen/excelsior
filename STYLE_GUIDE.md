@@ -18,6 +18,7 @@
 15. [Assist Card Dimming](#assist-card-dimming)
 16. [Ambush Card Dimming](#ambush-card-dimming)
 17. [Fortification Card Dimming](#fortification-card-dimming)
+18. [Deck Editor Card View Styling](#deck-editor-card-view-styling)
 
 ## Overview
 
@@ -1224,3 +1225,205 @@ function updateFortificationLimitStatus() {
 - **Unit Tests**: `tests/unit/fortification-backend-validation.test.ts`
 - **Frontend Tests**: `tests/unit/fortification-frontend-validation.test.ts`
 - **Test Scenarios**: Adding/removing fortification cards, multiple fortification handling, visual state consistency
+
+## Deck Editor Card View Styling
+
+### Overview
+The Card View is an admin-only deck visualization mode that displays cards in a unique card-centric layout with actual card images as the primary interface elements.
+
+### Container Styling
+- **Main Container**: `.deck-cards-editor.card-view`
+- **Background**: `rgba(0, 0, 0, 0.3)` (semi-transparent dark overlay)
+- **Padding**: `20px`
+- **Layout**: `display: block !important` with `flex-direction: column !important`
+- **Width**: `100%` with `min-width: 100%`
+- **Box Sizing**: `border-box` for all child elements
+
+### Card Item Styling
+#### Portrait Cards (Default)
+- **Container**: `.deck-card-card-view-item`
+- **Dimensions**: `175px × 250px` (7:10 aspect ratio)
+- **Background**: `rgba(255, 255, 255, 0.1)`
+- **Border**: `1px solid rgba(255, 215, 0, 0.3)` (gold border)
+- **Border Radius**: `8px`
+- **Layout**: `display: flex`, `flex-direction: column`, `align-items: center`
+- **Transition**: `all 0.2s ease`
+- **Position**: `relative` (for absolute positioning of buttons)
+
+#### Landscape Cards
+- **Target Types**: `[data-type="character"]`, `[data-type="location"]`, `[data-type="event"]`
+- **Dimensions**: `250px × 175px` (10:7 aspect ratio)
+- **Layout**: `flex-direction: column`, `justify-content: flex-start`
+- **Alignment**: `align-items: center`
+
+### Hover Effects
+- **Background**: `rgba(255, 215, 0, 0.2)` (gold highlight)
+- **Border**: `#ffd700` (solid gold)
+- **Transform**: `translateY(-2px)` (lift effect)
+- **Box Shadow**: `0 4px 12px rgba(0, 0, 0, 0.3)` (depth shadow)
+
+### Card Images
+#### Portrait Image Styling
+- **Class**: `.card-view-image` (portrait cards)
+- **Width**: `115%` (15% larger than container)
+- **Height**: `100%` (fills entire frame)
+- **Margins**: `-7.5%` left/right (centers larger image)
+- **Object Fit**: `cover`
+- **Object Position**: `center top`
+- **Border Radius**: `6px`
+
+#### Landscape Image Styling
+- **Width**: `100%` (full container width)
+- **Object Position**: `center top`
+- **Margin Bottom**: `8px` (space for buttons)
+- **Flex Shrink**: `0`
+
+### Action Buttons
+#### Button Container
+- **Class**: `.card-view-actions`
+- **Layout**: `display: flex`, `flex-direction: row`
+- **Gap**: `6px` between buttons
+- **Alignment**: `justify-content: center`
+- **Margin Top**: `auto` (pushes to bottom)
+
+#### Portrait Card Button Positioning
+- **Position**: `absolute`
+- **Bottom**: `-27px` (outside card frame)
+- **Left**: `50%` with `transform: translateX(-50%)` (centered)
+
+#### Button Styling
+- **Base Class**: `.card-view-btn`
+- **Background**: `rgba(78, 205, 196, 0.2)` (teal)
+- **Border**: `1px solid rgba(78, 205, 196, 0.3)`
+- **Color**: `#4ecdc4` (teal text)
+- **Font Size**: `10px`
+- **Padding**: `3px 6px`
+- **Min Width**: `32px`
+- **Height**: `20px`
+- **Border Radius**: `3px`
+- **Transition**: `all 0.2s ease`
+
+#### Button Hover Effects
+- **Background**: `rgba(78, 205, 196, 0.3)`
+- **Border**: `rgba(78, 205, 196, 0.4)`
+- **Transform**: `translateY(-1px)`
+
+#### Specialized Button Types
+- **Alternate Art Button**: `.alternate-art-btn`
+  - Font Size: `9px`
+  - Padding: `2px 4px`
+  - Min Width: `28px`
+  - Height: `18px`
+- **Quantity Buttons**: `.remove-one-btn`, `.add-one-btn`, `.quantity-btn`
+  - Font Size: `11px`
+  - Font Weight: `bold`
+  - Min Width: `24px`
+  - Height: `18px`
+
+### Category Sections
+#### Category Container
+- **Class**: `.card-view-category-section`
+- **Width**: `100%`
+- **Margin Bottom**: `30px`
+- **Display**: `block`
+- **Clear**: `both`
+
+#### Category Header
+- **Class**: `.card-view-category-header`
+- **Background**: `rgba(255, 215, 0, 0.1)` (gold tint)
+- **Border**: `1px solid rgba(255, 215, 0, 0.3)`
+- **Border Radius**: `6px`
+- **Padding**: `12px 16px`
+- **Margin Bottom**: `12px`
+- **Layout**: `display: flex`, `justify-content: space-between`, `align-items: center`
+
+#### Category Name
+- **Class**: `.card-view-category-name`
+- **Color**: `#ffd700` (gold)
+- **Font Weight**: `600`
+- **Font Size**: `1.2rem`
+
+#### Category Count
+- **Class**: `.card-view-category-count`
+- **Color**: `#bdc3c7` (light gray)
+- **Font Size**: `1rem`
+
+#### Category Cards Container
+- **Class**: `.card-view-category-cards`
+- **Layout**: `display: flex`, `flex-wrap: wrap`
+- **Gap**: `10px 30px` (horizontal: 10px, vertical: 30px)
+- **Width**: `100%`
+
+### Responsive Design
+#### Breakpoint System (75% Scaling)
+- **Desktop (Default)**: 175px × 250px (portrait), 250px × 175px (landscape)
+- **Large Tablet (≤1200px)**: 160px × 229px, 225px × 137px
+- **Tablet (≤1000px)**: 146px × 208px, 203px × 125px
+- **Small Tablet (≤800px)**: 131px × 188px, 183px × 113px
+- **Mobile (≤600px)**: 116px × 167px, 161px × 100px
+
+### CSS Implementation
+```css
+/* Card View Container */
+.deck-cards-editor.card-view {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    width: 100%;
+    min-width: 100%;
+    box-sizing: border-box;
+    display: block !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+}
+
+/* Individual Card View Item */
+.deck-card-card-view-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 175px;
+    height: 250px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Landscape Cards */
+.deck-card-card-view-item[data-type="character"],
+.deck-card-card-view-item[data-type="location"],
+.deck-card-card-view-item[data-type="event"] {
+    width: 250px;
+    height: 175px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Card View Buttons */
+.card-view-btn {
+    font-size: 10px;
+    padding: 3px 6px;
+    min-width: 32px;
+    height: 20px;
+    border-radius: 3px;
+    border: 1px solid rgba(78, 205, 196, 0.3);
+    background: rgba(78, 205, 196, 0.2);
+    color: #4ecdc4;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+```
+
+### Integration with View System
+- **View Manager**: Integrates with ViewManager for view switching
+- **Access Control**: Admin-only access with role validation
+- **Data Dependencies**: Uses `window.deckEditorCards` and `window.availableCardsMap`
+- **Event Handling**: Supports hover, click, and drag interactions
