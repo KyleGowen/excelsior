@@ -67,8 +67,8 @@ function showDeckEditor() {
             ? (currentDeckData.ui_preferences || (currentDeckData.metadata && currentDeckData.metadata.ui_preferences))
             : null;
         
-        // Default to 67% for deck pane (33% for available cards) for new decks
-        const defaultPercentage = 67;
+        // Default to 71% for deck pane (29% for available cards) for new decks
+        const defaultPercentage = 71;
         const percentage = uiPrefs && uiPrefs.dividerPosition ? uiPrefs.dividerPosition : defaultPercentage;
         
         // Use a small delay to ensure the modal is rendered
