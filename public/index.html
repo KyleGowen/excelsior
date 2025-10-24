@@ -4008,15 +4008,6 @@
             });
 
             deckCardsEditor.innerHTML = cardsHtml;
-            
-            // Force Card View category sections to be 100% width to prevent layout issues
-            // This fixes the issue where cycling through views causes categories to display horizontally
-            const categorySections = deckCardsEditor.querySelectorAll('.card-view-category-section');
-            categorySections.forEach(section => {
-                section.style.width = '100%';
-                section.style.maxWidth = '100%';
-                section.style.minWidth = '100%';
-            });
         }
 
         // Function to enforce horizontal layout in list view
