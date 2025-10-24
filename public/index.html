@@ -5880,7 +5880,12 @@
                         // Re-render in list view
                         renderDeckCardsListView();
                     } else {
-                        // Default to tile view
+                        // Default to tile view - but check if admin user should keep Card View
+                        if (currentUser && currentUser.role === 'ADMIN' && deckCardsEditor.classList.contains('card-view')) {
+                            // Admin user with Card View already set - don't override it
+                            return;
+                        }
+                        
                         manageDeckLayout('removeClass', { className: 'list-view' });
                         manageDeckLayout('removeClass', { className: 'card-view' });
                         // Check if user is admin to determine next view
@@ -5891,6 +5896,18 @@
                         }
                         // Re-render in tile view
                         await displayDeckCardsForEditing();
+                    }
+                }
+            } else {
+                // No viewMode in preferences - check if admin user should keep Card View
+                const deckCardsEditor = document.getElementById('deckCardsEditor');
+                const listViewBtn = document.getElementById('listViewBtn');
+                
+                if (deckCardsEditor && listViewBtn && currentUser && currentUser.role === 'ADMIN') {
+                    // Admin user with no saved viewMode - check if Card View is already set
+                    if (deckCardsEditor.classList.contains('card-view')) {
+                        // Card View is already set, don't override it
+                        return;
                     }
                 }
             }

@@ -187,7 +187,9 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
         }
         
         // Set initial view based on user role for new decks
+        console.log('🎯 About to apply initial view for new deck, currentView:', viewManager.currentView);
         await viewManager.applyInitialView();
+        console.log('✅ Initial view applied for new deck');
         
         return;
     }
