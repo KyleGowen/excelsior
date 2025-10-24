@@ -10702,7 +10702,18 @@
             // Capture current expansion state before re-rendering
             const currentExpansionState = getExpansionState();
             
-            await displayDeckCardsForEditing();
+            // Re-render the current view instead of always using Tile View
+            const deckCardsEditor = document.querySelector('.deck-cards-editor');
+            if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                // Card View is active - re-render Card View
+                await renderDeckCardsCardView();
+            } else if (deckCardsEditor && deckCardsEditor.classList.contains('list-view')) {
+                // List View is active - re-render List View
+                await renderDeckCardsListView();
+            } else {
+                // Tile View is active - re-render Tile View
+                await displayDeckCardsForEditing();
+            }
             
             // Enforce horizontal layout in list view after adding card
             if (true) {
