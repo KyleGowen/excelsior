@@ -3411,7 +3411,8 @@
         // View Manager - Clean abstraction layer for view switching
         class ViewManager {
             constructor() {
-                this.currentView = 'tile';
+                // Set default view based on user role - Card View for admin, Tile View for others
+                this.currentView = (currentUser && currentUser.role === 'ADMIN') ? 'card' : 'tile';
                 this.deckCardsEditor = null;
                 this.listViewBtn = null;
             }
@@ -3419,6 +3420,29 @@
             initialize() {
                 this.deckCardsEditor = document.getElementById('deckCardsEditor');
                 this.listViewBtn = document.getElementById('listViewBtn');
+                
+                // Set initial view based on user role
+                if (currentUser && currentUser.role === 'ADMIN') {
+                    // Admin users start with Card View
+                    this.setInitialAdminView();
+                } else {
+                    // Non-admin users start with Tile View
+                    this.setInitialUserView();
+                }
+            }
+            
+            setInitialAdminView() {
+                // Set button text for admin users (Card View → List View → Tile View)
+                if (this.listViewBtn) {
+                    this.listViewBtn.textContent = 'List View';
+                }
+            }
+            
+            setInitialUserView() {
+                // Set button text for non-admin users (Tile View → List View)
+                if (this.listViewBtn) {
+                    this.listViewBtn.textContent = 'List View';
+                }
             }
 
             async switchToTileView() {

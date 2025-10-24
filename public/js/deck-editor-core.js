@@ -186,6 +186,15 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             updateDeckSummary(window.deckEditorCards);
         }
         
+        // Set initial view based on user role for new decks
+        if (currentUser && currentUser.role === 'ADMIN') {
+            // Admin users start with Card View
+            await viewManager.switchToCardView();
+        } else {
+            // Non-admin users start with Tile View
+            await displayDeckCardsForEditing();
+        }
+        
         return;
     }
     
@@ -293,7 +302,14 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             await loadAvailableCards();
             
             // Display deck cards after available cards are loaded
-            await displayDeckCardsForEditing();
+            // Check if user is admin and should start with Card View
+            if (currentUser && currentUser.role === 'ADMIN') {
+                // Admin users start with Card View
+                await viewManager.switchToCardView();
+            } else {
+                // Non-admin users start with Tile View
+                await displayDeckCardsForEditing();
+            }
             
             // Ensure scroll container can show all content after deck is displayed
             setTimeout(() => {
