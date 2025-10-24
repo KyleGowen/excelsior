@@ -1336,6 +1336,9 @@ The Card View is an admin-only deck visualization mode that displays cards in a 
 - **Padding**: `12px 16px`
 - **Margin Bottom**: `12px`
 - **Layout**: `display: flex`, `justify-content: space-between`, `align-items: center`
+- **Cursor**: `pointer` (clickable for collapse/expand)
+- **Hover**: `rgba(78, 205, 196, 0.15)` background, `rgba(78, 205, 196, 0.4)` border
+- **Transition**: `all 0.2s ease`
 
 #### Category Name
 - **Class**: `.card-view-category-name`
@@ -1343,16 +1346,33 @@ The Card View is an admin-only deck visualization mode that displays cards in a 
 - **Font Weight**: `600`
 - **Font Size**: `1.2rem`
 
+#### Category Controls
+- **Container**: `.card-view-category-controls`
+- **Layout**: `display: flex`, `align-items: center`, `gap: 12px`
+
 #### Category Count
 - **Class**: `.card-view-category-count`
 - **Color**: `#bdc3c7` (light gray)
 - **Font Size**: `1rem`
 
+#### Category Toggle Button
+- **Class**: `.card-view-category-toggle`
+- **Color**: `#4ecdc4` (primary teal)
+- **Font Size**: `0.9rem`
+- **Font Weight**: `bold`
+- **Symbol**: `▼` (down arrow)
+- **Transition**: `transform 0.2s ease`
+- **User Select**: `none`
+- **Collapsed State**: `transform: rotate(-90deg)` (rotates to `▶`)
+
 #### Category Cards Container
 - **Class**: `.card-view-category-cards`
 - **Layout**: `display: flex`, `flex-wrap: wrap`
-- **Gap**: `10px 30px` (horizontal: 10px, vertical: 30px)
+- **Gap**: `45px 15px` (vertical: 45px, horizontal: 15px)
 - **Width**: `100%`
+- **Transition**: `all 0.3s ease`
+- **Overflow**: `hidden`
+- **Collapsed State**: `max-height: 0`, `margin-bottom: 0`, `opacity: 0`
 
 ### Responsive Design
 #### Breakpoint System (75% Scaling)
@@ -1421,6 +1441,14 @@ The Card View is an admin-only deck visualization mode that displays cards in a 
     justify-content: center;
 }
 ```
+
+### Collapsible Categories
+- **Toggle Function**: `toggleCardViewCategory(categoryType)` handles collapse/expand
+- **Click Target**: Entire category header is clickable
+- **Visual Feedback**: Arrow rotates from `▼` to `▶` when collapsed
+- **Smooth Animation**: 0.3s ease transition for collapsing/expanding
+- **State Management**: Uses CSS classes `.collapsed` for state tracking
+- **Accessibility**: Clear visual indicators and smooth transitions
 
 ### Integration with View System
 - **View Manager**: Integrates with ViewManager for view switching

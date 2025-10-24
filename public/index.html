@@ -368,6 +368,31 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .card-view-category-header:hover {
+            background: rgba(78, 205, 196, 0.15);
+            border-color: rgba(78, 205, 196, 0.4);
+        }
+
+        .card-view-category-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-view-category-toggle {
+            color: #4ecdc4;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+            user-select: none;
+        }
+
+        .card-view-category-toggle.collapsed {
+            transform: rotate(-90deg);
         }
         
         .card-view-category-name {
@@ -386,6 +411,14 @@
             flex-wrap: wrap;
             gap: 45px 15px; /* vertical gap: 45px to prevent portrait card overlap, horizontal gap: 15px */
             width: 100%;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card-view-category-cards.collapsed {
+            max-height: 0;
+            margin-bottom: 0;
+            opacity: 0;
         }
         
         /* Responsive adjustments for Card View - 75% scaling */
@@ -3868,6 +3901,26 @@
             });
         }
 
+        // Card View category toggle function
+        function toggleCardViewCategory(categoryType) {
+            const cardsContainer = document.getElementById(`cards-${categoryType}`);
+            const toggleButton = document.getElementById(`toggle-${categoryType}`);
+            
+            if (cardsContainer && toggleButton) {
+                const isCollapsed = cardsContainer.classList.contains('collapsed');
+                
+                if (isCollapsed) {
+                    // Expand the category
+                    cardsContainer.classList.remove('collapsed');
+                    toggleButton.classList.remove('collapsed');
+                } else {
+                    // Collapse the category
+                    cardsContainer.classList.add('collapsed');
+                    toggleButton.classList.add('collapsed');
+                }
+            }
+        }
+
         // Card View rendering function - Completely independent from Tile View
         function renderDeckCardsCardView() {
             const deckCardsEditor = document.getElementById('deckCardsEditor');
@@ -3948,11 +4001,14 @@
                     
                     cardsHtml += `
                         <div class="card-view-category-section" data-type="${type}">
-                            <div class="card-view-category-header">
+                            <div class="card-view-category-header" onclick="toggleCardViewCategory('${type}')">
                                 <span class="card-view-category-name">${typeName}</span>
-                                <span class="card-view-category-count">${cardCount} card${cardCount !== 1 ? 's' : ''}</span>
+                                <div class="card-view-category-controls">
+                                    <span class="card-view-category-count">${cardCount} card${cardCount !== 1 ? 's' : ''}</span>
+                                    <span class="card-view-category-toggle" id="toggle-${type}">▼</span>
+                                </div>
                             </div>
-                            <div class="card-view-category-cards">
+                            <div class="card-view-category-cards" id="cards-${type}">
                     `;
                     
                     // Render cards in horizontal rows - Card View specific rendering
