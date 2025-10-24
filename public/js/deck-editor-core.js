@@ -187,13 +187,7 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
         }
         
         // Set initial view based on user role for new decks
-        if (currentUser && currentUser.role === 'ADMIN') {
-            // Admin users start with Card View
-            await viewManager.switchToCardView();
-        } else {
-            // Non-admin users start with Tile View
-            await displayDeckCardsForEditing();
-        }
+        await viewManager.applyInitialView();
         
         return;
     }
@@ -302,14 +296,8 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             await loadAvailableCards();
             
             // Display deck cards after available cards are loaded
-            // Check if user is admin and should start with Card View
-            if (currentUser && currentUser.role === 'ADMIN') {
-                // Admin users start with Card View
-                await viewManager.switchToCardView();
-            } else {
-                // Non-admin users start with Tile View
-                await displayDeckCardsForEditing();
-            }
+            // Apply the initial view based on user role (set during ViewManager.initialize())
+            await viewManager.applyInitialView();
             
             // Ensure scroll container can show all content after deck is displayed
             setTimeout(() => {
