@@ -5746,7 +5746,9 @@
             if (isListView) {
                 viewMode = 'list';
             } else if (isCardView) {
-                viewMode = 'card';
+                // Don't save 'card' viewMode to backend - it's admin-only and not supported by API
+                // Card View will be restored automatically for admin users on page load
+                viewMode = 'tile';
             }
             
             return {
@@ -8545,7 +8547,17 @@
                     window.deckEditorCards.splice(index, 1);
                 }
                 
-                await displayDeckCardsForEditing();
+                // Re-render the current view instead of always using Tile View
+                if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                    // Card View is active - re-render Card View
+                    await renderDeckCardsCardView();
+                } else if (deckCardsEditor && deckCardsEditor.classList.contains('list-view')) {
+                    // List View is active - re-render List View
+                    await renderDeckCardsListView();
+                } else {
+                    // Tile View is active - re-render Tile View
+                    await displayDeckCardsForEditing();
+                }
                 
                 // Restore scroll position after re-rendering with a small delay to ensure DOM is fully updated
                 setTimeout(() => {
@@ -8640,7 +8652,17 @@
                 // Increase quantity by 1
                 window.window.deckEditorCards[index].quantity += 1;
                 
-                await displayDeckCardsForEditing();
+                // Re-render the current view instead of always using Tile View
+                if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                    // Card View is active - re-render Card View
+                    await renderDeckCardsCardView();
+                } else if (deckCardsEditor && deckCardsEditor.classList.contains('list-view')) {
+                    // List View is active - re-render List View
+                    await renderDeckCardsListView();
+                } else {
+                    // Tile View is active - re-render Tile View
+                    await displayDeckCardsForEditing();
+                }
                 
                 // Restore scroll position after re-rendering with a small delay to ensure DOM is fully updated
                 setTimeout(() => {
