@@ -33,6 +33,9 @@ const mockDeckCardsEditor = {
 (global as any).removeOneCardFromEditor = jest.fn();
 (global as any).addOneCardToEditor = jest.fn();
 (global as any).removeCardFromEditor = jest.fn();
+(global as any).updateDeckEditorCardCount = jest.fn();
+(global as any).updateDeckSummary = jest.fn();
+(global as any).toggleCardViewCategory = jest.fn();
 
 // Mock console methods
 (global as any).console = {
@@ -91,9 +94,11 @@ const mockEventCard = {
 (global.window as any).availableCardsMap.set('event-1', mockEventCard);
 
 // Mock the renderDeckCardsCardView function
-const mockRenderDeckCardsCardView = () => {
+function mockRenderDeckCardsCardView() {
     const deckCardsEditor = (global as any).document.getElementById('deckCardsEditor');
-    if (!deckCardsEditor) return;
+    if (!deckCardsEditor) {
+        return;
+    }
 
     // Check if user is admin
     if (!(global as any).currentUser || (global as any).currentUser.role !== 'ADMIN') {
@@ -163,11 +168,14 @@ const mockRenderDeckCardsCardView = () => {
             
             cardsHtml += `
                 <div class="card-view-category-section" data-type="${type}">
-                    <div class="card-view-category-header">
+                    <div class="card-view-category-header" onclick="toggleCardViewCategory('${type}')">
                         <span class="card-view-category-name">${typeName}</span>
-                        <span class="card-view-category-count">${cardCount} card${cardCount !== 1 ? 's' : ''}</span>
+                        <div class="card-view-category-controls">
+                            <span class="card-view-category-count">${cardCount} card${cardCount !== 1 ? 's' : ''}</span>
+                            <span class="card-view-category-toggle" id="toggle-${type}">▼</span>
+                        </div>
                     </div>
-                    <div class="card-view-category-cards">
+                    <div class="card-view-category-cards" id="cards-${type}">
             `;
             
             // Render cards in horizontal rows
@@ -203,19 +211,24 @@ const mockRenderDeckCardsCardView = () => {
                     quantityButtons = `<button class="quantity-btn card-view-btn" onclick="removeCardFromEditor(${index})">-</button>`;
                 }
                 
-                cardsHtml += `
-                    <div class="deck-card-card-view-item" 
-                         data-index="${index}" 
-                         data-type="${card.type}"
-                         onmouseenter="showCardHoverModal('${cardImagePath}', '${(availableCard.name || availableCard.card_name || 'Card').replace(/'/g, "\\'")}')"
-                         onmouseleave="hideCardHoverModal()">
-                        <img src="${cardImagePath}" alt="${availableCard.name || availableCard.card_name || 'Card'}" class="card-view-image">
-                        <div class="card-view-actions">
-                            ${alternateArtButton}
-                            ${quantityButtons}
+                // Render multiple instances of the card based on quantity
+                const quantity = card.quantity || 1;
+                for (let i = 0; i < quantity; i++) {
+                    cardsHtml += `
+                        <div class="deck-card-card-view-item" 
+                             data-index="${index}" 
+                             data-type="${card.type}"
+                             data-instance="${i + 1}"
+                             onmouseenter="showCardHoverModal('${cardImagePath}', '${(availableCard.name || availableCard.card_name || 'Card').replace(/'/g, "\\'")}')"
+                             onmouseleave="hideCardHoverModal()">
+                            <img src="${cardImagePath}" alt="${availableCard.name || availableCard.card_name || 'Card'}" class="card-view-image">
+                            <div class="card-view-actions">
+                                ${alternateArtButton}
+                                ${quantityButtons}
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             });
             
             cardsHtml += `
@@ -226,6 +239,14 @@ const mockRenderDeckCardsCardView = () => {
     });
 
     deckCardsEditor.innerHTML = cardsHtml;
+    
+    // Update deck summary and card count to ensure Draw Hand button state is correct
+    if (typeof (global as any).updateDeckEditorCardCount === 'function') {
+        (global as any).updateDeckEditorCardCount();
+    }
+    if (typeof (global as any).updateDeckSummary === 'function') {
+        (global as any).updateDeckSummary((global.window as any).deckEditorCards);
+    }
 };
 
 describe('Card View Functionality Tests', () => {
@@ -251,8 +272,13 @@ describe('Card View Functionality Tests', () => {
         test('should show warning and return early for non-admin users', () => {
             (global as any).currentUser = { role: 'USER' };
             
-            mockRenderDeckCardsCardView();
+            // Verify the function is defined
+            expect(typeof mockRenderDeckCardsCardView).toBe('function');
             
+            // Call the mock function
+            const result = mockRenderDeckCardsCardView();
+            
+            // Check if console.warn was called
             expect((global as any).console.warn).toHaveBeenCalledWith('Card View is only available to ADMIN users');
             expect(mockDeckCardsEditor.innerHTML).toBe('');
         });
