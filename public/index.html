@@ -4073,6 +4073,12 @@
             });
 
             deckCardsEditor.innerHTML = cardsHtml;
+            
+            // Update deck summary and card count to ensure Draw Hand button state is correct
+            updateDeckEditorCardCount();
+            if (typeof updateDeckSummary === 'function') {
+                updateDeckSummary(window.deckEditorCards);
+            }
         }
 
         // Function to enforce horizontal layout in list view
