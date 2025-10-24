@@ -3873,6 +3873,13 @@
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             if (!deckCardsEditor) return;
 
+            // FORCE flex-direction to column for Card View
+            console.log('🔧 FORCING Card View flex-direction to column');
+            deckCardsEditor.style.display = 'flex';
+            deckCardsEditor.style.flexDirection = 'column';
+            deckCardsEditor.style.flexWrap = 'nowrap';
+            deckCardsEditor.style.alignItems = 'stretch';
+
             // Check if user is admin
             if (!currentUser || currentUser.role !== 'ADMIN') {
                 console.warn('Card View is only available to ADMIN users');
