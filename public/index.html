@@ -3946,9 +3946,11 @@
                     `;
                     
                     // Render cards in horizontal rows - Card View specific rendering
+                    // Show multiple instances of cards based on quantity
                     typeCards.forEach((cardData, cardIndex) => {
                         const card = cardData;
                         const index = cardData.originalIndex;
+                        const quantity = card.quantity || 1;
                         
                         // Direct lookup using UUID
                         const availableCard = window.availableCardsMap.get(card.cardId);
@@ -3978,19 +3980,23 @@
                             quantityButtons = `<button class="quantity-btn card-view-btn" onclick="removeCardFromEditor(${index})">-</button>`;
                         }
                         
-                        cardsHtml += `
-                            <div class="deck-card-card-view-item" 
-                                 data-index="${index}" 
-                                 data-type="${card.type}"
-                                 onmouseenter="showCardHoverModal('${cardImagePath}', '${(availableCard.name || availableCard.card_name || 'Card').replace(/'/g, "\\'")}')"
-                                 onmouseleave="hideCardHoverModal()">
-                                <img src="${cardImagePath}" alt="${availableCard.name || availableCard.card_name || 'Card'}" class="card-view-image">
-                                <div class="card-view-actions">
-                                    ${alternateArtButton}
-                                    ${quantityButtons}
+                        // Render multiple instances of the card based on quantity
+                        for (let i = 0; i < quantity; i++) {
+                            cardsHtml += `
+                                <div class="deck-card-card-view-item" 
+                                     data-index="${index}" 
+                                     data-type="${card.type}"
+                                     data-instance="${i + 1}"
+                                     onmouseenter="showCardHoverModal('${cardImagePath}', '${(availableCard.name || availableCard.card_name || 'Card').replace(/'/g, "\\'")}')"
+                                     onmouseleave="hideCardHoverModal()">
+                                    <img src="${cardImagePath}" alt="${availableCard.name || availableCard.card_name || 'Card'}" class="card-view-image">
+                                    <div class="card-view-actions">
+                                        ${alternateArtButton}
+                                        ${quantityButtons}
+                                    </div>
                                 </div>
-                            </div>
-                        `;
+                            `;
+                        }
                     });
                     
                     cardsHtml += `
