@@ -180,6 +180,275 @@
             display: block;
             box-sizing: border-box;
         }
+
+        /* ===== CARD VIEW STYLING ===== */
+        
+        /* Card View Container - Completely Independent */
+        .deck-cards-editor.card-view {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+            display: block !important;
+            /* Override any layout system interference */
+            flex-direction: column !important;
+            align-items: stretch !important;
+        }
+        
+        /* Completely override any layout system for Card View */
+        .deck-cards-editor.card-view * {
+            box-sizing: border-box;
+        }
+        
+        .deck-cards-editor.card-view .deck-column,
+        .deck-cards-editor.card-view .deck-type-section {
+            display: none !important;
+        }
+        
+        /* Individual Card View Item */
+        .deck-card-card-view-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 175px; /* Portrait width */
+            height: 250px; /* Portrait height */
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            /* Removed padding to allow image to fill frame */
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative; /* Enable absolute positioning for buttons */
+        }
+        
+        /* Landscape orientation for character, location, and event cards */
+        .deck-card-card-view-item[data-type="character"],
+        .deck-card-card-view-item[data-type="location"],
+        .deck-card-card-view-item[data-type="event"] {
+            width: 250px; /* 75% of 333px for landscape */
+            height: 175px; /* 75% of 233px, taller to accommodate buttons underneath */
+            flex-direction: column; /* Keep vertical layout for buttons underneath */
+            align-items: center;
+            justify-content: flex-start; /* Align content to top, not center */
+            /* Removed padding to allow image to fill frame */
+        }
+        
+        .deck-card-card-view-item:hover {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Card View Image */
+        .card-view-image {
+            width: 100%;
+            flex-grow: 1; /* Fill available space above buttons */
+            object-fit: cover;
+            object-position: center top; /* Move image up to reduce empty head space */
+            border-radius: 6px;
+            margin-bottom: 8px; /* Space between image and buttons - same as landscape */
+        }
+        
+        /* Portrait image - increase size by 15% and fill frame */
+        .deck-card-card-view-item:not([data-type="character"]):not([data-type="location"]):not([data-type="event"]) .card-view-image {
+            width: 115%; /* Increase width by 15% */
+            height: 100%; /* Fill the entire frame height */
+            margin-left: -7.5%; /* Center the larger image */
+            margin-right: -7.5%; /* Center the larger image */
+            margin-bottom: 0; /* Remove space below image for portrait cards */
+            flex-grow: 0; /* Don't use flex-grow, use fixed height */
+            object-fit: cover; /* Ensure image covers the frame */
+            object-position: center top; /* Position image at top of frame */
+        }
+        
+        /* Landscape image for character, location, and event cards */
+        .deck-card-card-view-item[data-type="character"] .card-view-image,
+        .deck-card-card-view-item[data-type="location"] .card-view-image,
+        .deck-card-card-view-item[data-type="event"] .card-view-image {
+            width: 100%; /* Full width of container */
+            /* Removed fixed height - uses flex-grow from base class */
+            object-position: center top; /* Move image up to reduce empty head space */
+            margin-bottom: 8px; /* Space between image and buttons */
+            margin-right: 0;
+            flex-shrink: 0;
+        }
+        
+        /* Card View Actions Container */
+        .card-view-actions {
+            display: flex;
+            flex-direction: row; /* Always horizontal row */
+            gap: 6px; /* Increased gap for horizontal buttons */
+            width: auto; /* Auto width for horizontal buttons */
+            align-items: center;
+            justify-content: center; /* Center buttons horizontally */
+            margin-top: auto; /* Push buttons to bottom of card - same as landscape */
+            flex-shrink: 0; /* Prevent buttons from shrinking */
+        }
+        
+        /* Portrait card actions - position outside frame */
+        .deck-card-card-view-item:not([data-type="character"]):not([data-type="location"]):not([data-type="event"]) .card-view-actions {
+            position: absolute; /* Position outside the frame */
+            bottom: -27px; /* Position below the frame, moved up 3px */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Center horizontally */
+            margin-top: 0; /* Override margin-top: auto */
+        }
+        
+        /* Landscape card actions positioning */
+        .deck-card-card-view-item[data-type="character"] .card-view-actions,
+        .deck-card-card-view-item[data-type="location"] .card-view-actions,
+        .deck-card-card-view-item[data-type="event"] .card-view-actions {
+            margin-top: auto; /* Push buttons to bottom of card */
+            flex-shrink: 0; /* Prevent buttons from shrinking */
+        }
+        
+        /* Card View Buttons */
+        .card-view-btn {
+            font-size: 10px;
+            padding: 3px 6px;
+            min-width: 32px;
+            height: 20px;
+            border-radius: 3px;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card-view-btn:hover {
+            background: rgba(78, 205, 196, 0.3);
+            border-color: rgba(78, 205, 196, 0.4);
+            transform: translateY(-1px);
+        }
+        
+        /* Specific button types in card view */
+        .card-view-btn.alternate-art-btn {
+            font-size: 9px;
+            padding: 2px 4px;
+            min-width: 28px;
+            height: 18px;
+        }
+        
+        .card-view-btn.remove-one-btn,
+        .card-view-btn.add-one-btn,
+        .card-view-btn.quantity-btn {
+            font-size: 11px;
+            font-weight: bold;
+            min-width: 24px;
+            height: 18px;
+        }
+        
+        /* Card View Category Sections - Vertical Stack */
+        .card-view-category-section {
+            width: 100%;
+            margin-bottom: 30px;
+            display: block;
+            clear: both;
+        }
+        
+        .card-view-category-header {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-view-category-name {
+            color: #ffd700;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .card-view-category-count {
+            color: #bdc3c7;
+            font-size: 1rem;
+        }
+        
+        .card-view-category-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 30px; /* horizontal gap: 10px, vertical gap: 30px for more row spacing */
+            width: 100%;
+        }
+        
+        /* Responsive adjustments for Card View - 75% scaling */
+        @media (max-width: 1200px) {
+            .deck-card-card-view-item {
+                width: 160px; /* 75% of 175px */
+                height: 229px; /* 75% of 250px */
+            }
+            /* Images use flex-grow - no fixed heights needed */
+            /* Landscape cards */
+            .deck-card-card-view-item[data-type="character"],
+            .deck-card-card-view-item[data-type="location"],
+            .deck-card-card-view-item[data-type="event"] {
+                width: 225px; /* 75% of 300px */
+                height: 137px; /* 75% of 183px */
+            }
+            /* Images use flex-grow - no fixed heights needed */
+        }
+        
+        @media (max-width: 1000px) {
+            .deck-card-card-view-item {
+                width: 146px; /* 75% of 175px */
+                height: 208px; /* 75% of 250px */
+            }
+            /* Images use flex-grow - no fixed heights needed */
+            /* Landscape cards */
+            .deck-card-card-view-item[data-type="character"],
+            .deck-card-card-view-item[data-type="location"],
+            .deck-card-card-view-item[data-type="event"] {
+                width: 203px; /* 75% of 271px */
+                height: 125px; /* 75% of 167px */
+            }
+            /* Images use flex-grow - no fixed heights needed */
+        }
+        
+        @media (max-width: 800px) {
+            .deck-card-card-view-item {
+                width: 131px; /* 75% of 175px */
+                height: 188px; /* 75% of 250px */
+            }
+            /* Images use flex-grow - no fixed heights needed */
+            /* Landscape cards */
+            .deck-card-card-view-item[data-type="character"],
+            .deck-card-card-view-item[data-type="location"],
+            .deck-card-card-view-item[data-type="event"] {
+                width: 183px; /* 75% of 243px */
+                height: 113px; /* 75% of 150px */
+            }
+            /* Images use flex-grow - no fixed heights needed */
+        }
+        
+        @media (max-width: 600px) {
+            .deck-card-card-view-item {
+                width: 116px; /* 75% of 175px */
+                height: 167px; /* 75% of 250px */
+            }
+            /* Images use flex-grow - no fixed heights needed */
+            /* Landscape cards */
+            .deck-card-card-view-item[data-type="character"],
+            .deck-card-card-view-item[data-type="location"],
+            .deck-card-card-view-item[data-type="event"] {
+                width: 161px; /* 75% of 214px */
+                height: 100px; /* 75% of 133px */
+            }
+            /* Images use flex-grow - no fixed heights needed */
+        }
     </style>
     <!-- Authentication Service -->
     <script src="/js/auth-service.js"></script>
@@ -3163,10 +3432,16 @@
                 
                 if (this.deckCardsEditor) {
                     this.deckCardsEditor.classList.remove('list-view');
+                    this.deckCardsEditor.classList.remove('card-view');
                 }
                 
                 if (this.listViewBtn) {
-                    this.listViewBtn.textContent = 'List View';
+                    // Check if user is admin to determine next view
+                    if (currentUser && currentUser.role === 'ADMIN') {
+                        this.listViewBtn.textContent = 'Card View';
+                    } else {
+                        this.listViewBtn.textContent = 'List View';
+                    }
                 }
                 
                 // Use the original function to maintain exact behavior
@@ -3178,6 +3453,7 @@
                 
                 if (this.deckCardsEditor) {
                     this.deckCardsEditor.classList.add('list-view');
+                    this.deckCardsEditor.classList.remove('card-view');
                 }
                 
                 if (this.listViewBtn) {
@@ -3227,6 +3503,28 @@
                 }, 10);
             }
 
+            async switchToCardView() {
+                this.currentView = 'card';
+                
+                // Disconnect layout observer when switching to card view
+                if (layoutObserver) {
+                    layoutObserver.disconnect();
+                    layoutObserver = null;
+                }
+                
+                if (this.deckCardsEditor) {
+                    this.deckCardsEditor.classList.remove('list-view');
+                    this.deckCardsEditor.classList.add('card-view');
+                }
+                
+                if (this.listViewBtn) {
+                    this.listViewBtn.textContent = 'List View';
+                }
+                
+                // Use the new card view rendering function - completely independent
+                renderDeckCardsCardView();
+            }
+
             getCurrentView() {
                 return this.currentView;
             }
@@ -3238,22 +3536,38 @@
             isTileView() {
                 return this.currentView === 'tile';
             }
+
+            isCardView() {
+                return this.currentView === 'card';
+            }
         }
 
         // Global view manager instance
         const viewManager = new ViewManager();
 
-        // List View functionality - now uses ViewManager
+        // View toggle functionality - now supports three-way cycling (Tile → Card → List → Tile)
         function toggleListView() {
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             const listViewBtn = document.getElementById('listViewBtn');
             
-            if (deckCardsEditor.classList.contains('list-view')) {
-                // Switch back to tile view
+            // Check if user is admin
+            const isAdmin = currentUser && currentUser.role === 'ADMIN';
+            
+            if (deckCardsEditor.classList.contains('card-view')) {
+                // Currently in Card View - switch to List View
+                viewManager.switchToListView();
+            } else if (deckCardsEditor.classList.contains('list-view')) {
+                // Currently in List View - switch to Tile View
                 viewManager.switchToTileView();
             } else {
-                // Switch to list view
-                viewManager.switchToListView();
+                // Currently in Tile View
+                if (isAdmin) {
+                    // Switch to Card View (admin only)
+                    viewManager.switchToCardView();
+                } else {
+                    // Switch to List View
+                    viewManager.switchToListView();
+                }
             }
             
             if (currentDeckId) {
@@ -3512,6 +3826,144 @@
                     });
                 }, 10);
             });
+        }
+
+        // Card View rendering function - Completely independent from Tile View
+        function renderDeckCardsCardView() {
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            if (!deckCardsEditor) return;
+
+            // Check if user is admin
+            if (!currentUser || currentUser.role !== 'ADMIN') {
+                console.warn('Card View is only available to ADMIN users');
+                return;
+            }
+
+            if (window.deckEditorCards.length === 0) {
+                deckCardsEditor.innerHTML = `
+                    <div class="empty-deck-message">
+                        <p>No cards in this deck yet.</p>
+                        <p>Drag cards from the right panel to add them!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group cards by type - Card View specific logic
+            const cardsByType = {};
+            window.deckEditorCards.forEach((card, index) => {
+                let type = card.type;
+                // Convert underscore format to hyphen format for consistency
+                if (type === 'ally_universe') {
+                    type = 'ally-universe';
+                } else if (type === 'basic_universe') {
+                    type = 'basic-universe';
+                } else if (type === 'advanced_universe') {
+                    type = 'advanced-universe';
+                }
+                
+                if (!cardsByType[type]) {
+                    cardsByType[type] = [];
+                }
+                cardsByType[type].push({ ...card, originalIndex: index });
+            });
+
+            // Card View specific type order and display names
+            const typeOrder = [
+                'character', 'location', 'mission', 'event', 'special', 
+                'aspect', 'advanced-universe', 'teamwork', 'ally-universe', 
+                'training', 'basic-universe', 'power'
+            ];
+            
+            const typeDisplayNames = {
+                'character': 'Characters',
+                'location': 'Locations', 
+                'mission': 'Missions',
+                'event': 'Events',
+                'special': 'Special Cards',
+                'aspect': 'Aspects',
+                'advanced-universe': 'Universe: Advanced',
+                'teamwork': 'Universe: Teamwork',
+                'ally-universe': 'Universe: Ally',
+                'training': 'Universe: Training',
+                'basic-universe': 'Universe: Basic',
+                'power': 'Power Cards'
+            };
+
+            let cardsHtml = '';
+
+            // Render each type group as a full-width vertical section - completely independent structure
+            typeOrder.forEach(type => {
+                if (cardsByType[type] && cardsByType[type].length > 0) {
+                    const typeCards = cardsByType[type];
+                    const typeName = typeDisplayNames[type] || type;
+                    const cardCount = typeCards.reduce((total, card) => total + (card.quantity || 1), 0);
+                    
+                    cardsHtml += `
+                        <div class="card-view-category-section" data-type="${type}">
+                            <div class="card-view-category-header">
+                                <span class="card-view-category-name">${typeName}</span>
+                                <span class="card-view-category-count">${cardCount} card${cardCount !== 1 ? 's' : ''}</span>
+                            </div>
+                            <div class="card-view-category-cards">
+                    `;
+                    
+                    // Render cards in horizontal rows - Card View specific rendering
+                    typeCards.forEach((cardData, cardIndex) => {
+                        const card = cardData;
+                        const index = cardData.originalIndex;
+                        
+                        // Direct lookup using UUID
+                        const availableCard = window.availableCardsMap.get(card.cardId);
+                        
+                        if (!availableCard) {
+                            console.warn('Card not found in availableCardsMap:', card);
+                            return;
+                        }
+                        
+                        // Get card image path
+                        const cardImagePath = getCardImagePath(availableCard, card.type, card.selectedAlternateImage);
+                        
+                        // Add alternate art button for cards with alternate images
+                        let alternateArtButton = '';
+                        if (availableCard.alternateImages && availableCard.alternateImages.length > 0) {
+                            alternateArtButton = `<button class="alternate-art-btn card-view-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>`;
+                        }
+                        
+                        // Add quantity buttons for applicable card types
+                        let quantityButtons = '';
+                        if (card.type !== 'character' && card.type !== 'location' && card.type !== 'mission') {
+                            quantityButtons = `
+                                <button class="remove-one-btn card-view-btn" onclick="removeOneCardFromEditor(${index})">-1</button>
+                                <button class="add-one-btn card-view-btn" onclick="addOneCardToEditor(${index})">+1</button>
+                            `;
+                        } else {
+                            quantityButtons = `<button class="quantity-btn card-view-btn" onclick="removeCardFromEditor(${index})">-</button>`;
+                        }
+                        
+                        cardsHtml += `
+                            <div class="deck-card-card-view-item" 
+                                 data-index="${index}" 
+                                 data-type="${card.type}"
+                                 onmouseenter="showCardHoverModal('${cardImagePath}', '${(availableCard.name || availableCard.card_name || 'Card').replace(/'/g, "\\'")}')"
+                                 onmouseleave="hideCardHoverModal()">
+                                <img src="${cardImagePath}" alt="${availableCard.name || availableCard.card_name || 'Card'}" class="card-view-image">
+                                <div class="card-view-actions">
+                                    ${alternateArtButton}
+                                    ${quantityButtons}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    cardsHtml += `
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            deckCardsEditor.innerHTML = cardsHtml;
         }
 
         // Function to enforce horizontal layout in list view
@@ -5251,12 +5703,20 @@
         function getCurrentUIPreferences() {
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             const isListView = deckCardsEditor && deckCardsEditor.classList.contains('list-view');
+            const isCardView = deckCardsEditor && deckCardsEditor.classList.contains('card-view');
+            
+            let viewMode = 'tile'; // default
+            if (isListView) {
+                viewMode = 'list';
+            } else if (isCardView) {
+                viewMode = 'card';
+            }
             
             return {
                 dividerPosition: getDividerPosition(),
                 expansionState: getExpansionState(),
                 powerCardsSortMode: powerCardsSortMode,
-                viewMode: isListView ? 'list' : 'tile',
+                viewMode: viewMode,
                 characterGroupExpansionState: characterGroupExpansionState
             };
         }
@@ -5356,20 +5816,43 @@
                 Object.assign(characterGroupExpansionState, preferences.characterGroupExpansionState);
             }
 
-            // Apply view mode (list or tile)
+            // Apply view mode (list, tile, or card)
             if (preferences.viewMode) {
                 const deckCardsEditor = document.getElementById('deckCardsEditor');
                 const listViewBtn = document.getElementById('listViewBtn');
                 
                 if (deckCardsEditor && listViewBtn) {
-                    if (preferences.viewMode === 'list') {
+                    if (preferences.viewMode === 'card') {
+                        // Only apply card view if user is admin
+                        if (currentUser && currentUser.role === 'ADMIN') {
+                            manageDeckLayout('removeClass', { className: 'list-view' });
+                            manageDeckLayout('addClass', { className: 'card-view' });
+                            listViewBtn.textContent = 'List View';
+                            // Re-render in card view
+                            renderDeckCardsCardView();
+                        } else {
+                            // Fallback to tile view for non-admin users
+                            manageDeckLayout('removeClass', { className: 'list-view' });
+                            manageDeckLayout('removeClass', { className: 'card-view' });
+                            listViewBtn.textContent = 'List View';
+                            await displayDeckCardsForEditing();
+                        }
+                    } else if (preferences.viewMode === 'list') {
                         manageDeckLayout('addClass', { className: 'list-view' });
+                        manageDeckLayout('removeClass', { className: 'card-view' });
                         listViewBtn.textContent = 'Tile View';
                         // Re-render in list view
                         renderDeckCardsListView();
                     } else {
+                        // Default to tile view
                         manageDeckLayout('removeClass', { className: 'list-view' });
-                        listViewBtn.textContent = 'List View';
+                        manageDeckLayout('removeClass', { className: 'card-view' });
+                        // Check if user is admin to determine next view
+                        if (currentUser && currentUser.role === 'ADMIN') {
+                            listViewBtn.textContent = 'Card View';
+                        } else {
+                            listViewBtn.textContent = 'List View';
+                        }
                         // Re-render in tile view
                         await displayDeckCardsForEditing();
                     }
@@ -5984,6 +6467,7 @@
             
             const deckPercentage = (deckWidth / totalWidth) * 100;
             const isListView = deckCardsEditor.classList.contains('list-view');
+            const isCardView = deckCardsEditor.classList.contains('card-view');
             const hasTwoColumn = deckCardsEditor.classList.contains('two-column');
             
             
@@ -5992,6 +6476,9 @@
                 
                 manageDeckLayout('addClass', { className: 'two-column' });
                 createTwoColumnLayout();
+            } else if (isCardView) {
+                // Card view: completely independent - do nothing with layout system
+                // Card View manages its own layout internally
             } else {
                 // Tile view: normal responsive behavior
                 
@@ -6050,6 +6537,11 @@
         function createTwoColumnLayout() {
             const deckCardsEditor = document.querySelector('.deck-cards-editor');
             if (!deckCardsEditor) return;
+            
+            // Don't apply two-column layout to Card View
+            if (deckCardsEditor.classList.contains('card-view')) {
+                return;
+            }
             
             
             // If already in two-column mode, don't redistribute - keep categories stable
