@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Card View is an advanced deck visualization mode in the Overpower Deckbuilder that provides a unique card-centric display of deck contents. This view is exclusively available to ADMIN users and offers a completely different visual experience compared to the standard Tile View and List View modes.
+The Card View is an advanced deck visualization mode in the Overpower Deckbuilder that provides a unique card-centric display of deck contents. This view is available to all users and offers a completely different visual experience compared to the standard Tile View and List View modes.
 
 ## Table of Contents
 
@@ -25,7 +25,7 @@ The Card View is an advanced deck visualization mode in the Overpower Deckbuilde
 The Card View is implemented through the `renderDeckCardsCardView()` function located in `public/index.html` (lines 3832-3967). This function is completely independent from the Tile View and List View rendering systems.
 
 ### Key Design Principles
-- **Admin-Only Access**: Restricted to users with ADMIN role
+- **Universal Access**: Available to all user roles (ADMIN, USER, GUEST)
 - **Visual Card Focus**: Displays actual card images as the primary interface element
 - **Category-Based Organization**: Groups cards by type with clear visual separation
 - **Responsive Layout**: Adapts to different screen sizes with proportional scaling
@@ -40,15 +40,12 @@ window.deckEditorCards → renderDeckCardsCardView() → HTML Generation → DOM
 
 ### User Role Validation
 ```javascript
-// Check if user is admin
-if (!currentUser || currentUser.role !== 'ADMIN') {
-    console.warn('Card View is only available to ADMIN users');
-    return;
-}
+// Card View is now available to all users
+// No role-based restrictions
 ```
 
 ### Security Features
-- **Role-Based Access**: Only ADMIN users can access Card View
+- **Universal Access**: All user roles can access Card View
 - **Client-Side Validation**: Immediate feedback for unauthorized access
 - **Server-Side Enforcement**: Backend APIs maintain role-based restrictions
 - **Graceful Degradation**: Non-admin users see warning and fallback to other views

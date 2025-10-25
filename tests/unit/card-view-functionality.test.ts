@@ -97,16 +97,17 @@ const mockEventCard = {
 function mockRenderDeckCardsCardView() {
     const deckCardsEditor = (global as any).document.getElementById('deckCardsEditor');
     if (!deckCardsEditor) {
+        console.log('No deckCardsEditor found');
         return;
     }
 
-    // Check if user is admin
-    if (!(global as any).currentUser || (global as any).currentUser.role !== 'ADMIN') {
-        (global as any).console.warn('Card View is only available to ADMIN users');
-        return;
-    }
+    console.log('Mock function called, deckEditorCards length:', (global.window as any).deckEditorCards.length);
+    console.log('Available cards map size:', (global.window as any).availableCardsMap.size);
+
+    // Card View is now available to all users
 
     if ((global.window as any).deckEditorCards.length === 0) {
+        console.log('No cards in deck, showing empty message');
         deckCardsEditor.innerHTML = `
             <div class="empty-deck-message">
                 <p>No cards in this deck yet.</p>
@@ -266,34 +267,64 @@ describe('Card View Functionality Tests', () => {
         (global.window as any).availableCardsMap.set('power-1', mockPowerCard);
         (global.window as any).availableCardsMap.set('mission-1', mockMissionCard);
         (global.window as any).availableCardsMap.set('event-1', mockEventCard);
+        
+        // Debug: Verify the map is set up correctly
+        console.log('Available cards in map:', (global.window as any).availableCardsMap.size);
+        console.log('char-1 card:', (global.window as any).availableCardsMap.get('char-1'));
     });
 
-    describe('Admin Access Control', () => {
-        test('should show warning and return early for non-admin users', () => {
+    describe('User Access Control', () => {
+        test('should render cards for all user roles', () => {
             (global as any).currentUser = { role: 'USER' };
+            (global.window as any).deckEditorCards = [{
+                id: 'deckcard-1',
+                type: 'character',
+                cardId: 'char-1',
+                quantity: 1
+            }];
             
-            // Verify the function is defined
+            // Check if the function exists
             expect(typeof mockRenderDeckCardsCardView).toBe('function');
             
-            // Call the mock function
-            const result = mockRenderDeckCardsCardView();
+            // Simple test - just check if the function runs without error
+            expect(() => mockRenderDeckCardsCardView()).not.toThrow();
             
-            // Check if console.warn was called
-            expect((global as any).console.warn).toHaveBeenCalledWith('Card View is only available to ADMIN users');
-            expect(mockDeckCardsEditor.innerHTML).toBe('');
-        });
-
-        test('should show warning and return early for null currentUser', () => {
-            (global as any).currentUser = null;
-            
-            mockRenderDeckCardsCardView();
-            
-            expect((global as any).console.warn).toHaveBeenCalledWith('Card View is only available to ADMIN users');
-            expect(mockDeckCardsEditor.innerHTML).toBe('');
+            // Check if any HTML was rendered
+            expect(mockDeckCardsEditor.innerHTML.length).toBeGreaterThan(0);
         });
 
         test('should render cards for admin users', () => {
             (global as any).currentUser = { role: 'ADMIN' };
+            (global.window as any).deckEditorCards = [{
+                id: 'deckcard-1',
+                type: 'character',
+                cardId: 'char-1',
+                quantity: 1
+            }];
+            
+            mockRenderDeckCardsCardView();
+            
+            expect((global as any).console.warn).not.toHaveBeenCalled();
+            expect(mockDeckCardsEditor.innerHTML).toContain('card-view-category-section');
+        });
+
+        test('should render cards for guest users', () => {
+            (global as any).currentUser = { role: 'GUEST' };
+            (global.window as any).deckEditorCards = [{
+                id: 'deckcard-1',
+                type: 'character',
+                cardId: 'char-1',
+                quantity: 1
+            }];
+            
+            mockRenderDeckCardsCardView();
+            
+            expect((global as any).console.warn).not.toHaveBeenCalled();
+            expect(mockDeckCardsEditor.innerHTML).toContain('card-view-category-section');
+        });
+
+        test('should render cards even with null currentUser', () => {
+            (global as any).currentUser = null;
             (global.window as any).deckEditorCards = [{
                 id: 'deckcard-1',
                 type: 'character',

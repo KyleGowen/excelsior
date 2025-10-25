@@ -1229,7 +1229,7 @@ function updateFortificationLimitStatus() {
 ## Deck Editor Card View Styling
 
 ### Overview
-The Card View is an admin-only deck visualization mode that displays cards in a unique card-centric layout with actual card images as the primary interface elements.
+The Card View is a deck visualization mode available to all users that displays cards in a unique card-centric layout with actual card images as the primary interface elements.
 
 ### Container Styling
 - **Main Container**: `.deck-cards-editor.card-view`
