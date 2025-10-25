@@ -280,7 +280,7 @@
         
         /* Card View Actions Container */
         .card-view-actions {
-            display: flex;
+            display: flex !important;
             flex-direction: row; /* Always horizontal row */
             gap: 6px; /* Increased gap for horizontal buttons */
             width: auto; /* Auto width for horizontal buttons */
@@ -288,15 +288,18 @@
             justify-content: center; /* Center buttons horizontally */
             margin-top: auto; /* Push buttons to bottom of card - same as landscape */
             flex-shrink: 0; /* Prevent buttons from shrinking */
+            visibility: visible !important;
+            opacity: 1 !important;
         }
         
         /* Portrait card actions - position outside frame */
         .deck-card-card-view-item:not([data-type="character"]):not([data-type="location"]):not([data-type="event"]) .card-view-actions {
             position: absolute; /* Position outside the frame */
-            bottom: -27px; /* Position below the frame, moved up 3px */
+            bottom: -35px; /* Position below the frame with more space */
             left: 50%; /* Center horizontally */
             transform: translateX(-50%); /* Center horizontally */
             margin-top: 0; /* Override margin-top: auto */
+            z-index: 10; /* Ensure buttons are visible */
         }
         
         /* Landscape card actions positioning */
@@ -351,8 +354,8 @@
         /* Card View Category Sections - Vertical Stack */
         .card-view-category-section {
             width: 100% !important;
-            margin-bottom: 15px;
-            padding-bottom: 5px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
             display: block;
             clear: both;
         }
@@ -361,8 +364,8 @@
             background: rgba(78, 205, 196, 0.1);
             border: 1px solid rgba(78, 205, 196, 0.3);
             border-radius: 6px;
-            padding: 12px 16px;
-            margin-bottom: 12px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
             width: 100%;
             box-sizing: border-box;
             display: flex;
@@ -370,6 +373,7 @@
             align-items: center;
             cursor: pointer;
             transition: all 0.2s ease;
+            min-height: 50px;
         }
 
         .card-view-category-header:hover {
@@ -378,21 +382,40 @@
         }
 
         .card-view-category-controls {
-            display: flex;
+            display: flex !important;
             align-items: center;
             gap: 12px;
+            position: relative;
+            z-index: 1;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
 
         .card-view-category-toggle {
-            color: #4ecdc4;
-            font-size: 0.9rem;
+            color: #4ecdc4 !important;
+            font-size: 1.4rem !important;
             font-weight: bold;
             transition: transform 0.2s ease;
             user-select: none;
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            min-width: 20px !important;
+            text-align: center !important;
+            background: rgba(78, 205, 196, 0.1) !important;
+            border: 1px solid rgba(78, 205, 196, 0.3) !important;
+            border-radius: 4px !important;
+            padding: 4px 8px !important;
         }
 
         .card-view-category-toggle.collapsed {
             transform: rotate(-90deg);
+        }
+        
+        .card-view-category-toggle:hover {
+            background: rgba(78, 205, 196, 0.2) !important;
+            border-color: rgba(78, 205, 196, 0.5) !important;
+            transform: scale(1.1);
         }
         
         .card-view-category-name {
@@ -402,23 +425,34 @@
         }
         
         .card-view-category-count {
-            color: #bdc3c7;
-            font-size: 1rem;
+            color: #bdc3c7 !important;
+            font-size: 1rem !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
         
         .card-view-category-cards {
             display: flex;
             flex-wrap: wrap;
-            gap: 45px 15px; /* vertical gap: 45px to prevent portrait card overlap, horizontal gap: 15px */
+            gap: 70px 15px; /* vertical gap: 70px to accommodate buttons below cards, horizontal gap: 15px */
             width: 100%;
             transition: all 0.3s ease;
-            overflow: hidden;
+            overflow: visible; /* Allow buttons positioned outside cards to be visible */
         }
 
         .card-view-category-cards.collapsed {
             max-height: 0;
             margin-bottom: 0;
             opacity: 0;
+        }
+        
+        /* Sidebar category collapse icons */
+        .collapse-icon {
+            font-size: 1.02rem;
+            flex-shrink: 0;
+            min-width: 17px;
+            color: #4ecdc4;
+            transition: transform 0.2s ease;
         }
         
         /* Responsive adjustments for Card View - 75% scaling */
