@@ -4076,6 +4076,13 @@
                                 <button class="remove-one-btn card-view-btn" onclick="removeOneCardFromEditor(${index})">-1</button>
                                 <button class="add-one-btn card-view-btn" onclick="addOneCardToEditor(${index})">+1</button>
                             `;
+                        } else if (card.type === 'character') {
+                            // For characters, add remove button and reserve button
+                            const reserveButton = getReserveCharacterButton(card.cardId, index);
+                            quantityButtons = `
+                                <button class="quantity-btn card-view-btn" onclick="removeCardFromEditor(${index})">-</button>
+                                ${reserveButton}
+                            `;
                         } else {
                             quantityButtons = `<button class="quantity-btn card-view-btn" onclick="removeCardFromEditor(${index})">-</button>`;
                         }
@@ -5809,6 +5816,9 @@
             }
         }
 
+        // Debouncing mechanism for UI preferences saves
+        let saveUIPreferencesTimeout = null;
+        
         // Save UI preferences to database
         async function saveUIPreferences(deckId, preferences) {
             // Skip saving UI preferences for guest users
@@ -5829,7 +5839,13 @@
                 return;
             }
             
-            try {
+            // Debounce UI preference saves to prevent rate limiting
+            if (saveUIPreferencesTimeout) {
+                clearTimeout(saveUIPreferencesTimeout);
+            }
+            
+            saveUIPreferencesTimeout = setTimeout(async () => {
+                try {
                 const response = await fetch(`/api/decks/${deckId}/ui-preferences`, {
                     method: 'PUT',
                     headers: {
@@ -5839,13 +5855,14 @@
                     body: JSON.stringify(preferences)
                 });
                 
-                const data = await response.json();
-                if (!data.success) {
-                    console.warn('Failed to save UI preferences:', data.error);
+                    const data = await response.json();
+                    if (!data.success) {
+                        console.warn('Failed to save UI preferences:', data.error);
+                    }
+                } catch (error) {
+                    console.error('Error saving UI preferences:', error);
                 }
-            } catch (error) {
-                console.error('Error saving UI preferences:', error);
-            }
+            }, 500); // Debounce for 500ms
         }
 
         // Get current UI preferences object
@@ -8571,7 +8588,18 @@
             console.log('🎯 Removing card:', removedCard);
             
             window.deckEditorCards.splice(index, 1);
-            await displayDeckCardsForEditing();
+            
+            // Preserve current view when removing cards
+            if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                // Card View: re-render Card View
+                renderDeckCardsCardView();
+            } else if (deckCardsEditor && deckCardsEditor.classList.contains('list-view')) {
+                // List View: re-render List View
+                renderDeckCardsListView();
+            } else {
+                // Tile View (default): re-render Tile View
+                await displayDeckCardsForEditing();
+            }
             
             // Restore scroll position after re-rendering
             if (deckCardsEditor) {
@@ -10539,7 +10567,19 @@
                 const currentExpansionState = getExpansionState();
                 
                 window.deckEditorCards[cardIndex].selectedAlternateImage = selectedImage;
-                await displayDeckCardsForEditing();
+                
+                // Preserve current view when updating card art
+                const deckCardsEditor = document.querySelector('.deck-cards-editor');
+                if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                    // Card View: re-render Card View
+                    renderDeckCardsCardView();
+                } else if (deckCardsEditor && deckCardsEditor.classList.contains('list-view')) {
+                    // List View: re-render List View
+                    renderDeckCardsListView();
+                } else {
+                    // Tile View (default): re-render Tile View
+                    await displayDeckCardsForEditing();
+                }
                 
                 // Restore the expansion state after re-rendering
                 applyUIPreferences({ expansionState: currentExpansionState });
@@ -10923,34 +10963,65 @@
 
         function updateReserveButtons() {
             
-            // Find all character cards in the deck editor
-            const characterCards = document.querySelectorAll('.deck-card-editor-item');
+            // Find all character cards in the deck editor (both Tile View and Card View)
+            const characterCards = document.querySelectorAll('.deck-card-editor-item, .deck-card-card-view-item');
             
             characterCards.forEach((cardElement, index) => {
                 // Check if this is a character card
                 const cardInfo = cardElement.querySelector('.deck-card-editor-name');
-                if (!cardInfo) return;
+                let matchingCard = null;
                 
-                // Find the card ID from the window.deckEditorCards array by matching the card name
-                const cardName = cardInfo.textContent.trim();
-                const matchingCard = window.window.deckEditorCards.find(card => {
-                    if (card.type !== 'character') return false;
-                    const character = window.availableCardsMap.get(card.cardId);
-                    return character && character.name === cardName;
-                });
+                if (cardInfo) {
+                    // Tile View: Find by card name
+                    const cardName = cardInfo.textContent.trim();
+                    matchingCard = window.window.deckEditorCards.find(card => {
+                        if (card.type !== 'character') return false;
+                        const character = window.availableCardsMap.get(card.cardId);
+                        return character && character.name === cardName;
+                    });
+                } else if (cardElement.hasAttribute('data-index')) {
+                    // Card View: Find by data-index attribute
+                    const cardIndex = parseInt(cardElement.getAttribute('data-index'));
+                    if (cardIndex >= 0 && cardIndex < window.window.deckEditorCards.length) {
+                        const card = window.window.deckEditorCards[cardIndex];
+                        if (card && card.type === 'character') {
+                            matchingCard = card;
+                        }
+                    }
+                }
+                
+                if (!matchingCard) return;
                 
                 if (matchingCard) {
                     const cardId = matchingCard.cardId;
                     const cardIndex = window.window.deckEditorCards.indexOf(matchingCard);
-                    const reserveContainer = cardElement.querySelector('.deck-card-editor-reserve');
+                    
+                    // Handle both Tile View and Card View
+                    let reserveContainer = cardElement.querySelector('.deck-card-editor-reserve');
+                    if (!reserveContainer) {
+                        // Card View: look for reserve button in card-view-actions
+                        reserveContainer = cardElement.querySelector('.card-view-actions');
+                    }
                     
                     if (reserveContainer) {
                         // Get the new button HTML
                         const newButtonHTML = getReserveCharacterButton(cardId, cardIndex);
                         
-                        // Only update if the content has actually changed to avoid unnecessary DOM manipulation
-                        if (reserveContainer.innerHTML !== newButtonHTML) {
-                            reserveContainer.innerHTML = newButtonHTML;
+                        // For Card View, we need to preserve other buttons and only update the reserve button
+                        if (cardElement.classList.contains('deck-card-card-view-item')) {
+                            // Card View: find and update only the reserve button
+                            const existingReserveBtn = reserveContainer.querySelector('.reserve-btn');
+                            if (existingReserveBtn) {
+                                existingReserveBtn.outerHTML = newButtonHTML;
+                            } else if (newButtonHTML) {
+                                // Add reserve button if it doesn't exist
+                                reserveContainer.innerHTML += newButtonHTML;
+                            }
+                        } else {
+                            // Tile View: replace entire container content
+                            if (reserveContainer.innerHTML !== newButtonHTML) {
+                                reserveContainer.innerHTML = newButtonHTML;
+                            }
                         }
                     }
                 }
