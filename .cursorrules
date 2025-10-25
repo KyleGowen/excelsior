@@ -142,6 +142,11 @@
 
 ## Acronyms and Terminology
 - **OPD** = "One Per Deck" - Cards that can only appear once in a deck (marked with `one_per_deck=TRUE` in database)
+- **UA** = "Universe: Advanced" - Advanced Universe card category
+- **UB** = "Universe: Basic" - Basic Universe card category  
+- **TW** = "Universe: Teamwork" - Teamwork Universe card category
+- **Ally** = "Universe: Ally" - Ally Universe card category
+- **Training** = "Universe: Training" - Training Universe card category
 
 ## Remember
 - Quality over speed
