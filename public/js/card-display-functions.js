@@ -140,8 +140,10 @@ function formatAdvancedUniverseCardEffect(effectText, cardData = null) {
     
     // Decode HTML entities in the text
     let decodedText = effectText
-        .replace(/\'93/g, "'")  // Left single quotation mark
-        .replace(/\'94/g, "'")  // Right single quotation mark
+        .replace(/\\'93/g, "'")  // Left single quotation mark (escaped)
+        .replace(/\\'94/g, "'")  // Right single quotation mark (escaped)
+        .replace(/&#39;/g, "'")  // Single quotation mark
+        .replace(/&apos;/g, "'") // Single quotation mark (alternative)
         .replace(/&quot;/g, '"') // Double quotes
         .replace(/&amp;/g, '&')  // Ampersands
         .replace(/&lt;/g, '<')   // Less than
