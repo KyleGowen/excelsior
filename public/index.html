@@ -19,6 +19,24 @@
             box-sizing: border-box;
         }
         
+        /* Advanced Universe Table Column Widths */
+        #advanced-universe-table {
+            table-layout: fixed !important;
+            width: 100% !important;
+        }
+        
+        #advanced-universe-table th:nth-child(1), #advanced-universe-table td:nth-child(1) { width: 10% !important; } /* Image */
+        #advanced-universe-table th:nth-child(2), #advanced-universe-table td:nth-child(2) { width: 6% !important; }  /* Add to Deck */
+        #advanced-universe-table th:nth-child(3), #advanced-universe-table td:nth-child(3) { 
+            width: 10% !important; 
+            white-space: nowrap !important; 
+            overflow: hidden !important; 
+            text-overflow: ellipsis !important;
+        } /* Name - reduced to 10% */
+        #advanced-universe-table th:nth-child(4), #advanced-universe-table td:nth-child(4) { width: 10% !important; } /* Character */
+        #advanced-universe-table th:nth-child(5), #advanced-universe-table td:nth-child(5) { width: 25% !important; } /* Card Effect - increased to 25% */
+        #advanced-universe-table th:nth-child(6), #advanced-universe-table td:nth-child(6) { width: 7% !important; } /* One Per Deck */
+        
         /* Locations Search Input Styling - Direct override */
         #locations-table .header-filter[data-column="special_ability"] {
             width: 480px !important;
@@ -115,11 +133,11 @@
             width: 100% !important;
         }
         
-        #special-cards-table th:nth-child(1), #special-cards-table td:nth-child(1) { width: 10%; } /* Image - reduced by 15% */
-        #special-cards-table th:nth-child(2), #special-cards-table td:nth-child(2) { width: 6%; }  /* Add to Deck - reduced by 25% */
-        #special-cards-table th:nth-child(3), #special-cards-table td:nth-child(3) { width: 16%; } /* Name - reduced by 10% */
-        #special-cards-table th:nth-child(4), #special-cards-table td:nth-child(4) { width: 17%; } /* Character - reduced by 15% */
-        #special-cards-table th:nth-child(5), #special-cards-table td:nth-child(5) { width: 20%; } /* Card Effect - reduced to fit within frame */
+        #special-cards-table th:nth-child(1), #special-cards-table td:nth-child(1) { width: 10% !important; } /* Image - reduced by 15% */
+        #special-cards-table th:nth-child(2), #special-cards-table td:nth-child(2) { width: 6% !important; }  /* Add to Deck - reduced by 25% */
+        #special-cards-table th:nth-child(3), #special-cards-table td:nth-child(3) { width: 30% !important; } /* Name - increased by 14% total */
+        #special-cards-table th:nth-child(4), #special-cards-table td:nth-child(4) { width: 15% !important; } /* Character - reduced by 17% */
+        #special-cards-table th:nth-child(5), #special-cards-table td:nth-child(5) { width: 8% !important; } /* Card Effect - reduced by 12% total */
         
         
         /* Center and resize Special Cards search inputs */
