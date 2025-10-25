@@ -1069,6 +1069,11 @@ app.get('/database-view', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'database-view.html'));
 });
 
+// Serve database view (alias for compatibility)
+app.get('/database', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'public', 'database-view.html'));
+});
+
 
 // Deck Builder route for specific user - serve app HTML (no auth required in test server)
 app.get('/users/:userId/decks', (req, res) => {
