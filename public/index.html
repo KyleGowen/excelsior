@@ -3528,12 +3528,8 @@
                 }
                 
                 if (this.listViewBtn) {
-                    // Check if user is admin to determine next view
-                    if (currentUser && currentUser.role === 'ADMIN') {
-                        this.listViewBtn.textContent = 'Card View';
-                    } else {
-                        this.listViewBtn.textContent = 'List View';
-                    }
+                    // All users now have the same view cycling: Card View → List View → Tile View → Card View
+                    this.listViewBtn.textContent = 'Card View';
                 }
                 
                 // Use the original function to maintain exact behavior
@@ -3638,7 +3634,7 @@
         // Global view manager instance
         const viewManager = new ViewManager();
 
-        // View toggle functionality - now supports three-way cycling (Tile → Card → List → Tile)
+        // View toggle functionality - now supports three-way cycling (Card → List → Tile → Card)
         function toggleListView() {
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             const listViewBtn = document.getElementById('listViewBtn');
