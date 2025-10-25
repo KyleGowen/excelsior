@@ -360,6 +360,12 @@
             clear: both;
         }
         
+        /* Reduced spacing for collapsed categories */
+        .card-view-category-section.collapsed {
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+        }
+        
         .card-view-category-header {
             background: rgba(78, 205, 196, 0.1);
             border: 1px solid rgba(78, 205, 196, 0.3);
@@ -3912,6 +3918,7 @@
         function toggleCardViewCategory(categoryType) {
             const cardsContainer = document.getElementById(`cards-${categoryType}`);
             const toggleButton = document.getElementById(`toggle-${categoryType}`);
+            const section = cardsContainer ? cardsContainer.closest('.card-view-category-section') : null;
             
             if (cardsContainer && toggleButton) {
                 const isCollapsed = cardsContainer.classList.contains('collapsed');
@@ -3920,10 +3927,12 @@
                     // Expand the category
                     cardsContainer.classList.remove('collapsed');
                     toggleButton.classList.remove('collapsed');
+                    if (section) section.classList.remove('collapsed');
                 } else {
                     // Collapse the category
                     cardsContainer.classList.add('collapsed');
                     toggleButton.classList.add('collapsed');
+                    if (section) section.classList.add('collapsed');
                 }
             }
         }
