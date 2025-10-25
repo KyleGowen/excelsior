@@ -132,6 +132,62 @@ function displayAspects(aspects) {
     `).join('');
 }
 
+/**
+ * Format advanced universe card effect text with proper HTML encoding and keyword highlighting
+ */
+function formatAdvancedUniverseCardEffect(effectText, cardData = null) {
+    if (!effectText) return '';
+    
+    // Decode HTML entities in the text
+    let decodedText = effectText
+        .replace(/\'93/g, "'")  // Left single quotation mark
+        .replace(/\'94/g, "'")  // Right single quotation mark
+        .replace(/&quot;/g, '"') // Double quotes
+        .replace(/&amp;/g, '&')  // Ampersands
+        .replace(/&lt;/g, '<')   // Less than
+        .replace(/&gt;/g, '>')   // Greater than
+        .replace(/&nbsp;/g, ' '); // Non-breaking spaces
+    
+    // Define special keywords and desired display order (One Per Deck last)
+    const orderedKeywords = ['**One Per Deck**'];
+    const foundKeywords = [];
+    
+    // Find all special keywords in the text
+    for (const keyword of orderedKeywords) {
+        if (decodedText.includes(keyword)) {
+            foundKeywords.push(keyword);
+        }
+    }
+    
+    // Check if card has one_per_deck=true and add the label if not already present
+    if (cardData && cardData.is_one_per_deck === true && !foundKeywords.includes('**One Per Deck**')) {
+        foundKeywords.push('**One Per Deck**');
+    }
+    
+    if (foundKeywords.length > 0) {
+        // Remove all special keywords from the main text
+        let mainText = decodedText;
+        for (const keyword of orderedKeywords) {
+            mainText = mainText.replace(new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '');
+        }
+        
+        // Clean up extra spaces and trim
+        mainText = mainText.replace(/\s+/g, ' ').trim();
+        
+        // Sort keywords in the desired order (ensures One Per Deck is last)
+        const sortedKeywords = foundKeywords.sort((a, b) => orderedKeywords.indexOf(a) - orderedKeywords.indexOf(b));
+        
+        // Create keyword lines (convert ** to <strong> tags)
+        const keywordLines = sortedKeywords.map(keyword => keyword.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'));
+        
+        // Format: main text + keywords on separate lines
+        return (mainText ? mainText + '<br><br>' : '') + keywordLines.join('<br>');
+    }
+    
+    // If no special keywords found, return the decoded text
+    return decodedText;
+}
+
 // Display advanced universe cards
 function displayAdvancedUniverse(advancedUniverse) {
     const tbody = document.getElementById('advanced-universe-tbody');
@@ -161,7 +217,7 @@ function displayAdvancedUniverse(advancedUniverse) {
             </td>
             <td><strong>${card.name}</strong></td>
             <td>${card.character}</td>
-            <td>${card.card_description || card.card_effect || 'No description available'}</td>
+            <td>${formatAdvancedUniverseCardEffect(card.card_description || card.card_effect || 'No description available', card)}</td>
             <td class="one-per-deck-advanced-column">${card.is_one_per_deck ? 'Yes' : 'No'}</td>
         </tr>
     `).join('');

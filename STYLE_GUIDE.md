@@ -625,6 +625,41 @@ When a "One Per Deck" card is added to the deck, all available cards of that typ
 
 #### Implementation Details
 - **Function**: `updateOnePerDeckLimitStatus()` in `public/index.html`
+
+## One Per Deck Text Formatting
+
+### Overview
+The "One Per Deck" label in card effect text must be consistently formatted across all card types with bold styling and proper line breaks.
+
+### Consistent Styling Rules
+- **Bold Text**: "One Per Deck" must be displayed in **bold** using `<strong>` tags
+- **Line Placement**: Must appear on its own line below the main card effect text
+- **Spacing**: Two line breaks (`<br><br>`) separate the main effect from the "One Per Deck" label
+- **HTML Encoding**: Properly decode HTML entities in card effect text
+
+### Implementation by Card Type
+
+#### Special Cards
+- **Function**: `formatSpecialCardEffect()` in `public/js/card-display.js`
+- **Keywords**: Handles multiple keywords including **Fortifications!**, **Cataclysm!**, **Assist!**, **Ambush!**, and **One Per Deck**
+- **Order**: "One Per Deck" appears last in the keyword list
+
+#### Advanced Universe Cards
+- **Function**: `formatAdvancedUniverseCardEffect()` in `public/js/card-display-functions.js`
+- **Keywords**: Handles **One Per Deck** keyword
+- **Auto-detection**: Automatically adds "One Per Deck" label if `cardData.is_one_per_deck === true`
+
+#### Formatting Process
+1. **HTML Entity Decoding**: Convert HTML entities to proper characters
+2. **Keyword Detection**: Find special keywords in the text
+3. **Text Separation**: Remove keywords from main text
+4. **Keyword Formatting**: Convert `**keyword**` to `<strong>keyword</strong>`
+5. **Final Assembly**: Combine main text + line breaks + formatted keywords
+
+#### Example Output
+```html
+Main card effect text here.<br><br><strong>One Per Deck</strong>
+```
 - **Trigger**: Called after adding/removing cards and when displaying deck
 - **Scope**: Affects all card types (characters, specials, powers, events, etc.)
 - **Database Field**: Uses `one_per_deck` boolean column from card tables
