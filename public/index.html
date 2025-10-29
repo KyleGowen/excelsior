@@ -5097,26 +5097,34 @@
                             
                             // Check if any deck character can use this power card
                             const canUse = deckCharacters.some(char => {
+                                // Apply special-case overrides for power card usability
+                                // John Carter: treat Brute Force as 8 for power card filtering
+                                // Time Traveler: treat Intelligence as 8 for power card filtering
+                                const nameLower = (char.name || '').toLowerCase();
+                                const effectiveEnergy = char.energy || 0;
+                                const effectiveCombat = char.combat || 0;
+                                const effectiveBrute = Math.max(char.brute_force || 0, nameLower.includes('john carter') ? 8 : 0);
+                                const effectiveIntel = Math.max(char.intelligence || 0, nameLower.includes('time traveler') ? 8 : 0);
                                 let characterStat = 0;
                                 
                                 switch (cardType) {
                                     case 'Energy':
-                                        characterStat = char.energy;
+                                        characterStat = effectiveEnergy;
                                         break;
                                     case 'Combat':
-                                        characterStat = char.combat;
+                                        characterStat = effectiveCombat;
                                         break;
                                     case 'Brute Force':
-                                        characterStat = char.brute_force;
+                                        characterStat = effectiveBrute;
                                         break;
                                     case 'Intelligence':
-                                        characterStat = char.intelligence;
+                                        characterStat = effectiveIntel;
                                         break;
                                     case 'Any-Power':
                                     case 'Multi-Power':
                                     case 'Multi Power':  // Handle both hyphenated and spaced versions
                                         // These can be used by any character with any stat >= card value
-                                        characterStat = Math.max(char.energy, char.combat, char.brute_force, char.intelligence);
+                                        characterStat = Math.max(effectiveEnergy, effectiveCombat, effectiveBrute, effectiveIntel);
                                         break;
                                 }
                                 

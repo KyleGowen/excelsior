@@ -3,7 +3,9 @@
 
 // Set test environment variables
 process.env.NODE_ENV = 'test';
-process.env.PORT = '3000';
+if (!process.env.PORT) {
+  process.env.PORT = '3000';
+}
 // Note: SKIP_MIGRATIONS removed to ensure database schema is properly initialized
 
 // Polyfill for TextEncoder/TextDecoder (required by pg library)

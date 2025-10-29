@@ -12,7 +12,6 @@
             if (searchTerm.length < 2) return [];
 
             const results = [];
-            console.log('🔍 CardSearchService.search start:', searchTerm);
 
             try {
                 // Fetch all endpoints in parallel for responsiveness
@@ -232,7 +231,6 @@
                 .filter(r => r.name && r.name.trim())
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .slice(0, this.maxResults);
-            console.log('🔍 CardSearchService.search done. results:', finalResults.length);
             return finalResults;
         }
     }

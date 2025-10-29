@@ -174,15 +174,12 @@ window.applyPowerCardFilters = async function applyPowerCardFilters() {
         // Filter by power type
         const selectedTypes = Array.from(document.querySelectorAll('#power-cards-tab input[type="checkbox"]:checked'))
             .map(cb => cb.value);
-        console.log('Selected power types for filtering:', selectedTypes);
 
         // If no types are selected, show no cards
         if (selectedTypes.length === 0) {
             filtered = [];
-            console.log('No power types selected - showing no cards');
         } else {
             filtered = filtered.filter(card => selectedTypes.includes(card.power_type));
-            console.log('Filtered power cards count:', filtered.length);
         }
 
         // Filter by value range

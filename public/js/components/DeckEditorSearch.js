@@ -57,7 +57,6 @@
             if (!this.input || !this.resultsEl) return;
             if (this._bound) return;
             this._bound = true;
-            console.log('🔍 DeckEditorSearch.mount: binding listeners');
 
             this.input.addEventListener('input', this._handleInput);
             this.input.addEventListener('focus', this.showResults);
@@ -82,13 +81,10 @@
         // Bound arrow methods to preserve context
         _handleInput = (e) => {
             const term = (e.target.value || '').trim().toLowerCase();
-            console.log('🔍 DeckEditorSearch.input:', term);
             if (term.length < this.minChars) { this.hideResults(); return; }
             if (this._timeout) clearTimeout(this._timeout);
             this._timeout = setTimeout(async () => {
-                console.log('🔍 DeckEditorSearch.search: starting for term', term);
                 const results = await this.searchService.search(term);
-                console.log('🔍 DeckEditorSearch.search: results', results?.length);
                 this.render(results);
             }, this.debounceMs);
         };
@@ -106,7 +102,6 @@
         showResults = () => {
             if (this.resultsEl) {
                 this.resultsEl.style.display = 'block';
-                console.log('🔍 DeckEditorSearch.showResults: display=block');
             }
         };
 
@@ -117,7 +112,6 @@
         render(results) {
             if (!this.resultsEl) return;
             if (!Array.isArray(results) || results.length === 0) {
-                console.log('🔍 DeckEditorSearch.render: no results');
                 this.resultsEl.innerHTML = '<div class="deck-editor-search-result">No cards found</div>';
                 this.showResults();
                 return;
@@ -138,7 +132,6 @@
             `).join('');
 
             this.resultsEl.innerHTML = html;
-            console.log('🔍 DeckEditorSearch.render: injected items =', results.length, 'html length =', this.resultsEl.innerHTML.length);
             this.resultsEl.querySelectorAll('.deck-editor-search-result').forEach(el => {
                 el.addEventListener('click', () => {
                     const id = el.getAttribute('data-id');
