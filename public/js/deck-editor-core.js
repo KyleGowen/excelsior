@@ -170,6 +170,15 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
         
         // Show the deck editor modal
         document.getElementById('deckEditorModal').style.display = 'block';
+            
+            // Ensure search component is initialized for new deck flow as well
+            if (typeof initializeDeckEditorSearch === 'function') {
+                try {
+                    initializeDeckEditorSearch();
+                } catch (err) {
+                    console.error('Failed to initialize deck editor search for new deck:', err);
+                }
+            }
         
         // Load available cards
         if (typeof loadAvailableCards === 'function') {

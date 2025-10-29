@@ -563,6 +563,9 @@
     <script src="/js/app-initialization.js"></script>
     <script src="/js/data-loading.js"></script>
     <script src="/js/deck-editor-core.js"></script>
+    <link rel="stylesheet" href="/css/deck-editor-search.css">
+    <script src="/js/services/CardSearchService.js"></script>
+    <script src="/js/components/DeckEditorSearch.js"></script>
         <script src="/js/card-display-functions.js"></script>
         <script src="/js/search-filter-functions.js"></script>
         <script src="/js/deck-management-functions.js"></script>
@@ -6040,29 +6043,28 @@
         function initializeDeckEditorSearch() {
             const searchInput = document.getElementById('deckEditorSearchInput');
             const searchResults = document.getElementById('deckEditorSearchResults');
-            
-            if (!searchInput) {
-                console.error('🔍 Deck editor search input not found!');
+            if (!searchInput || !searchResults) { console.error('🔍 Deck editor search elements not found!'); return; }
+
+            if (window.DeckEditorSearch && window.CardSearchService) {
+                // Prefer refactored component
+                window.deckEditorSearchComponent = new window.DeckEditorSearch({
+                    input: searchInput,
+                    results: searchResults,
+                    onSelect: ({ id, type, name }) => {
+                        if (typeof addCardToDeckFromSearch === 'function') {
+                            addCardToDeckFromSearch(id, type, name);
+                        }
+                    }
+                });
+                window.deckEditorSearchComponent.mount();
                 return;
             }
-            
 
+            // Fallback to legacy wiring if component is unavailable
             searchInput.addEventListener('input', handleDeckEditorSearch);
             searchInput.addEventListener('focus', showDeckEditorSearchResults);
-            searchInput.addEventListener('blur', () => {
-                // Delay hiding to allow clicks on results
-                setTimeout(() => {
-                    hideDeckEditorSearchResults();
-                }, 200);
-            });
-
-            // Hide results when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.deck-editor-search-container')) {
-                    hideDeckEditorSearchResults();
-                }
-            });
-            
+            searchInput.addEventListener('blur', () => { setTimeout(() => { hideDeckEditorSearchResults(); }, 200); });
+            document.addEventListener('click', (e) => { if (!e.target.closest('.deck-editor-search-container')) { hideDeckEditorSearchResults(); } });
         }
         // Handle search input
         async function handleDeckEditorSearch(e) {
