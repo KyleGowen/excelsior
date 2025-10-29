@@ -1688,29 +1688,48 @@ jobs:
         echo "🏥 Calling health check endpoint on production server..."
         echo "=========================================="
         
-        # Call the health check endpoint
-        HEALTH_RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" "http://excelsior.cards/health" || echo "HTTP_STATUS:000")
+        MAX_RETRIES=2
+        RETRY_DELAY=30
+        ATTEMPT=0
+        SUCCESS=0
         
-        # Extract HTTP status code
-        HTTP_STATUS=$(echo "$HEALTH_RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
-        HEALTH_BODY=$(echo "$HEALTH_RESPONSE" | sed '/HTTP_STATUS:/d')
+        while [ $ATTEMPT -le $MAX_RETRIES ]; do
+          if [ $ATTEMPT -gt 0 ]; then
+            echo "⏳ Retry attempt $ATTEMPT of $MAX_RETRIES after waiting $RETRY_DELAY seconds..."
+            sleep $RETRY_DELAY
+          fi
+          
+          echo "🔎 Health check attempt $((ATTEMPT+1))..."
+          HEALTH_RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" "http://excelsior.cards/health" || echo "HTTP_STATUS:000")
+          
+          # Extract HTTP status code
+          HTTP_STATUS=$(echo "$HEALTH_RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
+          HEALTH_BODY=$(echo "$HEALTH_RESPONSE" | sed '/HTTP_STATUS:/d')
+          
+          echo "📊 Health Check Results (attempt $((ATTEMPT+1))):"
+          echo "========================"
+          echo "HTTP Status Code: $HTTP_STATUS"
+          echo ""
+          echo "Response Body:"
+          echo "$HEALTH_BODY" | jq . 2>/dev/null || echo "$HEALTH_BODY"
+          echo ""
+          echo "=========================================="
+          
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "✅ Health check PASSED - Server is healthy"
+            SUCCESS=1
+            break
+          else
+            echo "❌ Health check FAILED - Server may not be ready (HTTP $HTTP_STATUS)"
+          fi
+          
+          ATTEMPT=$((ATTEMPT+1))
+        done
         
-        echo "📊 Health Check Results:"
-        echo "========================"
-        echo "HTTP Status Code: $HTTP_STATUS"
-        echo ""
-        echo "Response Body:"
-        echo "$HEALTH_BODY" | jq . 2>/dev/null || echo "$HEALTH_BODY"
-        echo ""
-        echo "=========================================="
-        
-        # Check if health check was successful
-        if [ "$HTTP_STATUS" = "200" ]; then
-          echo "✅ Health check PASSED - Server is healthy"
+        if [ $SUCCESS -eq 1 ]; then
           exit 0
         else
-          echo "❌ Health check FAILED - Server may not be ready"
-          echo "HTTP Status: $HTTP_STATUS"
+          echo "❌ Health check FAILED after $((MAX_RETRIES+1)) attempts"
           exit 1
         fi
         
