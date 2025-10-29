@@ -1,3 +1,45 @@
+
+    /**
+     * DeckEditorSearch Component
+     * ------------------------------------------
+     * Encapsulated search UI for the Deck Editor. Provides debounced search across
+     * all card families using CardSearchService, renders a dropdown of results,
+     * and exposes a simple callback for selection.
+     *
+     * Usage:
+     *   const component = new DeckEditorSearch({
+     *       input: document.getElementById('deckEditorSearchInput'),
+     *       results: document.getElementById('deckEditorSearchResults'),
+     *       onSelect: ({ id, type, name }) => addCardToDeckFromSearch(id, type, name),
+     *       debounceMs: 300,
+     *       minChars: 2,
+     *       maxResults: 20
+     *   });
+     *   component.mount();
+     *
+     * Public options:
+     *   - input: HTMLInputElement for user typing (required)
+     *   - results: HTMLElement container for rendered dropdown (required)
+     *   - onSelect: function({ id, type, name }) invoked when a result is clicked
+     *   - minChars: minimum characters before searching (default: 2)
+     *   - debounceMs: delay before querying (default: 300)
+     *   - maxResults: maximum number of results to display (default: 20)
+     *   - searchService: optional custom service with search(term) -> normalized array
+     *
+     * Rendering contract:
+     *   - The component writes item markup into `results` and toggles its display.
+     *   - `.deck-editor-search-results` must be absolutely positioned with a
+     *     high z-index, and its parents must not clip overflow. See
+     *     public/css/deck-editor-search.css for the canonical rules and
+     *     tests/unit/deck-editor-search-css-rules.test.ts for safeguards.
+     *
+     * Normalized result shape:
+     *   { id: string, name: string, type: string, image: string, character?: string }
+     *
+     * Accessibility & Keyboard Navigation (future work):
+     *   - The component is structured to support arrow key navigation and Enter
+     *     selection in a future enhancement without changing the public API.
+     */
 (function(global) {
     class DeckEditorSearch {
         constructor(options = {}) {
