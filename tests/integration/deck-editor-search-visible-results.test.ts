@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../../src/app';
+import { app } from '../../src/test-server';
 
 describe('Deck Editor search bar - visible selectable results', () => {
   test('typing shows results container with items', async () => {

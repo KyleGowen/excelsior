@@ -32,7 +32,8 @@ export class PostgreSQLUserRepository implements UserRepository {
         id: user.id,
         name: user.username, // Map username to name for compatibility
         email: user.email,
-        role: user.role
+        role: user.role,
+        lastLoginAt: user.last_login_at ? new Date(user.last_login_at) : null
       };
     } finally {
       client.release();
@@ -56,7 +57,8 @@ export class PostgreSQLUserRepository implements UserRepository {
         id: user.id,
         name: user.username, // Map username to name for compatibility
         email: user.email,
-        role: user.role
+        role: user.role,
+        lastLoginAt: user.last_login_at ? new Date(user.last_login_at) : null
       };
     } finally {
       client.release();
@@ -80,7 +82,8 @@ export class PostgreSQLUserRepository implements UserRepository {
         id: user.id,
         name: user.username, // Map username to name for compatibility
         email: user.email,
-        role: user.role
+        role: user.role,
+        lastLoginAt: user.last_login_at ? new Date(user.last_login_at) : null
       };
     } finally {
       client.release();
@@ -129,7 +132,8 @@ export class PostgreSQLUserRepository implements UserRepository {
         id: user.id,
         name: user.username, // Map username to name for compatibility
         email: user.email,
-        role: user.role
+        role: user.role,
+        lastLoginAt: user.last_login_at ? new Date(user.last_login_at) : null
       }));
     } finally {
       client.release();
@@ -177,7 +181,8 @@ export class PostgreSQLUserRepository implements UserRepository {
         id: user.id,
         name: user.username, // Map username to name for compatibility
         email: user.email,
-        role: user.role
+        role: user.role,
+        lastLoginAt: user.last_login_at ? new Date(user.last_login_at) : null
       };
     } finally {
       client.release();
@@ -203,6 +208,15 @@ export class PostgreSQLUserRepository implements UserRepository {
         [passwordHash, id]
       );
       return (result.rowCount || 0) > 0;
+    } finally {
+      client.release();
+    }
+  }
+
+  async updateLastLoginAt(id: string): Promise<void> {
+    const client = await this.pool.connect();
+    try {
+      await client.query('UPDATE users SET last_login_at = NOW(), updated_at = NOW() WHERE id = $1', [id]);
     } finally {
       client.release();
     }

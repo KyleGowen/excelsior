@@ -121,6 +121,13 @@ export class AuthenticationService {
           maxAge: 2 * 60 * 60 * 1000,
           sameSite: 'lax'
         });
+        // Update last_login_at on successful login/session creation
+        try {
+          await this.userRepository.updateLastLoginAt(user.id);
+        } catch (e) {
+          // Do not fail login if timestamp update fails; log and continue
+          console.error('Warning: failed to update last_login_at:', e);
+        }
         
         res.json({ 
           success: true, 

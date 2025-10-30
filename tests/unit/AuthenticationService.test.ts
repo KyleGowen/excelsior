@@ -28,6 +28,7 @@ describe('AuthenticationService', () => {
       createUser: jest.fn(),
       getAllUsers: jest.fn(),
       updateUser: jest.fn(),
+      updateLastLoginAt: jest.fn(),
       updateUserPassword: jest.fn(),
       deleteUser: jest.fn(),
       getUserStats: jest.fn(),
@@ -218,6 +219,8 @@ describe('AuthenticationService', () => {
     it('should return 400 when username is missing', async () => {
       mockRequest.body = { password: 'password' };
 
+      (mockUserRepository as any).updateLastLoginAt = jest.fn().mockResolvedValue(undefined);
+
       await authService.handleLogin(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -280,6 +283,7 @@ describe('AuthenticationService', () => {
           username: user.name
         }
       });
+      expect((mockUserRepository as any).updateLastLoginAt).toHaveBeenCalledWith(user.id);
     });
 
     it('should handle authentication errors', async () => {
