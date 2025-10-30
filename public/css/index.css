@@ -67,10 +67,11 @@
         .tab-container {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
-            padding: 15px 0;
-            margin-bottom: 20px;
+            padding: 6px 0; /* compact spacing */
+            margin-top: 0;      /* pull buttons closer to global nav */
+            margin-bottom: 16px; /* keep comfortable space to table */
             width: 100%;
         }
 

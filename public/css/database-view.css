@@ -16,10 +16,14 @@
  * DATABASE VIEW LAYOUT & STRUCTURE
  * ======================================== */
 
+.database-view-adjust {
+    margin-top: 6px;
+}
+
 .database-section {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
-    padding: 20px;
+    padding: 0 20px 20px 20px; /* remove top padding to raise content */
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -45,7 +49,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 8px; /* tighter space below stats */
 }
 
 .stat-card {
@@ -87,10 +91,11 @@
 .tab-container {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
-    padding: 15px 0;
-    margin-bottom: 20px;
+    padding: 6px 0; /* compact spacing */
+    margin-top: 0;      /* pull buttons closer to global nav */
+    margin-bottom: 16px; /* keep comfortable space to table */
     width: 100%;
 }
 
