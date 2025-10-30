@@ -4045,8 +4045,30 @@
                     `;
                     
                     // Render cards in horizontal rows - Card View specific rendering
+                    // For power cards: sort by value with Overpower type tiebreaker (Energy, Combat, Brute Force, Intelligence, Multi Power, Any-Power)
+                    const cardsForRendering = (type === 'power') ? (() => {
+                        const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Multi Power', 'Any-Power'];
+                        const orderIndex = (t) => {
+                            const idx = preferredOrder.indexOf(t);
+                            return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
+                        };
+                        const copy = [...typeCards];
+                        copy.sort((a, b) => {
+                            const cardA = window.availableCardsMap.get(a.cardId);
+                            const cardB = window.availableCardsMap.get(b.cardId);
+                            if (!cardA || !cardB) return 0;
+                            const valueA = parseInt(cardA.value) || 0;
+                            const valueB = parseInt(cardB.value) || 0;
+                            if (valueA !== valueB) return valueA - valueB;
+                            const aType = cardA.power_type || '';
+                            const bType = cardB.power_type || '';
+                            return orderIndex(aType) - orderIndex(bType);
+                        });
+                        return copy;
+                    })() : typeCards;
+
                     // Show multiple instances of cards based on quantity
-                    typeCards.forEach((cardData, cardIndex) => {
+                    cardsForRendering.forEach((cardData, cardIndex) => {
                         const card = cardData;
                         const index = cardData.originalIndex;
                         const quantity = card.quantity || 1;
@@ -7353,18 +7375,21 @@
                                 `;
                             });
                         } else {
-                            // Value sorted view - sort all power cards by value
-                            const sortedCards = typeCards.sort((a, b) => {
+                        // Value sorted view - sort all power cards by value, then Overpower type order
+                        const sortedCards = [...typeCards].sort((a, b) => {
                                 // Direct lookup using UUID
                                 const cardA = window.availableCardsMap.get(a.cardId);
                                 const cardB = window.availableCardsMap.get(b.cardId);
-                                
                                 if (!cardA || !cardB) return 0;
-                                
                                 const valueA = parseInt(cardA.value) || 0;
                                 const valueB = parseInt(cardB.value) || 0;
-                                
-                                return valueA - valueB;
+                                if (valueA !== valueB) return valueA - valueB;
+                                const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Multi Power', 'Any-Power'];
+                                const orderIndex = (t) => {
+                                    const idx = preferredOrder.indexOf(t);
+                                    return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
+                                };
+                                return orderIndex(cardA.power_type || '') - orderIndex(cardB.power_type || '');
                             });
                             
                             sortedCards.forEach(cardData => {
