@@ -135,7 +135,8 @@ locals {
 
 # EC2 Instance
 resource "aws_instance" "app" {
-  ami                    = data.aws_ami.amazon_linux.id
+  # Pin AMI to current running instance to avoid replacement on plan
+  ami                    = "ami-020e631fda96bcccc"
   instance_type          = "t2.micro"  # Free tier eligible
   vpc_security_group_ids = [aws_security_group.app_sg.id]
   iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name

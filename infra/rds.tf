@@ -62,7 +62,7 @@ resource "aws_db_instance" "postgres" {
   # Basic configuration
   identifier = "${var.project_name}-postgres"
   engine     = "postgres"
-  engine_version = "16.4"  # Latest PostgreSQL version supported by RDS
+  engine_version = "16.8"  # Match running environment minor version to avoid downgrade
   
   # Instance configuration
   instance_class    = var.rds_instance_class
