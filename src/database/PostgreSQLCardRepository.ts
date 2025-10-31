@@ -28,6 +28,14 @@ export class PostgreSQLCardRepository implements CardRepository {
     this.pool = pool;
   }
 
+  // Clear caches manually (useful after migrations)
+  public clearCaches(): void {
+    this.charactersCache = null;
+    this.locationsCache = null;
+    this.cacheTime = 0;
+    console.log('🧹 Card repository caches cleared');
+  }
+
   async initialize(): Promise<void> {
     // PostgreSQL CardRepository doesn't need to load data from files
     // Data is already in the database from migrations
