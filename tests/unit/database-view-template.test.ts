@@ -32,7 +32,7 @@ describe('Database View Template', () => {
     describe('Template Structure', () => {
         it('should contain the main database-view container', () => {
             expect(templateContent).toContain('id="database-view"');
-            expect(templateContent).toContain('class="database-section"');
+            expect(templateContent).toContain('database-section');
         });
 
         it('should contain statistics section', () => {

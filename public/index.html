@@ -3955,6 +3955,14 @@
             // Ultra-aggressive layout enforcement
             ultraAggressiveLayoutEnforcement();
             
+            // Set up two-column layout for list view (critical for initial load)
+            enforceTwoColumnLayoutInListView();
+            
+            // Ensure two-column layout is applied after DOM updates (fallback)
+            setTimeout(() => {
+                enforceTwoColumnLayoutInListView();
+            }, 10);
+            
             // Apply saved expansion state to list view sections
             typeOrder.forEach(type => {
                 const cards = cardsByType[type];
