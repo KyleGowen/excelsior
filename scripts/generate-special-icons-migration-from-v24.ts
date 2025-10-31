@@ -86,7 +86,7 @@ function main() {
     const value = inferred.value != null ? String(inferred.value) : 'NULL';
     const nameClean = stripQuotes(r.name);
     const charClean = stripQuotes(r.character);
-    out.push(`UPDATE special_cards SET icons = ${icons}, value = ${value}, updated_at = NOW() WHERE name = '${esc(nameClean)}' AND character_name = '${esc(charClean)}';`);
+    out.push(`UPDATE special_cards SET icons = ${icons}, value = ${value}, updated_at = NOW() WHERE name = '${esc(nameClean)}' AND character_name = '${esc(charClean)}' AND (icons IS NULL OR value IS NULL);`);
   }
   fs.writeFileSync(OUT, out.join('\n') + '\n', 'utf8');
   console.log(`✅ Wrote ${rows.length} updates to ${OUT}`);
