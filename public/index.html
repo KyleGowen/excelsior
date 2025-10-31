@@ -4097,6 +4097,27 @@
                 
                 document.body.removeChild(tempContainer);
                 
+                // CRITICAL: Preserve column widths BEFORE RAF to prevent flex recalculation
+                // Force layout calculation to get accurate widths
+                void existingColumns[0].offsetWidth;
+                void existingColumns[1].offsetWidth;
+                const leftColumnWidth = existingColumns[0].offsetWidth;
+                const rightColumnWidth = existingColumns[1].offsetWidth;
+                
+                // Lock column widths IMMEDIATELY to prevent flex recalculation during replaceChildren
+                existingColumns[0].style.width = `${leftColumnWidth}px`;
+                existingColumns[0].style.minWidth = `${leftColumnWidth}px`;
+                existingColumns[0].style.maxWidth = `${leftColumnWidth}px`;
+                existingColumns[0].style.flex = '0 0 auto'; // Prevent flex from recalculating
+                existingColumns[1].style.width = `${rightColumnWidth}px`;
+                existingColumns[1].style.minWidth = `${rightColumnWidth}px`;
+                existingColumns[1].style.maxWidth = `${rightColumnWidth}px`;
+                existingColumns[1].style.flex = '0 0 auto'; // Prevent flex from recalculating
+                
+                // Force layout calculation with locked widths
+                void existingColumns[0].offsetWidth;
+                void existingColumns[1].offsetWidth;
+                
                 // Execute replacement synchronously in one frame to minimize layout recalculation
                 // Using RAF ensures it happens right before paint, reducing visual jumps
                 requestAnimationFrame(() => {
@@ -4104,7 +4125,7 @@
                     const leftColumnHeight = existingColumns[0].offsetHeight;
                     const rightColumnHeight = existingColumns[1].offsetHeight;
                     
-                    console.log(`📏 Before replacement - Left column: ${leftColumnHeight}px, Right column: ${rightColumnHeight}px`);
+                    console.log(`📏 Before replacement - Left column: ${leftColumnHeight}px (width: ${leftColumnWidth}px), Right column: ${rightColumnHeight}px (width: ${rightColumnWidth}px)`);
                     
                     // Apply section heights - use new measured height if available, otherwise preserve old
                     const appliedHeights = new Map();
@@ -4185,6 +4206,26 @@
                         }
                     });
                     
+                    // CRITICAL: Lock all quantity element widths immediately to prevent layout shifts
+                    // This fixes the issue where single-digit quantities cause text to jump
+                    const allQuantityElements = deckCardsEditor.querySelectorAll('.deck-list-item-quantity');
+                    allQuantityElements.forEach((qty, idx) => {
+                        // Force fixed width regardless of content
+                        qty.style.setProperty('min-width', '40px', 'important');
+                        qty.style.setProperty('width', '40px', 'important');
+                        qty.style.setProperty('text-align', 'right', 'important');
+                        qty.style.setProperty('flex', '0 0 40px', 'important');
+                        qty.style.setProperty('box-sizing', 'border-box', 'important');
+                        
+                        // Debug logging
+                        const text = qty.textContent.trim();
+                        const width = qty.offsetWidth;
+                        const computedWidth = window.getComputedStyle(qty).width;
+                        if (idx < 5) { // Log first 5 for debugging
+                            console.log(`🔢 After replaceChildren - Quantity[${idx}]: "${text}" → offsetWidth: ${width}px, computedWidth: ${computedWidth}`);
+                        }
+                    });
+                    
                     // Force synchronous layout calculation with heights applied
                     // This ensures browser uses our locked heights before paint
                     void existingColumns[0].offsetHeight;
@@ -4226,6 +4267,16 @@
                             // Allow columns to grow naturally too
                             existingColumns[0].style.minHeight = '';
                             existingColumns[1].style.minHeight = '';
+                            
+                            // Restore flex properties to allow natural column behavior
+                            existingColumns[0].style.width = '';
+                            existingColumns[0].style.minWidth = '';
+                            existingColumns[0].style.maxWidth = '';
+                            existingColumns[0].style.flex = '';
+                            existingColumns[1].style.width = '';
+                            existingColumns[1].style.minWidth = '';
+                            existingColumns[1].style.maxWidth = '';
+                            existingColumns[1].style.flex = '';
                         });
                     });
                     
@@ -4592,8 +4643,17 @@
                 if (quantity) {
                     quantity.style.setProperty('display', 'inline-block', 'important');
                     quantity.style.setProperty('white-space', 'nowrap', 'important');
-                    quantity.style.setProperty('min-width', '0', 'important');
-                    quantity.style.setProperty('flex', '0 0 auto', 'important');
+                    // CRITICAL: Fixed width to prevent layout shifts when quantity changes from 1 to 2 digits
+                    quantity.style.setProperty('min-width', '40px', 'important');
+                    quantity.style.setProperty('width', '40px', 'important');
+                    quantity.style.setProperty('text-align', 'right', 'important');
+                    quantity.style.setProperty('flex', '0 0 40px', 'important');
+                    quantity.style.setProperty('box-sizing', 'border-box', 'important');
+                    
+                    // Debug logging for quantity width changes
+                    const currentWidth = quantity.offsetWidth;
+                    const currentText = quantity.textContent.trim();
+                    console.log(`🔢 Quantity element: "${currentText}" → width: ${currentWidth}px`);
                 }
                 if (name) {
                     name.style.setProperty('display', 'inline-block', 'important');

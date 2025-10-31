@@ -19,6 +19,7 @@
 16. [Ambush Card Dimming](#ambush-card-dimming)
 17. [Fortification Card Dimming](#fortification-card-dimming)
 18. [Deck Editor Card View Styling](#deck-editor-card-view-styling)
+19. [Deck Editor List View Styling](#deck-editor-list-view-styling)
 
 ## Overview
 
@@ -1490,3 +1491,73 @@ The Card View is a deck visualization mode available to all users that displays 
 - **Access Control**: Admin-only access with role validation
 - **Data Dependencies**: Uses `window.deckEditorCards` and `window.availableCardsMap`
 - **Event Handling**: Supports hover, click, and drag interactions
+
+## Deck Editor List View Styling
+
+### Overview
+The List View displays deck cards in a vertical list format with quantity controls. This section documents the styling and layout fixes that prevent visual jumps when updating card quantities.
+
+### List View Item Layout
+- **Container**: `.deck-list-item`
+- **Layout**: `display: flex`, `flex-direction: row`, `align-items: center`
+- **Width**: `100%`
+- **Flex Wrap**: `nowrap` (prevents wrapping)
+
+### Quantity Element Styling (Critical Fix - 2025)
+The quantity element was causing text to jump when quantities changed from single to double digits. This has been fixed with a fixed-width approach.
+
+#### Problem
+- Single-digit quantities (1, 3) caused the quantity element width to change when updated
+- This caused all white text on screen to shift right then back left
+- Double-digit quantities (13, 24, 32) remained stable because they already had sufficient width
+
+#### Solution
+Fixed width applied to quantity element to prevent layout shifts:
+
+- **Class**: `.deck-list-item-quantity`
+- **Fixed Width**: `40px` (accommodates 2-3 digits)
+- **Min Width**: `40px`
+- **Text Alignment**: `right` (numbers align consistently)
+- **Flex Properties**: `flex: 0 0 40px` (prevents flex resizing)
+- **Box Sizing**: `border-box`
+- **Color**: `#4ecdc4` (primary teal)
+- **Font Weight**: `600`
+- **Margin Right**: `12px`
+
+#### CSS Implementation
+```css
+.deck-list-item-quantity {
+    font-weight: 600;
+    color: #4ecdc4;
+    margin-right: 12px;
+    min-width: 40px;
+    width: 40px;
+    text-align: right;
+    flex: 0 0 40px;
+    box-sizing: border-box;
+}
+```
+
+#### JavaScript Enforcement
+The `enforceListViewHorizontalLayout()` function ensures fixed widths are applied:
+- Sets `min-width: 40px` with `!important`
+- Sets `width: 40px` with `!important`
+- Sets `text-align: right` with `!important`
+- Sets `flex: 0 0 40px` with `!important`
+- Applied immediately after `replaceChildren()` in list view updates
+
+#### Layout Preservation During Updates
+- Column widths are locked before DOM updates to prevent flex recalculation
+- Quantity element widths are enforced synchronously after `replaceChildren()`
+- This prevents the "bouncing text" issue when clicking +/- buttons
+
+### List View Item Components
+- **Quantity**: Fixed 40px width, right-aligned, teal color
+- **Card Name**: Flexible width (`flex: 1`), white text
+- **Actions**: Fixed width buttons container with +/- quantity controls
+
+### Debug Logging
+Debug logging tracks quantity element widths during updates:
+- Logs first 5 quantity elements after `replaceChildren()`
+- Shows text content, `offsetWidth`, and computed `width`
+- Helps verify fixed widths are properly applied
