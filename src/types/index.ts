@@ -68,6 +68,8 @@ export interface SpecialCard {
   character: string;
   card_effect: string;
   image: string;
+  icons?: string[]; // e.g., ["Energy"], ["Combat","Brute Force"], ["Any-Power"]
+  value?: number | null; // level associated with icons
   is_cataclysm: boolean;
   is_assist: boolean;
   is_ambush: boolean;
