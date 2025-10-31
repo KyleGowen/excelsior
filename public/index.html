@@ -3950,38 +3950,375 @@
                 `;
             });
 
-            deckCardsEditor.innerHTML = html;
+            // Check if columns already exist to preserve layout during updates
+            const existingColumns = Array.from(deckCardsEditor.querySelectorAll('.deck-column'));
+            const hasColumns = existingColumns.length === 2;
             
-            // Ultra-aggressive layout enforcement
-            ultraAggressiveLayoutEnforcement();
-            
-            // Set up two-column layout for list view (critical for initial load)
-            enforceTwoColumnLayoutInListView();
-            
-            // Ensure two-column layout is applied after DOM updates (fallback)
-            setTimeout(() => {
-                enforceTwoColumnLayoutInListView();
-            }, 10);
-            
-            // Apply saved expansion state to list view sections
-            typeOrder.forEach(type => {
-                const cards = cardsByType[type];
-                if (!cards || cards.length === 0) return;
+            // If columns exist, preserve them by updating content within them
+            if (hasColumns) {
+                console.log('🔄 renderDeckCardsListView: Updating existing columns');
                 
-                const itemsContainer = document.getElementById(`deck-list-items-${type}`);
-                const header = itemsContainer?.previousElementSibling;
-                const toggle = header?.querySelector('.deck-list-section-toggle');
+                // Map existing sections to their columns by type to prevent redistribution
+                const leftColumnTypes = new Set();
+                const rightColumnTypes = new Set();
+                const sectionHeights = new Map(); // Store section heights to prevent jumps
                 
-                if (itemsContainer && header && toggle) {
-                    // In read-only list view, always expand sections by default
-                    const isExpanded = true; // Always expanded in read-only list view
-                    if (!isExpanded) {
-                        itemsContainer.style.display = 'none';
-                        toggle.textContent = '▶';
-                        header.classList.add('collapsed');
+                // Force a layout calculation before capturing heights to ensure accurate measurements
+                void existingColumns[0].offsetHeight;
+                void existingColumns[1].offsetHeight;
+                
+                existingColumns[0].querySelectorAll('.deck-list-section').forEach(section => {
+                    const itemsContainer = section.querySelector('.deck-list-items');
+                    if (itemsContainer) {
+                        const type = itemsContainer.id.replace('deck-list-items-', '');
+                        if (type) {
+                            leftColumnTypes.add(type);
+                            // Force layout calculation for this section before capturing height
+                            void section.offsetHeight;
+                            const height = section.offsetHeight;
+                            if (height > 0) {
+                                sectionHeights.set(type, height);
+                            }
+                        }
                     }
-                }
-            });
+                });
+                
+                existingColumns[1].querySelectorAll('.deck-list-section').forEach(section => {
+                    const itemsContainer = section.querySelector('.deck-list-items');
+                    if (itemsContainer) {
+                        const type = itemsContainer.id.replace('deck-list-items-', '');
+                        if (type) {
+                            rightColumnTypes.add(type);
+                            // Force layout calculation for this section before capturing height
+                            void section.offsetHeight;
+                            const height = section.offsetHeight;
+                            if (height > 0) {
+                                sectionHeights.set(type, height);
+                            }
+                        }
+                    }
+                });
+                
+                console.log('📊 Left column types:', Array.from(leftColumnTypes));
+                console.log('📊 Right column types:', Array.from(rightColumnTypes));
+                console.log('📏 Preserved section heights:', Object.fromEntries(sectionHeights));
+                
+                // Prepare new content first
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                const newSections = Array.from(tempDiv.children);
+                
+                // Distribute sections based on their original column assignment
+                const leftSections = [];
+                const rightSections = [];
+                
+                newSections.forEach(section => {
+                    const itemsContainer = section.querySelector('.deck-list-items');
+                    if (itemsContainer) {
+                        const type = itemsContainer.id.replace('deck-list-items-', '');
+                        if (leftColumnTypes.has(type)) {
+                            leftSections.push(section);
+                            console.log(`✅ ${type} → left column (preserved)`);
+                        } else if (rightColumnTypes.has(type)) {
+                            rightSections.push(section);
+                            console.log(`✅ ${type} → right column (preserved)`);
+                        } else {
+                            // New section type - use original distribution logic
+                            const totalExisting = leftColumnTypes.size + rightColumnTypes.size;
+                            const newTypeIndex = typeOrder.indexOf(type);
+                            const shouldBeInLeft = newTypeIndex < Math.ceil(totalExisting / 2);
+                            if (shouldBeInLeft) {
+                                leftSections.push(section);
+                                leftColumnTypes.add(type);
+                                console.log(`🆕 ${type} → left column (new)`);
+                            } else {
+                                rightSections.push(section);
+                                rightColumnTypes.add(type);
+                                console.log(`🆕 ${type} → right column (new)`);
+                            }
+                        }
+                    }
+                });
+                
+                console.log(`📦 Left sections: ${leftSections.length}, Right sections: ${rightSections.length}`);
+                
+                // Measure new content heights BEFORE the swap to predict final dimensions
+                // This allows us to apply the correct height immediately during swap
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'absolute';
+                tempContainer.style.visibility = 'hidden';
+                tempContainer.style.pointerEvents = 'none';
+                tempContainer.style.height = 'auto';
+                tempContainer.style.width = existingColumns[0].offsetWidth + 'px';
+                document.body.appendChild(tempContainer);
+                
+                // Clone and measure left sections
+                const leftSectionHeights = new Map();
+                leftSections.forEach(section => {
+                    const clone = section.cloneNode(true);
+                    tempContainer.appendChild(clone);
+                    const itemsContainer = clone.querySelector('.deck-list-items');
+                    if (itemsContainer) {
+                        const type = itemsContainer.id.replace('deck-list-items-', '');
+                        if (type) {
+                            // Force layout calculation
+                            void clone.offsetHeight;
+                            const newHeight = clone.offsetHeight;
+                            if (newHeight > 0) {
+                                leftSectionHeights.set(type, newHeight);
+                                console.log(`📐 Measured new height for ${type}: ${newHeight}px`);
+                            }
+                        }
+                    }
+                    tempContainer.removeChild(clone);
+                });
+                
+                // Clone and measure right sections
+                tempContainer.style.width = existingColumns[1].offsetWidth + 'px';
+                const rightSectionHeights = new Map();
+                rightSections.forEach(section => {
+                    const clone = section.cloneNode(true);
+                    tempContainer.appendChild(clone);
+                    const itemsContainer = clone.querySelector('.deck-list-items');
+                    if (itemsContainer) {
+                        const type = itemsContainer.id.replace('deck-list-items-', '');
+                        if (type) {
+                            // Force layout calculation
+                            void clone.offsetHeight;
+                            const newHeight = clone.offsetHeight;
+                            if (newHeight > 0) {
+                                rightSectionHeights.set(type, newHeight);
+                                console.log(`📐 Measured new height for ${type}: ${newHeight}px`);
+                            }
+                        }
+                    }
+                    tempContainer.removeChild(clone);
+                });
+                
+                document.body.removeChild(tempContainer);
+                
+                // Execute replacement synchronously in one frame to minimize layout recalculation
+                // Using RAF ensures it happens right before paint, reducing visual jumps
+                requestAnimationFrame(() => {
+                    // Preserve column heights to prevent jumps
+                    const leftColumnHeight = existingColumns[0].offsetHeight;
+                    const rightColumnHeight = existingColumns[1].offsetHeight;
+                    
+                    console.log(`📏 Before replacement - Left column: ${leftColumnHeight}px, Right column: ${rightColumnHeight}px`);
+                    
+                    // Apply section heights - use new measured height if available, otherwise preserve old
+                    const appliedHeights = new Map();
+                    
+                    // Store target heights for each section type - use MAX of measured vs preserved
+                    // This prevents shrinking by always using the larger value
+                    leftSections.forEach(section => {
+                        const itemsContainer = section.querySelector('.deck-list-items');
+                        if (itemsContainer) {
+                            const type = itemsContainer.id.replace('deck-list-items-', '');
+                            const measuredHeight = leftSectionHeights.get(type);
+                            const preservedHeight = sectionHeights.get(type);
+                            // Use maximum to prevent shrinking, prefer measured if both exist
+                            const targetHeight = measuredHeight && preservedHeight 
+                                ? Math.max(measuredHeight, preservedHeight)
+                                : (measuredHeight || preservedHeight);
+                            if (targetHeight && targetHeight > 0) {
+                                appliedHeights.set(type, targetHeight);
+                                console.log(`📐 Target height for ${type}: ${targetHeight}px (measured: ${measuredHeight || 'none'}, preserved: ${preservedHeight || 'none'})`);
+                            }
+                        }
+                    });
+                    
+                    rightSections.forEach(section => {
+                        const itemsContainer = section.querySelector('.deck-list-items');
+                        if (itemsContainer) {
+                            const type = itemsContainer.id.replace('deck-list-items-', '');
+                            const measuredHeight = rightSectionHeights.get(type);
+                            const preservedHeight = sectionHeights.get(type);
+                            // Use maximum to prevent shrinking, prefer measured if both exist
+                            const targetHeight = measuredHeight && preservedHeight 
+                                ? Math.max(measuredHeight, preservedHeight)
+                                : (measuredHeight || preservedHeight);
+                            if (targetHeight && targetHeight > 0) {
+                                appliedHeights.set(type, targetHeight);
+                                console.log(`📐 Target height for ${type}: ${targetHeight}px (measured: ${measuredHeight || 'none'}, preserved: ${preservedHeight || 'none'})`);
+                            }
+                        }
+                    });
+                    
+                    // Also preserve column heights to prevent column-level jumps
+                    if (leftColumnHeight > 0) {
+                        existingColumns[0].style.minHeight = `${leftColumnHeight}px`;
+                    }
+                    if (rightColumnHeight > 0) {
+                        existingColumns[1].style.minHeight = `${rightColumnHeight}px`;
+                    }
+                    
+                    // Force a layout calculation to apply the column heights before swap
+                    void existingColumns[0].offsetHeight;
+                    void existingColumns[1].offsetHeight;
+                    
+                    // Batch both column updates together synchronously
+                    if (existingColumns[0] && leftSections.length > 0) {
+                        existingColumns[0].replaceChildren(...leftSections);
+                    } else if (existingColumns[0]) {
+                        existingColumns[0].replaceChildren();
+                    }
+                    if (existingColumns[1] && rightSections.length > 0) {
+                        existingColumns[1].replaceChildren(...rightSections);
+                    } else if (existingColumns[1]) {
+                        existingColumns[1].replaceChildren();
+                    }
+                    
+                    // CRITICAL: Apply section heights IMMEDIATELY and SYNCHRONOUSLY after replaceChildren
+                    // This must happen before any layout recalculation to prevent visual jumps
+                    appliedHeights.forEach((height, type) => {
+                        const itemsContainer = document.getElementById(`deck-list-items-${type}`);
+                        if (itemsContainer) {
+                            const section = itemsContainer.closest('.deck-list-section');
+                            if (section) {
+                                // Apply exact height immediately to lock dimensions before browser recalculates
+                                section.style.height = `${height}px`;
+                                section.style.minHeight = `${height}px`;
+                                section.style.boxSizing = 'border-box';
+                                section.style.overflow = 'hidden'; // Prevent content overflow during transition
+                            }
+                        }
+                    });
+                    
+                    // Force synchronous layout calculation with heights applied
+                    // This ensures browser uses our locked heights before paint
+                    void existingColumns[0].offsetHeight;
+                    void existingColumns[1].offsetHeight;
+                    
+                    // Verify all sections got their heights applied
+                    appliedHeights.forEach((expectedHeight, type) => {
+                        const itemsContainer = document.getElementById(`deck-list-items-${type}`);
+                        if (itemsContainer) {
+                            const section = itemsContainer.closest('.deck-list-section');
+                            if (section) {
+                                const actualHeight = section.offsetHeight;
+                                if (Math.abs(actualHeight - expectedHeight) > 1) {
+                                    console.warn(`⚠️ Height mismatch for ${type}: expected ${expectedHeight}px, got ${actualHeight}px`);
+                                    // Force correct height
+                                    section.style.height = `${expectedHeight}px`;
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Switch from exact height to min-height in next frame to allow growth
+                    // Use double RAF to ensure paint has completed
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            appliedHeights.forEach((height, type) => {
+                                const itemsContainer = document.getElementById(`deck-list-items-${type}`);
+                                if (itemsContainer) {
+                                    const section = itemsContainer.closest('.deck-list-section');
+                                    if (section) {
+                                        // Switch to min-height to allow growth but prevent shrinking
+                                        section.style.height = '';
+                                        section.style.overflow = ''; // Re-enable overflow
+                                        section.style.minHeight = `${height}px`;
+                                    }
+                                }
+                            });
+                            
+                            // Allow columns to grow naturally too
+                            existingColumns[0].style.minHeight = '';
+                            existingColumns[1].style.minHeight = '';
+                        });
+                    });
+                    
+                    // Apply saved expansion state to list view sections (moved here to run after DOM update)
+                    typeOrder.forEach(type => {
+                        const cards = cardsByType[type];
+                        if (!cards || cards.length === 0) return;
+                        
+                        const itemsContainer = document.getElementById(`deck-list-items-${type}`);
+                        const header = itemsContainer?.previousElementSibling;
+                        const toggle = header?.querySelector('.deck-list-section-toggle');
+                        
+                        if (itemsContainer && header && toggle) {
+                            // In read-only list view, always expand sections by default
+                            const isExpanded = true; // Always expanded in read-only list view
+                            if (!isExpanded) {
+                                itemsContainer.style.display = 'none';
+                                toggle.textContent = '▶';
+                                header.classList.add('collapsed');
+                            }
+                        }
+                    });
+                    
+                    // Remove min-height constraints after layout has fully stabilized
+                    // Use triple RAF to ensure all layout calculations are complete
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            requestAnimationFrame(() => {
+                                // Check each section and remove min-height only if it has grown naturally
+                                appliedHeights.forEach((preservedHeight, type) => {
+                                    const itemsContainer = document.getElementById(`deck-list-items-${type}`);
+                                    if (itemsContainer) {
+                                        const section = itemsContainer.closest('.deck-list-section');
+                                        if (section) {
+                                            const currentHeight = section.offsetHeight;
+                                            const minHeight = parseInt(section.style.minHeight) || 0;
+                                            // Only remove if section has grown beyond preserved height
+                                            if (currentHeight > preservedHeight && currentHeight >= minHeight) {
+                                                section.style.minHeight = '';
+                                                console.log(`✅ Removed min-height constraint for ${type} (${currentHeight}px > ${preservedHeight}px)`);
+                                            } else if (currentHeight === preservedHeight) {
+                                                // Keep min-height if section hasn't changed size
+                                                console.log(`🔒 Keeping min-height for ${type} (${currentHeight}px = ${preservedHeight}px)`);
+                                            }
+                                        }
+                                    }
+                                });
+                                
+                                const newLeftHeight = existingColumns[0].offsetHeight;
+                                const newRightHeight = existingColumns[1].offsetHeight;
+                                console.log(`📏 After replacement - Left column: ${newLeftHeight}px, Right column: ${newRightHeight}px`);
+                            });
+                        });
+                    });
+                });
+            } else {
+                // Use requestAnimationFrame to batch DOM updates and reduce flicker
+                requestAnimationFrame(() => {
+                    // No columns exist yet - do normal render
+                    deckCardsEditor.innerHTML = html;
+                    
+                    // Ultra-aggressive layout enforcement
+                    ultraAggressiveLayoutEnforcement();
+                    
+                    // Set up two-column layout for list view (critical for initial load)
+                    enforceTwoColumnLayoutInListView();
+                    
+                    // Ensure two-column layout is applied after DOM updates (fallback)
+                    setTimeout(() => {
+                        enforceTwoColumnLayoutInListView();
+                    }, 10);
+                    
+                    // Apply saved expansion state to list view sections (moved here to run after DOM update)
+                    typeOrder.forEach(type => {
+                        const cards = cardsByType[type];
+                        if (!cards || cards.length === 0) return;
+                        
+                        const itemsContainer = document.getElementById(`deck-list-items-${type}`);
+                        const header = itemsContainer?.previousElementSibling;
+                        const toggle = header?.querySelector('.deck-list-section-toggle');
+                        
+                        if (itemsContainer && header && toggle) {
+                            // In read-only list view, always expand sections by default
+                            const isExpanded = true; // Always expanded in read-only list view
+                            if (!isExpanded) {
+                                itemsContainer.style.display = 'none';
+                                toggle.textContent = '▶';
+                                header.classList.add('collapsed');
+                            }
+                        }
+                    });
+                });
+            }
             
             // Force layout recalculation to ensure horizontal orientation
             requestAnimationFrame(() => {
