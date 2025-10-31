@@ -20,22 +20,15 @@
  * Handles tab visibility, search setup, and data loading
  */
 function switchTab(tabName) {
-    console.log(`🔍 DEBUG: switchTab called with: ${tabName}`);
-    console.log(`🔍 DEBUG: window.databaseViewCore exists:`, !!window.databaseViewCore);
-    console.log(`🔍 DEBUG: databaseViewCore.isInitialized():`, window.databaseViewCore?.isInitialized?.());
-
     // Use new component structure if available
     if (window.databaseViewCore && window.databaseViewCore.isInitialized()) {
         const tabsComponent = window.databaseViewCore.getComponent('tabs');
-        console.log(`🔍 DEBUG: tabsComponent found:`, !!tabsComponent);
         if (tabsComponent) {
-            console.log('🔍 DEBUG: Using new component structure for tab switch');
             return tabsComponent.switchTab(tabName);
         }
     }
 
     // Fallback to original implementation
-    console.log('🔍 DEBUG: Using fallback tab switch implementation');
     return switchTabFallback(tabName);
 }
 
@@ -44,7 +37,6 @@ function switchTab(tabName) {
  * Original implementation for backward compatibility
  */
 function switchTabFallback(tabName) {
-    console.log(`🔍 DEBUG: switchTabFallback called with: ${tabName}`);
     const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
 
     // Removed overly aggressive tab switching protection
@@ -83,10 +75,8 @@ function switchTabFallback(tabName) {
 
     // Show search container for all tabs including characters
     const searchContainer = document.getElementById('search-container');
-    console.log(`🔍 DEBUG: Fallback - searchContainer found:`, !!searchContainer);
     if (searchContainer) {
         searchContainer.style.display = 'block';
-        console.log(`🔍 DEBUG: Fallback - Set search container display to:`, searchContainer.style.display);
     }
 
     // Remove active class from all buttons

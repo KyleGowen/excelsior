@@ -37,11 +37,8 @@ class DatabaseViewTabs {
      */
     async initialize() {
         if (this.initialized) {
-            console.log('Database view tabs already initialized');
             return;
         }
-
-        console.log('Initializing database view tabs...');
 
         try {
             // Initialize tab configurations
@@ -54,7 +51,6 @@ class DatabaseViewTabs {
             this.initializeTabStates();
 
             this.initialized = true;
-            console.log('Database view tabs initialized successfully');
 
         } catch (error) {
             console.error('Error initializing database view tabs:', error);
@@ -142,8 +138,6 @@ class DatabaseViewTabs {
         };
 
         this.tabConfigs = new Map(Object.entries(tabConfigs));
-        console.log(`Initialized ${this.tabConfigs.size} tab configurations`);
-        console.log('🔍 DEBUG: Characters tab config:', this.tabConfigs.get('characters'));
     }
 
     /**
@@ -152,8 +146,6 @@ class DatabaseViewTabs {
     setupTabEventListeners() {
         // Listen for tab switch requests
         document.addEventListener('databaseViewTabSwitch', this.handleTabSwitch);
-
-        console.log('Database view tabs event listeners setup');
     }
 
     /**
@@ -174,15 +166,10 @@ class DatabaseViewTabs {
      * Switch to a specific tab
      */
     async switchTab(tabName) {
-        console.log(`🔍 DEBUG: DatabaseViewTabs.switchTab called with: ${tabName}`);
-        console.log(`🔍 DEBUG: tabConfigs has ${tabName}:`, this.tabConfigs.has(tabName));
-        
         if (!this.tabConfigs.has(tabName)) {
             console.warn(`Unknown tab: ${tabName}`);
             return;
         }
-
-        console.log(`Switching to tab: ${tabName}`);
 
         try {
             // Clear all filters when switching tabs
@@ -217,8 +204,6 @@ class DatabaseViewTabs {
 
             // Notify other components
             this.notifyTabSwitch(tabName);
-
-            console.log(`Successfully switched to tab: ${tabName}`);
 
         } catch (error) {
             console.error(`Error switching to tab ${tabName}:`, error);
@@ -288,25 +273,14 @@ class DatabaseViewTabs {
         const searchInput = document.getElementById('search-input');
         const config = this.tabConfigs.get(tabName);
 
-        console.log(`🔍 DEBUG: updateSearchContainer called for tab: ${tabName}`);
-        console.log('🔍 DEBUG: searchContainer found:', !!searchContainer);
-        console.log('🔍 DEBUG: searchInput found:', !!searchInput);
-        console.log('🔍 DEBUG: config found:', !!config);
-        console.log('🔍 DEBUG: config.hasSearch:', config?.hasSearch);
-        console.log('🔍 DEBUG: config.searchPlaceholder:', config?.searchPlaceholder);
-
         if (!searchContainer || !searchInput || !config) {
-            console.log('🔍 DEBUG: Missing elements or config, returning early');
             return;
         }
 
         if (config.hasSearch) {
-            console.log('🔍 DEBUG: Setting search container to display: block');
             searchContainer.style.display = 'block';
             searchInput.placeholder = config.searchPlaceholder;
-            console.log('🔍 DEBUG: Search container display after setting:', searchContainer.style.display);
         } else {
-            console.log('🔍 DEBUG: Setting search container to display: none');
             searchContainer.style.display = 'none';
         }
     }
@@ -440,8 +414,6 @@ class DatabaseViewTabs {
 
         this.initialized = false;
         this.currentTab = null;
-
-        console.log('Database view tabs cleaned up');
     }
 }
 

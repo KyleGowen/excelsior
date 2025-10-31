@@ -36,11 +36,8 @@ class DatabaseViewCore {
      */
     async initialize() {
         if (this.initialized) {
-            console.log('Database view core already initialized');
             return;
         }
-
-        console.log('Initializing database view core...');
 
         try {
             // Initialize components
@@ -56,7 +53,6 @@ class DatabaseViewCore {
             await this.loadInitialData();
 
             this.initialized = true;
-            console.log('Database view core initialized successfully');
 
         } catch (error) {
             console.error('Error initializing database view core:', error);
@@ -92,7 +88,6 @@ class DatabaseViewCore {
             await this.components.get('dataLoading').initialize();
         }
 
-        console.log(`Initialized ${this.components.size} database view components`);
     }
 
     /**
@@ -108,7 +103,6 @@ class DatabaseViewCore {
         // Listen for filter changes
         document.addEventListener('databaseViewFilterChange', this.handleFilterChange);
 
-        console.log('Database view core event listeners setup');
     }
 
     /**
@@ -137,7 +131,6 @@ class DatabaseViewCore {
         const tabName = event.detail?.tabName;
         if (!tabName) return;
 
-        console.log(`Database view core handling tab switch to: ${tabName}`);
         this.currentTab = tabName;
 
         // Notify components of tab switch
@@ -157,7 +150,6 @@ class DatabaseViewCore {
 
         if (!dataType || !data) return;
 
-        console.log(`Database view core handling data load for: ${dataType}`);
 
         // Notify display component to update
         const display = this.components.get('display');
@@ -175,7 +167,6 @@ class DatabaseViewCore {
 
         if (!filterType) return;
 
-        console.log(`Database view core handling filter change for: ${filterType}`);
 
         // Notify components of filter change
         this.components.forEach((component, name) => {
@@ -225,7 +216,6 @@ class DatabaseViewCore {
         this.components.clear();
         this.initialized = false;
 
-        console.log('Database view core cleaned up');
     }
 }
 

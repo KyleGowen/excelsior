@@ -96,14 +96,11 @@ async function loadCharacters() {
 
 // Load and display special cards
 async function loadSpecialCards() {
-    console.log('🔍 DEBUG: loadSpecialCards called');
     try {
-        console.log('🔍 DEBUG: Fetching special cards from API...');
         const response = await fetch('/api/special-cards');
         const data = await response.json();
         
         if (data.success) {
-            console.log('🔍 DEBUG: API response successful, calling displaySpecialCards with:', data.data);
             displaySpecialCards(data.data);
         } else {
             throw new Error('Failed to load special cards');

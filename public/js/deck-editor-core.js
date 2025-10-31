@@ -96,7 +96,6 @@ function showDeckEditor() {
                 saveButton.style.cursor = 'not-allowed';
                 saveButton.title = 'Save is disabled in read-only mode';
                 saveButton.style.display = 'block';
-                console.log('🔒 SECURITY: Save button disabled in read-only mode');
             } else if (isGuestUser()) {
                 // Disable Save button for guest users
                 saveButton.disabled = true;
@@ -145,13 +144,10 @@ function showDeckEditor() {
 
 // Load deck for editing
 async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) {
-    console.log('🔄 loadDeckForEditing called with:', { deckId, urlUserId, isReadOnly });
-    
     // Note: Read-only mode is now determined by API response and ownership checks below
     
     // Handle new deck creation
     if (deckId === 'new') {
-        console.log('Initializing new deck');
         currentDeckId = null; // No ID until saved
         currentDeckData = {
             metadata: {
@@ -203,19 +199,14 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
     
     currentDeckId = deckId; // Set the current deck ID
     try {
-        console.log('🌐 Fetching deck data from API...');
         const response = await fetch(`/api/decks/${deckId}`, {
             credentials: 'include'
         });
-        console.log('📡 API response status:', response.status);
         const data = await response.json();
-        console.log('📦 API response data:', data);
         
         if (data.success) {
-            console.log('✅ Deck data loaded successfully');
             currentDeckData = data.data;
             window.deckEditorCards = [...data.data.cards]; // Create working copy
-            console.log('🎴 Deck cards loaded:', window.deckEditorCards.length, 'cards');
             
             // Convert database type format to frontend format
             window.deckEditorCards = window.deckEditorCards.map(card => {
@@ -238,20 +229,15 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             if (isReadOnlyFromQuery && isDeckOwner) {
                 // Only allow read-only mode from URL parameter if user is the deck owner
                 isReadOnlyMode = true;
-                console.log('🔒 SECURITY: Allowing read-only mode from URL parameter - user is deck owner');
             } else if (isReadOnlyFromQuery && !isDeckOwner) {
                 // Security violation: non-owner trying to use readonly=true parameter
                 isReadOnlyMode = false; // Force edit mode to prevent unauthorized access
-                console.log('🚨 SECURITY VIOLATION: Non-owner attempted to use readonly=true parameter - forcing edit mode');
-                console.log('🚨 SECURITY: Current user is not deck owner, ignoring readonly=true parameter');
             } else if (data.data.metadata && data.data.metadata.isOwner !== undefined) {
                 // Use API response for ownership-based read-only mode
                 isReadOnlyMode = !data.data.metadata.isOwner;
-                console.log('🔒 SECURITY: Updated read-only mode from API:', isReadOnlyMode, 'isOwner:', data.data.metadata.isOwner);
             } else {
                 // Fallback: if no ownership info, assume read-only for safety
                 isReadOnlyMode = true;
-                console.log('🔒 SECURITY: No ownership info available, defaulting to read-only mode for safety');
             }
             
             // Update the body class to reflect the correct read-only mode
@@ -273,7 +259,6 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             // Validate and fix location count (max 1 location allowed)
             const locationCards = window.deckEditorCards.filter(card => card.type === 'location');
             if (locationCards.length > 1) {
-                console.log(`Found ${locationCards.length} location cards, removing extra ones`);
                 // Keep only the first location card
                 const firstLocationIndex = window.deckEditorCards.findIndex(card => card.type === 'location');
                 window.deckEditorCards = window.deckEditorCards.filter((card, index) => 
@@ -389,13 +374,6 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
 
 // Save deck changes
 async function saveDeckChanges() {
-    console.log('💾 saveDeckChanges called');
-    console.log('📊 Current state:', {
-        currentDeckId,
-        currentDeckData: currentDeckData ? 'loaded' : 'not loaded',
-        deckEditorCards: window.deckEditorCards ? window.deckEditorCards.length : 0
-    });
-    
     if (!currentDeckData) {
         console.error('❌ Cannot save - no deck data loaded');
         return;
@@ -418,7 +396,6 @@ async function saveDeckChanges() {
     
     // SECURITY: Check for read-only mode first
     if (document.body.classList.contains('read-only-mode')) {
-        console.log('🔒 SECURITY: Blocking saveDeckChanges in read-only mode');
         alert('Cannot save changes in read-only mode.');
         return;
     }
@@ -552,7 +529,6 @@ async function saveDeckChanges() {
 async function exportDeckAsJson() {
     // Security check - only allow ADMIN users (temporarily disabled for debugging)
     if (!currentUser || currentUser.role !== 'ADMIN') {
-        console.log('🔒 Security check: User role is', currentUser?.role, '- proceeding for debugging');
         // showNotification('Access denied: Admin privileges required', 'error');
         // return;
     }
@@ -560,7 +536,6 @@ async function exportDeckAsJson() {
     try {
         // Ensure availableCardsMap is loaded before exporting
         if (!window.availableCardsMap || window.availableCardsMap.size === 0) {
-            console.log('Loading card data for export...');
             if (typeof loadAvailableCards === 'function') {
                 await loadAvailableCards();
                 // Wait a bit for the function to complete
@@ -574,12 +549,6 @@ async function exportDeckAsJson() {
             }
         }
         
-        console.log(`Card data loaded for export: ${window.availableCardsMap.size} cards available`);
-        
-        // Debug: Log currentDeckData structure
-        console.log('🔍 currentDeckData:', currentDeckData);
-        console.log('🔍 currentDeckData.metadata:', currentDeckData?.metadata);
-        
         // Get current deck data from currentDeckData object, fallback to UI elements
         let deckName = 'Untitled Deck';
         let deckDescription = '';
@@ -588,10 +557,7 @@ async function exportDeckAsJson() {
         if (currentDeckData && currentDeckData.metadata) {
             deckName = currentDeckData.metadata.name || 'Untitled Deck';
             deckDescription = currentDeckData.metadata.description || '';
-            console.log('🔍 Using currentDeckData.metadata:', { deckName, deckDescription });
         } else {
-            console.log('🔍 currentDeckData or metadata not available, using UI fallbacks');
-            
             // Only try UI elements if metadata is not available
             // Look for the deck title in the deck editor area, not the deck list
             // The deck editor title should be an h3 element that's not in the deck list
@@ -607,17 +573,13 @@ async function exportDeckAsJson() {
                                     ) ||
                                     document.querySelector('h4') || 
                                     document.querySelector('.deck-title');
-            console.log('🔍 deckTitleElement:', deckTitleElement);
-            console.log('🔍 deckTitleElement textContent:', deckTitleElement?.textContent);
             
             if (deckTitleElement && deckTitleElement.textContent.trim()) {
                 // Extract just the deck name, excluding legality badges
                 let titleText = deckTitleElement.textContent.trim();
-                console.log('🔍 Original titleText:', titleText);
                 
                 // Remove common legality suffixes that are dynamically added
                 titleText = titleText.replace(/\s+(Not Legal|Legal|Invalid|Valid)$/i, '');
-                console.log('🔍 After removing legality suffixes:', titleText);
                 
                 // Also try to get just the text content without the legality span
                 const legalityBadge = deckTitleElement.querySelector('.deck-validation-badge, .legality-badge');
@@ -629,29 +591,20 @@ async function exportDeckAsJson() {
                         cleanBadge.remove();
                     }
                     titleText = cleanElement.textContent.trim();
-                    console.log('🔍 After removing legality badge:', titleText);
                 }
                 
                 if (titleText) {
                     deckName = titleText;
-                    console.log('🔍 Using UI element deckName:', deckName);
                 }
             }
             const deckDescElement = document.querySelector('.deck-description') || 
                                   document.querySelector('.deck-desc') ||
                                   document.querySelector('[data-deck-description]');
-            console.log('🔍 deckDescElement:', deckDescElement);
-            console.log('🔍 deckDescElement textContent:', deckDescElement?.textContent);
             
             if (deckDescElement && deckDescElement.textContent.trim()) {
                 deckDescription = deckDescElement.textContent.trim();
-                console.log('🔍 Using UI element deckDescription:', deckDescription);
             }
         }
-        
-        
-        // Debug: Log final values being used
-        console.log('🔍 Final export values:', { deckName, deckDescription });
         
         // Calculate deck statistics
         const totalCards = window.deckEditorCards
@@ -769,7 +722,6 @@ async function exportDeckAsJson() {
 // Import deck from JSON (Admin only) - DISABLED
 function importDeckFromJson() {
     // Import functionality has been disabled
-    console.log('🔒 Import functionality is disabled');
     showNotification('Import functionality is currently disabled', 'info');
 }
 
