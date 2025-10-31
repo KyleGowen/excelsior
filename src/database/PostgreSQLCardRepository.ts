@@ -431,6 +431,8 @@ export class PostgreSQLCardRepository implements CardRepository {
         card_effect: aspect.card_effect,
         aspect_description: aspect.aspect_description,
         image: aspect.image_path,
+        icons: aspect.icons || undefined,
+        value: aspect.value ?? null,
         is_fortification: aspect.fortifications || false,
         is_one_per_deck: aspect.one_per_deck || false
       }));

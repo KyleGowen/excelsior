@@ -3864,7 +3864,66 @@
                                  onmouseenter="showCardHoverModal('${imagePath}', '${cardName.replace(/'/g, "\\'")}')"
                                  onmouseleave="hideCardHoverModal()">
                                 <div class="deck-list-item-quantity">${card.quantity}</div>
-                                <div class="deck-list-item-name">${cardName}</div>
+                                <div class="deck-list-item-name">
+                                    ${(() => {
+                                        const iconMap = {
+                                            'Energy': '/src/resources/images/icons/energy.png',
+                                            'Combat': '/src/resources/images/icons/combat.png',
+                                            'Brute Force': '/src/resources/images/icons/brute_force.png',
+                                            'Intelligence': '/src/resources/images/icons/intelligence.png',
+                                            'Any-Power': '/src/resources/images/icons/any-power.png'
+                                        };
+                                        if (card.type === 'power') {
+                                            const type = String(availableCard.power_type || '').trim();
+                                            const renderOrder = ['Any-Power','Energy','Combat','Brute Force','Intelligence'];
+                                            const isMulti = /multi\s*-?power/i.test(type);
+                                            const icons = type === 'Any-Power'
+                                                ? ['Any-Power']
+                                                : isMulti
+                                                    ? ['Energy','Combat','Brute Force','Intelligence']
+                                                    : renderOrder.filter(t => t === type);
+                                            const imgs = icons
+                                                .filter(t => iconMap[t])
+                                                .map(t => `<img src="${iconMap[t]}" alt="${t}" style="width:24px;height:24px;object-fit:contain;vertical-align:middle;display:inline-block;margin-left:8px;" />`)
+                                                .join('');
+                                            return imgs ? `${cardName} ${imgs}` : `${cardName}`;
+                                        }
+                                        if (card.type === 'teamwork') {
+                                            const renderOrder = ['Any-Power','Energy','Combat','Brute Force','Intelligence'];
+                                            const src = String(availableCard.to_use || '');
+                                            const isAny = /Any-?Power/i.test(src);
+                                            const icons = isAny ? ['Any-Power'] : renderOrder.filter(t => t !== 'Any-Power' && new RegExp(t, 'i').test(src));
+                                            const imgs = icons
+                                                .filter(t => iconMap[t])
+                                                .map(t => `<img src="${iconMap[t]}" alt="${t}" style="width:24px;height:24px;object-fit:contain;vertical-align:middle;display:inline-block;margin-left:8px;" />`)
+                                                .join('');
+                                            return imgs ? `${cardName} ${imgs}` : `${cardName}`;
+                                        }
+                                        if (card.type === 'ally-universe') {
+                                            const iconMap = {
+                                                'Energy': '/src/resources/images/icons/energy.png',
+                                                'Combat': '/src/resources/images/icons/combat.png',
+                                                'Brute Force': '/src/resources/images/icons/brute_force.png',
+                                                'Intelligence': '/src/resources/images/icons/intelligence.png'
+                                            };
+                                            const src = String(availableCard.stat_type_to_use || '');
+                                            const renderOrder = ['Energy','Combat','Brute Force','Intelligence'];
+                                            const type = renderOrder.find(t => new RegExp(t, 'i').test(src));
+                                            const img = type && iconMap[type] ? `<img src="${iconMap[type]}" alt="${type}" style="width:24px;height:24px;object-fit:contain;vertical-align:middle;display:inline-block;margin-left:8px;" />` : '';
+                                            return `${cardName} ${img}`.trim();
+                                        }
+                                        if (card.type === 'aspect') {
+                                            const renderOrder = ['Energy','Combat','Brute Force','Intelligence'];
+                                            const icons = Array.isArray(availableCard.icons) ? availableCard.icons : [];
+                                            const imgs = renderOrder
+                                                .filter(t => icons.includes(t) && iconMap[t])
+                                                .map(t => `<img src="${iconMap[t]}" alt="${t}" style="width:24px;height:24px;object-fit:contain;vertical-align:middle;display:inline-block;margin-left:8px;" />`)
+                                                .join('');
+                                            return imgs ? `${cardName} ${imgs}` : `${cardName}`;
+                                        }
+                                        return `${cardName}`;
+                                    })()}
+                                </div>
                                 <div class="deck-list-item-actions">
                                     ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `
                                         <div class="deck-list-item-quantity-control">
