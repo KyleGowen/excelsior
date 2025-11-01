@@ -1348,6 +1348,11 @@
                                     <span class="stat-label">Total Cards:</span>
                                     <span class="stat-value" id="deckTotalCards">0</span>
                                 </div>
+                                <div class="deck-stats-divider"></div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Total Threat:</span>
+                                    <span class="stat-value" id="deckTotalThreat">0</span>
+                                </div>
                                 <div class="summary-stat">
                                     <span class="stat-label">Max Energy:</span>
                                     <span class="stat-value" id="deckMaxEnergy">0</span>
@@ -1364,9 +1369,22 @@
                                     <span class="stat-label">Max Intelligence:</span>
                                     <span class="stat-value" id="deckMaxIntelligence">0</span>
                                 </div>
+                                <div class="deck-stats-divider"></div>
                                 <div class="summary-stat">
-                                    <span class="stat-label">Total Threat:</span>
-                                    <span class="stat-value" id="deckTotalThreat">0</span>
+                                    <span class="stat-label">Total Energy:</span>
+                                    <span class="stat-value" id="deckTotalEnergy">0</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Total Combat:</span>
+                                    <span class="stat-value" id="deckTotalCombat">0</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Total Brute Force:</span>
+                                    <span class="stat-value" id="deckTotalBruteForce">0</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Total Intelligence:</span>
+                                    <span class="stat-value" id="deckTotalIntelligence">0</span>
                                 </div>
                             </div>
                             <div class="deck-summary-validation" id="deckSummaryValidation">
@@ -4404,6 +4422,12 @@
                     });
                 }, 10);
             });
+            
+            // Update deck summary and card count to ensure Draw Hand button state is correct
+            updateDeckEditorCardCount();
+            if (typeof updateDeckSummary === 'function') {
+                updateDeckSummary(window.window.deckEditorCards || window.deckEditorCards);
+            }
         }
 
         // Card View category toggle function
@@ -4958,6 +4982,97 @@
         // calculateTotalCardCount function moved to external file
 
         // calculateTotalThreat function moved to external file
+        
+        // Function to calculate total icon counts across all cards in the deck
+        // Uses the same logic as list view to determine icons for each card type
+        // Only counts icons from: Special Cards, Aspect Cards, Ally Cards, Teamwork Cards, and Power Cards
+        function calculateIconTotals(deckCards) {
+            const totals = {
+                'Energy': 0,
+                'Combat': 0,
+                'Brute Force': 0,
+                'Intelligence': 0
+            };
+            
+            const iconTypes = ['Energy', 'Combat', 'Brute Force', 'Intelligence'];
+            
+            // Only process card types that should contribute to icon totals
+            const allowedTypes = ['special', 'aspect', 'ally-universe', 'ally_universe', 'teamwork', 'power'];
+            
+            deckCards.forEach(card => {
+                // Skip card types that don't contribute to icon totals
+                if (!allowedTypes.includes(card.type)) {
+                    return;
+                }
+                
+                const availableCard = window.availableCardsMap.get(card.cardId);
+                if (!availableCard) return;
+                
+                const quantity = card.quantity || 1;
+                let icons = [];
+                
+                // Determine icons based on card type, using same logic as list view
+                if (card.type === 'power') {
+                    // Power cards: use power_type field
+                    const type = String(availableCard.power_type || '').trim();
+                    const isMulti = /multi\s*-?power/i.test(type);
+                    
+                    if (type === 'Any-Power') {
+                        // Any-Power doesn't count toward icon totals
+                        icons = [];
+                    } else if (isMulti) {
+                        // Multi Power counts as all 4 types
+                        icons = ['Energy', 'Combat', 'Brute Force', 'Intelligence'];
+                    } else {
+                        // Single type power card
+                        const matchedType = iconTypes.find(t => t === type);
+                        if (matchedType) {
+                            icons = [matchedType];
+                        }
+                    }
+                } else if (card.type === 'teamwork') {
+                    // Teamwork cards: use to_use field
+                    const src = String(availableCard.to_use || '');
+                    const isAny = /Any-?Power/i.test(src);
+                    
+                    if (isAny) {
+                        // Any-Power doesn't count toward icon totals
+                        icons = [];
+                    } else {
+                        // Match Energy, Combat, Brute Force, Intelligence from to_use string
+                        icons = iconTypes.filter(t => {
+                            const regex = new RegExp(t, 'i');
+                            return regex.test(src);
+                        });
+                    }
+                } else if (card.type === 'ally-universe' || card.type === 'ally_universe') {
+                    // Ally-universe cards: use stat_type_to_use field
+                    const src = String(availableCard.stat_type_to_use || '');
+                    const matchedType = iconTypes.find(t => {
+                        const regex = new RegExp(t, 'i');
+                        return regex.test(src);
+                    });
+                    if (matchedType) {
+                        icons = [matchedType];
+                    }
+                } else {
+                    // For other card types (special, aspect, etc.): use icons array
+                    icons = Array.isArray(availableCard.icons) ? availableCard.icons : [];
+                    // Filter to only count the 4 main icon types
+                    icons = icons.filter(icon => iconTypes.includes(icon));
+                }
+                
+                // Count each icon type, multiplied by quantity
+                icons.forEach(icon => {
+                    if (totals.hasOwnProperty(icon)) {
+                        totals[icon] += quantity;
+                    }
+                });
+            });
+            
+            return totals;
+        }
+        
         // Function to update deck summary with stats and validation
         async function updateDeckSummary(deckCards) {
             
@@ -5035,6 +5150,13 @@
                 totalThreatDisplay = totalThreat.toString();
             }
             document.getElementById('deckTotalThreat').textContent = totalThreatDisplay;
+            
+            // Calculate total icon counts
+            const iconTotals = calculateIconTotals(deckCards);
+            document.getElementById('deckTotalEnergy').textContent = iconTotals.Energy || 0;
+            document.getElementById('deckTotalCombat').textContent = iconTotals.Combat || 0;
+            document.getElementById('deckTotalBruteForce').textContent = iconTotals['Brute Force'] || 0;
+            document.getElementById('deckTotalIntelligence').textContent = iconTotals.Intelligence || 0;
             
             // Update validation in summary
             // Validation errors are now shown in tooltips on the deck title badge
