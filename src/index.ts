@@ -665,6 +665,16 @@ app.get('/api/debug/clear-cache', async (req, res) => {
   }
 });
 
+// Debug endpoint to clear card repository cache (useful after migrations)
+app.get('/api/debug/clear-card-cache', async (req, res) => {
+  try {
+    (cardRepository as any).clearCaches();
+    res.json({ success: true, message: 'Card repository cache cleared' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to clear card cache' });
+  }
+});
+
 app.post('/api/users', authenticateUser, async (req: any, res) => {
   try {
     // Check if the current user is an ADMIN
