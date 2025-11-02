@@ -1133,18 +1133,65 @@ function copyJsonToClipboard() {
     
     if (jsonString) {
         navigator.clipboard.writeText(jsonString).then(() => {
-            // Show temporary feedback
+            // Get elements for visual feedback
             const copyBtn = document.querySelector('.copy-button');
-            const originalTitle = copyBtn.title;
-            copyBtn.title = 'Copied!';
-            copyBtn.style.background = 'rgba(78, 205, 196, 0.4)';
-            copyBtn.style.borderColor = 'rgba(78, 205, 196, 0.6)';
-
-            setTimeout(() => {
-                copyBtn.title = originalTitle;
-                copyBtn.style.background = 'rgba(78, 205, 196, 0.2)';
-                copyBtn.style.borderColor = 'rgba(78, 205, 196, 0.3)';
-            }, 1000);
+            const jsonContent = document.getElementById('exportJsonContent');
+            const jsonContainer = document.querySelector('.json-container');
+            
+            if (copyBtn) {
+                // Enhanced button flash effect
+                const originalTitle = copyBtn.title;
+                copyBtn.title = 'Copied!';
+                
+                // Add flash animation class
+                copyBtn.classList.add('copy-flash');
+                
+                // Enhanced button styling
+                copyBtn.style.background = 'rgba(78, 205, 196, 0.6)';
+                copyBtn.style.borderColor = '#4ecdc4';
+                copyBtn.style.boxShadow = '0 0 20px rgba(78, 205, 196, 0.8), 0 0 40px rgba(78, 205, 196, 0.4)';
+                copyBtn.style.transform = 'scale(1.1)';
+                copyBtn.style.transition = 'all 0.3s ease';
+                
+                // Remove flash class and reset after animation
+                setTimeout(() => {
+                    copyBtn.classList.remove('copy-flash');
+                }, 150);
+                
+                setTimeout(() => {
+                    copyBtn.title = originalTitle;
+                    copyBtn.style.background = 'rgba(78, 205, 196, 0.2)';
+                    copyBtn.style.borderColor = 'rgba(78, 205, 196, 0.3)';
+                    copyBtn.style.boxShadow = 'none';
+                    copyBtn.style.transform = 'scale(1)';
+                }, 500);
+            }
+            
+            // Highlight the JSON content area
+            if (jsonContainer) {
+                jsonContainer.classList.add('json-copied-flash');
+                
+                // Add border flash
+                jsonContainer.style.borderColor = '#4ecdc4';
+                jsonContainer.style.boxShadow = '0 0 30px rgba(78, 205, 196, 0.6), inset 0 0 20px rgba(78, 205, 196, 0.2)';
+                jsonContainer.style.transition = 'all 0.4s ease';
+                
+                setTimeout(() => {
+                    jsonContainer.classList.remove('json-copied-flash');
+                    jsonContainer.style.borderColor = 'rgba(78, 205, 196, 0.3)';
+                    jsonContainer.style.boxShadow = 'none';
+                }, 400);
+            }
+            
+            // Flash the JSON text content
+            if (jsonContent) {
+                jsonContent.classList.add('json-text-flash');
+                
+                setTimeout(() => {
+                    jsonContent.classList.remove('json-text-flash');
+                }, 300);
+            }
+            
         }).catch(err => {
             console.error('Failed to copy JSON: ', err);
             showNotification('Failed to copy to clipboard', 'error');
