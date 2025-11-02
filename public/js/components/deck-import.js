@@ -198,11 +198,12 @@ async function processImportDeck() {
         const eventCardsToImport = cardsToImport.filter(c => c.type === 'event');
         const aspectCardsToImport = cardsToImport.filter(c => c.type === 'aspect');
         const advancedUniverseCardsToImport = cardsToImport.filter(c => c.type === 'advanced-universe');
-        console.log('🔍 IMPORT: Starting import - Characters:', characterCardsToImport.length, 'Special:', specialCardsToImport.length, 'Locations:', locationCardsToImport.length, 'Missions:', missionCardsToImport.length, 'Events:', eventCardsToImport.length, 'Aspects:', aspectCardsToImport.length, 'Advanced Universe:', advancedUniverseCardsToImport.length);
+        const teamworkCardsToImport = cardsToImport.filter(c => c.type === 'teamwork');
+        console.log('🔍 IMPORT: Starting import - Characters:', characterCardsToImport.length, 'Special:', specialCardsToImport.length, 'Locations:', locationCardsToImport.length, 'Missions:', missionCardsToImport.length, 'Events:', eventCardsToImport.length, 'Aspects:', aspectCardsToImport.length, 'Advanced Universe:', advancedUniverseCardsToImport.length, 'Teamwork:', teamworkCardsToImport.length);
         
         for (const cardEntry of cardsToImport) {
-            // Process characters, special cards, locations, missions, events, aspects, and advanced-universe
-            if (cardEntry.type !== 'character' && cardEntry.type !== 'special' && cardEntry.type !== 'location' && cardEntry.type !== 'mission' && cardEntry.type !== 'event' && cardEntry.type !== 'aspect' && cardEntry.type !== 'advanced-universe') {
+            // Process characters, special cards, locations, missions, events, aspects, advanced-universe, and teamwork
+            if (cardEntry.type !== 'character' && cardEntry.type !== 'special' && cardEntry.type !== 'location' && cardEntry.type !== 'mission' && cardEntry.type !== 'event' && cardEntry.type !== 'aspect' && cardEntry.type !== 'advanced-universe' && cardEntry.type !== 'teamwork') {
                 continue;
             }
             
@@ -214,8 +215,57 @@ async function processImportDeck() {
             else if (cardEntry.type === 'event') cardTypeLabel = 'EVENT';
             else if (cardEntry.type === 'aspect') cardTypeLabel = 'ASPECT';
             else if (cardEntry.type === 'advanced-universe') cardTypeLabel = 'ADVANCED_UNIVERSE';
-            console.log(`🔍 ${cardTypeLabel} IMPORT: Looking up "${cardEntry.name}"`);
-            const cardId = findCardIdByName(cardEntry.name, cardEntry.type);
+            else if (cardEntry.type === 'teamwork') cardTypeLabel = 'TEAMWORK';
+            
+            // For teamwork cards, use special lookup function that matches by name AND followup_attack_types
+            let cardId;
+            if (cardEntry.type === 'teamwork') {
+                const followupTypes = cardEntry.followup_attack_types || null;
+                console.log(`🔍 ${cardTypeLabel} IMPORT: Looking up "${cardEntry.name}"${followupTypes ? ` with followup: "${followupTypes}"` : ' (no followup types)'}`);
+                cardId = findTeamworkCardIdByName(cardEntry.name, followupTypes);
+                
+                // Debug: If not found, log available teamwork cards with matching names
+                if (!cardId) {
+                    console.log(`🔍 ${cardTypeLabel} IMPORT DEBUG: Card not found, searching for teamwork cards with name "${cardEntry.name}"`);
+                    let matchingCards = [];
+                    for (const [key, card] of window.availableCardsMap.entries()) {
+                        if (card && (card.type === 'teamwork' || card.card_type === 'teamwork' || card.cardType === 'teamwork')) {
+                            // For teamwork cards, check to_use field (primary name field)
+                            const cardName = card.to_use || card.name || card.card_name;
+                            if (cardName === cardEntry.name) {
+                                matchingCards.push({
+                                    key: key,
+                                    id: card.id,
+                                    name: cardName,
+                                    to_use: card.to_use,
+                                    followup_attack_types: card.followup_attack_types || card.follow_up_attack_types || null,
+                                    type: card.type || card.card_type || card.cardType
+                                });
+                            }
+                        }
+                    }
+                    console.log(`🔍 ${cardTypeLabel} IMPORT DEBUG: Found ${matchingCards.length} teamwork card(s) with name "${cardEntry.name}":`, matchingCards);
+                    
+                    // Also log all teamwork cards for debugging
+                    let allTeamworkCards = [];
+                    for (const [key, card] of window.availableCardsMap.entries()) {
+                        if (card && (card.type === 'teamwork' || card.card_type === 'teamwork' || card.cardType === 'teamwork')) {
+                            allTeamworkCards.push({
+                                key: key,
+                                id: card.id,
+                                to_use: card.to_use,
+                                name: card.name,
+                                card_name: card.card_name,
+                                followup_attack_types: card.followup_attack_types || card.follow_up_attack_types || null
+                            });
+                        }
+                    }
+                    console.log(`🔍 ${cardTypeLabel} IMPORT DEBUG: All teamwork cards in map (${allTeamworkCards.length} total):`, allTeamworkCards.slice(0, 10));
+                }
+            } else {
+                console.log(`🔍 ${cardTypeLabel} IMPORT: Looking up "${cardEntry.name}"`);
+                cardId = findCardIdByName(cardEntry.name, cardEntry.type);
+            }
             
             // Debug: For missions/events that aren't found, try to diagnose the issue
             if ((cardEntry.type === 'mission' || cardEntry.type === 'event') && !cardId) {
@@ -261,7 +311,7 @@ async function processImportDeck() {
                     
                     alreadyImported.add(importKey);
                 }
-                // Special cards, missions, events, aspects, and advanced-universe don't need duplicate checking - they can be added multiple times
+                // Special cards, missions, events, aspects, advanced-universe, and teamwork don't need duplicate checking - they can be added multiple times
                 
                 console.log(`✅ ${cardTypeLabel} IMPORT: Found "${cardEntry.name}" -> ID: ${cardId}`);
                 importList.push({
@@ -283,7 +333,8 @@ async function processImportDeck() {
         const eventImportList = importList.filter(c => c.type === 'event');
         const aspectImportList = importList.filter(c => c.type === 'aspect');
         const advancedUniverseImportList = importList.filter(c => c.type === 'advanced-universe');
-        console.log('📋 IMPORT: Ready to import - Characters:', characterImportList.length, 'Special:', specialImportList.length, 'Locations:', locationImportList.length, 'Missions:', missionImportList.length, 'Events:', eventImportList.length, 'Aspects:', aspectImportList.length, 'Advanced Universe:', advancedUniverseImportList.length);
+        const teamworkImportList = importList.filter(c => c.type === 'teamwork');
+        console.log('📋 IMPORT: Ready to import - Characters:', characterImportList.length, 'Special:', specialImportList.length, 'Locations:', locationImportList.length, 'Missions:', missionImportList.length, 'Events:', eventImportList.length, 'Aspects:', aspectImportList.length, 'Advanced Universe:', advancedUniverseImportList.length, 'Teamwork:', teamworkImportList.length);
 
         // Report unresolved cards
         if (unresolvedCards.length > 0) {
@@ -321,7 +372,7 @@ async function processImportDeck() {
                     // Validation will catch if we exceed limits
                     continue;
                 } else {
-                    // For special cards, missions, events, aspects, and advanced-universe: increment quantity
+                    // For special cards, missions, events, aspects, advanced-universe, and teamwork: increment quantity
                     testDeckCards[existingIndex].quantity += 1;
                 }
             } else {
@@ -386,12 +437,13 @@ async function processImportDeck() {
         const eventCardsToAdd = importList.filter(c => c.type === 'event');
         const aspectCardsToAdd = importList.filter(c => c.type === 'aspect');
         const advancedUniverseCardsToAdd = importList.filter(c => c.type === 'advanced-universe');
-        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length, 'Locations:', locationCardsToAdd.length, 'Missions:', missionCardsToAdd.length, 'Events:', eventCardsToAdd.length, 'Aspects:', aspectCardsToAdd.length, 'Advanced Universe:', advancedUniverseCardsToAdd.length);
+        const teamworkCardsToAdd = importList.filter(c => c.type === 'teamwork');
+        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length, 'Locations:', locationCardsToAdd.length, 'Missions:', missionCardsToAdd.length, 'Events:', eventCardsToAdd.length, 'Aspects:', aspectCardsToAdd.length, 'Advanced Universe:', advancedUniverseCardsToAdd.length, 'Teamwork:', teamworkCardsToAdd.length);
         console.log('🚀 IMPORT: Current deckEditorCards before import:', window.deckEditorCards?.length || 0, 'cards');
 
         for (const importCard of importList) {
-            // Process characters, special cards, locations, missions, events, aspects, and advanced-universe
-            if (importCard.type !== 'character' && importCard.type !== 'special' && importCard.type !== 'location' && importCard.type !== 'mission' && importCard.type !== 'event' && importCard.type !== 'aspect' && importCard.type !== 'advanced-universe') {
+            // Process characters, special cards, locations, missions, events, aspects, advanced-universe, and teamwork
+            if (importCard.type !== 'character' && importCard.type !== 'special' && importCard.type !== 'location' && importCard.type !== 'mission' && importCard.type !== 'event' && importCard.type !== 'aspect' && importCard.type !== 'advanced-universe' && importCard.type !== 'teamwork') {
                 continue;
             }
             
@@ -403,6 +455,7 @@ async function processImportDeck() {
             else if (importCard.type === 'event') cardTypeLabel = 'EVENT';
             else if (importCard.type === 'aspect') cardTypeLabel = 'ASPECT';
             else if (importCard.type === 'advanced-universe') cardTypeLabel = 'ADVANCED_UNIVERSE';
+            else if (importCard.type === 'teamwork') cardTypeLabel = 'TEAMWORK';
             
             try {
                 // Check card data before adding
@@ -571,8 +624,8 @@ async function processImportDeck() {
                         console.error(`❌ ${cardTypeLabel} IMPORT: addCardToEditor function not available`);
                         throw new Error('addCardToEditor function not available');
                     }
-                } else if (importCard.type === 'mission' || importCard.type === 'event' || importCard.type === 'aspect' || importCard.type === 'advanced-universe') {
-                    // Mission, event, aspect, and advanced-universe cards can be added directly (no duplicate checking needed, similar to special cards)
+                } else if (importCard.type === 'mission' || importCard.type === 'event' || importCard.type === 'aspect' || importCard.type === 'advanced-universe' || importCard.type === 'teamwork') {
+                    // Mission, event, aspect, advanced-universe, and teamwork cards can be added directly (no duplicate checking needed, similar to special cards)
                     // But we should auto-select default art if alternate images exist
                     let selectedAlternateImage = null;
                     if (cardData && cardData.alternateImages && cardData.alternateImages.length > 0) {
@@ -591,7 +644,7 @@ async function processImportDeck() {
                         // Wait a bit for async operations to complete
                         await new Promise(resolve => setTimeout(resolve, 100));
                         
-                        // Check if card was actually added (missions, events, aspects, and advanced-universe can have duplicates, so we just check if it exists)
+                        // Check if card was actually added (missions, events, aspects, advanced-universe, and teamwork can have duplicates, so we just check if it exists)
                         const wasAdded = window.deckEditorCards?.some(c => 
                             c.type === importCard.type && c.cardId === importCard.cardId
                         );
@@ -708,10 +761,31 @@ function extractCardsFromImportData(cardsData) {
         });
     }
 
-    // Teamwork (array of strings)
-    // if (Array.isArray(cardsData.teamwork)) {
-    //     cardsData.teamwork.forEach(cardName => addCard(cardName, 'teamwork'));
-    // }
+    // Teamwork (array of strings, format: "6 Combat - Brute Force + Intelligence")
+    if (Array.isArray(cardsData.teamwork)) {
+        cardsData.teamwork.forEach(cardName => {
+            if (cardName && typeof cardName === 'string') {
+                // Parse teamwork card name to extract base name and followup_attack_types
+                // Format: "6 Combat - Brute Force + Intelligence" or just "6 Combat"
+                const trimmedName = cardName.trim();
+                const dashIndex = trimmedName.indexOf(' - ');
+                
+                if (dashIndex > 0) {
+                    // Has followup_attack_types
+                    const baseName = trimmedName.substring(0, dashIndex).trim();
+                    const followupTypes = trimmedName.substring(dashIndex + 3).trim();
+                    result.push({ 
+                        name: baseName, 
+                        type: 'teamwork',
+                        followup_attack_types: followupTypes
+                    });
+                } else {
+                    // No followup_attack_types, just the base name
+                    result.push({ name: trimmedName, type: 'teamwork' });
+                }
+            }
+        });
+    }
 
     // Allies (array of strings)
     // if (Array.isArray(cardsData.allies)) {
@@ -737,6 +811,71 @@ function extractCardsFromImportData(cardsData) {
 }
 
 /**
+ * Find teamwork card ID by name and followup_attack_types
+ * Searches for a teamwork card matching both the base name and followup_attack_types
+ * @param {string} cardName - The base card name (e.g., "6 Combat")
+ * @param {string} followupTypes - The followup_attack_types value (e.g., "Brute Force + Energy")
+ * @returns {string|null} Card ID if found, null otherwise
+ */
+function findTeamworkCardIdByName(cardName, followupTypes) {
+    if (!window.availableCardsMap || !cardName || typeof cardName !== 'string') {
+        return null;
+    }
+    
+    // Search through all cards to find matching teamwork card
+    for (const [key, card] of window.availableCardsMap.entries()) {
+        // Skip if key or card is undefined/null
+        if (!key || !card) {
+            continue;
+        }
+        
+        // Additional safety check: ensure card has expected properties
+        if (!card.id) {
+            continue;
+        }
+        
+        // Check if this is a teamwork card
+        // Cards are stored with cardType set by loadAvailableCards, also check type and card_type
+        const cardType = card.cardType || card.type || card.card_type;
+        if (!cardType || cardType !== 'teamwork') {
+            continue;
+        }
+        
+        // Check name match
+        // For teamwork cards, the name is stored in the 'to_use' field, not 'name'
+        // Also check name and card_name as fallbacks
+        const cardToUse = card.to_use || null;
+        const cardNameField = card.name || null;
+        const cardCardName = card.card_name || null;
+        const cardNameMatch = (cardToUse && typeof cardToUse === 'string' && cardToUse === cardName) ||
+                             (cardNameField && typeof cardNameField === 'string' && cardNameField === cardName) ||
+                             (cardCardName && typeof cardCardName === 'string' && cardCardName === cardName);
+        
+        if (!cardNameMatch) {
+            continue; // Name doesn't match
+        }
+        
+        // Check followup_attack_types match (check both field name variations)
+        const cardFollowupTypes = card.followup_attack_types || card.follow_up_attack_types;
+        
+        if (followupTypes) {
+            // If followupTypes is provided, must match exactly
+            if (cardFollowupTypes && typeof cardFollowupTypes === 'string' && 
+                cardFollowupTypes.trim() === followupTypes.trim()) {
+                return card.id;
+            }
+        } else {
+            // If no followupTypes provided, match cards that also have no followup_attack_types
+            if (!cardFollowupTypes || (typeof cardFollowupTypes === 'string' && !cardFollowupTypes.trim())) {
+                return card.id;
+            }
+        }
+    }
+    
+    return null;
+}
+
+/**
  * Find card ID by name in availableCardsMap
  * Searches through the map for a card matching the name
  */
@@ -745,6 +884,10 @@ function findCardIdByName(cardName, cardType) {
         return null;
     }
 
+    // For teamwork cards, match by name AND followup_attack_types
+    // This is handled by findTeamworkCardIdByName function
+    // (see findCardIdByName usage for teamwork cards)
+    
     // For power cards, parse the formatted name (e.g., "5 - Energy")
     if (cardType === 'power') {
         const powerMatch = cardName.match(/^(\d+)\s*-\s*(.+)$/);
@@ -896,6 +1039,7 @@ if (typeof window !== 'undefined') {
     window.processImportDeck = processImportDeck;
     window.extractCardsFromImportData = extractCardsFromImportData;
     window.findCardIdByName = findCardIdByName;
+    window.findTeamworkCardIdByName = findTeamworkCardIdByName;
     
     // Debug: Confirm script loaded
     console.log('✅ Deck Import module loaded - importDeckFromJson available');

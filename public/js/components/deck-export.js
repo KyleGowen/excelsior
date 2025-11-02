@@ -298,7 +298,8 @@ async function exportDeckAsJson() {
                 const availableCard = window.availableCardsMap.get(card.cardId);
                 if (!availableCard) return;
                 
-                const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+                // For teamwork cards, the name is stored in 'to_use', fallback to name/card_name
+                const cardName = availableCard.to_use || availableCard.name || availableCard.card_name || 'Unknown Card';
                 const followupTypes = availableCard.followup_attack_types || availableCard.follow_up_attack_types;
                 const quantity = card.quantity || 1;
                 

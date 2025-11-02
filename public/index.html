@@ -9177,6 +9177,9 @@
                         
                         if (data.success && data.data.length > 0) {
                             data.data.forEach(card => {
+                                // Add the category type to the card data for easy lookup
+                                card.cardType = category.type;
+                                
                                 // Store with database UUID format (primary key)
                                 window.availableCardsMap.set(card.id, card);
                                 
@@ -9184,7 +9187,17 @@
                                 window.availableCardsMap.set(`${category.type}_${card.id}`, card);
                                 
                                 // Store by name for easy lookup
-                                window.availableCardsMap.set(card.name, card);
+                                // For teamwork cards, use 'to_use' field instead of 'name'
+                                if (category.type === 'teamwork') {
+                                    const cardName = card.to_use || card.name;
+                                    if (cardName) {
+                                        window.availableCardsMap.set(cardName, card);
+                                    }
+                                } else {
+                                    if (card.name) {
+                                        window.availableCardsMap.set(card.name, card);
+                                    }
+                                }
                                 
                                 // For characters, create a mapping from deck card IDs to database UUIDs
                                 if (category.type === 'character') {
@@ -10225,7 +10238,17 @@
                                 window.availableCardsMap.set(`${category.type}_${card.id}`, card);
                                 
                                 // Store by name for easy lookup
-                                window.availableCardsMap.set(card.name, card);
+                                // For teamwork cards, use 'to_use' field instead of 'name'
+                                if (category.type === 'teamwork') {
+                                    const cardName = card.to_use || card.name;
+                                    if (cardName) {
+                                        window.availableCardsMap.set(cardName, card);
+                                    }
+                                } else {
+                                    if (card.name) {
+                                        window.availableCardsMap.set(card.name, card);
+                                    }
+                                }
                                 
                                 // For characters, create a mapping from deck card IDs to database UUIDs
                                 if (category.type === 'character') {
