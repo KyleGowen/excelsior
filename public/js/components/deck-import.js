@@ -194,11 +194,13 @@ async function processImportDeck() {
         const characterCardsToImport = cardsToImport.filter(c => c.type === 'character');
         const specialCardsToImport = cardsToImport.filter(c => c.type === 'special');
         const locationCardsToImport = cardsToImport.filter(c => c.type === 'location');
-        console.log('🔍 IMPORT: Starting import - Characters:', characterCardsToImport.length, 'Special:', specialCardsToImport.length, 'Locations:', locationCardsToImport.length);
+        const missionCardsToImport = cardsToImport.filter(c => c.type === 'mission');
+        const eventCardsToImport = cardsToImport.filter(c => c.type === 'event');
+        console.log('🔍 IMPORT: Starting import - Characters:', characterCardsToImport.length, 'Special:', specialCardsToImport.length, 'Locations:', locationCardsToImport.length, 'Missions:', missionCardsToImport.length, 'Events:', eventCardsToImport.length);
         
         for (const cardEntry of cardsToImport) {
-            // Process characters, special cards, and locations
-            if (cardEntry.type !== 'character' && cardEntry.type !== 'special' && cardEntry.type !== 'location') {
+            // Process characters, special cards, locations, missions, and events
+            if (cardEntry.type !== 'character' && cardEntry.type !== 'special' && cardEntry.type !== 'location' && cardEntry.type !== 'mission' && cardEntry.type !== 'event') {
                 continue;
             }
             
@@ -206,8 +208,36 @@ async function processImportDeck() {
             if (cardEntry.type === 'character') cardTypeLabel = 'CHARACTER';
             else if (cardEntry.type === 'special') cardTypeLabel = 'SPECIAL';
             else if (cardEntry.type === 'location') cardTypeLabel = 'LOCATION';
+            else if (cardEntry.type === 'mission') cardTypeLabel = 'MISSION';
+            else if (cardEntry.type === 'event') cardTypeLabel = 'EVENT';
             console.log(`🔍 ${cardTypeLabel} IMPORT: Looking up "${cardEntry.name}"`);
             const cardId = findCardIdByName(cardEntry.name, cardEntry.type);
+            
+            // Debug: For missions/events that aren't found, try to diagnose the issue
+            if ((cardEntry.type === 'mission' || cardEntry.type === 'event') && !cardId) {
+                // Try searching without type filter to see if name exists
+                let foundByName = null;
+                for (const [key, card] of window.availableCardsMap.entries()) {
+                    if (card && ((card.name && card.name === cardEntry.name) || (card.card_name && card.card_name === cardEntry.name))) {
+                        foundByName = { key, card };
+                        break;
+                    }
+                }
+                if (foundByName) {
+                    console.log(`🔍 ${cardTypeLabel} IMPORT: Found card by name but type mismatch:`, {
+                        searchName: cardEntry.name,
+                        searchType: cardEntry.type,
+                        foundName: foundByName.card.name,
+                        foundCardName: foundByName.card.card_name,
+                        foundType: foundByName.card.type,
+                        foundCardType: foundByName.card.card_type,
+                        foundCardTypeProp: foundByName.card.cardType,
+                        cardId: foundByName.card.id
+                    });
+                } else {
+                    console.log(`🔍 ${cardTypeLabel} IMPORT: Card "${cardEntry.name}" not found in availableCardsMap at all`);
+                }
+            }
             
             if (cardId) {
                 // For characters and locations: check for duplicates (can only have one of each)
@@ -227,7 +257,7 @@ async function processImportDeck() {
                     
                     alreadyImported.add(importKey);
                 }
-                // Special cards don't need duplicate checking - they can be added multiple times
+                // Special cards, missions, and events don't need duplicate checking - they can be added multiple times
                 
                 console.log(`✅ ${cardTypeLabel} IMPORT: Found "${cardEntry.name}" -> ID: ${cardId}`);
                 importList.push({
@@ -245,7 +275,9 @@ async function processImportDeck() {
         const characterImportList = importList.filter(c => c.type === 'character');
         const specialImportList = importList.filter(c => c.type === 'special');
         const locationImportList = importList.filter(c => c.type === 'location');
-        console.log('📋 IMPORT: Ready to import - Characters:', characterImportList.length, 'Special:', specialImportList.length, 'Locations:', locationImportList.length);
+        const missionImportList = importList.filter(c => c.type === 'mission');
+        const eventImportList = importList.filter(c => c.type === 'event');
+        console.log('📋 IMPORT: Ready to import - Characters:', characterImportList.length, 'Special:', specialImportList.length, 'Locations:', locationImportList.length, 'Missions:', missionImportList.length, 'Events:', eventImportList.length);
 
         // Report unresolved cards
         if (unresolvedCards.length > 0) {
@@ -343,12 +375,14 @@ async function processImportDeck() {
         const characterCardsToAdd = importList.filter(c => c.type === 'character');
         const specialCardsToAdd = importList.filter(c => c.type === 'special');
         const locationCardsToAdd = importList.filter(c => c.type === 'location');
-        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length, 'Locations:', locationCardsToAdd.length);
+        const missionCardsToAdd = importList.filter(c => c.type === 'mission');
+        const eventCardsToAdd = importList.filter(c => c.type === 'event');
+        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length, 'Locations:', locationCardsToAdd.length, 'Missions:', missionCardsToAdd.length, 'Events:', eventCardsToAdd.length);
         console.log('🚀 IMPORT: Current deckEditorCards before import:', window.deckEditorCards?.length || 0, 'cards');
 
         for (const importCard of importList) {
-            // Process characters, special cards, and locations
-            if (importCard.type !== 'character' && importCard.type !== 'special' && importCard.type !== 'location') {
+            // Process characters, special cards, locations, missions, and events
+            if (importCard.type !== 'character' && importCard.type !== 'special' && importCard.type !== 'location' && importCard.type !== 'mission' && importCard.type !== 'event') {
                 continue;
             }
             
@@ -356,6 +390,8 @@ async function processImportDeck() {
             if (importCard.type === 'character') cardTypeLabel = 'CHARACTER';
             else if (importCard.type === 'special') cardTypeLabel = 'SPECIAL';
             else if (importCard.type === 'location') cardTypeLabel = 'LOCATION';
+            else if (importCard.type === 'mission') cardTypeLabel = 'MISSION';
+            else if (importCard.type === 'event') cardTypeLabel = 'EVENT';
             
             try {
                 // Check card data before adding
@@ -524,6 +560,43 @@ async function processImportDeck() {
                         console.error(`❌ ${cardTypeLabel} IMPORT: addCardToEditor function not available`);
                         throw new Error('addCardToEditor function not available');
                     }
+                } else if (importCard.type === 'mission' || importCard.type === 'event') {
+                    // Mission and event cards can be added directly (no duplicate checking needed, similar to special cards)
+                    // But we should auto-select default art if alternate images exist
+                    let selectedAlternateImage = null;
+                    if (cardData && cardData.alternateImages && cardData.alternateImages.length > 0) {
+                        // Automatically select the first alternate image for import (default art)
+                        selectedAlternateImage = cardData.alternateImages[0];
+                        console.log(`🖼️ ${cardTypeLabel} IMPORT: "${importCard.cardName}" has ${cardData.alternateImages.length} alternate image(s), auto-selecting first (default): "${selectedAlternateImage}"`);
+                    }
+                    
+                    console.log(`➕ ${cardTypeLabel} IMPORT: Calling addCardToEditor("${importCard.type}", "${importCard.cardId}", "${importCard.cardName}", ${selectedAlternateImage ? `"${selectedAlternateImage}"` : 'null'})`);
+                    
+                    // Check if addCardToEditor exists
+                    if (typeof addCardToEditor === 'function') {
+                        // Pass selected alternate image (or null if none) - same as special cards
+                        await addCardToEditor(importCard.type, importCard.cardId, importCard.cardName, selectedAlternateImage);
+                        
+                        // Wait a bit for async operations to complete
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        
+                        // Check if card was actually added (missions and events can have duplicates, so we just check if it exists)
+                        const wasAdded = window.deckEditorCards?.some(c => 
+                            c.type === importCard.type && c.cardId === importCard.cardId
+                        );
+                        
+                        if (wasAdded) {
+                            console.log(`✅ ${cardTypeLabel} IMPORT: Successfully added "${importCard.cardName}" to deck`);
+                            successCount++;
+                        } else {
+                            console.log(`⚠️ ${cardTypeLabel} IMPORT: addCardToEditor returned but "${importCard.cardName}" not found in deckEditorCards`);
+                            errorCount++;
+                            addErrors.push(`${importCard.cardName}: Card was not added to deck`);
+                        }
+                    } else {
+                        console.error(`❌ ${cardTypeLabel} IMPORT: addCardToEditor function not available`);
+                        throw new Error('addCardToEditor function not available');
+                    }
                 }
             } catch (error) {
                 errorCount++;
@@ -593,22 +666,22 @@ function extractCardsFromImportData(cardsData) {
     }
 
     // Missions (object grouped by mission set)
-    // if (cardsData.missions && typeof cardsData.missions === 'object') {
-    //     Object.values(cardsData.missions).forEach(missionSetCards => {
-    //         if (Array.isArray(missionSetCards)) {
-    //             missionSetCards.forEach(cardName => addCard(cardName, 'mission'));
-    //         }
-    //     });
-    // }
+    if (cardsData.missions && typeof cardsData.missions === 'object') {
+        Object.values(cardsData.missions).forEach(missionSetCards => {
+            if (Array.isArray(missionSetCards)) {
+                missionSetCards.forEach(cardName => addCard(cardName, 'mission'));
+            }
+        });
+    }
 
     // Events (object grouped by mission set)
-    // if (cardsData.events && typeof cardsData.events === 'object') {
-    //     Object.values(cardsData.events).forEach(eventSetCards => {
-    //         if (Array.isArray(eventSetCards)) {
-    //             eventSetCards.forEach(cardName => addCard(cardName, 'event'));
-    //         }
-    //     });
-    // }
+    if (cardsData.events && typeof cardsData.events === 'object') {
+        Object.values(cardsData.events).forEach(eventSetCards => {
+            if (Array.isArray(eventSetCards)) {
+                eventSetCards.forEach(cardName => addCard(cardName, 'event'));
+            }
+        });
+    }
 
     // Aspects (array of strings)
     // if (Array.isArray(cardsData.aspects)) {
@@ -698,10 +771,32 @@ function findCardIdByName(cardName, cardType) {
     }
 
     // Direct name lookup (cards are stored by name in the map)
+    // Try both name and card_name as keys (missions use card_name)
     let foundCard = window.availableCardsMap.get(cardName);
+    if (!foundCard) {
+        // Try looking through entries to find by card_name if direct lookup failed
+        for (const [key, card] of window.availableCardsMap.entries()) {
+            if (card && (card.card_name === cardName || card.name === cardName)) {
+                // Found by card_name - check if type matches
+                const foundType = card.type || card.card_type || card.cardType;
+                if (cardType) {
+                    const normalizedFoundType = foundType ? foundType.replace('-universe', '') : null;
+                    const normalizedCardType = cardType.replace('-universe', '');
+                    if (normalizedFoundType === normalizedCardType) {
+                        foundCard = card;
+                        break;
+                    }
+                } else {
+                    foundCard = card;
+                    break;
+                }
+            }
+        }
+    }
+    
     if (foundCard && foundCard.id) {
         const foundName = foundCard.name || foundCard.card_name;
-        const foundType = foundCard.type || foundCard.card_type;
+        const foundType = foundCard.type || foundCard.card_type || foundCard.cardType;
         // Type mapping: 'ally-universe' -> 'ally', etc.
         const normalizedFoundType = foundType ? foundType.replace('-universe', '') : null;
         const normalizedCardType = cardType ? cardType.replace('-universe', '') : null;
@@ -726,31 +821,56 @@ function findCardIdByName(cardName, cardType) {
         }
         
         // Skip prefixed keys (e.g., "character_123") - only if key doesn't match card.id
+        // BUT: allow prefixed keys that match the pattern for the card type we're looking for
+        // (e.g., "mission_123" when looking for missions)
         if (key.includes('_') && key !== card.id) {
-            continue;
+            // Check if this is a prefixed key for the card type we're looking for
+            if (cardType && cardType !== 'power') {
+                const prefixedPattern = `${cardType}_${card.id}`;
+                if (key !== prefixedPattern) {
+                    continue; // Skip this prefixed key
+                }
+                // This is the correct prefixed key for our search type - continue processing
+            } else {
+                continue; // No cardType specified, skip all prefixed keys
+            }
         }
         
-        // Filter by card type if specified (except for power cards which are handled above)
-        if (cardType && cardType !== 'power') {
-            const cardTypeToMatch = card.type || card.card_type;
-            if (!cardTypeToMatch) {
-                continue;
-            }
-            // Normalize types (handle 'ally-universe' vs 'ally', etc.)
-            const normalizedCardTypeToMatch = cardTypeToMatch.replace('-universe', '');
-            const normalizedRequestedType = cardType.replace('-universe', '');
-            if (normalizedCardTypeToMatch !== normalizedRequestedType) {
-                continue;
-            }
-        }
-
-        // Safely check card name - exact match required
+        // Safely check card name first - exact match required
+        // Check both name and card_name fields (missions use card_name, events use name)
         const cardNameMatch = (card.name && typeof card.name === 'string' && card.name === cardName) || 
                              (card.card_name && typeof card.card_name === 'string' && card.card_name === cardName);
         
-        if (cardNameMatch) {
-            return card.id;
+        if (!cardNameMatch) {
+            continue; // Name doesn't match, skip this card
         }
+        
+        // If name matches, check type if specified (except for power cards which are handled above)
+        if (cardType && cardType !== 'power') {
+            const cardTypeToMatch = card.type || card.card_type || card.cardType;
+            if (cardTypeToMatch) {
+                // Normalize types (handle 'ally-universe' vs 'ally', etc.)
+                const normalizedCardTypeToMatch = cardTypeToMatch.replace('-universe', '');
+                const normalizedRequestedType = cardType.replace('-universe', '');
+                if (normalizedCardTypeToMatch !== normalizedRequestedType) {
+                    continue; // Type doesn't match
+                }
+            } else {
+                // Card has no type field - check if we matched by prefixed key or cardType
+                // If cardType matches what we're looking for, allow it
+                if (card.cardType && card.cardType === cardType) {
+                    // cardType matches - allow it
+                } else if (!card.cardType) {
+                    // No type information at all - allow match if name matched (fallback for legacy data)
+                    // This helps with cards that might not have type properly set
+                } else {
+                    continue; // cardType doesn't match
+                }
+            }
+        }
+        
+        // Name matches (and type matches if specified) - return the card ID
+        return card.id;
     }
 
     return null;
