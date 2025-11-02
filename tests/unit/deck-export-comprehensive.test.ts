@@ -494,6 +494,30 @@ describe('Deck Export Component - Comprehensive Tests', () => {
                     return result;
                 };
 
+                // Helper function to create teamwork cards with followup_attack_types appended
+                const createTeamworkCards = (cards: any[]) => {
+                    const result: string[] = [];
+                    cards.filter((card: any) => card.type === 'teamwork').forEach((card: any) => {
+                        const availableCard = availableCardsMap.get(card.cardId);
+                        if (!availableCard) return;
+                        
+                        const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+                        const followupTypes = availableCard.followup_attack_types || availableCard.follow_up_attack_types;
+                        const quantity = card.quantity || 1;
+                        
+                        // Format: "7 Combat - Intelligence + Energy" or just "7 Combat" if no followup types
+                        const formattedName = followupTypes && followupTypes.trim() 
+                            ? `${cardName} - ${followupTypes}`
+                            : cardName;
+                        
+                        // Add card repeated by quantity
+                        for (let i = 0; i < quantity; i++) {
+                            result.push(formattedName);
+                        }
+                    });
+                    return result;
+                };
+
                 const cardCategories = {
                     characters: createCharactersArray(deckEditorCards),
                     special_cards: createSpecialCardsByCharacter(deckEditorCards),
@@ -502,7 +526,7 @@ describe('Deck Export Component - Comprehensive Tests', () => {
                     events: createEventsByMissionSet(deckEditorCards),
                     aspects: createRepeatedCards(deckEditorCards, 'aspect'),
                     advanced_universe: createAdvancedUniverseByCharacter(deckEditorCards),
-                    teamwork: createRepeatedCards(deckEditorCards, 'teamwork'),
+                    teamwork: createTeamworkCards(deckEditorCards),
                     allies: createRepeatedCards(deckEditorCards, 'ally-universe'),
                     training: createRepeatedCards(deckEditorCards, 'training'),
                     basic_universe: createRepeatedCards(deckEditorCards, 'basic-universe'),
@@ -1225,7 +1249,7 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             mockAvailableCardsMap.set('event1', { name: 'Event', mission_set: 'Test Set' });
             mockAvailableCardsMap.set('aspect1', { name: 'Aspect' });
             mockAvailableCardsMap.set('adv1', { name: 'Advanced', character: 'Ra' });
-            mockAvailableCardsMap.set('teamwork1', { name: 'Teamwork' });
+            mockAvailableCardsMap.set('teamwork1', { name: '6 Combat', followup_attack_types: 'Brute Force + Energy' });
             mockAvailableCardsMap.set('ally1', { name: 'Ally' });
             mockAvailableCardsMap.set('training1', { name: 'Training' });
             mockAvailableCardsMap.set('basic1', { name: 'Basic' });
@@ -1464,7 +1488,7 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             mockAvailableCardsMap.set('power1', { name: 'Energy Power', power_type: 'Energy' });
             mockAvailableCardsMap.set('power2', { name: 'Multi Power', power_type: 'Multi-Power' });
             mockAvailableCardsMap.set('special1', { name: 'Special Card', icons: ['Energy', 'Combat'] });
-            mockAvailableCardsMap.set('teamwork1', { name: 'Teamwork Card', to_use: 'Energy Combat' });
+            mockAvailableCardsMap.set('teamwork1', { name: '6 Combat', followup_attack_types: 'Brute Force + Energy', to_use: '6 Combat' });
             mockAvailableCardsMap.set('aspect1', { name: 'Aspect Card', icons: ['Brute Force'] });
 
             (window as any).deckEditorCards = mockDeckEditorCards;
@@ -1473,11 +1497,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             const result = await (window as any).exportDeckAsJson();
 
-            // Energy: power1 (2x Energy) + power2 multi (1x all types) + special1 (3x Energy) + teamwork1 (1x Energy) = 2+1+3+1 = 7
-            // Combat: power2 multi (1x) + special1 (3x Combat) + teamwork1 (1x Combat) = 1+3+1 = 5
+            // Energy: power1 (2x Energy) + power2 multi (1x all types) + special1 (3x Energy) = 2+1+3 = 6
+            // Combat: power2 multi (1x) + special1 (3x Combat) + teamwork1 (1x Combat from to_use: "6 Combat") = 1+3+1 = 5
             // Brute Force: power2 multi (1x) + aspect1 (1x) = 1+1 = 2
             // Intelligence: power2 multi (1x) = 1
-            expect(result.total_energy_icons).toBe(7);
+            expect(result.total_energy_icons).toBe(6);
             expect(result.total_combat_icons).toBe(5);
             expect(result.total_brute_force_icons).toBe(2);
             expect(result.total_intelligence_icons).toBe(1);
@@ -2476,6 +2500,194 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             (window as any).importDeckFromJson();
 
             expect(mockShowNotification).toHaveBeenCalledWith('Import functionality is currently disabled', 'info');
+        });
+    });
+
+    describe('Teamwork Cards Export - Enhanced Format', () => {
+        it('should export teamwork cards with followup_attack_types appended', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'teamwork1', type: 'teamwork', quantity: 1 },
+                { cardId: 'teamwork2', type: 'teamwork', quantity: 2 },
+                { cardId: 'teamwork3', type: 'teamwork', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('teamwork1', { 
+                name: '6 Combat',
+                followup_attack_types: 'Brute Force + Energy'
+            });
+            mockAvailableCardsMap.set('teamwork2', { 
+                name: '7 Combat',
+                followup_attack_types: 'Intelligence + Energy'
+            });
+            mockAvailableCardsMap.set('teamwork3', { 
+                name: '7 Any-Power',
+                followup_attack_types: 'Any-Power / Any-Power'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.teamwork).toEqual([
+                '6 Combat - Brute Force + Energy',
+                '7 Combat - Intelligence + Energy',
+                '7 Combat - Intelligence + Energy',
+                '7 Any-Power - Any-Power / Any-Power'
+            ]);
+        });
+
+        it('should export teamwork cards without followup_attack_types if field is missing', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'teamwork1', type: 'teamwork', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('teamwork1', { 
+                name: '6 Combat'
+                // No followup_attack_types field
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.teamwork).toEqual(['6 Combat']);
+        });
+
+        it('should export teamwork cards without followup_attack_types if field is empty', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'teamwork1', type: 'teamwork', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('teamwork1', { 
+                name: '6 Combat',
+                followup_attack_types: ''
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.teamwork).toEqual(['6 Combat']);
+        });
+
+        it('should export teamwork cards without followup_attack_types if field is whitespace only', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'teamwork1', type: 'teamwork', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('teamwork1', { 
+                name: '6 Combat',
+                followup_attack_types: '   '
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.teamwork).toEqual(['6 Combat']);
+        });
+
+        it('should handle teamwork cards with follow_up_attack_types (alternative field name)', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'teamwork1', type: 'teamwork', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('teamwork1', { 
+                name: '7 Combat',
+                follow_up_attack_types: 'Intelligence + Energy'  // Alternative field name
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.teamwork).toEqual(['7 Combat - Intelligence + Energy']);
+        });
+
+        it('should handle multiple quantities of same teamwork card with followup types', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'teamwork1', type: 'teamwork', quantity: 3 }
+            ];
+
+            mockAvailableCardsMap.set('teamwork1', { 
+                name: '7 Combat',
+                followup_attack_types: 'Intelligence + Energy'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.teamwork).toEqual([
+                '7 Combat - Intelligence + Energy',
+                '7 Combat - Intelligence + Energy',
+                '7 Combat - Intelligence + Energy'
+            ]);
+        });
+
+        it('should handle teamwork cards missing from availableCardsMap', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'missing_teamwork', type: 'teamwork', quantity: 1 },
+                { cardId: 'teamwork1', type: 'teamwork', quantity: 1 }
+            ];
+
+            // Only add one teamwork card to map
+            mockAvailableCardsMap.set('teamwork1', { 
+                name: '6 Combat',
+                followup_attack_types: 'Brute Force + Energy'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            // Missing card should be skipped (not added to result)
+            expect(result.cards.teamwork).toEqual(['6 Combat - Brute Force + Energy']);
+        });
+
+        it('should handle various followup_attack_types formats', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'teamwork1', type: 'teamwork', quantity: 1 },
+                { cardId: 'teamwork2', type: 'teamwork', quantity: 1 },
+                { cardId: 'teamwork3', type: 'teamwork', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('teamwork1', { 
+                name: '6 Combat',
+                followup_attack_types: 'Brute Force + Energy'
+            });
+            mockAvailableCardsMap.set('teamwork2', { 
+                name: '7 Any-Power',
+                followup_attack_types: 'Any-Power / Any-Power'
+            });
+            mockAvailableCardsMap.set('teamwork3', { 
+                name: '8 Energy',
+                followup_attack_types: 'Combat + Intelligence'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.teamwork).toContain('6 Combat - Brute Force + Energy');
+            expect(result.cards.teamwork).toContain('7 Any-Power - Any-Power / Any-Power');
+            expect(result.cards.teamwork).toContain('8 Energy - Combat + Intelligence');
         });
     });
 });

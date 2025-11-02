@@ -291,6 +291,31 @@ async function exportDeckAsJson() {
             return result;
         };
 
+        // Helper function to create teamwork cards with followup_attack_types appended
+        const createTeamworkCards = (cards) => {
+            const result = [];
+            cards.filter(card => card.type === 'teamwork').forEach(card => {
+                const availableCard = window.availableCardsMap.get(card.cardId);
+                if (!availableCard) return;
+                
+                const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+                const followupTypes = availableCard.followup_attack_types || availableCard.follow_up_attack_types;
+                const quantity = card.quantity || 1;
+                
+                // Format: "7 Combat - Intelligence + Energy" or just "7 Combat" if no followup types
+                // Only process if followupTypes is a non-empty string
+                const formattedName = (followupTypes && typeof followupTypes === 'string' && followupTypes.trim()) 
+                    ? `${cardName} - ${followupTypes}`
+                    : cardName;
+                
+                // Add card repeated by quantity
+                for (let i = 0; i < quantity; i++) {
+                    result.push(formattedName);
+                }
+            });
+            return result;
+        };
+
         // Helper function to create sorted power cards array
         // Sorts by value (ascending), then by type (Energy, Combat, Brute Force, Intelligence, Multi, Any-Power)
         const createSortedPowerCards = (cards) => {
@@ -480,7 +505,7 @@ async function exportDeckAsJson() {
             events: createEventsByMissionSet(window.deckEditorCards),
             aspects: createRepeatedCards(window.deckEditorCards, 'aspect'),
             advanced_universe: createAdvancedUniverseByCharacter(window.deckEditorCards),
-            teamwork: createRepeatedCards(window.deckEditorCards, 'teamwork'),
+            teamwork: createTeamworkCards(window.deckEditorCards),
             allies: createRepeatedCards(window.deckEditorCards, 'ally-universe'),
             training: createRepeatedCards(window.deckEditorCards, 'training'),
             basic_universe: createRepeatedCards(window.deckEditorCards, 'basic-universe'),
