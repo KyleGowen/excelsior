@@ -359,6 +359,66 @@ async function exportDeckAsJson() {
             return result;
         };
 
+        // Helper function to create training cards with type_1, type_2, and bonus appended
+        const createTrainingCards = (cards) => {
+            const result = [];
+            cards.filter(card => card.type === 'training').forEach(card => {
+                const availableCard = window.availableCardsMap.get(card.cardId);
+                if (!availableCard) return;
+                
+                // Get card name (training cards use name or card_name)
+                const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+                const type1 = availableCard.type_1;
+                const type2 = availableCard.type_2;
+                const bonus = availableCard.bonus;
+                const quantity = card.quantity || 1;
+                
+                // Format: "Training (Leonidas) - Energy Combat +4" if all three exist
+                // Format: "Training (Leonidas) - Energy Combat" if only types exist
+                // Format: "Training (Leonidas) - +4" if only bonus exists
+                // Format: "Training (Leonidas)" if none exist
+                let formattedName = cardName;
+                
+                // Normalize type_1 and type_2 (trim and check for valid values)
+                const validType1 = type1 && typeof type1 === 'string' && type1.trim();
+                const validType2 = type2 && typeof type2 === 'string' && type2.trim();
+                const trimmedType1 = validType1 ? type1.trim() : null;
+                const trimmedType2 = validType2 ? type2.trim() : null;
+                
+                // Normalize bonus (trim and check for valid value)
+                const validBonus = bonus && typeof bonus === 'string' && bonus.trim();
+                const trimmedBonus = validBonus ? bonus.trim() : null;
+                
+                // Build the suffix string
+                const suffixParts = [];
+                
+                // Add type_1 and type_2 if they exist
+                if (trimmedType1 && trimmedType2) {
+                    suffixParts.push(`${trimmedType1} ${trimmedType2}`);
+                } else if (trimmedType1) {
+                    suffixParts.push(trimmedType1);
+                } else if (trimmedType2) {
+                    suffixParts.push(trimmedType2);
+                }
+                
+                // Add bonus if it exists
+                if (trimmedBonus) {
+                    suffixParts.push(trimmedBonus);
+                }
+                
+                // Format the name with suffix if we have any parts
+                if (suffixParts.length > 0) {
+                    formattedName = `${cardName} - ${suffixParts.join(' ')}`;
+                }
+                
+                // Add card repeated by quantity
+                for (let i = 0; i < quantity; i++) {
+                    result.push(formattedName);
+                }
+            });
+            return result;
+        };
+
         // Helper function to create sorted power cards array
         // Sorts by value (ascending), then by type (Energy, Combat, Brute Force, Intelligence, Multi, Any-Power)
         const createSortedPowerCards = (cards) => {
@@ -550,7 +610,7 @@ async function exportDeckAsJson() {
             advanced_universe: createAdvancedUniverseByCharacter(window.deckEditorCards),
             teamwork: createTeamworkCards(window.deckEditorCards),
             allies: createAllyCards(window.deckEditorCards),
-            training: createRepeatedCards(window.deckEditorCards, 'training'),
+            training: createTrainingCards(window.deckEditorCards),
             basic_universe: createRepeatedCards(window.deckEditorCards, 'basic-universe'),
             power_cards: createSortedPowerCards(window.deckEditorCards)
         };

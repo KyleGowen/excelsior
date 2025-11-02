@@ -548,6 +548,66 @@ describe('Deck Export Component - Comprehensive Tests', () => {
                     return result;
                 };
 
+                // Helper function to create training cards with type_1, type_2, and bonus appended
+                const createTrainingCards = (cards: any[]) => {
+                    const result: string[] = [];
+                    cards.filter((card: any) => card.type === 'training').forEach((card: any) => {
+                        const availableCard = availableCardsMap.get(card.cardId);
+                        if (!availableCard) return;
+                        
+                        // Get card name (training cards use name or card_name)
+                        const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+                        const type1 = availableCard.type_1;
+                        const type2 = availableCard.type_2;
+                        const bonus = availableCard.bonus;
+                        const quantity = card.quantity || 1;
+                        
+                        // Format: "Training (Leonidas) - Energy Combat +4" if all three exist
+                        // Format: "Training (Leonidas) - Energy Combat" if only types exist
+                        // Format: "Training (Leonidas) - +4" if only bonus exists
+                        // Format: "Training (Leonidas)" if none exist
+                        let formattedName = cardName;
+                        
+                        // Normalize type_1 and type_2 (trim and check for valid values)
+                        const validType1 = type1 && typeof type1 === 'string' && type1.trim();
+                        const validType2 = type2 && typeof type2 === 'string' && type2.trim();
+                        const trimmedType1 = validType1 ? type1.trim() : null;
+                        const trimmedType2 = validType2 ? type2.trim() : null;
+                        
+                        // Normalize bonus (trim and check for valid value)
+                        const validBonus = bonus && typeof bonus === 'string' && bonus.trim();
+                        const trimmedBonus = validBonus ? bonus.trim() : null;
+                        
+                        // Build the suffix string
+                        const suffixParts: string[] = [];
+                        
+                        // Add type_1 and type_2 if they exist
+                        if (trimmedType1 && trimmedType2) {
+                            suffixParts.push(`${trimmedType1} ${trimmedType2}`);
+                        } else if (trimmedType1) {
+                            suffixParts.push(trimmedType1);
+                        } else if (trimmedType2) {
+                            suffixParts.push(trimmedType2);
+                        }
+                        
+                        // Add bonus if it exists
+                        if (trimmedBonus) {
+                            suffixParts.push(trimmedBonus);
+                        }
+                        
+                        // Format the name with suffix if we have any parts
+                        if (suffixParts.length > 0) {
+                            formattedName = `${cardName} - ${suffixParts.join(' ')}`;
+                        }
+                        
+                        // Add card repeated by quantity
+                        for (let i = 0; i < quantity; i++) {
+                            result.push(formattedName);
+                        }
+                    });
+                    return result;
+                };
+
                 const cardCategories = {
                     characters: createCharactersArray(deckEditorCards),
                     special_cards: createSpecialCardsByCharacter(deckEditorCards),
@@ -558,7 +618,7 @@ describe('Deck Export Component - Comprehensive Tests', () => {
                     advanced_universe: createAdvancedUniverseByCharacter(deckEditorCards),
                     teamwork: createTeamworkCards(deckEditorCards),
                     allies: createAllyCards(deckEditorCards),
-                    training: createRepeatedCards(deckEditorCards, 'training'),
+                    training: createTrainingCards(deckEditorCards),
                     basic_universe: createRepeatedCards(deckEditorCards, 'basic-universe'),
                     power_cards: createSortedPowerCards(deckEditorCards)
                 };
@@ -2665,6 +2725,211 @@ describe('Deck Export Component - Comprehensive Tests', () => {
                 '7 Combat - Intelligence + Energy',
                 '7 Combat - Intelligence + Energy'
             ]);
+        });
+    });
+
+    describe('Training Cards Export - Enhanced Format', () => {
+        it('should export training cards with type_1, type_2, and bonus appended', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'training1', type: 'training', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('training1', { 
+                name: 'Training (Leonidas)',
+                type_1: 'Energy',
+                type_2: 'Combat',
+                bonus: '+4'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.training).toEqual(['Training (Leonidas) - Energy Combat +4']);
+        });
+
+        it('should export training cards with only type_1 and type_2 (no bonus)', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'training1', type: 'training', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('training1', { 
+                name: 'Training (Leonidas)',
+                type_1: 'Energy',
+                type_2: 'Combat'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.training).toEqual(['Training (Leonidas) - Energy Combat']);
+        });
+
+        it('should export training cards with only type_1 (no type_2, no bonus)', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'training1', type: 'training', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('training1', { 
+                name: 'Training (Leonidas)',
+                type_1: 'Energy'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.training).toEqual(['Training (Leonidas) - Energy']);
+        });
+
+        it('should export training cards with only type_2 (no type_1, no bonus)', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'training1', type: 'training', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('training1', { 
+                name: 'Training (Leonidas)',
+                type_2: 'Combat'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.training).toEqual(['Training (Leonidas) - Combat']);
+        });
+
+        it('should export training cards with only bonus (no types)', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'training1', type: 'training', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('training1', { 
+                name: 'Training (Leonidas)',
+                bonus: '+4'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.training).toEqual(['Training (Leonidas) - +4']);
+        });
+
+        it('should export training cards without type_1, type_2, or bonus', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'training1', type: 'training', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('training1', { 
+                name: 'Training (Leonidas)'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.training).toEqual(['Training (Leonidas)']);
+        });
+
+        it('should handle multiple quantities of same training card', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'training1', type: 'training', quantity: 2 }
+            ];
+
+            mockAvailableCardsMap.set('training1', { 
+                name: 'Training (Cultists)',
+                type_1: 'Energy',
+                type_2: 'Combat',
+                bonus: '+4'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.training).toEqual([
+                'Training (Cultists) - Energy Combat +4',
+                'Training (Cultists) - Energy Combat +4'
+            ]);
+        });
+
+        it('should handle training cards missing from availableCardsMap', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'training1', type: 'training', quantity: 1 }
+            ];
+
+            // Don't add training1 to mockAvailableCardsMap
+            // Add at least one other card to ensure export doesn't fail completely
+            mockDeckEditorCards.push({ cardId: 'char1', type: 'character', quantity: 1 });
+            mockAvailableCardsMap.set('char1', { name: 'Test Character' });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result).toBeDefined();
+            expect(result.cards).toBeDefined();
+            expect(result.cards.training).toEqual([]);
+        });
+
+        it('should handle whitespace in type_1, type_2, and bonus fields', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'training1', type: 'training', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('training1', { 
+                name: 'Training (Leonidas)',
+                type_1: '  Energy  ',
+                type_2: '  Combat  ',
+                bonus: '  +4  '
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.training).toEqual(['Training (Leonidas) - Energy Combat +4']);
+        });
+
+        it('should handle training cards with card_name field instead of name', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'training1', type: 'training', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('training1', { 
+                card_name: 'Training (Leonidas)',
+                type_1: 'Energy',
+                type_2: 'Combat',
+                bonus: '+4'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.training).toEqual(['Training (Leonidas) - Energy Combat +4']);
         });
 
         it('should handle teamwork cards missing from availableCardsMap', async () => {
