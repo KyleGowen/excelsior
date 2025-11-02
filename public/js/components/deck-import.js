@@ -196,11 +196,13 @@ async function processImportDeck() {
         const locationCardsToImport = cardsToImport.filter(c => c.type === 'location');
         const missionCardsToImport = cardsToImport.filter(c => c.type === 'mission');
         const eventCardsToImport = cardsToImport.filter(c => c.type === 'event');
-        console.log('🔍 IMPORT: Starting import - Characters:', characterCardsToImport.length, 'Special:', specialCardsToImport.length, 'Locations:', locationCardsToImport.length, 'Missions:', missionCardsToImport.length, 'Events:', eventCardsToImport.length);
+        const aspectCardsToImport = cardsToImport.filter(c => c.type === 'aspect');
+        const advancedUniverseCardsToImport = cardsToImport.filter(c => c.type === 'advanced-universe');
+        console.log('🔍 IMPORT: Starting import - Characters:', characterCardsToImport.length, 'Special:', specialCardsToImport.length, 'Locations:', locationCardsToImport.length, 'Missions:', missionCardsToImport.length, 'Events:', eventCardsToImport.length, 'Aspects:', aspectCardsToImport.length, 'Advanced Universe:', advancedUniverseCardsToImport.length);
         
         for (const cardEntry of cardsToImport) {
-            // Process characters, special cards, locations, missions, and events
-            if (cardEntry.type !== 'character' && cardEntry.type !== 'special' && cardEntry.type !== 'location' && cardEntry.type !== 'mission' && cardEntry.type !== 'event') {
+            // Process characters, special cards, locations, missions, events, aspects, and advanced-universe
+            if (cardEntry.type !== 'character' && cardEntry.type !== 'special' && cardEntry.type !== 'location' && cardEntry.type !== 'mission' && cardEntry.type !== 'event' && cardEntry.type !== 'aspect' && cardEntry.type !== 'advanced-universe') {
                 continue;
             }
             
@@ -210,6 +212,8 @@ async function processImportDeck() {
             else if (cardEntry.type === 'location') cardTypeLabel = 'LOCATION';
             else if (cardEntry.type === 'mission') cardTypeLabel = 'MISSION';
             else if (cardEntry.type === 'event') cardTypeLabel = 'EVENT';
+            else if (cardEntry.type === 'aspect') cardTypeLabel = 'ASPECT';
+            else if (cardEntry.type === 'advanced-universe') cardTypeLabel = 'ADVANCED_UNIVERSE';
             console.log(`🔍 ${cardTypeLabel} IMPORT: Looking up "${cardEntry.name}"`);
             const cardId = findCardIdByName(cardEntry.name, cardEntry.type);
             
@@ -257,7 +261,7 @@ async function processImportDeck() {
                     
                     alreadyImported.add(importKey);
                 }
-                // Special cards, missions, and events don't need duplicate checking - they can be added multiple times
+                // Special cards, missions, events, aspects, and advanced-universe don't need duplicate checking - they can be added multiple times
                 
                 console.log(`✅ ${cardTypeLabel} IMPORT: Found "${cardEntry.name}" -> ID: ${cardId}`);
                 importList.push({
@@ -277,7 +281,9 @@ async function processImportDeck() {
         const locationImportList = importList.filter(c => c.type === 'location');
         const missionImportList = importList.filter(c => c.type === 'mission');
         const eventImportList = importList.filter(c => c.type === 'event');
-        console.log('📋 IMPORT: Ready to import - Characters:', characterImportList.length, 'Special:', specialImportList.length, 'Locations:', locationImportList.length, 'Missions:', missionImportList.length, 'Events:', eventImportList.length);
+        const aspectImportList = importList.filter(c => c.type === 'aspect');
+        const advancedUniverseImportList = importList.filter(c => c.type === 'advanced-universe');
+        console.log('📋 IMPORT: Ready to import - Characters:', characterImportList.length, 'Special:', specialImportList.length, 'Locations:', locationImportList.length, 'Missions:', missionImportList.length, 'Events:', eventImportList.length, 'Aspects:', aspectImportList.length, 'Advanced Universe:', advancedUniverseImportList.length);
 
         // Report unresolved cards
         if (unresolvedCards.length > 0) {
@@ -315,6 +321,7 @@ async function processImportDeck() {
                     // Validation will catch if we exceed limits
                     continue;
                 } else {
+                    // For special cards, missions, events, aspects, and advanced-universe: increment quantity
                     testDeckCards[existingIndex].quantity += 1;
                 }
             } else {
@@ -377,12 +384,14 @@ async function processImportDeck() {
         const locationCardsToAdd = importList.filter(c => c.type === 'location');
         const missionCardsToAdd = importList.filter(c => c.type === 'mission');
         const eventCardsToAdd = importList.filter(c => c.type === 'event');
-        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length, 'Locations:', locationCardsToAdd.length, 'Missions:', missionCardsToAdd.length, 'Events:', eventCardsToAdd.length);
+        const aspectCardsToAdd = importList.filter(c => c.type === 'aspect');
+        const advancedUniverseCardsToAdd = importList.filter(c => c.type === 'advanced-universe');
+        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length, 'Locations:', locationCardsToAdd.length, 'Missions:', missionCardsToAdd.length, 'Events:', eventCardsToAdd.length, 'Aspects:', aspectCardsToAdd.length, 'Advanced Universe:', advancedUniverseCardsToAdd.length);
         console.log('🚀 IMPORT: Current deckEditorCards before import:', window.deckEditorCards?.length || 0, 'cards');
 
         for (const importCard of importList) {
-            // Process characters, special cards, locations, missions, and events
-            if (importCard.type !== 'character' && importCard.type !== 'special' && importCard.type !== 'location' && importCard.type !== 'mission' && importCard.type !== 'event') {
+            // Process characters, special cards, locations, missions, events, aspects, and advanced-universe
+            if (importCard.type !== 'character' && importCard.type !== 'special' && importCard.type !== 'location' && importCard.type !== 'mission' && importCard.type !== 'event' && importCard.type !== 'aspect' && importCard.type !== 'advanced-universe') {
                 continue;
             }
             
@@ -392,6 +401,8 @@ async function processImportDeck() {
             else if (importCard.type === 'location') cardTypeLabel = 'LOCATION';
             else if (importCard.type === 'mission') cardTypeLabel = 'MISSION';
             else if (importCard.type === 'event') cardTypeLabel = 'EVENT';
+            else if (importCard.type === 'aspect') cardTypeLabel = 'ASPECT';
+            else if (importCard.type === 'advanced-universe') cardTypeLabel = 'ADVANCED_UNIVERSE';
             
             try {
                 // Check card data before adding
@@ -560,8 +571,8 @@ async function processImportDeck() {
                         console.error(`❌ ${cardTypeLabel} IMPORT: addCardToEditor function not available`);
                         throw new Error('addCardToEditor function not available');
                     }
-                } else if (importCard.type === 'mission' || importCard.type === 'event') {
-                    // Mission and event cards can be added directly (no duplicate checking needed, similar to special cards)
+                } else if (importCard.type === 'mission' || importCard.type === 'event' || importCard.type === 'aspect' || importCard.type === 'advanced-universe') {
+                    // Mission, event, aspect, and advanced-universe cards can be added directly (no duplicate checking needed, similar to special cards)
                     // But we should auto-select default art if alternate images exist
                     let selectedAlternateImage = null;
                     if (cardData && cardData.alternateImages && cardData.alternateImages.length > 0) {
@@ -580,7 +591,7 @@ async function processImportDeck() {
                         // Wait a bit for async operations to complete
                         await new Promise(resolve => setTimeout(resolve, 100));
                         
-                        // Check if card was actually added (missions and events can have duplicates, so we just check if it exists)
+                        // Check if card was actually added (missions, events, aspects, and advanced-universe can have duplicates, so we just check if it exists)
                         const wasAdded = window.deckEditorCards?.some(c => 
                             c.type === importCard.type && c.cardId === importCard.cardId
                         );
@@ -684,18 +695,18 @@ function extractCardsFromImportData(cardsData) {
     }
 
     // Aspects (array of strings)
-    // if (Array.isArray(cardsData.aspects)) {
-    //     cardsData.aspects.forEach(cardName => addCard(cardName, 'aspect'));
-    // }
+    if (Array.isArray(cardsData.aspects)) {
+        cardsData.aspects.forEach(cardName => addCard(cardName, 'aspect'));
+    }
 
     // Advanced universe (object grouped by character)
-    // if (cardsData.advanced_universe && typeof cardsData.advanced_universe === 'object') {
-    //     Object.values(cardsData.advanced_universe).forEach(characterCards => {
-    //         if (Array.isArray(characterCards)) {
-    //             characterCards.forEach(cardName => addCard(cardName, 'advanced-universe'));
-    //         }
-    //     });
-    // }
+    if (cardsData.advanced_universe && typeof cardsData.advanced_universe === 'object') {
+        Object.values(cardsData.advanced_universe).forEach(characterCards => {
+            if (Array.isArray(characterCards)) {
+                characterCards.forEach(cardName => addCard(cardName, 'advanced-universe'));
+            }
+        });
+    }
 
     // Teamwork (array of strings)
     // if (Array.isArray(cardsData.teamwork)) {
