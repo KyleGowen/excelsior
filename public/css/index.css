@@ -5767,6 +5767,89 @@
     background: rgba(78, 205, 196, 0.5);
 }
 
+/* ========================================
+ * DECK IMPORT COMPONENT STYLES
+ * ========================================
+ * 
+ * Import JSON Overlay Styles
+ * Refactored from deck-export.js module
+ * ======================================== */
+.import-json-textarea {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.4);
+    color: #ffffff;
+    padding: 20px;
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    border: none;
+    outline: none;
+    resize: none;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.import-json-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.import-error-messages {
+    margin: 20px;
+    padding: 15px;
+    background: rgba(231, 76, 60, 0.2);
+    border: 1px solid rgba(231, 76, 60, 0.5);
+    border-radius: 8px;
+    color: #e74c3c;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.import-error-messages ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.import-error-messages li {
+    margin: 8px 0;
+}
+
+.import-actions {
+    padding: 20px;
+    border-top: 1px solid rgba(78, 205, 196, 0.3);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.import-button {
+    background: rgba(78, 205, 196, 0.2);
+    border: 1px solid rgba(78, 205, 196, 0.4);
+    border-radius: 6px;
+    padding: 12px 24px;
+    color: #4ecdc4;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.import-button:hover:not(:disabled) {
+    background: rgba(78, 205, 196, 0.3);
+    border-color: rgba(78, 205, 196, 0.6);
+}
+
+.import-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 
 /* Deck Editor Actions - L-shaped layout */
 .deck-editor-actions {

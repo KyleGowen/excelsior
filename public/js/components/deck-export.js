@@ -12,7 +12,6 @@
  *   - showExportOverlay() - Display export overlay
  *   - closeExportOverlay() - Close export overlay
  *   - copyJsonToClipboard() - Copy JSON to clipboard
- *   - importDeckFromJson() - Import functionality (disabled)
  *
  * Dependencies:
  *   - Global: currentUser, window.availableCardsMap, window.deckEditorCards
@@ -565,14 +564,9 @@ async function exportDeckAsJson() {
 }
 
 /**
- * Import deck from JSON (Admin only) - DISABLED
- * This functionality has been disabled but the function is kept
- * for consistency and potential future implementation.
+ * NOTE: Import functionality has been moved to deck-import.js
+ * This file now only contains export functionality.
  */
-function importDeckFromJson() {
-    // Import functionality has been disabled
-    showNotification('Import functionality is currently disabled', 'info');
-}
 
 /**
  * Render JSON as an interactive, collapsible tree structure
@@ -1162,7 +1156,6 @@ function copyJsonToClipboard() {
 // This allows existing code and tests to continue using these functions
 if (typeof window !== 'undefined') {
     window.exportDeckAsJson = exportDeckAsJson;
-    window.importDeckFromJson = importDeckFromJson;
     window.showExportOverlay = showExportOverlay;
     window.closeExportOverlay = closeExportOverlay;
     window.copyJsonToClipboard = copyJsonToClipboard;

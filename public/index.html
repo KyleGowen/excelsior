@@ -564,6 +564,7 @@
     <script src="/js/data-loading.js"></script>
     <script src="/js/deck-editor-core.js"></script>
     <script src="/js/components/deck-export.js"></script>
+    <script src="/js/components/deck-import.js"></script>
     <link rel="stylesheet" href="/css/deck-editor-search.css">
     <script src="/js/services/CardSearchService.js"></script>
     <script src="/js/components/DeckEditorSearch.js"></script>
@@ -1469,6 +1470,25 @@
                         </svg>
                     </div>
                     <pre id="exportJsonContent"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import JSON Overlay -->
+    <div id="importJsonOverlay" class="export-overlay" style="display: none;">
+        <div class="export-overlay-content">
+            <div class="export-overlay-header">
+                <h3>Deck Import</h3>
+                <button class="export-close-btn" onclick="closeImportOverlay()">&times;</button>
+            </div>
+            <div class="export-overlay-body">
+                <div class="json-container">
+                    <textarea id="importJsonContent" class="import-json-textarea" placeholder="Paste exported deck JSON here..."></textarea>
+                    <div id="importErrorMessages" class="import-error-messages" style="display: none;"></div>
+                    <div class="import-actions">
+                        <button id="importJsonButton" class="import-button" onclick="processImportDeck()">Import Cards</button>
+                    </div>
                 </div>
             </div>
         </div>

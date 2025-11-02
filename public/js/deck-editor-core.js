@@ -17,6 +17,7 @@ function showDeckEditor() {
         // Show/hide Export button based on admin role
         const exportBtn = document.getElementById('exportBtn');
         if (exportBtn) {
+            const currentUser = window.currentUser || (typeof getCurrentUser === 'function' ? getCurrentUser() : null);
             if (currentUser && currentUser.role === 'ADMIN') {
                 exportBtn.style.display = 'inline-block';
             } else {
@@ -27,6 +28,7 @@ function showDeckEditor() {
         // Show/hide Import button based on admin role
         const importBtn = document.getElementById('importBtn');
         if (importBtn) {
+            const currentUser = window.currentUser || (typeof getCurrentUser === 'function' ? getCurrentUser() : null);
             if (currentUser && currentUser.role === 'ADMIN') {
                 importBtn.style.display = 'inline-block';
             } else {
