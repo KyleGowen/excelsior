@@ -518,6 +518,36 @@ describe('Deck Export Component - Comprehensive Tests', () => {
                     return result;
                 };
 
+                // Helper function to create ally cards with stat_to_use and stat_type_to_use appended
+                const createAllyCards = (cards: any[]) => {
+                    const result: string[] = [];
+                    cards.filter((card: any) => card.type === 'ally-universe' || card.type === 'ally_universe').forEach((card: any) => {
+                        const availableCard = availableCardsMap.get(card.cardId);
+                        if (!availableCard) return;
+                        
+                        const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+                        const statToUse = availableCard.stat_to_use;
+                        const statTypeToUse = availableCard.stat_type_to_use;
+                        const quantity = card.quantity || 1;
+                        
+                        // Format: "Little John - 3 Combat" if both stat_to_use and stat_type_to_use exist
+                        let formattedName = cardName;
+                        if (statToUse && statTypeToUse) {
+                            formattedName = `${cardName} - ${statToUse} ${statTypeToUse}`;
+                        } else if (statTypeToUse && typeof statTypeToUse === 'string' && statTypeToUse.trim()) {
+                            formattedName = `${cardName} - ${statTypeToUse}`;
+                        } else if (statToUse !== null && statToUse !== undefined) {
+                            formattedName = `${cardName} - ${statToUse}`;
+                        }
+                        
+                        // Add card repeated by quantity
+                        for (let i = 0; i < quantity; i++) {
+                            result.push(formattedName);
+                        }
+                    });
+                    return result;
+                };
+
                 const cardCategories = {
                     characters: createCharactersArray(deckEditorCards),
                     special_cards: createSpecialCardsByCharacter(deckEditorCards),
@@ -527,7 +557,7 @@ describe('Deck Export Component - Comprehensive Tests', () => {
                     aspects: createRepeatedCards(deckEditorCards, 'aspect'),
                     advanced_universe: createAdvancedUniverseByCharacter(deckEditorCards),
                     teamwork: createTeamworkCards(deckEditorCards),
-                    allies: createRepeatedCards(deckEditorCards, 'ally-universe'),
+                    allies: createAllyCards(deckEditorCards),
                     training: createRepeatedCards(deckEditorCards, 'training'),
                     basic_universe: createRepeatedCards(deckEditorCards, 'basic-universe'),
                     power_cards: createSortedPowerCards(deckEditorCards)

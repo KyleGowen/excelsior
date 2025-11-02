@@ -317,6 +317,48 @@ async function exportDeckAsJson() {
             return result;
         };
 
+        // Helper function to create ally cards with stat_to_use and stat_type_to_use appended
+        const createAllyCards = (cards) => {
+            const result = [];
+            cards.filter(card => card.type === 'ally-universe' || card.type === 'ally_universe').forEach(card => {
+                const availableCard = window.availableCardsMap.get(card.cardId);
+                if (!availableCard) return;
+                
+                // Get card name (ally cards use name or card_name)
+                const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+                const statToUse = availableCard.stat_to_use;
+                const statTypeToUse = availableCard.stat_type_to_use;
+                const quantity = card.quantity || 1;
+                
+                // Format: "Little John - 3 Combat" if both stat_to_use and stat_type_to_use exist
+                // Format: "Little John - Combat" if only stat_type_to_use exists
+                // Format: "Little John - 3" if only stat_to_use exists
+                // Format: "Little John" if neither exists
+                let formattedName = cardName;
+                
+                // Check if statTypeToUse is valid (not null, not undefined, not empty string after trim)
+                const validStatTypeToUse = statTypeToUse && typeof statTypeToUse === 'string' && statTypeToUse.trim();
+                const trimmedStatTypeToUse = validStatTypeToUse ? statTypeToUse.trim() : null;
+                
+                if (statToUse && trimmedStatTypeToUse) {
+                    // Both stat_to_use and stat_type_to_use
+                    formattedName = `${cardName} - ${statToUse} ${trimmedStatTypeToUse}`;
+                } else if (trimmedStatTypeToUse) {
+                    // Only stat_type_to_use
+                    formattedName = `${cardName} - ${trimmedStatTypeToUse}`;
+                } else if (statToUse !== null && statToUse !== undefined) {
+                    // Only stat_to_use
+                    formattedName = `${cardName} - ${statToUse}`;
+                }
+                
+                // Add card repeated by quantity
+                for (let i = 0; i < quantity; i++) {
+                    result.push(formattedName);
+                }
+            });
+            return result;
+        };
+
         // Helper function to create sorted power cards array
         // Sorts by value (ascending), then by type (Energy, Combat, Brute Force, Intelligence, Multi, Any-Power)
         const createSortedPowerCards = (cards) => {
@@ -507,7 +549,7 @@ async function exportDeckAsJson() {
             aspects: createRepeatedCards(window.deckEditorCards, 'aspect'),
             advanced_universe: createAdvancedUniverseByCharacter(window.deckEditorCards),
             teamwork: createTeamworkCards(window.deckEditorCards),
-            allies: createRepeatedCards(window.deckEditorCards, 'ally-universe'),
+            allies: createAllyCards(window.deckEditorCards),
             training: createRepeatedCards(window.deckEditorCards, 'training'),
             basic_universe: createRepeatedCards(window.deckEditorCards, 'basic-universe'),
             power_cards: createSortedPowerCards(window.deckEditorCards)

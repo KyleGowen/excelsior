@@ -55,8 +55,8 @@ describe('Export Functionality', () => {
             }],
             ['ally1', {
                 card_name: 'Test Ally',
-                stat_to_use: 'Combat',
-                stat_type_to_use: 'Physical',
+                stat_to_use: '3',
+                stat_type_to_use: 'Combat',
                 attack_value: 6,
                 attack_type: 'Physical',
                 threat_level: 1
@@ -149,7 +149,19 @@ describe('Export Functionality', () => {
                         if (card.type === 'power') {
                             return `${availableCard.value} - ${availableCard.power_type}`;
                         } else if (card.type === 'ally-universe') {
-                            return `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}`;
+                            // Format: "Card Name - stat_to_use stat_type_to_use"
+                            const cardName = availableCard.card_name || availableCard.name || 'Unknown Card';
+                            const statToUse = availableCard.stat_to_use;
+                            const statTypeToUse = availableCard.stat_type_to_use;
+                            
+                            if (statToUse && statTypeToUse) {
+                                return `${cardName} - ${statToUse} ${statTypeToUse}`;
+                            } else if (statTypeToUse && typeof statTypeToUse === 'string' && statTypeToUse.trim()) {
+                                return `${cardName} - ${statTypeToUse}`;
+                            } else if (statToUse !== null && statToUse !== undefined) {
+                                return `${cardName} - ${statToUse}`;
+                            }
+                            return cardName;
                         } else {
                             return availableCard.name || availableCard.card_name || 'Unknown Card';
                         }
@@ -314,8 +326,8 @@ describe('Export Functionality', () => {
             // Check that ally cards with quantity 2 appear 2 times
             expect(result.cards.allies).toHaveLength(2);
             expect(result.cards.allies).toEqual([
-                'Test Ally - Combat Physical → 6 Physical',
-                'Test Ally - Combat Physical → 6 Physical'
+                'Test Ally - 3 Combat',
+                'Test Ally - 3 Combat'
             ]);
 
             // Check that character cards with quantity 1 appear 1 time
