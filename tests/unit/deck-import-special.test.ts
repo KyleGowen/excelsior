@@ -336,7 +336,14 @@ describe('Deck Special Card Import - Unit Tests', () => {
                 if (validation && validation.errors && validation.errors.length > 0) {
                     const filteredErrors = validation.errors.filter((error: any) => {
                         if (typeof error === 'string') {
-                            return !error.includes('cards in draw pile');
+                            // Skip errors about minimum deck size / draw pile size
+                            if (error.includes('cards in draw pile')) {
+                                return false;
+                            }
+                            // Skip errors about threat level (can be adjusted after import)
+                            if (error.includes('threat level') || error.includes('Total threat')) {
+                                return false;
+                            }
                         }
                         return true;
                     });
@@ -656,6 +663,31 @@ describe('Deck Special Card Import - Unit Tests', () => {
             expect(errorMessages.style.display).toBe('block');
         });
 
+        it('should still show non-filtered validation errors', async () => {
+            mockValidateDeck.mockReturnValue({
+                errors: ['Cannot have more than 4 characters'],
+                warnings: []
+            });
+
+            const jsonData = {
+                cards: {
+                    special_cards: {
+                        'Any Character': ['The Gemini']
+                    }
+                }
+            };
+
+            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
+            textarea.value = JSON.stringify(jsonData);
+
+            await processImportDeck();
+
+            expect(mockAddCardToEditor).not.toHaveBeenCalled();
+            const errorMessages = document.getElementById('importErrorMessages') as HTMLDivElement;
+            expect(errorMessages.style.display).toBe('block');
+            expect(errorMessages.innerHTML).toContain('Cannot have more than 4 characters');
+        });
+
         it('should filter out 51-card validation errors during import', async () => {
             mockValidateDeck.mockReturnValue({
                 errors: ['Deck must have at least 51 cards in draw pile (0/51)'],
@@ -677,6 +709,57 @@ describe('Deck Special Card Import - Unit Tests', () => {
 
             // Should proceed with import despite 51-card rule
             expect(mockAddCardToEditor).toHaveBeenCalled();
+        });
+
+        it('should filter out threat level validation errors during import', async () => {
+            mockValidateDeck.mockReturnValue({
+                errors: ['Total threat level must be <= 76 (current: 78)'],
+                warnings: []
+            });
+
+            const jsonData = {
+                cards: {
+                    special_cards: {
+                        'Any Character': ['The Gemini']
+                    }
+                }
+            };
+
+            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
+            textarea.value = JSON.stringify(jsonData);
+
+            await processImportDeck();
+
+            // Should proceed with import despite threat level error
+            expect(mockAddCardToEditor).toHaveBeenCalled();
+            expect(mockShowNotification).toHaveBeenCalled();
+        });
+
+        it('should filter out both 51-card and threat level validation errors', async () => {
+            mockValidateDeck.mockReturnValue({
+                errors: [
+                    'Deck must have at least 51 cards in draw pile (0/51)',
+                    'Total threat level must be <= 76 (current: 78)'
+                ],
+                warnings: []
+            });
+
+            const jsonData = {
+                cards: {
+                    special_cards: {
+                        'Any Character': ['The Gemini']
+                    }
+                }
+            };
+
+            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
+            textarea.value = JSON.stringify(jsonData);
+
+            await processImportDeck();
+
+            // Should proceed with import despite both errors
+            expect(mockAddCardToEditor).toHaveBeenCalled();
+            expect(mockShowNotification).toHaveBeenCalled();
         });
 
         it('should handle unresolved special cards', async () => {

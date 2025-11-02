@@ -1,21 +1,21 @@
 /** @jest-environment jsdom */
 
 /**
- * Unit Tests for Deck Character Import Functionality
+ * Unit Tests for Deck Location Import Functionality
  * 
  * Tests cover:
- * - extractCardsFromImportData() - Character extraction from JSON
- * - findCardIdByName() - Character lookup by name
+ * - extractCardsFromImportData() - Location extraction from JSON
+ * - findCardIdByName() - Location lookup by name
  * - processImportDeck() - Full import flow
- *   - Characters without alternate images
- *   - Characters with alternate images (auto-selecting first)
+ *   - Locations without alternate images
+ *   - Locations with alternate images (auto-selecting first)
  *   - Duplicate detection (in deck and import list)
- *   - Character limit enforcement (4 max)
+ *   - Location limit enforcement (1 max)
  *   - Error handling and validation
  *   - Success scenarios with verification
  */
 
-describe('Deck Character Import - Unit Tests', () => {
+describe('Deck Location Import - Unit Tests', () => {
     let mockCurrentUser: any;
     let mockDeckEditorCards: any[];
     let mockAvailableCardsMap: Map<string, any>;
@@ -25,8 +25,7 @@ describe('Deck Character Import - Unit Tests', () => {
     let mockValidateDeck: jest.Mock;
     let mockLoadAvailableCards: jest.Mock;
 
-    // Helper to load the actual functions from deck-export.js
-    // Since it's in a script tag, we'll need to mock/recreate the functions
+    // Helper to load the actual functions from deck-import.js
     let extractCardsFromImportData: (cardsData: any) => any[];
     let findCardIdByName: (cardName: string, cardType: string) => string | null;
     let processImportDeck: () => Promise<void>;
@@ -67,66 +66,59 @@ describe('Deck Character Import - Unit Tests', () => {
         mockDeckEditorCards = [];
 
         mockAvailableCardsMap = new Map([
-            // Characters without alternate images
-            ['Captain Nemo', {
-                id: 'c7dc892b-5c68-40ee-9d16-df0cfb742591',
-                name: 'Captain Nemo',
-                type: 'character',
+            // Locations without alternate images
+            ['Event Horizon: The Future', {
+                id: 'event_horizon_id',
+                name: 'Event Horizon: The Future',
+                type: 'location',
                 alternateImages: []
             }],
-            // Characters with alternate images
-            ['d0fcb520-94f0-47df-b983-877b522973d2', {
-                id: 'd0fcb520-94f0-47df-b983-877b522973d2',
-                name: 'Count of Monte Cristo',
-                type: 'character',
-                alternateImages: ['characters/alternate/monte_cristo.webp']
-            }],
-            ['Count of Monte Cristo', {
-                id: 'd0fcb520-94f0-47df-b983-877b522973d2',
-                name: 'Count of Monte Cristo',
-                type: 'character',
-                alternateImages: ['characters/alternate/monte_cristo.webp']
-            }],
-            ['101217ab-a951-4871-8bc2-189b32af783d', {
-                id: '101217ab-a951-4871-8bc2-189b32af783d',
-                name: 'Korak',
-                type: 'character',
-                alternateImages: ['characters/alternate/korak1.webp', 'characters/alternate/korak2.webp']
-            }],
-            ['Korak', {
-                id: '101217ab-a951-4871-8bc2-189b32af783d',
-                name: 'Korak',
-                type: 'character',
-                alternateImages: ['characters/alternate/korak1.webp', 'characters/alternate/korak2.webp']
-            }],
-            ['98fd610e-39fd-470e-84b7-ab723cc0f39d', {
-                id: '98fd610e-39fd-470e-84b7-ab723cc0f39d',
-                name: 'Angry Mob (Industrial Age)',
-                type: 'character',
-                alternateImages: ['characters/alternate/angry_mob_industrial.webp']
-            }],
-            ['Angry Mob (Industrial Age)', {
-                id: '98fd610e-39fd-470e-84b7-ab723cc0f39d',
-                name: 'Angry Mob (Industrial Age)',
-                type: 'character',
-                alternateImages: ['characters/alternate/angry_mob_industrial.webp']
-            }],
-            // Additional characters for limit testing
-            ['character-5', {
-                id: 'character-5',
-                name: 'Character Five',
-                type: 'character',
+            ['The Citadel', {
+                id: 'citadel_id',
+                name: 'The Citadel',
+                type: 'location',
                 alternateImages: []
             }],
-            ['Character Five', {
-                id: 'character-5',
-                name: 'Character Five',
-                type: 'character',
+            // Locations with alternate images
+            ['Ancient Ruins', {
+                id: 'ancient_ruins_id',
+                name: 'Ancient Ruins',
+                type: 'location',
+                alternateImages: ['locations/alternate/ancient_ruins_alt.webp']
+            }],
+            ['ancient_ruins_id', {
+                id: 'ancient_ruins_id',
+                name: 'Ancient Ruins',
+                type: 'location',
+                alternateImages: ['locations/alternate/ancient_ruins_alt.webp']
+            }],
+            ['Lost City', {
+                id: 'lost_city_id',
+                name: 'Lost City',
+                type: 'location',
+                alternateImages: ['locations/alternate/lost_city_alt1.webp', 'locations/alternate/lost_city_alt2.webp']
+            }],
+            ['lost_city_id', {
+                id: 'lost_city_id',
+                name: 'Lost City',
+                type: 'location',
+                alternateImages: ['locations/alternate/lost_city_alt1.webp', 'locations/alternate/lost_city_alt2.webp']
+            }],
+            ['event_horizon_id', {
+                id: 'event_horizon_id',
+                name: 'Event Horizon: The Future',
+                type: 'location',
+                alternateImages: []
+            }],
+            ['citadel_id', {
+                id: 'citadel_id',
+                name: 'The Citadel',
+                type: 'location',
                 alternateImages: []
             }]
         ]);
 
-        // Set up global mocks
+        // Setup global mocks
         (window as any).currentUser = mockCurrentUser;
         (window as any).deckEditorCards = mockDeckEditorCards;
         (window as any).availableCardsMap = mockAvailableCardsMap;
@@ -136,8 +128,7 @@ describe('Deck Character Import - Unit Tests', () => {
         (window as any).validateDeck = mockValidateDeck;
         (window as any).loadAvailableCards = mockLoadAvailableCards;
 
-        // Recreate the functions from deck-export.js for testing
-        // This mimics the actual implementation
+        // Recreate the functions from deck-import.js for testing
         extractCardsFromImportData = (cardsData: any) => {
             const result: any[] = [];
             const addCard = (cardName: string, cardType: string) => {
@@ -146,8 +137,8 @@ describe('Deck Character Import - Unit Tests', () => {
                 }
             };
 
-            if (Array.isArray(cardsData.characters)) {
-                cardsData.characters.forEach((cardName: any) => addCard(cardName, 'character'));
+            if (Array.isArray(cardsData.locations)) {
+                cardsData.locations.forEach((cardName: any) => addCard(cardName, 'location'));
             }
 
             return result;
@@ -271,7 +262,7 @@ describe('Deck Character Import - Unit Tests', () => {
                 }
 
                 for (const cardEntry of cardsToImport) {
-                    if (cardEntry.type !== 'character') {
+                    if (cardEntry.type !== 'location') {
                         continue;
                     }
 
@@ -323,8 +314,8 @@ describe('Deck Character Import - Unit Tests', () => {
                     );
 
                     if (existingIndex >= 0) {
-                        if (importCard.type === 'character') {
-                            continue;
+                        if (importCard.type === 'location') {
+                            continue; // Locations shouldn't have duplicates
                         } else {
                             testDeckCards[existingIndex].quantity += 1;
                         }
@@ -376,24 +367,24 @@ describe('Deck Character Import - Unit Tests', () => {
                 const addErrors: string[] = [];
 
                 for (const importCard of importList) {
-                    if (importCard.type !== 'character') {
+                    if (importCard.type !== 'location') {
                         continue;
                     }
 
                     try {
                         const cardData = mockAvailableCardsMap.get(importCard.cardId);
 
-                        const existingCharacter = mockDeckEditorCards.find(c =>
-                            c.type === 'character' && c.cardId === importCard.cardId
+                        const existingLocation = mockDeckEditorCards.find(c =>
+                            c.type === 'location' && c.cardId === importCard.cardId
                         );
-                        if (existingCharacter) {
+                        if (existingLocation) {
                             continue;
                         }
 
-                        const characterCount = mockDeckEditorCards.filter(c => c.type === 'character').length;
-                        if (characterCount >= 4) {
+                        const locationCount = mockDeckEditorCards.filter(c => c.type === 'location').length;
+                        if (locationCount >= 1) {
                             errorCount++;
-                            addErrors.push(`${importCard.cardName}: Cannot add more than 4 characters`);
+                            addErrors.push(`${importCard.cardName}: Cannot add more than 1 location`);
                             continue;
                         }
 
@@ -463,22 +454,21 @@ describe('Deck Character Import - Unit Tests', () => {
     });
 
     describe('extractCardsFromImportData', () => {
-        it('should extract character cards from JSON structure', () => {
+        it('should extract location cards from JSON structure', () => {
             const cardsData = {
-                characters: ['Captain Nemo', 'Count of Monte Cristo', 'Korak']
+                locations: ['Event Horizon: The Future', 'The Citadel']
             };
 
             const result = extractCardsFromImportData(cardsData);
 
-            expect(result).toHaveLength(3);
-            expect(result[0]).toEqual({ name: 'Captain Nemo', type: 'character' });
-            expect(result[1]).toEqual({ name: 'Count of Monte Cristo', type: 'character' });
-            expect(result[2]).toEqual({ name: 'Korak', type: 'character' });
+            expect(result).toHaveLength(2);
+            expect(result[0]).toEqual({ name: 'Event Horizon: The Future', type: 'location' });
+            expect(result[1]).toEqual({ name: 'The Citadel', type: 'location' });
         });
 
-        it('should handle empty characters array', () => {
+        it('should handle empty locations array', () => {
             const cardsData = {
-                characters: []
+                locations: []
             };
 
             const result = extractCardsFromImportData(cardsData);
@@ -486,30 +476,30 @@ describe('Deck Character Import - Unit Tests', () => {
             expect(result).toHaveLength(0);
         });
 
-        it('should trim whitespace from character names', () => {
+        it('should trim whitespace from location names', () => {
             const cardsData = {
-                characters: ['  Captain Nemo  ', '  Korak  ']
+                locations: ['  Event Horizon: The Future  ', '  The Citadel  ']
             };
 
             const result = extractCardsFromImportData(cardsData);
 
-            expect(result[0].name).toBe('Captain Nemo');
-            expect(result[1].name).toBe('Korak');
+            expect(result[0].name).toBe('Event Horizon: The Future');
+            expect(result[1].name).toBe('The Citadel');
         });
 
-        it('should skip non-string character names', () => {
+        it('should skip non-string location names', () => {
             const cardsData = {
-                characters: ['Captain Nemo', null, undefined, 123, 'Korak']
+                locations: ['Event Horizon: The Future', null, undefined, 123, 'The Citadel']
             };
 
             const result = extractCardsFromImportData(cardsData);
 
             expect(result).toHaveLength(2);
-            expect(result[0].name).toBe('Captain Nemo');
-            expect(result[1].name).toBe('Korak');
+            expect(result[0].name).toBe('Event Horizon: The Future');
+            expect(result[1].name).toBe('The Citadel');
         });
 
-        it('should handle missing characters field', () => {
+        it('should handle missing locations field', () => {
             const cardsData = {};
 
             const result = extractCardsFromImportData(cardsData);
@@ -519,98 +509,47 @@ describe('Deck Character Import - Unit Tests', () => {
     });
 
     describe('findCardIdByName', () => {
-        it('should find character by exact name match', () => {
-            const cardId = findCardIdByName('Captain Nemo', 'character');
-            expect(cardId).toBe('c7dc892b-5c68-40ee-9d16-df0cfb742591');
+        it('should find location by exact name match', () => {
+            const cardId = findCardIdByName('Event Horizon: The Future', 'location');
+            expect(cardId).toBe('event_horizon_id');
         });
 
-        it('should find character with alternate images by name', () => {
-            const cardId = findCardIdByName('Count of Monte Cristo', 'character');
-            expect(cardId).toBe('d0fcb520-94f0-47df-b983-877b522973d2');
+        it('should find location with alternate images by name', () => {
+            const cardId = findCardIdByName('Ancient Ruins', 'location');
+            expect(cardId).toBe('ancient_ruins_id');
         });
 
-        it('should return null for character not found', () => {
-            const cardId = findCardIdByName('Non-existent Character', 'character');
+        it('should return null for location not found', () => {
+            const cardId = findCardIdByName('Non-existent Location', 'location');
             expect(cardId).toBeNull();
         });
 
         it('should return null for invalid input', () => {
-            expect(findCardIdByName(null as any, 'character')).toBeNull();
-            expect(findCardIdByName(undefined as any, 'character')).toBeNull();
-            expect(findCardIdByName('', 'character')).toBeNull();
+            expect(findCardIdByName(null as any, 'location')).toBeNull();
+            expect(findCardIdByName(undefined as any, 'location')).toBeNull();
+            expect(findCardIdByName('', 'location')).toBeNull();
         });
 
         it('should filter by card type', () => {
-            // Add a non-character card with same name to test filtering
-            mockAvailableCardsMap.set('Captain Nemo Special', {
-                id: 'special-captain-nemo',
-                name: 'Captain Nemo',
+            // Add a non-location card with same name to test filtering
+            mockAvailableCardsMap.set('Event Horizon Special', {
+                id: 'special-event-horizon',
+                name: 'Event Horizon: The Future',
                 type: 'special'
             });
 
-            const cardId = findCardIdByName('Captain Nemo', 'character');
-            // Should find character, not special
-            expect(cardId).toBe('c7dc892b-5c68-40ee-9d16-df0cfb742591');
-        });
-
-        it('should find character with variant name', () => {
-            const cardId = findCardIdByName('Angry Mob (Industrial Age)', 'character');
-            expect(cardId).toBe('98fd610e-39fd-470e-84b7-ab723cc0f39d');
+            const cardId = findCardIdByName('Event Horizon: The Future', 'location');
+            // Should find location, not special
+            expect(cardId).toBe('event_horizon_id');
         });
     });
 
-    describe('processImportDeck - JSON Parsing', () => {
-        it('should show error for empty textarea', async () => {
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
-            textarea.value = '';
-
-            await processImportDeck();
-
-            expect(errorMessages.style.display).toBe('block');
-            expect(errorMessages.innerHTML).toContain('Please paste JSON data');
-        });
-
-        it('should show error for invalid JSON', async () => {
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
-            textarea.value = '{ invalid json }';
-
-            await processImportDeck();
-
-            expect(errorMessages.style.display).toBe('block');
-            expect(errorMessages.innerHTML).toContain('Invalid JSON format');
-        });
-
-        it('should show error for missing cards section', async () => {
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
-            textarea.value = JSON.stringify({ name: 'Test Deck' });
-
-            await processImportDeck();
-
-            expect(errorMessages.style.display).toBe('block');
-            expect(errorMessages.innerHTML).toContain('Missing "cards" section');
-        });
-
-        it('should show error for empty cards section', async () => {
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
-            textarea.value = JSON.stringify({ cards: { characters: [] } });
-
-            await processImportDeck();
-
-            expect(errorMessages.style.display).toBe('block');
-            expect(errorMessages.innerHTML).toContain('No cards found');
-        });
-    });
-
-    describe('processImportDeck - Character Import Success', () => {
-        it('should successfully import character without alternate images', async () => {
+    describe('processImportDeck - Location Import Success', () => {
+        it('should successfully import location without alternate images', async () => {
             const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: ['Captain Nemo']
+                    locations: ['Event Horizon: The Future']
                 }
             });
 
@@ -619,22 +558,22 @@ describe('Deck Character Import - Unit Tests', () => {
             await promise;
 
             expect(mockAddCardToEditor).toHaveBeenCalledWith(
-                'character',
-                'c7dc892b-5c68-40ee-9d16-df0cfb742591',
-                'Captain Nemo',
+                'location',
+                'event_horizon_id',
+                'Event Horizon: The Future',
                 null
             );
             expect(mockDeckEditorCards).toHaveLength(1);
-            expect(mockDeckEditorCards[0].cardId).toBe('c7dc892b-5c68-40ee-9d16-df0cfb742591');
+            expect(mockDeckEditorCards[0].cardId).toBe('event_horizon_id');
             expect(mockCloseImportOverlay).toHaveBeenCalled();
             expect(mockShowNotification).toHaveBeenCalledWith('Successfully imported 1 card(s)', 'success');
         });
 
-        it('should successfully import character with alternate images and auto-select first', async () => {
+        it('should successfully import location with alternate images and auto-select first', async () => {
             const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: ['Count of Monte Cristo']
+                    locations: ['Ancient Ruins']
                 }
             });
 
@@ -643,21 +582,21 @@ describe('Deck Character Import - Unit Tests', () => {
             await promise;
 
             expect(mockAddCardToEditor).toHaveBeenCalledWith(
-                'character',
-                'd0fcb520-94f0-47df-b983-877b522973d2',
-                'Count of Monte Cristo',
-                'characters/alternate/monte_cristo.webp'
+                'location',
+                'ancient_ruins_id',
+                'Ancient Ruins',
+                'locations/alternate/ancient_ruins_alt.webp'
             );
             expect(mockDeckEditorCards).toHaveLength(1);
-            expect(mockDeckEditorCards[0].selectedAlternateImage).toBe('characters/alternate/monte_cristo.webp');
+            expect(mockDeckEditorCards[0].selectedAlternateImage).toBe('locations/alternate/ancient_ruins_alt.webp');
             expect(mockCloseImportOverlay).toHaveBeenCalled();
         });
 
-        it('should successfully import character with multiple alternate images (selects first)', async () => {
+        it('should successfully import location with multiple alternate images (selects first)', async () => {
             const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: ['Korak']
+                    locations: ['Lost City']
                 }
             });
 
@@ -666,53 +605,30 @@ describe('Deck Character Import - Unit Tests', () => {
             await promise;
 
             expect(mockAddCardToEditor).toHaveBeenCalledWith(
-                'character',
-                '101217ab-a951-4871-8bc2-189b32af783d',
-                'Korak',
-                'characters/alternate/korak1.webp' // First alternate image
+                'location',
+                'lost_city_id',
+                'Lost City',
+                'locations/alternate/lost_city_alt1.webp' // First alternate image
             );
             expect(mockDeckEditorCards).toHaveLength(1);
-            expect(mockDeckEditorCards[0].selectedAlternateImage).toBe('characters/alternate/korak1.webp');
-        });
-
-        it('should successfully import multiple characters', async () => {
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            textarea.value = JSON.stringify({
-                cards: {
-                    characters: [
-                        'Captain Nemo',
-                        'Count of Monte Cristo',
-                        'Korak',
-                        'Angry Mob (Industrial Age)'
-                    ]
-                }
-            });
-
-            const promise = processImportDeck();
-            await jest.runAllTimersAsync();
-            await promise;
-
-            expect(mockAddCardToEditor).toHaveBeenCalledTimes(4);
-            expect(mockDeckEditorCards).toHaveLength(4);
-            expect(mockCloseImportOverlay).toHaveBeenCalled();
-            expect(mockShowNotification).toHaveBeenCalledWith('Successfully imported 4 card(s)', 'success');
+            expect(mockDeckEditorCards[0].selectedAlternateImage).toBe('locations/alternate/lost_city_alt1.webp');
         });
     });
 
     describe('processImportDeck - Duplicate Detection', () => {
-        it('should skip character already in deck', async () => {
-            // Add character to deck first
+        it('should skip location already in deck', async () => {
+            // Add location to deck first
             mockDeckEditorCards.push({
                 id: 'existing-1',
-                type: 'character',
-                cardId: 'c7dc892b-5c68-40ee-9d16-df0cfb742591',
+                type: 'location',
+                cardId: 'event_horizon_id',
                 quantity: 1
             });
 
             const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: ['Captain Nemo']
+                    locations: ['Event Horizon: The Future']
                 }
             });
 
@@ -724,11 +640,11 @@ describe('Deck Character Import - Unit Tests', () => {
             expect(mockDeckEditorCards).toHaveLength(1); // Still only one
         });
 
-        it('should skip duplicate character in import list', async () => {
+        it('should skip duplicate location in import list', async () => {
             const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: ['Captain Nemo', 'Captain Nemo', 'Captain Nemo']
+                    locations: ['Event Horizon: The Future', 'Event Horizon: The Future', 'Event Horizon: The Future']
                 }
             });
 
@@ -742,21 +658,21 @@ describe('Deck Character Import - Unit Tests', () => {
         });
     });
 
-    describe('processImportDeck - Character Limit', () => {
-        it('should enforce 4 character maximum', async () => {
-            // Add 4 characters to deck first
-            mockDeckEditorCards.push(
-                { id: '1', type: 'character', cardId: 'char-1', quantity: 1 },
-                { id: '2', type: 'character', cardId: 'char-2', quantity: 1 },
-                { id: '3', type: 'character', cardId: 'char-3', quantity: 1 },
-                { id: '4', type: 'character', cardId: 'char-4', quantity: 1 }
-            );
+    describe('processImportDeck - Location Limit', () => {
+        it('should enforce 1 location maximum', async () => {
+            // Add 1 location to deck first
+            mockDeckEditorCards.push({
+                id: 'existing-1',
+                type: 'location',
+                cardId: 'citadel_id',
+                quantity: 1
+            });
 
             const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
             const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: ['Captain Nemo']
+                    locations: ['Event Horizon: The Future']
                 }
             });
 
@@ -764,22 +680,16 @@ describe('Deck Character Import - Unit Tests', () => {
             jest.advanceTimersByTime(200);
 
             expect(mockAddCardToEditor).not.toHaveBeenCalled();
-            expect(mockDeckEditorCards).toHaveLength(4); // Still 4
+            expect(mockDeckEditorCards).toHaveLength(1); // Still 1
             expect(errorMessages.style.display).toBe('block');
-            expect(errorMessages.innerHTML).toContain('Cannot add more than 4 characters');
+            expect(errorMessages.innerHTML).toContain('Cannot add more than 1 location');
         });
 
-        it('should allow adding up to 4 characters total', async () => {
-            // Start with 2 characters
-            mockDeckEditorCards.push(
-                { id: '1', type: 'character', cardId: 'char-1', quantity: 1 },
-                { id: '2', type: 'character', cardId: 'char-2', quantity: 1 }
-            );
-
+        it('should allow adding 1 location total', async () => {
             const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: ['Captain Nemo', 'Count of Monte Cristo']
+                    locations: ['Event Horizon: The Future']
                 }
             });
 
@@ -787,18 +697,18 @@ describe('Deck Character Import - Unit Tests', () => {
             await jest.runAllTimersAsync();
             await promise;
 
-            expect(mockAddCardToEditor).toHaveBeenCalledTimes(2);
-            expect(mockDeckEditorCards).toHaveLength(4); // 2 + 2 = 4
+            expect(mockAddCardToEditor).toHaveBeenCalledTimes(1);
+            expect(mockDeckEditorCards).toHaveLength(1);
         });
     });
 
     describe('processImportDeck - Unresolved Cards', () => {
-        it('should show error for character not found in card map', async () => {
+        it('should show error for location not found in card map', async () => {
             const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
             const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: ['Non-existent Character']
+                    locations: ['Non-existent Location']
                 }
             });
 
@@ -806,38 +716,22 @@ describe('Deck Character Import - Unit Tests', () => {
 
             expect(errorMessages.style.display).toBe('block');
             expect(errorMessages.innerHTML).toContain('Could not find');
-            expect(errorMessages.innerHTML).toContain('Non-existent Character');
+            expect(errorMessages.innerHTML).toContain('Non-existent Location');
             expect(mockAddCardToEditor).not.toHaveBeenCalled();
-        });
-
-        it('should show error for multiple unresolved cards', async () => {
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
-            textarea.value = JSON.stringify({
-                cards: {
-                    characters: ['Captain Nemo', 'Unknown Character 1', 'Unknown Character 2']
-                }
-            });
-
-            await processImportDeck();
-
-            expect(errorMessages.style.display).toBe('block');
-            expect(errorMessages.innerHTML).toContain('Could not find 2 card(s)');
-            expect(mockAddCardToEditor).not.toHaveBeenCalled(); // Should not add any if some are unresolved
         });
     });
 
     describe('processImportDeck - Validation', () => {
         it('should filter out 51-card rule validation errors', async () => {
             mockValidateDeck.mockReturnValue({
-                errors: ['Deck must have at least 51 cards in draw pile (4/51)'],
+                errors: ['Deck must have at least 51 cards in draw pile (1/51)'],
                 warnings: []
             });
 
             const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: ['Captain Nemo']
+                    locations: ['Event Horizon: The Future']
                 }
             });
 
@@ -859,7 +753,7 @@ describe('Deck Character Import - Unit Tests', () => {
             const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: ['Captain Nemo']
+                    locations: ['Event Horizon: The Future']
                 }
             });
 
@@ -875,7 +769,7 @@ describe('Deck Character Import - Unit Tests', () => {
         it('should filter out both 51-card and threat level validation errors', async () => {
             mockValidateDeck.mockReturnValue({
                 errors: [
-                    'Deck must have at least 51 cards in draw pile (4/51)',
+                    'Deck must have at least 51 cards in draw pile (1/51)',
                     'Total threat level must be <= 76 (current: 78)'
                 ],
                 warnings: []
@@ -884,7 +778,7 @@ describe('Deck Character Import - Unit Tests', () => {
             const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: ['Captain Nemo']
+                    locations: ['Event Horizon: The Future']
                 }
             });
 
@@ -896,45 +790,6 @@ describe('Deck Character Import - Unit Tests', () => {
             expect(mockAddCardToEditor).toHaveBeenCalled();
             expect(mockCloseImportOverlay).toHaveBeenCalled();
         });
-
-        it('should show other validation errors', async () => {
-            mockValidateDeck.mockReturnValue({
-                errors: ['Cannot have more than 4 characters'],
-                warnings: []
-            });
-
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
-            textarea.value = JSON.stringify({
-                cards: {
-                    characters: ['Captain Nemo', 'Count of Monte Cristo', 'Korak', 'Angry Mob (Industrial Age)', 'Character Five']
-                }
-            });
-
-            await processImportDeck();
-
-            expect(errorMessages.style.display).toBe('block');
-            expect(errorMessages.innerHTML).toContain('Cannot have more than 4 characters');
-            expect(mockAddCardToEditor).not.toHaveBeenCalled();
-        });
-
-        it('should handle validation function not existing', async () => {
-            (window as any).validateDeck = undefined;
-
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            textarea.value = JSON.stringify({
-                cards: {
-                    characters: ['Captain Nemo']
-                }
-            });
-
-            const promise = processImportDeck();
-            await jest.runAllTimersAsync();
-            await promise;
-
-            // Should still proceed (validation is optional)
-            expect(mockAddCardToEditor).toHaveBeenCalled();
-        });
     });
 
     describe('processImportDeck - Error Handling', () => {
@@ -945,7 +800,7 @@ describe('Deck Character Import - Unit Tests', () => {
             const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: ['Captain Nemo']
+                    locations: ['Event Horizon: The Future']
                 }
             });
 
@@ -963,7 +818,7 @@ describe('Deck Character Import - Unit Tests', () => {
             const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: ['Captain Nemo']
+                    locations: ['Event Horizon: The Future']
                 }
             });
 
@@ -974,181 +829,16 @@ describe('Deck Character Import - Unit Tests', () => {
             expect(errorMessages.style.display).toBe('block');
             expect(errorMessages.innerHTML).toContain('addCardToEditor function not available');
         });
-
-        it('should handle card not being added after addCardToEditor call', async () => {
-            // Mock addCardToEditor to not actually add the card
-            mockAddCardToEditor.mockImplementation(async () => {
-                // Don't add to deckEditorCards
-            });
-
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
-            textarea.value = JSON.stringify({
-                cards: {
-                    characters: ['Captain Nemo']
-                }
-            });
-
-            const promise = processImportDeck();
-            await jest.runAllTimersAsync();
-            await promise;
-
-            expect(errorMessages.style.display).toBe('block');
-            expect(errorMessages.innerHTML).toContain('Card was not added to deck');
-        });
-
-        it('should handle general errors during processing', async () => {
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
-            textarea.value = JSON.stringify({
-                cards: {
-                    characters: ['Captain Nemo']
-                }
-            });
-
-            // Mock an error in the processing
-            mockAvailableCardsMap.get = jest.fn().mockImplementation(() => {
-                throw new Error('Map access error');
-            });
-
-            await processImportDeck();
-
-            expect(errorMessages.style.display).toBe('block');
-            expect(errorMessages.innerHTML).toContain('Error processing import');
-        });
     });
 
-    describe('processImportDeck - Card Data Loading', () => {
-        it('should attempt to load cards if availableCardsMap is empty', async () => {
-            mockAvailableCardsMap.clear();
-
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
-            textarea.value = JSON.stringify({
-                cards: {
-                    characters: ['Captain Nemo']
-                }
-            });
-
-            const promise = processImportDeck();
-            await jest.runAllTimersAsync();
-            await promise;
-
-            expect(mockLoadAvailableCards).toHaveBeenCalled();
-        });
-
-        it('should show error if cards still not loaded after attempting load', async () => {
-            mockAvailableCardsMap.clear();
-
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
-            textarea.value = JSON.stringify({
-                cards: {
-                    characters: ['Captain Nemo']
-                }
-            });
-
-            const promise = processImportDeck();
-            await jest.runAllTimersAsync();
-            await promise;
-
-            expect(errorMessages.style.display).toBe('block');
-            expect(errorMessages.innerHTML).toContain('Card data not loaded');
-        });
-    });
-
-    describe('processImportDeck - Button State', () => {
-        it('should disable button during processing', async () => {
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const importButton = document.getElementById('importJsonButton') as HTMLButtonElement;
-            textarea.value = JSON.stringify({
-                cards: {
-                    characters: ['Captain Nemo']
-                }
-            });
-
-            const promise = processImportDeck();
-            expect(importButton.disabled).toBe(true);
-
-            await jest.runAllTimersAsync();
-            await promise;
-
-            expect(importButton.disabled).toBe(false);
-        });
-
-        it('should re-enable button on error', async () => {
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const importButton = document.getElementById('importJsonButton') as HTMLButtonElement;
-            textarea.value = 'invalid json';
-
-            await processImportDeck();
-
-            expect(importButton.disabled).toBe(false);
-        });
-    });
-
-    describe('processImportDeck - Partial Success', () => {
-        it('should show both success and error messages for partial imports', async () => {
-            // Add one character that exists and one that doesn't
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
-            textarea.value = JSON.stringify({
-                cards: {
-                    characters: ['Captain Nemo', 'Unknown Character']
-                }
-            });
-
-            await processImportDeck();
-
-            // Should show error for unresolved card
-            expect(errorMessages.style.display).toBe('block');
-            expect(errorMessages.innerHTML).toContain('Could not find');
-            expect(mockAddCardToEditor).not.toHaveBeenCalled(); // Shouldn't proceed if some are unresolved
-        });
-
-        it('should show errors when some cards fail to add', async () => {
-            // Mock addCardToEditor to fail for one character
-            let callCount = 0;
-            mockAddCardToEditor.mockImplementation(async (type, cardId, cardName) => {
-                callCount++;
-                if (callCount === 2) {
-                    throw new Error('Failed to add');
-                }
-                mockDeckEditorCards.push({
-                    id: `deckcard_${callCount}`,
-                    type: type,
-                    cardId: cardId,
-                    quantity: 1
-                });
-            });
-
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
-            textarea.value = JSON.stringify({
-                cards: {
-                    characters: ['Captain Nemo', 'Count of Monte Cristo', 'Korak']
-                }
-            });
-
-            const promise = processImportDeck();
-            await jest.runAllTimersAsync();
-            await promise;
-
-            expect(errorMessages.style.display).toBe('block');
-            expect(errorMessages.innerHTML).toContain('Successfully imported');
-            expect(errorMessages.innerHTML).toContain('Failed to add');
-        });
-    });
-
-    describe('processImportDeck - Mixed Character Types', () => {
-        it('should handle characters with and without alternate images in same import', async () => {
+    describe('processImportDeck - Mixed Location Types', () => {
+        it('should handle locations with and without alternate images in same import', async () => {
             const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
             textarea.value = JSON.stringify({
                 cards: {
-                    characters: [
-                        'Captain Nemo', // No alternate images
-                        'Count of Monte Cristo', // Has alternate images
-                        'Korak' // Has multiple alternate images
+                    locations: [
+                        'Event Horizon: The Future', // No alternate images
+                        'Ancient Ruins' // Has alternate images
                     ]
                 }
             });
@@ -1157,76 +847,15 @@ describe('Deck Character Import - Unit Tests', () => {
             await jest.runAllTimersAsync();
             await promise;
 
-            expect(mockAddCardToEditor).toHaveBeenCalledTimes(3);
-            expect(mockAddCardToEditor).toHaveBeenNthCalledWith(
-                1,
-                'character',
-                'c7dc892b-5c68-40ee-9d16-df0cfb742591',
-                'Captain Nemo',
+            // Should only import first location (limit is 1)
+            expect(mockAddCardToEditor).toHaveBeenCalledTimes(1);
+            expect(mockAddCardToEditor).toHaveBeenCalledWith(
+                'location',
+                'event_horizon_id',
+                'Event Horizon: The Future',
                 null
             );
-            expect(mockAddCardToEditor).toHaveBeenNthCalledWith(
-                2,
-                'character',
-                'd0fcb520-94f0-47df-b983-877b522973d2',
-                'Count of Monte Cristo',
-                'characters/alternate/monte_cristo.webp'
-            );
-            expect(mockAddCardToEditor).toHaveBeenNthCalledWith(
-                3,
-                'character',
-                '101217ab-a951-4871-8bc2-189b32af783d',
-                'Korak',
-                'characters/alternate/korak1.webp'
-            );
-
-            expect(mockDeckEditorCards).toHaveLength(3);
-        });
-    });
-
-    describe('processImportDeck - Edge Cases', () => {
-        it('should handle missing UI elements gracefully', async () => {
-            document.body.innerHTML = ''; // Remove all elements
-
-            await processImportDeck();
-
-            expect(mockShowNotification).toHaveBeenCalledWith('Import UI elements not found', 'error');
-        });
-
-        it('should handle whitespace-only JSON', async () => {
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            const errorMessages = document.getElementById('importErrorMessages') as HTMLElement;
-            textarea.value = '   ';
-
-            await processImportDeck();
-
-            expect(errorMessages.style.display).toBe('block');
-            expect(errorMessages.innerHTML).toContain('Please paste JSON data');
-        });
-
-        it('should preserve existing deck cards during import', async () => {
-            // Add existing non-character card
-            mockDeckEditorCards.push({
-                id: 'existing-special',
-                type: 'special',
-                cardId: 'special-1',
-                quantity: 1
-            });
-
-            const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
-            textarea.value = JSON.stringify({
-                cards: {
-                    characters: ['Captain Nemo']
-                }
-            });
-
-            const promise = processImportDeck();
-            await jest.runAllTimersAsync();
-            await promise;
-
-            expect(mockDeckEditorCards).toHaveLength(2); // Existing special + new character
-            expect(mockDeckEditorCards.some(c => c.type === 'special')).toBe(true);
-            expect(mockDeckEditorCards.some(c => c.type === 'character')).toBe(true);
+            expect(mockDeckEditorCards).toHaveLength(1);
         });
     });
 });

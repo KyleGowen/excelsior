@@ -193,22 +193,26 @@ async function processImportDeck() {
         // Debug: Log cards to import by type
         const characterCardsToImport = cardsToImport.filter(c => c.type === 'character');
         const specialCardsToImport = cardsToImport.filter(c => c.type === 'special');
-        console.log('🔍 IMPORT: Starting import - Characters:', characterCardsToImport.length, 'Special:', specialCardsToImport.length);
+        const locationCardsToImport = cardsToImport.filter(c => c.type === 'location');
+        console.log('🔍 IMPORT: Starting import - Characters:', characterCardsToImport.length, 'Special:', specialCardsToImport.length, 'Locations:', locationCardsToImport.length);
         
         for (const cardEntry of cardsToImport) {
-            // Process characters and special cards
-            if (cardEntry.type !== 'character' && cardEntry.type !== 'special') {
+            // Process characters, special cards, and locations
+            if (cardEntry.type !== 'character' && cardEntry.type !== 'special' && cardEntry.type !== 'location') {
                 continue;
             }
             
-            const cardTypeLabel = cardEntry.type === 'character' ? 'CHARACTER' : 'SPECIAL';
+            let cardTypeLabel = 'UNKNOWN';
+            if (cardEntry.type === 'character') cardTypeLabel = 'CHARACTER';
+            else if (cardEntry.type === 'special') cardTypeLabel = 'SPECIAL';
+            else if (cardEntry.type === 'location') cardTypeLabel = 'LOCATION';
             console.log(`🔍 ${cardTypeLabel} IMPORT: Looking up "${cardEntry.name}"`);
             const cardId = findCardIdByName(cardEntry.name, cardEntry.type);
             
             if (cardId) {
-                // For characters: check for duplicates (can only have one of each)
+                // For characters and locations: check for duplicates (can only have one of each)
                 // For special cards: allow duplicates (can have multiple of same card)
-                if (cardEntry.type === 'character') {
+                if (cardEntry.type === 'character' || cardEntry.type === 'location') {
                     const importKey = `${cardEntry.type}_${cardId}`;
                     
                     // Check for duplicates
@@ -240,7 +244,8 @@ async function processImportDeck() {
         // Debug: Log final import list by type
         const characterImportList = importList.filter(c => c.type === 'character');
         const specialImportList = importList.filter(c => c.type === 'special');
-        console.log('📋 IMPORT: Ready to import - Characters:', characterImportList.length, 'Special:', specialImportList.length);
+        const locationImportList = importList.filter(c => c.type === 'location');
+        console.log('📋 IMPORT: Ready to import - Characters:', characterImportList.length, 'Special:', specialImportList.length, 'Locations:', locationImportList.length);
 
         // Report unresolved cards
         if (unresolvedCards.length > 0) {
@@ -272,10 +277,10 @@ async function processImportDeck() {
             );
             
             if (existingIndex >= 0) {
-                // Card exists - increment quantity (but not for characters - they should be unique)
-                if (importCard.type === 'character') {
-                    // Characters shouldn't have duplicates - skip this one
-                    // Validation will catch if we exceed 4 characters
+                // Card exists - increment quantity (but not for characters or locations - they should be unique)
+                if (importCard.type === 'character' || importCard.type === 'location') {
+                    // Characters and locations shouldn't have duplicates - skip this one
+                    // Validation will catch if we exceed limits
                     continue;
                 } else {
                     testDeckCards[existingIndex].quantity += 1;
@@ -297,11 +302,17 @@ async function processImportDeck() {
             try {
                 const validation = validateDeck(testDeckCards);
                 if (validation && validation.errors && validation.errors.length > 0) {
-                    // Filter out the 51 card rule error during import
+                    // Filter out validation errors that we don't want to enforce during import
                     const filteredErrors = validation.errors.filter(error => {
                         if (typeof error === 'string') {
                             // Skip errors about minimum deck size / draw pile size
-                            return !error.includes('cards in draw pile');
+                            if (error.includes('cards in draw pile')) {
+                                return false;
+                            }
+                            // Skip errors about threat level (can be adjusted after import)
+                            if (error.includes('threat level') || error.includes('Total threat')) {
+                                return false;
+                            }
                         }
                         return true;
                     });
@@ -331,16 +342,20 @@ async function processImportDeck() {
         
         const characterCardsToAdd = importList.filter(c => c.type === 'character');
         const specialCardsToAdd = importList.filter(c => c.type === 'special');
-        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length);
+        const locationCardsToAdd = importList.filter(c => c.type === 'location');
+        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length, 'Locations:', locationCardsToAdd.length);
         console.log('🚀 IMPORT: Current deckEditorCards before import:', window.deckEditorCards?.length || 0, 'cards');
 
         for (const importCard of importList) {
-            // Process characters and special cards
-            if (importCard.type !== 'character' && importCard.type !== 'special') {
+            // Process characters, special cards, and locations
+            if (importCard.type !== 'character' && importCard.type !== 'special' && importCard.type !== 'location') {
                 continue;
             }
             
-            const cardTypeLabel = importCard.type === 'character' ? 'CHARACTER' : 'SPECIAL';
+            let cardTypeLabel = 'UNKNOWN';
+            if (importCard.type === 'character') cardTypeLabel = 'CHARACTER';
+            else if (importCard.type === 'special') cardTypeLabel = 'SPECIAL';
+            else if (importCard.type === 'location') cardTypeLabel = 'LOCATION';
             
             try {
                 // Check card data before adding
@@ -446,6 +461,69 @@ async function processImportDeck() {
                         console.error(`❌ ${cardTypeLabel} IMPORT: addCardToEditor function not available`);
                         throw new Error('addCardToEditor function not available');
                     }
+                } else if (importCard.type === 'location') {
+                    // Location-specific checks
+                    console.log(`🔍 ${cardTypeLabel} IMPORT: Card data for "${importCard.cardName}":`, {
+                        hasCardData: !!cardData,
+                        hasAlternateImages: cardData?.alternateImages?.length > 0,
+                        alternateImageCount: cardData?.alternateImages?.length || 0,
+                        currentDeckCards: window.deckEditorCards?.length || 0,
+                        currentLocations: window.deckEditorCards?.filter(c => c.type === 'location').length || 0
+                    });
+                    
+                    // Check if location already exists
+                    const existingLocation = window.deckEditorCards?.find(c => 
+                        c.type === 'location' && c.cardId === importCard.cardId
+                    );
+                    if (existingLocation) {
+                        console.log(`⚠️ ${cardTypeLabel} IMPORT: "${importCard.cardName}" already exists in deck, skipping`);
+                        continue;
+                    }
+                    
+                    // Check location count (max 1 location allowed)
+                    const locationCount = window.deckEditorCards?.filter(c => c.type === 'location').length || 0;
+                    if (locationCount >= 1) {
+                        console.log(`⚠️ ${cardTypeLabel} IMPORT: Already have 1 location (${locationCount}), cannot add "${importCard.cardName}"`);
+                        errorCount++;
+                        addErrors.push(`${importCard.cardName}: Cannot add more than 1 location`);
+                        continue;
+                    }
+                    
+                    // Determine if we need to select an alternate image
+                    let selectedAlternateImage = null;
+                    if (cardData && cardData.alternateImages && cardData.alternateImages.length > 0) {
+                        // Automatically select the first alternate image for import (default art)
+                        selectedAlternateImage = cardData.alternateImages[0];
+                        console.log(`🖼️ ${cardTypeLabel} IMPORT: "${importCard.cardName}" has ${cardData.alternateImages.length} alternate image(s), auto-selecting first (default): "${selectedAlternateImage}"`);
+                    }
+                    
+                    console.log(`➕ ${cardTypeLabel} IMPORT: Calling addCardToEditor("${importCard.type}", "${importCard.cardId}", "${importCard.cardName}", ${selectedAlternateImage ? `"${selectedAlternateImage}"` : 'null'})`);
+                    
+                    // Check if addCardToEditor exists
+                    if (typeof addCardToEditor === 'function') {
+                        // Call addCardToEditor with selected alternate image (or null if none)
+                        await addCardToEditor(importCard.type, importCard.cardId, importCard.cardName, selectedAlternateImage);
+                        
+                        // Wait a bit for async operations to complete
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        
+                        // Check if card was actually added
+                        const wasAdded = window.deckEditorCards?.some(c => 
+                            c.type === importCard.type && c.cardId === importCard.cardId
+                        );
+                        
+                        if (wasAdded) {
+                            console.log(`✅ ${cardTypeLabel} IMPORT: Successfully added "${importCard.cardName}" to deck`);
+                            successCount++;
+                        } else {
+                            console.log(`⚠️ ${cardTypeLabel} IMPORT: addCardToEditor returned but "${importCard.cardName}" not found in deckEditorCards`);
+                            errorCount++;
+                            addErrors.push(`${importCard.cardName}: Card was not added to deck`);
+                        }
+                    } else {
+                        console.error(`❌ ${cardTypeLabel} IMPORT: addCardToEditor function not available`);
+                        throw new Error('addCardToEditor function not available');
+                    }
                 }
             } catch (error) {
                 errorCount++;
@@ -510,9 +588,9 @@ function extractCardsFromImportData(cardsData) {
     }
 
     // Locations (array of strings)
-    // if (Array.isArray(cardsData.locations)) {
-    //     cardsData.locations.forEach(cardName => addCard(cardName, 'location'));
-    // }
+    if (Array.isArray(cardsData.locations)) {
+        cardsData.locations.forEach(cardName => addCard(cardName, 'location'));
+    }
 
     // Missions (object grouped by mission set)
     // if (cardsData.missions && typeof cardsData.missions === 'object') {
