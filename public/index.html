@@ -4590,7 +4590,38 @@
                         const quantity = card.quantity || 1;
                         
                         // Direct lookup using UUID
-                        const availableCard = window.availableCardsMap.get(card.cardId);
+                        let availableCard = window.availableCardsMap.get(card.cardId);
+                        
+                        // Debug logging for basic-universe cards
+                        if ((card.type === 'basic-universe' || card.type === 'basic_universe') && !availableCard) {
+                            console.log(`🔍 CARD VIEW DEBUG: Basic universe card not found with direct lookup:`, {
+                                cardId: card.cardId,
+                                type: card.type,
+                                cardName: card.cardName,
+                                fullCard: card
+                            });
+                            
+                            // Try alternate key formats
+                            const normalizedType = 'basic-universe';
+                            availableCard = window.availableCardsMap.get(`${normalizedType}_${card.cardId}`) ||
+                                          window.availableCardsMap.get(`${card.type}_${card.cardId}`);
+                            
+                            if (availableCard) {
+                                console.log(`✅ CARD VIEW DEBUG: Found basic universe card with alternate key`);
+                            } else {
+                                // Check what basic-universe cards exist in the map
+                                const allBasicUniverseInMap = Array.from(window.availableCardsMap.entries()).filter(([k, v]) => 
+                                    v && (v.type === 'basic-universe' || v.cardType === 'basic-universe' || v.card_type === 'basic-universe' || v.card_type === 'basic_universe')
+                                );
+                                console.log(`❌ CARD VIEW DEBUG: Basic universe card still not found. Total basic-universe in map:`, allBasicUniverseInMap.length);
+                                console.log(`❌ CARD VIEW DEBUG: Sample keys from map:`, allBasicUniverseInMap.slice(0, 5).map(([k, v]) => ({
+                                    key: k,
+                                    id: v.id,
+                                    name: v.card_name || v.name
+                                })));
+                                console.log(`❌ CARD VIEW DEBUG: Looking for cardId:`, card.cardId);
+                            }
+                        }
                         
                         if (!availableCard) {
                             console.warn('Card not found in availableCardsMap:', card);
@@ -7807,13 +7838,29 @@
                 let mapKeyType = card.type;
                 if (card.type === 'ally_universe') {
                     mapKeyType = 'ally-universe';
-                } else if (card.type === 'basic_universe') {
+                } else if (card.type === 'basic_universe' || card.type === 'basic-universe') {
                     mapKeyType = 'basic-universe';
-                } else if (card.type === 'advanced_universe') {
+                } else if (card.type === 'advanced_universe' || card.type === 'advanced-universe') {
                     mapKeyType = 'advanced-universe';
                 }
                 // Direct lookup using UUID
-                const availableCard = window.availableCardsMap.get(card.cardId);
+                let availableCard = window.availableCardsMap.get(card.cardId);
+                                
+                                if (!availableCard && (card.type === 'basic-universe' || card.type === 'basic_universe')) {
+                                    // Try alternate key formats for basic-universe cards
+                                    console.log(`🔍 BASIC_UNIVERSE DISPLAY: Card not found with direct lookup, trying alternate keys for cardId: ${card.cardId}`);
+                                    availableCard = window.availableCardsMap.get(`basic-universe_${card.cardId}`) || 
+                                                   window.availableCardsMap.get(`basic_universe_${card.cardId}`);
+                                    if (availableCard) {
+                                        console.log(`✅ BASIC_UNIVERSE DISPLAY: Found card with alternate key`);
+                                    } else {
+                                        console.warn('❌ BASIC_UNIVERSE DISPLAY: Card not found with any key format:', {
+                                            cardId: card.cardId,
+                                            type: card.type,
+                                            availableKeysSample: Array.from(window.availableCardsMap.keys()).filter(k => k.includes('basic') || k.includes(card.cardId)).slice(0, 10)
+                                        });
+                                    }
+                                }
                                 
                                 if (!availableCard) {
                                     console.warn('Card not found in availableCardsMap:', card);
@@ -7830,31 +7877,48 @@
                                     alternateArtButton = `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>`;
                                 }
                                 
-                                // Determine the correct CSS class based on card type
+                                // Determine the correct CSS class based on card type (normalize to handle both formats)
+                                const normalizedType = (card.type === 'basic_universe' || card.type === 'basic-universe') ? 'basic-universe' : 
+                                                      (card.type === 'ally_universe' || card.type === 'ally-universe') ? 'ally-universe' :
+                                                      (card.type === 'advanced_universe' || card.type === 'advanced-universe') ? 'advanced-universe' : card.type;
                                 let cardClass = 'special-card';
-                                if (card.type === 'ally-universe') {
+                                if (normalizedType === 'ally-universe') {
                                     cardClass = 'ally-universe-card';
-                                } else if (card.type === 'basic-universe') {
+                                } else if (normalizedType === 'basic-universe') {
                                     cardClass = 'basic-universe-card';
-                                } else if (card.type === 'advanced-universe') {
+                                } else if (normalizedType === 'advanced-universe') {
                                     cardClass = 'advanced-universe-card';
-                                } else if (card.type === 'training') {
+                                } else if (normalizedType === 'training') {
                                     cardClass = 'training-card';
-                                } else if (card.type === 'teamwork') {
+                                } else if (normalizedType === 'teamwork') {
                                     cardClass = 'teamwork-card';
+                                }
+                                
+                                // Format card display name (handle both underscore and hyphen formats)
+                                let cardDisplayName;
+                                if (normalizedType === 'teamwork') {
+                                    cardDisplayName = `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})`;
+                                } else if (normalizedType === 'ally-universe') {
+                                    cardDisplayName = `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}`;
+                                } else if (normalizedType === 'basic-universe') {
+                                    cardDisplayName = `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})`;
+                                } else if (normalizedType === 'training') {
+                                    cardDisplayName = `${(availableCard.card_name || '').replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})`;
+                                } else {
+                                    cardDisplayName = availableCard.name || availableCard.card_name || getCardName(card);
                                 }
                                 
                                 cardsHtml += `
                                     <div class="deck-card-editor-item preview-view ${cardClass}" draggable="true" data-index="${index}" data-type="${card.type}"
                                          data-bg-image="${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}', '${(card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))).replace(/'/g, "\\'")}')"
+                                         onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, card.selectedAlternateImage)}', '${cardDisplayName.replace(/'/g, "\\'")}')"
                                          onmouseleave="hideCardHoverModal()"
                                          ondragstart="handleDeckCardDragStart(event)"
                                          ondragend="handleDeckCardDragEnd(event)"
                                          ondragover="handleDeckCardDragOver(event)"
                                          ondrop="handleDeckCardDrop(event)">
                                         <div class="deck-card-editor-info">
-                                            <div class="deck-card-editor-name">${(card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally_universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic_universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))))))} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
+                                            <div class="deck-card-editor-name">${cardDisplayName}${card.quantity > 1 ? ` (${card.quantity})` : ''}</div>
                                             <div class="deck-card-editor-stats">${cardDetails}</div>
                                         </div>
                                         <div class="deck-card-editor-actions">
@@ -8068,16 +8132,44 @@
                             let mapKeyType = card.type;
                             if (card.type === 'ally_universe') {
                                 mapKeyType = 'ally-universe';
-                            } else if (card.type === 'basic_universe') {
+                            } else if (card.type === 'basic_universe' || card.type === 'basic-universe') {
                                 mapKeyType = 'basic-universe';
-                            } else if (card.type === 'advanced_universe') {
+                            } else if (card.type === 'advanced_universe' || card.type === 'advanced-universe') {
                                 mapKeyType = 'advanced-universe';
                             }
                             // Direct lookup using UUID
-                            const availableCard = window.availableCardsMap.get(card.cardId);
+                            let availableCard = window.availableCardsMap.get(card.cardId);
+                            
+                            // Try alternate key formats for universe cards if direct lookup fails
+                            if (!availableCard && (card.type === 'basic-universe' || card.type === 'basic_universe' || 
+                                                  card.type === 'ally-universe' || card.type === 'ally_universe' ||
+                                                  card.type === 'advanced-universe' || card.type === 'advanced_universe')) {
+                                const normalizedType = (card.type === 'basic_universe' || card.type === 'basic-universe') ? 'basic-universe' : 
+                                                      (card.type === 'ally_universe' || card.type === 'ally-universe') ? 'ally-universe' :
+                                                      'advanced-universe';
+                                availableCard = window.availableCardsMap.get(`${normalizedType}_${card.cardId}`) ||
+                                              window.availableCardsMap.get(`${card.type}_${card.cardId}`);
+                                if (availableCard) {
+                                    console.log(`✅ Found ${normalizedType} card with alternate key format for cardId: ${card.cardId}`);
+                                }
+                            }
                         
                         if (!availableCard) {
                             console.warn('Card not found in availableCardsMap:', card);
+                            console.warn('Available cards map keys (first 20):', Array.from(window.availableCardsMap.keys()).slice(0, 20));
+                            console.warn('Looking for cardId:', card.cardId);
+                            console.warn('Card type:', card.type);
+                            // Try to find any basic-universe cards in the map
+                            if (card.type === 'basic-universe' || card.type === 'basic_universe') {
+                                const basicUniverseCards = Array.from(window.availableCardsMap.entries()).filter(([k, v]) => 
+                                    v && (v.type === 'basic-universe' || v.cardType === 'basic-universe' || v.card_type === 'basic-universe')
+                                );
+                                console.warn('Available basic-universe cards in map:', basicUniverseCards.slice(0, 5).map(([k, v]) => ({
+                                    key: k,
+                                    id: v.id,
+                                    name: v.card_name || v.name
+                                })));
+                            }
                             return;
                         }
                         
@@ -8130,7 +8222,7 @@
                         } else if (card.type === 'power') {
                                 // Power card details - no additional details needed
                                 cardDetails = '';
-                        } else if (card.type === 'basic_universe') {
+                        } else if (card.type === 'basic_universe' || card.type === 'basic-universe') {
                             // Basic universe - no additional details (simple display)
                             cardDetails = '';
                         } else if (card.type === 'teamwork') {
@@ -8155,9 +8247,9 @@
                             const isEvent = card.type === 'event';
                             const isAspect = card.type === 'aspect';
                             const isTeamwork = card.type === 'teamwork';
-                            const isAllyUniverse = card.type === 'ally-universe';
-                            const isBasicUniverse = card.type === 'basic-universe';
-                            const isAdvancedUniverse = card.type === 'advanced-universe';
+                            const isAllyUniverse = card.type === 'ally-universe' || card.type === 'ally_universe';
+                            const isBasicUniverse = card.type === 'basic-universe' || card.type === 'basic_universe';
+                            const isAdvancedUniverse = card.type === 'advanced-universe' || card.type === 'advanced_universe';
                             const isTraining = card.type === 'training';
                             
                             const characterClass = isCharacter ? 'character-card' : '';
@@ -8182,17 +8274,36 @@
                                 alternateArtButton = `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>`;
                             }
                             
+                        // Format card display name (handle both underscore and hyphen formats)
+                        let cardDisplayNameForPreview;
+                        const normalizedTypeForPreview = (card.type === 'basic_universe' || card.type === 'basic-universe') ? 'basic-universe' : 
+                                                          (card.type === 'ally_universe' || card.type === 'ally-universe') ? 'ally-universe' :
+                                                          (card.type === 'advanced_universe' || card.type === 'advanced-universe') ? 'advanced-universe' : card.type;
+                        if (normalizedTypeForPreview === 'power') {
+                            cardDisplayNameForPreview = `${availableCard.value} - ${availableCard.power_type}`;
+                        } else if (normalizedTypeForPreview === 'teamwork') {
+                            cardDisplayNameForPreview = `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})`;
+                        } else if (normalizedTypeForPreview === 'ally-universe') {
+                            cardDisplayNameForPreview = `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}`;
+                        } else if (normalizedTypeForPreview === 'basic-universe') {
+                            cardDisplayNameForPreview = `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})`;
+                        } else if (normalizedTypeForPreview === 'training') {
+                            cardDisplayNameForPreview = `${(availableCard.card_name || '').replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})`;
+                        } else {
+                            cardDisplayNameForPreview = availableCard.name || availableCard.card_name || getCardName(card);
+                        }
+                        
                         cardsHtml += `
                                 <div class="deck-card-editor-item preview-view ${characterClass} ${powerClass} ${locationClass} ${missionClass} ${eventClass} ${aspectClass} ${teamworkClass} ${allyUniverseClass} ${basicUniverseClass} ${advancedUniverseClass} ${trainingClass}" draggable="true" data-index="${index}" data-type="${card.type}"
                                      ${bgImageData}
-                                     onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, selectedAlternateImage)}', '${card.type === 'power' ? `${availableCard.value} - ${availableCard.power_type}` : (card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))).replace(/'/g, "\\'")}')"
+                                     onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, selectedAlternateImage)}', '${cardDisplayNameForPreview.replace(/'/g, "\\'")}')"
                                  onmouseleave="hideCardHoverModal()"
                                  ondragstart="handleDeckCardDragStart(event)"
                                  ondragend="handleDeckCardDragEnd(event)"
                                  ondragover="handleDeckCardDragOver(event)"
                                  ondrop="handleDeckCardDrop(event)">
                                 <div class="deck-card-editor-info">
-                                        <div class="deck-card-editor-name">${card.type === 'power' ? `${availableCard.value} - ${availableCard.power_type}` : (card.type === 'teamwork' ? `${availableCard.to_use} -> ${availableCard.followup_attack_types} (${availableCard.first_attack_bonus}/${availableCard.second_attack_bonus})` : (card.type === 'ally-universe' ? `${availableCard.card_name} - ${availableCard.stat_to_use} ${availableCard.stat_type_to_use} → ${availableCard.attack_value} ${availableCard.attack_type}` : (card.type === 'basic-universe' ? `${availableCard.card_name} - ${availableCard.type} (${availableCard.value_to_use} → ${availableCard.bonus})` : (card.type === 'training' ? `${availableCard.card_name.replace(/^Training \(/, '').replace(/\)$/, '')} - ${availableCard.type_1} + ${availableCard.type_2} (${availableCard.value_to_use} → ${availableCard.bonus})` : (availableCard.name || availableCard.card_name || getCardName(card))))))} ${card.quantity > 1 ? `(${card.quantity})` : ''}</div>
+                                        <div class="deck-card-editor-name">${cardDisplayNameForPreview}${card.quantity > 1 ? ` (${card.quantity})` : ''}</div>
                                     ${cardDetails ? `<div class="deck-card-editor-stats">${cardDetails}</div>` : ''}
                                 </div>
                                 <div class="deck-card-editor-actions">
@@ -9984,10 +10095,23 @@
             // Get all One Per Deck cards currently in the deck
             const onePerDeckCardsInDeck = new Set();
             window.deckEditorCards.forEach(card => {
-                const cardData = window.availableCardsMap.get(card.cardId);
+                let cardData = window.availableCardsMap.get(card.cardId);
+                
+                // Try alternate key formats for universe cards if direct lookup fails
+                if (!cardData && (card.type === 'basic-universe' || card.type === 'basic_universe' || 
+                                  card.type === 'ally-universe' || card.type === 'ally_universe' ||
+                                  card.type === 'advanced-universe' || card.type === 'advanced_universe')) {
+                    const normalizedType = (card.type === 'basic_universe' || card.type === 'basic-universe') ? 'basic-universe' : 
+                                          (card.type === 'ally_universe' || card.type === 'ally-universe') ? 'ally-universe' :
+                                          'advanced-universe';
+                    cardData = window.availableCardsMap.get(`${normalizedType}_${card.cardId}`) ||
+                              window.availableCardsMap.get(`${card.type}_${card.cardId}`);
+                }
+                
                 if (cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true)) {
                     onePerDeckCardsInDeck.add(card.cardId);
-                    console.log(`✅ Found OPD card in deck: ${cardData.name} (ID: ${card.cardId})`);
+                    const cardName = cardData.name || cardData.card_name || 'Unknown';
+                    console.log(`✅ Found OPD card in deck: ${cardName} (ID: ${card.cardId})`);
                 }
             });
             
@@ -10002,11 +10126,32 @@
                 const cardType = cardElement.getAttribute('data-type');
                 
                 if (cardId) {
-                    const cardData = window.availableCardsMap.get(cardId);
+                    let cardData = window.availableCardsMap.get(cardId);
+                    
+                    // Try alternate key formats for universe cards if direct lookup fails
+                    if (!cardData && (cardType === 'basic-universe' || cardType === 'basic_universe' || 
+                                      cardType === 'ally-universe' || cardType === 'ally_universe' ||
+                                      cardType === 'advanced-universe' || cardType === 'advanced_universe')) {
+                        const normalizedType = (cardType === 'basic_universe' || cardType === 'basic-universe') ? 'basic-universe' : 
+                                              (cardType === 'ally_universe' || cardType === 'ally-universe') ? 'ally-universe' :
+                                              'advanced-universe';
+                        cardData = window.availableCardsMap.get(`${normalizedType}_${cardId}`) ||
+                                  window.availableCardsMap.get(`${cardType}_${cardId}`);
+                    }
+                    
                     const isOnePerDeck = cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
                     const isInDeck = onePerDeckCardsInDeck.has(cardId);
                     
-                    console.log(`🎯 Processing card: ${cardData ? cardData.name : 'Unknown'} (ID: ${cardId}, Type: ${cardType}, isOnePerDeck: ${isOnePerDeck}, isInDeck: ${isInDeck})`);
+                    // For basic-universe cards, also check if the card is in deckEditorCards by matching cardId and type
+                    let isBasicUniverseInDeck = false;
+                    if (cardType === 'basic-universe' || cardType === 'basic_universe') {
+                        isBasicUniverseInDeck = window.deckEditorCards.some(deckCard => 
+                            (deckCard.type === 'basic-universe' || deckCard.type === 'basic_universe') && 
+                            deckCard.cardId === cardId
+                        );
+                    }
+                    
+                    console.log(`🎯 Processing card: ${cardData ? (cardData.name || cardData.card_name || 'Unknown') : 'Unknown'} (ID: ${cardId}, Type: ${cardType}, isOnePerDeck: ${isOnePerDeck}, isInDeck: ${isInDeck}, isBasicUniverseInDeck: ${isBasicUniverseInDeck})`);
                     
                     if (isOnePerDeck && isInDeck) {
                         // This is a One Per Deck card that's already in the deck - dim it

@@ -201,11 +201,12 @@ async function processImportDeck() {
         const teamworkCardsToImport = cardsToImport.filter(c => c.type === 'teamwork');
         const allyCardsToImport = cardsToImport.filter(c => c.type === 'ally-universe');
         const trainingCardsToImport = cardsToImport.filter(c => c.type === 'training');
-        console.log('🔍 IMPORT: Starting import - Characters:', characterCardsToImport.length, 'Special:', specialCardsToImport.length, 'Locations:', locationCardsToImport.length, 'Missions:', missionCardsToImport.length, 'Events:', eventCardsToImport.length, 'Aspects:', aspectCardsToImport.length, 'Advanced Universe:', advancedUniverseCardsToImport.length, 'Teamwork:', teamworkCardsToImport.length, 'Allies:', allyCardsToImport.length, 'Training:', trainingCardsToImport.length);
+        const basicUniverseCardsToImport = cardsToImport.filter(c => c.type === 'basic-universe');
+        console.log('🔍 IMPORT: Starting import - Characters:', characterCardsToImport.length, 'Special:', specialCardsToImport.length, 'Locations:', locationCardsToImport.length, 'Missions:', missionCardsToImport.length, 'Events:', eventCardsToImport.length, 'Aspects:', aspectCardsToImport.length, 'Advanced Universe:', advancedUniverseCardsToImport.length, 'Teamwork:', teamworkCardsToImport.length, 'Allies:', allyCardsToImport.length, 'Training:', trainingCardsToImport.length, 'Basic Universe:', basicUniverseCardsToImport.length);
         
         for (const cardEntry of cardsToImport) {
-            // Process characters, special cards, locations, missions, events, aspects, advanced-universe, teamwork, ally-universe, and training
-            if (cardEntry.type !== 'character' && cardEntry.type !== 'special' && cardEntry.type !== 'location' && cardEntry.type !== 'mission' && cardEntry.type !== 'event' && cardEntry.type !== 'aspect' && cardEntry.type !== 'advanced-universe' && cardEntry.type !== 'teamwork' && cardEntry.type !== 'ally-universe' && cardEntry.type !== 'training') {
+            // Process characters, special cards, locations, missions, events, aspects, advanced-universe, teamwork, ally-universe, training, and basic-universe
+            if (cardEntry.type !== 'character' && cardEntry.type !== 'special' && cardEntry.type !== 'location' && cardEntry.type !== 'mission' && cardEntry.type !== 'event' && cardEntry.type !== 'aspect' && cardEntry.type !== 'advanced-universe' && cardEntry.type !== 'teamwork' && cardEntry.type !== 'ally-universe' && cardEntry.type !== 'training' && cardEntry.type !== 'basic-universe') {
                 continue;
             }
             
@@ -220,8 +221,9 @@ async function processImportDeck() {
             else if (cardEntry.type === 'teamwork') cardTypeLabel = 'TEAMWORK';
             else if (cardEntry.type === 'ally-universe') cardTypeLabel = 'ALLY';
             else if (cardEntry.type === 'training') cardTypeLabel = 'TRAINING';
+            else if (cardEntry.type === 'basic-universe') cardTypeLabel = 'BASIC_UNIVERSE';
             
-            // For teamwork, ally, and training cards, use special lookup functions that match by name AND additional fields
+            // For teamwork, ally, training, and basic-universe cards, use special lookup functions that match by name AND additional fields
             let cardId;
             if (cardEntry.type === 'training') {
                 const type1 = cardEntry.type_1 || null;
@@ -322,6 +324,35 @@ async function processImportDeck() {
                     }
                     console.log(`🔍 ${cardTypeLabel} IMPORT DEBUG: All teamwork cards in map (${allTeamworkCards.length} total):`, allTeamworkCards.slice(0, 10));
                 }
+            } else if (cardEntry.type === 'basic-universe') {
+                const typeField = cardEntry.type_field || null;
+                const valueToUse = cardEntry.value_to_use || null;
+                const bonus = cardEntry.bonus || null;
+                console.log(`🔍 ${cardTypeLabel} IMPORT: Looking up "${cardEntry.name}"${typeField ? ` with type: "${typeField}"` : ''}${valueToUse ? ` value_to_use: "${valueToUse}"` : ''}${bonus ? ` bonus: "${bonus}"` : ' (no field info)'}`);
+                cardId = findBasicUniverseCardIdByName(cardEntry.name, typeField, valueToUse, bonus);
+                
+                // Debug: If not found, log available basic universe cards with matching names
+                if (!cardId) {
+                    console.log(`🔍 ${cardTypeLabel} IMPORT DEBUG: Card not found, searching for basic universe cards with name "${cardEntry.name}"`);
+                    let matchingCards = [];
+                    for (const [key, card] of window.availableCardsMap.entries()) {
+                        if (card && (card.type === 'basic-universe' || card.card_type === 'basic-universe' || card.cardType === 'basic-universe')) {
+                            const cardName = card.name || card.card_name;
+                            if (cardName === cardEntry.name) {
+                                matchingCards.push({
+                                    key: key,
+                                    id: card.id,
+                                    name: cardName,
+                                    type: card.type || null,
+                                    value_to_use: card.value_to_use || null,
+                                    bonus: card.bonus || null,
+                                    cardType: card.type || card.card_type || card.cardType
+                                });
+                            }
+                        }
+                    }
+                    console.log(`🔍 ${cardTypeLabel} IMPORT DEBUG: Found ${matchingCards.length} basic universe card(s) with name "${cardEntry.name}":`, matchingCards);
+                }
             } else {
                 console.log(`🔍 ${cardTypeLabel} IMPORT: Looking up "${cardEntry.name}"`);
                 cardId = findCardIdByName(cardEntry.name, cardEntry.type);
@@ -396,7 +427,8 @@ async function processImportDeck() {
         const teamworkImportList = importList.filter(c => c.type === 'teamwork');
         const allyImportList = importList.filter(c => c.type === 'ally-universe');
         const trainingImportList = importList.filter(c => c.type === 'training');
-        console.log('📋 IMPORT: Ready to import - Characters:', characterImportList.length, 'Special:', specialImportList.length, 'Locations:', locationImportList.length, 'Missions:', missionImportList.length, 'Events:', eventImportList.length, 'Aspects:', aspectImportList.length, 'Advanced Universe:', advancedUniverseImportList.length, 'Teamwork:', teamworkImportList.length, 'Allies:', allyImportList.length, 'Training:', trainingImportList.length);
+        const basicUniverseImportList = importList.filter(c => c.type === 'basic-universe');
+        console.log('📋 IMPORT: Ready to import - Characters:', characterImportList.length, 'Special:', specialImportList.length, 'Locations:', locationImportList.length, 'Missions:', missionImportList.length, 'Events:', eventImportList.length, 'Aspects:', aspectImportList.length, 'Advanced Universe:', advancedUniverseImportList.length, 'Teamwork:', teamworkImportList.length, 'Allies:', allyImportList.length, 'Training:', trainingImportList.length, 'Basic Universe:', basicUniverseImportList.length);
 
         // Report unresolved cards
         if (unresolvedCards.length > 0) {
@@ -434,7 +466,7 @@ async function processImportDeck() {
                     // Validation will catch if we exceed limits
                     continue;
                 } else {
-                    // For special cards, missions, events, aspects, advanced-universe, teamwork, ally-universe, and training: increment quantity
+                    // For special cards, missions, events, aspects, advanced-universe, teamwork, ally-universe, training, and basic-universe: increment quantity
                     testDeckCards[existingIndex].quantity += 1;
                 }
             } else {
@@ -502,12 +534,13 @@ async function processImportDeck() {
         const teamworkCardsToAdd = importList.filter(c => c.type === 'teamwork');
         const allyCardsToAdd = importList.filter(c => c.type === 'ally-universe');
         const trainingCardsToAdd = importList.filter(c => c.type === 'training');
-        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length, 'Locations:', locationCardsToAdd.length, 'Missions:', missionCardsToAdd.length, 'Events:', eventCardsToAdd.length, 'Aspects:', aspectCardsToAdd.length, 'Advanced Universe:', advancedUniverseCardsToAdd.length, 'Teamwork:', teamworkCardsToAdd.length, 'Allies:', allyCardsToAdd.length, 'Training:', trainingCardsToAdd.length);
+        const basicUniverseCardsToAdd = importList.filter(c => c.type === 'basic-universe');
+        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length, 'Locations:', locationCardsToAdd.length, 'Missions:', missionCardsToAdd.length, 'Events:', eventCardsToAdd.length, 'Aspects:', aspectCardsToAdd.length, 'Advanced Universe:', advancedUniverseCardsToAdd.length, 'Teamwork:', teamworkCardsToAdd.length, 'Allies:', allyCardsToAdd.length, 'Training:', trainingCardsToAdd.length, 'Basic Universe:', basicUniverseCardsToAdd.length);
         console.log('🚀 IMPORT: Current deckEditorCards before import:', window.deckEditorCards?.length || 0, 'cards');
 
         for (const importCard of importList) {
-            // Process characters, special cards, locations, missions, events, aspects, advanced-universe, teamwork, ally-universe, and training
-            if (importCard.type !== 'character' && importCard.type !== 'special' && importCard.type !== 'location' && importCard.type !== 'mission' && importCard.type !== 'event' && importCard.type !== 'aspect' && importCard.type !== 'advanced-universe' && importCard.type !== 'teamwork' && importCard.type !== 'ally-universe' && importCard.type !== 'training') {
+            // Process characters, special cards, locations, missions, events, aspects, advanced-universe, teamwork, ally-universe, training, and basic-universe
+            if (importCard.type !== 'character' && importCard.type !== 'special' && importCard.type !== 'location' && importCard.type !== 'mission' && importCard.type !== 'event' && importCard.type !== 'aspect' && importCard.type !== 'advanced-universe' && importCard.type !== 'teamwork' && importCard.type !== 'ally-universe' && importCard.type !== 'training' && importCard.type !== 'basic-universe') {
                 continue;
             }
             
@@ -522,6 +555,7 @@ async function processImportDeck() {
             else if (importCard.type === 'teamwork') cardTypeLabel = 'TEAMWORK';
             else if (importCard.type === 'ally-universe') cardTypeLabel = 'ALLY';
             else if (importCard.type === 'training') cardTypeLabel = 'TRAINING';
+            else if (importCard.type === 'basic-universe') cardTypeLabel = 'BASIC_UNIVERSE';
             
             try {
                 // Check card data before adding
@@ -690,8 +724,8 @@ async function processImportDeck() {
                         console.error(`❌ ${cardTypeLabel} IMPORT: addCardToEditor function not available`);
                         throw new Error('addCardToEditor function not available');
                     }
-                } else if (importCard.type === 'mission' || importCard.type === 'event' || importCard.type === 'aspect' || importCard.type === 'advanced-universe' || importCard.type === 'teamwork' || importCard.type === 'ally-universe' || importCard.type === 'training') {
-                    // Mission, event, aspect, advanced-universe, teamwork, ally-universe, and training cards can be added directly (no duplicate checking needed, similar to special cards)
+                } else if (importCard.type === 'mission' || importCard.type === 'event' || importCard.type === 'aspect' || importCard.type === 'advanced-universe' || importCard.type === 'teamwork' || importCard.type === 'ally-universe' || importCard.type === 'training' || importCard.type === 'basic-universe') {
+                    // Mission, event, aspect, advanced-universe, teamwork, ally-universe, training, and basic-universe cards can be added directly (no duplicate checking needed, similar to special cards)
                     // But we should auto-select default art if alternate images exist
                     let selectedAlternateImage = null;
                     if (cardData && cardData.alternateImages && cardData.alternateImages.length > 0) {
@@ -710,7 +744,7 @@ async function processImportDeck() {
                         // Wait a bit for async operations to complete
                         await new Promise(resolve => setTimeout(resolve, 100));
                         
-                        // Check if card was actually added (missions, events, aspects, advanced-universe, teamwork, ally-universe, and training can have duplicates, so we just check if it exists)
+                        // Check if card was actually added (missions, events, aspects, advanced-universe, teamwork, ally-universe, training, and basic-universe can have duplicates, so we just check if it exists)
                         const wasAdded = window.deckEditorCards?.some(c => 
                             c.type === importCard.type && c.cardId === importCard.cardId
                         );
@@ -738,6 +772,46 @@ async function processImportDeck() {
         
         console.log('📊 IMPORT: Final results - Success:', successCount, 'Failed:', errorCount);
         console.log('📊 IMPORT: Final deckEditorCards count:', window.deckEditorCards?.length || 0, 'cards');
+        
+        // Debug: Check what basic-universe cards are in deckEditorCards
+        const basicUniverseInDeck = window.deckEditorCards.filter(c => c.type === 'basic-universe' || c.type === 'basic_universe');
+        console.log('🔍 IMPORT DEBUG: Basic universe cards in deckEditorCards:', basicUniverseInDeck.length);
+        if (basicUniverseInDeck.length > 0) {
+            console.log('🔍 IMPORT DEBUG: Basic universe cards details:');
+            basicUniverseInDeck.forEach((card, idx) => {
+                console.log(`🔍 IMPORT DEBUG: Basic universe card ${idx + 1}:`, {
+                    type: card.type,
+                    cardId: card.cardId,
+                    cardName: card.cardName,
+                    quantity: card.quantity,
+                    fullCard: card
+                });
+                
+                // Try to look it up in availableCardsMap
+                const lookedUp = window.availableCardsMap.get(card.cardId);
+                console.log(`🔍 IMPORT DEBUG: Lookup result for cardId "${card.cardId}":`, {
+                    found: !!lookedUp,
+                    cardName: lookedUp?.card_name || lookedUp?.name || 'NOT FOUND',
+                    cardId: lookedUp?.id,
+                    type: lookedUp?.type || lookedUp?.cardType || lookedUp?.card_type
+                });
+                
+                // Try alternate keys
+                const altKey1 = window.availableCardsMap.get(`basic-universe_${card.cardId}`);
+                const altKey2 = window.availableCardsMap.get(`basic_universe_${card.cardId}`);
+                console.log(`🔍 IMPORT DEBUG: Alternate key lookups:`, {
+                    [`basic-universe_${card.cardId}`]: !!altKey1,
+                    [`basic_universe_${card.cardId}`]: !!altKey2
+                });
+                
+                // List all keys in map that contain this cardId
+                const matchingKeys = Array.from(window.availableCardsMap.keys()).filter(k => k.includes(card.cardId));
+                console.log(`🔍 IMPORT DEBUG: All keys containing cardId "${card.cardId}":`, matchingKeys);
+            });
+        } else {
+            console.log('⚠️ IMPORT DEBUG: No basic-universe cards found in deckEditorCards after import!');
+            console.log('🔍 IMPORT DEBUG: All card types in deckEditorCards:', [...new Set(window.deckEditorCards.map(c => c.type))]);
+        }
 
         // Show results
         if (errorCount > 0) {
@@ -750,6 +824,43 @@ async function processImportDeck() {
             // Success - close overlay
             closeImportOverlay();
             showNotification(`Successfully imported ${successCount} card(s)`, 'success');
+            
+            // Respect current deck view; only re-render the active one
+            const viewModeEl = document.getElementById('viewMode');
+            const currentViewMode = viewModeEl ? viewModeEl.value : null;
+            console.log('🔄 IMPORT DEBUG: Triggering deck re-render after import. Current view mode:', currentViewMode || 'unknown');
+
+            if (currentViewMode === 'card') {
+                if (typeof renderDeckCardsCardView === 'function') {
+                    console.log('🔄 IMPORT DEBUG: Re-rendering Card View');
+                    renderDeckCardsCardView();
+                }
+            } else if (currentViewMode === 'list') {
+                if (typeof renderDeckCardsListView === 'function') {
+                    console.log('🔄 IMPORT DEBUG: Re-rendering List View');
+                    renderDeckCardsListView();
+                }
+            } else {
+                // Fallback: prefer Card View if available
+                if (typeof renderDeckCardsCardView === 'function') {
+                    console.log('🔄 IMPORT DEBUG: Unknown view mode, defaulting to Card View');
+                    renderDeckCardsCardView();
+                }
+            }
+            
+            // Check again after render
+            setTimeout(() => {
+                const basicUniverseAfterRender = window.deckEditorCards.filter(c => c.type === 'basic-universe' || c.type === 'basic_universe');
+                console.log('🔄 IMPORT DEBUG: Basic universe cards count after render:', basicUniverseAfterRender.length);
+                
+                // Check if basic-universe section exists in DOM
+                const basicUniverseSection = document.querySelector('[data-type="basic-universe"]');
+                console.log('🔄 IMPORT DEBUG: Basic-universe section in DOM:', !!basicUniverseSection);
+                if (basicUniverseSection) {
+                    const cardsInSection = basicUniverseSection.querySelectorAll('.deck-card-card-view-item, .deck-card-editor-item');
+                    console.log('🔄 IMPORT DEBUG: Cards rendered in basic-universe section:', cardsInSection.length);
+                }
+            }, 500);
         }
 
     } catch (error) {
@@ -1037,10 +1148,85 @@ function extractCardsFromImportData(cardsData) {
         });
     }
 
-    // Basic universe (array of strings)
-    // if (Array.isArray(cardsData.basic_universe)) {
-    //     cardsData.basic_universe.forEach(cardName => addCard(cardName, 'basic-universe'));
-    // }
+    // Basic universe (array of strings, format: "Secret Identity - Intelligence 6 or greater +2")
+    if (Array.isArray(cardsData.basic_universe)) {
+        cardsData.basic_universe.forEach(cardName => {
+            if (cardName && typeof cardName === 'string') {
+                // Parse basic universe card name to extract base name, type, value_to_use, and bonus
+                // Format: "Secret Identity - Intelligence 6 or greater +2" or "Secret Identity - Intelligence 6 or greater" or just "Secret Identity"
+                const trimmedName = cardName.trim();
+                const dashIndex = trimmedName.indexOf(' - ');
+                
+                if (dashIndex > 0) {
+                    // Has additional information after dash
+                    const baseName = trimmedName.substring(0, dashIndex).trim();
+                    const suffix = trimmedName.substring(dashIndex + 3).trim();
+                    console.log(`📥 EXTRACT: Parsing basic universe card "${trimmedName}" -> baseName: "${baseName}", suffix: "${suffix}"`);
+                    
+                    // Parse suffix to extract type, value_to_use, and bonus
+                    // Format: "Intelligence 6 or greater +2" or "Intelligence 6 or greater" or "Intelligence +2" or just "Intelligence"
+                    // Bonus is typically at the end and starts with + or - followed by a number
+                    const bonusMatch = suffix.match(/^(.+?)\s*([+-]\d+)$/);
+                    let statInfo = suffix;
+                    let bonus = null;
+                    
+                    if (bonusMatch) {
+                        // Found bonus at the end
+                        statInfo = bonusMatch[1].trim();
+                        bonus = bonusMatch[2].trim();
+                    } else if (/^[+-]\d+$/.test(suffix.trim())) {
+                        // Entire suffix is just bonus
+                        statInfo = '';
+                        bonus = suffix.trim();
+                    }
+                    
+                    // Parse statInfo to extract type and value_to_use
+                    // Stat types can be: Energy, Combat, Brute Force, Intelligence, Any-Power
+                    // "Brute Force" is two words, so check for it first
+                    const statTypes = ['Brute Force', 'Any-Power', 'Energy', 'Combat', 'Intelligence']; // Order matters - two-word first
+                    let type = null;
+                    let valueToUse = null;
+                    
+                    if (statInfo && statInfo.trim()) {
+                        const trimmedStatInfo = statInfo.trim();
+                        
+                        // Try to find stat type at the start
+                        for (const statType of statTypes) {
+                            if (trimmedStatInfo.startsWith(statType)) {
+                                type = statType;
+                                const remaining = trimmedStatInfo.substring(statType.length).trim();
+                                valueToUse = remaining || null;
+                                break;
+                            }
+                        }
+                        
+                        // If no type found at start, try checking if entire string is a stat type
+                        if (!type && statTypes.includes(trimmedStatInfo)) {
+                            type = trimmedStatInfo;
+                        } else if (!type) {
+                            // No type found, treat entire string as value_to_use
+                            valueToUse = trimmedStatInfo;
+                        }
+                    }
+                    
+                    const extractedCard = { 
+                        name: baseName, 
+                        type: 'basic-universe',
+                        type_field: type,
+                        value_to_use: valueToUse,
+                        bonus: bonus
+                    };
+                    console.log(`📥 EXTRACT: Extracted basic universe card:`, extractedCard);
+                    result.push(extractedCard);
+                } else {
+                    // No additional information, just the base name
+                    const extractedCard = { name: trimmedName, type: 'basic-universe' };
+                    console.log(`📥 EXTRACT: Extracted basic universe card (no fields):`, extractedCard);
+                    result.push(extractedCard);
+                }
+            }
+        });
+    }
 
     // Power cards (array of strings, format: "5 - Energy")
     // if (Array.isArray(cardsData.power_cards)) {
@@ -1361,6 +1547,161 @@ function findTrainingCardIdByName(cardName, type1, type2, bonus) {
 }
 
 /**
+ * Find basic universe card ID by name, type, value_to_use, and bonus
+ * Searches for a basic universe card matching the name and all specified fields
+ * @param {string} cardName - The base card name (e.g., "Secret Identity")
+ * @param {string|null} typeField - The type value (e.g., "Intelligence", "Combat", "Energy", "Brute Force")
+ * @param {string|null} valueToUse - The value_to_use value (e.g., "6 or greater", "7 or greater")
+ * @param {string|null} bonus - The bonus value (e.g., "+2", "+3")
+ * @returns {string|null} Card ID if found, null otherwise
+ */
+function findBasicUniverseCardIdByName(cardName, typeField, valueToUse, bonus) {
+    if (!window.availableCardsMap || !cardName || typeof cardName !== 'string') {
+        console.log(`❌ BASIC_UNIVERSE LOOKUP: Invalid input - cardName: ${cardName}, map exists: ${!!window.availableCardsMap}`);
+        return null;
+    }
+    
+    console.log(`🔍 BASIC_UNIVERSE LOOKUP: Searching for "${cardName}" with type: ${typeField || 'null'}, value_to_use: ${valueToUse || 'null'}, bonus: ${bonus || 'null'}`);
+    
+    // Count total basic universe cards in map for debugging
+    let totalBasicUniverseCards = 0;
+    let matchingNameCards = [];
+    
+    // Search through all cards to find matching basic universe card
+    for (const [key, card] of window.availableCardsMap.entries()) {
+        // Skip if key or card is undefined/null
+        if (!key || !card) {
+            continue;
+        }
+        
+        // Additional safety check: ensure card has expected properties
+        if (!card.id) {
+            continue;
+        }
+        
+        // Check if this is a basic universe card
+        const cardType = card.cardType || card.type || card.card_type;
+        if (!cardType || (cardType !== 'basic-universe' && cardType !== 'basic_universe')) {
+            continue;
+        }
+        
+        totalBasicUniverseCards++;
+        
+        // Check name match (basic universe cards use name or card_name)
+        const cardNameMatch = (card.name && typeof card.name === 'string' && card.name === cardName) ||
+                             (card.card_name && typeof card.card_name === 'string' && card.card_name === cardName);
+        
+        if (cardNameMatch) {
+            matchingNameCards.push({
+                id: card.id,
+                name: card.name || 'undefined',
+                card_name: card.card_name || 'undefined',
+                type: card.type || 'null',
+                value_to_use: card.value_to_use || 'null',
+                bonus: card.bonus || 'null',
+                cardType: cardType,
+                key: key
+            });
+        }
+        
+        if (!cardNameMatch) {
+            continue; // Name doesn't match
+        }
+        
+        // Check type, value_to_use, and bonus match
+        const cardTypeField = card.type;
+        const cardValueToUse = card.value_to_use;
+        const cardBonus = card.bonus;
+        
+        // Normalize values for comparison (trim)
+        const normalize = (value) => {
+            if (!value || typeof value !== 'string') return null;
+            return value.trim();
+        };
+        
+        const normalizedCardType = normalize(cardTypeField);
+        const normalizedCardValueToUse = normalize(cardValueToUse);
+        const normalizedCardBonus = normalize(cardBonus);
+        const normalizedSearchType = normalize(typeField);
+        const normalizedSearchValueToUse = normalize(valueToUse);
+        const normalizedSearchBonus = normalize(bonus);
+        
+        // Match logic:
+        // If all fields are provided, all must match
+        // If only some fields are provided, only those must match
+        // If no fields are provided, match cards with no fields
+        if (typeField !== null && valueToUse !== null && bonus !== null) {
+            // All three provided - all must match
+            if (normalizedCardType === normalizedSearchType &&
+                normalizedCardValueToUse === normalizedSearchValueToUse &&
+                normalizedCardBonus === normalizedSearchBonus) {
+                console.log(`✅ BASIC_UNIVERSE LOOKUP: Found match for "${cardName}" (all fields) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else if (typeField !== null && valueToUse !== null) {
+            // Only type and value_to_use provided - both must match
+            if (normalizedCardType === normalizedSearchType &&
+                normalizedCardValueToUse === normalizedSearchValueToUse) {
+                console.log(`✅ BASIC_UNIVERSE LOOKUP: Found match for "${cardName}" (type + value_to_use) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else if (typeField !== null && bonus !== null) {
+            // type and bonus provided
+            if (normalizedCardType === normalizedSearchType &&
+                normalizedCardBonus === normalizedSearchBonus) {
+                console.log(`✅ BASIC_UNIVERSE LOOKUP: Found match for "${cardName}" (type + bonus) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else if (valueToUse !== null && bonus !== null) {
+            // value_to_use and bonus provided
+            if (normalizedCardValueToUse === normalizedSearchValueToUse &&
+                normalizedCardBonus === normalizedSearchBonus) {
+                console.log(`✅ BASIC_UNIVERSE LOOKUP: Found match for "${cardName}" (value_to_use + bonus) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else if (typeField !== null) {
+            // Only type provided
+            if (normalizedCardType === normalizedSearchType) {
+                console.log(`✅ BASIC_UNIVERSE LOOKUP: Found match for "${cardName}" (type only) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else if (valueToUse !== null) {
+            // Only value_to_use provided
+            if (normalizedCardValueToUse === normalizedSearchValueToUse) {
+                console.log(`✅ BASIC_UNIVERSE LOOKUP: Found match for "${cardName}" (value_to_use only) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else if (bonus !== null) {
+            // Only bonus provided
+            if (normalizedCardBonus === normalizedSearchBonus) {
+                console.log(`✅ BASIC_UNIVERSE LOOKUP: Found match for "${cardName}" (bonus only) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else {
+            // No fields provided - match cards with no fields, or match first card with matching name
+            if (!normalizedCardType && !normalizedCardValueToUse && !normalizedCardBonus) {
+                console.log(`✅ BASIC_UNIVERSE LOOKUP: Found match for "${cardName}" (no fields) - ID: ${card.id}`);
+                return card.id;
+            } else {
+                // If no fields provided but card has fields, still match (name-only match)
+                console.log(`✅ BASIC_UNIVERSE LOOKUP: Found match for "${cardName}" (name only, card has fields) - ID: ${card.id}`);
+                return card.id;
+            }
+        }
+    }
+    
+    // Debug: Log summary if no match found
+    if (matchingNameCards.length === 0) {
+        console.log(`❌ BASIC_UNIVERSE LOOKUP: No cards found with name "${cardName}". Total basic universe cards in map: ${totalBasicUniverseCards}`);
+    } else {
+        console.log(`⚠️ BASIC_UNIVERSE LOOKUP: Found ${matchingNameCards.length} card(s) with matching name but fields didn't match:`, matchingNameCards);
+        console.log(`⚠️ BASIC_UNIVERSE LOOKUP: Search criteria - type: "${typeField || 'null'}", value_to_use: "${valueToUse || 'null'}", bonus: "${bonus || 'null'}"`);
+    }
+    
+    return null;
+}
+
+/**
  * Find card ID by name in availableCardsMap
  * Searches through the map for a card matching the name
  */
@@ -1527,6 +1868,7 @@ if (typeof window !== 'undefined') {
     window.findTeamworkCardIdByName = findTeamworkCardIdByName;
     window.findAllyCardIdByName = findAllyCardIdByName;
     window.findTrainingCardIdByName = findTrainingCardIdByName;
+    window.findBasicUniverseCardIdByName = findBasicUniverseCardIdByName;
     
     // Debug: Confirm script loaded
     console.log('✅ Deck Import module loaded - importDeckFromJson available');
