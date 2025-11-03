@@ -212,7 +212,7 @@ describe('Button Styling Tests', () => {
   });
 
   describe('Button Visibility and Access Control', () => {
-    it('should show Export and Import buttons only for ADMIN users', () => {
+    it('should show Export and Import buttons for all users', () => {
       const exportBtn = {
         style: { display: 'none' },
         className: 'export-import-btn'
@@ -227,21 +227,15 @@ describe('Button Styling Tests', () => {
         .mockReturnValueOnce(exportBtn)
         .mockReturnValueOnce(importBtn);
 
-      // Mock ADMIN user
-      const adminUser = { role: 'ADMIN' };
-      (global as any).currentUser = adminUser;
-
-      // Simulate showing buttons for ADMIN user
-      if (adminUser.role === 'ADMIN') {
-        exportBtn.style.display = 'inline-block';
-        importBtn.style.display = 'inline-block';
-      }
+      // Simulate showing buttons for all users (GUEST, USER, ADMIN)
+      exportBtn.style.display = 'inline-block';
+      importBtn.style.display = 'inline-block';
 
       expect(exportBtn.style.display).toBe('inline-block');
       expect(importBtn.style.display).toBe('inline-block');
     });
 
-    it('should hide Export and Import buttons for non-ADMIN users', () => {
+    it('should show Export and Import buttons for GUEST users', () => {
       const exportBtn = {
         style: { display: 'none' },
         className: 'export-import-btn'
@@ -256,18 +250,16 @@ describe('Button Styling Tests', () => {
         .mockReturnValueOnce(exportBtn)
         .mockReturnValueOnce(importBtn);
 
-      // Mock non-ADMIN user
+      // Mock GUEST user
       const guestUser = { role: 'GUEST' };
       (global as any).currentUser = guestUser;
 
-      // Simulate hiding buttons for non-ADMIN user
-      if (guestUser.role !== 'ADMIN') {
-        exportBtn.style.display = 'none';
-        importBtn.style.display = 'none';
-      }
+      // Simulate showing buttons for all users
+      exportBtn.style.display = 'inline-block';
+      importBtn.style.display = 'inline-block';
 
-      expect(exportBtn.style.display).toBe('none');
-      expect(importBtn.style.display).toBe('none');
+      expect(exportBtn.style.display).toBe('inline-block');
+      expect(importBtn.style.display).toBe('inline-block');
     });
   });
 

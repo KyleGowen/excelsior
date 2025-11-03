@@ -3,7 +3,7 @@
  * ========================================
  *
  * This file contains the deck import functionality
- * for ADMIN users to import decks from JSON.
+ * for all users to import decks from JSON.
  *
  * Purpose: Standalone deck import module
  * Created: Refactored from deck-export.js
@@ -24,16 +24,11 @@
  * ======================================== */
 
 /**
- * Import deck from JSON (Admin only)
+ * Import deck from JSON
  * Opens a modal for pasting exported deck JSON and imports cards into the current deck.
+ * Available to all users (GUEST, USER, ADMIN).
  */
 function importDeckFromJson() {
-    // Security check - only allow ADMIN users
-    const currentUser = window.currentUser || (typeof getCurrentUser === 'function' ? getCurrentUser() : null);
-    if (!currentUser || currentUser.role !== 'ADMIN') {
-        showNotification('Access denied: Admin privileges required', 'error');
-        return;
-    }
 
     // Check if deck editor is open (for new decks, currentDeckId might be "new" or null)
     // Allow import if deck editor modal is visible, even if it's a new deck

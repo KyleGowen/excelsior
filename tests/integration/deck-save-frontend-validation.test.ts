@@ -218,56 +218,47 @@ describe('Deck Save Frontend Validation - Integration Tests', () => {
         });
     });
 
-    describe('Admin Role Validation for Export Button', () => {
+    describe('Export Button Visibility for All Users', () => {
         it('should show Export button for admin users', () => {
             // Set up admin user
             (window as any).currentUser = { id: 'admin-1', role: 'ADMIN' };
             const exportBtn = document.getElementById('exportBtn');
 
             const showDeckEditor = () => {
-                if ((window as any).currentUser?.role === 'ADMIN') {
-                    exportBtn!.style.display = 'block';
-                } else {
-                    exportBtn!.style.display = 'none';
-                }
+                // Show buttons for all users
+                exportBtn!.style.display = 'inline-block';
             };
 
             showDeckEditor();
-            expect(exportBtn!.style.display).toBe('block');
+            expect(exportBtn!.style.display).toBe('inline-block');
         });
 
-        it('should hide Export button for non-admin users', () => {
+        it('should show Export button for regular users', () => {
             // Set up regular user
             (window as any).currentUser = { id: 'user-1', role: 'USER' };
             const exportBtn = document.getElementById('exportBtn');
 
             const showDeckEditor = () => {
-                if ((window as any).currentUser?.role === 'ADMIN') {
-                    exportBtn!.style.display = 'block';
-                } else {
-                    exportBtn!.style.display = 'none';
-                }
+                // Show buttons for all users
+                exportBtn!.style.display = 'inline-block';
             };
 
             showDeckEditor();
-            expect(exportBtn!.style.display).toBe('none');
+            expect(exportBtn!.style.display).toBe('inline-block');
         });
 
-        it('should hide Export button for guest users', () => {
+        it('should show Export button for guest users', () => {
             // Set up guest user
             (window as any).currentUser = null;
             const exportBtn = document.getElementById('exportBtn');
 
             const showDeckEditor = () => {
-                if ((window as any).currentUser?.role === 'ADMIN') {
-                    exportBtn!.style.display = 'block';
-                } else {
-                    exportBtn!.style.display = 'none';
-                }
+                // Show buttons for all users
+                exportBtn!.style.display = 'inline-block';
             };
 
             showDeckEditor();
-            expect(exportBtn!.style.display).toBe('none');
+            expect(exportBtn!.style.display).toBe('inline-block');
         });
     });
 

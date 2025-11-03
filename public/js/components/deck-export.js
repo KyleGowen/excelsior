@@ -3,7 +3,7 @@
  * ========================================
  *
  * This file contains the deck export functionality
- * for ADMIN users to export decks as JSON.
+ * for all users to export decks as JSON.
  *
  * Purpose: Standalone deck export module
  * Created: Refactored from deck-editor-core.js
@@ -22,19 +22,14 @@
  * ======================================== */
 
 /**
- * Export deck as JSON (Admin only)
+ * Export deck as JSON
  * Exports the current deck configuration as a JSON object
  * and displays it in a modal overlay for copying.
+ * Available to all users (GUEST, USER, ADMIN).
  *
  * @returns {Promise<void>}
  */
 async function exportDeckAsJson() {
-    // Security check - only allow ADMIN users
-    // Note: Currently commented out for debugging, should be re-enabled in production
-    if (!currentUser || currentUser.role !== 'ADMIN') {
-        // showNotification('Access denied: Admin privileges required', 'error');
-        // return;
-    }
     
     try {
         // Ensure availableCardsMap is loaded before exporting

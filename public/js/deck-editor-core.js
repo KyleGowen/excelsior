@@ -14,26 +14,15 @@ function showDeckEditor() {
         // Add body class for deck editor specific styling
         document.body.classList.add('deck-editor-active');
         
-        // Show/hide Export button based on admin role
+        // Show Export and Import buttons for all users (GUEST, USER, ADMIN)
         const exportBtn = document.getElementById('exportBtn');
         if (exportBtn) {
-            const currentUser = window.currentUser || (typeof getCurrentUser === 'function' ? getCurrentUser() : null);
-            if (currentUser && currentUser.role === 'ADMIN') {
-                exportBtn.style.display = 'inline-block';
-            } else {
-                exportBtn.style.display = 'none';
-            }
+            exportBtn.style.display = 'inline-block';
         }
         
-        // Show/hide Import button based on admin role
         const importBtn = document.getElementById('importBtn');
         if (importBtn) {
-            const currentUser = window.currentUser || (typeof getCurrentUser === 'function' ? getCurrentUser() : null);
-            if (currentUser && currentUser.role === 'ADMIN') {
-                importBtn.style.display = 'inline-block';
-            } else {
-                importBtn.style.display = 'none';
-            }
+            importBtn.style.display = 'inline-block';
         }
         
         // Apply layout immediately to prevent flash
@@ -527,11 +516,11 @@ async function saveDeckChanges() {
     }
 }
 
-// Export deck as JSON (Admin only)
+// Export deck as JSON (Available to all users)
 // Function moved to deck-export.js component module
 // Access via window.exportDeckAsJson() or import from deck-export.js
 
-// Import deck from JSON (Admin only) - DISABLED
+// Import deck from JSON (Available to all users)
 // Function moved to deck-export.js component module
 // Access via window.importDeckFromJson() or import from deck-export.js
 

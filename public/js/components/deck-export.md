@@ -1,10 +1,10 @@
 # Deck Export Component
 
-A standalone, encapsulated module for exporting deck configurations as JSON. This component provides ADMIN-only functionality to export complete deck data including metadata, statistics, and all card information.
+A standalone, encapsulated module for exporting deck configurations as JSON. This component provides functionality for all users (GUEST, USER, ADMIN) to export complete deck data including metadata, statistics, and all card information.
 
 ## Overview
 
-The Deck Export component allows ADMIN users to export their deck configurations in a structured JSON format. The export includes comprehensive deck information such as deck name, description, statistics (max stats, total threat), legality status, and all cards organized by category.
+The Deck Export component allows all users (GUEST, USER, ADMIN) to export their deck configurations in a structured JSON format. The export includes comprehensive deck information such as deck name, description, statistics (max stats, total threat), legality status, and all cards organized by category.
 
 ## File Structure
 
@@ -42,7 +42,7 @@ public/js/components/
 **Returns:** `Promise<void>`
 
 **Process:**
-1. Validates ADMIN role (currently commented out for debugging)
+1. Available to all users (GUEST, USER, ADMIN)
 2. Ensures `availableCardsMap` is loaded
 3. Extracts deck name and description from `currentDeckData` or DOM
 4. Calculates deck statistics:
@@ -166,7 +166,7 @@ These fields export the first occurrence of each special card type that has the 
 
 ### Basic Export
 
-The export button is automatically displayed for ADMIN users in the deck editor. Clicking the "Export" button triggers the export process:
+The export button is automatically displayed for all users in the deck editor. Clicking the "Export" button triggers the export process:
 
 ```html
 <button id="exportBtn" data-click-handler="exportDeckAsJson">Export</button>
@@ -241,17 +241,9 @@ if (exportBtn) {
 
 ## Security
 
-### Admin-Only Access
+### User Access
 
-The export functionality is restricted to ADMIN users. The security check is currently commented out for debugging purposes but should be re-enabled in production:
-
-```javascript
-// Security check - only allow ADMIN users
-if (!currentUser || currentUser.role !== 'ADMIN') {
-    showNotification('Access denied: Admin privileges required', 'error');
-    return;
-}
-```
+The export functionality is available to all users (GUEST, USER, ADMIN). No role restrictions are applied.
 
 ### Data Privacy
 
@@ -342,7 +334,7 @@ Tests cover:
 - Card quantity repetition
 - Deck statistics calculation
 - Legality badge removal from deck names
-- Admin role restrictions
+- Available to all user roles
 - Overlay display and interaction
 - Clipboard copy functionality
 - Empty deck handling
@@ -382,13 +374,13 @@ This ensures consistent export output that's easy to read and compare.
 
 ## Known Issues
 
-1. **Security Check Disabled**: Admin role check is commented out (line 34-37). Should be re-enabled before production.
+1. **Available to All Users**: Export functionality is available to GUEST, USER, and ADMIN roles.
 
 2. **Card Loading Race Condition**: If cards aren't loaded, export waits 1 second. May need improvement for slow connections.
 
 ## Future Enhancements
 
-1. **Re-enable Security**: Uncomment admin role check for production
+1. **No Role Restrictions**: Export is available to all users
 2. **Import Functionality**: Implement JSON import feature
 3. **Export Formats**: Add support for other export formats (CSV, XML)
 4. **Download File**: Add option to download JSON as file

@@ -546,7 +546,7 @@ Consider implementing CSS custom properties for easier theme management:
 ## Import/Export Button Styling
 
 ### Overview
-Import and Export buttons are admin-only utility buttons in the deck editor that share identical styling for visual consistency.
+Import and Export buttons are utility buttons in the deck editor available to all users (GUEST, USER, ADMIN) that share identical styling for visual consistency.
 
 ### Grid Layout
 - **Container**: `.deck-editor-actions` with `display: grid`
@@ -559,9 +559,9 @@ Import and Export buttons are admin-only utility buttons in the deck editor that
 Both buttons use identical visual styling:
 
 #### Base Properties
-- **Background**: `#2b2b2b` (dark gray to match app background)
-- **Text Color**: `#d2b48c` (light tan/beige)
-- **Border**: `1px solid rgba(210, 180, 140, 0.35)` (subtle tan border)
+- **Background**: `rgba(78, 205, 196, 0.2)` (teal with 20% opacity - matches Draw Hand/List View)
+- **Text Color**: `#4ecdc4` (bright teal - matches Draw Hand/List View)
+- **Border**: `1px solid rgba(78, 205, 196, 0.3)` (teal border with 30% opacity - matches Draw Hand/List View)
 - **Height**: `auto` with `min-height: 24px`
 - **Padding**: `4px 8px`
 - **Width**: `100%` of grid cell
@@ -571,17 +571,11 @@ Both buttons use identical visual styling:
 - **Cursor**: `pointer`
 
 #### Visual Effects
-- **Box Shadow**: 
-  - Inset: `inset 0 1px 0 rgba(255, 255, 255, 0.06)` (subtle top highlight)
-  - Outer: `0 2px 6px rgba(0, 0, 0, 0.35)` (depth shadow)
-- **Transition**: `background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease`
+- **Transition**: `background-color 0.2s ease, border-color 0.2s ease`
 
 #### Hover States
-- **Background**: `#343434` (slightly lighter gray)
-- **Border**: `rgba(210, 180, 140, 0.5)` (brighter tan border)
-- **Box Shadow**: 
-  - Inset: `inset 0 1px 0 rgba(255, 255, 255, 0.08)` (enhanced highlight)
-  - Outer: `0 3px 8px rgba(0, 0, 0, 0.45)` (deeper shadow)
+- **Background**: `rgba(78, 205, 196, 0.3)` (teal with 30% opacity - matches Draw Hand/List View hover)
+- **Border**: `rgba(78, 205, 196, 0.4)` (teal border with 40% opacity - matches Draw Hand/List View hover)
 
 ### CSS Selectors
 ```css
@@ -589,9 +583,9 @@ Both buttons use identical visual styling:
 .deck-editor-actions #exportBtn {
     grid-column: 1 !important;
     grid-row: 1 !important;
-    background: #2b2b2b !important;
-    color: #d2b48c !important;
-    border: 1px solid rgba(210, 180, 140, 0.35) !important;
+    background: rgba(78, 205, 196, 0.2) !important; /* teal - matches Draw Hand/List View */
+    color: #4ecdc4 !important; /* bright teal - matches Draw Hand/List View */
+    border: 1px solid rgba(78, 205, 196, 0.3) !important; /* teal border - matches Draw Hand/List View */
     /* ... other properties ... */
 }
 
@@ -599,16 +593,16 @@ Both buttons use identical visual styling:
 .deck-editor-actions #importBtn {
     grid-column: 1 !important;
     grid-row: 2 !important;
-    background: #2b2b2b !important;
-    color: #d2b48c !important;
-    border: 1px solid rgba(210, 180, 140, 0.35) !important;
+    background: rgba(78, 205, 196, 0.2) !important; /* teal - matches Draw Hand/List View */
+    color: #4ecdc4 !important; /* bright teal - matches Draw Hand/List View */
+    border: 1px solid rgba(78, 205, 196, 0.3) !important; /* teal border - matches Draw Hand/List View */
     /* ... other properties ... */
 }
 ```
 
 ### Visibility Control
-- **Admin Only**: Both buttons are hidden by default (`display: none`)
-- **Show Logic**: JavaScript shows buttons when `currentUser.role === 'ADMIN'`
+- **All Users**: Both buttons are hidden by default (`display: none`)
+- **Show Logic**: JavaScript shows buttons for all users (GUEST, USER, ADMIN) when the deck editor is opened
 - **Display**: Set to `inline-block` when visible
 
 ## One Per Deck Card Dimming

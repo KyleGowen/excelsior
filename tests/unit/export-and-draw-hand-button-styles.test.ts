@@ -6,11 +6,11 @@
  * Unit tests for Export button and Draw Hand button styles and display functionality
  * 
  * Tests cover:
- * - Export button visibility and styling (admin-only)
+ * - Export button visibility and styling (available to all users)
  * - Draw Hand button styling consistency with List View button
  * - Button layout and positioning
  * - CSS class management and state handling
- * - Admin role-based Export button display
+ * - Export button display for all users
  */
 
 describe('Export and Draw Hand Button Styles and Display', () => {
@@ -30,7 +30,7 @@ describe('Export and Draw Hand Button Styles and Display', () => {
         mockExportBtn.id = 'exportBtn';
         mockExportBtn.className = 'remove-all-btn';
         mockExportBtn.setAttribute('data-click-handler', 'exportDeckAsJson');
-        mockExportBtn.title = 'Export deck as JSON (Admin only)';
+        mockExportBtn.title = 'Export deck as JSON';
         mockExportBtn.style.display = 'none';
         mockExportBtn.textContent = 'Export';
         mockDeckEditorActions.appendChild(mockExportBtn);
@@ -69,7 +69,7 @@ describe('Export and Draw Hand Button Styles and Display', () => {
             expect(mockExportBtn.id).toBe('exportBtn');
             expect(mockExportBtn.className).toBe('remove-all-btn');
             expect(mockExportBtn.getAttribute('data-click-handler')).toBe('exportDeckAsJson');
-            expect(mockExportBtn.title).toBe('Export deck as JSON (Admin only)');
+            expect(mockExportBtn.title).toBe('Export deck as JSON');
             expect(mockExportBtn.textContent).toBe('Export');
         });
 
@@ -187,7 +187,7 @@ describe('Export and Draw Hand Button Styles and Display', () => {
         });
 
         it('should have proper title attribute for Export button', () => {
-            expect(mockExportBtn.title).toBe('Export deck as JSON (Admin only)');
+            expect(mockExportBtn.title).toBe('Export deck as JSON');
         });
 
         it('should be focusable when enabled', () => {
