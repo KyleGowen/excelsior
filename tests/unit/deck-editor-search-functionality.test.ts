@@ -12,14 +12,14 @@ const mockSearchResults = {
   style: { display: 'none' }
 };
 
-const mockDocument = {
+const mockDocumentSearch = {
   getElementById: jest.fn((id: string) => {
     if (id === 'deckEditorSearchResults') return mockSearchResults;
     return null;
   })
 };
 
-(global as any).document = mockDocument;
+(global as any).document = mockDocumentSearch;
 
 // Mock the search functions from index.html
 let searchAllCards: (searchTerm: string) => Promise<any[]>;

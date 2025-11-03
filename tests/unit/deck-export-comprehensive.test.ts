@@ -13,6 +13,16 @@
  * - Quantity handling in grouped structures
  */
 
+import fs from 'fs';
+import path from 'path';
+
+// Polyfill for TextEncoder/TextDecoder if needed
+if (typeof global.TextEncoder === 'undefined') {
+    const { TextEncoder, TextDecoder } = require('util');
+    global.TextEncoder = TextEncoder;
+    global.TextDecoder = TextDecoder;
+}
+
 describe('Deck Export Component - Comprehensive Tests', () => {
     let mockCurrentUser: any;
     let mockDeckEditorCards: any[];
@@ -22,7 +32,10 @@ describe('Deck Export Component - Comprehensive Tests', () => {
     let mockShowNotification: jest.Mock;
     let mockLoadAvailableCards: jest.Mock;
     let mockValidateDeck: jest.Mock;
-    let mockShowExportOverlay: jest.Mock;
+    let mockShowExportOverlay: jest.Mock = jest.fn();
+    
+    // Functions from the actual file
+    let exportDeckAsJson: () => Promise<void>;
 
     beforeEach(() => {
         // Mock DOM elements
@@ -49,8 +62,6 @@ describe('Deck Export Component - Comprehensive Tests', () => {
         mockShowNotification = jest.fn();
         mockLoadAvailableCards = jest.fn().mockResolvedValue(undefined);
         mockValidateDeck = jest.fn().mockReturnValue({ errors: [], warnings: [] });
-        mockShowExportOverlay = jest.fn();
-
         // Mock global variables
         mockCurrentUser = {
             role: 'ADMIN',
@@ -74,14 +85,57 @@ describe('Deck Export Component - Comprehensive Tests', () => {
         (window as any).showNotification = mockShowNotification;
         (window as any).loadAvailableCards = mockLoadAvailableCards;
         (window as any).validateDeck = mockValidateDeck;
+
+        // Load and execute the actual deck-export.js file
+        const deckExportPath = path.join(__dirname, '../../public/js/components/deck-export.js');
+        const deckExportCode = fs.readFileSync(deckExportPath, 'utf-8');
+
+        const executeCode = new Function(
+            'window',
+            'document',
+            'navigator',
+            `
+            // Make globals available in function scope
+            const currentUser = window.currentUser;
+            const showNotification = window.showNotification;
+            const loadAvailableCards = window.loadAvailableCards;
+            const validateDeck = window.validateDeck;
+            const isDeckLimited = window.isDeckLimited;
+            const currentDeckData = window.currentDeckData;
+            
+            ${deckExportCode}
+            `
+        );
+        
+        executeCode(window, document, navigator);
+
+        // Get function from window after execution
+        exportDeckAsJson = (window as any).exportDeckAsJson;
+        
+        if (!exportDeckAsJson) {
+            throw new Error('exportDeckAsJson function not found on window object');
+        }
+
+        // Spy on showExportOverlay after it's been defined by the actual code
+        // and make it store the JSON in dataset for our getExportedJson helper
+        const actualShowExportOverlay = (window as any).showExportOverlay;
+        mockShowExportOverlay = jest.fn((jsonString: string) => {
+            // Store JSON in dataset for getExportedJson helper
+            const overlay = document.getElementById('exportJsonOverlay');
+            if (overlay) {
+                (overlay as HTMLElement).dataset.jsonString = jsonString;
+            }
+            // Also call the actual function to maintain behavior
+            actualShowExportOverlay(jsonString);
+        });
         (window as any).showExportOverlay = mockShowExportOverlay;
 
-        // Load the actual export module (it exports to window)
-        // In real usage, this is loaded via script tag
-        // For tests, we'll need to mock the actual implementation
+        jest.useFakeTimers();
     });
 
     afterEach(() => {
+        jest.runOnlyPendingTimers();
+        jest.useRealTimers();
         jest.clearAllMocks();
         delete (window as any).currentUser;
         delete (window as any).deckEditorCards;
@@ -97,667 +151,15 @@ describe('Deck Export Component - Comprehensive Tests', () => {
         delete (window as any).copyJsonToClipboard;
     });
 
-    // Helper function to create the actual export function implementation for testing
-    function createExportFunction() {
-        return async function exportDeckAsJson(): Promise<any> {
-            const currentUser = (window as any).currentUser;
-            const deckEditorCards = (window as any).deckEditorCards || [];
-            const availableCardsMap = (window as any).availableCardsMap || new Map();
-            const isDeckLimited = (window as any).isDeckLimited || false;
-            const currentDeckData = (window as any).currentDeckData;
-            const validateDeck = (window as any).validateDeck;
-            const showExportOverlay = (window as any).showExportOverlay;
-            const showNotification = (window as any).showNotification;
-            const loadAvailableCards = (window as any).loadAvailableCards;
-
-            // Security check (currently commented out, but we'll test it)
-            if (!currentUser || currentUser.role !== 'ADMIN') {
-                // In real code this is commented out, but we'll include it for testing
-                return undefined;
-            }
-
-            try {
-                // Ensure availableCardsMap is loaded
-                if (!availableCardsMap || availableCardsMap.size === 0) {
-                    if (typeof loadAvailableCards === 'function') {
-                        await loadAvailableCards();
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                    }
-
-                    if (!availableCardsMap || availableCardsMap.size === 0) {
-                        console.error('No card data available for export');
-                        showNotification('Card data not loaded. Please refresh the page and try again.', 'error');
-                        return;
-                    }
-                }
-
-                // Get deck name and description
-                let deckName = 'Untitled Deck';
-                let deckDescription = '';
-
-                if (currentDeckData && currentDeckData.metadata) {
-                    deckName = currentDeckData.metadata.name || 'Untitled Deck';
-                    deckDescription = currentDeckData.metadata.description || '';
-                } else {
-                    const deckTitleElement = document.querySelector('h4') || document.querySelector('.deck-title');
-                    if (deckTitleElement && deckTitleElement.textContent.trim()) {
-                        let titleText = deckTitleElement.textContent.trim();
-                        titleText = titleText.replace(/\s+(Not Legal|Legal|Invalid|Valid)$/i, '');
-                        const legalityBadge = deckTitleElement.querySelector('.deck-validation-badge, .legality-badge');
-                        if (legalityBadge) {
-                            const cleanElement = deckTitleElement.cloneNode(true) as Element;
-                            const cleanBadge = cleanElement.querySelector('.deck-validation-badge, .legality-badge');
-                            if (cleanBadge) {
-                                cleanBadge.remove();
-                            }
-                            titleText = cleanElement.textContent?.trim() || titleText;
-                        }
-                        if (titleText) {
-                            deckName = titleText;
-                        }
-                    }
-
-                    const deckDescElement = document.querySelector('.deck-description') || 
-                                          document.querySelector('.deck-desc') ||
-                                          document.querySelector('[data-deck-description]');
-                    if (deckDescElement && deckDescElement.textContent.trim()) {
-                        deckDescription = deckDescElement.textContent.trim();
-                    }
-                }
-
-                // Calculate deck statistics
-                const totalCards = deckEditorCards
-                    .filter((card: any) => !['mission', 'character', 'location'].includes(card.type))
-                    .reduce((sum: number, card: any) => sum + card.quantity, 0);
-
-                const characterCards = deckEditorCards.filter((card: any) => card.type === 'character');
-                const locationCards = deckEditorCards.filter((card: any) => card.type === 'location');
-
-                let maxEnergy = 0, maxCombat = 0, maxBruteForce = 0, maxIntelligence = 0;
-                let totalThreat = 0;
-
-                // Get reserve character ID
-                const reserveCharacterId = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
-
-                if (characterCards.length > 0) {
-                    maxEnergy = Math.max(...characterCards.map((card: any) => {
-                        const availableCard = availableCardsMap.get(card.cardId);
-                        return availableCard ? (availableCard.energy || 0) : 0;
-                    }));
-                    maxCombat = Math.max(...characterCards.map((card: any) => {
-                        const availableCard = availableCardsMap.get(card.cardId);
-                        return availableCard ? (availableCard.combat || 0) : 0;
-                    }));
-                    maxBruteForce = Math.max(...characterCards.map((card: any) => {
-                        const availableCard = availableCardsMap.get(card.cardId);
-                        return availableCard ? (availableCard.brute_force || 0) : 0;
-                    }));
-                    maxIntelligence = Math.max(...characterCards.map((card: any) => {
-                        const availableCard = availableCardsMap.get(card.cardId);
-                        return availableCard ? (availableCard.intelligence || 0) : 0;
-                    }));
-                }
-
-                // Calculate threat from characters (with reserve adjustments)
-                characterCards.forEach((card: any) => {
-                    const character = availableCardsMap.get(card.cardId);
-                    if (character && character.threat_level) {
-                        let threatLevel = character.threat_level;
-
-                        if (card.cardId === reserveCharacterId) {
-                            if (character.name === 'Victory Harben') {
-                                threatLevel = 20;
-                            } else if (character.name === 'Carson of Venus') {
-                                threatLevel = 19;
-                            } else if (character.name === 'Morgan Le Fay') {
-                                threatLevel = 20;
-                            }
-                        }
-
-                        totalThreat += threatLevel * card.quantity;
-                    }
-                });
-
-                // Calculate threat from locations
-                locationCards.forEach((card: any) => {
-                    const location = availableCardsMap.get(card.cardId);
-                    if (location && location.threat_level) {
-                        totalThreat += location.threat_level * card.quantity;
-                    }
-                });
-
-                // Calculate icon totals (from special, aspect, ally, teamwork, and power cards)
-                const calculateIconTotals = (deckCards: any[]) => {
-                    const totals: any = {
-                        'Energy': 0,
-                        'Combat': 0,
-                        'Brute Force': 0,
-                        'Intelligence': 0
-                    };
-                    
-                    const iconTypes = ['Energy', 'Combat', 'Brute Force', 'Intelligence'];
-                    const allowedTypes = ['special', 'aspect', 'ally-universe', 'ally_universe', 'teamwork', 'power'];
-                    
-                    deckCards.forEach((card: any) => {
-                        if (!allowedTypes.includes(card.type)) {
-                            return;
-                        }
-                        
-                        const availableCard = availableCardsMap.get(card.cardId);
-                        if (!availableCard) return;
-                        
-                        const quantity = card.quantity || 1;
-                        let icons: string[] = [];
-                        
-                        if (card.type === 'power') {
-                            const type = String(availableCard.power_type || '').trim();
-                            const isMulti = /multi\s*-?power/i.test(type);
-                            
-                            if (type === 'Any-Power') {
-                                icons = [];
-                            } else if (isMulti) {
-                                icons = ['Energy', 'Combat', 'Brute Force', 'Intelligence'];
-                            } else {
-                                const matchedType = iconTypes.find(t => t === type);
-                                if (matchedType) {
-                                    icons = [matchedType];
-                                }
-                            }
-                        } else if (card.type === 'teamwork') {
-                            const src = String(availableCard.to_use || '');
-                            const isAny = /Any-?Power/i.test(src);
-                            
-                            if (isAny) {
-                                icons = [];
-                            } else {
-                                icons = iconTypes.filter(t => {
-                                    const regex = new RegExp(t, 'i');
-                                    return regex.test(src);
-                                });
-                            }
-                        } else if (card.type === 'ally-universe' || card.type === 'ally_universe') {
-                            const src = String(availableCard.stat_type_to_use || '');
-                            const matchedType = iconTypes.find(t => {
-                                const regex = new RegExp(t, 'i');
-                                return regex.test(src);
-                            });
-                            if (matchedType) {
-                                icons = [matchedType];
-                            }
-                        } else {
-                            icons = Array.isArray(availableCard.icons) ? availableCard.icons : [];
-                            icons = icons.filter((icon: string) => iconTypes.includes(icon));
-                        }
-                        
-                        icons.forEach((icon: string) => {
-                            if (totals.hasOwnProperty(icon)) {
-                                totals[icon] += quantity;
-                            }
-                        });
-                    });
-                    
-                    return totals;
-                };
-                
-                const iconTotals = calculateIconTotals(deckEditorCards);
-
-                // Helper functions
-                const getCardNameFromMap = (card: any) => {
-                    const availableCard = availableCardsMap.get(card.cardId);
-                    if (availableCard) {
-                        return availableCard.name || availableCard.card_name || 'Unknown Card';
-                    }
-                    return 'Unknown Card';
-                };
-
-                const createRepeatedCards = (cards: any[], cardType: string) => {
-                    const result: string[] = [];
-                    cards.filter((card: any) => card.type === cardType).forEach((card: any) => {
-                        const cardName = getCardNameFromMap(card);
-                        const quantity = card.quantity || 1;
-                        for (let i = 0; i < quantity; i++) {
-                            result.push(cardName);
-                        }
-                    });
-                    return result;
-                };
-
-                // Helper function to create sorted power cards array
-                // Sorts by value (ascending), then by type (Energy, Combat, Brute Force, Intelligence, Multi, Any-Power)
-                const createSortedPowerCards = (cards: any[]) => {
-                    const result: string[] = [];
-                    cards.filter((card: any) => card.type === 'power').forEach((card: any) => {
-                        const cardName = getCardNameFromMap(card);
-                        const quantity = card.quantity || 1;
-                        for (let i = 0; i < quantity; i++) {
-                            result.push(cardName);
-                        }
-                    });
-                    
-                    // Sort power cards by value, then by type
-                    const typeOrder: { [key: string]: number } = {
-                        'Energy': 1,
-                        'Combat': 2,
-                        'Brute Force': 3,
-                        'Intelligence': 4,
-                        'Multi Power': 5,
-                        'Multi-Power': 5,
-                        'Any-Power': 6,
-                        'Any Power': 6
-                    };
-                    
-                    result.sort((a, b) => {
-                        // Extract value and type from power card names (format: "5 - Energy" or "3 - Multi Power")
-                        const parsePowerCard = (name: string) => {
-                            const match = name.match(/^(\d+)\s*-\s*(.+)$/);
-                            if (match) {
-                                const value = parseInt(match[1], 10);
-                                const type = match[2].trim();
-                                return { value, type };
-                            }
-                            // Fallback for unexpected format
-                            return { value: 999, type: name };
-                        };
-                        
-                        const aParsed = parsePowerCard(a);
-                        const bParsed = parsePowerCard(b);
-                        
-                        // First sort by value (ascending)
-                        if (aParsed.value !== bParsed.value) {
-                            return aParsed.value - bParsed.value;
-                        }
-                        
-                        // Then sort by type order
-                        const aTypeOrder = typeOrder[aParsed.type] || 99;
-                        const bTypeOrder = typeOrder[bParsed.type] || 99;
-                        
-                        if (aTypeOrder !== bTypeOrder) {
-                            return aTypeOrder - bTypeOrder;
-                        }
-                        
-                        // If same value and type order, maintain original order (stable sort)
-                        return 0;
-                    });
-                    
-                    return result;
-                };
-
-                const createCharactersArray = (cards: any[]) => {
-                    const result: any[] = [];
-                    const reserveCharacterId = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
-                    
-                    cards.filter((card: any) => card.type === 'character').forEach((card: any) => {
-                        const cardName = getCardNameFromMap(card);
-                        const quantity = card.quantity || 1;
-                        
-                        if (card.cardId === reserveCharacterId) {
-                            // Reserve character - structure as object with reserve flag
-                            for (let i = 0; i < quantity; i++) {
-                                result.push({
-                                    [cardName]: {
-                                        reserve: true
-                                    }
-                                });
-                            }
-                        } else {
-                            // Regular character - just the name string
-                            for (let i = 0; i < quantity; i++) {
-                                result.push(cardName);
-                            }
-                        }
-                    });
-                    
-                    return result;
-                };
-
-                const createSpecialCardsByCharacter = (cards: any[]) => {
-                    const result: any = {};
-                    cards.filter((card: any) => card.type === 'special').forEach((card: any) => {
-                        const availableCard = availableCardsMap.get(card.cardId);
-                        if (!availableCard) return;
-
-                        const characterName = availableCard.character_name || availableCard.character || 'Any Character';
-                        const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
-                        const quantity = card.quantity || 1;
-
-                        if (!result[characterName]) {
-                            result[characterName] = [];
-                        }
-
-                        for (let i = 0; i < quantity; i++) {
-                            result[characterName].push(cardName);
-                        }
-                    });
-                    return result;
-                };
-
-                const createMissionsByMissionSet = (cards: any[]) => {
-                    const result: any = {};
-                    cards.filter((card: any) => card.type === 'mission').forEach((card: any) => {
-                        const availableCard = availableCardsMap.get(card.cardId);
-                        if (!availableCard) return;
-
-                        const missionSet = availableCard.mission_set || 'Unknown Mission Set';
-                        const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
-                        const quantity = card.quantity || 1;
-
-                        if (!result[missionSet]) {
-                            result[missionSet] = [];
-                        }
-
-                        for (let i = 0; i < quantity; i++) {
-                            result[missionSet].push(cardName);
-                        }
-                    });
-                    return result;
-                };
-
-                const createEventsByMissionSet = (cards: any[]) => {
-                    const result: any = {};
-                    cards.filter((card: any) => card.type === 'event').forEach((card: any) => {
-                        const availableCard = availableCardsMap.get(card.cardId);
-                        if (!availableCard) return;
-
-                        const missionSet = availableCard.mission_set || 'Unknown Mission Set';
-                        const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
-                        const quantity = card.quantity || 1;
-
-                        if (!result[missionSet]) {
-                            result[missionSet] = [];
-                        }
-
-                        for (let i = 0; i < quantity; i++) {
-                            result[missionSet].push(cardName);
-                        }
-                    });
-                    return result;
-                };
-
-                const createAdvancedUniverseByCharacter = (cards: any[]) => {
-                    const result: any = {};
-                    cards.filter((card: any) => card.type === 'advanced-universe').forEach((card: any) => {
-                        const availableCard = availableCardsMap.get(card.cardId);
-                        if (!availableCard) return;
-
-                        const characterName = availableCard.character || 'Unknown Character';
-                        const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
-                        const quantity = card.quantity || 1;
-
-                        if (!result[characterName]) {
-                            result[characterName] = [];
-                        }
-
-                        for (let i = 0; i < quantity; i++) {
-                            result[characterName].push(cardName);
-                        }
-                    });
-                    return result;
-                };
-
-                // Helper function to create teamwork cards with followup_attack_types appended
-                const createTeamworkCards = (cards: any[]) => {
-                    const result: string[] = [];
-                    cards.filter((card: any) => card.type === 'teamwork').forEach((card: any) => {
-                        const availableCard = availableCardsMap.get(card.cardId);
-                        if (!availableCard) return;
-                        
-                        const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
-                        const followupTypes = availableCard.followup_attack_types || availableCard.follow_up_attack_types;
-                        const quantity = card.quantity || 1;
-                        
-                        // Format: "7 Combat - Intelligence + Energy" or just "7 Combat" if no followup types
-                        const formattedName = followupTypes && followupTypes.trim() 
-                            ? `${cardName} - ${followupTypes}`
-                            : cardName;
-                        
-                        // Add card repeated by quantity
-                        for (let i = 0; i < quantity; i++) {
-                            result.push(formattedName);
-                        }
-                    });
-                    return result;
-                };
-
-                // Helper function to create ally cards with stat_to_use and stat_type_to_use appended
-                const createAllyCards = (cards: any[]) => {
-                    const result: string[] = [];
-                    cards.filter((card: any) => card.type === 'ally-universe' || card.type === 'ally_universe').forEach((card: any) => {
-                        const availableCard = availableCardsMap.get(card.cardId);
-                        if (!availableCard) return;
-                        
-                        const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
-                        const statToUse = availableCard.stat_to_use;
-                        const statTypeToUse = availableCard.stat_type_to_use;
-                        const quantity = card.quantity || 1;
-                        
-                        // Format: "Little John - 3 Combat" if both stat_to_use and stat_type_to_use exist
-                        let formattedName = cardName;
-                        if (statToUse && statTypeToUse) {
-                            formattedName = `${cardName} - ${statToUse} ${statTypeToUse}`;
-                        } else if (statTypeToUse && typeof statTypeToUse === 'string' && statTypeToUse.trim()) {
-                            formattedName = `${cardName} - ${statTypeToUse}`;
-                        } else if (statToUse !== null && statToUse !== undefined) {
-                            formattedName = `${cardName} - ${statToUse}`;
-                        }
-                        
-                        // Add card repeated by quantity
-                        for (let i = 0; i < quantity; i++) {
-                            result.push(formattedName);
-                        }
-                    });
-                    return result;
-                };
-
-                // Helper function to create basic universe cards with type, value_to_use, and bonus appended
-                const createBasicUniverseCards = (cards: any[]) => {
-                    const result: string[] = [];
-                    cards.filter((card: any) => card.type === 'basic-universe').forEach((card: any) => {
-                        const availableCard = availableCardsMap.get(card.cardId);
-                        if (!availableCard) return;
-                        
-                        // Get card name (basic universe cards use card_name)
-                        const cardName = availableCard.card_name || availableCard.name || 'Unknown Card';
-                        const type = availableCard.type;
-                        const valueToUse = availableCard.value_to_use;
-                        const bonus = availableCard.bonus;
-                        const quantity = card.quantity || 1;
-                        
-                        // Format: "Secret Identity - Energy 6 or greater +2" if all three exist
-                        // Format: "Secret Identity - Energy 6 or greater" if only type and value_to_use exist
-                        // Format: "Secret Identity - +2" if only bonus exists
-                        // Format: "Secret Identity" if none exist
-                        let formattedName = cardName;
-                        
-                        // Normalize type, value_to_use, and bonus (trim and check for valid values)
-                        const validType = type && typeof type === 'string' && type.trim();
-                        const trimmedType = validType ? type.trim() : null;
-                        
-                        const validValueToUse = valueToUse && typeof valueToUse === 'string' && valueToUse.trim();
-                        const trimmedValueToUse = validValueToUse ? valueToUse.trim() : null;
-                        
-                        const validBonus = bonus && typeof bonus === 'string' && bonus.trim();
-                        const trimmedBonus = validBonus ? bonus.trim() : null;
-                        
-                        // Build the suffix string
-                        const suffixParts: string[] = [];
-                        
-                        // Add type and value_to_use if they exist
-                        if (trimmedType && trimmedValueToUse) {
-                            suffixParts.push(`${trimmedType} ${trimmedValueToUse}`);
-                        } else if (trimmedType) {
-                            suffixParts.push(trimmedType);
-                        } else if (trimmedValueToUse) {
-                            suffixParts.push(trimmedValueToUse);
-                        }
-                        
-                        // Add bonus if it exists
-                        if (trimmedBonus) {
-                            suffixParts.push(trimmedBonus);
-                        }
-                        
-                        // Format the name with suffix if we have any parts
-                        if (suffixParts.length > 0) {
-                            formattedName = `${cardName} - ${suffixParts.join(' ')}`;
-                        }
-                        
-                        // Add card repeated by quantity
-                        for (let i = 0; i < quantity; i++) {
-                            result.push(formattedName);
-                        }
-                    });
-                    return result;
-                };
-
-                // Helper function to create training cards with type_1, type_2, and bonus appended
-                const createTrainingCards = (cards: any[]) => {
-                    const result: string[] = [];
-                    cards.filter((card: any) => card.type === 'training').forEach((card: any) => {
-                        const availableCard = availableCardsMap.get(card.cardId);
-                        if (!availableCard) return;
-                        
-                        // Get card name (training cards use name or card_name)
-                        const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
-                        const type1 = availableCard.type_1;
-                        const type2 = availableCard.type_2;
-                        const bonus = availableCard.bonus;
-                        const quantity = card.quantity || 1;
-                        
-                        // Format: "Training (Leonidas) - Energy Combat +4" if all three exist
-                        // Format: "Training (Leonidas) - Energy Combat" if only types exist
-                        // Format: "Training (Leonidas) - +4" if only bonus exists
-                        // Format: "Training (Leonidas)" if none exist
-                        let formattedName = cardName;
-                        
-                        // Normalize type_1 and type_2 (trim and check for valid values)
-                        const validType1 = type1 && typeof type1 === 'string' && type1.trim();
-                        const validType2 = type2 && typeof type2 === 'string' && type2.trim();
-                        const trimmedType1 = validType1 ? type1.trim() : null;
-                        const trimmedType2 = validType2 ? type2.trim() : null;
-                        
-                        // Normalize bonus (trim and check for valid value)
-                        const validBonus = bonus && typeof bonus === 'string' && bonus.trim();
-                        const trimmedBonus = validBonus ? bonus.trim() : null;
-                        
-                        // Build the suffix string
-                        const suffixParts: string[] = [];
-                        
-                        // Add type_1 and type_2 if they exist
-                        if (trimmedType1 && trimmedType2) {
-                            suffixParts.push(`${trimmedType1} ${trimmedType2}`);
-                        } else if (trimmedType1) {
-                            suffixParts.push(trimmedType1);
-                        } else if (trimmedType2) {
-                            suffixParts.push(trimmedType2);
-                        }
-                        
-                        // Add bonus if it exists
-                        if (trimmedBonus) {
-                            suffixParts.push(trimmedBonus);
-                        }
-                        
-                        // Format the name with suffix if we have any parts
-                        if (suffixParts.length > 0) {
-                            formattedName = `${cardName} - ${suffixParts.join(' ')}`;
-                        }
-                        
-                        // Add card repeated by quantity
-                        for (let i = 0; i < quantity; i++) {
-                            result.push(formattedName);
-                        }
-                    });
-                    return result;
-                };
-
-                const cardCategories = {
-                    characters: createCharactersArray(deckEditorCards),
-                    special_cards: createSpecialCardsByCharacter(deckEditorCards),
-                    locations: createRepeatedCards(deckEditorCards, 'location'),
-                    missions: createMissionsByMissionSet(deckEditorCards),
-                    events: createEventsByMissionSet(deckEditorCards),
-                    aspects: createRepeatedCards(deckEditorCards, 'aspect'),
-                    advanced_universe: createAdvancedUniverseByCharacter(deckEditorCards),
-                    teamwork: createTeamworkCards(deckEditorCards),
-                    allies: createAllyCards(deckEditorCards),
-                    training: createTrainingCards(deckEditorCards),
-                    basic_universe: createBasicUniverseCards(deckEditorCards),
-                    power_cards: createSortedPowerCards(deckEditorCards)
-                };
-
-                // Collect special card attributes at root level (single values, not arrays)
-                let reserveCharacter: string | null = null;
-                let cataclysmSpecial: string | null = null;
-                let assistSpecial: string | null = null;
-                let ambushSpecial: string | null = null;
-
-                // Get reserve character (reserveCharacterId already declared above for threat calculation)
-                if (reserveCharacterId) {
-                    const reserveCard = deckEditorCards.find((card: any) => card.type === 'character' && card.cardId === reserveCharacterId);
-                    if (reserveCard) {
-                        reserveCharacter = getCardNameFromMap(reserveCard);
-                    }
-                }
-
-                // Collect special card types (get first occurrence of each type)
-                deckEditorCards.filter((card: any) => card.type === 'special').forEach((card: any) => {
-                    const availableCard = availableCardsMap.get(card.cardId);
-                    if (!availableCard) return;
-
-                    const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
-                    const isCataclysm = availableCard.is_cataclysm === true || availableCard.cataclysm === true;
-                    const isAssist = availableCard.is_assist === true || availableCard.assist === true;
-                    const isAmbush = availableCard.is_ambush === true || availableCard.ambush === true;
-
-                    // Set first occurrence of each type (skip if already found)
-                    if (isCataclysm && !cataclysmSpecial) {
-                        cataclysmSpecial = cardName;
-                    }
-                    if (isAssist && !assistSpecial) {
-                        assistSpecial = cardName;
-                    }
-                    if (isAmbush && !ambushSpecial) {
-                        ambushSpecial = cardName;
-                    }
-                });
-
-                const validation = validateDeck(deckEditorCards);
-                const isLegal = validation.errors.length === 0;
-                const isLimited = isDeckLimited;
-
-                const exportData = {
-                    name: deckName,
-                    description: deckDescription,
-                    total_cards: totalCards,
-                    max_energy: maxEnergy,
-                    max_combat: maxCombat,
-                    max_brute_force: maxBruteForce,
-                    max_intelligence: maxIntelligence,
-                    total_energy_icons: iconTotals.Energy || 0,
-                    total_combat_icons: iconTotals.Combat || 0,
-                    total_brute_force_icons: iconTotals['Brute Force'] || 0,
-                    total_intelligence_icons: iconTotals.Intelligence || 0,
-                    total_threat: totalThreat,
-                    legal: isLegal,
-                    limited: isLimited,
-                    export_timestamp: new Date().toISOString(),
-                    exported_by: currentUser.name || currentUser.username || 'Admin',
-                    reserve_character: reserveCharacter,
-                    cataclysm_special: cataclysmSpecial,
-                    assist_special: assistSpecial,
-                    ambush_special: ambushSpecial,
-                    cards: cardCategories
-                };
-
-                const jsonString = JSON.stringify(exportData, null, 2);
-                showExportOverlay(jsonString);
-
-                return exportData;
-            } catch (error: any) {
-                console.error('Error exporting deck:', error);
-                showNotification('Error exporting deck: ' + error.message, 'error');
-                throw error;
-            }
-        };
+    // Helper function to get exported JSON from overlay
+    function getExportedJson(): any {
+        const overlay = document.getElementById('exportJsonOverlay');
+        const jsonString = (overlay as HTMLElement)?.dataset.jsonString;
+        if (!jsonString) return null;
+        return JSON.parse(jsonString);
     }
+
+    // REMOVED: createExportFunction() - now using actual code from deck-export.js
 
     describe('exportDeckAsJson - Basic Functionality', () => {
         it('should export deck with correct structure', async () => {
@@ -771,9 +173,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result).toBeDefined();
             expect(result.cards).toBeDefined();
@@ -795,9 +199,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             mockDeckEditorCards = [];
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.name).toBe('Test Deck Name');
             expect(result.description).toBe('Test deck description');
@@ -818,9 +224,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             mockDeckEditorCards = [];
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.name).toBe('From CurrentDeckData');
             expect(result.description).toBe('Description from CurrentDeckData');
@@ -836,9 +244,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             mockDeckEditorCards = [];
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.name).toBe('Test Deck');
         });
@@ -850,9 +260,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             mockDeckEditorCards = [];
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.total_cards).toBe(0);
             expect(result.max_energy).toBe(0);
@@ -868,9 +280,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
         it('should deny access to non-ADMIN users', async () => {
             (window as any).currentUser = { role: 'USER' };
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result).toBeUndefined();
             expect(mockShowExportOverlay).not.toHaveBeenCalled();
@@ -878,9 +292,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
         it('should deny access when no user is logged in', async () => {
             (window as any).currentUser = null;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result).toBeUndefined();
             expect(mockShowExportOverlay).not.toHaveBeenCalled();
@@ -893,9 +309,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             mockDeckEditorCards = [];
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.exported_by).toBe('Test Admin');
             expect(result.export_timestamp).toBeDefined();
@@ -917,9 +335,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             mockDeckEditorCards = [];
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.exported_by).toBe('testuser');
         });
@@ -937,9 +357,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.total_threat).toBe(38); // 18 + 20
         });
@@ -955,9 +377,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.total_threat).toBe(7); // 3 + (2 * 2)
         });
@@ -973,9 +397,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.total_threat).toBe(21); // 18 + 3
         });
@@ -1003,9 +429,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             (window as any).currentDeckData = mockCurrentDeckData;
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.total_threat).toBe(20); // Adjusted from 18 to 20
         });
@@ -1033,9 +461,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             (window as any).currentDeckData = mockCurrentDeckData;
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.total_threat).toBe(19); // Adjusted from 18 to 19
         });
@@ -1063,9 +493,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             (window as any).currentDeckData = mockCurrentDeckData;
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.total_threat).toBe(20); // Adjusted from 19 to 20
         });
@@ -1102,9 +534,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             (window as any).currentDeckData = mockCurrentDeckData;
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.total_threat).toBe(37); // 18 + 19 (no adjustment for Victory Harben since it's not reserve)
         });
@@ -1125,9 +559,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.total_threat).toBe(36); // 18 * 2
         });
@@ -1147,9 +583,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.special_cards).toEqual({
                 'Captain Nemo': ['Card 1', 'Card 2'],
@@ -1166,9 +604,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.special_cards).toEqual({
                 'Any Character': ['Universal Card']
@@ -1184,9 +624,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.special_cards).toEqual({
                 'Fallback Character': ['Card 1']
@@ -1202,9 +644,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.special_cards).toEqual({
                 'Any Character': ['Card 1']
@@ -1220,9 +664,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.special_cards).toEqual({
                 'Test Character': ['Card 1', 'Card 1', 'Card 1']
@@ -1244,9 +690,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.missions).toEqual({
                 'Battle at Olympus': ['Mission 1', 'Mission 2'],
@@ -1263,9 +711,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.missions).toEqual({
                 'Unknown Mission Set': ['Mission 1']
@@ -1281,9 +731,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.missions).toEqual({
                 'Test Set': ['Mission 1', 'Mission 1', 'Mission 1', 'Mission 1']
@@ -1303,9 +755,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.events).toEqual({
                 'Set A': ['Event 1'],
@@ -1322,9 +776,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.events).toEqual({
                 'Unknown Mission Set': ['Event 1']
@@ -1346,9 +802,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.advanced_universe).toEqual({
                 'Ra': ['Card 1', 'Card 2'],
@@ -1365,9 +823,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.advanced_universe).toEqual({
                 'Unknown Character': ['Card 1']
@@ -1407,9 +867,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(Array.isArray(result.cards.characters)).toBe(true);
             expect(typeof result.cards.special_cards).toBe('object');
@@ -1439,9 +901,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Characters can be strings or objects (for reserve)
             expect(result.cards.characters).toBeDefined();
@@ -1458,9 +922,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // The function uses quantity || 1, so quantity 0 becomes 1
             // This is expected behavior - quantity 0 shouldn't exist in a deck in practice
@@ -1478,9 +944,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Character should be in array (could be string or object for reserve)
             expect(result.cards.characters).toBeDefined();
@@ -1499,9 +967,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             mockDeckEditorCards = [{ cardId: 'char1', type: 'character', quantity: 1 }];
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = new Map(); // Start empty
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(mockLoadAvailableCards).toHaveBeenCalled();
             // Note: In real scenario, cards might still not be loaded after 1 second
@@ -1519,9 +989,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.legal).toBe(false);
         });
@@ -1535,9 +1007,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             mockDeckEditorCards = [];
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.limited).toBe(true);
         });
@@ -1555,9 +1029,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.max_energy).toBe(6);
             expect(result.max_combat).toBe(5);
@@ -1582,9 +1058,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Should only count power (3) + special (2) = 5
             // Excludes character (1), mission (1), location (1)
@@ -1600,9 +1078,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.max_energy).toBe(0);
             expect(result.max_combat).toBe(0);
@@ -1619,9 +1099,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.total_threat).toBe(0);
         });
@@ -1643,9 +1125,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Energy: power1 (2x Energy) + power2 multi (1x all types) + special1 (3x Energy) = 2+1+3 = 6
             // Combat: power2 multi (1x) + special1 (3x Combat) + teamwork1 (1x Combat from to_use: "6 Combat") = 1+3+1 = 5
@@ -1668,9 +1152,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.total_energy_icons).toBe(0);
             expect(result.total_combat_icons).toBe(0);
@@ -1723,9 +1209,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Verify structure
             expect(result).toBeDefined();
@@ -1780,9 +1268,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             (window as any).currentDeckData = mockCurrentDeckData;
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.reserve_character).toBe('Captain Nemo');
             expect(typeof result.reserve_character).toBe('string');
@@ -1801,9 +1291,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             (window as any).currentDeckData = mockCurrentDeckData;
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.reserve_character).toBeNull();
         });
@@ -1818,9 +1310,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             (window as any).currentDeckData = null;
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.reserve_character).toBeNull();
         });
@@ -1836,9 +1330,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cataclysm_special).toBe('Fairy Protection');
             expect(typeof result.cataclysm_special).toBe('string');
@@ -1853,9 +1349,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cataclysm_special).toBe('Fairy Protection');
         });
@@ -1869,9 +1367,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cataclysm_special).toBeNull();
         });
@@ -1887,9 +1387,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cataclysm_special).toBe('First Cataclysm');
         });
@@ -1903,9 +1405,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.assist_special).toBe('Charge into Battle!');
             expect(typeof result.assist_special).toBe('string');
@@ -1920,9 +1424,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.assist_special).toBe('Charge into Battle!');
         });
@@ -1936,9 +1442,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.assist_special).toBeNull();
         });
@@ -1954,9 +1462,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.assist_special).toBe('First Assist');
         });
@@ -1970,9 +1480,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.ambush_special).toBe('Bodhisattva: Enlightened One');
             expect(typeof result.ambush_special).toBe('string');
@@ -1987,9 +1499,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.ambush_special).toBe('Bodhisattva: Enlightened One');
         });
@@ -2003,9 +1517,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.ambush_special).toBeNull();
         });
@@ -2021,9 +1537,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.ambush_special).toBe('First Ambush');
         });
@@ -2049,9 +1567,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             (window as any).currentDeckData = mockCurrentDeckData;
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.reserve_character).toBe('Captain Nemo');
             expect(result.cataclysm_special).toBe('Fairy Protection');
@@ -2081,9 +1601,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // First card should be captured as cataclysm (checked first in loop)
             expect(result.cataclysm_special).toBe('Multi-Type Card');
@@ -2105,9 +1627,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cataclysm_special).toBeNull();
             expect(result.assist_special).toBeNull();
@@ -2124,9 +1648,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cataclysm_special).toBeNull();
             expect(result.assist_special).toBeNull();
@@ -2149,12 +1675,14 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             (window as any).currentDeckData = mockCurrentDeckData;
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
-            // When card is missing from availableCardsMap, getCardNameFromMap returns 'Unknown Card'
-            expect(result.reserve_character).toBe('Unknown Card');
+            // When card is missing from availableCardsMap, reserve_character is null
+            expect(result.reserve_character).toBeNull();
         });
 
         it('should use card_name if name is not present for special cards', async () => {
@@ -2175,9 +1703,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // The export function uses: availableCard.name || availableCard.card_name || 'Unknown Card'
             // So if name is undefined, it should use card_name
@@ -2192,9 +1722,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.reserve_character).toBeNull();
             expect(result.cataclysm_special).toBeNull();
@@ -2228,9 +1760,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Expected order: by value (1, 3, 3, 3, 3, 5, 5, 5), then by type
             // Value 1: Combat
@@ -2261,9 +1795,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Should be sorted: 3 Combat (x3), 5 Energy (x2), 8 Energy (x1)
             expect(result.cards.power_cards).toEqual([
@@ -2289,9 +1825,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Should sort: Energy (1), then Multi Power/Multi-Power (both order 5)
             expect(result.cards.power_cards[0]).toBe('5 - Energy');
@@ -2318,9 +1856,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Expected order: Energy, Combat, Brute Force, Intelligence, Multi Power, Any-Power
             expect(result.cards.power_cards).toEqual([
@@ -2389,9 +1929,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Expected sorted order: by value (1, 2, 3, 4, 5, 6, 7, 8), then by type
             expect(result.cards.power_cards).toEqual([
@@ -2431,9 +1973,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.power_cards).toEqual([]);
             expect(Array.isArray(result.cards.power_cards)).toBe(true);
@@ -2448,9 +1992,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.power_cards).toEqual(['5 - Energy']);
         });
@@ -2468,9 +2014,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.power_cards).toEqual([
                 '10 - Combat',
@@ -2492,9 +2040,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.power_cards).toEqual([
                 '1 - Energy',
@@ -2516,9 +2066,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Invalid format should be sorted last (value 999), but should still be included
             expect(result.cards.power_cards).toContain('3 - Combat');
@@ -2547,9 +2099,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // All should be present and sorted together
             expect(result.cards.power_cards).toEqual([
@@ -2572,9 +2126,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Both Any-Power and Any Power should be treated the same (order 6)
             expect(result.cards.power_cards[0]).toBe('5 - Energy');
@@ -2597,9 +2153,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Should be sorted: Energy (x4), Combat (x2), Brute Force (x3), Intelligence (x1)
             expect(result.cards.power_cards).toEqual([
@@ -2629,9 +2187,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Regex handles whitespace variations with \s*
             expect(result.cards.power_cards).toHaveLength(3);
@@ -2676,9 +2236,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.teamwork).toEqual([
                 '6 Combat - Brute Force + Energy',
@@ -2700,9 +2262,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.teamwork).toEqual(['6 Combat']);
         });
@@ -2719,9 +2283,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.teamwork).toEqual(['6 Combat']);
         });
@@ -2738,9 +2304,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.teamwork).toEqual(['6 Combat']);
         });
@@ -2757,9 +2325,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.teamwork).toEqual(['7 Combat - Intelligence + Energy']);
         });
@@ -2776,9 +2346,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.teamwork).toEqual([
                 '7 Combat - Intelligence + Energy',
@@ -2803,9 +2375,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.training).toEqual(['Training (Leonidas) - Energy Combat +4']);
         });
@@ -2823,9 +2397,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.training).toEqual(['Training (Leonidas) - Energy Combat']);
         });
@@ -2842,9 +2418,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.training).toEqual(['Training (Leonidas) - Energy']);
         });
@@ -2861,9 +2439,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.training).toEqual(['Training (Leonidas) - Combat']);
         });
@@ -2880,9 +2460,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.training).toEqual(['Training (Leonidas) - +4']);
         });
@@ -2898,9 +2480,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.training).toEqual(['Training (Leonidas)']);
         });
@@ -2919,9 +2503,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.training).toEqual([
                 'Training (Cultists) - Energy Combat +4',
@@ -2941,9 +2527,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result).toBeDefined();
             expect(result.cards).toBeDefined();
@@ -2964,9 +2552,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.training).toEqual(['Training (Leonidas) - Energy Combat +4']);
         });
@@ -2985,9 +2575,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.training).toEqual(['Training (Leonidas) - Energy Combat +4']);
         });
@@ -3006,9 +2598,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             // Missing card should be skipped (not added to result)
             expect(result.cards.teamwork).toEqual(['6 Combat - Brute Force + Energy']);
@@ -3036,9 +2630,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.teamwork).toContain('6 Combat - Brute Force + Energy');
             expect(result.cards.teamwork).toContain('7 Any-Power - Any-Power / Any-Power');
@@ -3061,9 +2657,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.basic_universe).toEqual(['Secret Identity - Energy 6 or greater +2']);
         });
@@ -3081,9 +2679,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.basic_universe).toEqual(['Secret Identity - Energy 6 or greater']);
         });
@@ -3100,9 +2700,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.basic_universe).toEqual(['Secret Identity - Energy']);
         });
@@ -3119,9 +2721,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.basic_universe).toEqual(['Secret Identity - 6 or greater']);
         });
@@ -3138,9 +2742,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.basic_universe).toEqual(['Secret Identity - +2']);
         });
@@ -3156,9 +2762,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.basic_universe).toEqual(['Secret Identity']);
         });
@@ -3177,9 +2785,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.basic_universe).toEqual([
                 'Secret Identity - Energy 6 or greater +2',
@@ -3200,9 +2810,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.basic_universe).toEqual([]);
         });
@@ -3221,9 +2833,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.basic_universe).toEqual(['Secret Identity - Energy 6 or greater +2']);
         });
@@ -3242,9 +2856,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.basic_universe).toEqual(['Secret Identity - Energy 6 or greater +2']);
         });
@@ -3277,9 +2893,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
             (window as any).deckEditorCards = mockDeckEditorCards;
             (window as any).availableCardsMap = mockAvailableCardsMap;
-            (window as any).exportDeckAsJson = createExportFunction();
+            const promise = exportDeckAsJson();
+            await jest.runAllTimersAsync();
+            await promise;
 
-            const result = await (window as any).exportDeckAsJson();
+            const result = getExportedJson();
 
             expect(result.cards.basic_universe).toEqual([
                 'Secret Identity - Energy 6 or greater +2',

@@ -11,6 +11,16 @@
  * - Real-world data scenarios
  */
 
+import fs from 'fs';
+import path from 'path';
+
+// Polyfill for TextEncoder/TextDecoder if needed
+if (typeof global.TextEncoder === 'undefined') {
+    const { TextEncoder, TextDecoder } = require('util');
+    global.TextEncoder = TextEncoder;
+    global.TextDecoder = TextDecoder;
+}
+
 describe('Deck Basic Universe Card Export - Unit Tests', () => {
     let mockCurrentUser: any;
     let mockDeckEditorCards: any[];
