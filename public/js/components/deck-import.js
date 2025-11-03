@@ -205,8 +205,8 @@ async function processImportDeck() {
         console.log('🔍 IMPORT: Starting import - Characters:', characterCardsToImport.length, 'Special:', specialCardsToImport.length, 'Locations:', locationCardsToImport.length, 'Missions:', missionCardsToImport.length, 'Events:', eventCardsToImport.length, 'Aspects:', aspectCardsToImport.length, 'Advanced Universe:', advancedUniverseCardsToImport.length, 'Teamwork:', teamworkCardsToImport.length, 'Allies:', allyCardsToImport.length, 'Training:', trainingCardsToImport.length, 'Basic Universe:', basicUniverseCardsToImport.length);
         
         for (const cardEntry of cardsToImport) {
-            // Process characters, special cards, locations, missions, events, aspects, advanced-universe, teamwork, ally-universe, training, and basic-universe
-            if (cardEntry.type !== 'character' && cardEntry.type !== 'special' && cardEntry.type !== 'location' && cardEntry.type !== 'mission' && cardEntry.type !== 'event' && cardEntry.type !== 'aspect' && cardEntry.type !== 'advanced-universe' && cardEntry.type !== 'teamwork' && cardEntry.type !== 'ally-universe' && cardEntry.type !== 'training' && cardEntry.type !== 'basic-universe') {
+        // Process characters, special cards, locations, missions, events, aspects, advanced-universe, teamwork, ally-universe, training, basic-universe, and power
+        if (cardEntry.type !== 'character' && cardEntry.type !== 'special' && cardEntry.type !== 'location' && cardEntry.type !== 'mission' && cardEntry.type !== 'event' && cardEntry.type !== 'aspect' && cardEntry.type !== 'advanced-universe' && cardEntry.type !== 'teamwork' && cardEntry.type !== 'ally-universe' && cardEntry.type !== 'training' && cardEntry.type !== 'basic-universe' && cardEntry.type !== 'power') {
                 continue;
             }
             
@@ -221,7 +221,8 @@ async function processImportDeck() {
             else if (cardEntry.type === 'teamwork') cardTypeLabel = 'TEAMWORK';
             else if (cardEntry.type === 'ally-universe') cardTypeLabel = 'ALLY';
             else if (cardEntry.type === 'training') cardTypeLabel = 'TRAINING';
-            else if (cardEntry.type === 'basic-universe') cardTypeLabel = 'BASIC_UNIVERSE';
+        else if (cardEntry.type === 'basic-universe') cardTypeLabel = 'BASIC_UNIVERSE';
+        else if (cardEntry.type === 'power') cardTypeLabel = 'POWER';
             
             // For teamwork, ally, training, and basic-universe cards, use special lookup functions that match by name AND additional fields
             let cardId;
@@ -535,12 +536,13 @@ async function processImportDeck() {
         const allyCardsToAdd = importList.filter(c => c.type === 'ally-universe');
         const trainingCardsToAdd = importList.filter(c => c.type === 'training');
         const basicUniverseCardsToAdd = importList.filter(c => c.type === 'basic-universe');
-        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length, 'Locations:', locationCardsToAdd.length, 'Missions:', missionCardsToAdd.length, 'Events:', eventCardsToAdd.length, 'Aspects:', aspectCardsToAdd.length, 'Advanced Universe:', advancedUniverseCardsToAdd.length, 'Teamwork:', teamworkCardsToAdd.length, 'Allies:', allyCardsToAdd.length, 'Training:', trainingCardsToAdd.length, 'Basic Universe:', basicUniverseCardsToAdd.length);
+        const powerCardsToAdd = importList.filter(c => c.type === 'power');
+        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length, 'Locations:', locationCardsToAdd.length, 'Missions:', missionCardsToAdd.length, 'Events:', eventCardsToAdd.length, 'Aspects:', aspectCardsToAdd.length, 'Advanced Universe:', advancedUniverseCardsToAdd.length, 'Teamwork:', teamworkCardsToAdd.length, 'Allies:', allyCardsToAdd.length, 'Training:', trainingCardsToAdd.length, 'Basic Universe:', basicUniverseCardsToAdd.length, 'Power:', powerCardsToAdd.length);
         console.log('🚀 IMPORT: Current deckEditorCards before import:', window.deckEditorCards?.length || 0, 'cards');
 
         for (const importCard of importList) {
-            // Process characters, special cards, locations, missions, events, aspects, advanced-universe, teamwork, ally-universe, training, and basic-universe
-            if (importCard.type !== 'character' && importCard.type !== 'special' && importCard.type !== 'location' && importCard.type !== 'mission' && importCard.type !== 'event' && importCard.type !== 'aspect' && importCard.type !== 'advanced-universe' && importCard.type !== 'teamwork' && importCard.type !== 'ally-universe' && importCard.type !== 'training' && importCard.type !== 'basic-universe') {
+            // Process characters, special cards, locations, missions, events, aspects, advanced-universe, teamwork, ally-universe, training, basic-universe, and power
+            if (importCard.type !== 'character' && importCard.type !== 'special' && importCard.type !== 'location' && importCard.type !== 'mission' && importCard.type !== 'event' && importCard.type !== 'aspect' && importCard.type !== 'advanced-universe' && importCard.type !== 'teamwork' && importCard.type !== 'ally-universe' && importCard.type !== 'training' && importCard.type !== 'basic-universe' && importCard.type !== 'power') {
                 continue;
             }
             
@@ -556,6 +558,7 @@ async function processImportDeck() {
             else if (importCard.type === 'ally-universe') cardTypeLabel = 'ALLY';
             else if (importCard.type === 'training') cardTypeLabel = 'TRAINING';
             else if (importCard.type === 'basic-universe') cardTypeLabel = 'BASIC_UNIVERSE';
+            else if (importCard.type === 'power') cardTypeLabel = 'POWER';
             
             try {
                 // Check card data before adding
@@ -724,8 +727,8 @@ async function processImportDeck() {
                         console.error(`❌ ${cardTypeLabel} IMPORT: addCardToEditor function not available`);
                         throw new Error('addCardToEditor function not available');
                     }
-                } else if (importCard.type === 'mission' || importCard.type === 'event' || importCard.type === 'aspect' || importCard.type === 'advanced-universe' || importCard.type === 'teamwork' || importCard.type === 'ally-universe' || importCard.type === 'training' || importCard.type === 'basic-universe') {
-                    // Mission, event, aspect, advanced-universe, teamwork, ally-universe, training, and basic-universe cards can be added directly (no duplicate checking needed, similar to special cards)
+                } else if (importCard.type === 'mission' || importCard.type === 'event' || importCard.type === 'aspect' || importCard.type === 'advanced-universe' || importCard.type === 'teamwork' || importCard.type === 'ally-universe' || importCard.type === 'training' || importCard.type === 'basic-universe' || importCard.type === 'power') {
+                    // Mission, event, aspect, advanced-universe, teamwork, ally-universe, training, basic-universe, and power cards can be added directly (no duplicate checking needed, similar to special cards)
                     // But we should auto-select default art if alternate images exist
                     let selectedAlternateImage = null;
                     if (cardData && cardData.alternateImages && cardData.alternateImages.length > 0) {
@@ -1229,9 +1232,25 @@ function extractCardsFromImportData(cardsData) {
     }
 
     // Power cards (array of strings, format: "5 - Energy")
-    // if (Array.isArray(cardsData.power_cards)) {
-    //     cardsData.power_cards.forEach(cardName => addCard(cardName, 'power'));
-    // }
+    if (Array.isArray(cardsData.power_cards)) {
+        cardsData.power_cards.forEach(cardName => {
+            if (typeof cardName === 'string' && cardName.trim()) {
+                const trimmed = cardName.trim();
+                // Expect "<value> - <type>"; tolerate missing hyphen and extra spaces
+                const m = trimmed.match(/^(\d+)\s*-\s*(.+)$/);
+                if (m) {
+                    const valuePart = parseInt(m[1], 10);
+                    const typePart = m[2].trim();
+                    // Normalize power type capitalization/spelling to match DB (e.g., "Any-Power", "Multi Power")
+                    const normalizedType = typePart;
+                    result.push({ name: `${valuePart} - ${normalizedType}`, type: 'power' });
+                } else {
+                    // Fallback: push as-is; lookup will attempt by name
+                    result.push({ name: trimmed, type: 'power' });
+                }
+            }
+        });
+    }
 
     return result;
 }
