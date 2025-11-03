@@ -235,17 +235,17 @@ describe('Export Functionality', () => {
 
                 // Create export data structure with data at top level
                 const exportData = {
-                    name: deckName,
-                    description: deckDescription,
-                    total_cards: totalCards,
-                    max_energy: maxEnergy,
-                    max_combat: maxCombat,
-                    max_brute_force: maxBruteForce,
-                    max_intelligence: maxIntelligence,
-                    total_threat: totalThreat,
-                    legal: isLegal,
-                    limited: isLimited,
-                    export_timestamp: new Date().toISOString(),
+                        name: deckName,
+                        description: deckDescription,
+                        total_cards: totalCards,
+                        max_energy: maxEnergy,
+                        max_combat: maxCombat,
+                        max_brute_force: maxBruteForce,
+                        max_intelligence: maxIntelligence,
+                        total_threat: totalThreat,
+                        legal: isLegal,
+                        limited: isLimited,
+                        export_timestamp: new Date().toISOString(),
                     exported_by: currentUser.name || currentUser.username || 'Admin',
                     cards: cardCategories
                 };

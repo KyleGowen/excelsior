@@ -359,6 +359,66 @@ async function exportDeckAsJson() {
             return result;
         };
 
+        // Helper function to create basic universe cards with type, value_to_use, and bonus appended
+        const createBasicUniverseCards = (cards) => {
+            const result = [];
+            cards.filter(card => card.type === 'basic-universe').forEach(card => {
+                const availableCard = window.availableCardsMap.get(card.cardId);
+                if (!availableCard) return;
+                
+                // Get card name (basic universe cards use card_name)
+                const cardName = availableCard.card_name || availableCard.name || 'Unknown Card';
+                const type = availableCard.type;
+                const valueToUse = availableCard.value_to_use;
+                const bonus = availableCard.bonus;
+                const quantity = card.quantity || 1;
+                
+                // Format: "Secret Identity - Energy 6 or greater +2" if all three exist
+                // Format: "Secret Identity - Energy 6 or greater" if only type and value_to_use exist
+                // Format: "Secret Identity - +2" if only bonus exists
+                // Format: "Secret Identity" if none exist
+                let formattedName = cardName;
+                
+                // Normalize type, value_to_use, and bonus (trim and check for valid values)
+                const validType = type && typeof type === 'string' && type.trim();
+                const trimmedType = validType ? type.trim() : null;
+                
+                const validValueToUse = valueToUse && typeof valueToUse === 'string' && valueToUse.trim();
+                const trimmedValueToUse = validValueToUse ? valueToUse.trim() : null;
+                
+                const validBonus = bonus && typeof bonus === 'string' && bonus.trim();
+                const trimmedBonus = validBonus ? bonus.trim() : null;
+                
+                // Build the suffix string
+                const suffixParts = [];
+                
+                // Add type and value_to_use if they exist
+                if (trimmedType && trimmedValueToUse) {
+                    suffixParts.push(`${trimmedType} ${trimmedValueToUse}`);
+                } else if (trimmedType) {
+                    suffixParts.push(trimmedType);
+                } else if (trimmedValueToUse) {
+                    suffixParts.push(trimmedValueToUse);
+                }
+                
+                // Add bonus if it exists
+                if (trimmedBonus) {
+                    suffixParts.push(trimmedBonus);
+                }
+                
+                // Format the name with suffix if we have any parts
+                if (suffixParts.length > 0) {
+                    formattedName = `${cardName} - ${suffixParts.join(' ')}`;
+                }
+                
+                // Add card repeated by quantity
+                for (let i = 0; i < quantity; i++) {
+                    result.push(formattedName);
+                }
+            });
+            return result;
+        };
+
         // Helper function to create training cards with type_1, type_2, and bonus appended
         const createTrainingCards = (cards) => {
             const result = [];
@@ -611,7 +671,7 @@ async function exportDeckAsJson() {
             teamwork: createTeamworkCards(window.deckEditorCards),
             allies: createAllyCards(window.deckEditorCards),
             training: createTrainingCards(window.deckEditorCards),
-            basic_universe: createRepeatedCards(window.deckEditorCards, 'basic-universe'),
+            basic_universe: createBasicUniverseCards(window.deckEditorCards),
             power_cards: createSortedPowerCards(window.deckEditorCards)
         };
         

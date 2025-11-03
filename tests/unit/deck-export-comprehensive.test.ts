@@ -548,6 +548,66 @@ describe('Deck Export Component - Comprehensive Tests', () => {
                     return result;
                 };
 
+                // Helper function to create basic universe cards with type, value_to_use, and bonus appended
+                const createBasicUniverseCards = (cards: any[]) => {
+                    const result: string[] = [];
+                    cards.filter((card: any) => card.type === 'basic-universe').forEach((card: any) => {
+                        const availableCard = availableCardsMap.get(card.cardId);
+                        if (!availableCard) return;
+                        
+                        // Get card name (basic universe cards use card_name)
+                        const cardName = availableCard.card_name || availableCard.name || 'Unknown Card';
+                        const type = availableCard.type;
+                        const valueToUse = availableCard.value_to_use;
+                        const bonus = availableCard.bonus;
+                        const quantity = card.quantity || 1;
+                        
+                        // Format: "Secret Identity - Energy 6 or greater +2" if all three exist
+                        // Format: "Secret Identity - Energy 6 or greater" if only type and value_to_use exist
+                        // Format: "Secret Identity - +2" if only bonus exists
+                        // Format: "Secret Identity" if none exist
+                        let formattedName = cardName;
+                        
+                        // Normalize type, value_to_use, and bonus (trim and check for valid values)
+                        const validType = type && typeof type === 'string' && type.trim();
+                        const trimmedType = validType ? type.trim() : null;
+                        
+                        const validValueToUse = valueToUse && typeof valueToUse === 'string' && valueToUse.trim();
+                        const trimmedValueToUse = validValueToUse ? valueToUse.trim() : null;
+                        
+                        const validBonus = bonus && typeof bonus === 'string' && bonus.trim();
+                        const trimmedBonus = validBonus ? bonus.trim() : null;
+                        
+                        // Build the suffix string
+                        const suffixParts: string[] = [];
+                        
+                        // Add type and value_to_use if they exist
+                        if (trimmedType && trimmedValueToUse) {
+                            suffixParts.push(`${trimmedType} ${trimmedValueToUse}`);
+                        } else if (trimmedType) {
+                            suffixParts.push(trimmedType);
+                        } else if (trimmedValueToUse) {
+                            suffixParts.push(trimmedValueToUse);
+                        }
+                        
+                        // Add bonus if it exists
+                        if (trimmedBonus) {
+                            suffixParts.push(trimmedBonus);
+                        }
+                        
+                        // Format the name with suffix if we have any parts
+                        if (suffixParts.length > 0) {
+                            formattedName = `${cardName} - ${suffixParts.join(' ')}`;
+                        }
+                        
+                        // Add card repeated by quantity
+                        for (let i = 0; i < quantity; i++) {
+                            result.push(formattedName);
+                        }
+                    });
+                    return result;
+                };
+
                 // Helper function to create training cards with type_1, type_2, and bonus appended
                 const createTrainingCards = (cards: any[]) => {
                     const result: string[] = [];
@@ -619,7 +679,7 @@ describe('Deck Export Component - Comprehensive Tests', () => {
                     teamwork: createTeamworkCards(deckEditorCards),
                     allies: createAllyCards(deckEditorCards),
                     training: createTrainingCards(deckEditorCards),
-                    basic_universe: createRepeatedCards(deckEditorCards, 'basic-universe'),
+                    basic_universe: createBasicUniverseCards(deckEditorCards),
                     power_cards: createSortedPowerCards(deckEditorCards)
                 };
 
@@ -2983,6 +3043,250 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             expect(result.cards.teamwork).toContain('6 Combat - Brute Force + Energy');
             expect(result.cards.teamwork).toContain('7 Any-Power - Any-Power / Any-Power');
             expect(result.cards.teamwork).toContain('8 Energy - Combat + Intelligence');
+        });
+    });
+
+    describe('Basic Universe Cards Export - Enhanced Format', () => {
+        it('should export basic universe cards with type, value_to_use, and bonus appended', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'basic1', type: 'basic-universe', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('basic1', { 
+                card_name: 'Secret Identity',
+                type: 'Energy',
+                value_to_use: '6 or greater',
+                bonus: '+2'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.basic_universe).toEqual(['Secret Identity - Energy 6 or greater +2']);
+        });
+
+        it('should export basic universe cards with only type and value_to_use (no bonus)', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'basic1', type: 'basic-universe', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('basic1', { 
+                card_name: 'Secret Identity',
+                type: 'Energy',
+                value_to_use: '6 or greater'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.basic_universe).toEqual(['Secret Identity - Energy 6 or greater']);
+        });
+
+        it('should export basic universe cards with only type (no value_to_use, no bonus)', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'basic1', type: 'basic-universe', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('basic1', { 
+                card_name: 'Secret Identity',
+                type: 'Energy'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.basic_universe).toEqual(['Secret Identity - Energy']);
+        });
+
+        it('should export basic universe cards with only value_to_use (no type, no bonus)', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'basic1', type: 'basic-universe', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('basic1', { 
+                card_name: 'Secret Identity',
+                value_to_use: '6 or greater'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.basic_universe).toEqual(['Secret Identity - 6 or greater']);
+        });
+
+        it('should export basic universe cards with only bonus (no type, no value_to_use)', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'basic1', type: 'basic-universe', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('basic1', { 
+                card_name: 'Secret Identity',
+                bonus: '+2'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.basic_universe).toEqual(['Secret Identity - +2']);
+        });
+
+        it('should export basic universe cards without type, value_to_use, or bonus', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'basic1', type: 'basic-universe', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('basic1', { 
+                card_name: 'Secret Identity'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.basic_universe).toEqual(['Secret Identity']);
+        });
+
+        it('should handle multiple quantities of same basic universe card', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'basic1', type: 'basic-universe', quantity: 3 }
+            ];
+
+            mockAvailableCardsMap.set('basic1', { 
+                card_name: 'Secret Identity',
+                type: 'Energy',
+                value_to_use: '6 or greater',
+                bonus: '+2'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.basic_universe).toEqual([
+                'Secret Identity - Energy 6 or greater +2',
+                'Secret Identity - Energy 6 or greater +2',
+                'Secret Identity - Energy 6 or greater +2'
+            ]);
+        });
+
+        it('should handle basic universe cards missing from availableCardsMap', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'basic1', type: 'basic-universe', quantity: 1 },
+                { cardId: 'char1', type: 'character', quantity: 1 }
+            ];
+
+            // Don't add basic1 to map - card should be skipped
+            // Add at least one other card to ensure export doesn't fail completely
+            mockAvailableCardsMap.set('char1', { name: 'Test Character' });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.basic_universe).toEqual([]);
+        });
+
+        it('should handle whitespace in type, value_to_use, and bonus fields', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'basic1', type: 'basic-universe', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('basic1', { 
+                card_name: 'Secret Identity',
+                type: ' Energy ',
+                value_to_use: ' 6 or greater ',
+                bonus: ' +2 '
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.basic_universe).toEqual(['Secret Identity - Energy 6 or greater +2']);
+        });
+
+        it('should handle basic universe cards with name field instead of card_name', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'basic1', type: 'basic-universe', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('basic1', { 
+                name: 'Secret Identity',
+                type: 'Energy',
+                value_to_use: '6 or greater',
+                bonus: '+2'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.basic_universe).toEqual(['Secret Identity - Energy 6 or greater +2']);
+        });
+
+        it('should handle multiple different basic universe cards', async () => {
+            mockDeckEditorCards = [
+                { cardId: 'basic1', type: 'basic-universe', quantity: 1 },
+                { cardId: 'basic2', type: 'basic-universe', quantity: 2 },
+                { cardId: 'basic3', type: 'basic-universe', quantity: 1 }
+            ];
+
+            mockAvailableCardsMap.set('basic1', { 
+                card_name: 'Secret Identity',
+                type: 'Energy',
+                value_to_use: '6 or greater',
+                bonus: '+2'
+            });
+            mockAvailableCardsMap.set('basic2', { 
+                card_name: 'Longbow',
+                type: 'Combat',
+                value_to_use: '7 or greater',
+                bonus: '+3'
+            });
+            mockAvailableCardsMap.set('basic3', { 
+                card_name: 'Flintlock',
+                type: 'Brute Force',
+                value_to_use: '5 or greater',
+                bonus: '+1'
+            });
+
+            (window as any).deckEditorCards = mockDeckEditorCards;
+            (window as any).availableCardsMap = mockAvailableCardsMap;
+            (window as any).exportDeckAsJson = createExportFunction();
+
+            const result = await (window as any).exportDeckAsJson();
+
+            expect(result.cards.basic_universe).toEqual([
+                'Secret Identity - Energy 6 or greater +2',
+                'Longbow - Combat 7 or greater +3',
+                'Longbow - Combat 7 or greater +3',
+                'Flintlock - Brute Force 5 or greater +1'
+            ]);
         });
     });
 });
