@@ -1316,6 +1316,9 @@ function closeExportOverlay() {
  * and provides visual feedback
  * Uses modern Clipboard API if available, falls back to execCommand for older browsers or non-HTTPS
  */
+// Track if feedback is currently showing to prevent double flashing
+let isShowingCopyFeedback = false;
+
 function copyJsonToClipboard() {
     const overlay = document.getElementById('exportJsonOverlay');
     const jsonString = overlay?.dataset.jsonString;
@@ -1325,8 +1328,19 @@ function copyJsonToClipboard() {
         return;
     }
     
+    // Prevent multiple feedback triggers if already showing
+    if (isShowingCopyFeedback) {
+        return;
+    }
+    
     // Helper function to provide visual feedback
     const showCopyFeedback = () => {
+        // Guard against double feedback
+        if (isShowingCopyFeedback) {
+            return;
+        }
+        
+        isShowingCopyFeedback = true;
         const copyBtn = document.querySelector('.copy-button');
         const jsonContent = document.getElementById('exportJsonContent');
         const jsonContainer = document.querySelector('.json-container');
@@ -1334,17 +1348,32 @@ function copyJsonToClipboard() {
         if (copyBtn) {
             // Enhanced button flash effect
             const originalTitle = copyBtn.title;
+            const originalBackground = copyBtn.style.background;
+            const originalBorderColor = copyBtn.style.borderColor;
+            const originalBoxShadow = copyBtn.style.boxShadow;
+            const originalTransition = copyBtn.style.transition;
+            
             copyBtn.title = 'Copied!';
             
-            // Add flash animation class
-            copyBtn.classList.add('copy-flash');
-            
-            // Enhanced button styling
+            // Enhanced button styling - SET BEFORE adding class to avoid animation restart
             copyBtn.style.background = 'rgba(78, 205, 196, 0.6)';
             copyBtn.style.borderColor = '#4ecdc4';
             copyBtn.style.boxShadow = '0 0 20px rgba(78, 205, 196, 0.8), 0 0 40px rgba(78, 205, 196, 0.4)';
-            copyBtn.style.transform = 'scale(1.1)';
+            // NOTE: Don't set transform inline - let the CSS animation handle it
+            // Setting transform inline conflicts with the CSS animation
             copyBtn.style.transition = 'all 0.3s ease';
+            
+            // Force a reflow to ensure styles are applied before animation
+            void copyBtn.offsetHeight;
+            
+            // Remove class first if it exists to restart animation
+            if (copyBtn.classList.contains('copy-flash')) {
+                copyBtn.classList.remove('copy-flash');
+                // Force reflow
+                void copyBtn.offsetHeight;
+            }
+            
+            copyBtn.classList.add('copy-flash');
             
             // Remove flash class and reset after animation
             setTimeout(() => {
@@ -1353,15 +1382,18 @@ function copyJsonToClipboard() {
             
             setTimeout(() => {
                 copyBtn.title = originalTitle;
-                copyBtn.style.background = 'rgba(78, 205, 196, 0.2)';
-                copyBtn.style.borderColor = 'rgba(78, 205, 196, 0.3)';
-                copyBtn.style.boxShadow = 'none';
-                copyBtn.style.transform = 'scale(1)';
+                copyBtn.style.background = originalBackground || 'rgba(78, 205, 196, 0.2)';
+                copyBtn.style.borderColor = originalBorderColor || 'rgba(78, 205, 196, 0.3)';
+                copyBtn.style.boxShadow = originalBoxShadow || 'none';
+                copyBtn.style.transition = originalTransition || '';
             }, 500);
         }
         
         // Highlight the JSON content area
         if (jsonContainer) {
+            const containerOriginalBorder = jsonContainer.style.borderColor;
+            const containerOriginalBoxShadow = jsonContainer.style.boxShadow;
+            
             jsonContainer.classList.add('json-copied-flash');
             
             // Add border flash
@@ -1371,8 +1403,8 @@ function copyJsonToClipboard() {
             
             setTimeout(() => {
                 jsonContainer.classList.remove('json-copied-flash');
-                jsonContainer.style.borderColor = 'rgba(78, 205, 196, 0.3)';
-                jsonContainer.style.boxShadow = 'none';
+                jsonContainer.style.borderColor = containerOriginalBorder || 'rgba(78, 205, 196, 0.3)';
+                jsonContainer.style.boxShadow = containerOriginalBoxShadow || 'none';
             }, 400);
         }
         
@@ -1384,6 +1416,11 @@ function copyJsonToClipboard() {
                 jsonContent.classList.remove('json-text-flash');
             }, 300);
         }
+        
+        // Reset flag after all animations complete
+        setTimeout(() => {
+            isShowingCopyFeedback = false;
+        }, 600); // Wait for longest animation (500ms) plus buffer
     };
     
     // Try modern Clipboard API first (requires HTTPS/secure context)
@@ -1392,8 +1429,10 @@ function copyJsonToClipboard() {
             showCopyFeedback();
         }).catch(err => {
             console.error('Failed to copy JSON using Clipboard API: ', err);
-            // Fall back to execCommand if Clipboard API fails
-            fallbackCopyToClipboard(jsonString, showCopyFeedback);
+            // Only fall back if feedback hasn't been shown yet
+            if (!isShowingCopyFeedback) {
+                fallbackCopyToClipboard(jsonString, showCopyFeedback);
+            }
         });
     } else {
         // Fall back to execCommand for older browsers or non-HTTPS contexts
@@ -1405,6 +1444,7 @@ function copyJsonToClipboard() {
  * Fallback copy method using execCommand for browsers/environments without Clipboard API
  */
 function fallbackCopyToClipboard(text, onSuccess) {
+    
     // Create a temporary textarea element
     const textArea = document.createElement('textarea');
     textArea.value = text;
@@ -1434,7 +1474,10 @@ function fallbackCopyToClipboard(text, onSuccess) {
         
         if (successful) {
             if (onSuccess) {
-                onSuccess();
+                // Check flag one more time before calling
+                if (!isShowingCopyFeedback) {
+                    onSuccess();
+                }
             }
         } else {
             throw new Error('execCommand copy failed');
