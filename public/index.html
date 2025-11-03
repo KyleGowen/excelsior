@@ -9194,8 +9194,16 @@
                                         window.availableCardsMap.set(cardName, card);
                                     }
                                 } else {
-                                    if (card.name) {
-                                        window.availableCardsMap.set(card.name, card);
+                                    // For training, ally-universe, basic-universe, and aspects, use card_name if available
+                                    if (category.type === 'training' || category.type === 'ally-universe' || category.type === 'basic-universe' || category.type === 'aspect') {
+                                        const cardName = card.card_name || card.name;
+                                        if (cardName) {
+                                            window.availableCardsMap.set(cardName, card);
+                                        }
+                                    } else {
+                                        if (card.name) {
+                                            window.availableCardsMap.set(card.name, card);
+                                        }
                                     }
                                 }
                                 
@@ -10245,8 +10253,16 @@
                                         window.availableCardsMap.set(cardName, card);
                                     }
                                 } else {
-                                    if (card.name) {
-                                        window.availableCardsMap.set(card.name, card);
+                                    // For training, ally-universe, basic-universe, and aspects, use card_name if available
+                                    if (category.type === 'training' || category.type === 'ally-universe' || category.type === 'basic-universe' || category.type === 'aspect') {
+                                        const cardName = card.card_name || card.name;
+                                        if (cardName) {
+                                            window.availableCardsMap.set(cardName, card);
+                                        }
+                                    } else {
+                                        if (card.name) {
+                                            window.availableCardsMap.set(card.name, card);
+                                        }
                                     }
                                 }
                                 

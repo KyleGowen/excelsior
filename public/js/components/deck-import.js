@@ -200,11 +200,12 @@ async function processImportDeck() {
         const advancedUniverseCardsToImport = cardsToImport.filter(c => c.type === 'advanced-universe');
         const teamworkCardsToImport = cardsToImport.filter(c => c.type === 'teamwork');
         const allyCardsToImport = cardsToImport.filter(c => c.type === 'ally-universe');
-        console.log('🔍 IMPORT: Starting import - Characters:', characterCardsToImport.length, 'Special:', specialCardsToImport.length, 'Locations:', locationCardsToImport.length, 'Missions:', missionCardsToImport.length, 'Events:', eventCardsToImport.length, 'Aspects:', aspectCardsToImport.length, 'Advanced Universe:', advancedUniverseCardsToImport.length, 'Teamwork:', teamworkCardsToImport.length, 'Allies:', allyCardsToImport.length);
+        const trainingCardsToImport = cardsToImport.filter(c => c.type === 'training');
+        console.log('🔍 IMPORT: Starting import - Characters:', characterCardsToImport.length, 'Special:', specialCardsToImport.length, 'Locations:', locationCardsToImport.length, 'Missions:', missionCardsToImport.length, 'Events:', eventCardsToImport.length, 'Aspects:', aspectCardsToImport.length, 'Advanced Universe:', advancedUniverseCardsToImport.length, 'Teamwork:', teamworkCardsToImport.length, 'Allies:', allyCardsToImport.length, 'Training:', trainingCardsToImport.length);
         
         for (const cardEntry of cardsToImport) {
-            // Process characters, special cards, locations, missions, events, aspects, advanced-universe, teamwork, and ally-universe
-            if (cardEntry.type !== 'character' && cardEntry.type !== 'special' && cardEntry.type !== 'location' && cardEntry.type !== 'mission' && cardEntry.type !== 'event' && cardEntry.type !== 'aspect' && cardEntry.type !== 'advanced-universe' && cardEntry.type !== 'teamwork' && cardEntry.type !== 'ally-universe') {
+            // Process characters, special cards, locations, missions, events, aspects, advanced-universe, teamwork, ally-universe, and training
+            if (cardEntry.type !== 'character' && cardEntry.type !== 'special' && cardEntry.type !== 'location' && cardEntry.type !== 'mission' && cardEntry.type !== 'event' && cardEntry.type !== 'aspect' && cardEntry.type !== 'advanced-universe' && cardEntry.type !== 'teamwork' && cardEntry.type !== 'ally-universe' && cardEntry.type !== 'training') {
                 continue;
             }
             
@@ -218,10 +219,40 @@ async function processImportDeck() {
             else if (cardEntry.type === 'advanced-universe') cardTypeLabel = 'ADVANCED_UNIVERSE';
             else if (cardEntry.type === 'teamwork') cardTypeLabel = 'TEAMWORK';
             else if (cardEntry.type === 'ally-universe') cardTypeLabel = 'ALLY';
+            else if (cardEntry.type === 'training') cardTypeLabel = 'TRAINING';
             
-            // For teamwork and ally cards, use special lookup functions that match by name AND additional fields
+            // For teamwork, ally, and training cards, use special lookup functions that match by name AND additional fields
             let cardId;
-            if (cardEntry.type === 'ally-universe') {
+            if (cardEntry.type === 'training') {
+                const type1 = cardEntry.type_1 || null;
+                const type2 = cardEntry.type_2 || null;
+                const bonus = cardEntry.bonus || null;
+                console.log(`🔍 ${cardTypeLabel} IMPORT: Looking up "${cardEntry.name}"${type1 ? ` with type_1: "${type1}"` : ''}${type2 ? ` type_2: "${type2}"` : ''}${bonus ? ` bonus: "${bonus}"` : ' (no field info)'}`);
+                cardId = findTrainingCardIdByName(cardEntry.name, type1, type2, bonus);
+                
+                // Debug: If not found, log available training cards with matching names
+                if (!cardId) {
+                    console.log(`🔍 ${cardTypeLabel} IMPORT DEBUG: Card not found, searching for training cards with name "${cardEntry.name}"`);
+                    let matchingCards = [];
+                    for (const [key, card] of window.availableCardsMap.entries()) {
+                        if (card && (card.type === 'training' || card.card_type === 'training' || card.cardType === 'training')) {
+                            const cardName = card.name || card.card_name;
+                            if (cardName === cardEntry.name) {
+                                matchingCards.push({
+                                    key: key,
+                                    id: card.id,
+                                    name: cardName,
+                                    type_1: card.type_1 || null,
+                                    type_2: card.type_2 || null,
+                                    bonus: card.bonus || null,
+                                    type: card.type || card.card_type || card.cardType
+                                });
+                            }
+                        }
+                    }
+                    console.log(`🔍 ${cardTypeLabel} IMPORT DEBUG: Found ${matchingCards.length} training card(s) with name "${cardEntry.name}":`, matchingCards);
+                }
+            } else if (cardEntry.type === 'ally-universe') {
                 const statToUse = cardEntry.stat_to_use || null;
                 const statTypeToUse = cardEntry.stat_type_to_use || null;
                 console.log(`🔍 ${cardTypeLabel} IMPORT: Looking up "${cardEntry.name}"${statToUse ? ` with stat_to_use: "${statToUse}"` : ''}${statTypeToUse ? ` stat_type_to_use: "${statTypeToUse}"` : ' (no stat info)'}`);
@@ -340,7 +371,7 @@ async function processImportDeck() {
                     
                     alreadyImported.add(importKey);
                 }
-                // Special cards, missions, events, aspects, advanced-universe, teamwork, and ally-universe don't need duplicate checking - they can be added multiple times
+                // Special cards, missions, events, aspects, advanced-universe, teamwork, ally-universe, and training don't need duplicate checking - they can be added multiple times
                 
                 console.log(`✅ ${cardTypeLabel} IMPORT: Found "${cardEntry.name}" -> ID: ${cardId}`);
                 importList.push({
@@ -364,7 +395,8 @@ async function processImportDeck() {
         const advancedUniverseImportList = importList.filter(c => c.type === 'advanced-universe');
         const teamworkImportList = importList.filter(c => c.type === 'teamwork');
         const allyImportList = importList.filter(c => c.type === 'ally-universe');
-        console.log('📋 IMPORT: Ready to import - Characters:', characterImportList.length, 'Special:', specialImportList.length, 'Locations:', locationImportList.length, 'Missions:', missionImportList.length, 'Events:', eventImportList.length, 'Aspects:', aspectImportList.length, 'Advanced Universe:', advancedUniverseImportList.length, 'Teamwork:', teamworkImportList.length, 'Allies:', allyImportList.length);
+        const trainingImportList = importList.filter(c => c.type === 'training');
+        console.log('📋 IMPORT: Ready to import - Characters:', characterImportList.length, 'Special:', specialImportList.length, 'Locations:', locationImportList.length, 'Missions:', missionImportList.length, 'Events:', eventImportList.length, 'Aspects:', aspectImportList.length, 'Advanced Universe:', advancedUniverseImportList.length, 'Teamwork:', teamworkImportList.length, 'Allies:', allyImportList.length, 'Training:', trainingImportList.length);
 
         // Report unresolved cards
         if (unresolvedCards.length > 0) {
@@ -402,7 +434,7 @@ async function processImportDeck() {
                     // Validation will catch if we exceed limits
                     continue;
                 } else {
-                    // For special cards, missions, events, aspects, advanced-universe, teamwork, and ally-universe: increment quantity
+                    // For special cards, missions, events, aspects, advanced-universe, teamwork, ally-universe, and training: increment quantity
                     testDeckCards[existingIndex].quantity += 1;
                 }
             } else {
@@ -469,12 +501,13 @@ async function processImportDeck() {
         const advancedUniverseCardsToAdd = importList.filter(c => c.type === 'advanced-universe');
         const teamworkCardsToAdd = importList.filter(c => c.type === 'teamwork');
         const allyCardsToAdd = importList.filter(c => c.type === 'ally-universe');
-        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length, 'Locations:', locationCardsToAdd.length, 'Missions:', missionCardsToAdd.length, 'Events:', eventCardsToAdd.length, 'Aspects:', aspectCardsToAdd.length, 'Advanced Universe:', advancedUniverseCardsToAdd.length, 'Teamwork:', teamworkCardsToAdd.length, 'Allies:', allyCardsToAdd.length);
+        const trainingCardsToAdd = importList.filter(c => c.type === 'training');
+        console.log('🚀 IMPORT: Starting to add cards - Characters:', characterCardsToAdd.length, 'Special:', specialCardsToAdd.length, 'Locations:', locationCardsToAdd.length, 'Missions:', missionCardsToAdd.length, 'Events:', eventCardsToAdd.length, 'Aspects:', aspectCardsToAdd.length, 'Advanced Universe:', advancedUniverseCardsToAdd.length, 'Teamwork:', teamworkCardsToAdd.length, 'Allies:', allyCardsToAdd.length, 'Training:', trainingCardsToAdd.length);
         console.log('🚀 IMPORT: Current deckEditorCards before import:', window.deckEditorCards?.length || 0, 'cards');
 
         for (const importCard of importList) {
-            // Process characters, special cards, locations, missions, events, aspects, advanced-universe, teamwork, and ally-universe
-            if (importCard.type !== 'character' && importCard.type !== 'special' && importCard.type !== 'location' && importCard.type !== 'mission' && importCard.type !== 'event' && importCard.type !== 'aspect' && importCard.type !== 'advanced-universe' && importCard.type !== 'teamwork' && importCard.type !== 'ally-universe') {
+            // Process characters, special cards, locations, missions, events, aspects, advanced-universe, teamwork, ally-universe, and training
+            if (importCard.type !== 'character' && importCard.type !== 'special' && importCard.type !== 'location' && importCard.type !== 'mission' && importCard.type !== 'event' && importCard.type !== 'aspect' && importCard.type !== 'advanced-universe' && importCard.type !== 'teamwork' && importCard.type !== 'ally-universe' && importCard.type !== 'training') {
                 continue;
             }
             
@@ -488,6 +521,7 @@ async function processImportDeck() {
             else if (importCard.type === 'advanced-universe') cardTypeLabel = 'ADVANCED_UNIVERSE';
             else if (importCard.type === 'teamwork') cardTypeLabel = 'TEAMWORK';
             else if (importCard.type === 'ally-universe') cardTypeLabel = 'ALLY';
+            else if (importCard.type === 'training') cardTypeLabel = 'TRAINING';
             
             try {
                 // Check card data before adding
@@ -656,8 +690,8 @@ async function processImportDeck() {
                         console.error(`❌ ${cardTypeLabel} IMPORT: addCardToEditor function not available`);
                         throw new Error('addCardToEditor function not available');
                     }
-                } else if (importCard.type === 'mission' || importCard.type === 'event' || importCard.type === 'aspect' || importCard.type === 'advanced-universe' || importCard.type === 'teamwork' || importCard.type === 'ally-universe') {
-                    // Mission, event, aspect, advanced-universe, teamwork, and ally-universe cards can be added directly (no duplicate checking needed, similar to special cards)
+                } else if (importCard.type === 'mission' || importCard.type === 'event' || importCard.type === 'aspect' || importCard.type === 'advanced-universe' || importCard.type === 'teamwork' || importCard.type === 'ally-universe' || importCard.type === 'training') {
+                    // Mission, event, aspect, advanced-universe, teamwork, ally-universe, and training cards can be added directly (no duplicate checking needed, similar to special cards)
                     // But we should auto-select default art if alternate images exist
                     let selectedAlternateImage = null;
                     if (cardData && cardData.alternateImages && cardData.alternateImages.length > 0) {
@@ -676,7 +710,7 @@ async function processImportDeck() {
                         // Wait a bit for async operations to complete
                         await new Promise(resolve => setTimeout(resolve, 100));
                         
-                        // Check if card was actually added (missions, events, aspects, advanced-universe, teamwork, and ally-universe can have duplicates, so we just check if it exists)
+                        // Check if card was actually added (missions, events, aspects, advanced-universe, teamwork, ally-universe, and training can have duplicates, so we just check if it exists)
                         const wasAdded = window.deckEditorCards?.some(c => 
                             c.type === importCard.type && c.cardId === importCard.cardId
                         );
@@ -876,10 +910,132 @@ function extractCardsFromImportData(cardsData) {
         });
     }
 
-    // Training (array of strings)
-    // if (Array.isArray(cardsData.training)) {
-    //     cardsData.training.forEach(cardName => addCard(cardName, 'training'));
-    // }
+    // Training (array of strings, format: "Training (Leonidas) - Combat Intelligence +4")
+    if (Array.isArray(cardsData.training)) {
+        console.log(`📥 EXTRACT: Found ${cardsData.training.length} training card(s) in JSON:`, cardsData.training);
+        cardsData.training.forEach(cardName => {
+            if (cardName && typeof cardName === 'string') {
+                // Parse training card name to extract base name, type_1, type_2, and bonus
+                // Format: "Training (Leonidas) - Combat Intelligence +4" or "Training (Leonidas) - Combat +4" or just "Training (Leonidas)"
+                const trimmedName = cardName.trim();
+                const dashIndex = trimmedName.indexOf(' - ');
+                
+                if (dashIndex > 0) {
+                    // Has additional information after dash
+                    const baseName = trimmedName.substring(0, dashIndex).trim();
+                    const suffix = trimmedName.substring(dashIndex + 3).trim();
+                    console.log(`📥 EXTRACT: Parsing training card "${trimmedName}" -> baseName: "${baseName}", suffix: "${suffix}"`);
+                    
+                    // Parse suffix to extract type_1, type_2, and bonus
+                    // Format: "Combat Intelligence +4" or "Combat +4" or "+4" or just "Combat Intelligence"
+                    // Bonus is typically at the end and starts with + or - followed by a number
+                    const bonusMatch = suffix.match(/^(.+?)\s*([+-]\d+)$/);
+                    let typesString = suffix;
+                    let bonus = null;
+                    
+                    if (bonusMatch) {
+                        // Found bonus at the end
+                        typesString = bonusMatch[1].trim();
+                        bonus = bonusMatch[2].trim();
+                    } else if (/^[+-]\d+$/.test(suffix.trim())) {
+                        // Entire suffix is just bonus
+                        typesString = '';
+                        bonus = suffix.trim();
+                    }
+                    
+                    // Parse types string to extract type_1 and type_2
+                    // Stat types can be: Energy, Combat, Brute Force, Intelligence
+                    // "Brute Force" is two words, so check for it first
+                    const statTypes = ['Brute Force', 'Energy', 'Combat', 'Intelligence']; // Order matters - two-word first
+                    let type1 = null;
+                    let type2 = null;
+                    
+                    if (typesString && typesString.trim()) {
+                        const trimmedTypes = typesString.trim();
+                        
+                        // Try to find stat types in the string
+                        // First check for "Brute Force" (two-word type)
+                        if (trimmedTypes.startsWith('Brute Force')) {
+                            type1 = 'Brute Force';
+                            const remaining = trimmedTypes.substring(12).trim(); // Remove "Brute Force" (12 chars)
+                            if (remaining) {
+                                // Check if remaining is another stat type
+                                for (const statType of statTypes) {
+                                    if (remaining === statType || remaining.startsWith(statType + ' ') || remaining === statType) {
+                                        type2 = statType;
+                                        break;
+                                    }
+                                }
+                                // If no match found, try matching by word
+                                if (!type2) {
+                                    const remainingWords = remaining.split(/\s+/);
+                                    if (remainingWords.length > 0 && statTypes.includes(remainingWords[0])) {
+                                        type2 = remainingWords[0];
+                                    }
+                                }
+                            }
+                        } else {
+                            // No "Brute Force" at start, try to find first stat type
+                            const words = trimmedTypes.split(/\s+/);
+                            
+                            // Find first stat type
+                            let firstTypeIndex = -1;
+                            let firstType = null;
+                            
+                            // Check if first word is a stat type
+                            if (words.length > 0 && statTypes.includes(words[0])) {
+                                firstTypeIndex = 0;
+                                firstType = words[0];
+                            }
+                            
+                            if (firstType) {
+                                type1 = firstType;
+                                // Get remaining after first type
+                                const afterFirstType = trimmedTypes.substring(firstType.length).trim();
+                                
+                                if (afterFirstType) {
+                                    // Check for "Brute Force" in remaining
+                                    if (afterFirstType.startsWith('Brute Force')) {
+                                        type2 = 'Brute Force';
+                                    } else {
+                                        // Try to find another stat type
+                                        for (const statType of statTypes) {
+                                            if (afterFirstType === statType || afterFirstType.startsWith(statType + ' ')) {
+                                                type2 = statType;
+                                                break;
+                                            }
+                                        }
+                                        // If no match, try by first word
+                                        if (!type2 && words.length > 1) {
+                                            const secondWord = words[1];
+                                            if (statTypes.includes(secondWord)) {
+                                                type2 = secondWord;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    const extractedCard = { 
+                        name: baseName, 
+                        type: 'training',
+                        type_1: type1,
+                        type_2: type2,
+                        bonus: bonus
+                    };
+                    console.log(`📥 EXTRACT: Extracted training card:`, extractedCard);
+                    result.push(extractedCard);
+                } else {
+                    // No additional information, just the base name
+                    const extractedCard = { name: trimmedName, type: 'training' };
+                    console.log(`📥 EXTRACT: Extracted training card (no fields):`, extractedCard);
+                    result.push(extractedCard);
+                }
+            }
+        });
+    }
 
     // Basic universe (array of strings)
     // if (Array.isArray(cardsData.basic_universe)) {
@@ -1054,6 +1210,157 @@ function findAllyCardIdByName(cardName, statToUse, statTypeToUse) {
 }
 
 /**
+ * Find training card ID by name, type_1, type_2, and bonus
+ * Searches for a training card matching the name and all specified fields
+ * @param {string} cardName - The base card name (e.g., "Training (Leonidas)")
+ * @param {string|null} type1 - The type_1 value (e.g., "Combat")
+ * @param {string|null} type2 - The type_2 value (e.g., "Intelligence")
+ * @param {string|null} bonus - The bonus value (e.g., "+4")
+ * @returns {string|null} Card ID if found, null otherwise
+ */
+function findTrainingCardIdByName(cardName, type1, type2, bonus) {
+    if (!window.availableCardsMap || !cardName || typeof cardName !== 'string') {
+        console.log(`❌ TRAINING LOOKUP: Invalid input - cardName: ${cardName}, map exists: ${!!window.availableCardsMap}`);
+        return null;
+    }
+    
+    console.log(`🔍 TRAINING LOOKUP: Searching for "${cardName}" with type_1: ${type1 || 'null'}, type_2: ${type2 || 'null'}, bonus: ${bonus || 'null'}`);
+    
+    // Count total training cards in map for debugging
+    let totalTrainingCards = 0;
+    let matchingNameCards = [];
+    
+    // Search through all cards to find matching training card
+    for (const [key, card] of window.availableCardsMap.entries()) {
+        // Skip if key or card is undefined/null
+        if (!key || !card) {
+            continue;
+        }
+        
+        // Additional safety check: ensure card has expected properties
+        if (!card.id) {
+            continue;
+        }
+        
+        // Check if this is a training card
+        const cardType = card.cardType || card.type || card.card_type;
+        if (!cardType || cardType !== 'training') {
+            continue;
+        }
+        
+        totalTrainingCards++;
+        
+        // Check name match (training cards use name or card_name)
+        const cardNameMatch = (card.name && typeof card.name === 'string' && card.name === cardName) ||
+                             (card.card_name && typeof card.card_name === 'string' && card.card_name === cardName);
+        
+        if (cardNameMatch) {
+            matchingNameCards.push({
+                id: card.id,
+                name: card.name || 'undefined',
+                card_name: card.card_name || 'undefined',
+                type_1: card.type_1 || 'null',
+                type_2: card.type_2 || 'null',
+                bonus: card.bonus || 'null',
+                cardType: cardType,
+                key: key
+            });
+        }
+        
+        if (!cardNameMatch) {
+            continue; // Name doesn't match
+        }
+        
+        // Check type_1, type_2, and bonus match
+        const cardType1 = card.type_1;
+        const cardType2 = card.type_2;
+        const cardBonus = card.bonus;
+        
+        // Normalize values for comparison (trim)
+        const normalize = (value) => {
+            if (!value || typeof value !== 'string') return null;
+            return value.trim();
+        };
+        
+        const normalizedCardType1 = normalize(cardType1);
+        const normalizedCardType2 = normalize(cardType2);
+        const normalizedCardBonus = normalize(cardBonus);
+        const normalizedSearchType1 = normalize(type1);
+        const normalizedSearchType2 = normalize(type2);
+        const normalizedSearchBonus = normalize(bonus);
+        
+        // Match logic:
+        // If all fields are provided, all must match
+        // If only some fields are provided, only those must match
+        // If no fields are provided, match cards with no fields
+        if (type1 !== null && type2 !== null && bonus !== null) {
+            // All three provided - all must match
+            if (normalizedCardType1 === normalizedSearchType1 &&
+                normalizedCardType2 === normalizedSearchType2 &&
+                normalizedCardBonus === normalizedSearchBonus) {
+                console.log(`✅ TRAINING LOOKUP: Found match for "${cardName}" (all fields) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else if (type1 !== null && type2 !== null) {
+            // Only types provided - both must match
+            if (normalizedCardType1 === normalizedSearchType1 &&
+                normalizedCardType2 === normalizedSearchType2) {
+                console.log(`✅ TRAINING LOOKUP: Found match for "${cardName}" (type_1 + type_2) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else if (type1 !== null && bonus !== null) {
+            // type_1 and bonus provided
+            if (normalizedCardType1 === normalizedSearchType1 &&
+                normalizedCardBonus === normalizedSearchBonus) {
+                console.log(`✅ TRAINING LOOKUP: Found match for "${cardName}" (type_1 + bonus) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else if (type2 !== null && bonus !== null) {
+            // type_2 and bonus provided
+            if (normalizedCardType2 === normalizedSearchType2 &&
+                normalizedCardBonus === normalizedSearchBonus) {
+                console.log(`✅ TRAINING LOOKUP: Found match for "${cardName}" (type_2 + bonus) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else if (type1 !== null) {
+            // Only type_1 provided
+            if (normalizedCardType1 === normalizedSearchType1) {
+                console.log(`✅ TRAINING LOOKUP: Found match for "${cardName}" (type_1 only) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else if (type2 !== null) {
+            // Only type_2 provided
+            if (normalizedCardType2 === normalizedSearchType2) {
+                console.log(`✅ TRAINING LOOKUP: Found match for "${cardName}" (type_2 only) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else if (bonus !== null) {
+            // Only bonus provided
+            if (normalizedCardBonus === normalizedSearchBonus) {
+                console.log(`✅ TRAINING LOOKUP: Found match for "${cardName}" (bonus only) - ID: ${card.id}`);
+                return card.id;
+            }
+        } else {
+            // No fields provided - match cards with no fields
+            if (!normalizedCardType1 && !normalizedCardType2 && !normalizedCardBonus) {
+                console.log(`✅ TRAINING LOOKUP: Found match for "${cardName}" (no fields) - ID: ${card.id}`);
+                return card.id;
+            }
+        }
+    }
+    
+    // Debug: Log summary if no match found
+    if (matchingNameCards.length === 0) {
+        console.log(`❌ TRAINING LOOKUP: No cards found with name "${cardName}". Total training cards in map: ${totalTrainingCards}`);
+    } else {
+        console.log(`⚠️ TRAINING LOOKUP: Found ${matchingNameCards.length} card(s) with matching name but fields didn't match:`, matchingNameCards);
+        console.log(`⚠️ TRAINING LOOKUP: Search criteria - type_1: "${type1 || 'null'}", type_2: "${type2 || 'null'}", bonus: "${bonus || 'null'}"`);
+    }
+    
+    return null;
+}
+
+/**
  * Find card ID by name in availableCardsMap
  * Searches through the map for a card matching the name
  */
@@ -1219,6 +1526,7 @@ if (typeof window !== 'undefined') {
     window.findCardIdByName = findCardIdByName;
     window.findTeamworkCardIdByName = findTeamworkCardIdByName;
     window.findAllyCardIdByName = findAllyCardIdByName;
+    window.findTrainingCardIdByName = findTrainingCardIdByName;
     
     // Debug: Confirm script loaded
     console.log('✅ Deck Import module loaded - importDeckFromJson available');
