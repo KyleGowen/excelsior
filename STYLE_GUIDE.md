@@ -20,6 +20,8 @@
 17. [Fortification Card Dimming](#fortification-card-dimming)
 18. [Deck Editor Card View Styling](#deck-editor-card-view-styling)
 19. [Deck Editor List View Styling](#deck-editor-list-view-styling)
+20. [Export Modal Styling](#export-modal-styling)
+21. [Import Modal Styling](#import-modal-styling)
 
 ## Overview
 
@@ -1561,3 +1563,302 @@ Debug logging tracks quantity element widths during updates:
 - Logs first 5 quantity elements after `replaceChildren()`
 - Shows text content, `offsetWidth`, and computed `width`
 - Helps verify fixed widths are properly applied
+
+## Export Modal Styling
+
+### Overview
+The Export Modal displays exported deck JSON in a full-screen overlay with a dark theme and teal accents. It's designed for viewing and copying exported deck data.
+
+### Modal Overlay Container
+- **Class**: `.export-overlay`
+- **Position**: `fixed`, `top: 0`, `left: 0`
+- **Dimensions**: `width: 100%`, `height: 100%` (full viewport)
+- **Background**: `rgba(0, 0, 0, 0.8)` (80% black overlay)
+- **Z-Index**: `10000` (above all other content)
+- **Layout**: `display: flex`, `align-items: center`, `justify-content: center`
+- **Click-to-Close**: Clicking outside the content closes the modal
+
+### Modal Content Container
+- **Class**: `.export-overlay-content`
+- **Background**: `linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)` (matches main app background)
+- **Border**: `1px solid #4ecdc4` (primary teal)
+- **Border Radius**: `12px`
+- **Dimensions**: `width: 90%`, `max-width: 1200px`, `height: 80%`, `max-height: 900px`
+- **Layout**: `display: flex`, `flex-direction: column`
+- **Box Shadow**: `0 0 30px rgba(78, 205, 196, 0.4)` (teal glow)
+
+### Modal Header
+- **Class**: `.export-overlay-header`
+- **Layout**: `display: flex`, `justify-content: space-between`, `align-items: center`
+- **Padding**: `20px 24px`
+- **Border Bottom**: `1px solid rgba(78, 205, 196, 0.3)` (teal divider)
+- **Background**: `rgba(0, 0, 0, 0.2)` (subtle dark overlay)
+
+#### Header Title
+- **Element**: `h3` inside `.export-overlay-header`
+- **Color**: `#4ecdc4` (primary teal)
+- **Font Size**: `1.4rem`
+- **Font Weight**: `600`
+- **Margin**: `0`
+
+#### Close Button
+- **Class**: `.export-close-btn`
+- **Background**: `none`
+- **Border**: `none`
+- **Color**: `#4ecdc4` (primary teal)
+- **Font Size**: `28px`
+- **Dimensions**: `32px × 32px`
+- **Layout**: `display: flex`, `align-items: center`, `justify-content: center`
+- **Border Radius**: `4px`
+- **Cursor**: `pointer`
+- **Hover**: `background: rgba(78, 205, 196, 0.2)` (teal tint)
+
+### Modal Body
+- **Class**: `.export-overlay-body`
+- **Flex**: `1` (takes remaining space)
+- **Padding**: `0`
+- **Overflow**: `hidden`
+- **Layout**: `display: flex`, `flex-direction: column`
+
+### JSON Container
+- **Class**: `.json-container`
+- **Position**: `relative`
+- **Flex**: `1` (fills body space)
+- **Overflow**: `auto` (scrollable content)
+- **Padding**: `20px`
+
+#### Copy Button (Export Only)
+- **Class**: `.copy-button`
+- **Position**: `absolute`, `top: 20px`, `right: 20px`
+- **Background**: `rgba(78, 205, 196, 0.2)` (teal)
+- **Border**: `1px solid rgba(78, 205, 196, 0.4)`
+- **Border Radius**: `6px`
+- **Padding**: `8px 12px`
+- **Cursor**: `pointer`
+- **Z-Index**: `10`
+- **Transition**: `all 0.2s ease`
+- **Hover**: `background: rgba(78, 205, 196, 0.3)`, `border-color: rgba(78, 205, 196, 0.6)`
+
+#### JSON Content Display (Export)
+- **Element**: `#exportJsonContent` (`<pre>` tag)
+- **Font**: `'Courier New', monospace`
+- **Font Size**: `13px`
+- **Line Height**: `1.5`
+- **Color**: `#ffffff` (white text)
+- **Background**: `rgba(0, 0, 0, 0.3)` (dark overlay)
+- **Padding**: `20px`
+- **Border Radius**: `6px`
+- **Margin**: `0`
+- **White Space**: `pre-wrap` (preserves formatting)
+- **Word Wrap**: `break-word`
+- **Overflow**: `auto`
+
+### CSS Implementation
+```css
+.export-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.export-overlay-content {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid #4ecdc4;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 1200px;
+    height: 80%;
+    max-height: 900px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 30px rgba(78, 205, 196, 0.4);
+}
+
+.export-overlay-header h3 {
+    margin: 0;
+    color: #4ecdc4;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.export-close-btn {
+    background: none;
+    border: none;
+    color: #4ecdc4;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.export-close-btn:hover {
+    background: rgba(78, 205, 196, 0.2);
+}
+```
+
+## Import Modal Styling
+
+### Overview
+The Import Modal provides a textarea for pasting JSON and displays error messages when import fails. It shares the same overlay structure as the Export Modal but with different body content.
+
+### Shared Overlay Styling
+The Import Modal uses the same `.export-overlay` class and overlay structure as the Export Modal:
+- Same overlay container, content wrapper, header, and close button
+- Same dimensions, positioning, and z-index
+- Only the body content differs
+
+### Import Body Content
+
+#### JSON Textarea
+- **Element**: `#importJsonContent`
+- **Class**: `.import-json-textarea`
+- **Flex**: `1` (fills available space)
+- **Background**: `rgba(0, 0, 0, 0.4)` (dark overlay)
+- **Color**: `#ffffff` (white text)
+- **Padding**: `20px`
+- **Font**: `'Courier New', monospace`
+- **Font Size**: `13px`
+- **Line Height**: `1.5`
+- **Border**: `none`
+- **Outline**: `none`
+- **Resize**: `vertical` (allows height adjustment)
+- **Placeholder Color**: `rgba(255, 255, 255, 0.4)` (muted white)
+- **Placeholder Text**: "Paste exported deck JSON here..."
+
+#### Error Messages Container
+- **Element**: `#importErrorMessages`
+- **Class**: `.import-error-messages`
+- **Display**: `none` (hidden by default, shown on errors)
+- **Margin**: `20px`
+- **Padding**: `15px`
+- **Background**: `rgba(231, 76, 60, 0.2)` (red tint)
+- **Border**: `1px solid rgba(231, 76, 60, 0.5)` (red border)
+- **Border Radius**: `8px`
+- **Color**: `#e74c3c` (danger red)
+- **Font**: `'Courier New', monospace`
+- **Font Size**: `13px`
+- **Line Height**: `1.5`
+- **Max Height**: `200px`
+- **Overflow**: `auto` (scrollable if content is long)
+
+##### Error List
+- **Element**: `<ul>` inside error messages
+- **Margin**: `0`
+- **Padding Left**: `20px`
+
+##### Error List Items
+- **Element**: `<li>` inside error list
+- **Margin**: `8px 0`
+
+#### Import Actions Container
+- **Class**: `.import-actions`
+- **Padding**: `20px`
+- **Border Top**: `1px solid rgba(78, 205, 196, 0.3)` (teal divider)
+- **Layout**: `display: flex`, `justify-content: flex-end`
+- **Gap**: `12px`
+
+#### Import Button
+- **Element**: `#importJsonButton`
+- **Class**: `.import-button`
+- **Background**: `rgba(78, 205, 196, 0.2)` (teal)
+- **Border**: `1px solid rgba(78, 205, 196, 0.4)`
+- **Border Radius**: `6px`
+- **Padding**: `12px 24px`
+- **Color**: `#4ecdc4` (primary teal)
+- **Font Size**: `14px`
+- **Font Weight**: `600`
+- **Cursor**: `pointer`
+- **Transition**: `all 0.2s ease`
+- **Hover**: `background: rgba(78, 205, 196, 0.3)`, `border-color: rgba(78, 205, 196, 0.6)`
+- **Disabled State**: `opacity: 0.5`, `cursor: not-allowed`
+- **Text**: "Import Cards"
+
+### CSS Implementation
+```css
+.import-json-textarea {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.4);
+    color: #ffffff;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    border: none;
+    outline: none;
+    resize: vertical;
+}
+
+.import-json-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.import-error-messages {
+    margin: 20px;
+    padding: 15px;
+    background: rgba(231, 76, 60, 0.2);
+    border: 1px solid rgba(231, 76, 60, 0.5);
+    border-radius: 8px;
+    color: #e74c3c;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    max-height: 200px;
+    overflow: auto;
+}
+
+.import-actions {
+    padding: 20px;
+    border-top: 1px solid rgba(78, 205, 196, 0.3);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.import-button {
+    background: rgba(78, 205, 196, 0.2);
+    border: 1px solid rgba(78, 205, 196, 0.4);
+    border-radius: 6px;
+    padding: 12px 24px;
+    color: #4ecdc4;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.import-button:hover:not(:disabled) {
+    background: rgba(78, 205, 196, 0.3);
+    border-color: rgba(78, 205, 196, 0.6);
+}
+
+.import-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+```
+
+### Shared Components
+Both Export and Import modals use the same base structure:
+- **Overlay**: `.export-overlay` (shared class name)
+- **Content Container**: `.export-overlay-content`
+- **Header**: `.export-overlay-header` with title and close button
+- **Body**: `.export-overlay-body` with content-specific elements
+
+This shared structure ensures visual consistency between export and import workflows.
+
+### Responsive Design
+- **Desktop**: Full-size modal (90% width, 80% height, max 1200px × 900px)
+- **Tablet**: Maintains same proportions, adjusts to viewport
+- **Mobile**: Modal fills most of screen (90% width), content scrolls internally

@@ -91,12 +91,26 @@ Processes the JSON input and adds cards to the deck.
 
 **Special Handling**:
 - **Character Limit**: Enforces 4-character maximum
-- **Duplicate Detection**: Prevents adding characters already in deck or in import list
-- **Alternate Images**: Automatically selects the first alternate image if available
+- **Duplicate Detection**: Prevents adding characters/locations already in deck or in import list
+- **Alternate Images**: Automatically selects the first alternate image if available (for special cards, missions, events, aspects, advanced-universe, teamwork, ally-universe, training, basic-universe, and power cards)
 - **51-Card Rule**: Filters out the minimum deck size validation error during import
+- **Threat Level Validation**: Filters out threat level validation errors during import (can be adjusted after)
+- **View Mode Preservation**: Preserves the user's current deck view (Card View or List View) after successful import
 - **Error Reporting**: Shows detailed error messages for unresolved cards or validation failures
 
-**Current Limitation**: Only processes character cards. Other card types are commented out in `extractCardsFromImportData()`.
+**Supported Card Types**: All 12 card types are fully supported:
+- Characters (with duplicate detection)
+- Special cards (allows duplicates, auto-selects alternate images)
+- Locations (with duplicate detection)
+- Missions (grouped by mission set, allows duplicates)
+- Events (grouped by mission set, allows duplicates)
+- Aspects (allows duplicates)
+- Advanced Universe (grouped by character, allows duplicates)
+- Teamwork (with field matching)
+- Ally Universe (with field matching)
+- Training (with field matching)
+- Basic Universe (with field matching)
+- Power cards (with value and power type matching)
 
 ---
 
@@ -105,24 +119,62 @@ Processes the JSON input and adds cards to the deck.
 Extracts card names and types from the nested JSON structure and flattens them into an array.
 
 **Input**: The `cards` section of the import JSON
-**Output**: Array of `{ name: string, type: string }` objects
+**Output**: Array of card objects with `name`, `type`, and optional field-specific properties
 
-**Current Implementation**:
-- Only extracts `characters` (array of strings)
-- Other card types are commented out for future implementation
+**Fully Implemented Card Types**:
 
-**Planned Support** (currently commented):
-- `special_cards` (object grouped by character name)
-- `locations` (array of strings)
-- `missions` (object grouped by mission set)
-- `events` (object grouped by mission set)
-- `aspects` (array of strings)
-- `advanced_universe` (object grouped by character)
-- `teamwork` (array of strings)
-- `allies` (array of strings)
-- `training` (array of strings)
-- `basic_universe` (array of strings)
-- `power_cards` (array of formatted strings like `"5 - Energy"`)
+1. **Characters** (`characters`)
+   - Format: Array of strings
+   - Example: `["Captain Nemo", "Count of Monte Cristo"]`
+
+2. **Special Cards** (`special_cards`)
+   - Format: Object grouped by character name
+   - Example: `{ "Captain Nemo": ["The Nautilus"], "Any Character": ["Preternatural Healing"] }`
+
+3. **Locations** (`locations`)
+   - Format: Array of strings
+   - Example: `["Event Horizon: The Future"]`
+
+4. **Missions** (`missions`)
+   - Format: Object grouped by mission set name
+   - Example: `{ "Time Wars: Rise of the Gods": ["Battle at Olympus"] }`
+
+5. **Events** (`events`)
+   - Format: Object grouped by mission set name
+   - Example: `{ "Time Wars: Rise of the Gods": ["Getting Our Hands Dirty"] }`
+
+6. **Aspects** (`aspects`)
+   - Format: Array of strings
+   - Example: `["Supay"]`
+
+7. **Advanced Universe** (`advanced_universe`)
+   - Format: Object grouped by character name
+   - Example: `{ "Ra": ["Shards of the Staff"] }`
+
+8. **Teamwork** (`teamwork`)
+   - Format: Array of strings with optional field info
+   - Parsing: Extracts base name and `followup_attack_types` from format like `"6 Combat - Brute Force + Energy"`
+   - Example: `["6 Combat", "7 Combat - Brute Force + Intelligence"]`
+
+9. **Ally Universe** (`allies`)
+   - Format: Array of strings with optional field info
+   - Parsing: Extracts base name, `stat_to_use`, and `stat_type_to_use` from format like `"Little John - Intelligence 5 or less"`
+   - Example: `["Little John", "Hera - Combat 7 or greater"]`
+
+10. **Training** (`training`)
+    - Format: Array of strings with optional field info
+    - Parsing: Extracts base name, `type_1`, `type_2`, and `bonus` from format like `"Training (Leonidas) - Combat + Intelligence +4"`
+    - Example: `["Training (Cultists)", "Training (Leonidas) - Combat + Intelligence +4"]`
+
+11. **Basic Universe** (`basic_universe`)
+    - Format: Array of strings with optional field info
+    - Parsing: Extracts base name, stat type, `value_to_use`, and `bonus` from format like `"Secret Identity - Intelligence 6 or greater +2"`
+    - Example: `["Secret Identity", "Longbow - Combat 7 or greater +3"]`
+
+12. **Power Cards** (`power_cards`)
+    - Format: Array of formatted strings
+    - Format: `"<value> - <power_type>"` (e.g., `"5 - Energy"`, `"8 - Any-Power"`)
+    - Example: `["1 - Combat", "2 - Energy", "5 - Multi Power", "6 - Any-Power"]`
 
 ---
 
@@ -138,7 +190,9 @@ Finds a card's UUID in `availableCardsMap` by matching the card name and type.
 
 **Search Strategy**:
 1. **Power Cards**: Special parsing for formatted names like `"5 - Energy"`
-   - Matches by `value` and `power_type` properties
+   - Extracts numeric `value` and `powerType` from the string (regex: `/^(\d+)\s*-\s*(.+)$/`)
+   - Matches by `card.value` and `card.power_type` properties (exact match)
+   - Example: `"5 - Energy"` matches a card with `value: 5` and `power_type: "Energy"`
 2. **Direct Lookup**: Tries direct map lookup by card name
 3. **Iterative Search**: Searches through all cards in the map
    - Filters by card type if specified
@@ -148,6 +202,15 @@ Finds a card's UUID in `availableCardsMap` by matching the card name and type.
 **Type Normalization**:
 - Handles variations like `'ally-universe'` vs `'ally'`
 - Ensures type filtering works correctly
+
+**Specialized Lookup Functions**:
+
+For cards with additional matching fields, specialized lookup functions are used:
+
+- **`findTeamworkCardIdByName(cardName, followupTypes)`**: Matches teamwork cards by name and `followup_attack_types`
+- **`findAllyCardIdByName(cardName, statToUse, statTypeToUse)`**: Matches ally cards by name, `stat_to_use`, and `stat_type_to_use`
+- **`findTrainingCardIdByName(cardName, type1, type2, bonus)`**: Matches training cards by name, `type_1`, `type_2`, and `bonus`
+- **`findBasicUniverseCardIdByName(cardName, typeField, valueToUse, bonus)`**: Matches basic universe cards by name, stat type, `value_to_use`, and `bonus`
 
 ---
 
@@ -255,7 +318,7 @@ The import expects JSON in this format:
 }
 ```
 
-**Note**: Currently only `characters` are processed. Other card types will be enabled in the future.
+**All Card Types Supported**: The import feature fully supports all 12 card types listed above. Cards are extracted from their respective JSON structures and matched using specialized lookup functions when additional fields are required.
 
 ---
 
@@ -295,22 +358,32 @@ The import expects JSON in this format:
 ## Testing
 
 ### Unit Tests
-Located in `tests/unit/deck-import-character.test.ts`:
-- `extractCardsFromImportData()` - 5 tests
-- `findCardIdByName()` - 6 tests
-- `processImportDeck()` - 31 tests
 
-**Total**: 42 tests covering all import functionality.
+**Main Test File**: `tests/unit/deck-import-character.test.ts`
+- `extractCardsFromImportData()` - Comprehensive tests for all card types
+- `findCardIdByName()` - Tests for various card types including power cards
+- `processImportDeck()` - Full import flow tests
+
+**Power Cards Test File**: `tests/unit/deck-import-power-cards.test.ts`
+- `extractCardsFromImportData()` - Power card extraction tests
+- `findCardIdByName()` - Power card parsing and lookup tests
+- `processImportDeck()` - Power card import flow including view mode preservation
+
+**Total**: Extensive test coverage across all card types and import scenarios.
 
 ### Test Coverage
 - JSON parsing and validation
-- Character extraction and lookup
-- Duplicate detection
+- All 12 card type extraction and lookup
+- Duplicate detection (characters and locations)
 - Character limit enforcement
+- Field-based matching (teamwork, ally, training, basic-universe)
+- Power card value and type matching
 - Alternate image handling
-- Error handling
+- View mode preservation (Card View vs List View)
+- Error handling and reporting
 - Button state management
 - Card data loading
+- Validation error filtering
 
 ---
 
@@ -335,14 +408,27 @@ Located in `tests/unit/deck-import-character.test.ts`:
 
 ---
 
+## View Mode Preservation
+
+After a successful import, the system preserves the user's current deck view:
+
+1. **Detection**: Reads the `#viewMode` hidden input field to determine current view mode
+2. **Re-rendering**: Calls the appropriate rendering function:
+   - `renderDeckCardsCardView()` if mode is `"card"`
+   - `renderDeckCardsListView()` if mode is `"list"`
+   - Defaults to Card View if mode cannot be determined
+3. **User Experience**: Maintains visual consistency - users don't lose their preferred view after import
+
+This feature ensures that users who prefer List View aren't forced back to Card View after importing cards.
+
 ## Future Enhancements
 
-1. **Support All Card Types**: Re-enable extraction for all card categories
-2. **Batch Import**: Optimize adding multiple cards at once
-3. **Progress Indicator**: Show import progress for large decks
-4. **Import Preview**: Show what cards would be imported before confirming
-5. **Conflict Resolution**: Handle cards that already exist in deck
-6. **Undo Support**: Allow undoing an import operation
+1. **Batch Import Optimization**: Optimize adding multiple cards at once for faster imports
+2. **Progress Indicator**: Show import progress for large decks
+3. **Import Preview**: Show what cards would be imported before confirming
+4. **Conflict Resolution**: Handle cards that already exist in deck with merge options
+5. **Undo Support**: Allow undoing an import operation
+6. **Partial Import**: Allow importing even if some cards fail (currently aborts on unresolved cards)
 
 ---
 
@@ -362,4 +448,12 @@ Located in `tests/unit/deck-import-character.test.ts`:
   - Separated import functionality into standalone module
   - Added comprehensive unit test coverage
   - Documented all functions and CSS classes
+
+- **v2.0** (2025-01-XX): Full card type support
+  - Added support for all 12 card types (characters, special, locations, missions, events, aspects, advanced-universe, teamwork, ally-universe, training, basic-universe, power)
+  - Implemented specialized lookup functions for cards with additional fields
+  - Added power card parsing (value and power type matching)
+  - Implemented view mode preservation after import
+  - Enhanced error handling and validation
+  - Added alternate image auto-selection for applicable card types
 

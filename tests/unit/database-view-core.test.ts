@@ -12,7 +12,7 @@
 
 import { JSDOM } from 'jsdom';
 
-describe.skip('DatabaseViewCore Component', () => {
+describe('DatabaseViewCore Component', () => {
     let dom: JSDOM;
     let window: any;
     let document: any;
@@ -69,7 +69,7 @@ describe.skip('DatabaseViewCore Component', () => {
 
     describe('Component Creation', () => {
         test('should create DatabaseViewCore instance', () => {
-            // Mock the component classes since we can't load the actual files in tests
+            // Define class directly in test context (JSDOM doesn't execute script tags)
             class DatabaseViewCore {
                 initialized: boolean;
                 components: Map<string, any>;
@@ -95,30 +95,32 @@ describe.skip('DatabaseViewCore Component', () => {
             }
             
             const databaseViewCore = new DatabaseViewCore();
-            window.DatabaseViewCore = DatabaseViewCore;
-            window.databaseViewCore = databaseViewCore;
+            (window as any).DatabaseViewCore = DatabaseViewCore;
+            (window as any).databaseViewCore = databaseViewCore;
 
-            expect(window.DatabaseViewCore).toBeDefined();
-            expect(window.databaseViewCore).toBeDefined();
-            expect(window.databaseViewCore.isInitialized()).toBe(false);
+            expect((window as any).DatabaseViewCore).toBeDefined();
+            expect((window as any).databaseViewCore).toBeDefined();
+            expect((window as any).databaseViewCore.isInitialized()).toBe(false);
         });
 
         test('should have proper component structure', () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewCore {
-                    constructor() {
-                        this.initialized = false;
-                        this.currentTab = null;
-                        this.components = new Map();
-                        this.eventListeners = new Map();
-                    }
+            // Define class directly in test context
+            class DatabaseViewCore {
+                initialized: boolean;
+                currentTab: string | null;
+                components: Map<string, any>;
+                eventListeners: Map<string, any>;
+                
+                constructor() {
+                    this.initialized = false;
+                    this.currentTab = null;
+                    this.components = new Map();
+                    this.eventListeners = new Map();
                 }
-                window.DatabaseViewCore = DatabaseViewCore;
-            `;
-            document.head.appendChild(script);
+            }
+            (window as any).DatabaseViewCore = DatabaseViewCore;
 
-            const core = new window.DatabaseViewCore();
+            const core = new (window as any).DatabaseViewCore();
             expect(core.initialized).toBe(false);
             expect(core.currentTab).toBe(null);
             expect(core.components).toBeInstanceOf(Map);
@@ -128,80 +130,79 @@ describe.skip('DatabaseViewCore Component', () => {
 
     describe('Initialization', () => {
         test('should initialize successfully', async () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewCore {
-                    constructor() {
-                        this.initialized = false;
-                        this.components = new Map();
-                    }
-                    
-                    async initialize() {
-                        if (this.initialized) return;
-                        this.initialized = true;
-                    }
-                    
-                    isInitialized() {
-                        return this.initialized;
-                    }
+            // Define class directly in test context
+            class DatabaseViewCore {
+                initialized: boolean;
+                components: Map<string, any>;
+                
+                constructor() {
+                    this.initialized = false;
+                    this.components = new Map();
                 }
-                window.DatabaseViewCore = DatabaseViewCore;
-                window.databaseViewCore = new DatabaseViewCore();
-            `;
-            document.head.appendChild(script);
+                
+                async initialize() {
+                    if (this.initialized) return;
+                    this.initialized = true;
+                }
+                
+                isInitialized() {
+                    return this.initialized;
+                }
+            }
+            (window as any).DatabaseViewCore = DatabaseViewCore;
+            (window as any).databaseViewCore = new DatabaseViewCore();
 
-            await window.databaseViewCore.initialize();
-            expect(window.databaseViewCore.isInitialized()).toBe(true);
+            await (window as any).databaseViewCore.initialize();
+            expect((window as any).databaseViewCore.isInitialized()).toBe(true);
         });
 
         test('should not initialize twice', async () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewCore {
-                    constructor() {
-                        this.initialized = false;
-                        this.initCount = 0;
-                    }
-                    
-                    async initialize() {
-                        if (this.initialized) return;
-                        this.initCount++;
-                        this.initialized = true;
-                    }
-                    
-                    getInitCount() {
-                        return this.initCount;
-                    }
+            // Define class directly in test context
+            class DatabaseViewCore {
+                initialized: boolean;
+                initCount: number;
+                
+                constructor() {
+                    this.initialized = false;
+                    this.initCount = 0;
                 }
-                window.DatabaseViewCore = DatabaseViewCore;
-                window.databaseViewCore = new DatabaseViewCore();
-            `;
-            document.head.appendChild(script);
+                
+                async initialize() {
+                    if (this.initialized) return;
+                    this.initCount++;
+                    this.initialized = true;
+                }
+                
+                getInitCount() {
+                    return this.initCount;
+                }
+            }
+            (window as any).DatabaseViewCore = DatabaseViewCore;
+            (window as any).databaseViewCore = new DatabaseViewCore();
 
-            await window.databaseViewCore.initialize();
-            await window.databaseViewCore.initialize();
-            expect(window.databaseViewCore.getInitCount()).toBe(1);
+            await (window as any).databaseViewCore.initialize();
+            await (window as any).databaseViewCore.initialize();
+            expect((window as any).databaseViewCore.getInitCount()).toBe(1);
         });
     });
 
     describe('Component Management', () => {
         test('should manage components correctly', () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewCore {
-                    constructor() {
-                        this.components = new Map();
-                    }
-                    
-                    getComponent(name) {
-                        return this.components.get(name);
-                    }
+            // Define class directly in test context
+            class DatabaseViewCore {
+                components: Map<string, any>;
+                
+                constructor() {
+                    this.components = new Map();
                 }
-                window.DatabaseViewCore = DatabaseViewCore;
-            `;
-            document.head.appendChild(script);
+                
+                getComponent(name: string) {
+                    return this.components.get(name);
+                }
+            }
+            (window as any).DatabaseViewCore = DatabaseViewCore;
 
-            const core = new window.DatabaseViewCore();
+            const core = new (window as any).DatabaseViewCore();
             const mockComponent = { name: 'test' };
             core.components.set('test', mockComponent);
 
@@ -212,30 +213,30 @@ describe.skip('DatabaseViewCore Component', () => {
 
     describe('Event Handling', () => {
         test('should handle tab switch events', () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewCore {
-                    constructor() {
-                        this.currentTab = null;
-                        this.components = new Map();
-                    }
-                    
-                    handleTabSwitch(event) {
-                        const tabName = event.detail?.tabName;
-                        if (tabName) {
-                            this.currentTab = tabName;
-                        }
-                    }
-                    
-                    getCurrentTab() {
-                        return this.currentTab;
+            // Define class directly in test context
+            class DatabaseViewCore {
+                currentTab: string | null;
+                components: Map<string, any>;
+                
+                constructor() {
+                    this.currentTab = null;
+                    this.components = new Map();
+                }
+                
+                handleTabSwitch(event: any) {
+                    const tabName = event.detail?.tabName;
+                    if (tabName) {
+                        this.currentTab = tabName;
                     }
                 }
-                window.DatabaseViewCore = DatabaseViewCore;
-            `;
-            document.head.appendChild(script);
+                
+                getCurrentTab() {
+                    return this.currentTab;
+                }
+            }
+            (window as any).DatabaseViewCore = DatabaseViewCore;
 
-            const core = new window.DatabaseViewCore();
+            const core = new (window as any).DatabaseViewCore();
             const event = {
                 detail: { tabName: 'characters' }
             };
@@ -245,30 +246,29 @@ describe.skip('DatabaseViewCore Component', () => {
         });
 
         test('should handle data load events', () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewCore {
-                    constructor() {
-                        this.lastDataLoad = null;
-                    }
-                    
-                    handleDataLoad(event) {
-                        const dataType = event.detail?.dataType;
-                        const data = event.detail?.data;
-                        if (dataType && data) {
-                            this.lastDataLoad = { dataType, data };
-                        }
-                    }
-                    
-                    getLastDataLoad() {
-                        return this.lastDataLoad;
+            // Define class directly in test context
+            class DatabaseViewCore {
+                lastDataLoad: any;
+                
+                constructor() {
+                    this.lastDataLoad = null;
+                }
+                
+                handleDataLoad(event: any) {
+                    const dataType = event.detail?.dataType;
+                    const data = event.detail?.data;
+                    if (dataType && data) {
+                        this.lastDataLoad = { dataType, data };
                     }
                 }
-                window.DatabaseViewCore = DatabaseViewCore;
-            `;
-            document.head.appendChild(script);
+                
+                getLastDataLoad() {
+                    return this.lastDataLoad;
+                }
+            }
+            (window as any).DatabaseViewCore = DatabaseViewCore;
 
-            const core = new window.DatabaseViewCore();
+            const core = new (window as any).DatabaseViewCore();
             const event = {
                 detail: { dataType: 'characters', data: [{ id: 1, name: 'Test' }] }
             };
@@ -283,30 +283,31 @@ describe.skip('DatabaseViewCore Component', () => {
 
     describe('Cleanup', () => {
         test('should cleanup resources properly', () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewCore {
-                    constructor() {
-                        this.initialized = true;
-                        this.components = new Map();
-                        this.eventListeners = new Map();
-                    }
-                    
-                    cleanup() {
-                        this.components.clear();
-                        this.eventListeners.clear();
-                        this.initialized = false;
-                    }
-                    
-                    isInitialized() {
-                        return this.initialized;
-                    }
+            // Define class directly in test context
+            class DatabaseViewCore {
+                initialized: boolean;
+                components: Map<string, any>;
+                eventListeners: Map<string, any>;
+                
+                constructor() {
+                    this.initialized = true;
+                    this.components = new Map();
+                    this.eventListeners = new Map();
                 }
-                window.DatabaseViewCore = DatabaseViewCore;
-            `;
-            document.head.appendChild(script);
+                
+                cleanup() {
+                    this.components.clear();
+                    this.eventListeners.clear();
+                    this.initialized = false;
+                }
+                
+                isInitialized() {
+                    return this.initialized;
+                }
+            }
+            (window as any).DatabaseViewCore = DatabaseViewCore;
 
-            const core = new window.DatabaseViewCore();
+            const core = new (window as any).DatabaseViewCore();
             core.components.set('test', {});
             core.eventListeners.set('test', {});
 
@@ -324,23 +325,22 @@ describe.skip('DatabaseViewCore Component', () => {
 
     describe('Global Availability', () => {
         test('should be globally available', () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewCore {
-                    constructor() {
-                        this.initialized = false;
-                    }
-                }
+            // Define class directly in test context
+            class DatabaseViewCore {
+                initialized: boolean;
                 
-                const databaseViewCore = new DatabaseViewCore();
-                window.DatabaseViewCore = DatabaseViewCore;
-                window.databaseViewCore = databaseViewCore;
-            `;
-            document.head.appendChild(script);
+                constructor() {
+                    this.initialized = false;
+                }
+            }
+            
+            const databaseViewCore = new DatabaseViewCore();
+            (window as any).DatabaseViewCore = DatabaseViewCore;
+            (window as any).databaseViewCore = databaseViewCore;
 
-            expect(window.DatabaseViewCore).toBeDefined();
-            expect(window.databaseViewCore).toBeDefined();
-            expect(window.databaseViewCore).toBeInstanceOf(window.DatabaseViewCore);
+            expect((window as any).DatabaseViewCore).toBeDefined();
+            expect((window as any).databaseViewCore).toBeDefined();
+            expect((window as any).databaseViewCore).toBeInstanceOf((window as any).DatabaseViewCore);
         });
     });
 });

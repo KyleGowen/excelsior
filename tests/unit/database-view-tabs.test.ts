@@ -12,7 +12,7 @@
 
 import { JSDOM } from 'jsdom';
 
-describe.skip('DatabaseViewTabs Component', () => {
+describe('DatabaseViewTabs Component', () => {
     let dom: JSDOM;
     let window: any;
     let document: any;
@@ -68,30 +68,32 @@ describe.skip('DatabaseViewTabs Component', () => {
 
     describe('Component Creation', () => {
         test('should create DatabaseViewTabs instance', () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewTabs {
-                    constructor() {
-                        this.initialized = false;
-                        this.currentTab = null;
-                        this.tabStates = new Map();
-                        this.tabConfigs = new Map();
-                    }
-                    
-                    async initialize() {
-                        this.initialized = true;
-                    }
-                    
-                    isInitialized() {
-                        return this.initialized;
-                    }
+            // Define class directly in test context (JSDOM doesn't execute script tags)
+            class DatabaseViewTabs {
+                initialized: boolean;
+                currentTab: string | null;
+                tabStates: Map<string, any>;
+                tabConfigs: Map<string, any>;
+                
+                constructor() {
+                    this.initialized = false;
+                    this.currentTab = null;
+                    this.tabStates = new Map();
+                    this.tabConfigs = new Map();
                 }
                 
-                window.DatabaseViewTabs = DatabaseViewTabs;
-            `;
-            document.head.appendChild(script);
+                async initialize() {
+                    this.initialized = true;
+                }
+                
+                isInitialized() {
+                    return this.initialized;
+                }
+            }
+            
+            (window as any).DatabaseViewTabs = DatabaseViewTabs;
 
-            const tabs = new window.DatabaseViewTabs();
+            const tabs = new (window as any).DatabaseViewTabs();
             expect(tabs.initialized).toBe(false);
             expect(tabs.currentTab).toBe(null);
             expect(tabs.tabStates).toBeInstanceOf(Map);
@@ -101,36 +103,35 @@ describe.skip('DatabaseViewTabs Component', () => {
 
     describe('Tab Configuration', () => {
         test('should initialize tab configurations', () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewTabs {
-                    constructor() {
-                        this.tabConfigs = new Map();
-                    }
-                    
-                    initializeTabConfigs() {
-                        const tabConfigs = {
-                            'characters': {
-                                hasSearch: false,
-                                searchPlaceholder: '',
-                                dataLoader: 'loadCharacters',
-                                searchSetup: 'setupSearch'
-                            },
-                            'special-cards': {
-                                hasSearch: true,
-                                searchPlaceholder: 'Search special cards...',
-                                dataLoader: 'loadSpecialCards',
-                                searchSetup: 'setupSpecialCardSearch'
-                            }
-                        };
-                        this.tabConfigs = new Map(Object.entries(tabConfigs));
-                    }
+            // Define class directly in test context
+            class DatabaseViewTabs {
+                tabConfigs: Map<string, any>;
+                
+                constructor() {
+                    this.tabConfigs = new Map();
                 }
-                window.DatabaseViewTabs = DatabaseViewTabs;
-            `;
-            document.head.appendChild(script);
+                
+                initializeTabConfigs() {
+                    const tabConfigs = {
+                        'characters': {
+                            hasSearch: false,
+                            searchPlaceholder: '',
+                            dataLoader: 'loadCharacters',
+                            searchSetup: 'setupSearch'
+                        },
+                        'special-cards': {
+                            hasSearch: true,
+                            searchPlaceholder: 'Search special cards...',
+                            dataLoader: 'loadSpecialCards',
+                            searchSetup: 'setupSpecialCardSearch'
+                        }
+                    };
+                    this.tabConfigs = new Map(Object.entries(tabConfigs));
+                }
+            }
+            (window as any).DatabaseViewTabs = DatabaseViewTabs;
 
-            const tabs = new window.DatabaseViewTabs();
+            const tabs = new (window as any).DatabaseViewTabs();
             tabs.initializeTabConfigs();
 
             expect(tabs.tabConfigs.size).toBe(2);
@@ -151,38 +152,38 @@ describe.skip('DatabaseViewTabs Component', () => {
 
     describe('Tab Switching', () => {
         test('should switch to valid tab', async () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewTabs {
-                    constructor() {
-                        this.tabConfigs = new Map();
-                        this.currentTab = null;
-                    }
-                    
-                    initializeTabConfigs() {
-                        this.tabConfigs.set('characters', {
-                            hasSearch: false,
-                            dataLoader: 'loadCharacters',
-                            searchSetup: 'setupSearch'
-                        });
-                    }
-                    
-                    async switchTab(tabName) {
-                        if (!this.tabConfigs.has(tabName)) {
-                            throw new Error('Unknown tab: ' + tabName);
-                        }
-                        this.currentTab = tabName;
-                    }
-                    
-                    getCurrentTab() {
-                        return this.currentTab;
-                    }
+            // Define class directly in test context
+            class DatabaseViewTabs {
+                tabConfigs: Map<string, any>;
+                currentTab: string | null;
+                
+                constructor() {
+                    this.tabConfigs = new Map();
+                    this.currentTab = null;
                 }
-                window.DatabaseViewTabs = DatabaseViewTabs;
-            `;
-            document.head.appendChild(script);
+                
+                initializeTabConfigs() {
+                    this.tabConfigs.set('characters', {
+                        hasSearch: false,
+                        dataLoader: 'loadCharacters',
+                        searchSetup: 'setupSearch'
+                    });
+                }
+                
+                async switchTab(tabName: string) {
+                    if (!this.tabConfigs.has(tabName)) {
+                        throw new Error('Unknown tab: ' + tabName);
+                    }
+                    this.currentTab = tabName;
+                }
+                
+                getCurrentTab() {
+                    return this.currentTab;
+                }
+            }
+            (window as any).DatabaseViewTabs = DatabaseViewTabs;
 
-            const tabs = new window.DatabaseViewTabs();
+            const tabs = new (window as any).DatabaseViewTabs();
             tabs.initializeTabConfigs();
 
             await tabs.switchTab('characters');
@@ -190,24 +191,23 @@ describe.skip('DatabaseViewTabs Component', () => {
         });
 
         test('should reject invalid tab', async () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewTabs {
-                    constructor() {
-                        this.tabConfigs = new Map();
-                    }
-                    
-                    async switchTab(tabName) {
-                        if (!this.tabConfigs.has(tabName)) {
-                            throw new Error('Unknown tab: ' + tabName);
-                        }
+            // Define class directly in test context
+            class DatabaseViewTabs {
+                tabConfigs: Map<string, any>;
+                
+                constructor() {
+                    this.tabConfigs = new Map();
+                }
+                
+                async switchTab(tabName: string) {
+                    if (!this.tabConfigs.has(tabName)) {
+                        throw new Error('Unknown tab: ' + tabName);
                     }
                 }
-                window.DatabaseViewTabs = DatabaseViewTabs;
-            `;
-            document.head.appendChild(script);
+            }
+            (window as any).DatabaseViewTabs = DatabaseViewTabs;
 
-            const tabs = new window.DatabaseViewTabs();
+            const tabs = new (window as any).DatabaseViewTabs();
 
             await expect(tabs.switchTab('invalid-tab')).rejects.toThrow('Unknown tab: invalid-tab');
         });
@@ -215,40 +215,39 @@ describe.skip('DatabaseViewTabs Component', () => {
 
     describe('Tab State Management', () => {
         test('should manage tab states correctly', () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewTabs {
-                    constructor() {
-                        this.tabStates = new Map();
-                    }
-                    
-                    initializeTabStates() {
-                        this.tabStates.set('characters', {
-                            visible: false,
-                            active: false,
-                            dataLoaded: false
-                        });
-                    }
-                    
-                    getTabState(tabName) {
-                        return this.tabStates.get(tabName);
-                    }
-                    
-                    isTabVisible(tabName) {
-                        const state = this.tabStates.get(tabName);
-                        return state ? state.visible : false;
-                    }
-                    
-                    isTabActive(tabName) {
-                        const state = this.tabStates.get(tabName);
-                        return state ? state.active : false;
-                    }
+            // Define class directly in test context
+            class DatabaseViewTabs {
+                tabStates: Map<string, any>;
+                
+                constructor() {
+                    this.tabStates = new Map();
                 }
-                window.DatabaseViewTabs = DatabaseViewTabs;
-            `;
-            document.head.appendChild(script);
+                
+                initializeTabStates() {
+                    this.tabStates.set('characters', {
+                        visible: false,
+                        active: false,
+                        dataLoaded: false
+                    });
+                }
+                
+                getTabState(tabName: string) {
+                    return this.tabStates.get(tabName);
+                }
+                
+                isTabVisible(tabName: string) {
+                    const state = this.tabStates.get(tabName);
+                    return state ? state.visible : false;
+                }
+                
+                isTabActive(tabName: string) {
+                    const state = this.tabStates.get(tabName);
+                    return state ? state.active : false;
+                }
+            }
+            (window as any).DatabaseViewTabs = DatabaseViewTabs;
 
-            const tabs = new window.DatabaseViewTabs();
+            const tabs = new (window as any).DatabaseViewTabs();
             tabs.initializeTabStates();
 
             expect(tabs.getTabState('characters')).toEqual({
@@ -263,28 +262,25 @@ describe.skip('DatabaseViewTabs Component', () => {
 
     describe('Search Container Management', () => {
         test('should update search container visibility', () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewTabs {
-                    updateSearchContainer(tabName) {
-                        const searchContainer = document.getElementById('search-container');
-                        const searchInput = document.getElementById('search-input');
-                        
-                        if (tabName === 'characters') {
-                            searchContainer.style.display = 'none';
-                        } else {
-                            searchContainer.style.display = 'block';
-                            searchInput.placeholder = 'Search ' + tabName + '...';
-                        }
+            // Define class directly in test context
+            class DatabaseViewTabs {
+                updateSearchContainer(tabName: string) {
+                    const searchContainer = document.getElementById('search-container') as HTMLElement;
+                    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+                    
+                    if (tabName === 'characters') {
+                        searchContainer.style.display = 'none';
+                    } else {
+                        searchContainer.style.display = 'block';
+                        searchInput.placeholder = 'Search ' + tabName + '...';
                     }
                 }
-                window.DatabaseViewTabs = DatabaseViewTabs;
-            `;
-            document.head.appendChild(script);
+            }
+            (window as any).DatabaseViewTabs = DatabaseViewTabs;
 
-            const tabs = new window.DatabaseViewTabs();
-            const searchContainer = document.getElementById('search-container');
-            const searchInput = document.getElementById('search-input');
+            const tabs = new (window as any).DatabaseViewTabs();
+            const searchContainer = document.getElementById('search-container') as HTMLElement;
+            const searchInput = document.getElementById('search-input') as HTMLInputElement;
 
             // Test characters tab (no search)
             tabs.updateSearchContainer('characters');
@@ -299,42 +295,42 @@ describe.skip('DatabaseViewTabs Component', () => {
 
     describe('Event Handling', () => {
         test('should handle tab switch events', () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewTabs {
-                    constructor() {
-                        this.tabConfigs = new Map();
-                        this.currentTab = null;
-                    }
-                    
-                    initializeTabConfigs() {
-                        this.tabConfigs.set('characters', {
-                            hasSearch: false,
-                            dataLoader: 'loadCharacters',
-                            searchSetup: 'setupSearch'
-                        });
-                    }
-                    
-                    handleTabSwitch(event) {
-                        const tabName = event.detail?.tabName;
-                        if (tabName) {
-                            this.switchTab(tabName);
-                        }
-                    }
-                    
-                    async switchTab(tabName) {
-                        this.currentTab = tabName;
-                    }
-                    
-                    getCurrentTab() {
-                        return this.currentTab;
+            // Define class directly in test context
+            class DatabaseViewTabs {
+                tabConfigs: Map<string, any>;
+                currentTab: string | null;
+                
+                constructor() {
+                    this.tabConfigs = new Map();
+                    this.currentTab = null;
+                }
+                
+                initializeTabConfigs() {
+                    this.tabConfigs.set('characters', {
+                        hasSearch: false,
+                        dataLoader: 'loadCharacters',
+                        searchSetup: 'setupSearch'
+                    });
+                }
+                
+                handleTabSwitch(event: any) {
+                    const tabName = event.detail?.tabName;
+                    if (tabName) {
+                        this.switchTab(tabName);
                     }
                 }
-                window.DatabaseViewTabs = DatabaseViewTabs;
-            `;
-            document.head.appendChild(script);
+                
+                async switchTab(tabName: string) {
+                    this.currentTab = tabName;
+                }
+                
+                getCurrentTab() {
+                    return this.currentTab;
+                }
+            }
+            (window as any).DatabaseViewTabs = DatabaseViewTabs;
 
-            const tabs = new window.DatabaseViewTabs();
+            const tabs = new (window as any).DatabaseViewTabs();
             tabs.initializeTabConfigs();
 
             const event = {
@@ -348,30 +344,31 @@ describe.skip('DatabaseViewTabs Component', () => {
 
     describe('Cleanup', () => {
         test('should cleanup resources properly', () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewTabs {
-                    constructor() {
-                        this.initialized = true;
-                        this.tabStates = new Map();
-                        this.tabConfigs = new Map();
-                    }
-                    
-                    cleanup() {
-                        this.tabStates.clear();
-                        this.tabConfigs.clear();
-                        this.initialized = false;
-                    }
-                    
-                    isInitialized() {
-                        return this.initialized;
-                    }
+            // Define class directly in test context
+            class DatabaseViewTabs {
+                initialized: boolean;
+                tabStates: Map<string, any>;
+                tabConfigs: Map<string, any>;
+                
+                constructor() {
+                    this.initialized = true;
+                    this.tabStates = new Map();
+                    this.tabConfigs = new Map();
                 }
-                window.DatabaseViewTabs = DatabaseViewTabs;
-            `;
-            document.head.appendChild(script);
+                
+                cleanup() {
+                    this.tabStates.clear();
+                    this.tabConfigs.clear();
+                    this.initialized = false;
+                }
+                
+                isInitialized() {
+                    return this.initialized;
+                }
+            }
+            (window as any).DatabaseViewTabs = DatabaseViewTabs;
 
-            const tabs = new window.DatabaseViewTabs();
+            const tabs = new (window as any).DatabaseViewTabs();
             tabs.tabStates.set('test', {});
             tabs.tabConfigs.set('test', {});
 
@@ -389,20 +386,19 @@ describe.skip('DatabaseViewTabs Component', () => {
 
     describe('Global Availability', () => {
         test('should be globally available', () => {
-            const script = document.createElement('script');
-            script.textContent = `
-                class DatabaseViewTabs {
-                    constructor() {
-                        this.initialized = false;
-                    }
-                }
+            // Define class directly in test context
+            class DatabaseViewTabs {
+                initialized: boolean;
                 
-                window.DatabaseViewTabs = DatabaseViewTabs;
-            `;
-            document.head.appendChild(script);
+                constructor() {
+                    this.initialized = false;
+                }
+            }
+            
+            (window as any).DatabaseViewTabs = DatabaseViewTabs;
 
-            expect(window.DatabaseViewTabs).toBeDefined();
-            expect(new window.DatabaseViewTabs()).toBeInstanceOf(window.DatabaseViewTabs);
+            expect((window as any).DatabaseViewTabs).toBeDefined();
+            expect(new (window as any).DatabaseViewTabs()).toBeInstanceOf((window as any).DatabaseViewTabs);
         });
     });
 });

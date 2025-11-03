@@ -470,12 +470,19 @@ async function initializeServer() {
     
   } catch (error) {
     console.error('❌ Server initialization failed:', error);
-    process.exit(1);
+    if (process.env.NODE_ENV !== 'test') {
+      process.exit(1);
+    } else {
+      // In tests, rethrow to allow the test runner to handle the failure without exiting
+      throw error;
+    }
   }
 }
 
-// Start the server
-initializeServer();
+// Start the server (skip during unit tests)
+if (process.env.NODE_ENV !== 'test') {
+  initializeServer();
+}
 
 // Authentication middleware
 const authenticateUser = authService.createAuthMiddleware();

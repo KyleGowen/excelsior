@@ -59,25 +59,27 @@ public/js/components/
 **Export Data Structure:**
 ```javascript
 {
-  data: {
-    name: string,
-    description: string,
-    total_cards: number,
-    max_energy: number,
-    max_combat: number,
-    max_brute_force: number,
-    max_intelligence: number,
-    total_energy_icons: number,
-    total_combat_icons: number,
-    total_brute_force_icons: number,
-    total_intelligence_icons: number,
-    total_threat: number,
-    legal: boolean,
-    limited: boolean,
-    export_timestamp: string (ISO 8601),
-    exported_by: string
-  },
-  Cards: {
+  name: string,
+  description: string,
+  total_cards: number,
+  max_energy: number,
+  max_combat: number,
+  max_brute_force: number,
+  max_intelligence: number,
+  total_energy_icons: number,
+  total_combat_icons: number,
+  total_brute_force_icons: number,
+  total_intelligence_icons: number,
+  total_threat: number,
+  legal: boolean,
+  limited: boolean,
+  export_timestamp: string (ISO 8601),
+  exported_by: string,
+  reserve_character: string | null,
+  cataclysm_special: string | null,
+  assist_special: string | null,
+  ambush_special: string | null,
+  cards: {
     characters: string[],
     special_cards: { [characterName: string]: string[] },
     locations: string[],
@@ -94,8 +96,10 @@ public/js/components/
 }
 ```
 
+**Note**: The data structure was simplified in v2.0 - metadata fields are now at the root level (not nested in a `data` object), and the cards are in a `cards` object (not `Cards`).
+
 **Card Categories:**
-- All card types are represented in the `Cards` object
+- All card types are represented in the `cards` object
 - Cards are repeated based on their `quantity` value
 - Card names use exact database names for import compatibility
 
@@ -104,6 +108,20 @@ public/js/components/
 - **missions**: Object grouped by mission set name (e.g., `"Battle at Olympus": [...]`, `"Divine Retribution": [...]`)
 - **events**: Object grouped by mission set name (e.g., `"Getting Our Hands Dirty": [...]`, `"Ready for War": [...]`)
 - **advanced_universe**: Object grouped by character name (e.g., `"Ra": [...]`, `"Unknown Character": [...]`)
+
+**Special Card Attributes** (Root Level):
+- **reserve_character**: Name of the reserve character (if set), or `null`
+- **cataclysm_special**: Name of the cataclysm special card (if any), or `null`
+- **assist_special**: Name of the assist special card (if any), or `null`
+- **ambush_special**: Name of the ambush special card (if any), or `null`
+
+These fields export the first occurrence of each special card type that has the corresponding flag set in the database.
+
+**Power Cards Format**:
+- Power cards are exported as formatted strings: `"<value> - <power_type>"`
+- Examples: `"1 - Combat"`, `"2 - Energy"`, `"5 - Multi Power"`, `"8 - Any-Power"`
+- Cards are sorted by value (ascending), then by power type (alphabetically)
+- Multiple copies of the same power card appear as separate entries in the array
 
 ### `showExportOverlay(jsonString)`
 
@@ -342,13 +360,31 @@ Export-related styles are located in `public/css/index.css`:
 - `.copy-button` - Copy button styles
 - `.export-import-btn` - Export button styles
 
+## Special Features
+
+### Reserve Character Export
+If a deck has a reserve character set, it's exported in the `reserve_character` field at the root level. This is the name of the character card that serves as the reserve.
+
+### Special Card Type Flags
+The export captures the first occurrence of special cards with specific flags:
+- **Cataclysm**: Special cards with `cataclysm=TRUE` or `is_cataclysm=TRUE`
+- **Assist**: Special cards with `assist=TRUE` or `is_assist=TRUE`
+- **Ambush**: Special cards with `ambush=TRUE` or `is_ambush=TRUE`
+
+These are exported as single string values (not arrays) because decks can only have one of each type.
+
+### Power Card Sorting
+Power cards are sorted intelligently:
+1. First by numeric `value` (ascending: 1, 2, 3, ...)
+2. Then by `power_type` alphabetically (e.g., "Any-Power", "Combat", "Energy", "Multi Power")
+
+This ensures consistent export output that's easy to read and compare.
+
 ## Known Issues
 
-1. **Security Check Disabled**: Admin role check is commented out (line 531-534). Should be re-enabled before production.
+1. **Security Check Disabled**: Admin role check is commented out (line 34-37). Should be re-enabled before production.
 
-2. **Import Disabled**: Import functionality is completely disabled. Button exists but shows notification.
-
-3. **Card Loading Race Condition**: If cards aren't loaded, export waits 1 second. May need improvement for slow connections.
+2. **Card Loading Race Condition**: If cards aren't loaded, export waits 1 second. May need improvement for slow connections.
 
 ## Future Enhancements
 

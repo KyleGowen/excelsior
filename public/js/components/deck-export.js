@@ -1314,76 +1314,135 @@ function closeExportOverlay() {
  * Copy JSON to clipboard
  * Copies the exported JSON data to the user's clipboard
  * and provides visual feedback
+ * Uses modern Clipboard API if available, falls back to execCommand for older browsers or non-HTTPS
  */
 function copyJsonToClipboard() {
     const overlay = document.getElementById('exportJsonOverlay');
     const jsonString = overlay?.dataset.jsonString;
     
-    if (jsonString) {
+    if (!jsonString) {
+        showNotification('No JSON data to copy', 'error');
+        return;
+    }
+    
+    // Helper function to provide visual feedback
+    const showCopyFeedback = () => {
+        const copyBtn = document.querySelector('.copy-button');
+        const jsonContent = document.getElementById('exportJsonContent');
+        const jsonContainer = document.querySelector('.json-container');
+        
+        if (copyBtn) {
+            // Enhanced button flash effect
+            const originalTitle = copyBtn.title;
+            copyBtn.title = 'Copied!';
+            
+            // Add flash animation class
+            copyBtn.classList.add('copy-flash');
+            
+            // Enhanced button styling
+            copyBtn.style.background = 'rgba(78, 205, 196, 0.6)';
+            copyBtn.style.borderColor = '#4ecdc4';
+            copyBtn.style.boxShadow = '0 0 20px rgba(78, 205, 196, 0.8), 0 0 40px rgba(78, 205, 196, 0.4)';
+            copyBtn.style.transform = 'scale(1.1)';
+            copyBtn.style.transition = 'all 0.3s ease';
+            
+            // Remove flash class and reset after animation
+            setTimeout(() => {
+                copyBtn.classList.remove('copy-flash');
+            }, 150);
+            
+            setTimeout(() => {
+                copyBtn.title = originalTitle;
+                copyBtn.style.background = 'rgba(78, 205, 196, 0.2)';
+                copyBtn.style.borderColor = 'rgba(78, 205, 196, 0.3)';
+                copyBtn.style.boxShadow = 'none';
+                copyBtn.style.transform = 'scale(1)';
+            }, 500);
+        }
+        
+        // Highlight the JSON content area
+        if (jsonContainer) {
+            jsonContainer.classList.add('json-copied-flash');
+            
+            // Add border flash
+            jsonContainer.style.borderColor = '#4ecdc4';
+            jsonContainer.style.boxShadow = '0 0 30px rgba(78, 205, 196, 0.6), inset 0 0 20px rgba(78, 205, 196, 0.2)';
+            jsonContainer.style.transition = 'all 0.4s ease';
+            
+            setTimeout(() => {
+                jsonContainer.classList.remove('json-copied-flash');
+                jsonContainer.style.borderColor = 'rgba(78, 205, 196, 0.3)';
+                jsonContainer.style.boxShadow = 'none';
+            }, 400);
+        }
+        
+        // Flash the JSON text content
+        if (jsonContent) {
+            jsonContent.classList.add('json-text-flash');
+            
+            setTimeout(() => {
+                jsonContent.classList.remove('json-text-flash');
+            }, 300);
+        }
+    };
+    
+    // Try modern Clipboard API first (requires HTTPS/secure context)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(jsonString).then(() => {
-            // Get elements for visual feedback
-            const copyBtn = document.querySelector('.copy-button');
-            const jsonContent = document.getElementById('exportJsonContent');
-            const jsonContainer = document.querySelector('.json-container');
-            
-            if (copyBtn) {
-                // Enhanced button flash effect
-                const originalTitle = copyBtn.title;
-                copyBtn.title = 'Copied!';
-                
-                // Add flash animation class
-                copyBtn.classList.add('copy-flash');
-                
-                // Enhanced button styling
-                copyBtn.style.background = 'rgba(78, 205, 196, 0.6)';
-                copyBtn.style.borderColor = '#4ecdc4';
-                copyBtn.style.boxShadow = '0 0 20px rgba(78, 205, 196, 0.8), 0 0 40px rgba(78, 205, 196, 0.4)';
-                copyBtn.style.transform = 'scale(1.1)';
-                copyBtn.style.transition = 'all 0.3s ease';
-                
-                // Remove flash class and reset after animation
-                setTimeout(() => {
-                    copyBtn.classList.remove('copy-flash');
-                }, 150);
-                
-                setTimeout(() => {
-                    copyBtn.title = originalTitle;
-                    copyBtn.style.background = 'rgba(78, 205, 196, 0.2)';
-                    copyBtn.style.borderColor = 'rgba(78, 205, 196, 0.3)';
-                    copyBtn.style.boxShadow = 'none';
-                    copyBtn.style.transform = 'scale(1)';
-                }, 500);
-            }
-            
-            // Highlight the JSON content area
-            if (jsonContainer) {
-                jsonContainer.classList.add('json-copied-flash');
-                
-                // Add border flash
-                jsonContainer.style.borderColor = '#4ecdc4';
-                jsonContainer.style.boxShadow = '0 0 30px rgba(78, 205, 196, 0.6), inset 0 0 20px rgba(78, 205, 196, 0.2)';
-                jsonContainer.style.transition = 'all 0.4s ease';
-                
-                setTimeout(() => {
-                    jsonContainer.classList.remove('json-copied-flash');
-                    jsonContainer.style.borderColor = 'rgba(78, 205, 196, 0.3)';
-                    jsonContainer.style.boxShadow = 'none';
-                }, 400);
-            }
-            
-            // Flash the JSON text content
-            if (jsonContent) {
-                jsonContent.classList.add('json-text-flash');
-                
-                setTimeout(() => {
-                    jsonContent.classList.remove('json-text-flash');
-                }, 300);
-            }
-            
+            showCopyFeedback();
         }).catch(err => {
-            console.error('Failed to copy JSON: ', err);
-            showNotification('Failed to copy to clipboard', 'error');
+            console.error('Failed to copy JSON using Clipboard API: ', err);
+            // Fall back to execCommand if Clipboard API fails
+            fallbackCopyToClipboard(jsonString, showCopyFeedback);
         });
+    } else {
+        // Fall back to execCommand for older browsers or non-HTTPS contexts
+        fallbackCopyToClipboard(jsonString, showCopyFeedback);
+    }
+}
+
+/**
+ * Fallback copy method using execCommand for browsers/environments without Clipboard API
+ */
+function fallbackCopyToClipboard(text, onSuccess) {
+    // Create a temporary textarea element
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    
+    // Style it to be invisible but selectable
+    textArea.style.position = 'fixed';
+    textArea.style.top = '0';
+    textArea.style.left = '0';
+    textArea.style.width = '2em';
+    textArea.style.height = '2em';
+    textArea.style.padding = '0';
+    textArea.style.border = 'none';
+    textArea.style.outline = 'none';
+    textArea.style.boxShadow = 'none';
+    textArea.style.background = 'transparent';
+    textArea.style.opacity = '0';
+    textArea.style.zIndex = '-1';
+    
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        // Try to copy using execCommand
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        if (successful) {
+            if (onSuccess) {
+                onSuccess();
+            }
+        } else {
+            throw new Error('execCommand copy failed');
+        }
+    } catch (err) {
+        document.body.removeChild(textArea);
+        console.error('Failed to copy JSON using fallback method: ', err);
+        showNotification('Failed to copy to clipboard. Please copy manually.', 'error');
     }
 }
 
