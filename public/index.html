@@ -546,6 +546,7 @@
     </style>
     <!-- Authentication Service -->
     <script src="/js/auth-service.js"></script>
+    <script src="/js/components/simulate-ko.js"></script>
     
     <!-- Global Navigation Component -->
     <link rel="stylesheet" href="/components/globalNav.css">
@@ -2621,6 +2622,7 @@
                 const authResult = await checkAuthentication();
                 console.log('🔐 Authentication result:', authResult);
                 currentUser = authResult.currentUser; // Update global currentUser after checkAuthentication
+                window.currentUser = currentUser; // Also set on window for modules to access
 
                 // Initialize ViewManager
                 viewManager.initialize();
@@ -3421,6 +3423,8 @@
         let currentDeckData = null;
         window.deckEditorCards = []; // Working copy of deck cards
         window.availableCardsMap = new Map(); // Cache for available cards data
+        // KO state is managed by SimulateKO module - don't initialize here, let the module handle it
+        // window.koCharacters will be created by SimulateKO.init()
         let deckEditorExpansionState = {}; // Track expansion state of deck type sections
         let characterGroupExpansionState = {}; // Track expansion state of character groups within special cards
         let powerCardsSortMode = 'type'; // Track power cards sort mode: 'type' or 'value'
@@ -3819,6 +3823,8 @@
                             
                             html += `
                                 <div class="deck-list-item" 
+                                     data-card-id="${card.cardId}"
+                                     data-type="${card.type}"
                                      onmouseenter="showCardHoverModal('${imagePath}', '${cardName.replace(/'/g, "\\'")}')"
                                      onmouseleave="hideCardHoverModal()">
                                     <div class="deck-list-item-quantity">${card.quantity}</div>
@@ -3847,6 +3853,7 @@
                                             </div>
                                         ` : ''}
                                         ${type === 'character' ? `
+                                            ${currentUser ? `<button class="ko-btn ${window.SimulateKO && window.SimulateKO.isKOd(card.cardId) ? 'active' : ''}" onclick="toggleKOCharacter('${card.cardId}', ${window.window.deckEditorCards.indexOf(card)})" title="${window.SimulateKO && window.SimulateKO.isKOd(card.cardId) ? 'Un-KO Character' : 'KO Character'}">KO</button>` : ''}
                                             ${getReserveCharacterButton(card.cardId, window.window.deckEditorCards.indexOf(card))}
                                             <button class="deck-list-item-remove" onclick="removeCardFromEditor(${window.window.deckEditorCards.indexOf(card)})">-</button>
                                         ` : ''}
@@ -4377,6 +4384,11 @@
                     // No columns exist yet - do normal render
                     deckCardsEditor.innerHTML = html;
                     
+                    // Apply KO dimming (list view)
+                    if (currentUser) {
+                        applyKODimming();
+                    }
+                    
                     // Ultra-aggressive layout enforcement
                     ultraAggressiveLayoutEnforcement();
                     
@@ -4645,21 +4657,30 @@
                                 <button class="add-one-btn card-view-btn" onclick="addOneCardToEditor(${index})">+1</button>
                             `;
                         } else if (card.type === 'character') {
-                            // For characters, add remove button and reserve button
+                            // For characters, add remove button, KO button, and reserve button
                             const reserveButton = getReserveCharacterButton(card.cardId, index);
+                            const koButton = currentUser 
+                                ? `<button class="ko-btn card-view-btn ${window.SimulateKO && window.SimulateKO.isKOd(card.cardId) ? 'active' : ''}" onclick="toggleKOCharacter('${card.cardId}', ${index})" title="${window.SimulateKO && window.SimulateKO.isKOd(card.cardId) ? 'Un-KO Character' : 'KO Character'}">KO</button>`
+                                : '';
                             quantityButtons = `
                                 <button class="quantity-btn card-view-btn" onclick="removeCardFromEditor(${index})">-</button>
+                                ${koButton}
                                 ${reserveButton}
                             `;
                         } else {
                             quantityButtons = `<button class="quantity-btn card-view-btn" onclick="removeCardFromEditor(${index})">-</button>`;
                         }
                         
+                        // Check if this character is KO'd (for card view)
+                        const isKOdCardView = card.type === 'character' && window.SimulateKO && window.SimulateKO.isKOd(card.cardId);
+                        const koDimmedClassCardView = isKOdCardView ? 'ko-dimmed' : '';
+                        
                         // Render multiple instances of the card based on quantity
                         for (let i = 0; i < quantity; i++) {
                             cardsHtml += `
-                                <div class="deck-card-card-view-item" 
+                                <div class="deck-card-card-view-item ${koDimmedClassCardView}" 
                                      data-index="${index}" 
+                                     data-card-id="${card.cardId}"
                                      data-type="${card.type}"
                                      data-instance="${i + 1}"
                                      onmouseenter="showCardHoverModal('${cardImagePath}', '${(availableCard.name || availableCard.card_name || 'Card').replace(/'/g, "\\'")}')"
@@ -4682,6 +4703,11 @@
             });
 
             deckCardsEditor.innerHTML = cardsHtml;
+            
+            // Apply KO dimming (card view)
+            if (currentUser) {
+                applyKODimming();
+            }
             
             // Update deck summary and card count to ensure Draw Hand button state is correct
             updateDeckEditorCardCount();
@@ -4924,7 +4950,8 @@
             displayDrawnCards(drawnCards);
         }
 
-        function displayDrawnCards(cards) {
+        // Make displayDrawnCards globally accessible for KO refresh
+        window.displayDrawnCards = function displayDrawnCards(cards) {
             const drawHandContent = document.getElementById('drawHandContent');
             drawHandContent.innerHTML = '';
 
@@ -4937,6 +4964,18 @@
                 // Add event-card class for horizontal orientation
                 if (card.type === 'event') {
                     cardElement.classList.add('event-card');
+                }
+                
+                // Check if card should be dimmed based on KO'd characters
+                if (window.SimulateKO && window.SimulateKO.shouldDimCard) {
+                    const shouldDim = window.SimulateKO.shouldDimCard(
+                        card, 
+                        window.availableCardsMap || new Map(), 
+                        window.deckEditorCards || []
+                    );
+                    if (shouldDim) {
+                        cardElement.classList.add('ko-dimmed');
+                    }
                 }
                 
                 // Get the card image path
@@ -8293,8 +8332,12 @@
                             cardDisplayNameForPreview = availableCard.name || availableCard.card_name || getCardName(card);
                         }
                         
+                        // Check if this character is KO'd
+                        const isKOd = card.type === 'character' && window.SimulateKO && window.SimulateKO.isKOd(card.cardId);
+                        const koDimmedClass = isKOd ? 'ko-dimmed' : '';
+                        
                         cardsHtml += `
-                                <div class="deck-card-editor-item preview-view ${characterClass} ${powerClass} ${locationClass} ${missionClass} ${eventClass} ${aspectClass} ${teamworkClass} ${allyUniverseClass} ${basicUniverseClass} ${advancedUniverseClass} ${trainingClass}" draggable="true" data-index="${index}" data-type="${card.type}"
+                                <div class="deck-card-editor-item preview-view ${characterClass} ${powerClass} ${locationClass} ${missionClass} ${eventClass} ${aspectClass} ${teamworkClass} ${allyUniverseClass} ${basicUniverseClass} ${advancedUniverseClass} ${trainingClass} ${koDimmedClass}" draggable="true" data-index="${index}" data-type="${card.type}" data-card-id="${card.cardId}"
                                      ${bgImageData}
                                      onmouseenter="showCardHoverModal('${getCardImagePath(availableCard, card.type, selectedAlternateImage)}', '${cardDisplayNameForPreview.replace(/'/g, "\\'")}')"
                                  onmouseleave="hideCardHoverModal()"
@@ -8311,8 +8354,9 @@
                                     ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
                                     ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="add-one-btn" onclick="addOneCardToEditor(${index})">+1</button>` : ''}
                                     ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">-</button>` : ''}
+                                    ${card.type === 'character' && currentUser ? `<button class="ko-btn ${window.SimulateKO && window.SimulateKO.isKOd(card.cardId) ? 'active' : ''}" onclick="toggleKOCharacter('${card.cardId}', ${index})" title="${window.SimulateKO && window.SimulateKO.isKOd(card.cardId) ? 'Un-KO Character' : 'KO Character'}">KO</button>` : ''}
+                                    ${card.type === 'character' ? getReserveCharacterButton(card.cardId, index) : ''}
                                 </div>
-                                ${card.type === 'character' ? `<div class="deck-card-editor-reserve">${getReserveCharacterButton(card.cardId, index)}</div>` : ''}
                             </div>
                         `;
                     });
@@ -8326,6 +8370,11 @@
             });
             
             deckCardsEditor.innerHTML = cardsHtml;
+            
+            // Apply KO dimming
+            if (currentUser) {
+                applyKODimming();
+            }
             
             // Debug: Check character section layout and body classes
             setTimeout(() => {
@@ -9360,6 +9409,11 @@
             const removedCard = window.deckEditorCards[index];
             console.log('🎯 Removing card:', removedCard);
             
+            // If removing a character, also remove it from KO set
+            if (removedCard && removedCard.type === 'character' && window.SimulateKO) {
+                window.SimulateKO.removeCharacter(removedCard.cardId);
+            }
+            
             window.deckEditorCards.splice(index, 1);
             
             // Preserve current view when removing cards
@@ -10300,6 +10354,46 @@
             }
         }
 
+        // KO Feature Functions - Now handled by SimulateKO module
+        // Wrapper functions for backward compatibility
+        async function toggleKOCharacter(cardId, index) {
+            try {
+                if (!window.SimulateKO) {
+                    console.error('SimulateKO module not loaded');
+                    return;
+                }
+                console.log('🔘 toggleKOCharacter called:', cardId, index);
+                await window.SimulateKO.toggleKOCharacter(cardId, index, {
+                    renderCardView: renderDeckCardsCardView,
+                    renderListView: renderDeckCardsListView,
+                    renderTileView: displayDeckCardsForEditing
+                });
+            } catch (error) {
+                console.error('Error in toggleKOCharacter:', error);
+            }
+        }
+        
+        function getActiveCharacters() {
+            if (!window.SimulateKO) {
+                return [];
+            }
+            return window.SimulateKO.getActiveCharacters();
+        }
+        
+        function calculateActiveTeamStats() {
+            if (!window.SimulateKO) {
+                return { maxEnergy: 0, maxCombat: 0, maxBruteForce: 0, maxIntelligence: 0 };
+            }
+            return window.SimulateKO.calculateActiveTeamStats();
+        }
+        
+        function applyKODimming() {
+            if (!window.SimulateKO) {
+                return;
+            }
+            window.SimulateKO.applyDimming();
+        }
+        
         // Function to update Fortification card dimming status
         function updateFortificationLimitStatus() {
             // Get all Fortification cards currently in the deck

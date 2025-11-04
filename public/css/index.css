@@ -1506,6 +1506,7 @@
             position: relative;
         }
 
+
         .drawn-card.event-card {
             width: 185px;
             height: 132px;
@@ -2655,6 +2656,51 @@
 
         .quantity-btn.danger:hover {
             background: rgba(255, 107, 107, 0.3);
+        }
+
+        /* KO Button Styling - Similar to quantity-btn but red, inverted when active */
+        .ko-btn {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            padding: 3.3px 6.6px;
+            border-radius: 3.3px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s ease;
+        }
+
+        .ko-btn:hover {
+            background: rgba(255, 107, 107, 0.3);
+            border-color: rgba(255, 107, 107, 0.4);
+        }
+
+        /* Inverted color scheme when character is KO'd */
+        .ko-btn.active {
+            background: #ff6b6b;
+            color: rgba(26, 26, 46, 0.9);
+            border-color: #ff6b6b;
+        }
+
+        .ko-btn.active:hover {
+            background: #ff5252;
+            border-color: #ff5252;
+        }
+
+        /* Dimmed state for KO'd characters and unusable cards */
+        .deck-card-editor-item.ko-dimmed,
+        .deck-card-card-view-item.ko-dimmed,
+        .deck-list-item.ko-dimmed,
+        .drawn-card.ko-dimmed {
+            opacity: 0.375 !important; /* 25% more dimmed (was 0.5, now 0.375) */
+            filter: grayscale(0.4);
+        }
+
+        .deck-card-editor-item.ko-dimmed:hover,
+        .deck-card-card-view-item.ko-dimmed:hover,
+        .deck-list-item.ko-dimmed:hover,
+        .drawn-card.ko-dimmed:hover {
+            opacity: 0.375 !important;
         }
 
         .deck-card-editor-reserve {

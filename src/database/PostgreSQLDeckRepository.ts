@@ -536,7 +536,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
           cardExists = powerResult.rows.length > 0;
           break;
         case 'mission':
-          const missionResult = await client.query('SELECT id FROM mission_objectives WHERE id = $1', [cardId]);
+          const missionResult = await client.query('SELECT id FROM missions WHERE id = $1', [cardId]);
           cardExists = missionResult.rows.length > 0;
           break;
         case 'event':
