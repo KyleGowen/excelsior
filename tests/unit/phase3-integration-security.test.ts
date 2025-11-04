@@ -454,7 +454,7 @@ describe('Phase 3: Integration Security Testing', () => {
         status: 429,
         json: jest.fn().mockResolvedValue({
           success: false,
-          error: 'Rate limit exceeded. Maximum 10 requests per minute allowed.'
+          error: 'Rate limit exceeded. Maximum 100 requests per minute allowed.'
         })
       });
 

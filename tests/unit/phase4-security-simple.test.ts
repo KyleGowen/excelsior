@@ -54,8 +54,8 @@ describe('Phase 4: Security Features', () => {
 
   describe('Rate Limiting', () => {
     test('should define rate limits', () => {
-      const limit = 10; // requests per minute
-      expect(limit).toBe(10);
+      const limit = 100; // requests per minute
+      expect(limit).toBe(100);
     });
   });
 

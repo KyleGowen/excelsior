@@ -381,7 +381,7 @@ describe('Phase 3: Penetration Security Testing', () => {
         {
           name: 'Rate limit exceeded',
           request: { url: '/api/decks/deck-123', method: 'PUT', rateLimited: true },
-          expectedResponse: { status: 429, error: 'Rate limit exceeded. Maximum 10 requests per minute allowed.' }
+          expectedResponse: { status: 429, error: 'Rate limit exceeded. Maximum 100 requests per minute allowed.' }
         }
       ];
 

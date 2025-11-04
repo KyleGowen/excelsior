@@ -169,7 +169,7 @@ describe('Phase 2 Backend Security', () => {
         const [req, res, operation] = args;
         res.status(429).json({
           success: false,
-          error: 'Rate limit exceeded. Maximum 10 requests per minute allowed.'
+          error: 'Rate limit exceeded. Maximum 100 requests per minute allowed.'
         });
         return true;
       });
@@ -180,7 +180,7 @@ describe('Phase 2 Backend Security', () => {
       expect(mockResponse.status).toHaveBeenCalledWith(429);
       expect(mockResponse.json).toHaveBeenCalledWith({
         success: false,
-        error: 'Rate limit exceeded. Maximum 10 requests per minute allowed.'
+        error: 'Rate limit exceeded. Maximum 100 requests per minute allowed.'
       });
     });
 

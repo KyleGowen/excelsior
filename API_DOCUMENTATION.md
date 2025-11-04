@@ -476,7 +476,7 @@ Create a new deck.
 **Authentication:** Required (USER or ADMIN role, not GUEST)
 **Security:**
 - Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
-- Rate limiting: 10 requests per minute per IP
+- Rate limiting: 100 requests per minute per IP
 - Input validation: name required (max 100 chars), description max 500 chars, characters max 50 items
 
 **Request Body:**
@@ -579,7 +579,7 @@ Update a deck's metadata.
 **Authentication:** Required (USER or ADMIN role, not GUEST)
 **Security:**
 - Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
-- Rate limiting: 10 requests per minute per IP
+- Rate limiting: 100 requests per minute per IP
 - Ownership validation required
 - Input validation: name max 100 chars, description max 500 chars, reserve_character max 50 chars
 
@@ -626,7 +626,7 @@ Delete a deck.
 **Authentication:** Required (USER or ADMIN role, not GUEST)
 **Security:**
 - Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
-- Rate limiting: 10 requests per minute per IP
+- Rate limiting: 100 requests per minute per IP
 - Ownership validation required
 
 **Parameters:**
@@ -650,7 +650,7 @@ Add a card to a deck.
 **Authentication:** Required (USER or ADMIN role, not GUEST)
 **Security:**
 - Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
-- Rate limiting: 10 requests per minute per IP
+- Rate limiting: 100 requests per minute per IP
 - Ownership validation required
 - Input validation: cardType/cardId required (max 50/100 chars), quantity 1-10, selectedAlternateImage max 200 chars
 
@@ -689,7 +689,7 @@ Replace all cards in a deck (bulk operation).
 **Authentication:** Required (USER or ADMIN role, not GUEST)
 **Security:**
 - Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
-- Rate limiting: 10 requests per minute per IP
+- Rate limiting: 100 requests per minute per IP
 - Ownership validation required
 - Input validation: cards array max 100 items, each card validated individually
 
@@ -732,7 +732,7 @@ Remove a card from a deck.
 **Authentication:** Required (USER or ADMIN role, not GUEST)
 **Security:**
 - Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
-- Rate limiting: 10 requests per minute per IP
+- Rate limiting: 100 requests per minute per IP
 - Ownership validation required
 - Input validation: cardType/cardId required (max 50/100 chars), quantity 1-10
 
@@ -778,7 +778,7 @@ Update a specific card's quantity or alternate image in a deck.
 **Authentication:** Required (USER or ADMIN role, not GUEST)
 **Security:**
 - Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
-- Rate limiting: 10 requests per minute per IP
+- Rate limiting: 100 requests per minute per IP
 - Ownership validation required
 - Input validation: quantity 1-10, selectedAlternateImage max 200 chars
 
@@ -872,7 +872,7 @@ When read-only mode is detected, all modification operations are blocked with a 
 
 ### Rate Limiting
 Security-sensitive operations are rate limited to prevent abuse:
-- **Limit:** 10 requests per minute per IP address
+- **Limit:** 100 requests per minute per IP address
 - **Scope:** Per operation type (deck creation, card addition, etc.)
 - **Response:** 429 Too Many Requests when limit exceeded
 - **Window:** 1 minute sliding window
@@ -941,7 +941,7 @@ Update UI preferences for a specific deck.
 **Authentication:** Required (USER or ADMIN role, not GUEST)
 **Security:** 
 - Read-only mode detection (blocks if `readonly=true` in URL/query/headers)
-- Rate limiting: 10 requests per minute per IP
+- Rate limiting: 100 requests per minute per IP
 - Ownership validation required
 - Input validation: preferences object size limited to 1000 characters
 

@@ -313,7 +313,7 @@ function blockInReadOnlyMode(req: any, res: any, operation: string): boolean {
 // Rate limiting for security-sensitive operations
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 10; // Max 10 requests per minute per IP
+const RATE_LIMIT_MAX_REQUESTS = 100; // Max 100 requests per minute per IP
 
 function checkRateLimit(req: any, res: any, operation: string): boolean {
   const clientIP = req.ip || req.connection.remoteAddress || 'unknown';

@@ -194,7 +194,7 @@ if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isO
 ##### 3. Rate Limiting Implementation ✅
 - ✅ **Implemented in-memory rate limiting** for security-sensitive operations
 - ✅ **Added IP-based request tracking** with 1-minute sliding windows
-- ✅ **Configured rate limits** (10 requests/minute per IP per operation)
+- ✅ **Configured rate limits** (100 requests/minute per IP per operation)
 
 ##### 4. Enhanced Input Validation ✅
 - ✅ **Added comprehensive validation** for all request parameters
