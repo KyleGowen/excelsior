@@ -7,12 +7,13 @@ module.exports = {
     '**/tests/integration/**/*.spec.ts'
   ],
   testPathIgnorePatterns: [
-    '.*/tests/integration/character.*\\.test\\.ts$',
+    '.*/tests/integration/characterLimitValidation\\.test\\.ts$',
+    '.*/tests/integration/character-column-layout\\.test\\.ts$',
+    '.*/tests/integration/special-character-threat-display\\.test\\.ts$',
     '.*/tests/integration/reserve-character.*\\.test\\.ts$',
     '.*/tests/integration/power.*\\.test\\.ts$',
     '.*/tests/integration/teamwork.*\\.test\\.ts$',
     '.*/tests/integration/event-mission-filtering-integration\\.test\\.ts$',
-    '.*/tests/integration/special-character-threat-display\\.test\\.ts$',
     '.*/tests/integration/guest-reserve-character-integration\\.test\\.ts$',
     '.*/tests/integration/deck-ownership-security.*\\.test\\.ts$',
     '.*/tests/integration/deck-save-security.*\\.test\\.ts$',
