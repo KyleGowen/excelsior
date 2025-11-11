@@ -24,6 +24,11 @@ function showMainApp() {
         : (currentUser.username || currentUser.name || 'User');
     document.getElementById('currentUsername').textContent = displayName;
     
+    // Update Collection button visibility after login
+    if (typeof updateUserWelcome === 'function') {
+        updateUserWelcome();
+    }
+    
     // Hide database view by default to avoid flash and switch directly to deck builder
     const databaseView = document.getElementById('database-view');
     if (databaseView) databaseView.style.display = 'none';

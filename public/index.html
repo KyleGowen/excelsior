@@ -9,6 +9,7 @@
     <link rel="icon" href="/public/resources/images/icons/threat.png" type="image/png">
     <title>Excelsior Deckbuilder - Characters Database</title>
     <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/collection-view.css">
     <style>
         /* Advanced Universe Search Input Styling - Direct override */
         #advanced-universe-table .header-filter[data-column="card_effect"] {
@@ -569,7 +570,8 @@
     <link rel="stylesheet" href="/css/deck-editor-search.css">
     <script src="/js/services/CardSearchService.js"></script>
     <script src="/js/components/DeckEditorSearch.js"></script>
-        <script src="/js/card-display-functions.js"></script>
+    <script src="/js/card-display-functions.js"></script>
+    <script src="/js/collection-view.js"></script>
         <script src="/js/search-filter-functions.js"></script>
         <script src="/js/deck-management-functions.js"></script>
     <script src="/js/ui-utility-functions.js"></script>
@@ -1174,7 +1176,24 @@
             </div>
         </div>
 
+        <!-- Collection View -->
+        <div id="collection-view" class="collection-section" style="display: none;">
+            <!-- Search Bar -->
+            <div class="collection-search-container">
+                <input type="text" 
+                       id="collectionSearchInput" 
+                       class="collection-search-input" 
+                       placeholder="Search all cards to add to collection...">
+                <div id="collectionSearchResults" class="collection-search-results" style="display: none;"></div>
+            </div>
 
+            <!-- Collection Cards List -->
+            <div class="collection-cards-container">
+                <div id="collectionCardsList" class="collection-cards-list">
+                    <div class="collection-loading">Loading collection...</div>
+                </div>
+            </div>
+        </div>
 
         <!-- Deck Builder Section -->
         <div id="deck-builder" class="deck-builder-section" style="display: none; opacity: 0; transition: opacity 120ms ease-in-out;">
@@ -2046,6 +2065,11 @@
                         <button class="add-to-deck-btn" onclick="showDeckSelection('teamwork', '${card.id}', '${(card.card_type || '').replace(/'/g, "\\'")}', this)">
                             Add to Deck
                         </button>
+                        ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
+                        <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'teamwork')" style="margin-top: 4px; display: block; width: 100%;">
+                            Add to Collection
+                        </button>
+                        ` : ''}
                     </td>
                     <td>${card.to_use}</td>
                     <td>${card.acts_as}</td>
@@ -2156,6 +2180,11 @@
                         <button class="add-to-deck-btn" onclick="showDeckSelection('training', '${card.id}', '${(card.card_name || '').replace(/'/g, "\\'")}', this)">
                             Add to Deck
                         </button>
+                        ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
+                        <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'training')" style="margin-top: 4px; display: block; width: 100%;">
+                            Add to Collection
+                        </button>
+                        ` : ''}
                     </td>
                     <td><strong>${card.card_name.replace(/^Training \(/, '').replace(/\)$/, '')}</strong></td>
                     <td>${card.type_1}</td>
@@ -2280,6 +2309,11 @@
                         <button class="add-to-deck-btn" onclick="showDeckSelection('basic-universe', '${card.id}', '${(card.card_name || '').replace(/'/g, "\\'")}', this)">
                             Add to Deck
                         </button>
+                        ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
+                        <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'basic-universe')" style="margin-top: 4px; display: block; width: 100%;">
+                            Add to Collection
+                        </button>
+                        ` : ''}
                     </td>
                     <td><strong>${card.card_name}</strong></td>
                     <td>${card.type}</td>
@@ -2434,6 +2468,11 @@
                         <button class="add-to-deck-btn" onclick="showDeckSelection('power', '${card.id}', '${card.value} - ${card.power_type}', this)">
                             Add to Deck
                         </button>
+                        ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
+                        <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'power')" style="margin-top: 4px; display: block; width: 100%;">
+                            Add to Collection
+                        </button>
+                        ` : ''}
                     </td>
                     <td>${card.power_type}</td>
                     <td>${card.value}</td>
@@ -2634,6 +2673,10 @@
                 }
 
                 if (authResult.isAuthenticated) {
+                    // Ensure Collection button visibility is updated after authentication
+                    if (typeof updateUserWelcome === 'function') {
+                        updateUserWelcome();
+                    }
                     console.log('✅ User is authenticated');
                     if (authResult.deckId) {
                         console.log('🎯 Deck ID detected:', authResult.deckId);
@@ -2705,22 +2748,43 @@
             
             // Load data only if authenticated
             if (currentUser) {
+                // Check if we're on the collection route
+                const isCollectionRoute = window.location.pathname.includes('/users/') && window.location.pathname.includes('/collection');
                 // Check if we're on the deck builder route
                 const isDeckBuilderRoute = window.location.pathname.includes('/users/') && window.location.pathname.includes('/decks');
                 
-                if (isDeckBuilderRoute) {
+                if (isCollectionRoute && currentUser.role === 'ADMIN') {
+                    // Start in collection view
+                    document.getElementById('database-view').style.display = 'none';
+                    document.getElementById('deck-builder').style.display = 'none';
+                    document.getElementById('collection-view').style.display = 'block';
+                    document.getElementById('databaseViewBtn').classList.remove('active');
+                    document.getElementById('deckBuilderBtn').classList.remove('active');
+                    const collectionBtn = document.getElementById('collectionViewBtn');
+                    if (collectionBtn) collectionBtn.classList.add('active');
+                    // Initialize collection view
+                    if (typeof initializeCollectionView === 'function') {
+                        initializeCollectionView();
+                    }
+                } else if (isDeckBuilderRoute) {
                     // Start in deck builder view
                     document.getElementById('database-view').style.display = 'none';
                     document.getElementById('deck-builder').style.display = 'block';
+                    document.getElementById('collection-view').style.display = 'none';
                     document.getElementById('databaseViewBtn').classList.remove('active');
                     document.getElementById('deckBuilderBtn').classList.add('active');
+                    const collectionBtn = document.getElementById('collectionViewBtn');
+                    if (collectionBtn) collectionBtn.classList.remove('active');
                     
                 } else {
                     // Start in database view
                     document.getElementById('database-view').style.display = 'block';
                     document.getElementById('deck-builder').style.display = 'none';
+                    document.getElementById('collection-view').style.display = 'none';
                     document.getElementById('databaseViewBtn').classList.add('active');
                     document.getElementById('deckBuilderBtn').classList.remove('active');
+                    const collectionBtn = document.getElementById('collectionViewBtn');
+                    if (collectionBtn) collectionBtn.classList.remove('active');
                 }
                 
                 // Show database statistics in initial database view
@@ -8803,8 +8867,89 @@
                     
                     // Check if we're near any buttons and adjust position
                     const target = event.target;
-                    const cardElement = target.closest('.deck-card-editor-item, .card-item');
+                    const cardElement = target.closest('.deck-card-editor-item, .card-item, .collection-card-item');
                     if (cardElement) {
+                        // Handle collection view cards
+                        if (cardElement.classList.contains('collection-card-item')) {
+                            // Check for actions container first (similar to deck editor)
+                            const actionsContainer = cardElement.querySelector('.collection-card-actions, .collection-quantity-control');
+                            if (actionsContainer) {
+                                const rect = actionsContainer.getBoundingClientRect();
+                                
+                                // If mouse is near the actions area, position modal to avoid it
+                                if (event.clientX > rect.left - 100 && event.clientY > rect.top - 100) {
+                                    // Try positioning to the left first with larger offset
+                                    x = event.clientX - modalWidth - 80;
+                                    y = event.clientY + 50;
+                                    
+                                    // If that would go off screen, try positioning below and to the right
+                                    if (x < 10) {
+                                        x = event.clientX + 80;
+                                        y = event.clientY + modalHeight + 50;
+                                    }
+                                }
+                            }
+                            
+                            // Check for quantity buttons in collection view
+                            const buttons = cardElement.querySelectorAll('.collection-quantity-btn');
+                            let buttonAvoided = false;
+                            
+                            buttons.forEach(button => {
+                                const buttonRect = button.getBoundingClientRect();
+                                
+                                // Check if mouse is near the button area (larger detection zone)
+                                const buffer = 120; // Larger buffer zone for detection
+                                if (event.clientX > buttonRect.left - buffer && event.clientX < buttonRect.right + buffer &&
+                                    event.clientY > buttonRect.top - buffer && event.clientY < buttonRect.bottom + buffer) {
+                                    
+                                    // Position modal to the left of the button with large offset
+                                    x = buttonRect.left - modalWidth - 80;
+                                    y = buttonRect.top - modalHeight / 2;
+                                    
+                                    // If that goes off screen, try positioning below with large offset
+                                    if (x < 10) {
+                                        x = buttonRect.right + 80;
+                                        y = buttonRect.top - modalHeight / 2;
+                                    }
+                                    
+                                    // If still off screen, try positioning above
+                                    if (y < 10) {
+                                        x = buttonRect.left - modalWidth / 2;
+                                        y = buttonRect.top - modalHeight - 80;
+                                    }
+                                    
+                                    // If still off screen, try positioning to the right
+                                    if (x + modalWidth > window.innerWidth - 10) {
+                                        x = buttonRect.left - modalWidth - 80;
+                                        y = buttonRect.bottom + 80;
+                                    }
+                                    
+                                    buttonAvoided = true;
+                                }
+                            });
+                            
+                            // If no button was avoided, use default positioning but check for overlap
+                            if (!buttonAvoided) {
+                                buttons.forEach(button => {
+                                    const buttonRect = button.getBoundingClientRect();
+                                    
+                                    // If modal would overlap with button, move it away
+                                    if (x < buttonRect.right + 20 && x + modalWidth > buttonRect.left - 20 &&
+                                        y < buttonRect.bottom + 20 && y + modalHeight > buttonRect.top - 20) {
+                                        // Try positioning to the left of the button with larger offset
+                                        x = buttonRect.left - modalWidth - 80;
+                                        y = buttonRect.top - modalHeight / 2;
+                                        
+                                        // If that goes off screen, try positioning below with larger offset
+                                        if (x < 10) {
+                                            x = buttonRect.right + 80;
+                                            y = buttonRect.bottom + 80;
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                        
                         // Handle deck editor cards
                         if (cardElement.classList.contains('deck-card-editor-item')) {
                             // Check for any buttons in the deck editor card element first
@@ -9195,6 +9340,107 @@
         // Helper function to get card image path
         function getCardImagePath(card, cardType, selectedAlternateImage = null) {
             try {
+                // CRITICAL: Check for card.image_path first (for collection cards after V179 migration)
+                // This takes precedence over everything else
+                if (card.image_path && typeof card.image_path === 'string' && card.image_path.trim() !== '') {
+                    const imagePath = card.image_path.trim();
+                    console.log('🟢 [getCardImagePath] Using card.image_path:', imagePath);
+                    
+                    // If it's already a full path, use it directly
+                    if (imagePath.startsWith('/src/resources/cards/images/')) {
+                        return imagePath;
+                    }
+                    
+                    // If it's just a filename, construct the full path based on card type
+                    if (!imagePath.includes('/')) {
+                        switch (cardType) {
+                            case 'character':
+                                return `/src/resources/cards/images/characters/${imagePath}`;
+                            case 'special':
+                                return `/src/resources/cards/images/specials/${imagePath}`;
+                            case 'power':
+                                return `/src/resources/cards/images/power-cards/${imagePath}`;
+                            case 'location':
+                                return `/src/resources/cards/images/locations/${imagePath}`;
+                            case 'mission':
+                                return `/src/resources/cards/images/missions/${imagePath}`;
+                            case 'event':
+                                return `/src/resources/cards/images/events/${imagePath}`;
+                            case 'aspect':
+                                return `/src/resources/cards/images/aspects/${imagePath}`;
+                            case 'advanced_universe':
+                                return `/src/resources/cards/images/advanced-universe/${imagePath}`;
+                            case 'teamwork':
+                                return `/src/resources/cards/images/teamwork-universe/${imagePath}`;
+                            case 'ally_universe':
+                                return `/src/resources/cards/images/ally-universe/${imagePath}`;
+                            case 'training':
+                                return `/src/resources/cards/images/training-universe/${imagePath}`;
+                            case 'basic_universe':
+                                return `/src/resources/cards/images/basic-universe/${imagePath}`;
+                            default:
+                                return '/src/resources/cards/images/placeholder.webp';
+                        }
+                    }
+                    
+                    // If it has a partial path, construct full path
+                    if (imagePath.includes('/') && !imagePath.startsWith('/')) {
+                        return `/src/resources/cards/images/${imagePath}`;
+                    }
+                    
+                    // Fallback
+                    return imagePath;
+                }
+                
+                // Legacy support: Check for card.alternate_image (for collection cards before V179 migration)
+                if (card.alternate_image && typeof card.alternate_image === 'string' && card.alternate_image.trim() !== '') {
+                    const altImagePath = card.alternate_image.trim();
+                    console.log('🟢 [getCardImagePath] Using card.alternate_image (legacy):', altImagePath);
+                    
+                    // If it's already a full path, use it directly
+                    if (altImagePath.startsWith('/src/resources/cards/images/')) {
+                        return altImagePath;
+                    }
+                    
+                    // Handle "characters/alternate/filename.png" format
+                    if (cardType === 'character' && altImagePath.startsWith('characters/alternate/')) {
+                        const filename = altImagePath.replace('characters/alternate/', '');
+                        return `/src/resources/cards/images/characters/alternate/${filename}`;
+                    }
+                    
+                    // Handle "alternate/filename.png" format for characters
+                    if (cardType === 'character' && altImagePath.startsWith('alternate/')) {
+                        const filename = altImagePath.replace('alternate/', '');
+                        return `/src/resources/cards/images/characters/alternate/${filename}`;
+                    }
+                    
+                    // Handle special cards with alternate images
+                    if (cardType === 'special' && altImagePath.includes('/alternate/')) {
+                        const filename = altImagePath.split('/alternate/').pop();
+                        return `/src/resources/cards/images/specials/alternate/${filename}`;
+                    }
+                    
+                    // Handle power cards with alternate images
+                    if (cardType === 'power' && altImagePath.includes('/alternate/')) {
+                        const filename = altImagePath.split('/alternate/').pop();
+                        return `/src/resources/cards/images/power-cards/alternate/${filename}`;
+                    }
+                    
+                    // For other cases, try to use the path as-is
+                    if (altImagePath.includes('/')) {
+                        return `/src/resources/cards/images/${altImagePath}`;
+                    }
+                    
+                    // If it's just a filename, construct the path based on card type
+                    if (cardType === 'character') {
+                        return `/src/resources/cards/images/characters/alternate/${altImagePath}`;
+                    } else if (cardType === 'special') {
+                        return `/src/resources/cards/images/specials/alternate/${altImagePath}`;
+                    } else if (cardType === 'power') {
+                        return `/src/resources/cards/images/power-cards/alternate/${altImagePath}`;
+                    }
+                }
+                
                 if (cardType === 'character') {
                     // If a specific alternate image is selected, use it
                     if (selectedAlternateImage && card.alternateImages && card.alternateImages.includes(selectedAlternateImage)) {

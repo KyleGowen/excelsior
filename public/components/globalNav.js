@@ -13,10 +13,16 @@ function switchToDatabaseView() {
     // Update button states
     document.getElementById('databaseViewBtn').classList.add('active');
     document.getElementById('deckBuilderBtn').classList.remove('active');
+    const collectionBtn = document.getElementById('collectionViewBtn');
+    if (collectionBtn) collectionBtn.classList.remove('active');
     
-    // Show database view, hide deck builder
+    // Show database view, hide deck builder and collection view
     document.getElementById('database-view').style.display = 'block';
     document.getElementById('deck-builder').style.display = 'none';
+    const collectionViewEl = document.getElementById('collection-view');
+    if (collectionViewEl) {
+        collectionViewEl.style.display = 'none';
+    }
     
     // Show database statistics and hide deck statistics
     const databaseStats = document.getElementById('database-stats');
@@ -54,8 +60,10 @@ function switchToDeckBuilder() {
     // Update button states
     document.getElementById('deckBuilderBtn').classList.add('active');
     document.getElementById('databaseViewBtn').classList.remove('active');
+    const collectionBtn = document.getElementById('collectionViewBtn');
+    if (collectionBtn) collectionBtn.classList.remove('active');
     
-    // Show deck builder, hide database view
+    // Show deck builder, hide database view and collection view
     const deckBuilderEl = document.getElementById('deck-builder');
     if (deckBuilderEl) {
         deckBuilderEl.style.display = 'block';
@@ -67,6 +75,10 @@ function switchToDeckBuilder() {
     const databaseViewEl = document.getElementById('database-view');
     if (databaseViewEl) {
         databaseViewEl.style.display = 'none';
+    }
+    const collectionViewEl = document.getElementById('collection-view');
+    if (collectionViewEl) {
+        collectionViewEl.style.display = 'none';
     }
     
     // Show deck statistics and hide database statistics
@@ -215,8 +227,55 @@ function createNewDeck() {
     }
 }
 
+// Client-side navigation function for Collection view
+function switchToCollectionView() {
+    // Update URL without page reload
+    const currentUser = getCurrentUser();
+    const userId = currentUser ? (currentUser.userId || currentUser.id) : 'guest';
+    history.pushState({view: 'collection'}, '', `/users/${userId}/collection`);
+    
+    // Update button states
+    document.getElementById('collectionViewBtn').classList.add('active');
+    document.getElementById('databaseViewBtn').classList.remove('active');
+    document.getElementById('deckBuilderBtn').classList.remove('active');
+    
+    // Show collection view, hide other views
+    const collectionView = document.getElementById('collection-view');
+    const databaseView = document.getElementById('database-view');
+    const deckBuilder = document.getElementById('deck-builder');
+    
+    if (collectionView) collectionView.style.display = 'block';
+    if (databaseView) databaseView.style.display = 'none';
+    if (deckBuilder) deckBuilder.style.display = 'none';
+    
+    // Hide stats sections
+    const databaseStats = document.getElementById('database-stats');
+    const deckStats = document.getElementById('deck-stats');
+    const createDeckSection = document.getElementById('createDeckSection');
+    if (databaseStats) databaseStats.style.display = 'none';
+    if (deckStats) deckStats.style.display = 'none';
+    if (createDeckSection) createDeckSection.style.display = 'none';
+    
+    // Initialize collection view if not already initialized
+    if (typeof initializeCollectionView === 'function') {
+        initializeCollectionView();
+    }
+}
+
 // Initialize global navigation
 function initializeGlobalNav() {
+    
+    // Show Collection button only for ADMIN users
+    // Note: This will be updated again in updateUserWelcome() after authentication
+    const currentUser = getCurrentUser();
+    const collectionBtn = document.getElementById('collectionViewBtn');
+    if (collectionBtn) {
+        if (currentUser && currentUser.role === 'ADMIN') {
+            collectionBtn.removeAttribute('style'); // Remove inline style to use default
+        } else {
+            collectionBtn.style.display = 'none';
+        }
+    }
     
     // Initialize user menu
     setupUserMenu();
@@ -245,6 +304,8 @@ function initializeGlobalNav() {
     window.addEventListener('popstate', function(event) {
         if (event.state && event.state.view === 'database') {
             switchToDatabaseView();
+        } else if (event.state && event.state.view === 'collection') {
+            switchToCollectionView();
         } else if (event.state && event.state.newDeck) {
             // Don't call switchToDeckBuilder for new deck creation
         } else {
@@ -264,6 +325,23 @@ function updateUserWelcome() {
         const usernameElement = document.getElementById('currentUsername');
         if (usernameElement) usernameElement.textContent = displayName;
         buildUserMenuOptions(currentUser);
+        
+        // Update Collection button visibility based on user role
+        const collectionBtn = document.getElementById('collectionViewBtn');
+        if (collectionBtn) {
+            if (currentUser.role === 'ADMIN') {
+                collectionBtn.style.display = ''; // Remove inline style to use default
+                collectionBtn.removeAttribute('style'); // Remove the style attribute entirely
+            } else {
+                collectionBtn.style.display = 'none';
+            }
+        }
+    } else {
+        // Hide Collection button if no user
+        const collectionBtn = document.getElementById('collectionViewBtn');
+        if (collectionBtn) {
+            collectionBtn.style.display = 'none';
+        }
     }
 }
 
@@ -353,6 +431,7 @@ window.createUser = createUser;
 window.toggleChangePasswordDropdown = toggleChangePasswordDropdown;
 window.closeChangePasswordDropdown = closeChangePasswordDropdown;
 window.changePassword = changePassword;
+window.switchToCollectionView = switchToCollectionView;
 
 function toggleChangePasswordDropdown() {
     const dropdown = document.getElementById('changePasswordDropdown');

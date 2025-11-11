@@ -58,6 +58,11 @@ function displayCharacters(characters) {
                 <button class="add-to-deck-btn" onclick="showDeckSelection('character', '${character.id}', '${character.name.replace(/'/g, "\\'")}', this)">
                     Add to Deck
                 </button>
+                ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${character.id}', 'character')" style="margin-top: 4px; display: block; width: 100%;">
+                    Add to Collection
+                </button>
+                ` : ''}
             </td>
             <td><strong>${character.name}</strong></td>
             <td>${character.energy}</td>
@@ -176,6 +181,11 @@ function displaySpecialCards(specialCards) {
                 <button class="add-to-deck-btn" onclick="showDeckSelection('special', '${card.id}', '${card.name.replace(/'/g, "\\'")}', this)">
                     Add to Deck
                 </button>
+                ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'special')" style="margin-top: 4px; display: block; width: 100%;">
+                    Add to Collection
+                </button>
+                ` : ''}
             </td>
             <td><strong>${card.name}</strong></td>
             <td>${card.character}</td>
@@ -230,6 +240,11 @@ function displayLocations(locations) {
                 <button class="add-to-deck-btn" onclick="showDeckSelection('location', '${location.id}', '${location.name.replace(/'/g, "\\'")}', this)">
                     Add to Deck
                 </button>
+                ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${location.id}', 'location')" style="margin-top: 4px; display: block; width: 100%;">
+                    Add to Collection
+                </button>
+                ` : ''}
             </td>
             <td><strong>${location.name}</strong></td>
             <td class="${threatClass}">${location.threat_level}</td>

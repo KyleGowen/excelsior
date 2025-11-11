@@ -33,6 +33,11 @@ function displayMissions(missions) {
                 <button class="add-to-deck-btn" onclick="showDeckSelection('mission', '${mission.id}', '${mission.card_name.replace(/'/g, "\\'")}', this)">
                     Add to Deck
                 </button>
+                ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${mission.id}', 'mission')" style="margin-top: 4px; display: block; width: 100%;">
+                    Add to Collection
+                </button>
+                ` : ''}
             </td>
             <td>${mission.mission_set}</td>
             <td>${mission.card_name}</td>
@@ -75,6 +80,11 @@ function displayEvents(events) {
                 <button class="add-to-deck-btn" onclick="showDeckSelection('event', '${event.id}', '${event.name.replace(/'/g, "\\'")}', this)">
                     Add to Deck
                 </button>
+                ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${event.id}', 'event')" style="margin-top: 4px; display: block; width: 100%;">
+                    Add to Collection
+                </button>
+                ` : ''}
             </td>
             <td><strong>${event.name}</strong></td>
             <td>${event.mission_set}</td>
@@ -122,6 +132,11 @@ function displayAspects(aspects) {
                 <button class="add-to-deck-btn" onclick="showDeckSelection('aspect', '${aspect.id}', '${aspect.card_name.replace(/'/g, "\\'")}', this)">
                     Add to Deck
                 </button>
+                ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${aspect.id}', 'aspect')" style="margin-top: 4px; display: block; width: 100%;">
+                    Add to Collection
+                </button>
+                ` : ''}
             </td>
             <td><strong>${aspect.card_name}</strong></td>
             <td>${aspect.location}</td>
@@ -216,6 +231,11 @@ function displayAdvancedUniverse(advancedUniverse) {
                 <button class="add-to-deck-btn" onclick="showDeckSelection('advanced-universe', '${card.id}', '${card.name.replace(/'/g, "\\'")}', this)">
                     Add to Deck
                 </button>
+                ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'advanced-universe')" style="margin-top: 4px; display: block; width: 100%;">
+                    Add to Collection
+                </button>
+                ` : ''}
             </td>
             <td><strong>${card.name}</strong></td>
             <td>${card.character}</td>

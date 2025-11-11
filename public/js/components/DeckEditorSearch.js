@@ -10,7 +10,7 @@
      *   const component = new DeckEditorSearch({
      *       input: document.getElementById('deckEditorSearchInput'),
      *       results: document.getElementById('deckEditorSearchResults'),
-     *       onSelect: ({ id, type, name }) => addCardToDeckFromSearch(id, type, name),
+     *       onSelect: ({ id, type, name, alternateImage }) => addCardToDeckFromSearch(id, type, name, alternateImage),
      *       debounceMs: 300,
      *       minChars: 2,
      *       maxResults: 20
@@ -34,7 +34,7 @@
      *     tests/unit/deck-editor-search-css-rules.test.ts for safeguards.
      *
      * Normalized result shape:
-     *   { id: string, name: string, type: string, image: string, character?: string }
+     *   { id: string, name: string, type: string, image: string, character?: string, alternateImage?: string }
      *
      * Accessibility & Keyboard Navigation (future work):
      *   - The component is structured to support arrow key navigation and Enter
@@ -117,11 +117,15 @@
                 return;
             }
 
-            const html = results.map(card => `
+            const html = results.map(card => {
+                const alternateImage = card.alternateImage || '';
+                const escapedAlternateImage = alternateImage.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+                return `
                 <div class="deck-editor-search-result"
                      data-id="${card.id}"
                      data-type="${card.type}"
-                     data-name="${(card.name || '').replace(/'/g, "\\'")}">
+                     data-name="${(card.name || '').replace(/'/g, "\\'")}"
+                     data-alternate-image="${escapedAlternateImage}">
                     <div class="deck-editor-search-result-image" style="background-image: url('${card.image}')"></div>
                     <div class="deck-editor-search-result-info">
                         <div class="deck-editor-search-result-name">${card.name}</div>
@@ -129,7 +133,8 @@
                         ${card.character ? `<div class="deck-editor-search-result-character">${card.character}</div>` : ''}
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
 
             this.resultsEl.innerHTML = html;
             this.resultsEl.querySelectorAll('.deck-editor-search-result').forEach(el => {
@@ -137,7 +142,8 @@
                     const id = el.getAttribute('data-id');
                     const type = el.getAttribute('data-type');
                     const name = el.getAttribute('data-name');
-                    this.onSelect({ id, type, name });
+                    const alternateImage = el.getAttribute('data-alternate-image') || null;
+                    this.onSelect({ id, type, name, alternateImage: alternateImage && alternateImage.length > 0 ? alternateImage : null });
                     this.clear();
                 });
             });
