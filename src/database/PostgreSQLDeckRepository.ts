@@ -135,7 +135,6 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         type: card.card_type,
         cardId: card.card_id,
         quantity: card.quantity,
-        selectedAlternateImage: card.selected_alternate_image
       }));
       
       const fullDeck = {
@@ -212,7 +211,6 @@ export class PostgreSQLDeckRepository implements DeckRepository {
             type: 'character',
             cardId: deck.character_1_id,
             quantity: 1,
-            selectedAlternateImage: deck.character_1_image,
             defaultImage: deck.character_1_default_image,
             name: deck.character_1_name
           });
@@ -223,7 +221,6 @@ export class PostgreSQLDeckRepository implements DeckRepository {
             type: 'character',
             cardId: deck.character_2_id,
             quantity: 1,
-            selectedAlternateImage: deck.character_2_image,
             defaultImage: deck.character_2_default_image,
             name: deck.character_2_name
           });
@@ -234,7 +231,6 @@ export class PostgreSQLDeckRepository implements DeckRepository {
             type: 'character',
             cardId: deck.character_3_id,
             quantity: 1,
-            selectedAlternateImage: deck.character_3_image,
             defaultImage: deck.character_3_default_image,
             name: deck.character_3_name
           });
@@ -245,7 +241,6 @@ export class PostgreSQLDeckRepository implements DeckRepository {
             type: 'character',
             cardId: deck.character_4_id,
             quantity: 1,
-            selectedAlternateImage: deck.character_4_image,
             defaultImage: deck.character_4_default_image,
             name: deck.character_4_name
           });
@@ -258,7 +253,6 @@ export class PostgreSQLDeckRepository implements DeckRepository {
             type: 'location',
             cardId: deck.location_id,
             quantity: 1,
-            selectedAlternateImage: null, // Locations don't have alternate images
             name: deck.location_name
           });
         }
@@ -316,7 +310,6 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         type: card.card_type,
         cardId: card.card_id,
         quantity: card.quantity,
-        selectedAlternateImage: card.selected_alternate_image
       }));
       
       const fullDeck = {
@@ -517,7 +510,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
   }
 
   // Deck card management methods
-  async addCardToDeck(deckId: string, cardType: string, cardId: string, quantity: number = 1, selectedAlternateImage?: string): Promise<boolean> {
+  async addCardToDeck(deckId: string, cardType: string, cardId: string, quantity: number = 1): Promise<boolean> {
     const client = await this.pool.connect();
     try {
       // First, validate that the card exists in the appropriate card table
@@ -596,8 +589,8 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       } else {
         // Add new card to deck
         await client.query(
-          'INSERT INTO deck_cards (deck_id, card_type, card_id, quantity, selected_alternate_image) VALUES ($1, $2, $3, $4, $5)',
-          [deckId, cardType, cardId, quantity, selectedAlternateImage || null]
+          'INSERT INTO deck_cards (deck_id, card_type, card_id, quantity) VALUES ($1, $2, $3, $4)',
+          [deckId, cardType, cardId, quantity]
         );
       }
       
@@ -691,7 +684,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
     }
   }
 
-  async updateCardInDeck(deckId: string, cardType: string, cardId: string, updates: { quantity?: number; selectedAlternateImage?: string }): Promise<boolean> {
+  async updateCardInDeck(deckId: string, cardType: string, cardId: string, updates: { quantity?: number }): Promise<boolean> {
     const client = await this.pool.connect();
     try {
       const setClause = [];
@@ -701,10 +694,6 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       if (updates.quantity !== undefined) {
         setClause.push(`quantity = $${paramCount++}`);
         values.push(updates.quantity);
-      }
-      if (updates.selectedAlternateImage !== undefined) {
-        setClause.push(`selected_alternate_image = $${paramCount++}`);
-        values.push(updates.selectedAlternateImage);
       }
 
       if (setClause.length === 0) {
@@ -765,7 +754,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
   }
 
   // Bulk replace all cards in a deck (used for save operations)
-  async replaceAllCardsInDeck(deckId: string, cards: Array<{cardType: string, cardId: string, quantity: number, selectedAlternateImage?: string}>): Promise<boolean> {
+  async replaceAllCardsInDeck(deckId: string, cards: Array<{cardType: string, cardId: string, quantity: number}>): Promise<boolean> {
     const client = await this.pool.connect();
     try {
       // Start a transaction to ensure atomicity
@@ -777,8 +766,8 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       // Insert all new cards
       for (const card of cards) {
         await client.query(
-          'INSERT INTO deck_cards (deck_id, card_type, card_id, quantity, selected_alternate_image) VALUES ($1, $2, $3, $4, $5)',
-          [deckId, card.cardType, card.cardId, card.quantity, card.selectedAlternateImage || null]
+          'INSERT INTO deck_cards (deck_id, card_type, card_id, quantity) VALUES ($1, $2, $3, $4)',
+          [deckId, card.cardType, card.cardId, card.quantity]
         );
       }
       
@@ -820,7 +809,6 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         type: card.card_type,
         cardId: card.card_id,
         quantity: card.quantity,
-        selectedAlternateImage: card.selected_alternate_image
       }));
     } finally {
       client.release();

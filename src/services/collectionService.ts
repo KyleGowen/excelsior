@@ -47,15 +47,15 @@ export class CollectionService {
     cardId: string,
     cardType: string,
     quantity: number = 1,
-    alternateImage?: string
+    imagePath?: string
   ): Promise<CollectionCardWithDetails> {
     console.log('🟡 [Service] addCardToCollection called with:', {
       collectionId,
       cardId,
       cardType,
       quantity,
-      alternateImage,
-      alternateImageType: typeof alternateImage
+      imagePath,
+      imagePathType: typeof imagePath
     });
     
     // Validate card exists
@@ -79,7 +79,7 @@ export class CollectionService {
       cardId,
       cardType,
       quantity,
-      alternateImage
+      imagePath
     );
     console.log('🟡 [Service] Repository returned:', {
       id: collectionCard.id,
@@ -153,7 +153,7 @@ export class CollectionService {
         collectionCardId: collectionCard.id,
         cardId,
         cardType,
-        alternateImage,
+        imagePath,
         image_path: collectionCard.image_path,
         totalCards: cards.length,
         allMatchingCards: cards.filter(c => c.card_id === cardId && c.card_type === cardType).map(c => ({

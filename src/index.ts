@@ -508,44 +508,7 @@ app.get('/api/characters', async (req, res) => {
   }
 });
 
-app.get('/api/characters/:id/alternate-images', async (req, res) => {
-  try {
-    const character = await cardRepository.getCharacterById(req.params.id);
-    if (!character) {
-      return res.status(404).json({ success: false, error: 'Character not found' });
-    }
-    
-    res.json({ success: true, data: character.alternateImages || [] });
-  } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to fetch alternate images' });
-  }
-});
-
-app.get('/api/special-cards/:id/alternate-images', async (req, res) => {
-  try {
-    const specialCard = await cardRepository.getSpecialCardById(req.params.id);
-    if (!specialCard) {
-      return res.status(404).json({ success: false, error: 'Special card not found' });
-    }
-    
-    res.json({ success: true, data: specialCard.alternateImages || [] });
-  } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to fetch alternate images' });
-  }
-});
-
-app.get('/api/power-cards/:id/alternate-images', async (req, res) => {
-  try {
-    const powerCard = await cardRepository.getPowerCardById(req.params.id);
-    if (!powerCard) {
-      return res.status(404).json({ success: false, error: 'Power card not found' });
-    }
-    
-    res.json({ success: true, data: powerCard.alternateImages || [] });
-  } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to fetch alternate images' });
-  }
-});
+// Alternate images endpoints removed - alternate cards are now separate card rows
 
 app.get('/api/locations', async (req, res) => {
   try {
@@ -1096,7 +1059,7 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
-    const { cardType, cardId, quantity, selectedAlternateImage } = req.body;
+    const { cardType, cardId, quantity } = req.body;
     
     // SECURITY: Comprehensive input validation
     if (!cardType || typeof cardType !== 'string' || cardType.trim().length === 0) {
@@ -1117,10 +1080,6 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
     
     if (quantity !== undefined && (typeof quantity !== 'number' || quantity < 1 || quantity > 10)) {
       return res.status(400).json({ success: false, error: 'Quantity must be a number between 1 and 10' });
-    }
-    
-    if (selectedAlternateImage !== undefined && selectedAlternateImage !== null && (typeof selectedAlternateImage !== 'string' || selectedAlternateImage.length > 200)) {
-      return res.status(400).json({ success: false, error: 'Selected alternate image must be a string with 200 characters or less' });
     }
     
     // SECURITY: Check if user owns this deck
@@ -1245,7 +1204,7 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
           }
         }
     
-    const success = await deckRepository.addCardToDeck(req.params.id, cardType, cardId, quantity || 1, selectedAlternateImage);
+    const success = await deckRepository.addCardToDeck(req.params.id, cardType, cardId, quantity || 1);
     if (!success) {
       return res.status(404).json({ success: false, error: 'Deck not found or failed to add card' });
     }
@@ -1581,7 +1540,7 @@ app.post('/api/collections/me/cards', authenticateUser, async (req: any, res) =>
       return res.status(403).json({ success: false, error: 'Only ADMIN users can modify collections' });
     }
 
-    const { cardId, cardType, quantity, alternateImage } = req.body;
+    const { cardId, cardType, quantity, imagePath } = req.body;
 
     if (!cardId || !cardType) {
       return res.status(400).json({ success: false, error: 'cardId and cardType are required' });
@@ -1596,7 +1555,7 @@ app.post('/api/collections/me/cards', authenticateUser, async (req: any, res) =>
       cardId,
       cardType,
       quantity: quantity || 1,
-      alternateImage
+      imagePath
     });
     
     const card = await collectionService.addCardToCollection(
@@ -1604,7 +1563,7 @@ app.post('/api/collections/me/cards', authenticateUser, async (req: any, res) =>
       cardId,
       cardType,
       quantity || 1,
-      alternateImage
+      imagePath
     );
 
     console.log('🟢 [API] Successfully added card, returning:', {

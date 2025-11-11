@@ -571,20 +571,11 @@ async function processImportDeck() {
                         continue;
                     }
                     
-                    // Determine if we need to select an alternate image
-                    let selectedAlternateImage = null;
-                    if (cardData && cardData.alternateImages && cardData.alternateImages.length > 0) {
-                        // Automatically select the first alternate image for import (default art)
-                        selectedAlternateImage = cardData.alternateImages[0];
-                        
-                    }
-                    
-                    
-                    
+                    // After migration, alternate cards are separate cards, so we just add the card directly
                     // Check if addCardToEditor exists
                     if (typeof addCardToEditor === 'function') {
-                        // Call addCardToEditor with selected alternate image (or null if none)
-                        await addCardToEditor(importCard.type, importCard.cardId, importCard.cardName, selectedAlternateImage);
+                        // Call addCardToEditor (no alternate image selection needed)
+                        await addCardToEditor(importCard.type, importCard.cardId, importCard.cardName);
                         
                         // Wait a bit for async operations to complete
                         await new Promise(resolve => setTimeout(resolve, 100));
@@ -609,19 +600,11 @@ async function processImportDeck() {
                 } else if (importCard.type === 'special') {
                     // Special cards can be added directly (no duplicate checking needed)
                     // But we should auto-select default art if alternate images exist
-                    let selectedAlternateImage = null;
-                    if (cardData && cardData.alternateImages && cardData.alternateImages.length > 0) {
-                        // Automatically select the first alternate image for import (default art)
-                        selectedAlternateImage = cardData.alternateImages[0];
-                        
-                    }
-                    
-                    
-                    
+                    // After migration, alternate cards are separate cards, so we just add the card directly
                     // Check if addCardToEditor exists
                     if (typeof addCardToEditor === 'function') {
-                        // Pass selected alternate image (or null if none) - same as characters
-                        await addCardToEditor(importCard.type, importCard.cardId, importCard.cardName, selectedAlternateImage);
+                        // Call addCardToEditor (no alternate image selection needed)
+                        await addCardToEditor(importCard.type, importCard.cardId, importCard.cardName);
                         
                         // Wait a bit for async operations to complete
                         await new Promise(resolve => setTimeout(resolve, 100));
@@ -664,20 +647,11 @@ async function processImportDeck() {
                         continue;
                     }
                     
-                    // Determine if we need to select an alternate image
-                    let selectedAlternateImage = null;
-                    if (cardData && cardData.alternateImages && cardData.alternateImages.length > 0) {
-                        // Automatically select the first alternate image for import (default art)
-                        selectedAlternateImage = cardData.alternateImages[0];
-                        
-                    }
-                    
-                    
-                    
+                    // After migration, alternate cards are separate cards, so we just add the card directly
                     // Check if addCardToEditor exists
                     if (typeof addCardToEditor === 'function') {
-                        // Call addCardToEditor with selected alternate image (or null if none)
-                        await addCardToEditor(importCard.type, importCard.cardId, importCard.cardName, selectedAlternateImage);
+                        // Call addCardToEditor (no alternate image selection needed)
+                        await addCardToEditor(importCard.type, importCard.cardId, importCard.cardName);
                         
                         // Wait a bit for async operations to complete
                         await new Promise(resolve => setTimeout(resolve, 100));
@@ -701,20 +675,11 @@ async function processImportDeck() {
                     }
                 } else if (importCard.type === 'mission' || importCard.type === 'event' || importCard.type === 'aspect' || importCard.type === 'advanced-universe' || importCard.type === 'teamwork' || importCard.type === 'ally-universe' || importCard.type === 'training' || importCard.type === 'basic-universe' || importCard.type === 'power') {
                     // Mission, event, aspect, advanced-universe, teamwork, ally-universe, training, basic-universe, and power cards can be added directly (no duplicate checking needed, similar to special cards)
-                    // But we should auto-select default art if alternate images exist
-                    let selectedAlternateImage = null;
-                    if (cardData && cardData.alternateImages && cardData.alternateImages.length > 0) {
-                        // Automatically select the first alternate image for import (default art)
-                        selectedAlternateImage = cardData.alternateImages[0];
-                        
-                    }
-                    
-                    
-                    
+                    // After migration, alternate cards are separate cards, so we just add the card directly
                     // Check if addCardToEditor exists
                     if (typeof addCardToEditor === 'function') {
-                        // Pass selected alternate image (or null if none) - same as special cards
-                        await addCardToEditor(importCard.type, importCard.cardId, importCard.cardName, selectedAlternateImage);
+                        // Call addCardToEditor (no alternate image selection needed)
+                        await addCardToEditor(importCard.type, importCard.cardId, importCard.cardName);
                         
                         // Wait a bit for async operations to complete
                         await new Promise(resolve => setTimeout(resolve, 100));

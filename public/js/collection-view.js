@@ -379,8 +379,8 @@ function initializeCollectionSearch() {
         window.collectionSearchComponent = new window.DeckEditorSearch({
             input: searchInput,
             results: searchResults,
-            onSelect: ({ id, type, alternateImage }) => {
-                addCardToCollection(id, type, alternateImage || null);
+            onSelect: ({ id, type, imagePath }) => {
+                addCardToCollection(id, type, imagePath || null);
             }
         });
         window.collectionSearchComponent.mount();
@@ -461,20 +461,19 @@ function displayCollectionSearchResults(results) {
         // Escape single quotes in image path and card name for use in HTML attributes
         const escapedImagePath = (card.image || '').replace(/'/g, "\\'");
         const escapedCardName = (card.name || '').replace(/'/g, "\\'");
-        const alternateImage = card.alternateImage || null;
-        const alternateImageAttr = alternateImage ? alternateImage.replace(/"/g, '&quot;') : '';
-        const alternateSlugAttr = alternateImage ? alternateImage.split('/').pop().replace(/"/g, '&quot;') : '';
+        // After migration, alternate cards are separate cards, so we use the card's image directly
+        const imagePath = card.image || card.image_path || '';
+        const imagePathAttr = imagePath ? imagePath.replace(/"/g, '&quot;') : '';
         // Use data attributes instead of inline onclick to avoid escaping issues
         return `
         <div class="collection-search-result-item"
              data-card-id="${card.id}"
              data-card-type="${card.type}"
-             data-alternate-image="${alternateImageAttr}"
-             data-alternate-slug="${alternateSlugAttr}"
+             data-image-path="${imagePathAttr}"
              onclick="handleCollectionSearchResultClick(this)"
              onmouseenter="showCardHoverModal('${escapedImagePath}', '${escapedCardName}')"
              onmouseleave="hideCardHoverModal()">
-            <div class="collection-search-result-name">${card.name}${alternateImage ? ' (Alternate Art)' : ''}</div>
+            <div class="collection-search-result-name">${card.name}</div>
             <div class="collection-search-result-type">${formatCardType(card.type)}</div>
         </div>
         `;
@@ -490,10 +489,9 @@ function displayCollectionSearchResults(results) {
 function handleCollectionSearchResultClick(element) {
     const cardId = element.getAttribute('data-card-id');
     const cardType = element.getAttribute('data-card-type');
-    const alternateImage = element.getAttribute('data-alternate-image') || null;
-    const alternateSlug = element.getAttribute('data-alternate-slug') || null;
-    console.log('🟦 [Collection] Search result selected:', { cardId, cardType, alternateImage, alternateSlug });
-    addCardToCollection(cardId, cardType, alternateImage);
+    const imagePath = element.getAttribute('data-image-path') || null;
+    console.log('🟦 [Collection] Search result selected:', { cardId, cardType, imagePath });
+    addCardToCollection(cardId, cardType, imagePath);
 }
 
 /**
@@ -506,7 +504,7 @@ async function addCardToCollectionFromDatabase(cardId, cardType) {
 /**
  * Add card to collection
  */
-async function addCardToCollection(cardId, cardType, alternateImage = null) {
+async function addCardToCollection(cardId, cardType, imagePath = null) {
     try {
         const requestBody = {
             cardId: cardId,
@@ -514,9 +512,9 @@ async function addCardToCollection(cardId, cardType, alternateImage = null) {
             quantity: 1
         };
         
-        // Only include alternateImage if it's not null/undefined/empty
-        if (alternateImage && alternateImage.trim() !== '') {
-            requestBody.alternateImage = alternateImage;
+        // Include imagePath if provided (required for collection cards)
+        if (imagePath && imagePath.trim() !== '') {
+            requestBody.imagePath = imagePath;
         }
         
         const url = '/api/collections/me/cards';
@@ -524,7 +522,7 @@ async function addCardToCollection(cardId, cardType, alternateImage = null) {
             url,
             cardId,
             cardType,
-            alternateImage,
+            imagePath,
             requestBody,
             method: 'POST'
         });

@@ -34,33 +34,15 @@
                     characters.data.forEach(char => {
                         if (char.name && char.name.toLowerCase().includes(searchTerm)) {
                             // Add default image as a result
+                            // After migration, alternate cards are separate cards, so we just add the character
                             results.push({
                                 id: char.id,
                                 name: char.name,
                                 type: 'character',
                                 image: `/src/resources/cards/images/${char.image}`,
                                 character: null,
-                                alternateImage: null
+                                imagePath: char.image
                             });
-                            
-                            // Add each alternate image as a separate result
-                            if (char.alternateImages && Array.isArray(char.alternateImages) && char.alternateImages.length > 0) {
-                                char.alternateImages.forEach(altImage => {
-                                    // altImage from database is like "characters/alternate/leonidas.webp"
-                                    // We need to construct the full path and also store just the filename for the API
-                                    const altImagePath = altImage.startsWith('/') ? altImage : `/src/resources/cards/images/${altImage}`;
-                                    // Extract just the filename for storage (e.g., "leonidas.webp" from "characters/alternate/leonidas.webp")
-                                    const altImageFilename = altImage.split('/').pop();
-                                    results.push({
-                                        id: char.id,
-                                        name: char.name,
-                                        type: 'character',
-                                        image: altImagePath,
-                                        character: null,
-                                        alternateImage: altImage // Store the full path from database
-                                    });
-                                });
-                            }
                         }
                     });
                 }
@@ -72,29 +54,15 @@
                         const exactCharacterMatch = card.character && card.character.toLowerCase() === searchTerm;
                         const typeMatch = searchTerm === 'special';
                         if (nameMatch || characterMatch || exactCharacterMatch || typeMatch) {
-                            // Add default image as a result
+                            // After migration, alternate cards are separate cards, so we just add the special card
                             results.push({
                                 id: card.id,
                                 name: card.name,
                                 type: 'special',
                                 image: `/src/resources/cards/images/${card.image}`,
                                 character: card.character,
-                                alternateImage: null
+                                imagePath: card.image
                             });
-                            
-                            // Add each alternate image as a separate result
-                            if (card.alternateImages && Array.isArray(card.alternateImages) && card.alternateImages.length > 0) {
-                                card.alternateImages.forEach(altImage => {
-                                    results.push({
-                                        id: card.id,
-                                        name: card.name,
-                                        type: 'special',
-                                        image: `/src/resources/cards/images/${altImage}`,
-                                        character: card.character,
-                                        alternateImage: altImage
-                                    });
-                                });
-                            }
                         }
                     });
                 }

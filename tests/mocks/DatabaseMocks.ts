@@ -50,7 +50,6 @@ const mockCharacters: Character[] = [
     id: 'char-1',
     name: 'Zeus',
     image: '/images/zeus.jpg',
-    alternateImages: ['/images/zeus_alt1.jpg'],
     threat_level: 5,
     energy: 4,
     combat: 3,
@@ -62,7 +61,6 @@ const mockCharacters: Character[] = [
     id: 'char-2',
     name: 'Leonidas',
     image: '/images/leonidas.jpg',
-    alternateImages: [],
     threat_level: 4,
     energy: 3,
     combat: 5,
@@ -83,8 +81,7 @@ const mockSpecialCards: SpecialCard[] = [
     is_cataclysm: false,
     is_assist: false,
     is_ambush: false,
-    one_per_deck: true,
-    alternateImages: []
+    one_per_deck: true
   },
   {
     id: 'special-2',
@@ -96,8 +93,7 @@ const mockSpecialCards: SpecialCard[] = [
     is_cataclysm: false,
     is_assist: false,
     is_ambush: false,
-    one_per_deck: false,
-    alternateImages: []
+    one_per_deck: false
   }
 ];
 
@@ -108,8 +104,7 @@ const mockPowerCards: PowerCard[] = [
     value: 6,
     power_type: 'Energy',
     image: '/images/energy_6.jpg',
-    one_per_deck: false,
-    alternateImages: []
+    one_per_deck: false
   },
   {
     id: 'power-2',
@@ -117,8 +112,7 @@ const mockPowerCards: PowerCard[] = [
     value: 7,
     power_type: 'Combat',
     image: '/images/combat_7.jpg',
-    one_per_deck: true,
-    alternateImages: []
+    one_per_deck: true
   }
 ];
 

@@ -451,11 +451,6 @@ async function saveDeckChanges() {
                 quantity: card.quantity
             };
             
-            // Include selectedAlternateImage if it exists
-            if (card.selectedAlternateImage) {
-                cardData.selectedAlternateImage = card.selectedAlternateImage;
-            }
-            
             return cardData;
         });
         

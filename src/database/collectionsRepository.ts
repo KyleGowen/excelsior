@@ -32,173 +32,106 @@ export class CollectionsRepository {
   }
 
   /**
-   * Construct image path from card data and optional alternate image
+   * Get image path from card data
+   * After migration, alternate cards are separate cards, so we just get the card's image_path
    */
-  private async constructImagePath(
+  private async getCardImagePath(
     client: PoolClient,
     cardId: string,
-    cardType: string,
-    alternateImage?: string
+    cardType: string
   ): Promise<string> {
-    // If alternate image is provided, construct path from it
-    if (alternateImage && alternateImage.trim() !== '') {
-      const altPath = alternateImage.trim();
-      
-      // If already a full path, use it
-      if (altPath.startsWith('/src/resources/cards/images/')) {
-        return altPath;
-      }
-      
-      // Construct full path based on format
-      if (cardType === 'character' && altPath.startsWith('characters/alternate/')) {
-        const filename = altPath.replace('characters/alternate/', '');
-        return `/src/resources/cards/images/characters/alternate/${filename}`;
-      }
-      
-      if (cardType === 'character' && altPath.startsWith('alternate/')) {
-        const filename = altPath.replace('alternate/', '');
-        return `/src/resources/cards/images/characters/alternate/${filename}`;
-      }
-      
-      if (cardType === 'special' && altPath.includes('/alternate/')) {
-        const filename = altPath.split('/alternate/').pop();
-        return `/src/resources/cards/images/specials/alternate/${filename}`;
-      }
-      
-      if (cardType === 'power' && altPath.includes('/alternate/')) {
-        const filename = altPath.split('/alternate/').pop();
-        return `/src/resources/cards/images/power-cards/alternate/${filename}`;
-      }
-      
-      // Try to construct based on card type
-      if (cardType === 'character') {
-        return `/src/resources/cards/images/characters/alternate/${altPath}`;
-      } else if (cardType === 'special') {
-        return `/src/resources/cards/images/specials/alternate/${altPath}`;
-      } else if (cardType === 'power') {
-        return `/src/resources/cards/images/power-cards/alternate/${altPath}`;
-      }
-      
-      // Fallback
-      return `/src/resources/cards/images/${altPath}`;
-    }
-    
-    // Otherwise, get the card's regular image and construct path
-    let cardImage: string | null = null;
+    let cardImagePath: string | null = null;
     
     try {
       switch (cardType) {
         case 'character':
-          const charResult = await client.query('SELECT image, image_path FROM characters WHERE id = $1', [cardId]);
+          const charResult = await client.query('SELECT image_path FROM characters WHERE id = $1', [cardId]);
           if (charResult.rows.length > 0) {
-            cardImage = charResult.rows[0].image || charResult.rows[0].image_path;
+            cardImagePath = charResult.rows[0].image_path;
           }
           break;
         case 'special':
-          const specialResult = await client.query('SELECT image, image_path FROM special_cards WHERE id = $1', [cardId]);
+          const specialResult = await client.query('SELECT image_path FROM special_cards WHERE id = $1', [cardId]);
           if (specialResult.rows.length > 0) {
-            cardImage = specialResult.rows[0].image || specialResult.rows[0].image_path;
+            cardImagePath = specialResult.rows[0].image_path;
           }
           break;
         case 'power':
-          const powerResult = await client.query('SELECT image, image_path FROM power_cards WHERE id = $1', [cardId]);
+          const powerResult = await client.query('SELECT image_path FROM power_cards WHERE id = $1', [cardId]);
           if (powerResult.rows.length > 0) {
-            cardImage = powerResult.rows[0].image || powerResult.rows[0].image_path;
+            cardImagePath = powerResult.rows[0].image_path;
           }
           break;
         case 'location':
-          const locationResult = await client.query('SELECT image, image_path FROM locations WHERE id = $1', [cardId]);
+          const locationResult = await client.query('SELECT image_path FROM locations WHERE id = $1', [cardId]);
           if (locationResult.rows.length > 0) {
-            cardImage = locationResult.rows[0].image || locationResult.rows[0].image_path;
+            cardImagePath = locationResult.rows[0].image_path;
           }
           break;
         case 'mission':
-          const missionResult = await client.query('SELECT image, image_path FROM missions WHERE id = $1', [cardId]);
+          const missionResult = await client.query('SELECT image_path FROM missions WHERE id = $1', [cardId]);
           if (missionResult.rows.length > 0) {
-            cardImage = missionResult.rows[0].image || missionResult.rows[0].image_path;
+            cardImagePath = missionResult.rows[0].image_path;
           }
           break;
         case 'event':
-          const eventResult = await client.query('SELECT image, image_path FROM events WHERE id = $1', [cardId]);
+          const eventResult = await client.query('SELECT image_path FROM events WHERE id = $1', [cardId]);
           if (eventResult.rows.length > 0) {
-            cardImage = eventResult.rows[0].image || eventResult.rows[0].image_path;
+            cardImagePath = eventResult.rows[0].image_path;
           }
           break;
         case 'aspect':
-          const aspectResult = await client.query('SELECT image, image_path FROM aspects WHERE id = $1', [cardId]);
+          const aspectResult = await client.query('SELECT image_path FROM aspects WHERE id = $1', [cardId]);
           if (aspectResult.rows.length > 0) {
-            cardImage = aspectResult.rows[0].image || aspectResult.rows[0].image_path;
+            cardImagePath = aspectResult.rows[0].image_path;
           }
           break;
         case 'advanced_universe':
-          const advUniResult = await client.query('SELECT image, image_path FROM advanced_universe_cards WHERE id = $1', [cardId]);
+          const advUniResult = await client.query('SELECT image_path FROM advanced_universe_cards WHERE id = $1', [cardId]);
           if (advUniResult.rows.length > 0) {
-            cardImage = advUniResult.rows[0].image || advUniResult.rows[0].image_path;
+            cardImagePath = advUniResult.rows[0].image_path;
           }
           break;
         case 'teamwork':
-          const teamworkResult = await client.query('SELECT image, image_path FROM teamwork_cards WHERE id = $1', [cardId]);
+          const teamworkResult = await client.query('SELECT image_path FROM teamwork_cards WHERE id = $1', [cardId]);
           if (teamworkResult.rows.length > 0) {
-            cardImage = teamworkResult.rows[0].image || teamworkResult.rows[0].image_path;
+            cardImagePath = teamworkResult.rows[0].image_path;
           }
           break;
         case 'ally_universe':
-          const allyResult = await client.query('SELECT image, image_path FROM ally_universe_cards WHERE id = $1', [cardId]);
+          const allyResult = await client.query('SELECT image_path FROM ally_universe_cards WHERE id = $1', [cardId]);
           if (allyResult.rows.length > 0) {
-            cardImage = allyResult.rows[0].image || allyResult.rows[0].image_path;
+            cardImagePath = allyResult.rows[0].image_path;
           }
           break;
         case 'training':
-          const trainingResult = await client.query('SELECT image, image_path FROM training_cards WHERE id = $1', [cardId]);
+          const trainingResult = await client.query('SELECT image_path FROM training_cards WHERE id = $1', [cardId]);
           if (trainingResult.rows.length > 0) {
-            cardImage = trainingResult.rows[0].image || trainingResult.rows[0].image_path;
+            cardImagePath = trainingResult.rows[0].image_path;
           }
           break;
         case 'basic_universe':
-          const basicResult = await client.query('SELECT image, image_path FROM basic_universe_cards WHERE id = $1', [cardId]);
+          const basicResult = await client.query('SELECT image_path FROM basic_universe_cards WHERE id = $1', [cardId]);
           if (basicResult.rows.length > 0) {
-            cardImage = basicResult.rows[0].image || basicResult.rows[0].image_path;
+            cardImagePath = basicResult.rows[0].image_path;
           }
           break;
       }
     } catch (error) {
-      console.error(`Error fetching card image for ${cardType} ${cardId}:`, error);
+      console.error(`Error fetching card image_path for ${cardType} ${cardId}:`, error);
     }
     
-    // Construct path from card image
-    if (cardImage && cardImage.trim() !== '') {
-      // Extract filename (remove directory prefix if present)
-      const filename = cardImage.split('/').pop() || cardImage;
+    // Construct full path from image_path
+    if (cardImagePath && cardImagePath.trim() !== '') {
+      const path = cardImagePath.trim();
       
-      // Construct full path based on card type
-      switch (cardType) {
-        case 'character':
-          return `/src/resources/cards/images/characters/${filename}`;
-        case 'special':
-          return `/src/resources/cards/images/specials/${filename}`;
-        case 'power':
-          return `/src/resources/cards/images/power-cards/${filename}`;
-        case 'location':
-          return `/src/resources/cards/images/locations/${filename}`;
-        case 'mission':
-          return `/src/resources/cards/images/missions/${filename}`;
-        case 'event':
-          return `/src/resources/cards/images/events/${filename}`;
-        case 'aspect':
-          return `/src/resources/cards/images/aspects/${filename}`;
-        case 'advanced_universe':
-          return `/src/resources/cards/images/advanced-universe/${filename}`;
-        case 'teamwork':
-          return `/src/resources/cards/images/teamwork-universe/${filename}`;
-        case 'ally_universe':
-          return `/src/resources/cards/images/ally-universe/${filename}`;
-        case 'training':
-          return `/src/resources/cards/images/training-universe/${filename}`;
-        case 'basic_universe':
-          return `/src/resources/cards/images/basic-universe/${filename}`;
-        default:
-          return '/src/resources/cards/images/placeholder.webp';
+      // If already a full path, use it
+      if (path.startsWith('/src/resources/cards/images/')) {
+        return path;
       }
+      
+      // Otherwise, construct full path
+      return `/src/resources/cards/images/${path}`;
     }
     
     // Fallback to placeholder
@@ -408,23 +341,26 @@ export class CollectionsRepository {
     cardId: string,
     cardType: string,
     quantity: number = 1,
-    alternateImage?: string
+    imagePath?: string
   ): Promise<CollectionCard> {
     console.log('🟠 [Repo] addCardToCollection called:', {
       collectionId,
       cardId,
       cardType,
       quantity,
-      alternateImage
+      imagePath
     });
 
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
 
-      // Construct the image path
-      const imagePath = await this.constructImagePath(client, cardId, cardType, alternateImage);
-      console.log('🟠 [Repo] Constructed image_path:', imagePath);
+      // Get the image path from the card if not provided
+      let finalImagePath = imagePath;
+      if (!finalImagePath) {
+        finalImagePath = await this.getCardImagePath(client, cardId, cardType);
+      }
+      console.log('🟠 [Repo] Using image_path:', finalImagePath);
 
       // Use ON CONFLICT with the unique constraint
       const insertResult = await client.query<CollectionCard>(
@@ -441,7 +377,7 @@ export class CollectionsRepository {
             quantity = collection_cards.quantity + EXCLUDED.quantity,
             updated_at = NOW()
           RETURNING *`,
-        [collectionId, cardId, cardType, quantity, imagePath]
+        [collectionId, cardId, cardType, quantity, finalImagePath]
       );
 
       await client.query('COMMIT');

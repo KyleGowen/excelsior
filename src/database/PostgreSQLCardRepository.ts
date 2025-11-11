@@ -65,8 +65,7 @@ export class PostgreSQLCardRepository implements CardRepository {
         intelligence: char.intelligence,
         threat_level: char.threat_level,
         special_abilities: char.special_abilities,
-        image: char.image_path,
-        alternateImages: char.alternate_images || []
+        image: char.image_path
       };
     } finally {
       client.release();
@@ -93,8 +92,7 @@ export class PostgreSQLCardRepository implements CardRepository {
         intelligence: char.intelligence,
         threat_level: char.threat_level,
         special_abilities: char.special_abilities,
-        image: char.image_path,
-        alternateImages: char.alternate_images || []
+        image: char.image_path
       }));
       
       // Cache the result
@@ -111,10 +109,7 @@ export class PostgreSQLCardRepository implements CardRepository {
     const character = await this.getCharacterById(characterId);
     if (!character) return '';
 
-    if (selectedAlternateImage && character.alternateImages?.includes(selectedAlternateImage)) {
-      return `/src/resources/cards/images/characters/alternate/${selectedAlternateImage}`;
-    }
-
+    // After migration, alternate images are separate cards, so just return the card's image
     return character.image || '';
   }
 
@@ -144,8 +139,7 @@ export class PostgreSQLCardRepository implements CardRepository {
               is_cataclysm: card.cataclysm || false,
               is_assist: card.assist || false,
               is_ambush: card.ambush || false,
-              one_per_deck: card.one_per_deck || false,
-              alternateImages: card.alternate_images || []
+              one_per_deck: card.one_per_deck || false
             };
     } finally {
       client.release();
@@ -169,8 +163,7 @@ export class PostgreSQLCardRepository implements CardRepository {
               is_cataclysm: card.cataclysm || false,
               is_assist: card.assist || false,
               is_ambush: card.ambush || false,
-              one_per_deck: card.one_per_deck || false,
-              alternateImages: card.alternate_images || []
+              one_per_deck: card.one_per_deck || false
             }));
     } finally {
       client.release();
@@ -181,10 +174,7 @@ export class PostgreSQLCardRepository implements CardRepository {
     const card = await this.getSpecialCardById(specialCardId);
     if (!card) return '';
 
-    if (selectedAlternateImage && card.alternateImages?.includes(selectedAlternateImage)) {
-      return `/src/resources/cards/images/specials/alternate/${selectedAlternateImage}`;
-    }
-
+    // After migration, alternate images are separate cards, so just return the card's image
     return card.image || '';
   }
 
@@ -208,8 +198,7 @@ export class PostgreSQLCardRepository implements CardRepository {
         power_type: card.power_type,
         value: card.value,
         image: card.image_path,
-        one_per_deck: card.one_per_deck || false,
-        alternateImages: card.alternate_images || []
+        one_per_deck: card.one_per_deck || false
       };
     } finally {
       client.release();
@@ -227,8 +216,7 @@ export class PostgreSQLCardRepository implements CardRepository {
         power_type: card.power_type,
         value: card.value,
         image: card.image_path,
-        one_per_deck: card.one_per_deck || false,
-        alternateImages: card.alternate_images || []
+        one_per_deck: card.one_per_deck || false
       }));
     } finally {
       client.release();
@@ -239,10 +227,7 @@ export class PostgreSQLCardRepository implements CardRepository {
     const card = await this.getPowerCardById(powerCardId);
     if (!card) return '';
 
-    if (selectedAlternateImage && card.alternateImages?.includes(selectedAlternateImage)) {
-      return `/src/resources/cards/images/power-cards/alternate/${selectedAlternateImage}`;
-    }
-
+    // After migration, alternate images are separate cards, so just return the card's image
     return card.image || '';
   }
 

@@ -40,7 +40,6 @@ export interface Character {
   threat_level: number;
   special_abilities: string; // Can be empty string for no special ability
   image: string;
-  alternateImages?: string[]; // Array of alternate image filenames
 }
 
 export interface Location {
@@ -74,7 +73,6 @@ export interface SpecialCard {
   is_assist: boolean;
   is_ambush: boolean;
   one_per_deck: boolean;
-  alternateImages?: string[]; // Array of alternate image filenames
 }
 
 export interface Mission {
@@ -173,16 +171,14 @@ export interface PowerCard {
   value: number;        // 1..8, or 3..5 for Multi-Power
   image: string;
   one_per_deck: boolean; // Whether this card can only be included once per deck
-  alternateImages?: string[]; // Array of alternate image filenames
 }
 
 // Deck management interfaces
 export interface DeckCard {
   id: string;
   type: 'character' | 'location' | 'special' | 'mission' | 'event' | 'aspect' | 'advanced-universe' | 'teamwork' | 'ally-universe' | 'training' | 'basic-universe' | 'power';
-  cardId: string; // The ID from the original card table
+  cardId: string; // The ID from the original card table (now includes alternate cards as separate rows)
   quantity: number; // How many copies of this card
-  selectedAlternateImage?: string; // For characters, stores the selected alternate image filename
 }
 
 // Extended type for API operations that includes special cases
