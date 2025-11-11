@@ -33,6 +33,7 @@ export interface Deck {
 export interface Character {
   id: string;
   name: string;
+  universe?: string; // Optional for backward compatibility
   energy: number;
   combat: number;
   brute_force: number;
@@ -40,6 +41,7 @@ export interface Character {
   threat_level: number;
   special_abilities: string; // Can be empty string for no special ability
   image: string;
+  image_path?: string; // Optional for backward compatibility, same as image
 }
 
 export interface Location {

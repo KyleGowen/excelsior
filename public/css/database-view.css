@@ -13,6 +13,66 @@
  * ======================================== */
 
 /* ========================================
+ * CARD IMAGE NAVIGATION ARROWS
+ * ======================================== */
+
+.card-image-container {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: auto;
+    flex-wrap: nowrap;
+}
+
+.card-nav-arrow {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.5);
+    border: none;
+    border-radius: 0;
+    width: auto;
+    height: auto;
+    font-size: 20px;
+    font-weight: normal;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.2s ease;
+    user-select: none;
+    padding: 4px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.card-nav-arrow:hover {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+}
+
+.card-nav-arrow:active {
+    transform: translateY(0);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.card-nav-prev {
+    order: 1 !important;
+}
+
+.card-nav-next {
+    order: 3 !important;
+}
+
+.card-image-container img {
+    order: 2 !important;
+    flex-shrink: 0;
+}
+
+/* ========================================
  * DATABASE VIEW LAYOUT & STRUCTURE
  * ======================================== */
 
@@ -541,16 +601,30 @@ td:last-child {
     text-align: center;
 }
 
+
 #characters-table th:nth-child(1), /* Image */
 #characters-table td:nth-child(1) {
     width: 15%;
     text-align: center;
+    vertical-align: middle;
+}
+
+/* Lock row height after initial render to prevent changes when cycling images */
+/* Only apply to data rows, not header rows */
+#characters-table tbody tr {
+    min-height: fit-content; /* Allow natural sizing initially */
+}
+
+/* Once row is rendered, lock the image cell height to prevent changes */
+#characters-table tbody td:nth-child(1) {
+    min-height: 200px; /* Minimum height to accommodate images at 275px width */
+    /* Height will be set by JavaScript after initial render */
 }
 
 #characters-table td:nth-child(1) img {
-    max-width: 120px;
+    max-width: 316px; /* 15% increase from 275px */
     height: auto;
-    max-height: 180px;
+    object-fit: contain; /* Ensure images scale properly */
 }
 
 #characters-table th:nth-child(2), /* Add to Deck */

@@ -59,13 +59,15 @@ export class PostgreSQLCardRepository implements CardRepository {
       return {
         id: char.id,
         name: char.name,
+        universe: char.universe || 'ERB',
         energy: char.energy,
         combat: char.combat,
         brute_force: char.brute_force,
         intelligence: char.intelligence,
         threat_level: char.threat_level,
         special_abilities: char.special_abilities,
-        image: char.image_path
+        image: char.image_path,
+        image_path: char.image_path
       };
     } finally {
       client.release();
@@ -86,13 +88,15 @@ export class PostgreSQLCardRepository implements CardRepository {
       const characters = result.rows.map(char => ({
         id: char.id,
         name: char.name,
+        universe: char.universe || 'ERB',
         energy: char.energy,
         combat: char.combat,
         brute_force: char.brute_force,
         intelligence: char.intelligence,
         threat_level: char.threat_level,
         special_abilities: char.special_abilities,
-        image: char.image_path
+        image: char.image_path,
+        image_path: char.image_path
       }));
       
       // Cache the result
@@ -158,6 +162,8 @@ export class PostgreSQLCardRepository implements CardRepository {
               character: card.character_name,
               card_effect: card.card_effect,
               image: card.image_path,
+              image_path: card.image_path,
+              universe: card.universe || 'ERB',
               icons: card.icons || undefined,
               value: card.value ?? null,
               is_cataclysm: card.cataclysm || false,
@@ -216,6 +222,8 @@ export class PostgreSQLCardRepository implements CardRepository {
         power_type: card.power_type,
         value: card.value,
         image: card.image_path,
+        image_path: card.image_path,
+        universe: card.universe || 'ERB',
         one_per_deck: card.one_per_deck || false
       }));
     } finally {
