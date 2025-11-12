@@ -79,6 +79,11 @@ describe('Deck Export Component - Comprehensive Tests', () => {
         mockCurrentDeckData = null;
 
         // Set up global mocks (using window for browser globals)
+        // Store in _ prefixed properties for getter/setter access
+        (window as any)._currentUser = mockCurrentUser;
+        (window as any)._isDeckLimited = mockIsDeckLimited;
+        (window as any)._currentDeckData = mockCurrentDeckData;
+        // Also set directly for compatibility
         (window as any).currentUser = mockCurrentUser;
         (window as any).deckEditorCards = mockDeckEditorCards;
         (window as any).availableCardsMap = mockAvailableCardsMap;
@@ -98,18 +103,58 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             'navigator',
             `
             // Make globals available in function scope
-            const currentUser = window.currentUser;
+            // Use getter to always get current value for currentUser
+            Object.defineProperty(window, 'currentUser', {
+                get: function() { return window._currentUser; },
+                set: function(val) { window._currentUser = val; },
+                configurable: true
+            });
+            window._currentUser = window.currentUser;
+            // Create a local currentUser that accesses window.currentUser dynamically
+            const currentUser = new Proxy({}, {
+                get: function(target, prop) {
+                    return window.currentUser ? window.currentUser[prop] : undefined;
+                }
+            });
             const showNotification = window.showNotification;
             const loadAvailableCards = window.loadAvailableCards;
             const validateDeck = window.validateDeck;
-            const isDeckLimited = window.isDeckLimited;
-            const currentDeckData = window.currentDeckData;
+            // Use getter/setter to always get current value
+            Object.defineProperty(window, 'isDeckLimited', {
+                get: function() { return window._isDeckLimited; },
+                set: function(val) { window._isDeckLimited = val; },
+                configurable: true
+            });
+            Object.defineProperty(window, 'currentDeckData', {
+                get: function() { return window._currentDeckData; },
+                set: function(val) { window._currentDeckData = val; },
+                configurable: true
+            });
+            window._isDeckLimited = window.isDeckLimited;
+            window._currentDeckData = window.currentDeckData;
             
             ${deckExportCode}
             `
         );
         
         executeCode(window, document, navigator);
+        
+        // Update getters after code execution
+        Object.defineProperty(window, 'currentUser', {
+            get: function() { return (window as any)._currentUser; },
+            set: function(val) { (window as any)._currentUser = val; },
+            configurable: true
+        });
+        Object.defineProperty(window, 'isDeckLimited', {
+            get: function() { return (window as any)._isDeckLimited; },
+            set: function(val) { (window as any)._isDeckLimited = val; },
+            configurable: true
+        });
+        Object.defineProperty(window, 'currentDeckData', {
+            get: function() { return (window as any)._currentDeckData; },
+            set: function(val) { (window as any)._currentDeckData = val; },
+            configurable: true
+        });
 
         // Get function from window after execution
         exportDeckAsJson = (window as any).exportDeckAsJson;
@@ -121,16 +166,27 @@ describe('Deck Export Component - Comprehensive Tests', () => {
         // Spy on showExportOverlay after it's been defined by the actual code
         // and make it store the JSON in dataset for our getExportedJson helper
         const actualShowExportOverlay = (window as any).showExportOverlay;
-        mockShowExportOverlay = jest.fn((jsonString: string) => {
-            // Store JSON in dataset for getExportedJson helper
-            const overlay = document.getElementById('exportJsonOverlay');
-            if (overlay) {
-                (overlay as HTMLElement).dataset.jsonString = jsonString;
-            }
-            // Also call the actual function to maintain behavior
-            actualShowExportOverlay(jsonString);
-        });
-        (window as any).showExportOverlay = mockShowExportOverlay;
+        if (actualShowExportOverlay) {
+            mockShowExportOverlay = jest.fn((jsonString: string) => {
+                // Store JSON in dataset for getExportedJson helper
+                const overlay = document.getElementById('exportJsonOverlay');
+                if (overlay) {
+                    (overlay as HTMLElement).dataset.jsonString = jsonString;
+                }
+                // Also call the actual function to maintain behavior
+                actualShowExportOverlay.call(window, jsonString);
+            });
+            (window as any).showExportOverlay = mockShowExportOverlay;
+        } else {
+            // Fallback if showExportOverlay doesn't exist yet
+            mockShowExportOverlay = jest.fn((jsonString: string) => {
+                const overlay = document.getElementById('exportJsonOverlay');
+                if (overlay) {
+                    (overlay as HTMLElement).dataset.jsonString = jsonString;
+                }
+            });
+            (window as any).showExportOverlay = mockShowExportOverlay;
+        }
 
         jest.useFakeTimers();
     });
@@ -172,6 +228,7 @@ describe('Deck Export Component - Comprehensive Tests', () => {
                     description: 'Test deck description'
                 }
             };
+            (window as any)._currentDeckData = mockCurrentDeckData;
             (window as any).currentDeckData = mockCurrentDeckData;
             
             mockDeckEditorCards = [
@@ -227,6 +284,7 @@ describe('Deck Export Component - Comprehensive Tests', () => {
                     description: 'Description from CurrentDeckData'
                 }
             };
+            (window as any)._currentDeckData = mockCurrentDeckData;
             (window as any).currentDeckData = mockCurrentDeckData;
             
             // Need at least one card in map to avoid early return
@@ -246,7 +304,14 @@ describe('Deck Export Component - Comprehensive Tests', () => {
         });
 
         it('should remove legality badges from deck name', async () => {
-            const titleElement = document.querySelector('h4');
+            // Use h3 which exists in the DOM setup, or create h4 if needed
+            let titleElement = document.querySelector('#deckEditorModal h3') || document.querySelector('h3');
+            if (!titleElement) {
+                // Create h4 if h3 doesn't exist
+                const h4 = document.createElement('h4');
+                document.body.appendChild(h4);
+                titleElement = h4;
+            }
             titleElement!.innerHTML = 'Test Deck <span class="deck-validation-badge error">Not Legal</span>';
             
             // Need at least one card in map to avoid early return
@@ -313,11 +378,21 @@ describe('Deck Export Component - Comprehensive Tests', () => {
         });
 
         it('should use username if name is not available', async () => {
-            (window as any).currentUser = {
+            // Create a new user object without name to avoid closure issues
+            const testUser = {
                 role: 'ADMIN',
                 username: 'testuser'
-                // no name field
             };
+            // Update both _currentUser (for getter) and currentUser (for compatibility)
+            (window as any)._currentUser = testUser;
+            (window as any).currentUser = testUser;
+            // Ensure name is not present
+            if ((window as any)._currentUser.name) {
+                delete (window as any)._currentUser.name;
+            }
+            if ((window as any).currentUser.name) {
+                delete (window as any).currentUser.name;
+            }
 
             // Need at least one card in map to avoid early return
             mockAvailableCardsMap.set('char1', { name: 'Character' });

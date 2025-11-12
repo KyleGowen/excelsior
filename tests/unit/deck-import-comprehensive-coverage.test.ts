@@ -88,6 +88,9 @@ describe('Deck Import - Comprehensive Coverage', () => {
         (window as any).renderDeckCardsListView = jest.fn();
         (window as any).currentDeckId = 'test-deck';
 
+        // Use fake timers before executing code so setTimeout is mocked
+        jest.useFakeTimers();
+        
         // Load and execute the actual deck-import.js file
         const deckImportPath = path.join(__dirname, '../../public/js/components/deck-import.js');
         const deckImportCode = fs.readFileSync(deckImportPath, 'utf-8');
@@ -105,7 +108,7 @@ describe('Deck Import - Comprehensive Coverage', () => {
             renderDeckCardsCardView: (window as any).renderDeckCardsCardView,
             renderDeckCardsListView: (window as any).renderDeckCardsListView,
             console: console,
-            setTimeout: setTimeout,
+            setTimeout: setTimeout, // This will be the mocked setTimeout from jest.useFakeTimers()
             clearTimeout: clearTimeout,
             setInterval: setInterval,
             clearInterval: clearInterval,
@@ -159,8 +162,6 @@ describe('Deck Import - Comprehensive Coverage', () => {
             extractCardsFromImportData = (window as any).extractCardsFromImportData;
             findCardIdByName = (window as any).findCardIdByName;
         }
-
-        jest.useFakeTimers();
     });
 
     afterEach(() => {
@@ -245,15 +246,19 @@ describe('Deck Import - Comprehensive Coverage', () => {
             expect(overlay?.style.display).toBe('none');
         });
 
-        it('should focus textarea after delay', async () => {
+        it('should focus textarea after delay', () => {
+            // Fake timers are already active from beforeEach
             const textarea = document.getElementById('importJsonContent') as HTMLTextAreaElement;
+            if (!textarea) {
+                throw new Error('Textarea not found');
+            }
             const focusSpy = jest.spyOn(textarea, 'focus');
             
             showImportOverlay();
             expect(focusSpy).not.toHaveBeenCalled();
             
-            // Use runAllTimersAsync to ensure setTimeout callbacks are executed
-            await jest.runAllTimersAsync();
+            // Advance timers by more than 100ms to trigger setTimeout (100ms delay)
+            jest.advanceTimersByTime(150);
             // Focus should be called after the setTimeout
             expect(focusSpy).toHaveBeenCalled();
         });
@@ -348,7 +353,15 @@ describe('Deck Import - Comprehensive Coverage', () => {
             });
             
             const promise = processImportDeck();
-            jest.advanceTimersByTime(1000);
+            // Run pending timers until promise resolves
+            // processImportDeck uses setTimeout(1000) which needs to be executed
+            let resolved = false;
+            promise.then(() => { resolved = true; });
+            // Run timers multiple times to ensure all setTimeout callbacks execute
+            for (let i = 0; i < 10 && !resolved; i++) {
+                jest.runOnlyPendingTimers();
+                await Promise.resolve(); // Allow promise to resolve
+            }
             await promise;
             
             expect(mockLoadAvailableCards).toHaveBeenCalled();
@@ -366,7 +379,15 @@ describe('Deck Import - Comprehensive Coverage', () => {
             });
             
             const promise = processImportDeck();
-            jest.advanceTimersByTime(1000);
+            // Run pending timers until promise resolves
+            // processImportDeck uses setTimeout(1000) which needs to be executed
+            let resolved = false;
+            promise.then(() => { resolved = true; });
+            // Run timers multiple times to ensure all setTimeout callbacks execute
+            for (let i = 0; i < 10 && !resolved; i++) {
+                jest.runOnlyPendingTimers();
+                await Promise.resolve(); // Allow promise to resolve
+            }
             await promise;
             
             expect(errorMessages.style.display).toBe('block');

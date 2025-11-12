@@ -680,7 +680,11 @@ async function exportDeckAsJson() {
         if (reserveCharacterId) {
             const reserveCard = window.deckEditorCards.find(card => card.type === 'character' && card.cardId === reserveCharacterId);
             if (reserveCard) {
-                reserveCharacter = getCardNameFromMap(reserveCard);
+                const cardName = getCardNameFromMap(reserveCard);
+                // Only set reserveCharacter if card was found (not "Unknown Card")
+                if (cardName !== 'Unknown Card') {
+                    reserveCharacter = cardName;
+                }
             }
         }
         
@@ -709,7 +713,7 @@ async function exportDeckAsJson() {
         // Determine if deck is legal and limited using the actual validation logic
         const validation = validateDeck(window.deckEditorCards);
         const isLegal = validation.errors.length === 0;
-        const isLimited = isDeckLimited; // Use the global limited state variable
+        const isLimited = isDeckLimited || false; // Use the global limited state variable, default to false
         
         // Create export data structure with data at top level
         const exportData = {
@@ -738,7 +742,12 @@ async function exportDeckAsJson() {
         
         // Show JSON in overlay
         const jsonString = JSON.stringify(exportData, null, 2);
-        showExportOverlay(jsonString);
+        // Use window.showExportOverlay to ensure we call the latest version (for test spies)
+        if (typeof window.showExportOverlay === 'function') {
+            window.showExportOverlay(jsonString);
+        } else if (typeof showExportOverlay === 'function') {
+            showExportOverlay(jsonString);
+        }
         
     } catch (error) {
         console.error('Error exporting deck:', error);

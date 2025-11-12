@@ -162,6 +162,9 @@ describe('Deck Character Import - Unit Tests', () => {
 
         (window as any).showImportOverlay = function showImportOverlay() {
             const overlay = document.getElementById('importJsonOverlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+            }
             const textarea = document.getElementById('importJsonContent');
             const errorMessages = document.getElementById('importErrorMessages');
             const importButton = document.getElementById('importJsonButton');
