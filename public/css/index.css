@@ -2247,6 +2247,8 @@
             margin-bottom: 10px;
             position: relative;
             gap: 20px;
+            min-height: 60px;
+            height: 60px;
         }
 
         .modal-header .deck-editor-title-section {
@@ -2403,6 +2405,11 @@
             background: transparent;
             border: none;
             padding: 0;
+            height: 60px;
+            min-height: 60px;
+            max-height: 60px;
+            display: flex;
+            align-items: center;
         }
 
         .deck-summary-content {
@@ -2410,6 +2417,8 @@
             justify-content: center;
             align-items: center;
             gap: 20px;
+            height: 100%;
+            width: 100%;
         }
 
         /* Deck stats divider - styled like resizable divider but scaled down and without handles */
@@ -2438,7 +2447,9 @@
             display: flex;
             gap: 15px;
             align-items: center;
-            height: 100%;
+            height: 60px;
+            min-height: 60px;
+            max-height: 60px;
         }
 
 
@@ -2447,12 +2458,20 @@
             flex-direction: column;
             align-items: center;
             gap: 4px;
+            height: 60px;
+            min-height: 60px;
+            max-height: 60px;
+            justify-content: center;
         }
 
         /* Buttons in summary-stat should be stacked vertically */
         .summary-stat:has(button) {
             flex-direction: column;
             gap: 6px;
+            height: 60px;
+            min-height: 60px;
+            max-height: 60px;
+            justify-content: center;
         }
 
         /* Deck summary stats - more specific selector to override other stat-label rules */
@@ -2544,6 +2563,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            height: 60px;
+            min-height: 60px;
+            max-height: 60px;
         }
 
         .deck-summary-validation .validation-errors-compact,
@@ -4976,8 +4998,9 @@
             justify-content: center;
             white-space: nowrap;
             line-height: 1.2;
-            height: auto;
+            height: 24px;
             min-height: 24px;
+            max-height: 24px;
             box-sizing: border-box;
         }
 
