@@ -8210,8 +8210,19 @@
                                     name: v.card_name || v.name
                                 })));
                             }
+                            // Skip alternate art check if card not found
+                            cardsHtml += `
+                                <div class="deck-card-editor-item preview-view" data-index="${index}" data-type="${card.type}" data-card-id="${card.cardId}">
+                                    <div class="deck-card-editor-info">
+                                        <div class="deck-card-editor-name">Card not found: ${card.cardId}</div>
+                                    </div>
+                                </div>
+                            `;
                             return;
                         }
+                        
+                        // Debug: Log card being processed
+                        console.log(`[ChangeArt] Processing card: ${card.cardId}, type: ${card.type}, name: ${availableCard.name || availableCard.card_name || 'unknown'}`);
                         
                         let cardDetails = '';
                         if (card.type === 'character') {
