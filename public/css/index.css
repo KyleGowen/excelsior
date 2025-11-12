@@ -3357,18 +3357,18 @@
             background: rgba(78, 205, 196, 0.2);
             color: #4ecdc4;
             border: 1px solid rgba(78, 205, 196, 0.3);
-            padding: 6px 12px;
+            padding: 4px 8px;
             border-radius: 4px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
             transition: background 0.2s ease;
             margin: 0;
             white-space: nowrap;
-            min-width: 90px;
+            min-width: 80px;
             width: 100%;
             height: auto;
-            min-height: 28px;
+            min-height: 24px;
             box-sizing: border-box;
             display: inline-flex;
             align-items: center;
@@ -4965,22 +4965,30 @@
 
         /* Deck validation badges in deck list */
         .deck-validation-badge {
-            font-size: 0.75rem;
-            padding: 4px 10px;
+            font-size: 0.8rem;
+            padding: 4px 8px;
             border-radius: 4px;
             margin-left: 10px;
-            font-weight: 600;
+            font-weight: 500;
             vertical-align: middle;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             white-space: nowrap;
             line-height: 1.2;
             height: auto;
+            min-height: 24px;
+            box-sizing: border-box;
         }
 
         .deck-validation-badge.error {
-            background: #ff4444;
-            color: #ffffff;
-            border: none;
+            background: rgba(255, 68, 68, 0.2) !important;
+            color: #ff4444 !important;
+            border: 1px solid rgba(255, 68, 68, 0.3) !important;
+            padding: 4px 8px !important;
+            min-height: 24px !important;
+            height: auto !important;
+            cursor: pointer !important;
         }
 
         .deck-validation-badge.warning {

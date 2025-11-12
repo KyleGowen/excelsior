@@ -10579,6 +10579,10 @@
                         const response = await fetch(category.api);
                         const data = await response.json();
                         
+                        // Variables to store tile counts for header rendering
+                        let characterTileCount = null;
+                        let specialCardTileCount = null;
+                        
                         if (data.success && data.data.length > 0) {
                             // Populate the global map for deck editor use
                             data.data.forEach(card => {
@@ -10679,6 +10683,9 @@
                                 });
                                 
                                 console.log(`[IndexHTML] Grouped ${data.data.length} cards into ${groups.size} unique groups`);
+                                
+                                // Store the grouped tile count for use in header rendering
+                                characterTileCount = groups.size;
                                 
                                 // Debug: Log groups with multiple cards
                                 const groupsWithMultiple = Array.from(groups.entries()).filter(([key, group]) => group.length > 1);
@@ -10899,7 +10906,11 @@
                                 `;
                             });
                                                     } else if (category.type === 'special') {
-                            // Special handling for special cards - group by character name
+                            // Special handling for special cards - group by character name, then by card name to consolidate alternate arts
+                            console.log(`[IndexHTML] ===== PROCESSING SPECIAL CARDS =====`);
+                            console.log(`[IndexHTML] Received ${data.data.length} special cards from API`);
+                            
+                            // First, group by character name
                             const characterGroups = {};
                             
                             data.data.forEach(card => {
@@ -10913,47 +10924,131 @@
                             const characterNames = Object.keys(characterGroups).sort();
                             cardsHtml = '';
                             
+                            // Track total unique special cards across all character groups
+                            let totalUniqueSpecialCards = 0;
+                            
                             characterNames.forEach(characterName => {
-                                const cards = characterGroups[characterName].sort((a, b) => a.name.localeCompare(b.name));
-                                const cardItems = cards.map(card => {
+                                const cardsInCharacterGroup = characterGroups[characterName];
+                                
+                                // Group cards by name to consolidate alternate arts
+                                const cardGroups = new Map();
+                                cardsInCharacterGroup.forEach(card => {
+                                    const cardName = (card.name || '').trim();
+                                    
+                                    if (!cardName) {
+                                        console.warn('[IndexHTML] Skipping special card with empty name:', card);
+                                        return;
+                                    }
+                                    
+                                    const key = cardName;
+                                    if (!cardGroups.has(key)) {
+                                        cardGroups.set(key, []);
+                                    }
+                                    cardGroups.get(key).push(card);
+                                });
+                                
+                                // Add to total count
+                                totalUniqueSpecialCards += cardGroups.size;
+                                
+                                // Sort each group: original art first, then alternates
+                                cardGroups.forEach((group, key) => {
+                                    group.sort((a, b) => {
+                                        const aImage = a.image_path || a.image || '';
+                                        const bImage = b.image_path || b.image || '';
+                                        const aIsAlternate = aImage.includes('/alternate/');
+                                        const bIsAlternate = bImage.includes('/alternate/');
+                                        
+                                        if (aIsAlternate && !bIsAlternate) return 1;
+                                        if (!aIsAlternate && bIsAlternate) return -1;
+                                        return 0;
+                                    });
+                                });
+                                
+                                // Track rendered cards to prevent duplicates
+                                const renderedKeys = new Set();
+                                
+                                const cardItems = [];
+                                cardGroups.forEach((group, cardName) => {
+                                    if (group.length === 0) return;
+                                    
+                                    // Use first card (original art) as representative
+                                    const representative = group[0];
+                                    const name = (representative.name || '').trim();
+                                    
+                                    // Skip if already rendered
+                                    if (renderedKeys.has(name)) {
+                                        console.warn(`[IndexHTML] SKIPPING duplicate special card: "${name}"`);
+                                        return;
+                                    }
+                                    
+                                    renderedKeys.add(name);
+                                    
+                                    // Store all alternate arts
+                                    const allCards = group.map(card => ({
+                                        id: card.id,
+                                        imagePath: getCardImagePath(card, category.type),
+                                        name: card.name
+                                    }));
+                                    const allCardsJson = JSON.stringify(allCards).replace(/"/g, '&quot;');
+                                    
+                                    // Use original art (first card) for display
+                                    const displayCard = allCards[0];
+                                    
                                     // Check if this special card is One Per Deck and already in deck
-                                    const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
+                                    // Check if ANY alternate art of this card is already in deck
+                                    const isOnePerDeck = representative.one_per_deck === true || representative.is_one_per_deck === true;
                                     const isOnePerDeckInDeck = isOnePerDeck && window.deckEditorCards.some(deckCard => 
-                                        deckCard.type === 'special' && deckCard.cardId === card.id
+                                        deckCard.type === 'special' && group.some(gc => gc.id === deckCard.cardId)
                                     );
                                     
                                     const disabledClass = isOnePerDeckInDeck ? 'disabled' : '';
                                     const disabledTitle = isOnePerDeckInDeck ? 'One Per Deck - already in deck' : '';
                                     
-                                    return `
+                                    cardItems.push(`
                                         <div class="card-item ${disabledClass}" 
                                              draggable="${!isOnePerDeckInDeck}" 
                                              data-type="${category.type}" 
-                                             data-id="${card.id}"
-                                             onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
+                                             data-id="${displayCard.id}"
+                                             data-all-cards="${allCardsJson}"
+                                             onmouseenter="showCardHoverModal('${displayCard.imagePath}', '${name.replace(/'/g, "\\'")}')"
                                              onmouseleave="hideCardHoverModal()"
-                                             onclick="handleCardClick(event, '${category.type}', '${card.id}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
-                                             data-name="${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}"
+                                             onclick="handleCardClick(event, '${category.type}', '${displayCard.id}', '${name.replace(/'/g, "\\'")}')"
+                                             data-name="${name.replace(/'/g, "\\'")}"
                                              title="${disabledTitle}">
-                                            <div class="card-item-content">${card[category.nameField]}</div>
-                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
+                                            <div class="card-item-content">${name}</div>
+                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${displayCard.id}', '${name}', '${allCardsJson}')" title="Add to deck (multiple copies allowed)">+</div>
                                         </div>
-                                    `;
-                                }).join('');
+                                    `);
+                                });
+                                
+                                // Sort card items by name
+                                cardItems.sort((a, b) => {
+                                    const aMatch = a.match(/data-name="([^"]+)"/);
+                                    const bMatch = b.match(/data-name="([^"]+)"/);
+                                    const aName = aMatch ? aMatch[1] : '';
+                                    const bName = bMatch ? bMatch[1] : '';
+                                    return aName.localeCompare(bName);
+                                });
                                 
                                 cardsHtml += `
                                     <div class="character-group">
                                         <div class="character-group-header" onclick="toggleCharacterGroup(this)">
-                                            <span>${characterName} (${cards.length})</span>
+                                            <span>${characterName} (${cardGroups.size})</span>
                                             <button class="add-all-special-btn" onclick="event.stopPropagation(); addAllSpecialCardsForCharacter('${characterName}')">Add All</button>
                                             <span class="collapse-icon">▶</span>
                                         </div>
                                         <div class="character-group-content collapsed">
-                                            ${cardItems}
+                                            ${cardItems.join('')}
                                         </div>
                                     </div>
                                 `;
                             });
+                            
+                            // Store the grouped tile count for use in header rendering
+                            specialCardTileCount = totalUniqueSpecialCards;
+                            
+                            console.log(`[IndexHTML] Rendered special cards grouped by character and consolidated alternate arts`);
+                            console.log(`[IndexHTML] Grouped ${data.data.length} special cards into ${totalUniqueSpecialCards} unique cards`);
                         } else if (category.type === 'advanced-universe') {
                             // Special handling for advanced universe cards - group by character name
                             const characterGroups = {};
@@ -11334,11 +11429,13 @@
                             
                             if (category.type === 'special') {
                                 // Special handling for special cards header with toggle
+                                // Use grouped tile count instead of raw data length
+                                const displayCount = specialCardTileCount !== null ? specialCardTileCount : data.data.length;
                                 categoriesHtml += `
                                     <div class="card-category">
                                         <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
                                             <div class="category-header-content">
-                                                <span>${category.name} (${data.data.length})</span>
+                                                <span>${category.name} (${displayCount})</span>
                                                 <label class="filter-toggle" onclick="event.stopPropagation()">
                                                     <input type="checkbox" id="specialCardsCharacterFilter" onchange="toggleSpecialCardsCharacterFilter()">
                                                     <span class="toggle-label">Hide Unusables</span>
@@ -11481,11 +11578,13 @@
                                 `;
                             } else if (category.type === 'character') {
                                 // Special handling for characters with name search
+                                // Use grouped tile count instead of raw data length
+                                const displayCount = characterTileCount !== null ? characterTileCount : data.data.length;
                                 categoriesHtml += `
                                     <div class="card-category">
                                         <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
                                             <div class="category-header-content">
-                                                <span>${category.name} (${data.data.length})</span>
+                                                <span>${category.name} (${displayCount})</span>
                                                 <input type="text" class="character-name-search" placeholder="Search names..." 
                                                        onkeyup="filterCharactersByName(this.value)" 
                                                        onclick="expandCharacterCategoryIfNeeded(this); event.stopPropagation()"

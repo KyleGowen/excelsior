@@ -172,8 +172,8 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
 - **Background**: `rgba(78, 205, 196, 0.2)`
 - **Text Color**: `#4ecdc4`
 - **Border**: `1px solid rgba(78, 205, 196, 0.3)`
-- **Height**: `28px` (fixed)
-- **Min-Height**: `28px`
+- **Height**: `auto` with `min-height: 24px` (matches Save/Cancel buttons)
+- **Min-Height**: `24px`
 - **Min-Width**: `80px`
 - **Padding**: `4px 8px`
 - **Display**: `inline-flex`; `align-items: center`; `justify-content: center`
@@ -181,7 +181,7 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
 - **Border Radius**: `4px`
 - **Font**: `0.8rem`, `500`
 - **Hover**: `background: rgba(78, 205, 196, 0.3)`; `border-color: rgba(78, 205, 196, 0.4)`
-- These specs keep Draw Hand and List View visually identical.
+- These specs keep Draw Hand and List View visually identical and match the size of Save/Cancel buttons.
 
 ### Cards
 
