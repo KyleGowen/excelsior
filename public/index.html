@@ -135,11 +135,33 @@
             width: 100% !important;
         }
         
-        #special-cards-table th:nth-child(1), #special-cards-table td:nth-child(1) { width: 10% !important; } /* Image */
-        #special-cards-table th:nth-child(2), #special-cards-table td:nth-child(2) { width: 5% !important; }  /* Add to Deck */
-        #special-cards-table th:nth-child(3), #special-cards-table td:nth-child(3) { width: 15% !important; } /* Name */
-        #special-cards-table th:nth-child(4), #special-cards-table td:nth-child(4) { width: 15% !important; } /* Character */
-        #special-cards-table th:nth-child(5), #special-cards-table td:nth-child(5) { width: 55% !important; } /* Card Effect */
+        /* ========================================
+         * DEBUG: Special Cards Table Column Widths
+         * ========================================
+         * These inline styles override database-view.css
+         * Column 1: Image - 15%
+         * Column 2: Add to Deck - 10%
+         * Column 3: Name - 20%
+         * Column 4: Character - 20%
+         * Column 5: Card Effect - 35%
+         * Total: 15% + 10% + 20% + 20% + 35% = 100%
+         * ======================================== */
+        #special-cards-table th:nth-child(1), #special-cards-table td:nth-child(1) { 
+            width: 15% !important; 
+        }
+        #special-cards-table th:nth-child(2), #special-cards-table td:nth-child(2) { 
+            width: 10% !important; 
+            min-width: 100px !important;
+        }
+        #special-cards-table th:nth-child(3), #special-cards-table td:nth-child(3) { 
+            width: 20% !important; 
+        }
+        #special-cards-table th:nth-child(4), #special-cards-table td:nth-child(4) { 
+            width: 20% !important; 
+        }
+        #special-cards-table th:nth-child(5), #special-cards-table td:nth-child(5) { 
+            width: 35% !important; 
+        }
         
         
         /* Center and resize Special Cards search inputs */
@@ -2423,64 +2445,7 @@
             } catch (e) { console.error('Error loading power cards:', e); }
         }
 
-        function displayPowerCards(cards) {
-            
-            // Check DOM state before making any changes
-            const powerCardsTab = document.getElementById('power-cards-tab');
-            const charactersTab = document.getElementById('characters-tab');
-            
-            const tbody = document.getElementById('power-cards-tbody');
-            if (!cards || cards.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4">No power cards found</td></tr>';
-                return;
-            }
-            
-            // Sort power cards by type using OverPower order: Energy → Combat → Brute Force → Intelligence → Multi Power → Any-Power
-            const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Multi Power', 'Any-Power'];
-            const sortedCards = cards.sort((a, b) => {
-                const aTypeIndex = preferredOrder.indexOf(a.power_type);
-                const bTypeIndex = preferredOrder.indexOf(b.power_type);
-                
-                // If both are in preferred order, sort by their position
-                if (aTypeIndex !== -1 && bTypeIndex !== -1) {
-                    return aTypeIndex - bTypeIndex;
-                }
-                
-                // If only one is in preferred order, prioritize it
-                if (aTypeIndex !== -1) return -1;
-                if (bTypeIndex !== -1) return 1;
-                
-                // If neither is in preferred order, sort alphabetically
-                return a.power_type.localeCompare(b.power_type);
-            });
-            
-            tbody.innerHTML = sortedCards.map(card => `
-                <tr>
-                    <td>
-                        <img src="/src/resources/cards/images/power-cards/${mapImagePathToActualFile(card.image)}" 
-                             alt="${card.power_type} ${card.value}" 
-                             style="width: 120px !important; height: auto !important; max-height: 180px !important; object-fit: contain; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
-                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiZmZmYiIHRleHQtYW5jaG9yPSJtZWRpYW4iIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
-                             onmouseenter="showCardHoverModal('/src/resources/cards/images/power-cards/${mapImagePathToActualFile(card.image)}', '${card.value} - ${card.power_type}')"
-                             onmouseleave="hideCardHoverModal()"
-                             onclick="openModal(this)">
-                    </td>
-                    <td>
-                        <button class="add-to-deck-btn" onclick="showDeckSelection('power', '${card.id}', '${card.value} - ${card.power_type}', this)">
-                            Add to Deck
-                        </button>
-                        ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
-                        <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'power')" style="margin-top: 4px; display: block; width: 100%;">
-                            Add to Collection
-                        </button>
-                        ` : ''}
-                    </td>
-                    <td>${card.power_type}</td>
-                    <td>${card.value}</td>
-                </tr>
-            `).join('');
-            
-        }
+        // displayPowerCards function moved to card-display-functions.js
         // setupPowerCardsSearch function moved to external file
 
 
@@ -5218,6 +5183,36 @@
         
         // Function to update deck summary with stats and validation
         async function updateDeckSummary(deckCards) {
+            // DEBUG: Check font sizes after update and force apply
+            setTimeout(() => {
+                const statLabels = document.querySelectorAll('.deck-summary-stats .stat-label');
+                const statValues = document.querySelectorAll('.deck-summary-stats .stat-value');
+                console.log('🔍 [DEBUG] Font size check - found', statLabels.length, 'labels and', statValues.length, 'values');
+                if (statLabels.length > 0) {
+                    const label = statLabels[0];
+                    const computedStyle = window.getComputedStyle(label);
+                    console.log('  Stat Label font-size:', computedStyle.fontSize);
+                    console.log('  Stat Label inline style:', label.style.fontSize);
+                    console.log('  Stat Label classes:', label.className);
+                    // Force apply font size to ALL labels
+                    statLabels.forEach(l => {
+                        l.style.setProperty('font-size', '0.65rem', 'important');
+                    });
+                    console.log('  ✅ Applied 0.65rem to all', statLabels.length, 'labels');
+                }
+                if (statValues.length > 0) {
+                    const value = statValues[0];
+                    const computedStyle = window.getComputedStyle(value);
+                    console.log('  Stat Value font-size:', computedStyle.fontSize);
+                    console.log('  Stat Value inline style:', value.style.fontSize);
+                    console.log('  Stat Value classes:', value.className);
+                    // Force apply font size to ALL values
+                    statValues.forEach(v => {
+                        v.style.setProperty('font-size', '0.85rem', 'important');
+                    });
+                    console.log('  ✅ Applied 0.85rem to all', statValues.length, 'values');
+                }
+            }, 100);
             
             // Update total card count using shared function
             const totalCards = calculateTotalCardCount(deckCards);
@@ -10143,11 +10138,32 @@
                     const cardId = card.dataset.id;
                     const cardName = card.querySelector('.character-name')?.textContent?.trim() || 'Unknown';
                     
-                    const isExistingCharacter = window.deckEditorCards.some(deckCard => 
-                        deckCard.type === 'character' && deckCard.cardId === cardId
-                    );
+                    // Check if this specific card OR any alternate art is in the deck
+                    // Get all cards in the group from data-all-cards attribute
+                    const allCardsJson = card.getAttribute('data-all-cards');
+                    let isExistingCharacter = false;
+                    
+                    if (allCardsJson && allCardsJson.trim() !== '') {
+                        try {
+                            const allCards = JSON.parse(allCardsJson.replace(/&quot;/g, '"'));
+                            // Check if any card in the group (all alternate arts) is in the deck
+                            isExistingCharacter = window.deckEditorCards.some(deckCard => 
+                                deckCard.type === 'character' && allCards.some(ac => ac.id === deckCard.cardId)
+                            );
+                        } catch (e) {
+                            // Fallback to checking just this card ID
+                            isExistingCharacter = window.deckEditorCards.some(deckCard => 
+                                deckCard.type === 'character' && deckCard.cardId === cardId
+                            );
+                        }
+                    } else {
+                        // Fallback: check just this card ID
+                        isExistingCharacter = window.deckEditorCards.some(deckCard => 
+                            deckCard.type === 'character' && deckCard.cardId === cardId
+                        );
+                    }
                 
-                    // Disable if we have 4 different characters OR if this character is already in the deck
+                    // Disable if we have 4 different characters OR if this character (or any alternate art) is already in the deck
                     const shouldDisable = uniqueCharacterCount >= 4 || isExistingCharacter;
                 
                     if (shouldDisable) {
@@ -10527,6 +10543,8 @@
         }
 
         async function loadAvailableCards() {
+            console.log('[IndexHTML] ===== loadAvailableCards() CALLED (from index.html) =====');
+            console.trace('[IndexHTML] Stack trace:');
             try {
                 const cardCategories = document.getElementById('cardCategories');
                 
@@ -10614,6 +10632,9 @@
                             let cardsHtml = '';
                             
                             if (category.type === 'character') {
+                                console.log(`[IndexHTML] ===== PROCESSING CHARACTER CARDS =====`);
+                                console.log(`[IndexHTML] Received ${data.data.length} character cards from API`);
+                                
                                 // Special handling for characters with stats
                                 const currentCharacterCount = window.deckEditorCards
                                     .filter(card => card.type === 'character')
@@ -10621,7 +10642,86 @@
                                 
                                 const isCharacterLimitReached = currentCharacterCount >= 4;
                                 
-                                cardsHtml = data.data.map(card => {
+                                // Group characters by name and universe (same type, name, universe = same card)
+                                console.log('[IndexHTML] Grouping characters by name and universe...');
+                                const groups = new Map();
+                                data.data.forEach(card => {
+                                    const name = (card.name || '').trim();
+                                    let universe = (card.universe || 'ERB').trim();
+                                    if (!universe || universe === '') {
+                                        universe = 'ERB';
+                                    }
+                                    
+                                    if (!name) {
+                                        console.warn('[IndexHTML] Skipping card with empty name:', card);
+                                        return;
+                                    }
+                                    
+                                    const key = `${name}|${universe}`;
+                                    if (!groups.has(key)) {
+                                        groups.set(key, []);
+                                    }
+                                    groups.get(key).push(card);
+                                });
+                                
+                                // Sort each group: original art first, then alternates
+                                groups.forEach((group, key) => {
+                                    group.sort((a, b) => {
+                                        const aImage = a.image_path || a.image || '';
+                                        const bImage = b.image_path || b.image || '';
+                                        const aIsAlternate = aImage.includes('/alternate/');
+                                        const bIsAlternate = bImage.includes('/alternate/');
+                                        
+                                        if (aIsAlternate && !bIsAlternate) return 1;
+                                        if (!aIsAlternate && bIsAlternate) return -1;
+                                        return 0;
+                                    });
+                                });
+                                
+                                console.log(`[IndexHTML] Grouped ${data.data.length} cards into ${groups.size} unique groups`);
+                                
+                                // Debug: Log groups with multiple cards
+                                const groupsWithMultiple = Array.from(groups.entries()).filter(([key, group]) => group.length > 1);
+                                if (groupsWithMultiple.length > 0) {
+                                    console.log(`[IndexHTML] Found ${groupsWithMultiple.length} groups with multiple cards (alternate arts):`);
+                                    groupsWithMultiple.slice(0, 5).forEach(([key, group]) => {
+                                        console.log(`  - "${key}": ${group.length} cards`, group.map(c => ({ id: c.id, name: c.name, image: c.image_path || c.image })));
+                                    });
+                                }
+                                
+                                // Track rendered cards to prevent duplicates
+                                const renderedKeys = new Set();
+                                
+                                cardsHtml = '';
+                                groups.forEach((group, key) => {
+                                    if (group.length === 0) return;
+                                    
+                                    // Use first card (original art) as representative
+                                    const representative = group[0];
+                                    const name = (representative.name || '').trim();
+                                    const universe = (representative.universe || 'ERB').trim() || 'ERB';
+                                    const renderKey = `${name}|${universe}`;
+                                    
+                                    // Skip if already rendered
+                                    if (renderedKeys.has(renderKey)) {
+                                        console.warn(`[IndexHTML] SKIPPING duplicate: "${renderKey}"`);
+                                        return;
+                                    }
+                                    
+                                    renderedKeys.add(renderKey);
+                                    
+                                    // Store all alternate arts
+                                    const allCards = group.map(card => ({
+                                        id: card.id,
+                                        imagePath: getCardImagePath(card, category.type),
+                                        name: card.name
+                                    }));
+                                    const allCardsJson = JSON.stringify(allCards).replace(/"/g, '&quot;');
+                                    
+                                    // Use original art (first card) for display
+                                    const displayCard = allCards[0];
+                                    
+                                    const card = representative; // Use representative for stats
                                     const stats = [
                                         { label: 'TL:', value: card.threat_level || 0, color: '#808080' }, // Gray - Threat Level
                                         { label: 'E:', value: card.energy || 0, color: '#FFD700' },      // Yellow - Energy
@@ -10634,38 +10734,45 @@
                                         `<span class="character-stat"><span class="stat-label">${stat.label}</span><span class="stat-value" style="color: ${stat.color};">${stat.value}</span></span>`
                                     ).join(' ');
                                     
-                                    // Check if this character is One Per Deck and already in deck
-                                    const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
-                                    const isOnePerDeckInDeck = isOnePerDeck && window.deckEditorCards.some(deckCard => 
-                                        deckCard.type === 'character' && deckCard.cardId === card.id
+                                    // Check if ANY alternate art of this character is already in deck
+                                    // This includes checking all cards in the group (all alternate arts)
+                                    const isCharacterInDeck = window.deckEditorCards.some(deckCard => 
+                                        deckCard.type === 'character' && group.some(gc => gc.id === deckCard.cardId)
                                     );
                                     
-                                    const disabledClass = (isCharacterLimitReached || isOnePerDeckInDeck) ? 'disabled' : '';
+                                    // Check if this character is One Per Deck and already in deck
+                                    const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
+                                    const isOnePerDeckInDeck = isOnePerDeck && isCharacterInDeck;
+                                    
+                                    const disabledClass = (isCharacterLimitReached || isCharacterInDeck) ? 'disabled' : '';
                                     let disabledTitle = '';
                                     if (isCharacterLimitReached) {
                                         disabledTitle = 'Character limit reached (max 4)';
-                                    } else if (isOnePerDeckInDeck) {
-                                        disabledTitle = 'One Per Deck - already in deck';
+                                    } else if (isCharacterInDeck) {
+                                        disabledTitle = 'This character is already in your deck';
                                     }
                                     
-                                    return `
+                                    cardsHtml += `
                                         <div class="card-item character-card ${disabledClass}" 
-                                             draggable="${!(isCharacterLimitReached || isOnePerDeckInDeck)}" 
+                                             draggable="${!(isCharacterLimitReached || isCharacterInDeck)}" 
                                              data-type="${category.type}" 
-                                             data-id="${card.id}"
-                                             onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
+                                             data-id="${displayCard.id}"
+                                             data-all-cards="${allCardsJson}"
+                                             onmouseenter="showCardHoverModal('${displayCard.imagePath}', '${name.replace(/'/g, "\\'")}')"
                                              onmouseleave="hideCardHoverModal()"
-                                             onclick="handleCardClick(event, '${category.type}', '${card.id}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
-                                             data-name="${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}"
+                                             onclick="handleCardClick(event, '${category.type}', '${displayCard.id}', '${name.replace(/'/g, "\\'")}')"
+                                             data-name="${name.replace(/'/g, "\\'")}"
                                              title="${disabledTitle}">
                                             <div class="card-item-content">
-                                            <div class="character-name">${card[category.nameField]}</div>
+                                            <div class="character-name">${name}</div>
                                             <div class="character-stats">${statsHtml}</div>
                                             </div>
-                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
+                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${displayCard.id}', '${name}', '${allCardsJson}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
                                         </div>
                                     `;
-                                }).join('');
+                                });
+                                
+                                console.log(`[IndexHTML] Rendered ${renderedKeys.size} unique character cards`);
                                                     } else if (category.type === 'mission') {
                             // Special handling for missions - group by mission set
                             const missionSetGroups = {};
@@ -11507,6 +11614,86 @@
 
         // handleDeckCardDragEnd, handleDeckCardDragOver, handleDeckCardDrop, handleAvailableCardDragOver, handleAvailableCardDragLeave, handleAvailableCardDrop, updateDragLayout, reorderDeckCards functions moved to external file
 
+
+        /**
+         * Show alternate art selection modal
+         * Make it globally accessible
+         */
+        window.showAlternateArtSelectionModal = function showAlternateArtSelectionModal(cardType, cardName, allCards) {
+            // Create modal overlay (uses CSS class)
+            const overlay = document.createElement('div');
+            overlay.className = 'alternate-art-modal';
+            
+            // Create modal content container (uses CSS class)
+            const content = document.createElement('div');
+            content.className = 'alternate-art-content';
+            
+            // Create title
+            const title = document.createElement('h3');
+            title.textContent = `Select Art for ${cardName}`;
+            
+            // Create card grid (uses CSS class)
+            const grid = document.createElement('div');
+            grid.className = 'alternate-art-options';
+            
+            // Add each card as an option
+            allCards.forEach((card, index) => {
+                const cardOption = document.createElement('div');
+                cardOption.className = 'art-option';
+                
+                // Mark first card (original art) as selected by default
+                if (index === 0) {
+                    cardOption.classList.add('selected');
+                }
+                
+                const img = document.createElement('img');
+                img.src = card.imagePath;
+                img.alt = card.name;
+                
+                const label = document.createElement('span');
+                label.textContent = index === 0 ? 'Original Art' : `Alternate Art ${index}`;
+                
+                cardOption.appendChild(img);
+                cardOption.appendChild(label);
+                
+                // Add click handler
+                cardOption.addEventListener('click', () => {
+                    addCardToEditor(cardType, card.id, card.name);
+                    document.body.removeChild(overlay);
+                });
+                
+                grid.appendChild(cardOption);
+            });
+            
+            // Create actions container
+            const actions = document.createElement('div');
+            actions.className = 'alternate-art-actions';
+            
+            // Create cancel button
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.addEventListener('click', () => {
+                document.body.removeChild(overlay);
+            });
+            
+            actions.appendChild(cancelBtn);
+            
+            // Assemble modal
+            content.appendChild(title);
+            content.appendChild(grid);
+            content.appendChild(actions);
+            overlay.appendChild(content);
+            
+            // Close on overlay click
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    document.body.removeChild(overlay);
+                }
+            });
+            
+            // Add to document
+            document.body.appendChild(overlay);
+        };
 
         async function addCardToEditor(cardType, cardId, cardName) {
             try {

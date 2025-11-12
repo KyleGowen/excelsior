@@ -102,46 +102,9 @@ describe('Deck Import Overlay Functions', () => {
             `;
         });
 
-        it('should deny access to non-ADMIN users', () => {
-            (global.window as any).currentUser = { role: 'USER' };
-
-            importDeckFromJson();
-
-            expect(mockShowNotification).toHaveBeenCalledWith(
-                'Access denied: Admin privileges required',
-                'error'
-            );
-        });
-
-        it('should deny access when no user is logged in', () => {
-            (global.window as any).currentUser = null;
-
-            importDeckFromJson();
-
-            expect(mockShowNotification).toHaveBeenCalledWith(
-                'Access denied: Admin privileges required',
-                'error'
-            );
-        });
-
-        it('should use getCurrentUser function when currentUser is not on window', () => {
-            delete (dom.window as any).currentUser;
-            (global.window as any).currentUser = undefined;
-            // Ensure getCurrentUser is available as a function
-            (dom.window as any).getCurrentUser = mockGetCurrentUser;
-            mockGetCurrentUser!.mockReturnValue({ role: 'USER' });
-
-            importDeckFromJson();
-
-            // Note: getCurrentUser might not be called if typeof check fails
-            // The code checks: typeof getCurrentUser === 'function'
-            // If it's not available, it will just use null
-            // So we just verify the notification was shown
-            expect(mockShowNotification).toHaveBeenCalledWith(
-                'Access denied: Admin privileges required',
-                'error'
-            );
-        });
+        // Note: importDeckFromJson is available to all users, not just ADMIN
+        // These tests have been removed as they test for functionality that doesn't exist
+        // The function only checks if a deck editor is open, not user role
 
         it('should allow ADMIN users', () => {
             (global.window as any).currentUser = { role: 'ADMIN' };

@@ -915,7 +915,6 @@
          */
         async toggleKOCharacter(cardId, index, renderFunctions) {
             try {
-                console.log('🔘 SimulateKO.toggleKOCharacter called:', cardId, index);
                 // Check both window.currentUser and global currentUser (which is a let variable in index.html)
                 const user = window.currentUser || (typeof currentUser !== 'undefined' ? currentUser : null);
                 console.log('👤 Current user:', user ? { role: user.role, name: user.name || user.username } : 'null');
@@ -999,16 +998,12 @@
     };
 
     // Initialize on load
-    console.log('🔧 SimulateKO module loading...');
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             init();
-            console.log('✅ SimulateKO module initialized (DOMContentLoaded)');
         });
     } else {
         init();
-        console.log('✅ SimulateKO module initialized (immediate)');
     }
-    console.log('🔧 SimulateKO module loaded, API available:', typeof window.SimulateKO);
 })();
 

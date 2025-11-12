@@ -51,7 +51,7 @@ describe('Backend Ambush Validation', () => {
         is_assist: false,
         is_ambush: true,
         one_per_deck: false,
-        // alternateImages removed - alternate arts are now separate cards
+        alternateImages: []
       });
 
       const result = await checkIfCardIsAmbush('special', 'special_ambush_card');
@@ -73,7 +73,7 @@ describe('Backend Ambush Validation', () => {
         is_assist: false,
         is_ambush: false,
         one_per_deck: false,
-        // alternateImages removed - alternate arts are now separate cards
+        alternateImages: []
       });
 
       const result = await checkIfCardIsAmbush('special', 'special_regular_card');
@@ -152,7 +152,7 @@ describe('Backend Ambush Validation', () => {
         is_assist: false,
         is_ambush: false,
         one_per_deck: false,
-        // alternateImages removed - alternate arts are now separate cards
+        alternateImages: []
       });
 
       // Mock the ambush card being added
@@ -167,7 +167,7 @@ describe('Backend Ambush Validation', () => {
         is_assist: false,
         is_ambush: true,
         one_per_deck: false,
-        // alternateImages removed - alternate arts are now separate cards
+        alternateImages: []
       });
 
       const result = await validateCardAddition(currentCards, 'special', 'special_ambush_card', 1);
@@ -192,7 +192,7 @@ describe('Backend Ambush Validation', () => {
         is_assist: false,
         is_ambush: true,
         one_per_deck: false,
-        // alternateImages removed - alternate arts are now separate cards
+        alternateImages: []
       });
 
       const result = await validateCardAddition(currentCards, 'special', 'special_ambush_card_2', 1);
@@ -217,7 +217,7 @@ describe('Backend Ambush Validation', () => {
         is_assist: false,
         is_ambush: false,
         one_per_deck: false,
-        // alternateImages removed - alternate arts are now separate cards
+        alternateImages: []
       });
 
       const result = await validateCardAddition(currentCards, 'special', 'special_regular_card', 1);

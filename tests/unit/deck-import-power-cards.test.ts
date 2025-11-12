@@ -116,11 +116,11 @@ describe('Deck Import - Power Cards - Unit Tests', () => {
       // Ensure duplicates were added (quantity increments)
       const energy2 = added.find((c: any) => c.cardId === 'power_energy_2');
       expect(energy2?.quantity).toBe(2);
-      // Verify calls
-      expect((window as any).addCardToEditor).toHaveBeenCalledWith('power', 'power_energy_2', '2 - Energy', null);
-      expect((window as any).addCardToEditor).toHaveBeenCalledWith('power', 'power_combat_4', '4 - Combat', null);
-      expect((window as any).addCardToEditor).toHaveBeenCalledWith('power', 'power_multi_3', '3 - Multi Power', null);
-      expect((window as any).addCardToEditor).toHaveBeenCalledWith('power', 'power_any_5', '5 - Any-Power', null);
+      // Verify calls (note: addCardToEditor no longer takes a 4th parameter for alternate images)
+      expect((window as any).addCardToEditor).toHaveBeenCalledWith('power', 'power_energy_2', '2 - Energy');
+      expect((window as any).addCardToEditor).toHaveBeenCalledWith('power', 'power_combat_4', '4 - Combat');
+      expect((window as any).addCardToEditor).toHaveBeenCalledWith('power', 'power_multi_3', '3 - Multi Power');
+      expect((window as any).addCardToEditor).toHaveBeenCalledWith('power', 'power_any_5', '5 - Any-Power');
     });
 
     it('preserves Card View after power import', async () => {

@@ -416,14 +416,8 @@ function updateDragLayout() {
 }
 
 function reorderDeckCards(fromIndex, toIndex) {
-    console.log('🟡 [reorderDeckCards] Called with:', { fromIndex, toIndex });
     // Get the card being moved
     const cardToMove = deckEditorCards[fromIndex];
-    
-    if (!cardToMove) {
-        console.error('🟡 [reorderDeckCards] No card found at index:', fromIndex);
-        return;
-    }
     
     // Remove the card from its current position
     deckEditorCards.splice(fromIndex, 1);
@@ -445,8 +439,52 @@ function reorderDeckCards(fromIndex, toIndex) {
     
     // Save the deck
     saveDeck();
+}
+
+function reorderDeckCards(fromIndex, toIndex) {
+    // Get the card being moved
+    const cardToMove = deckEditorCards[fromIndex];
     
-    console.log('🟡 [reorderDeckCards] Card reordered successfully');
+    // Remove the card from its current position
+    deckEditorCards.splice(fromIndex, 1);
+    
+    // Adjust the target index if we're moving down
+    const adjustedToIndex = fromIndex < toIndex ? toIndex - 1 : toIndex;
+    
+    // Capture current expansion state before re-rendering
+    const currentExpansionState = getExpansionState();
+    
+    // Insert the card at the new position
+    deckEditorCards.splice(adjustedToIndex, 0, cardToMove);
+    
+    // Refresh the display
+    displayDeckCardsForEditing();
+    
+    // Restore the expansion state after re-rendering
+    applyUIPreferences({ expansionState: currentExpansionState });
+    
+    // Save the deck
+    saveDeck();
+}
+
+    
+    // Adjust the target index if we're moving down
+    const adjustedToIndex = fromIndex < toIndex ? toIndex - 1 : toIndex;
+    
+    // Capture current expansion state before re-rendering
+    const currentExpansionState = getExpansionState();
+    
+    // Insert the card at the new position
+    deckEditorCards.splice(adjustedToIndex, 0, cardToMove);
+    
+    // Refresh the display
+    displayDeckCardsForEditing();
+    
+    // Restore the expansion state after re-rendering
+    applyUIPreferences({ expansionState: currentExpansionState });
+    
+    // Save the deck
+    saveDeck();
 }
 
 // Export functions to global scope

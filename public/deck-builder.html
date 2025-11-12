@@ -9875,9 +9875,114 @@
             });
         }
 
-        async function loadAvailableCards() {
+        /**
+         * Group cards by type, name, and universe
+         * Returns a map where key is "type|name|universe" and value is array of cards
+         * Original art (non-alternate) is placed first in each group
+         */
+        function groupCardsForDeckBuilder(cards, cardType, nameField = 'name', universeField = 'universe') {
+            const groups = new Map();
+            
+            cards.forEach(card => {
+                // Normalize name: trim whitespace and handle null/undefined
+                // Use the specified nameField first, then fall back to other common fields
+                let name = '';
+                if (nameField === 'name') {
+                    name = (card.name || card.card_name || '').trim();
+                } else if (nameField === 'card_name') {
+                    name = (card.card_name || card.name || '').trim();
+                } else {
+                    name = (card[nameField] || card.name || card.card_name || '').trim();
+                }
+                
+                // Normalize universe: trim whitespace, default to ERB, handle null/undefined
+                let universe = (card[universeField] || card.universe || 'ERB').trim();
+                if (!universe || universe === '') {
+                    universe = 'ERB';
+                }
+                
+                // Skip cards with empty names (shouldn't happen, but be defensive)
+                if (!name) {
+                    console.warn('[DeckBuilder] Skipping card with empty name:', card);
+                    return;
+                }
+                
+                // Create normalized key: cardType|name|universe
+                // This ensures cards with same type, name, and universe are grouped together
+                const key = `${cardType}|${name}|${universe}`;
+                
+                if (!groups.has(key)) {
+                    groups.set(key, []);
+                }
+                
+                groups.get(key).push(card);
+                
+                // Debug: Log if we find a duplicate key
+                if (groups.get(key).length > 1) {
+                    console.log(`[DeckBuilder] Adding card to existing group "${key}":`, {
+                        cardId: card.id,
+                        name: card.name,
+                        universe: card.universe,
+                        image: card.image_path || card.image,
+                        groupSize: groups.get(key).length
+                    });
+                }
+            });
+            
+            // Sort each group: original art first (image_path doesn't contain /alternate/), then alternates
+            groups.forEach((group, key) => {
+                group.sort((a, b) => {
+                    const aImage = a.image_path || a.image || '';
+                    const bImage = b.image_path || b.image || '';
+                    const aIsAlternate = aImage.includes('/alternate/');
+                    const bIsAlternate = bImage.includes('/alternate/');
+                    
+                    if (aIsAlternate && !bIsAlternate) return 1;  // b (original) comes first
+                    if (!aIsAlternate && bIsAlternate) return -1; // a (original) comes first
+                    return 0; // Keep original order for same type
+                });
+            });
+            
+            // Debug: Log grouping results
+            console.log(`[DeckBuilder] groupCardsForDeckBuilder: Grouped ${cards.length} ${cardType} cards into ${groups.size} unique groups`);
+            if (groups.size < cards.length) {
+                console.log(`[DeckBuilder] groupCardsForDeckBuilder: Found ${cards.length - groups.size} duplicate cards that were grouped`);
+            }
+            
+            // Debug: Show all group keys
+            const allKeys = Array.from(groups.keys());
+            console.log(`[DeckBuilder] groupCardsForDeckBuilder: Group keys (first 20):`, allKeys.slice(0, 20));
+            
+            // Debug: Check for cards that should have been grouped but weren't
+            const nameUniversePairs = cards.map(card => {
+                const name = (card[nameField] || card.name || card.card_name || '').trim();
+                const universe = (card[universeField] || card.universe || 'ERB').trim();
+                return `${name}|${universe}`;
+            });
+            const pairCounts = {};
+            nameUniversePairs.forEach(pair => {
+                pairCounts[pair] = (pairCounts[pair] || 0) + 1;
+            });
+            const duplicatePairs = Object.entries(pairCounts).filter(([pair, count]) => count > 1);
+            if (duplicatePairs.length > 0) {
+                console.log(`[DeckBuilder] groupCardsForDeckBuilder: Found ${duplicatePairs.length} name|universe pairs that appear multiple times:`, duplicatePairs.slice(0, 10));
+            }
+            
+            return groups;
+        }
+
+        // Make function globally accessible
+        window.loadAvailableCards = async function loadAvailableCards() {
+            console.log('[DeckBuilder] ===== loadAvailableCards() CALLED =====');
+            console.log('[DeckBuilder] Function is defined in:', window.loadAvailableCards ? 'window' : 'local scope');
             try {
                 const cardCategories = document.getElementById('cardCategories');
+                if (!cardCategories) {
+                    console.error('[DeckBuilder] ❌ cardCategories element not found!');
+                    return;
+                }
+                
+                console.log('[DeckBuilder] cardCategories element found, proceeding...');
                 
                 // Save current collapse state before refreshing
                 const currentCollapseState = {};
@@ -9888,6 +9993,7 @@
                 });
                 
                 cardCategories.innerHTML = '<div class="drag-instructions">Loading available cards...</div>';
+                console.log('[DeckBuilder] Starting to load card categories...');
                 
                 const categories = [
                     { type: 'character', name: 'Characters', api: '/api/characters', nameField: 'name' },
@@ -9908,8 +10014,10 @@
                 
                 for (const category of categories) {
                     try {
+                        console.log(`[DeckBuilder] Fetching ${category.name} from ${category.api}...`);
                         const response = await fetch(category.api);
                         const data = await response.json();
+                        console.log(`[DeckBuilder] Received ${category.name}: success=${data.success}, count=${data.data?.length || 0}`);
                         
                         if (data.success && data.data.length > 0) {
                             // Populate the global map for deck editor use
@@ -9918,22 +10026,106 @@
                             });
                             
                             let cardsHtml = '';
+                            let uniqueCardCount = data.data.length; // Default to total count
                             
-                            if (category.type === 'character') {
-                                // Special handling for characters with stats
-                                const currentCharacterCount = deckEditorCards
-                                    .filter(card => card.type === 'character')
-                                    .reduce((total, card) => total + card.quantity, 0);
+                                if (category.type === 'character') {
+                                    console.log(`[DeckBuilder] ===== PROCESSING CHARACTER CARDS =====`);
+                                    console.log(`[DeckBuilder] Received ${data.data.length} character cards from API`);
+                                    
+                                    // Special handling for characters with stats
+                                    const currentCharacterCount = deckEditorCards
+                                        .filter(card => card.type === 'character')
+                                        .reduce((total, card) => total + card.quantity, 0);
+                                    
+                                    const isCharacterLimitReached = currentCharacterCount >= 4;
+                                    
+                                    // Debug: Log all cards before grouping
+                                    const cardNames = data.data.map(c => ({ id: c.id, name: c.name, universe: c.universe, image: c.image_path || c.image }));
+                                    console.log('[DeckBuilder] Sample cards (first 10):', cardNames.slice(0, 10));
+                                    
+                                    // Group characters by name and universe
+                                    console.log('[DeckBuilder] Calling groupCardsForDeckBuilder...');
+                                    const groupedCards = groupCardsForDeckBuilder(data.data, category.type, 'name', 'universe');
+                                    uniqueCardCount = groupedCards.size;
+                                    console.log(`[DeckBuilder] Grouped into ${groupedCards.size} unique groups`);
                                 
-                                const isCharacterLimitReached = currentCharacterCount >= 4;
+                                // Debug: Log grouping results
+                                const duplicateGroups = Array.from(groupedCards.entries()).filter(([key, group]) => group.length > 1);
+                                if (duplicateGroups.length > 0) {
+                                    console.log(`[DeckBuilder] Found ${duplicateGroups.length} groups with multiple cards:`);
+                                    duplicateGroups.forEach(([key, group]) => {
+                                        console.log(`  - "${key}": ${group.length} cards`, group.map(c => ({ id: c.id, name: c.name, image: c.image_path || c.image })));
+                                    });
+                                }
                                 
-                                cardsHtml = data.data.map(card => {
+                                // Debug: Check for ungrouped duplicates
+                                const allNames = data.data.map(c => c.name);
+                                const nameCounts = {};
+                                allNames.forEach(name => {
+                                    nameCounts[name] = (nameCounts[name] || 0) + 1;
+                                });
+                                const duplicateNames = Object.entries(nameCounts).filter(([name, count]) => count > 1);
+                                if (duplicateNames.length > 0) {
+                                    console.log(`[DeckBuilder] Found ${duplicateNames.length} names that appear multiple times:`, duplicateNames);
+                                }
+                                
+                                cardsHtml = '';
+                                
+                                // Track rendered cards to ensure no duplicates - use name+universe as the key
+                                const renderedKeys = new Set();
+                                const renderedCardIds = new Set();
+                                const renderedCardNames = new Set();
+                                
+                                groupedCards.forEach((group, key) => {
+                                    if (group.length === 0) return;
+                                    
+                                    // Use the first card (original art) as the representative
+                                    const representative = group[0];
+                                    
+                                    // Normalize name and universe the same way as grouping function
+                                    const name = (representative.name || '').trim();
+                                    const universe = (representative.universe || 'ERB').trim() || 'ERB';
+                                    
+                                    // Create a unique key for this card (name + universe) - must match grouping key logic
+                                    const renderKey = `${name}|${universe}`;
+                                    
+                                    // Skip if we've already rendered this name+universe combination
+                                    if (renderedKeys.has(renderKey)) {
+                                        console.warn(`[DeckBuilder] SKIPPING duplicate render key: "${renderKey}"`);
+                                        console.warn(`[DeckBuilder] Group key: "${key}", Representative:`, {
+                                            id: representative.id,
+                                            name: representative.name,
+                                            universe: representative.universe,
+                                            image: representative.image_path || representative.image
+                                        });
+                                        console.warn(`[DeckBuilder] Group has ${group.length} cards (alternate arts)`);
+                                        return; // Skip this entire group
+                                    }
+                                    
+                                    // Debug: Log what we're rendering
+                                    if (group.length > 1) {
+                                        console.log(`[DeckBuilder] Rendering group "${key}" with ${group.length} cards (showing original art only)`);
+                                    }
+                                    
+                                    // Mark as rendered BEFORE rendering (to prevent duplicates)
+                                    renderedKeys.add(renderKey);
+                                    renderedCardNames.add(name);
+                                    renderedCardIds.add(representative.id);
+                                    
+                                    // Store all alternate arts in data attribute
+                                    const allCards = group.map(card => ({
+                                        id: card.id,
+                                        imagePath: getCardImagePath(card, category.type),
+                                        name: card.name
+                                    }));
+                                    const allCardsJson = JSON.stringify(allCards).replace(/"/g, '&quot;');
+                                    
                                     const stats = [
-                                        { label: 'TL:', value: card.threat_level || 0, color: '#808080' }, // Gray - Threat Level
-                                        { label: 'E:', value: card.energy || 0, color: '#FFD700' },      // Yellow - Energy
-                                        { label: 'C:', value: card.combat || 0, color: '#FF8C00' },     // Dark Orange - Combat (redder)
-                                        { label: 'BF:', value: card.brute_force || 0, color: '#32CD32' }, // Green - Brute Force
-                                        { label: 'I:', value: card.intelligence || 0, color: '#6495ED' } // Lighter Blue - Intelligence
+                                        { label: 'TL:', value: representative.threat_level || 0, color: '#808080' }, // Gray - Threat Level
+                                        { label: 'E:', value: representative.energy || 0, color: '#FFD700' },      // Yellow - Energy
+                                        { label: 'C:', value: representative.combat || 0, color: '#FF8C00' },     // Dark Orange - Combat (redder)
+                                        { label: 'BF:', value: representative.brute_force || 0, color: '#32CD32' }, // Green - Brute Force
+                                        { label: 'I:', value: representative.intelligence || 0, color: '#6495ED' } // Lighter Blue - Intelligence
                                     ];
                                     
                                     const statsHtml = stats.map(stat => 
@@ -9943,23 +10135,91 @@
                                     const disabledClass = isCharacterLimitReached ? 'disabled' : '';
                                     const disabledTitle = isCharacterLimitReached ? 'Character limit reached (max 4)' : '';
                                     
-                                    return `
+                                    // Use the original art (first card) for display
+                                    const displayCard = allCards[0];
+                                    
+                                    // Render the card (we already checked renderKey above)
+                                    // Double-check: make absolutely sure we haven't rendered this before
+                                    if (renderedKeys.has(renderKey)) {
+                                        console.error(`[DeckBuilder] ❌ CRITICAL: Attempting to render duplicate after check! renderKey: "${renderKey}"`);
+                                        return; // This should never happen, but be extra safe
+                                    }
+                                    
+                                    // Log what we're about to render
+                                    console.log(`[DeckBuilder] Rendering card: "${name}" (universe: "${universe}") - ID: ${displayCard.id}`);
+                                    
+                                    cardsHtml += `
                                         <div class="card-item character-card ${disabledClass}" 
                                              draggable="${!isCharacterLimitReached}" 
                                              data-type="${category.type}" 
-                                             data-id="${card.id}"
-                                             onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${card.name}')"
+                                             data-id="${displayCard.id}"
+                                             data-all-cards="${allCardsJson}"
+                                             data-render-key="${renderKey}"
+                                             onmouseenter="showCardHoverModal('${displayCard.imagePath}', '${representative.name}')"
                                              onmouseleave="hideCardHoverModal()"
-                                             data-name="${card[category.nameField]}"
+                                             data-name="${representative.name}"
                                              title="${disabledTitle}">
                                             <div class="card-item-content">
-                                            <div class="character-name">${card[category.nameField]}</div>
+                                            <div class="character-name">${representative.name}</div>
                                             <div class="character-stats">${statsHtml}</div>
                                             </div>
-                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')">+</div>
+                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${displayCard.id}', '${representative.name}', '${allCardsJson}')">+</div>
                                         </div>
                                     `;
-                                }).join('');
+                                });
+                                
+                                // Debug: Final count check
+                                console.log(`[DeckBuilder] ===== FINAL CHARACTER RENDERING SUMMARY =====`);
+                                console.log(`[DeckBuilder] Total cards from API: ${data.data.length}`);
+                                console.log(`[DeckBuilder] Unique groups created: ${groupedCards.size}`);
+                                console.log(`[DeckBuilder] Unique cards rendered: ${renderedKeys.size}`);
+                                console.log(`[DeckBuilder] Rendered card IDs: ${renderedCardIds.size}, Rendered names: ${renderedCardNames.size}`);
+                                
+                                if (renderedKeys.size !== groupedCards.size) {
+                                    console.warn(`[DeckBuilder] ⚠️ MISMATCH: Expected ${groupedCards.size} groups but rendered ${renderedKeys.size} cards`);
+                                    console.warn(`[DeckBuilder] This suggests some groups were skipped due to duplicate name+universe combinations`);
+                                }
+                                
+                                if (renderedKeys.size > groupedCards.size) {
+                                    console.error(`[DeckBuilder] ❌ ERROR: Rendered MORE cards than groups! This should never happen.`);
+                                    console.error(`[DeckBuilder] This indicates a bug in the rendering logic.`);
+                                }
+                                
+                                // Debug: Show all rendered keys
+                                console.log(`[DeckBuilder] Rendered keys (first 20):`, Array.from(renderedKeys).slice(0, 20));
+                                
+                                // Debug: Check for any duplicate names in rendered cards
+                                const renderedNamesArray = Array.from(renderedCardNames);
+                                const nameCounts = {};
+                                renderedNamesArray.forEach(name => {
+                                    nameCounts[name] = (nameCounts[name] || 0) + 1;
+                                });
+                                const duplicateRenderedNames = Object.entries(nameCounts).filter(([name, count]) => count > 1);
+                                if (duplicateRenderedNames.length > 0) {
+                                    console.error(`[DeckBuilder] ❌ ERROR: Found ${duplicateRenderedNames.length} duplicate names in rendered cards:`, duplicateRenderedNames);
+                                    console.error(`[DeckBuilder] This means the duplicate check failed!`);
+                                } else {
+                                    console.log(`[DeckBuilder] ✅ No duplicate names in rendered cards`);
+                                }
+                                
+                                // After HTML is set, verify DOM doesn't have duplicates
+                                setTimeout(() => {
+                                    const cardItems = document.querySelectorAll('#cardCategories .character-card');
+                                    const domNames = {};
+                                    cardItems.forEach(item => {
+                                        const name = item.getAttribute('data-name');
+                                        if (name) {
+                                            domNames[name] = (domNames[name] || 0) + 1;
+                                        }
+                                    });
+                                    const duplicateDomNames = Object.entries(domNames).filter(([name, count]) => count > 1);
+                                    if (duplicateDomNames.length > 0) {
+                                        console.error(`[DeckBuilder] ❌ DOM VERIFICATION FAILED: Found ${duplicateDomNames.length} duplicate names in DOM:`, duplicateDomNames);
+                                        console.error(`[DeckBuilder] This means duplicates are being rendered despite our checks!`);
+                                    } else {
+                                        console.log(`[DeckBuilder] ✅ DOM verification passed: No duplicate names found in rendered HTML`);
+                                    }
+                                }, 100);
                                                     } else if (category.type === 'mission') {
                             // Special handling for missions - group by mission set
                             const missionSetGroups = {};
@@ -9975,8 +10235,14 @@
                             const missionSetNames = Object.keys(missionSetGroups).sort();
                             cardsHtml = '';
                             
+                            // Calculate total unique card count across all mission sets
+                            let totalUniqueMissions = 0;
+                            
                             missionSetNames.forEach(missionSetName => {
                                 const cards = missionSetGroups[missionSetName];
+                                
+                                // Group missions by name and universe
+                                const groupedCards = groupCardsForDeckBuilder(cards, category.type, 'card_name', 'universe');
                                 
                                 // Check mission limit
                                 const currentMissionCount = deckEditorCards
@@ -9984,42 +10250,63 @@
                                     .reduce((total, card) => total + card.quantity, 0);
                                 const isMissionLimitReached = currentMissionCount >= 7;
                                 
-                                const cardItems = cards.map(card => {
+                                const cardItems = [];
+                                groupedCards.forEach((group, key) => {
+                                    if (group.length === 0) return;
+                                    
+                                    const representative = group[0];
+                                    
+                                    // Store all alternate arts in data attribute
+                                    const allCards = group.map(card => ({
+                                        id: card.id,
+                                        imagePath: getCardImagePath(card, category.type),
+                                        name: card.card_name || card.name
+                                    }));
+                                    const allCardsJson = JSON.stringify(allCards).replace(/"/g, '&quot;');
+                                    
+                                    // Use the original art (first card) for display
+                                    const displayCard = allCards[0];
+                                    
                                     const disabledClass = isMissionLimitReached ? 'disabled' : '';
                                     const disabledTitle = isMissionLimitReached ? 'Mission limit reached (max 7)' : '';
                                     
-                                    return `
+                                    cardItems.push(`
                                         <div class="card-item ${disabledClass}" 
                                              draggable="${!isMissionLimitReached}" 
                                              data-type="${category.type}" 
-                                             data-id="${card.id}"
-                                             onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${card.name}')"
+                                             data-id="${displayCard.id}"
+                                             data-all-cards="${allCardsJson}"
+                                             onmouseenter="showCardHoverModal('${displayCard.imagePath}', '${representative.card_name || representative.name}')"
                                              onmouseleave="hideCardHoverModal()"
-                                             data-name="${card[category.nameField]}"
+                                             data-name="${representative.card_name || representative.name}"
                                              title="${disabledTitle}">
-                                            <div class="card-item-content">${card[category.nameField]}</div>
-                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')">+</div>
+                                            <div class="card-item-content">${representative.card_name || representative.name}</div>
+                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${displayCard.id}', '${representative.card_name || representative.name}', '${allCardsJson}')">+</div>
                                         </div>
-                                    `;
-                                }).join('');
+                                    `);
+                                });
+                                
+                                const cardItemsHtml = cardItems.join('');
+                                const uniqueCardCount = groupedCards.size;
                                 
                                 cardsHtml += `
                                     <div class="mission-set-group">
                                         <div class="mission-set-group-header" onclick="toggleMissionSetGroup(this)">
-                                            <span>${missionSetName} (${cards.length})</span>
+                                            <span>${missionSetName} (${uniqueCardCount})</span>
                                             <div class="mission-set-controls">
                                                 <button class="add-all-btn" onclick="event.stopPropagation(); addAllMissionSetCards('${missionSetName}', ${JSON.stringify(cards).replace(/"/g, '&quot;')})">Add All</button>
                                                 <span class="collapse-icon">▼</span>
                                             </div>
                                         </div>
                                         <div class="mission-set-group-content collapsed">
-                                            ${cardItems}
+                                            ${cardItemsHtml}
                                         </div>
                                     </div>
                                 `;
                             });
+                            uniqueCardCount = totalUniqueMissions;
                                                     } else if (category.type === 'event') {
-                            // Special handling for events - group by mission set
+                            // Special handling for events - group by mission set, then by name and universe
                             const missionSetGroups = {};
                             
                             data.data.forEach(card => {
@@ -10033,35 +10320,65 @@
                             const missionSetNames = Object.keys(missionSetGroups).sort();
                             cardsHtml = '';
                             
+                            // Calculate total unique card count across all mission sets
+                            let totalUniqueEvents = 0;
+                            
                             missionSetNames.forEach(missionSetName => {
                                 const cards = missionSetGroups[missionSetName];
-                                const cardItems = cards.map(card => `
-                                    <div class="card-item" 
-                                         draggable="true" 
-                                         data-type="${category.type}" 
-                                         data-id="${card.id}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${card.name}')"
-                                         onmouseleave="hideCardHoverModal()"
-                                         data-name="${card[category.nameField]}">
-                                        <div class="card-item-content">${card[category.nameField]}</div>
-                                        <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')">+</div>
-                                    </div>
-                                `).join('');
+                                
+                                // Group events by name and universe
+                                const groupedCards = groupCardsForDeckBuilder(cards, category.type, 'name', 'universe');
+                                
+                                const cardItems = [];
+                                groupedCards.forEach((group, key) => {
+                                    if (group.length === 0) return;
+                                    
+                                    const representative = group[0];
+                                    
+                                    // Store all alternate arts in data attribute
+                                    const allCards = group.map(card => ({
+                                        id: card.id,
+                                        imagePath: getCardImagePath(card, category.type),
+                                        name: card.name
+                                    }));
+                                    const allCardsJson = JSON.stringify(allCards).replace(/"/g, '&quot;');
+                                    
+                                    // Use the original art (first card) for display
+                                    const displayCard = allCards[0];
+                                    
+                                    cardItems.push(`
+                                        <div class="card-item" 
+                                             draggable="true" 
+                                             data-type="${category.type}" 
+                                             data-id="${displayCard.id}"
+                                             data-all-cards="${allCardsJson}"
+                                             onmouseenter="showCardHoverModal('${displayCard.imagePath}', '${representative.name}')"
+                                             onmouseleave="hideCardHoverModal()"
+                                             data-name="${representative.name}">
+                                            <div class="card-item-content">${representative.name}</div>
+                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${displayCard.id}', '${representative.name}', '${allCardsJson}')">+</div>
+                                        </div>
+                                    `);
+                                });
+                                
+                                const cardItemsHtml = cardItems.join('');
+                                const uniqueCardCount = groupedCards.size;
                                 
                                 cardsHtml += `
                                     <div class="mission-set-group">
                                         <div class="mission-set-group-header" onclick="toggleMissionSetGroup(this)">
-                                            <span>${missionSetName} (${cards.length})</span>
+                                            <span>${missionSetName} (${uniqueCardCount})</span>
                                             <span class="collapse-icon">▼</span>
                                         </div>
                                         <div class="mission-set-group-content collapsed">
-                                            ${cardItems}
+                                            ${cardItemsHtml}
                                         </div>
                                     </div>
                                 `;
                             });
+                            uniqueCardCount = totalUniqueEvents;
                                                     } else if (category.type === 'special') {
-                            // Special handling for special cards - group by character name
+                            // Special handling for special cards - group by character name, then by card name and universe
                             const characterGroups = {};
                             
                             data.data.forEach(card => {
@@ -10075,36 +10392,69 @@
                             const characterNames = Object.keys(characterGroups).sort();
                             cardsHtml = '';
                             
+                            // Calculate total unique card count across all character groups
+                            let totalUniqueSpecials = 0;
+                            
                             characterNames.forEach(characterName => {
                                 const cards = characterGroups[characterName];
-                                const cardItems = cards.map(card => `
-                                    <div class="card-item" 
-                                         draggable="true" 
-                                         data-type="${category.type}" 
-                                         data-id="${card.id}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${card.name}')"
-                                         onmouseleave="hideCardHoverModal()"
-                                         data-name="${card[category.nameField]}">
-                                        <div class="card-item-content">${card[category.nameField]}</div>
-                                        <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')">+</div>
-                                    </div>
-                                `).join('');
+                                
+                                // Group cards by name and universe within each character group
+                                const groupedCards = groupCardsForDeckBuilder(cards, category.type, 'name', 'universe');
+                                
+                                const cardItems = [];
+                                groupedCards.forEach((group, key) => {
+                                    if (group.length === 0) return;
+                                    
+                                    const representative = group[0];
+                                    
+                                    // Store all alternate arts in data attribute
+                                    const allCards = group.map(card => ({
+                                        id: card.id,
+                                        imagePath: getCardImagePath(card, category.type),
+                                        name: card.name
+                                    }));
+                                    const allCardsJson = JSON.stringify(allCards).replace(/"/g, '&quot;');
+                                    
+                                    // Use the original art (first card) for display
+                                    const displayCard = allCards[0];
+                                    
+                                    cardItems.push(`
+                                        <div class="card-item" 
+                                             draggable="true" 
+                                             data-type="${category.type}" 
+                                             data-id="${displayCard.id}"
+                                             data-all-cards="${allCardsJson}"
+                                             onmouseenter="showCardHoverModal('${displayCard.imagePath}', '${representative.name}')"
+                                             onmouseleave="hideCardHoverModal()"
+                                             data-name="${representative.name}">
+                                            <div class="card-item-content">${representative.name}</div>
+                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${displayCard.id}', '${representative.name}', '${allCardsJson}')">+</div>
+                                        </div>
+                                    `);
+                                });
+                                
+                                const cardItemsHtml = cardItems.join('');
+                                
+                                // Count unique card groups (not individual cards)
+                                const charUniqueCount = groupedCards.size;
+                                totalUniqueSpecials += charUniqueCount;
                                 
                                 cardsHtml += `
                                     <div class="character-group">
                                         <div class="character-group-header" onclick="toggleCharacterGroup(this)">
-                                            <span>${characterName} (${cards.length})</span>
+                                            <span>${characterName} (${charUniqueCount})</span>
                                             <button class="add-all-special-btn" onclick="event.stopPropagation(); addAllSpecialCardsForCharacter('${characterName}')">Add All</button>
                                             <span class="collapse-icon">▶</span>
                                         </div>
                                         <div class="character-group-content collapsed">
-                                            ${cardItems}
+                                            ${cardItemsHtml}
                                         </div>
                                     </div>
                                 `;
                             });
+                            uniqueCardCount = totalUniqueSpecials;
                         } else if (category.type === 'advanced-universe') {
-                            // Special handling for advanced universe cards - group by character name
+                            // Special handling for advanced universe cards - group by character name, then by card name and universe
                             const characterGroups = {};
                             
                             data.data.forEach(card => {
@@ -10118,34 +10468,65 @@
                             const characterNames = Object.keys(characterGroups).sort();
                             cardsHtml = '';
                             
+                            // Calculate total unique card count across all character groups
+                            let totalUniqueAdvanced = 0;
+                            
                             characterNames.forEach(characterName => {
                                 const cards = characterGroups[characterName];
-                                const cardItems = cards.map(card => `
-                                    <div class="card-item" 
-                                         draggable="true" 
-                                         data-type="${category.type}" 
-                                         data-id="${card.id}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${card.name}')"
-                                         onmouseleave="hideCardHoverModal()"
-                                         data-name="${card[category.nameField]}">
-                                        <div class="card-item-content">${card[category.nameField]}</div>
-                                        <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')">+</div>
-                                    </div>
-                                `).join('');
+                                
+                                // Group cards by name and universe within each character group
+                                const groupedCards = groupCardsForDeckBuilder(cards, category.type, 'name', 'universe');
+                                
+                                const cardItems = [];
+                                groupedCards.forEach((group, key) => {
+                                    if (group.length === 0) return;
+                                    
+                                    const representative = group[0];
+                                    
+                                    // Store all alternate arts in data attribute
+                                    const allCards = group.map(card => ({
+                                        id: card.id,
+                                        imagePath: getCardImagePath(card, category.type),
+                                        name: card.name
+                                    }));
+                                    const allCardsJson = JSON.stringify(allCards).replace(/"/g, '&quot;');
+                                    
+                                    // Use the original art (first card) for display
+                                    const displayCard = allCards[0];
+                                    
+                                    cardItems.push(`
+                                        <div class="card-item" 
+                                             draggable="true" 
+                                             data-type="${category.type}" 
+                                             data-id="${displayCard.id}"
+                                             data-all-cards="${allCardsJson}"
+                                             onmouseenter="showCardHoverModal('${displayCard.imagePath}', '${representative.name}')"
+                                             onmouseleave="hideCardHoverModal()"
+                                             data-name="${representative.name}">
+                                            <div class="card-item-content">${representative.name}</div>
+                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${displayCard.id}', '${representative.name}', '${allCardsJson}')">+</div>
+                                        </div>
+                                    `);
+                                });
+                                
+                                const cardItemsHtml = cardItems.join('');
+                                const charUniqueCount = groupedCards.size;
+                                totalUniqueAdvanced += charUniqueCount;
                                 
                                 cardsHtml += `
                                     <div class="character-group">
                                         <div class="character-group-header" onclick="toggleCharacterGroup(this)">
-                                            <span>${characterName} (${cards.length})</span>
+                                            <span>${characterName} (${charUniqueCount})</span>
                                             <button class="add-all-special-btn" onclick="event.stopPropagation(); addAllAdvancedUniverseCardsForCharacter('${characterName}')">Add All</button>
                                             <span class="collapse-icon">▶</span>
                                         </div>
                                         <div class="character-group-content collapsed">
-                                            ${cardItems}
+                                            ${cardItemsHtml}
                                         </div>
                                     </div>
                                 `;
                             });
+                            uniqueCardCount = totalUniqueAdvanced;
                         } else if (category.type === 'teamwork') {
                             // Special handling for teamwork cards - group by "To Use" type
                             const typeGroups = {};
@@ -10260,7 +10641,7 @@
                                 `;
                             }).join('');
                         } else if (category.type === 'power') {
-                            // Special handling for power cards - group by power type and show value - type format
+                            // Special handling for power cards - group by power type, then by value and universe
                             const typeGroups = {};
                             
                             data.data.forEach(card => {
@@ -10288,26 +10669,83 @@
                             });
                             cardsHtml = '';
                             
+                            // Calculate total unique card count across all power types
+                            let totalUniquePowers = 0;
+                            
                             typeNames.forEach(typeName => {
                                 const cards = typeGroups[typeName];
-                                // Sort cards within each type by value
-                                cards.sort((a, b) => a.value - b.value);
                                 
-                                const cardItems = cards.map(card => {
-                                    const summary = `${card.value} - ${card.power_type}`;
-                                    return `
+                                // Group power cards by value and universe (power_type is already grouped)
+                                // For power cards, we group by power_type, value, and universe
+                                const groupedCards = new Map();
+                                cards.forEach(card => {
+                                    const value = String(card.value || '').trim();
+                                    const universe = (card.universe || 'ERB').trim();
+                                    const key = `${value}|${universe}`;
+                                    
+                                    if (!groupedCards.has(key)) {
+                                        groupedCards.set(key, []);
+                                    }
+                                    groupedCards.get(key).push(card);
+                                });
+                                
+                                // Sort each group: original art first
+                                groupedCards.forEach((group, key) => {
+                                    group.sort((a, b) => {
+                                        const aImage = a.image_path || a.image || '';
+                                        const bImage = b.image_path || b.image || '';
+                                        const aIsAlternate = aImage.includes('/alternate/');
+                                        const bIsAlternate = bImage.includes('/alternate/');
+                                        
+                                        if (aIsAlternate && !bIsAlternate) return 1;
+                                        if (!aIsAlternate && bIsAlternate) return -1;
+                                        return 0;
+                                    });
+                                });
+                                
+                                // Sort groups by value
+                                const sortedGroups = Array.from(groupedCards.entries()).sort(([keyA], [keyB]) => {
+                                    const valueA = parseInt(keyA.split('|')[0]) || 0;
+                                    const valueB = parseInt(keyB.split('|')[0]) || 0;
+                                    return valueA - valueB;
+                                });
+                                
+                                const cardItems = [];
+                                sortedGroups.forEach(([key, group]) => {
+                                    if (group.length === 0) return;
+                                    
+                                    const representative = group[0];
+                                    
+                                    // Store all alternate arts in data attribute
+                                    const allCards = group.map(card => ({
+                                        id: card.id,
+                                        imagePath: getCardImagePath(card, category.type),
+                                        name: `${card.value} - ${card.power_type}`
+                                    }));
+                                    const allCardsJson = JSON.stringify(allCards).replace(/"/g, '&quot;');
+                                    
+                                    // Use the original art (first card) for display
+                                    const displayCard = allCards[0];
+                                    const summary = `${representative.value} - ${representative.power_type}`;
+                                    
+                                    cardItems.push(`
                                         <div class="card-item" 
                                              draggable="true" 
                                              data-type="${category.type}" 
-                                             data-id="${card.id}"
-                                             onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${summary}')"
+                                             data-id="${displayCard.id}"
+                                             data-all-cards="${allCardsJson}"
+                                             onmouseenter="showCardHoverModal('${displayCard.imagePath}', '${summary}')"
                                              onmouseleave="hideCardHoverModal()"
                                              data-name="${summary}">
                                             <div class="card-item-content">${summary}</div>
-                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${summary}')">+</div>
+                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${displayCard.id}', '${summary}', '${allCardsJson}')">+</div>
                                         </div>
-                                    `;
-                                }).join('');
+                                    `);
+                                });
+                                
+                                const cardItemsHtml = cardItems.join('');
+                                const typeUniqueCount = sortedGroups.length;
+                                totalUniquePowers += typeUniqueCount;
                                 
                                 // Add "Add All" button for Multi-Power and Any-Power subsections
                                 const addAllButton = (typeName === 'Multi-Power' || typeName === 'Any-Power') ? 
@@ -10323,25 +10761,49 @@
                                             </div>
                                         </div>
                                         <div class="character-group-content collapsed">
-                                            ${cardItems}
+                                            ${cardItemsHtml}
                                         </div>
                                     </div>
                                 `;
                             });
+                            uniqueCardCount = totalUniquePowers;
                         } else {
-                            // Regular handling for other card types
-                            cardsHtml = data.data.map(card => `
-                                <div class="card-item" 
-                                     draggable="true" 
-                                     data-type="${category.type}" 
-                                     data-id="${card.id}"
-                                     onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${card.name}')"
-                                     onmouseleave="hideCardHoverModal()"
-                                     data-name="${card[category.nameField]}">
-                                    <div class="card-item-content">${card[category.nameField]}</div>
-                                    <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')">+</div>
-                                </div>
-                            `).join('');
+                            // Regular handling for other card types - group by name and universe
+                            const groupedCards = groupCardsForDeckBuilder(data.data, category.type, category.nameField, 'universe');
+                            uniqueCardCount = groupedCards.size;
+                            
+                            cardsHtml = '';
+                            groupedCards.forEach((group, key) => {
+                                if (group.length === 0) return;
+                                
+                                const representative = group[0];
+                                
+                                // Store all alternate arts in data attribute
+                                const allCards = group.map(card => ({
+                                    id: card.id,
+                                    imagePath: getCardImagePath(card, category.type),
+                                    name: card[category.nameField] || card.name || card.card_name
+                                }));
+                                const allCardsJson = JSON.stringify(allCards).replace(/"/g, '&quot;');
+                                
+                                // Use the original art (first card) for display
+                                const displayCard = allCards[0];
+                                const cardName = representative[category.nameField] || representative.name || representative.card_name;
+                                
+                                cardsHtml += `
+                                    <div class="card-item" 
+                                         draggable="true" 
+                                         data-type="${category.type}" 
+                                         data-id="${displayCard.id}"
+                                         data-all-cards="${allCardsJson}"
+                                         onmouseenter="showCardHoverModal('${displayCard.imagePath}', '${cardName}')"
+                                         onmouseleave="hideCardHoverModal()"
+                                         data-name="${cardName}">
+                                        <div class="card-item-content">${cardName}</div>
+                                        <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${displayCard.id}', '${cardName}', '${allCardsJson}')">+</div>
+                                    </div>
+                                `;
+                            });
                         }
                             
                             // Always collapse all available card categories by default
@@ -10355,7 +10817,7 @@
                                     <div class="card-category">
                                         <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
                                             <div class="category-header-content">
-                                                <span>${category.name} (${data.data.length})</span>
+                                                <span>${category.name} (${uniqueCardCount})</span>
                                                 <label class="filter-toggle" onclick="event.stopPropagation()">
                                                     <input type="checkbox" id="specialCardsCharacterFilter" onchange="toggleSpecialCardsCharacterFilter()">
                                                     <span class="toggle-label">Hide Unusables</span>
@@ -10376,7 +10838,7 @@
                                     <div class="card-category">
                                         <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
                                             <div class="category-header-content">
-                                                <span>${category.name} (${data.data.length})</span>
+                                                <span>${category.name} (${uniqueCardCount})</span>
                                                 <label class="filter-toggle" onclick="event.stopPropagation()">
                                                     <input type="checkbox" id="advancedUniverseCharacterFilter" onchange="toggleAdvancedUniverseCharacterFilter()">
                                                     <span class="toggle-label">Hide Unusables</span>
@@ -10397,7 +10859,7 @@
                                     <div class="card-category" data-type="power">
                                         <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
                                             <div class="category-header-content">
-                                                <span>${category.name} (${data.data.length})</span>
+                                                <span>${category.name} (${uniqueCardCount})</span>
                                                 <label class="filter-toggle" onclick="event.stopPropagation()">
                                                     <input type="checkbox" id="powerCardsCharacterFilter" onchange="togglePowerCardsCharacterFilter()">
                                                     <span class="toggle-label">Hide Unusables</span>
@@ -10418,7 +10880,7 @@
                                     <div class="card-category">
                                         <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
                                             <div class="category-header-content">
-                                                <span>${category.name} (${data.data.length})</span>
+                                                <span>${category.name} (${uniqueCardCount})</span>
                                                 <label class="filter-toggle" onclick="event.stopPropagation()">
                                                     <input type="checkbox" id="teamworkCharacterFilter" onchange="toggleTeamworkCharacterFilter()">
                                                     <span class="toggle-label">Hide Unusables</span>
@@ -10439,7 +10901,7 @@
                                     <div class="card-category">
                                         <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
                                             <div class="category-header-content">
-                                                <span>${category.name} (${data.data.length})</span>
+                                                <span>${category.name} (${uniqueCardCount})</span>
                                                 <label class="filter-toggle" onclick="event.stopPropagation()">
                                                     <input type="checkbox" id="basicUniverseCharacterFilter" onchange="toggleBasicUniverseCharacterFilter()">
                                                     <span class="toggle-label">Hide Unusables</span>
@@ -10460,7 +10922,7 @@
                                     <div class="card-category">
                                         <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
                                             <div class="category-header-content">
-                                                <span>${category.name} (${data.data.length})</span>
+                                                <span>${category.name} (${uniqueCardCount})</span>
                                                 <label class="filter-toggle" onclick="event.stopPropagation()">
                                                     <input type="checkbox" id="trainingCharacterFilter" onchange="toggleTrainingCharacterFilter()">
                                                     <span class="toggle-label">Hide Unusables</span>
@@ -10481,7 +10943,7 @@
                                     <div class="card-category">
                                         <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
                                             <div class="category-header-content">
-                                                <span>${category.name} (${data.data.length})</span>
+                                                <span>${category.name} (${uniqueCardCount})</span>
                                                 <label class="filter-toggle" onclick="event.stopPropagation()">
                                                     <input type="checkbox" id="allyUniverseCharacterFilter" onchange="toggleAllyUniverseCharacterFilter()">
                                                     <span class="toggle-label">Hide Unusables</span>
@@ -10502,7 +10964,7 @@
                                     <div class="card-category">
                                         <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
                                             <div class="category-header-content">
-                                                <span>${category.name} (${data.data.length})</span>
+                                                <span>${category.name} (${uniqueCardCount})</span>
                                                 <label class="filter-toggle" onclick="event.stopPropagation()">
                                                     <input type="checkbox" id="eventsMissionFilter" onchange="toggleEventsMissionFilter()">
                                                     <span class="toggle-label">Hide Unusables</span>
@@ -10547,10 +11009,14 @@
                     updatePowerCardsFilter();
                 }, 100);
             } catch (error) {
-                console.error('Error loading available cards:', error);
-                cardCategories.innerHTML = '<div class="error">Error loading available cards</div>';
+                console.error('[DeckBuilder] ❌ ERROR in loadAvailableCards:', error);
+                console.error('[DeckBuilder] Error stack:', error.stack);
+                const cardCategories = document.getElementById('cardCategories');
+                if (cardCategories) {
+                    cardCategories.innerHTML = '<div class="error">Error loading available cards</div>';
+                }
             }
-        }
+        };
         function setupDragAndDrop() {
             try {
                 const deckCardsEditor = document.getElementById('deckCardsEditor');
@@ -10607,10 +11073,1792 @@
         }
 
         // Function to handle plus button clicks
-        function handlePlusButtonClick(event, cardType, cardId, cardName) {
+        function handlePlusButtonClick(event, cardType, cardId, cardName, allCardsJson = null) {
             event.stopPropagation(); // Prevent drag event
+            
+            // If allCardsJson is provided and contains multiple cards, show alternate art selection
+            if (allCardsJson && allCardsJson.trim() !== '') {
+                try {
+                    const allCards = JSON.parse(allCardsJson.replace(/&quot;/g, '"'));
+                    if (allCards && Array.isArray(allCards) && allCards.length > 1) {
+                        // Show alternate art selection modal
+                        showAlternateArtSelectionModal(cardType, cardName, allCards);
+                        return;
+                    }
+                } catch (e) {
+                    console.error('Error parsing allCardsJson:', e);
+                }
+            }
+            
+            // Otherwise, add the card directly
             addCardToEditor(cardType, cardId, cardName);
         }
+        
+        /**
+         * Show alternate art selection modal
+         * Make it globally accessible
+         */
+        window.showAlternateArtSelectionModal = function showAlternateArtSelectionModal(cardType, cardName, allCards) {
+            // Create modal overlay (uses CSS class)
+            const overlay = document.createElement('div');
+            overlay.className = 'alternate-art-modal';
+            
+            // Create modal content container (uses CSS class)
+            const content = document.createElement('div');
+            content.className = 'alternate-art-content';
+            
+            // Create title
+            const title = document.createElement('h3');
+            title.textContent = `Select Art for ${cardName}`;
+            
+            // Create card grid (uses CSS class)
+            const grid = document.createElement('div');
+            grid.className = 'alternate-art-options';
+            
+            // Add each card as an option
+            allCards.forEach((card, index) => {
+                const cardOption = document.createElement('div');
+                cardOption.className = 'art-option';
+                
+                // Mark first card (original art) as selected by default
+                if (index === 0) {
+                    cardOption.classList.add('selected');
+                }
+                
+                const img = document.createElement('img');
+                img.src = card.imagePath;
+                img.alt = card.name;
+                
+                const label = document.createElement('span');
+                label.textContent = index === 0 ? 'Original Art' : `Alternate Art ${index}`;
+                
+                cardOption.appendChild(img);
+                cardOption.appendChild(label);
+                
+                // Add click handler
+                cardOption.addEventListener('click', () => {
+                    addCardToEditor(cardType, card.id, card.name);
+                    document.body.removeChild(overlay);
+                });
+                
+                grid.appendChild(cardOption);
+            });
+            
+            // Create actions container
+            const actions = document.createElement('div');
+            actions.className = 'alternate-art-actions';
+            
+            // Create cancel button
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.addEventListener('click', () => {
+                document.body.removeChild(overlay);
+            });
+            
+            actions.appendChild(cancelBtn);
+            
+            // Assemble modal
+            content.appendChild(title);
+            content.appendChild(grid);
+            content.appendChild(actions);
+            overlay.appendChild(content);
+            
+            // Close on overlay click
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    document.body.removeChild(overlay);
+                }
+            });
+            
+            // Add to document
+            document.body.appendChild(overlay);
+        };
+
+        // Alternate art selection functions removed - alternate cards are now separate card rows
+
+        async function addCardToEditor(cardType, cardId, cardName) {
+            // Check character limit before adding
+            if (cardType === 'character') {
+                const currentCharacterCount = deckEditorCards
+                    .filter(card => card.type === 'character')
+                    .reduce((total, card) => total + card.quantity, 0);
+                
+                
+                if (currentCharacterCount >= 4) {
+                    showNotification('Cannot add more than 4 characters to a deck', 'error');
+                    return;
+                }
+                
+                // Auto-activate special cards character filter when character is added
+                setTimeout(async () => {
+                    const filterCheckbox = document.getElementById('specialCardsCharacterFilter');
+                    if (filterCheckbox && !filterCheckbox.checked) {
+                        filterCheckbox.checked = true;
+                        await toggleSpecialCardsCharacterFilter();
+                    }
+                }, 100); // Small delay to ensure DOM is updated
+            }
+            
+            // Check mission limit before adding
+            if (cardType === 'mission') {
+                const currentMissionCount = deckEditorCards
+                    .filter(card => card.type === 'mission')
+                    .reduce((total, card) => total + card.quantity, 0);
+                
+                
+                if (currentMissionCount >= 7) {
+                    showNotification('Cannot add more than 7 missions to a deck', 'error');
+                    return;
+                }
+            }
+            
+            // Check if card already exists in deck
+            const existingCardIndex = deckEditorCards.findIndex(card => 
+                card.type === cardType && card.cardId === cardId
+            );
+            
+            if (existingCardIndex >= 0) {
+                // Increase quantity
+                deckEditorCards[existingCardIndex].quantity += 1;
+            } else {
+                // Add new card
+                const newCard = {
+                    id: `deckcard_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    type: cardType,
+                    cardId: cardId,
+                    quantity: 1
+                };
+                deckEditorCards.push(newCard);
+            }
+            
+            // Set expansion state: expand only the added card type, collapse all others
+            lastAddedCardType = cardType;
+            
+            // Get all existing section types and collapse them
+            const allTypes = ['character', 'location', 'mission', 'event', 'special', 
+                             'aspect', 'advanced_universe', 'teamwork', 'ally_universe', 
+                             'training', 'basic_universe', 'power'];
+            
+            // Collapse all sections except the one being added
+            allTypes.forEach(type => {
+                deckEditorExpansionState[type] = (type === cardType);
+            });
+            
+            await displayDeckCardsForEditing();
+            updateDeckEditorCardCount();
+            
+            // Update character limit status without affecting collapse state
+            updateCharacterLimitStatus();
+            
+            // Update mission limit status without affecting collapse state
+            updateMissionLimitStatus();
+            
+            // Update special cards filter if it's active
+            updateSpecialCardsFilter();
+            
+            // Update advanced universe filter if it's active
+            updateAdvancedUniverseFilter();
+            
+            // Update power cards filter if it's active
+            updatePowerCardsFilter();
+            
+            // Update basic universe filter if it's active
+            updateBasicUniverseFilter();
+            
+            // Update teamwork filter if it's active
+            updateTeamworkFilter();
+            
+            // Update training filter if it's active
+            updateTrainingFilter();
+            
+            // Update ally universe filter if it's active
+            updateAllyUniverseFilter();
+            
+            
+            // Validate deck after adding card
+            await showDeckValidation(deckEditorCards);
+        }
+
+        async function saveDeckChanges() {
+            if (!currentDeckId || !currentDeckData) return;
+            
+            // Check if user is guest - guests cannot save any changes
+            if (isGuestUser()) {
+                alert('Guests cannot save edits. Please log in to save deck changes.');
+                return;
+            }
+            
+            try {
+                // Prepare cards data for bulk replacement
+                const cardsData = deckEditorCards.map(card => {
+                    const cardData = {
+                        cardType: card.type,
+                        cardId: card.cardId,
+                        quantity: card.quantity
+                    };
+                    
+                    return cardData;
+                });
+                
+                // Bulk replace all cards in one atomic operation
+                const replaceResponse = await fetch(`/api/decks/${currentDeckId}/cards`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ cards: cardsData })
+                });
+                
+                if (!replaceResponse.ok) {
+                    throw new Error('Failed to save deck cards');
+                }
+                
+                // Save deck metadata (name, description, and is_limited)
+                await fetch(`/api/decks/${currentDeckId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        name: currentDeckData.metadata.name,
+                        description: currentDeckData.metadata.description || '',
+                        is_limited: isDeckLimited
+                    })
+                });
+                
+                // Save expansion state
+                saveDeckExpansionState();
+                
+                // Check validation status before saving
+                const validation = validateDeck(deckEditorCards);
+                if (validation.errors.length > 0) {
+                    showNotification('Deck saved with validation errors - not legal for tournament play', 'warning');
+                } else {
+                    showNotification('Deck changes saved successfully!', 'success');
+                }
+                
+                // Don't close the editor - just refresh the deck list
+                loadDecks();
+                
+            } catch (error) {
+                console.error('Error saving deck changes:', error);
+                showNotification('Failed to save deck changes', 'error');
+            }
+        }
+
+        // Add missing toggle function for teamwork type groups
+        function toggleTeamworkTypeGroup(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.collapse-icon');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                icon.textContent = '▲';
+            } else {
+                content.classList.add('collapsed');
+                icon.textContent = '▼';
+            }
+        }
+
+
+
+
+    </script>
+</body>
+</html>
+                            // Always collapse all available card categories by default
+                            const isCollapsed = true;
+                            const collapsedClass = isCollapsed ? 'collapsed' : '';
+                            const collapseIcon = isCollapsed ? '▼' : '▲';
+                            
+                            if (category.type === 'special') {
+                                // Special handling for special cards header with toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="specialCardsCharacterFilter" onchange="toggleSpecialCardsCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'advanced-universe') {
+                                // Special handling for advanced universe cards header with character filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="advancedUniverseCharacterFilter" onchange="toggleAdvancedUniverseCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'power') {
+                                // Special handling for power cards header with character filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category" data-type="power">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="powerCardsCharacterFilter" onchange="togglePowerCardsCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'teamwork') {
+                                // Teamwork category - with filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="teamworkCharacterFilter" onchange="toggleTeamworkCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'basic-universe') {
+                                // Basic universe category - with filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="basicUniverseCharacterFilter" onchange="toggleBasicUniverseCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'training') {
+                                // Training category - with filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="trainingCharacterFilter" onchange="toggleTrainingCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'ally-universe') {
+                                // Ally universe category - with filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="allyUniverseCharacterFilter" onchange="toggleAllyUniverseCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'event') {
+                                // Events category - with mission filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="eventsMissionFilter" onchange="toggleEventsMissionFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else {
+                                // Regular handling for other card types
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <span>${category.name} (${data.data.length})</span>
+                                            <span class="collapse-icon">${collapseIcon}</span>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Error loading ${category.name}:`, error);
+                    }
+                }
+                
+                cardCategories.innerHTML = categoriesHtml;
+                
+                // Update power cards filter to show correct counts after categories are loaded
+                updatePowerCardsFilter();
+                
+                // Also update counts immediately for initial display
+                setTimeout(() => {
+                    updatePowerCardsFilter();
+                }, 100);
+            } catch (error) {
+                console.error('[DeckBuilder] ❌ ERROR in loadAvailableCards:', error);
+                console.error('[DeckBuilder] Error stack:', error.stack);
+                const cardCategories = document.getElementById('cardCategories');
+                if (cardCategories) {
+                    cardCategories.innerHTML = '<div class="error">Error loading available cards</div>';
+                }
+            }
+        };
+        function setupDragAndDrop() {
+            try {
+                const deckCardsEditor = document.getElementById('deckCardsEditor');
+                if (!deckCardsEditor) {
+                    console.error('deckCardsEditor element not found');
+                    return;
+                }
+                
+            
+            // Drag over effects
+            deckCardsEditor.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                deckCardsEditor.classList.add('drag-over');
+            });
+            
+            deckCardsEditor.addEventListener('dragleave', () => {
+                deckCardsEditor.classList.remove('drag-over');
+            });
+            
+            // Drop handling
+            deckCardsEditor.addEventListener('drop', (e) => {
+                e.preventDefault();
+                deckCardsEditor.classList.remove('drag-over');
+                
+                const cardType = e.dataTransfer.getData('text/plain').split('|')[0];
+                const cardId = e.dataTransfer.getData('text/plain').split('|')[1];
+                const cardName = e.dataTransfer.getData('text/plain').split('|')[2];
+                
+                if (cardType && cardId) {
+                    addCardToEditor(cardType, cardId, cardName);
+                }
+            });
+            
+            // Setup card item drag events
+            document.addEventListener('dragstart', (e) => {
+                if (e.target.classList.contains('card-item')) {
+                    e.target.classList.add('dragging');
+                    const cardType = e.target.dataset.type;
+                    const cardId = e.target.dataset.id;
+                    const cardName = e.target.dataset.name;
+                    e.dataTransfer.setData('text/plain', `${cardType}|${cardId}|${cardName}`);
+                }
+            });
+            
+                            document.addEventListener('dragend', (e) => {
+                    if (e.target.classList.contains('card-item')) {
+                        e.target.classList.remove('dragging');
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error in setupDragAndDrop:', error);
+            }
+        }
+
+        // Function to handle plus button clicks
+        function handlePlusButtonClick(event, cardType, cardId, cardName, allCardsJson = null) {
+            event.stopPropagation(); // Prevent drag event
+            
+            // If allCardsJson is provided and contains multiple cards, show alternate art selection
+            if (allCardsJson && allCardsJson.trim() !== '') {
+                try {
+                    const allCards = JSON.parse(allCardsJson.replace(/&quot;/g, '"'));
+                    if (allCards && Array.isArray(allCards) && allCards.length > 1) {
+                        // Show alternate art selection modal
+                        showAlternateArtSelectionModal(cardType, cardName, allCards);
+                        return;
+                    }
+                } catch (e) {
+                    console.error('Error parsing allCardsJson:', e);
+                }
+            }
+            
+            // Otherwise, add the card directly
+            addCardToEditor(cardType, cardId, cardName);
+        }
+        
+        /**
+         * Show alternate art selection modal
+         * Make it globally accessible
+         */
+        window.showAlternateArtSelectionModal = function showAlternateArtSelectionModal(cardType, cardName, allCards) {
+            // Create modal overlay (uses CSS class)
+            const overlay = document.createElement('div');
+            overlay.className = 'alternate-art-modal';
+            
+            // Create modal content container (uses CSS class)
+            const content = document.createElement('div');
+            content.className = 'alternate-art-content';
+            
+            // Create title
+            const title = document.createElement('h3');
+            title.textContent = `Select Art for ${cardName}`;
+            
+            // Create card grid (uses CSS class)
+            const grid = document.createElement('div');
+            grid.className = 'alternate-art-options';
+            
+            // Add each card as an option
+            allCards.forEach((card, index) => {
+                const cardOption = document.createElement('div');
+                cardOption.className = 'art-option';
+                
+                // Mark first card (original art) as selected by default
+                if (index === 0) {
+                    cardOption.classList.add('selected');
+                }
+                
+                const img = document.createElement('img');
+                img.src = card.imagePath;
+                img.alt = card.name;
+                
+                const label = document.createElement('span');
+                label.textContent = index === 0 ? 'Original Art' : `Alternate Art ${index}`;
+                
+                cardOption.appendChild(img);
+                cardOption.appendChild(label);
+                
+                // Add click handler
+                cardOption.addEventListener('click', () => {
+                    addCardToEditor(cardType, card.id, card.name);
+                    document.body.removeChild(overlay);
+                });
+                
+                grid.appendChild(cardOption);
+            });
+            
+            // Create actions container
+            const actions = document.createElement('div');
+            actions.className = 'alternate-art-actions';
+            
+            // Create cancel button
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.addEventListener('click', () => {
+                document.body.removeChild(overlay);
+            });
+            
+            actions.appendChild(cancelBtn);
+            
+            // Assemble modal
+            content.appendChild(title);
+            content.appendChild(grid);
+            content.appendChild(actions);
+            overlay.appendChild(content);
+            
+            // Close on overlay click
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    document.body.removeChild(overlay);
+                }
+            });
+            
+            // Add to document
+            document.body.appendChild(overlay);
+        };
+
+        // Alternate art selection functions removed - alternate cards are now separate card rows
+
+        async function addCardToEditor(cardType, cardId, cardName) {
+            // Check character limit before adding
+            if (cardType === 'character') {
+                const currentCharacterCount = deckEditorCards
+                    .filter(card => card.type === 'character')
+                    .reduce((total, card) => total + card.quantity, 0);
+                
+                
+                if (currentCharacterCount >= 4) {
+                    showNotification('Cannot add more than 4 characters to a deck', 'error');
+                    return;
+                }
+                
+                // Auto-activate special cards character filter when character is added
+                setTimeout(async () => {
+                    const filterCheckbox = document.getElementById('specialCardsCharacterFilter');
+                    if (filterCheckbox && !filterCheckbox.checked) {
+                        filterCheckbox.checked = true;
+                        await toggleSpecialCardsCharacterFilter();
+                    }
+                }, 100); // Small delay to ensure DOM is updated
+            }
+            
+            // Check mission limit before adding
+            if (cardType === 'mission') {
+                const currentMissionCount = deckEditorCards
+                    .filter(card => card.type === 'mission')
+                    .reduce((total, card) => total + card.quantity, 0);
+                
+                
+                if (currentMissionCount >= 7) {
+                    showNotification('Cannot add more than 7 missions to a deck', 'error');
+                    return;
+                }
+            }
+            
+            // Check if card already exists in deck
+            const existingCardIndex = deckEditorCards.findIndex(card => 
+                card.type === cardType && card.cardId === cardId
+            );
+            
+            if (existingCardIndex >= 0) {
+                // Increase quantity
+                deckEditorCards[existingCardIndex].quantity += 1;
+            } else {
+                // Add new card
+                const newCard = {
+                    id: `deckcard_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    type: cardType,
+                    cardId: cardId,
+                    quantity: 1
+                };
+                deckEditorCards.push(newCard);
+            }
+            
+            // Set expansion state: expand only the added card type, collapse all others
+            lastAddedCardType = cardType;
+            
+            // Get all existing section types and collapse them
+            const allTypes = ['character', 'location', 'mission', 'event', 'special', 
+                             'aspect', 'advanced_universe', 'teamwork', 'ally_universe', 
+                             'training', 'basic_universe', 'power'];
+            
+            // Collapse all sections except the one being added
+            allTypes.forEach(type => {
+                deckEditorExpansionState[type] = (type === cardType);
+            });
+            
+            await displayDeckCardsForEditing();
+            updateDeckEditorCardCount();
+            
+            // Update character limit status without affecting collapse state
+            updateCharacterLimitStatus();
+            
+            // Update mission limit status without affecting collapse state
+            updateMissionLimitStatus();
+            
+            // Update special cards filter if it's active
+            updateSpecialCardsFilter();
+            
+            // Update advanced universe filter if it's active
+            updateAdvancedUniverseFilter();
+            
+            // Update power cards filter if it's active
+            updatePowerCardsFilter();
+            
+            // Update basic universe filter if it's active
+            updateBasicUniverseFilter();
+            
+            // Update teamwork filter if it's active
+            updateTeamworkFilter();
+            
+            // Update training filter if it's active
+            updateTrainingFilter();
+            
+            // Update ally universe filter if it's active
+            updateAllyUniverseFilter();
+            
+            
+            // Validate deck after adding card
+            await showDeckValidation(deckEditorCards);
+        }
+
+        async function saveDeckChanges() {
+            if (!currentDeckId || !currentDeckData) return;
+            
+            // Check if user is guest - guests cannot save any changes
+            if (isGuestUser()) {
+                alert('Guests cannot save edits. Please log in to save deck changes.');
+                return;
+            }
+            
+            try {
+                // Prepare cards data for bulk replacement
+                const cardsData = deckEditorCards.map(card => {
+                    const cardData = {
+                        cardType: card.type,
+                        cardId: card.cardId,
+                        quantity: card.quantity
+                    };
+                    
+                    return cardData;
+                });
+                
+                // Bulk replace all cards in one atomic operation
+                const replaceResponse = await fetch(`/api/decks/${currentDeckId}/cards`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ cards: cardsData })
+                });
+                
+                if (!replaceResponse.ok) {
+                    throw new Error('Failed to save deck cards');
+                }
+                
+                // Save deck metadata (name, description, and is_limited)
+                await fetch(`/api/decks/${currentDeckId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        name: currentDeckData.metadata.name,
+                        description: currentDeckData.metadata.description || '',
+                        is_limited: isDeckLimited
+                    })
+                });
+                
+                // Save expansion state
+                saveDeckExpansionState();
+                
+                // Check validation status before saving
+                const validation = validateDeck(deckEditorCards);
+                if (validation.errors.length > 0) {
+                    showNotification('Deck saved with validation errors - not legal for tournament play', 'warning');
+                } else {
+                    showNotification('Deck changes saved successfully!', 'success');
+                }
+                
+                // Don't close the editor - just refresh the deck list
+                loadDecks();
+                
+            } catch (error) {
+                console.error('Error saving deck changes:', error);
+                showNotification('Failed to save deck changes', 'error');
+            }
+        }
+
+        // Add missing toggle function for teamwork type groups
+        function toggleTeamworkTypeGroup(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.collapse-icon');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                icon.textContent = '▲';
+            } else {
+                content.classList.add('collapsed');
+                icon.textContent = '▼';
+            }
+        }
+
+
+
+
+    </script>
+</body>
+</html>
+                            // Always collapse all available card categories by default
+                            const isCollapsed = true;
+                            const collapsedClass = isCollapsed ? 'collapsed' : '';
+                            const collapseIcon = isCollapsed ? '▼' : '▲';
+                            
+                            if (category.type === 'special') {
+                                // Special handling for special cards header with toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="specialCardsCharacterFilter" onchange="toggleSpecialCardsCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'advanced-universe') {
+                                // Special handling for advanced universe cards header with character filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="advancedUniverseCharacterFilter" onchange="toggleAdvancedUniverseCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'power') {
+                                // Special handling for power cards header with character filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category" data-type="power">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="powerCardsCharacterFilter" onchange="togglePowerCardsCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'teamwork') {
+                                // Teamwork category - with filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="teamworkCharacterFilter" onchange="toggleTeamworkCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'basic-universe') {
+                                // Basic universe category - with filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="basicUniverseCharacterFilter" onchange="toggleBasicUniverseCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'training') {
+                                // Training category - with filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="trainingCharacterFilter" onchange="toggleTrainingCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'ally-universe') {
+                                // Ally universe category - with filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="allyUniverseCharacterFilter" onchange="toggleAllyUniverseCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'event') {
+                                // Events category - with mission filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="eventsMissionFilter" onchange="toggleEventsMissionFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else {
+                                // Regular handling for other card types
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <span>${category.name} (${data.data.length})</span>
+                                            <span class="collapse-icon">${collapseIcon}</span>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Error loading ${category.name}:`, error);
+                    }
+                }
+                
+                cardCategories.innerHTML = categoriesHtml;
+                
+                // Update power cards filter to show correct counts after categories are loaded
+                updatePowerCardsFilter();
+                
+                // Also update counts immediately for initial display
+                setTimeout(() => {
+                    updatePowerCardsFilter();
+                }, 100);
+            } catch (error) {
+                console.error('[DeckBuilder] ❌ ERROR in loadAvailableCards:', error);
+                console.error('[DeckBuilder] Error stack:', error.stack);
+                const cardCategories = document.getElementById('cardCategories');
+                if (cardCategories) {
+                    cardCategories.innerHTML = '<div class="error">Error loading available cards</div>';
+                }
+            }
+        };
+        function setupDragAndDrop() {
+            try {
+                const deckCardsEditor = document.getElementById('deckCardsEditor');
+                if (!deckCardsEditor) {
+                    console.error('deckCardsEditor element not found');
+                    return;
+                }
+                
+            
+            // Drag over effects
+            deckCardsEditor.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                deckCardsEditor.classList.add('drag-over');
+            });
+            
+            deckCardsEditor.addEventListener('dragleave', () => {
+                deckCardsEditor.classList.remove('drag-over');
+            });
+            
+            // Drop handling
+            deckCardsEditor.addEventListener('drop', (e) => {
+                e.preventDefault();
+                deckCardsEditor.classList.remove('drag-over');
+                
+                const cardType = e.dataTransfer.getData('text/plain').split('|')[0];
+                const cardId = e.dataTransfer.getData('text/plain').split('|')[1];
+                const cardName = e.dataTransfer.getData('text/plain').split('|')[2];
+                
+                if (cardType && cardId) {
+                    addCardToEditor(cardType, cardId, cardName);
+                }
+            });
+            
+            // Setup card item drag events
+            document.addEventListener('dragstart', (e) => {
+                if (e.target.classList.contains('card-item')) {
+                    e.target.classList.add('dragging');
+                    const cardType = e.target.dataset.type;
+                    const cardId = e.target.dataset.id;
+                    const cardName = e.target.dataset.name;
+                    e.dataTransfer.setData('text/plain', `${cardType}|${cardId}|${cardName}`);
+                }
+            });
+            
+                            document.addEventListener('dragend', (e) => {
+                    if (e.target.classList.contains('card-item')) {
+                        e.target.classList.remove('dragging');
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error in setupDragAndDrop:', error);
+            }
+        }
+
+        // Function to handle plus button clicks
+        function handlePlusButtonClick(event, cardType, cardId, cardName, allCardsJson = null) {
+            event.stopPropagation(); // Prevent drag event
+            
+            // If allCardsJson is provided and contains multiple cards, show alternate art selection
+            if (allCardsJson && allCardsJson.trim() !== '') {
+                try {
+                    const allCards = JSON.parse(allCardsJson.replace(/&quot;/g, '"'));
+                    if (allCards && Array.isArray(allCards) && allCards.length > 1) {
+                        // Show alternate art selection modal
+                        showAlternateArtSelectionModal(cardType, cardName, allCards);
+                        return;
+                    }
+                } catch (e) {
+                    console.error('Error parsing allCardsJson:', e);
+                }
+            }
+            
+            // Otherwise, add the card directly
+            addCardToEditor(cardType, cardId, cardName);
+        }
+        
+        /**
+         * Show alternate art selection modal
+         * Make it globally accessible
+         */
+        window.showAlternateArtSelectionModal = function showAlternateArtSelectionModal(cardType, cardName, allCards) {
+            // Create modal overlay (uses CSS class)
+            const overlay = document.createElement('div');
+            overlay.className = 'alternate-art-modal';
+            
+            // Create modal content container (uses CSS class)
+            const content = document.createElement('div');
+            content.className = 'alternate-art-content';
+            
+            // Create title
+            const title = document.createElement('h3');
+            title.textContent = `Select Art for ${cardName}`;
+            
+            // Create card grid (uses CSS class)
+            const grid = document.createElement('div');
+            grid.className = 'alternate-art-options';
+            
+            // Add each card as an option
+            allCards.forEach((card, index) => {
+                const cardOption = document.createElement('div');
+                cardOption.className = 'art-option';
+                
+                // Mark first card (original art) as selected by default
+                if (index === 0) {
+                    cardOption.classList.add('selected');
+                }
+                
+                const img = document.createElement('img');
+                img.src = card.imagePath;
+                img.alt = card.name;
+                
+                const label = document.createElement('span');
+                label.textContent = index === 0 ? 'Original Art' : `Alternate Art ${index}`;
+                
+                cardOption.appendChild(img);
+                cardOption.appendChild(label);
+                
+                // Add click handler
+                cardOption.addEventListener('click', () => {
+                    addCardToEditor(cardType, card.id, card.name);
+                    document.body.removeChild(overlay);
+                });
+                
+                grid.appendChild(cardOption);
+            });
+            
+            // Create actions container
+            const actions = document.createElement('div');
+            actions.className = 'alternate-art-actions';
+            
+            // Create cancel button
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.addEventListener('click', () => {
+                document.body.removeChild(overlay);
+            });
+            
+            actions.appendChild(cancelBtn);
+            
+            // Assemble modal
+            content.appendChild(title);
+            content.appendChild(grid);
+            content.appendChild(actions);
+            overlay.appendChild(content);
+            
+            // Close on overlay click
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    document.body.removeChild(overlay);
+                }
+            });
+            
+            // Add to document
+            document.body.appendChild(overlay);
+        };
+
+        // Alternate art selection functions removed - alternate cards are now separate card rows
+
+        async function addCardToEditor(cardType, cardId, cardName) {
+            // Check character limit before adding
+            if (cardType === 'character') {
+                const currentCharacterCount = deckEditorCards
+                    .filter(card => card.type === 'character')
+                    .reduce((total, card) => total + card.quantity, 0);
+                
+                
+                if (currentCharacterCount >= 4) {
+                    showNotification('Cannot add more than 4 characters to a deck', 'error');
+                    return;
+                }
+                
+                // Auto-activate special cards character filter when character is added
+                setTimeout(async () => {
+                    const filterCheckbox = document.getElementById('specialCardsCharacterFilter');
+                    if (filterCheckbox && !filterCheckbox.checked) {
+                        filterCheckbox.checked = true;
+                        await toggleSpecialCardsCharacterFilter();
+                    }
+                }, 100); // Small delay to ensure DOM is updated
+            }
+            
+            // Check mission limit before adding
+            if (cardType === 'mission') {
+                const currentMissionCount = deckEditorCards
+                    .filter(card => card.type === 'mission')
+                    .reduce((total, card) => total + card.quantity, 0);
+                
+                
+                if (currentMissionCount >= 7) {
+                    showNotification('Cannot add more than 7 missions to a deck', 'error');
+                    return;
+                }
+            }
+            
+            // Check if card already exists in deck
+            const existingCardIndex = deckEditorCards.findIndex(card => 
+                card.type === cardType && card.cardId === cardId
+            );
+            
+            if (existingCardIndex >= 0) {
+                // Increase quantity
+                deckEditorCards[existingCardIndex].quantity += 1;
+            } else {
+                // Add new card
+                const newCard = {
+                    id: `deckcard_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    type: cardType,
+                    cardId: cardId,
+                    quantity: 1
+                };
+                deckEditorCards.push(newCard);
+            }
+            
+            // Set expansion state: expand only the added card type, collapse all others
+            lastAddedCardType = cardType;
+            
+            // Get all existing section types and collapse them
+            const allTypes = ['character', 'location', 'mission', 'event', 'special', 
+                             'aspect', 'advanced_universe', 'teamwork', 'ally_universe', 
+                             'training', 'basic_universe', 'power'];
+            
+            // Collapse all sections except the one being added
+            allTypes.forEach(type => {
+                deckEditorExpansionState[type] = (type === cardType);
+            });
+            
+            await displayDeckCardsForEditing();
+            updateDeckEditorCardCount();
+            
+            // Update character limit status without affecting collapse state
+            updateCharacterLimitStatus();
+            
+            // Update mission limit status without affecting collapse state
+            updateMissionLimitStatus();
+            
+            // Update special cards filter if it's active
+            updateSpecialCardsFilter();
+            
+            // Update advanced universe filter if it's active
+            updateAdvancedUniverseFilter();
+            
+            // Update power cards filter if it's active
+            updatePowerCardsFilter();
+            
+            // Update basic universe filter if it's active
+            updateBasicUniverseFilter();
+            
+            // Update teamwork filter if it's active
+            updateTeamworkFilter();
+            
+            // Update training filter if it's active
+            updateTrainingFilter();
+            
+            // Update ally universe filter if it's active
+            updateAllyUniverseFilter();
+            
+            
+            // Validate deck after adding card
+            await showDeckValidation(deckEditorCards);
+        }
+
+        async function saveDeckChanges() {
+            if (!currentDeckId || !currentDeckData) return;
+            
+            // Check if user is guest - guests cannot save any changes
+            if (isGuestUser()) {
+                alert('Guests cannot save edits. Please log in to save deck changes.');
+                return;
+            }
+            
+            try {
+                // Prepare cards data for bulk replacement
+                const cardsData = deckEditorCards.map(card => {
+                    const cardData = {
+                        cardType: card.type,
+                        cardId: card.cardId,
+                        quantity: card.quantity
+                    };
+                    
+                    return cardData;
+                });
+                
+                // Bulk replace all cards in one atomic operation
+                const replaceResponse = await fetch(`/api/decks/${currentDeckId}/cards`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ cards: cardsData })
+                });
+                
+                if (!replaceResponse.ok) {
+                    throw new Error('Failed to save deck cards');
+                }
+                
+                // Save deck metadata (name, description, and is_limited)
+                await fetch(`/api/decks/${currentDeckId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        name: currentDeckData.metadata.name,
+                        description: currentDeckData.metadata.description || '',
+                        is_limited: isDeckLimited
+                    })
+                });
+                
+                // Save expansion state
+                saveDeckExpansionState();
+                
+                // Check validation status before saving
+                const validation = validateDeck(deckEditorCards);
+                if (validation.errors.length > 0) {
+                    showNotification('Deck saved with validation errors - not legal for tournament play', 'warning');
+                } else {
+                    showNotification('Deck changes saved successfully!', 'success');
+                }
+                
+                // Don't close the editor - just refresh the deck list
+                loadDecks();
+                
+            } catch (error) {
+                console.error('Error saving deck changes:', error);
+                showNotification('Failed to save deck changes', 'error');
+            }
+        }
+
+        // Add missing toggle function for teamwork type groups
+        function toggleTeamworkTypeGroup(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.collapse-icon');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                icon.textContent = '▲';
+            } else {
+                content.classList.add('collapsed');
+                icon.textContent = '▼';
+            }
+        }
+
+
+
+
+    </script>
+</body>
+</html>
+                            // Always collapse all available card categories by default
+                            const isCollapsed = true;
+                            const collapsedClass = isCollapsed ? 'collapsed' : '';
+                            const collapseIcon = isCollapsed ? '▼' : '▲';
+                            
+                            if (category.type === 'special') {
+                                // Special handling for special cards header with toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="specialCardsCharacterFilter" onchange="toggleSpecialCardsCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'advanced-universe') {
+                                // Special handling for advanced universe cards header with character filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="advancedUniverseCharacterFilter" onchange="toggleAdvancedUniverseCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'power') {
+                                // Special handling for power cards header with character filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category" data-type="power">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="powerCardsCharacterFilter" onchange="togglePowerCardsCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'teamwork') {
+                                // Teamwork category - with filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="teamworkCharacterFilter" onchange="toggleTeamworkCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'basic-universe') {
+                                // Basic universe category - with filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="basicUniverseCharacterFilter" onchange="toggleBasicUniverseCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'training') {
+                                // Training category - with filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="trainingCharacterFilter" onchange="toggleTrainingCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'ally-universe') {
+                                // Ally universe category - with filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="allyUniverseCharacterFilter" onchange="toggleAllyUniverseCharacterFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'event') {
+                                // Events category - with mission filter toggle
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${uniqueCardCount})</span>
+                                                <label class="filter-toggle" onclick="event.stopPropagation()">
+                                                    <input type="checkbox" id="eventsMissionFilter" onchange="toggleEventsMissionFilter()">
+                                                    <span class="toggle-label">Hide Unusables</span>
+                                                </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else {
+                                // Regular handling for other card types
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <span>${category.name} (${data.data.length})</span>
+                                            <span class="collapse-icon">${collapseIcon}</span>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Error loading ${category.name}:`, error);
+                    }
+                }
+                
+                cardCategories.innerHTML = categoriesHtml;
+                
+                // Update power cards filter to show correct counts after categories are loaded
+                updatePowerCardsFilter();
+                
+                // Also update counts immediately for initial display
+                setTimeout(() => {
+                    updatePowerCardsFilter();
+                }, 100);
+            } catch (error) {
+                console.error('[DeckBuilder] ❌ ERROR in loadAvailableCards:', error);
+                console.error('[DeckBuilder] Error stack:', error.stack);
+                const cardCategories = document.getElementById('cardCategories');
+                if (cardCategories) {
+                    cardCategories.innerHTML = '<div class="error">Error loading available cards</div>';
+                }
+            }
+        };
+        function setupDragAndDrop() {
+            try {
+                const deckCardsEditor = document.getElementById('deckCardsEditor');
+                if (!deckCardsEditor) {
+                    console.error('deckCardsEditor element not found');
+                    return;
+                }
+                
+            
+            // Drag over effects
+            deckCardsEditor.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                deckCardsEditor.classList.add('drag-over');
+            });
+            
+            deckCardsEditor.addEventListener('dragleave', () => {
+                deckCardsEditor.classList.remove('drag-over');
+            });
+            
+            // Drop handling
+            deckCardsEditor.addEventListener('drop', (e) => {
+                e.preventDefault();
+                deckCardsEditor.classList.remove('drag-over');
+                
+                const cardType = e.dataTransfer.getData('text/plain').split('|')[0];
+                const cardId = e.dataTransfer.getData('text/plain').split('|')[1];
+                const cardName = e.dataTransfer.getData('text/plain').split('|')[2];
+                
+                if (cardType && cardId) {
+                    addCardToEditor(cardType, cardId, cardName);
+                }
+            });
+            
+            // Setup card item drag events
+            document.addEventListener('dragstart', (e) => {
+                if (e.target.classList.contains('card-item')) {
+                    e.target.classList.add('dragging');
+                    const cardType = e.target.dataset.type;
+                    const cardId = e.target.dataset.id;
+                    const cardName = e.target.dataset.name;
+                    e.dataTransfer.setData('text/plain', `${cardType}|${cardId}|${cardName}`);
+                }
+            });
+            
+                            document.addEventListener('dragend', (e) => {
+                    if (e.target.classList.contains('card-item')) {
+                        e.target.classList.remove('dragging');
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error in setupDragAndDrop:', error);
+            }
+        }
+
+        // Function to handle plus button clicks
+        function handlePlusButtonClick(event, cardType, cardId, cardName, allCardsJson = null) {
+            event.stopPropagation(); // Prevent drag event
+            
+            // If allCardsJson is provided and contains multiple cards, show alternate art selection
+            if (allCardsJson && allCardsJson.trim() !== '') {
+                try {
+                    const allCards = JSON.parse(allCardsJson.replace(/&quot;/g, '"'));
+                    if (allCards && Array.isArray(allCards) && allCards.length > 1) {
+                        // Show alternate art selection modal
+                        showAlternateArtSelectionModal(cardType, cardName, allCards);
+                        return;
+                    }
+                } catch (e) {
+                    console.error('Error parsing allCardsJson:', e);
+                }
+            }
+            
+            // Otherwise, add the card directly
+            addCardToEditor(cardType, cardId, cardName);
+        }
+        
+        /**
+         * Show alternate art selection modal
+         * Make it globally accessible
+         */
+        window.showAlternateArtSelectionModal = function showAlternateArtSelectionModal(cardType, cardName, allCards) {
+            // Create modal overlay (uses CSS class)
+            const overlay = document.createElement('div');
+            overlay.className = 'alternate-art-modal';
+            
+            // Create modal content container (uses CSS class)
+            const content = document.createElement('div');
+            content.className = 'alternate-art-content';
+            
+            // Create title
+            const title = document.createElement('h3');
+            title.textContent = `Select Art for ${cardName}`;
+            
+            // Create card grid (uses CSS class)
+            const grid = document.createElement('div');
+            grid.className = 'alternate-art-options';
+            
+            // Add each card as an option
+            allCards.forEach((card, index) => {
+                const cardOption = document.createElement('div');
+                cardOption.className = 'art-option';
+                
+                // Mark first card (original art) as selected by default
+                if (index === 0) {
+                    cardOption.classList.add('selected');
+                }
+                
+                const img = document.createElement('img');
+                img.src = card.imagePath;
+                img.alt = card.name;
+                
+                const label = document.createElement('span');
+                label.textContent = index === 0 ? 'Original Art' : `Alternate Art ${index}`;
+                
+                cardOption.appendChild(img);
+                cardOption.appendChild(label);
+                
+                // Add click handler
+                cardOption.addEventListener('click', () => {
+                    addCardToEditor(cardType, card.id, card.name);
+                    document.body.removeChild(overlay);
+                });
+                
+                grid.appendChild(cardOption);
+            });
+            
+            // Create actions container
+            const actions = document.createElement('div');
+            actions.className = 'alternate-art-actions';
+            
+            // Create cancel button
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.addEventListener('click', () => {
+                document.body.removeChild(overlay);
+            });
+            
+            actions.appendChild(cancelBtn);
+            
+            // Assemble modal
+            content.appendChild(title);
+            content.appendChild(grid);
+            content.appendChild(actions);
+            overlay.appendChild(content);
+            
+            // Close on overlay click
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    document.body.removeChild(overlay);
+                }
+            });
+            
+            // Add to document
+            document.body.appendChild(overlay);
+        };
 
         // Alternate art selection functions removed - alternate cards are now separate card rows
 

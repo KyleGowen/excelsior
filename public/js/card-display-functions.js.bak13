@@ -513,13 +513,366 @@ window.displayMissions = displayMissions;
 window.displayEvents = displayEvents;
 window.displayLocations = displayLocations;
 
+// Make functions globally available
+window.displayAdvancedUniverse = displayAdvancedUniverse;
+window.displayTeamwork = displayTeamwork;
+window.displayAllyUniverse = displayAllyUniverse;
+window.displayTraining = displayTraining;
+window.displayBasicUniverse = displayBasicUniverse;
+window.displayPowerCards = displayPowerCards;
+window.displayAspects = displayAspects;
+window.displayMissions = displayMissions;
+window.displayEvents = displayEvents;
+window.displayLocations = displayLocations;
 
-// Debug: Log that functions are exported
-console.log('🟢 [card-display-functions.js] Functions exported:', {
-    displayPowerCards: typeof window.displayPowerCards,
-    displayAspects: typeof window.displayAspects,
-    displayMissions: typeof window.displayMissions,
-    displayEvents: typeof window.displayEvents,
-    displayLocations: typeof window.displayLocations,
-    displayAdvancedUniverse: typeof window.displayAdvancedUniverse
-});
+        groups.get(key).push(card);
+    });
+    
+    // Sort each group: original art first (image_path doesn't contain /alternate/), then alternates
+    groups.forEach((group, key) => {
+        group.sort((a, b) => {
+            const aIsAlternate = (a.image_path || a.image || '').includes('/alternate/');
+            const bIsAlternate = (b.image_path || b.image || '').includes('/alternate/');
+            
+            if (aIsAlternate && !bIsAlternate) return 1;  // b (original) comes first
+            if (!aIsAlternate && bIsAlternate) return -1; // a (original) comes first
+            return 0; // Keep original order for same type
+        });
+    });
+    
+    const groupedCards = groups;
+    
+    // Sort groups by power_type using OverPower order: Energy → Combat → Brute Force → Intelligence → Multi Power → Any-Power
+    // Then sort by value within each type
+    const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Multi Power', 'Any-Power'];
+    const sortedGroups = Array.from(groupedCards.entries()).sort(([keyA, groupA], [keyB, groupB]) => {
+        const repA = groupA[0];
+        const repB = groupB[0];
+        const aTypeIndex = preferredOrder.indexOf(repA.power_type || repA.type || '');
+        const bTypeIndex = preferredOrder.indexOf(repB.power_type || repB.type || '');
+        
+        // If both are in preferred order, sort by their position
+        if (aTypeIndex !== -1 && bTypeIndex !== -1) {
+            if (aTypeIndex !== bTypeIndex) {
+                return aTypeIndex - bTypeIndex;
+            }
+            // Same type, sort by value
+            return (repA.value || 0) - (repB.value || 0);
+        }
+        
+        // If only one is in preferred order, prioritize it
+        if (aTypeIndex !== -1) return -1;
+        if (bTypeIndex !== -1) return 1;
+        
+        // If neither is in preferred order, sort alphabetically by type, then by value
+        const typeCompare = (repA.power_type || repA.type || '').localeCompare(repB.power_type || repB.type || '');
+        if (typeCompare !== 0) return typeCompare;
+        return (repA.value || 0) - (repB.value || 0);
+    });
+    
+    // Process each group
+    sortedGroups.forEach(([key, group]) => {
+        if (group.length === 0) return;
+        
+        // Use the first card (original art) as the representative
+        const representative = group[0];
+        
+        // Prepare image data for navigation
+        const imageData = group.map(card => ({
+            id: card.id,
+            imagePath: getCardImagePathForDisplay(card, 'power'),
+            name: card.name || `${card.value} - ${card.power_type}`
+        }));
+        
+        // Create unique identifier for this card group
+        const groupId = `power-group-${representative.id}`;
+        
+        // Build navigation arrows HTML (only show if there are multiple images)
+        const hasMultipleImages = imageData.length > 1;
+        const navArrows = hasMultipleImages ? `
+            <button class="card-nav-arrow card-nav-prev" onclick="navigateCardImage('${groupId}', -1)" aria-label="Previous art" type="button">‹</button>
+            <button class="card-nav-arrow card-nav-next" onclick="navigateCardImage('${groupId}', 1)" aria-label="Next art" type="button">›</button>
+        ` : '';
+        
+        // Current image (starts with original art - index 0)
+        const currentImage = imageData[0];
+        const currentImagePath = currentImage.imagePath;
+        const currentImageName = currentImage.name;
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>
+                <div class="card-image-container">
+                    ${navArrows}
+                    <img id="${groupId}-img"
+                         src="${currentImagePath}" 
+                         alt="${currentImageName}" 
+                         style="width: 120px; height: auto; max-height: 180px; object-fit: contain; border-radius: 5px; cursor: pointer;"
+                         onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                         onmouseenter="showCardHoverModal('${currentImagePath}', '${currentImageName.replace(/'/g, "\\'")}')"
+                         onmouseleave="hideCardHoverModal()"
+                         onclick="openModal(this)">
+                </div>
+            </td>
+            <td>
+                <button class="add-to-deck-btn" onclick="showDeckSelection('power', '${currentImage.id}', '${currentImageName.replace(/'/g, "\\'")}', this)">
+                    Add to Deck
+                </button>
+                ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${currentImage.id}', 'power')" style="margin-top: 4px; display: block; width: 100%;">
+                    Add to Collection
+                </button>
+                ` : ''}
+            </td>
+            <td><strong>${representative.power_type || representative.type || ''}</strong></td>
+            <td>${representative.value || ''}</td>
+        `;
+        
+        // Store image data in data attribute for navigation
+        row.querySelector('.card-image-container').setAttribute('data-image-data', JSON.stringify(imageData));
+        row.querySelector('.card-image-container').setAttribute('data-current-index', '0');
+        
+        tbody.appendChild(row);
+        
+        // Lock row height after image loads to prevent changes when cycling images
+        const img = row.querySelector('img');
+        if (img) {
+            const lockRowHeight = () => {
+                const imageCell = row.querySelector('td:nth-child(1)');
+                if (imageCell && !imageCell.dataset.heightLocked) {
+                    // Lock both the cell and the row height
+                    // Use setProperty with important to prevent override
+                    const cellHeight = imageCell.offsetHeight;
+                    const rowHeight = row.offsetHeight;
+                    
+                    if (cellHeight > 0) {
+                        const cellHeightStr = cellHeight + 'px';
+                        imageCell.style.setProperty('height', cellHeightStr, 'important');
+                        imageCell.style.setProperty('min-height', cellHeightStr, 'important');
+                        imageCell.style.setProperty('max-height', cellHeightStr, 'important');
+                        imageCell.dataset.heightLocked = 'true';
+                    }
+                    
+                    // Also lock the row height to prevent table recalculation
+                    if (rowHeight > 0) {
+                        const rowHeightStr = rowHeight + 'px';
+                        row.style.setProperty('height', rowHeightStr, 'important');
+                        row.style.setProperty('min-height', rowHeightStr, 'important');
+                        row.style.setProperty('max-height', rowHeightStr, 'important');
+                        row.dataset.heightLocked = 'true';
+                    }
+                }
+            };
+            
+            if (img.complete) {
+                // Image already loaded
+                setTimeout(lockRowHeight, 100);
+            } else {
+                // Wait for image to load
+                img.addEventListener('load', lockRowHeight, { once: true });
+                // Fallback timeout
+                setTimeout(lockRowHeight, 1000);
+            }
+        }
+        
+        // Immediately disable Add to Deck button for guest users to prevent flash
+        if (typeof isGuestUser === 'function' && isGuestUser()) {
+            const addToDeckBtn = row.querySelector('.add-to-deck-btn');
+            if (addToDeckBtn) {
+                addToDeckBtn.disabled = true;
+                addToDeckBtn.style.opacity = '0.5';
+                addToDeckBtn.style.cursor = 'not-allowed';
+                addToDeckBtn.title = 'Log in to add to decks...';
+                addToDeckBtn.setAttribute('data-guest-disabled', 'true');
+            }
+        }
+    });
+}
+
+// Make functions globally available
+window.displayAdvancedUniverse = displayAdvancedUniverse;
+window.displayTeamwork = displayTeamwork;
+window.displayAllyUniverse = displayAllyUniverse;
+window.displayTraining = displayTraining;
+window.displayBasicUniverse = displayBasicUniverse;
+window.displayPowerCards = displayPowerCards;
+window.displayAspects = displayAspects;
+window.displayMissions = displayMissions;
+window.displayEvents = displayEvents;
+window.displayLocations = displayLocations;
+
+        groups.get(key).push(card);
+    });
+    
+    // Sort each group: original art first (image_path doesn't contain /alternate/), then alternates
+    groups.forEach((group, key) => {
+        group.sort((a, b) => {
+            const aIsAlternate = (a.image_path || a.image || '').includes('/alternate/');
+            const bIsAlternate = (b.image_path || b.image || '').includes('/alternate/');
+            
+            if (aIsAlternate && !bIsAlternate) return 1;  // b (original) comes first
+            if (!aIsAlternate && bIsAlternate) return -1; // a (original) comes first
+            return 0; // Keep original order for same type
+        });
+    });
+    
+    const groupedCards = groups;
+    
+    // Sort groups by power_type using OverPower order: Energy → Combat → Brute Force → Intelligence → Multi Power → Any-Power
+    // Then sort by value within each type
+    const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Multi Power', 'Any-Power'];
+    const sortedGroups = Array.from(groupedCards.entries()).sort(([keyA, groupA], [keyB, groupB]) => {
+        const repA = groupA[0];
+        const repB = groupB[0];
+        const aTypeIndex = preferredOrder.indexOf(repA.power_type || repA.type || '');
+        const bTypeIndex = preferredOrder.indexOf(repB.power_type || repB.type || '');
+        
+        // If both are in preferred order, sort by their position
+        if (aTypeIndex !== -1 && bTypeIndex !== -1) {
+            if (aTypeIndex !== bTypeIndex) {
+                return aTypeIndex - bTypeIndex;
+            }
+            // Same type, sort by value
+            return (repA.value || 0) - (repB.value || 0);
+        }
+        
+        // If only one is in preferred order, prioritize it
+        if (aTypeIndex !== -1) return -1;
+        if (bTypeIndex !== -1) return 1;
+        
+        // If neither is in preferred order, sort alphabetically by type, then by value
+        const typeCompare = (repA.power_type || repA.type || '').localeCompare(repB.power_type || repB.type || '');
+        if (typeCompare !== 0) return typeCompare;
+        return (repA.value || 0) - (repB.value || 0);
+    });
+    
+    // Process each group
+    sortedGroups.forEach(([key, group]) => {
+        if (group.length === 0) return;
+        
+        // Use the first card (original art) as the representative
+        const representative = group[0];
+        
+        // Prepare image data for navigation
+        const imageData = group.map(card => ({
+            id: card.id,
+            imagePath: getCardImagePathForDisplay(card, 'power'),
+            name: card.name || `${card.value} - ${card.power_type}`
+        }));
+        
+        // Create unique identifier for this card group
+        const groupId = `power-group-${representative.id}`;
+        
+        // Build navigation arrows HTML (only show if there are multiple images)
+        const hasMultipleImages = imageData.length > 1;
+        const navArrows = hasMultipleImages ? `
+            <button class="card-nav-arrow card-nav-prev" onclick="navigateCardImage('${groupId}', -1)" aria-label="Previous art" type="button">‹</button>
+            <button class="card-nav-arrow card-nav-next" onclick="navigateCardImage('${groupId}', 1)" aria-label="Next art" type="button">›</button>
+        ` : '';
+        
+        // Current image (starts with original art - index 0)
+        const currentImage = imageData[0];
+        const currentImagePath = currentImage.imagePath;
+        const currentImageName = currentImage.name;
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>
+                <div class="card-image-container">
+                    ${navArrows}
+                    <img id="${groupId}-img"
+                         src="${currentImagePath}" 
+                         alt="${currentImageName}" 
+                         style="width: 120px; height: auto; max-height: 180px; object-fit: contain; border-radius: 5px; cursor: pointer;"
+                         onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                         onmouseenter="showCardHoverModal('${currentImagePath}', '${currentImageName.replace(/'/g, "\\'")}')"
+                         onmouseleave="hideCardHoverModal()"
+                         onclick="openModal(this)">
+                </div>
+            </td>
+            <td>
+                <button class="add-to-deck-btn" onclick="showDeckSelection('power', '${currentImage.id}', '${currentImageName.replace(/'/g, "\\'")}', this)">
+                    Add to Deck
+                </button>
+                ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${currentImage.id}', 'power')" style="margin-top: 4px; display: block; width: 100%;">
+                    Add to Collection
+                </button>
+                ` : ''}
+            </td>
+            <td><strong>${representative.power_type || representative.type || ''}</strong></td>
+            <td>${representative.value || ''}</td>
+        `;
+        
+        // Store image data in data attribute for navigation
+        row.querySelector('.card-image-container').setAttribute('data-image-data', JSON.stringify(imageData));
+        row.querySelector('.card-image-container').setAttribute('data-current-index', '0');
+        
+        tbody.appendChild(row);
+        
+        // Lock row height after image loads to prevent changes when cycling images
+        const img = row.querySelector('img');
+        if (img) {
+            const lockRowHeight = () => {
+                const imageCell = row.querySelector('td:nth-child(1)');
+                if (imageCell && !imageCell.dataset.heightLocked) {
+                    // Lock both the cell and the row height
+                    // Use setProperty with important to prevent override
+                    const cellHeight = imageCell.offsetHeight;
+                    const rowHeight = row.offsetHeight;
+                    
+                    if (cellHeight > 0) {
+                        const cellHeightStr = cellHeight + 'px';
+                        imageCell.style.setProperty('height', cellHeightStr, 'important');
+                        imageCell.style.setProperty('min-height', cellHeightStr, 'important');
+                        imageCell.style.setProperty('max-height', cellHeightStr, 'important');
+                        imageCell.dataset.heightLocked = 'true';
+                    }
+                    
+                    // Also lock the row height to prevent table recalculation
+                    if (rowHeight > 0) {
+                        const rowHeightStr = rowHeight + 'px';
+                        row.style.setProperty('height', rowHeightStr, 'important');
+                        row.style.setProperty('min-height', rowHeightStr, 'important');
+                        row.style.setProperty('max-height', rowHeightStr, 'important');
+                        row.dataset.heightLocked = 'true';
+                    }
+                }
+            };
+            
+            if (img.complete) {
+                // Image already loaded
+                setTimeout(lockRowHeight, 100);
+            } else {
+                // Wait for image to load
+                img.addEventListener('load', lockRowHeight, { once: true });
+                // Fallback timeout
+                setTimeout(lockRowHeight, 1000);
+            }
+        }
+        
+        // Immediately disable Add to Deck button for guest users to prevent flash
+        if (typeof isGuestUser === 'function' && isGuestUser()) {
+            const addToDeckBtn = row.querySelector('.add-to-deck-btn');
+            if (addToDeckBtn) {
+                addToDeckBtn.disabled = true;
+                addToDeckBtn.style.opacity = '0.5';
+                addToDeckBtn.style.cursor = 'not-allowed';
+                addToDeckBtn.title = 'Log in to add to decks...';
+                addToDeckBtn.setAttribute('data-guest-disabled', 'true');
+            }
+        }
+    });
+}
+
+// Make functions globally available
+window.displayAdvancedUniverse = displayAdvancedUniverse;
+window.displayTeamwork = displayTeamwork;
+window.displayAllyUniverse = displayAllyUniverse;
+window.displayTraining = displayTraining;
+window.displayBasicUniverse = displayBasicUniverse;
+window.displayPowerCards = displayPowerCards;
+window.displayAspects = displayAspects;
+window.displayMissions = displayMissions;
+window.displayEvents = displayEvents;
+window.displayLocations = displayLocations;

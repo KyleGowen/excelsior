@@ -143,8 +143,7 @@ describe('Deck Import Edge Cases', () => {
             expect(mockAddCardToEditor).toHaveBeenCalledWith(
                 'character',
                 'char-2',
-                'Test Character',
-                null
+                'Test Character'
             );
         });
 
@@ -267,8 +266,7 @@ describe('Deck Import Edge Cases', () => {
             expect(mockAddCardToEditor).toHaveBeenCalledWith(
                 'character',
                 'char-1',
-                'Test Character',
-                null
+                'Test Character'
             );
         });
     });
@@ -309,8 +307,8 @@ describe('Deck Import Edge Cases', () => {
 
             // Should add new character, but skip existing character
             expect(mockAddCardToEditor).toHaveBeenCalledTimes(1);
-            expect(mockAddCardToEditor).toHaveBeenCalledWith('character', 'char-new', 'New Character', null);
-            expect(mockAddCardToEditor).not.toHaveBeenCalledWith('character', 'char-existing', expect.anything(), expect.anything());
+            expect(mockAddCardToEditor).toHaveBeenCalledWith('character', 'char-new', 'New Character');
+            expect(mockAddCardToEditor).not.toHaveBeenCalledWith('character', 'char-existing', expect.anything());
         });
 
         it('should handle cards with missing cardId in deckEditorCards', async () => {

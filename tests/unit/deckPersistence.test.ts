@@ -277,19 +277,8 @@ describe('DeckPersistenceService', () => {
       expect(updatedDeck?.metadata.cardCount).toBe(5);
     });
 
-    it('should add alternate image for supported card types', () => {
-      const deck = service.createDeck('Test Deck', 'user1');
-      const updatedDeck = service.addCardToDeck(deck.metadata.id, 'character', 'char1', 1, 'alt-image.jpg');
-
-      expect(updatedDeck?.cards[0].selectedAlternateImage).toBe('alt-image.jpg');
-    });
-
-    it('should not add alternate image for unsupported card types', () => {
-      const deck = service.createDeck('Test Deck', 'user1');
-      const updatedDeck = service.addCardToDeck(deck.metadata.id, 'mission', 'mission1', 1, 'alt-image.jpg');
-
-      expect(updatedDeck?.cards[0].selectedAlternateImage).toBeUndefined();
-    });
+    // Note: Alternate images are now separate cards, so these tests are no longer applicable
+    // Removed tests for selectedAlternateImage as alternate arts are now separate card rows
 
     it('should exclude mission, character, and location cards from count', () => {
       const deck = service.createDeck('Test Deck', 'user1');

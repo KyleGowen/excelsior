@@ -51,7 +51,7 @@ describe('Backend Cataclysm Validation', () => {
         is_assist: false,
         is_ambush: false,
         one_per_deck: false,
-        alternateImages: []
+        // alternateImages removed - alternate arts are now separate cards
       });
 
       const result = await checkIfCardIsCataclysm('special', 'special_heimdall');
@@ -73,7 +73,7 @@ describe('Backend Cataclysm Validation', () => {
         is_assist: false,
         is_ambush: false,
         one_per_deck: false,
-        alternateImages: []
+        // alternateImages removed - alternate arts are now separate cards
       });
 
       const result = await checkIfCardIsCataclysm('special', 'special_regular');
@@ -126,7 +126,7 @@ describe('Backend Cataclysm Validation', () => {
         is_assist: false,
         is_ambush: false,
         one_per_deck: false,
-        alternateImages: []
+        // alternateImages removed - alternate arts are now separate cards
       });
 
       const result = await checkIfCardIsCataclysm('special', 'special_undefined');
@@ -146,7 +146,7 @@ describe('Backend Cataclysm Validation', () => {
         is_assist: false,
         is_ambush: false,
         one_per_deck: false,
-        alternateImages: []
+        // alternateImages removed - alternate arts are now separate cards
       });
 
       const result = await checkIfCardIsCataclysm('special', 'special_null');
@@ -174,7 +174,7 @@ describe('Backend Cataclysm Validation', () => {
         is_assist: false,
         is_ambush: false,
         one_per_deck: false,
-        alternateImages: []
+        // alternateImages removed - alternate arts are now separate cards
       });
 
       const result = await validateCardAddition(currentCards, 'special', 'special_heimdall', 1);
@@ -200,7 +200,7 @@ describe('Backend Cataclysm Validation', () => {
         is_assist: false,
         is_ambush: false,
         one_per_deck: false,
-        alternateImages: []
+        // alternateImages removed - alternate arts are now separate cards
       });
 
       const result = await validateCardAddition(currentCards, 'special', 'special_loki', 1);
@@ -226,7 +226,7 @@ describe('Backend Cataclysm Validation', () => {
         is_assist: false,
         is_ambush: false,
         one_per_deck: false,
-        alternateImages: []
+        // alternateImages removed - alternate arts are now separate cards
       });
 
       const result = await validateCardAddition(currentCards, 'special', 'special_regular', 1);
@@ -252,7 +252,7 @@ describe('Backend Cataclysm Validation', () => {
         is_assist: false,
         is_ambush: false,
         one_per_deck: false,
-        alternateImages: []
+        // alternateImages removed - alternate arts are now separate cards
       });
 
       const result = await validateCardAddition(currentCards, 'special', 'special_loki', 1);
@@ -303,7 +303,7 @@ describe('Backend Cataclysm Validation', () => {
         is_assist: false,
         is_ambush: false,
         one_per_deck: false,
-        alternateImages: []
+        // alternateImages removed - alternate arts are now separate cards
       });
 
       const result = await validateCardAddition(currentCards, 'special', 'special_heimdall', 1);

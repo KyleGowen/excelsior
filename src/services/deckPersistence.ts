@@ -143,7 +143,7 @@ export class DeckPersistenceService {
   }
 
   // Add a card to a deck
-  addCardToDeck(deckId: string, cardType: DeckCard['type'], cardId: string, quantity: number = 1, selectedAlternateImage?: string): DeckData | null {
+  addCardToDeck(deckId: string, cardType: DeckCard['type'], cardId: string, quantity: number = 1): DeckData | null {
     const deck = this.decks.get(deckId);
     if (!deck) return null;
 
@@ -153,19 +153,15 @@ export class DeckPersistenceService {
     );
 
     if (existingCardIndex >= 0) {
-      // Update existing card quantity and alternate image if provided
+      // Update existing card quantity
       deck.cards[existingCardIndex].quantity += quantity;
-      if (selectedAlternateImage && (cardType === 'character' || cardType === 'special' || cardType === 'power')) {
-        deck.cards[existingCardIndex].selectedAlternateImage = selectedAlternateImage;
-      }
     } else {
       // Add new card
       const newCard: DeckCard = {
         id: generateUUID(),
         type: cardType,
         cardId,
-        quantity,
-        ...((cardType === 'character' || cardType === 'special' || cardType === 'power') && selectedAlternateImage && { selectedAlternateImage })
+        quantity
       };
       deck.cards.push(newCard);
     }
@@ -232,7 +228,7 @@ export class DeckPersistenceService {
   }
 
   // Bulk replace all cards in a deck (used for save operations)
-  replaceAllCardsInDeck(deckId: string, cards: Array<{cardType: string, cardId: string, quantity: number, selectedAlternateImage?: string}>): DeckData | null {
+  replaceAllCardsInDeck(deckId: string, cards: Array<{cardType: string, cardId: string, quantity: number}>): DeckData | null {
     const deck = this.decks.get(deckId);
     if (!deck) return null;
 
@@ -245,8 +241,7 @@ export class DeckPersistenceService {
         id: generateUUID(),
         type: card.cardType as DeckCard['type'],
         cardId: card.cardId,
-        quantity: card.quantity,
-        ...((card.cardType === 'character' || card.cardType === 'special' || card.cardType === 'power') && card.selectedAlternateImage && { selectedAlternateImage: card.selectedAlternateImage })
+        quantity: card.quantity
       };
       deck.cards.push(newCard);
     }

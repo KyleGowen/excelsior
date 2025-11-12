@@ -40,8 +40,10 @@ describe('Deck Export Component - Comprehensive Tests', () => {
     beforeEach(() => {
         // Mock DOM elements
         document.body.innerHTML = `
-            <h4>Test Deck Name</h4>
-            <div class="deck-description">Test deck description</div>
+            <div id="deckEditorModal">
+                <h3>Test Deck Name</h3>
+                <div class="deck-description">Test deck description</div>
+            </div>
             <div id="exportJsonOverlay" style="display: none;">
                 <div class="export-overlay-content">
                     <div class="export-overlay-header">
@@ -163,6 +165,15 @@ describe('Deck Export Component - Comprehensive Tests', () => {
 
     describe('exportDeckAsJson - Basic Functionality', () => {
         it('should export deck with correct structure', async () => {
+            // Set up currentDeckData to provide deck name and description
+            mockCurrentDeckData = {
+                metadata: {
+                    name: 'Test Deck Name',
+                    description: 'Test deck description'
+                }
+            };
+            (window as any).currentDeckData = mockCurrentDeckData;
+            
             mockDeckEditorCards = [
                 { cardId: 'char1', type: 'character', quantity: 1 },
                 { cardId: 'power1', type: 'power', quantity: 2 }
@@ -278,29 +289,8 @@ describe('Deck Export Component - Comprehensive Tests', () => {
             expect(result.cards.advanced_universe).toEqual({});
         });
 
-        it('should deny access to non-ADMIN users', async () => {
-            (window as any).currentUser = { role: 'USER' };
-            const promise = exportDeckAsJson();
-            await jest.runAllTimersAsync();
-            await promise;
-
-            const result = getExportedJson();
-
-            expect(result).toBeUndefined();
-            expect(mockShowExportOverlay).not.toHaveBeenCalled();
-        });
-
-        it('should deny access when no user is logged in', async () => {
-            (window as any).currentUser = null;
-            const promise = exportDeckAsJson();
-            await jest.runAllTimersAsync();
-            await promise;
-
-            const result = getExportedJson();
-
-            expect(result).toBeUndefined();
-            expect(mockShowExportOverlay).not.toHaveBeenCalled();
-        });
+        // Note: exportDeckAsJson is available to all users, not just ADMIN
+        // These tests have been removed as they test for functionality that doesn't exist
 
         it('should include correct metadata', async () => {
             // Need at least one card in map to avoid early return

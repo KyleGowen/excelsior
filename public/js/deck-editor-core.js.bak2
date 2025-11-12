@@ -578,6 +578,69 @@ async function closeDeckEditor() {
 // Access via window.showExportOverlay(), window.closeExportOverlay(), window.copyJsonToClipboard()
 // or import from deck-export.js
 
+    if (currentDeckId) {
+        const preferences = getCurrentUIPreferences();
+        await saveUIPreferences(currentDeckId, preferences);
+    }
+    
+    document.getElementById('deckEditorModal').style.display = 'none';
+    
+    // Remove body class for deck editor specific styling
+    document.body.classList.remove('deck-editor-active');
+    
+    currentDeckId = null;
+    currentDeckData = null;
+    window.deckEditorCards = [];
+    
+    // Return to deck builder selection screen
+    switchToDeckBuilder();
+}
+
+// Export Overlay Functions
+// Functions moved to deck-export.js component module
+// Access via window.showExportOverlay(), window.closeExportOverlay(), window.copyJsonToClipboard()
+// or import from deck-export.js
+
+    if (currentDeckId) {
+        const preferences = getCurrentUIPreferences();
+        await saveUIPreferences(currentDeckId, preferences);
+    }
+    
+    document.getElementById('deckEditorModal').style.display = 'none';
+    
+    // Remove body class for deck editor specific styling
+    document.body.classList.remove('deck-editor-active');
+    
+    currentDeckId = null;
+    currentDeckData = null;
+    window.deckEditorCards = [];
+    
+    // Return to deck builder selection screen
+    switchToDeckBuilder();
+}
+
+// Export Overlay Functions
+// Functions moved to deck-export.js component module
+// Access via window.showExportOverlay(), window.closeExportOverlay(), window.copyJsonToClipboard()
+// or import from deck-export.js
+
+    if (currentDeckId) {
+        const preferences = getCurrentUIPreferences();
+        await saveUIPreferences(currentDeckId, preferences);
+    }
+    
+    document.getElementById('deckEditorModal').style.display = 'none';
+    
+    // Remove body class for deck editor specific styling
+    document.body.classList.remove('deck-editor-active');
+    
+    currentDeckId = null;
+    currentDeckData = null;
+    window.deckEditorCards = [];
+    
+    // Return to deck builder selection screen
+    switchToDeckBuilder();
+}
 
 // Export Overlay Functions
 // Functions moved to deck-export.js component module

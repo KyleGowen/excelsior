@@ -2242,10 +2242,11 @@
         
         .deck-editor-top-row {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             width: 100%;
             margin-bottom: 10px;
             position: relative;
+            gap: 20px;
         }
 
         .modal-header .deck-editor-title-section {
@@ -2255,9 +2256,7 @@
         }
 
         .modal-header .deck-summary-section {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -2294,6 +2293,7 @@
             align-items: center;
             gap: 10px;
             flex-wrap: nowrap;
+            flex-shrink: 0;
         }
 
         .deck-title-with-validation h3 {
@@ -2409,7 +2409,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 30px;
+            gap: 20px;
         }
 
         /* Deck stats divider - styled like resizable divider but scaled down and without handles */
@@ -2426,9 +2426,9 @@
                 transparent 100%);
             position: relative;
             flex-shrink: 0;
-            margin: 0 12px;
-            height: 70px;
-            min-height: 70px;
+            margin: 0 8px;
+            height: 40px;
+            min-height: 40px;
             align-self: center;
             display: block;
             flex-grow: 0;
@@ -2436,7 +2436,7 @@
 
         .deck-summary-stats {
             display: flex;
-            gap: 25px;
+            gap: 15px;
             align-items: center;
             height: 100%;
         }
@@ -2446,11 +2446,45 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
+        }
+
+        /* Buttons in summary-stat should be stacked vertically */
+        .summary-stat:has(button) {
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        /* Deck summary stats - more specific selector to override other stat-label rules */
+        .deck-summary-stats .stat-label,
+        .summary-stat .stat-label {
+            font-size: 0.65rem !important;
+            color: #888 !important;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            line-height: 1.2;
+        }
+
+        /* Deck summary stats - use more specific selector */
+        .deck-summary-stats .summary-stat .stat-label,
+        .summary-stat .stat-label {
+            font-size: 0.65rem !important;
+            color: #888 !important;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            line-height: 1.2;
         }
 
         .stat-label {
-            font-size: 1.46rem;
+            font-size: 0.65rem;
             color: #888;
             font-weight: 500;
             text-transform: uppercase;
@@ -2458,6 +2492,7 @@
             display: flex;
             align-items: center;
             gap: 4px;
+            line-height: 1.2;
         }
 
         .stat-icon {
@@ -2476,11 +2511,32 @@
             vertical-align: middle;
         }
 
+        /* Deck summary stats - use more specific selector */
+        .deck-summary-stats .summary-stat .stat-value,
+        .summary-stat .stat-value {
+            font-size: 0.85rem !important;
+            color: #4ecdc4 !important;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            line-height: 1.2;
+        }
+
+        /* Deck summary stats - more specific selector to override other stat-value rules */
+        .deck-summary-stats .stat-value,
+        .summary-stat .stat-value {
+            font-size: 0.85rem !important;
+            color: #4ecdc4 !important;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            line-height: 1.2;
+        }
+
         .stat-value {
-            font-size: 2.93rem;
+            font-size: 0.85rem;
             color: #4ecdc4;
             font-weight: 700;
             font-family: 'Courier New', monospace;
+            line-height: 1.2;
         }
 
         .deck-summary-validation {
@@ -3301,17 +3357,17 @@
             background: rgba(78, 205, 196, 0.2);
             color: #4ecdc4;
             border: 1px solid rgba(78, 205, 196, 0.3);
-            padding: 4px 8px;
+            padding: 6px 12px;
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 500;
             cursor: pointer;
             transition: background 0.2s ease;
-            margin-left: auto;
-            margin-right: 8px;
+            margin: 0;
             white-space: nowrap;
-            min-width: 80px;
-            height: 28px;
+            min-width: 90px;
+            width: 100%;
+            height: auto;
             min-height: 28px;
             box-sizing: border-box;
             display: inline-flex;
@@ -4909,19 +4965,22 @@
 
         /* Deck validation badges in deck list */
         .deck-validation-badge {
-            font-size: 0.8rem;
-            padding: 2px 6px;
+            font-size: 0.75rem;
+            padding: 4px 10px;
             border-radius: 4px;
-            margin-left: 8px;
-            font-weight: 500;
+            margin-left: 10px;
+            font-weight: 600;
             vertical-align: middle;
             display: inline-block;
+            white-space: nowrap;
+            line-height: 1.2;
+            height: auto;
         }
 
         .deck-validation-badge.error {
-            background: rgba(255, 107, 107, 0.2);
-            color: #ff6b6b;
-            border: 1px solid rgba(255, 107, 107, 0.3);
+            background: #ff4444;
+            color: #ffffff;
+            border: none;
         }
 
         .deck-validation-badge.warning {
@@ -6076,6 +6135,17 @@
 
 @media (max-width: 500px) {
     .deck-pane, .card-selector-pane {
+        min-width: 100px;
+    }
+    
+    .deck-editor-layout.force-two-pane .deck-pane,
+    .deck-editor-layout.force-two-pane .card-selector-pane {
+        min-width: 100px;
+    }
+}
+
+
+
         min-width: 100px;
     }
     
