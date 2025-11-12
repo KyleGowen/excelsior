@@ -7977,6 +7977,26 @@
                                             <div class="deck-card-editor-stats">${cardDetails}</div>
                                         </div>
                                         <div class="deck-card-editor-actions">
+                                            ${(() => {
+                                                // Check if this special card has alternate arts
+                                                let hasAlternateArts = false;
+                                                if (availableCard && window.availableCardsMap) {
+                                                    const characterName = (availableCard.character || '').trim();
+                                                    const cardName = (availableCard.name || availableCard.card_name || '').trim();
+                                                    let count = 0;
+                                                    window.availableCardsMap.forEach((c, id) => {
+                                                        const cardType = c.cardType || c.type || '';
+                                                        if ((cardType === 'special' || id.startsWith('special_')) && 
+                                                            (c.character || '').trim() === characterName && 
+                                                            (c.name || c.card_name || '').trim() === cardName) {
+                                                            count++;
+                                                        }
+                                                    });
+                                                    hasAlternateArts = count > 1;
+                                                }
+                                                return hasAlternateArts ? 
+                                                    `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
+                                            })()}
                                             <button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>
                                             <button class="add-one-btn" onclick="addOneCardToEditor(${index})">+1</button>
                                         </div>
@@ -8095,6 +8115,28 @@
                                                 <div class="deck-card-editor-stats">${cardDetails}</div>
                                             </div>
                                             <div class="deck-card-editor-actions">
+                                                ${(() => {
+                                                    // Check if this power card has alternate arts
+                                                    let hasAlternateArts = false;
+                                                    if (availableCard && window.availableCardsMap) {
+                                                        const value = String(availableCard.value || '').trim();
+                                                        const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                                                        const powerType = (availableCard.power_type || '').trim();
+                                                        let count = 0;
+                                                        window.availableCardsMap.forEach((c, id) => {
+                                                            const cardType = c.cardType || c.type || '';
+                                                            if ((cardType === 'power' || id.startsWith('power_')) && 
+                                                                String(c.value || '').trim() === value && 
+                                                                (c.universe || 'ERB').trim() === universe &&
+                                                                (c.power_type || '').trim() === powerType) {
+                                                                count++;
+                                                            }
+                                                        });
+                                                        hasAlternateArts = count > 1;
+                                                    }
+                                                    return hasAlternateArts ? 
+                                                        `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
+                                                })()}
                                                 ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
                                                 ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="add-one-btn" onclick="addOneCardToEditor(${index})">+1</button>` : ''}
                                                 ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">-</button>` : ''}
@@ -8155,6 +8197,28 @@
                                             <div class="deck-card-editor-stats">${cardDetails}</div>
                                         </div>
                                         <div class="deck-card-editor-actions">
+                                            ${(() => {
+                                                // Check if this power card has alternate arts
+                                                let hasAlternateArts = false;
+                                                if (availableCard && window.availableCardsMap) {
+                                                    const value = String(availableCard.value || '').trim();
+                                                    const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                                                    const powerType = (availableCard.power_type || '').trim();
+                                                    let count = 0;
+                                                    window.availableCardsMap.forEach((c, id) => {
+                                                        const cardType = c.cardType || c.type || '';
+                                                        if ((cardType === 'power' || id.startsWith('power_')) && 
+                                                            String(c.value || '').trim() === value && 
+                                                            (c.universe || 'ERB').trim() === universe &&
+                                                            (c.power_type || '').trim() === powerType) {
+                                                            count++;
+                                                        }
+                                                    });
+                                                    hasAlternateArts = count > 1;
+                                                }
+                                                return hasAlternateArts ? 
+                                                    `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
+                                            })()}
                                             ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
                                             ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="add-one-btn" onclick="addOneCardToEditor(${index})">+1</button>` : ''}
                                             ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">-</button>` : ''}
