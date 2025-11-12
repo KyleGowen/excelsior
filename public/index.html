@@ -10582,6 +10582,7 @@
                         // Variables to store tile counts for header rendering
                         let characterTileCount = null;
                         let specialCardTileCount = null;
+                        let powerCardTileCount = null;
                         
                         if (data.success && data.data.length > 0) {
                             // Populate the global map for deck editor use
@@ -11269,7 +11270,11 @@
                                 `;
                             }).join('');
                         } else if (category.type === 'power') {
-                            // Special handling for power cards - group by power type and show value - type format
+                            // Special handling for power cards - group by power type, then by value and universe to consolidate alternate arts
+                            console.log(`[IndexHTML] ===== PROCESSING POWER CARDS =====`);
+                            console.log(`[IndexHTML] Received ${data.data.length} power cards from API`);
+                            
+                            // First, group by power type
                             const typeGroups = {};
                             
                             data.data.forEach(card => {
@@ -11304,59 +11309,137 @@
                             });
                             cardsHtml = '';
                             
+                            // Track total unique power cards across all type groups
+                            let totalUniquePowerCards = 0;
+                            
                             typeNames.forEach(typeName => {
-                                const cards = typeGroups[typeName];
-                                // Sort cards within each type by value
-                                cards.sort((a, b) => a.value - b.value);
+                                const cardsInTypeGroup = typeGroups[typeName];
                                 
-                                const cardItems = cards.map(card => {
-                                    const summary = `${card.value} - ${card.power_type}`;
+                                // Group cards by value and universe to consolidate alternate arts
+                                const cardGroups = new Map();
+                                cardsInTypeGroup.forEach(card => {
+                                    const value = String(card.value || '').trim();
+                                    let universe = (card.universe || 'ERB').trim();
+                                    if (!universe || universe === '') {
+                                        universe = 'ERB';
+                                    }
+                                    
+                                    const key = `${value}|${universe}`;
+                                    if (!cardGroups.has(key)) {
+                                        cardGroups.set(key, []);
+                                    }
+                                    cardGroups.get(key).push(card);
+                                });
+                                
+                                // Add to total count
+                                totalUniquePowerCards += cardGroups.size;
+                                
+                                // Sort each group: original art first, then alternates
+                                cardGroups.forEach((group, key) => {
+                                    group.sort((a, b) => {
+                                        const aImage = a.image_path || a.image || '';
+                                        const bImage = b.image_path || b.image || '';
+                                        const aIsAlternate = aImage.includes('/alternate/');
+                                        const bIsAlternate = bImage.includes('/alternate/');
+                                        
+                                        if (aIsAlternate && !bIsAlternate) return 1;
+                                        if (!aIsAlternate && bIsAlternate) return -1;
+                                        return 0;
+                                    });
+                                });
+                                
+                                // Sort groups by value
+                                const sortedCardGroups = Array.from(cardGroups.entries()).sort((a, b) => {
+                                    const valueA = parseInt(a[0].split('|')[0]) || 0;
+                                    const valueB = parseInt(b[0].split('|')[0]) || 0;
+                                    return valueA - valueB;
+                                });
+                                
+                                // Track rendered cards to prevent duplicates
+                                const renderedKeys = new Set();
+                                
+                                const cardItems = [];
+                                sortedCardGroups.forEach(([key, group]) => {
+                                    if (group.length === 0) return;
+                                    
+                                    // Use first card (original art) as representative
+                                    const representative = group[0];
+                                    const value = String(representative.value || '').trim();
+                                    const summary = `${value} - ${typeName}`;
+                                    const renderKey = `${value}|${typeName}`;
+                                    
+                                    // Skip if already rendered
+                                    if (renderedKeys.has(renderKey)) {
+                                        console.warn(`[IndexHTML] SKIPPING duplicate power card: "${summary}"`);
+                                        return;
+                                    }
+                                    
+                                    renderedKeys.add(renderKey);
+                                    
+                                    // Store all alternate arts
+                                    const allCards = group.map(card => ({
+                                        id: card.id,
+                                        imagePath: getCardImagePath(card, category.type),
+                                        name: `${card.value} - ${card.power_type}`
+                                    }));
+                                    const allCardsJson = JSON.stringify(allCards).replace(/"/g, '&quot;');
+                                    
+                                    // Use original art (first card) for display
+                                    const displayCard = allCards[0];
                                     
                                     // Check if this power card is One Per Deck and already in deck
-                                    const isOnePerDeck = card.one_per_deck === true || card.is_one_per_deck === true;
+                                    // Check if ANY alternate art of this card is already in deck
+                                    const isOnePerDeck = representative.one_per_deck === true || representative.is_one_per_deck === true;
                                     const isOnePerDeckInDeck = isOnePerDeck && window.deckEditorCards.some(deckCard => 
-                                        deckCard.type === 'power' && deckCard.cardId === card.id
+                                        deckCard.type === 'power' && group.some(gc => gc.id === deckCard.cardId)
                                     );
                                     
                                     const disabledClass = isOnePerDeckInDeck ? 'disabled' : '';
                                     const disabledTitle = isOnePerDeckInDeck ? 'One Per Deck - already in deck' : '';
                                     
-                                    return `
+                                    cardItems.push(`
                                         <div class="card-item ${disabledClass}" 
                                              draggable="${!isOnePerDeckInDeck}" 
                                              data-type="${category.type}" 
-                                             data-id="${card.id}"
-                                             onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${summary}')"
+                                             data-id="${displayCard.id}"
+                                             data-all-cards="${allCardsJson}"
+                                             onmouseenter="showCardHoverModal('${displayCard.imagePath}', '${summary.replace(/'/g, "\\'")}')"
                                              onmouseleave="hideCardHoverModal()"
-                                             onclick="handleCardClick(event, '${category.type}', '${card.id}', '${summary}')"
-                                             data-name="${summary}"
+                                             onclick="handleCardClick(event, '${category.type}', '${displayCard.id}', '${summary.replace(/'/g, "\\'")}')"
+                                             data-name="${summary.replace(/'/g, "\\'")}"
                                              title="${disabledTitle}">
                                             <div class="card-item-content">${summary}</div>
-                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${summary}')" title="${category.type === 'character' ? 'Add to deck (max 4 characters)' : 'Add to deck (multiple copies allowed)'}">+</div>
+                                            <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${displayCard.id}', '${summary}', '${allCardsJson}')" title="Add to deck (multiple copies allowed)">+</div>
                                         </div>
-                                    `;
-                                }).join('');
+                                    `);
+                                });
                                 
                                 // Add "Add All" button for Multi-Power and Any-Power subsections
                                 const normalizedTypeName = typeName.replace(/\s+/g, '-');
                                 const addAllButton = (normalizedTypeName === 'Multi-Power' || normalizedTypeName === 'Any-Power') ? 
-                                    `<button class="add-all-btn" onclick="event.stopPropagation(); addAllPowerCards('${typeName}', ${JSON.stringify(cards).replace(/"/g, '&quot;')})">Add All</button>` : '';
+                                    `<button class="add-all-btn" onclick="event.stopPropagation(); addAllPowerCards('${typeName}', ${JSON.stringify(cardsInTypeGroup).replace(/"/g, '&quot;')})">Add All</button>` : '';
                                 
                                 cardsHtml += `
                                     <div class="character-group">
                                         <div class="character-group-header" onclick="toggleCharacterGroup(this)">
-                                            <span>${typeName} (${cards.length})</span>
+                                            <span>${typeName} (${cardGroups.size})</span>
                                             <div class="mission-set-controls">
                                                 ${addAllButton}
                                                 <span class="collapse-icon">▶</span>
                                             </div>
                                         </div>
                                         <div class="character-group-content collapsed">
-                                            ${cardItems}
+                                            ${cardItems.join('')}
                                         </div>
                                     </div>
                                 `;
                             });
+                            
+                            // Store the grouped tile count for use in header rendering
+                            powerCardTileCount = totalUniquePowerCards;
+                            
+                            console.log(`[IndexHTML] Rendered power cards grouped by type and consolidated alternate arts`);
+                            console.log(`[IndexHTML] Grouped ${data.data.length} power cards into ${totalUniquePowerCards} unique cards`);
                         } else if (category.type === 'location') {
                             // Special handling for locations with threat level and validation
                             const currentLocationCount = window.deckEditorCards
@@ -11473,11 +11556,13 @@
                                 `;
                             } else if (category.type === 'power') {
                                 // Special handling for power cards header with character filter toggle
+                                // Use grouped tile count instead of raw data length
+                                const displayCount = powerCardTileCount !== null ? powerCardTileCount : data.data.length;
                                 categoriesHtml += `
                                     <div class="card-category" data-type="power">
                                         <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
                                             <div class="category-header-content">
-                                                <span>${category.name} (${data.data.length})</span>
+                                                <span>${category.name} (${displayCount})</span>
                                                 <label class="filter-toggle" onclick="event.stopPropagation()">
                                                     <input type="checkbox" id="powerCardsCharacterFilter" onchange="togglePowerCardsCharacterFilter()">
                                                     <span class="toggle-label">Hide Unusables</span>
