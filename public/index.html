@@ -8331,38 +8331,47 @@
                         
                         // Check if this card has alternate arts
                         let hasAlternateArts = false;
-                        if (availableCard) {
+                        if (availableCard && window.availableCardsMap) {
                             if (card.type === 'character') {
                                 const name = (availableCard.name || '').trim();
                                 const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
                                 let count = 0;
                                 window.availableCardsMap.forEach((c, id) => {
-                                    if ((c.type === 'character' || id.startsWith('char_')) && 
+                                    const cardType = c.cardType || c.type || '';
+                                    if ((cardType === 'character' || id.startsWith('char_')) && 
                                         (c.name || '').trim() === name && 
                                         (c.universe || 'ERB').trim() === universe) {
                                         count++;
                                     }
                                 });
                                 hasAlternateArts = count > 1;
+                                if (hasAlternateArts) {
+                                    console.log(`[ChangeArt] Character "${name}" has ${count} alternate arts`);
+                                }
                             } else if (card.type === 'special') {
                                 const characterName = (availableCard.character || '').trim();
                                 const cardName = (availableCard.name || availableCard.card_name || '').trim();
                                 let count = 0;
                                 window.availableCardsMap.forEach((c, id) => {
-                                    if ((c.type === 'special' || id.startsWith('special_')) && 
+                                    const cardType = c.cardType || c.type || '';
+                                    if ((cardType === 'special' || id.startsWith('special_')) && 
                                         (c.character || '').trim() === characterName && 
                                         (c.name || c.card_name || '').trim() === cardName) {
                                         count++;
                                     }
                                 });
                                 hasAlternateArts = count > 1;
+                                if (hasAlternateArts) {
+                                    console.log(`[ChangeArt] Special card "${cardName}" for "${characterName}" has ${count} alternate arts`);
+                                }
                             } else if (card.type === 'power') {
                                 const value = String(availableCard.value || '').trim();
                                 const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
                                 const powerType = (availableCard.power_type || '').trim();
                                 let count = 0;
                                 window.availableCardsMap.forEach((c, id) => {
-                                    if ((c.type === 'power' || id.startsWith('power_')) && 
+                                    const cardType = c.cardType || c.type || '';
+                                    if ((cardType === 'power' || id.startsWith('power_')) && 
                                         String(c.value || '').trim() === value && 
                                         (c.universe || 'ERB').trim() === universe &&
                                         (c.power_type || '').trim() === powerType) {
@@ -8370,11 +8379,25 @@
                                     }
                                 });
                                 hasAlternateArts = count > 1;
+                                if (hasAlternateArts) {
+                                    console.log(`[ChangeArt] Power card "${value} - ${powerType}" has ${count} alternate arts`);
+                                }
+                            }
+                        } else {
+                            if (!availableCard) {
+                                console.log(`[ChangeArt] No availableCard for cardId: ${card.cardId}, type: ${card.type}`);
+                            }
+                            if (!window.availableCardsMap) {
+                                console.log(`[ChangeArt] availableCardsMap not available`);
                             }
                         }
                         
                         const changeArtButton = hasAlternateArts ? 
                             `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
+                        
+                        if (hasAlternateArts) {
+                            console.log(`[ChangeArt] Adding Change Art button for cardId: ${card.cardId}, index: ${index}`);
+                        }
                         
                         cardsHtml += `
                                 <div class="deck-card-editor-item preview-view ${characterClass} ${powerClass} ${locationClass} ${missionClass} ${eventClass} ${aspectClass} ${teamworkClass} ${allyUniverseClass} ${basicUniverseClass} ${advancedUniverseClass} ${trainingClass} ${koDimmedClass}" draggable="true" data-index="${index}" data-type="${card.type}" data-card-id="${card.cardId}"
