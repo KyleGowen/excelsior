@@ -10,8 +10,7 @@
  * Contains:
  *   - showToast() - Toast notifications
  *   - startEditingTitle() / saveTitleEdit() - Title editing
- *   - startEditingDescription() / saveDescriptionEdit() - Description editing
- *   - cancelTitleEdit() / cancelDescriptionEdit() - Edit cancellation
+ *   - cancelTitleEdit() - Edit cancellation
  *   - toggleDrawHand() - Draw hand toggle
  *   - screenshotView() - Screenshot functionality
  * 
@@ -159,67 +158,6 @@ function startEditingTitle() {
     });
 }
 
-function startEditingDescription() {
-    // Check if in read-only mode
-    if (isReadOnlyMode) {
-        alert('Cannot edit deck description in read-only mode. You are viewing another user\'s deck.');
-        return;
-    }
-    
-    const descElement = document.getElementById('deckEditorDescription');
-    // Get the description from currentDeckData instead of textContent to avoid character counter interference
-    const currentDescription = currentDeckData?.metadata?.description || '';
-    
-    // Create textarea element
-    const textarea = document.createElement('textarea');
-    textarea.className = 'edit-input';
-    textarea.value = currentDescription;
-    textarea.placeholder = 'Enter deck description (max 200 characters)';
-    textarea.rows = 2;
-    textarea.style.resize = 'none';
-    textarea.maxLength = 200;
-    
-    // Create character counter
-    const counter = document.createElement('div');
-    counter.className = 'character-counter';
-    counter.style.cssText = 'font-size: 0.8rem; color: #bdc3c7; text-align: right; margin-top: 4px;';
-    counter.textContent = `${currentDescription.length}/200`;
-    
-    // Replace content with textarea and counter
-    descElement.innerHTML = '';
-    descElement.appendChild(textarea);
-    descElement.appendChild(counter);
-    descElement.classList.add('editing');
-    
-    // Focus and select text
-    textarea.focus();
-    textarea.select();
-    
-    // Update counter on input
-    textarea.addEventListener('input', () => {
-        counter.textContent = `${textarea.value.length}/200`;
-        if (textarea.value.length > 120) {
-            counter.style.color = '#e74c3c';
-        } else if (textarea.value.length > 100) {
-            counter.style.color = '#f39c12';
-        } else {
-            counter.style.color = '#bdc3c7';
-        }
-    });
-    
-    // Handle save on blur or enter (with Ctrl/Cmd)
-    textarea.addEventListener('blur', () => saveDescriptionEdit(textarea));
-    textarea.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-            e.preventDefault();
-            saveDescriptionEdit(textarea);
-        } else if (e.key === 'Escape') {
-            e.preventDefault();
-            cancelDescriptionEdit(textarea, currentDescription);
-        }
-    });
-}
-
 function saveTitleEdit(input) {
     const newTitle = input.value.trim();
     const titleElement = document.getElementById('deckEditorTitle');
@@ -242,67 +180,10 @@ function saveTitleEdit(input) {
     }
 }
 
-function saveDescriptionEdit(textarea) {
-    let newDescription = textarea.value.trim();
-    
-    // Truncate to 200 characters if needed
-    if (newDescription.length > 200) {
-        newDescription = newDescription.substring(0, 200);
-    }
-    
-    const descElement = document.getElementById('deckEditorDescription');
-    
-    // Always update the display with the current input value
-    // Clear the innerHTML first to remove any textarea and counter elements
-    descElement.innerHTML = '';
-    
-    if (newDescription) {
-        descElement.textContent = newDescription;
-        descElement.classList.remove('placeholder');
-        descElement.style.display = 'block';
-    } else {
-        descElement.textContent = '';
-        descElement.classList.add('placeholder');
-        descElement.style.display = 'none';
-    }
-    
-    descElement.classList.remove('editing');
-    
-    // Only update deck data and show notification if the description actually changed
-    if (newDescription !== currentDeckData?.metadata?.description) {
-        // Update the deck data
-        if (currentDeckData) {
-            currentDeckData.metadata.description = newDescription;
-        }
-        
-        // Show save indicator only for non-guest users
-        if (!isGuestUser()) {
-            showNotification('Description updated - remember to save changes', 'info');
-        }
-    }
-}
-
 function cancelTitleEdit(input, originalTitle) {
     const titleElement = document.getElementById('deckEditorTitle');
     titleElement.textContent = originalTitle;
     titleElement.classList.remove('editing');
 }
 
-function cancelDescriptionEdit(textarea, originalDescription) {
-    const descElement = document.getElementById('deckEditorDescription');
-    
-    // Clear the innerHTML first to remove any textarea and counter elements
-    descElement.innerHTML = '';
-    
-    if (originalDescription) {
-        descElement.textContent = originalDescription;
-        descElement.classList.remove('placeholder');
-        descElement.style.display = 'block';
-    } else {
-        descElement.textContent = '';
-        descElement.classList.add('placeholder');
-        descElement.style.display = 'none';
-    }
-    descElement.classList.remove('editing');
-}
 

@@ -1251,12 +1251,6 @@
                 </div>
                 </div>
                 <div class="form-row">
-                <div class="form-group">
-                        <label for="deckDescription">Deck Description:</label>
-                    <textarea id="deckDescription" name="deckDescription" placeholder="Enter deck description"></textarea>
-                    </div>
-                </div>
-                <div class="form-row">
                     <div class="form-group">
                         <label for="characterSelect">Characters: <span style="font-style: italic; color: #666; font-weight: normal; font-size: 0.9em;">Optional</span></label>
                         <div class="character-selection">
@@ -1287,10 +1281,6 @@
             <div class="modal-body">
                 <div class="deck-info-section">
                     <div class="deck-metadata">
-                        <div class="metadata-item">
-                            <label>Description:</label>
-                            <span id="viewDeckDescription">-</span>
-                        </div>
                         <div class="metadata-item">
                             <label>Created:</label>
                             <span id="viewDeckCreated">-</span>
@@ -1374,7 +1364,6 @@
                             <span id="deckTitleValidationBadge" class="deck-validation-badge"></span>
                             <span id="readOnlyBadge" class="deck-validation-badge read-only" style="display: none;">Read-Only</span>
                         </div>
-                        <p id="deckEditorDescription" class="deck-description editable-description" data-edit-handler="startEditingDescription"></p>
                         <div id="readOnlyIndicator" class="read-only-indicator" style="display: none;">
                             <span class="read-only-text">📖 Read Only Mode</span>
                         </div>
@@ -2999,7 +2988,6 @@
                         <div class="deck-header">
                             <div class="deck-info">
                                 <h4>${deck.metadata.name} ${validationStatus}</h4>
-                                ${deck.metadata.description ? `<div class="deck-description">${deck.metadata.description}</div>` : ''}
                                 ${characterList}
                                 <div class="deck-meta">
                                     <span>📊 Cards:<br>${deck.metadata.cardCount || 0}</span>
@@ -3084,7 +3072,6 @@
             e.preventDefault();
             
             const name = document.getElementById('deckName').value.trim();
-            const description = document.getElementById('deckDescription').value.trim();
             
             if (!name) return;
 
@@ -3097,7 +3084,7 @@
                     credentials: 'include',
                     body: JSON.stringify({ 
                         name, 
-                        description,
+                        description: '',
                         characters: selectedCharacterIds 
                     })
                 });
@@ -3177,7 +3164,6 @@
                     
                     // Update modal title and metadata
                     document.getElementById('viewDeckTitle').textContent = deck.metadata.name;
-                    document.getElementById('viewDeckDescription').textContent = deck.metadata.description || 'No description';
                     document.getElementById('viewDeckCreated').textContent = new Date(deck.metadata.created).toLocaleDateString();
                     document.getElementById('viewDeckModified').textContent = new Date(deck.metadata.lastModified).toLocaleDateString();
                     document.getElementById('viewDeckCardCount').textContent = calculateTotalCardCount(deck.cards || []);
@@ -7275,16 +7261,12 @@
             }
         }
 
-        // Inline editing functions for deck title and description
+        // Inline editing functions for deck title
         // startEditingTitle function moved to external file
-
-        // startEditingDescription function moved to external file
 
         // saveTitleEdit function moved to external file
 
-        // saveDescriptionEdit function moved to external file
-
-        // cancelTitleEdit, cancelDescriptionEdit functions moved to external file
+        // cancelTitleEdit function moved to external file
 
         // showDeckEditor function moved to external file
 
@@ -7686,18 +7668,11 @@
             window.deckEditorCards = [];
             currentDeckId = null;
             
-            // Update modal title and description
+            // Update modal title
             const titleElement = document.getElementById('deckEditorTitle');
-            const descriptionElement = document.getElementById('deckEditorDescription');
             
             if (titleElement) {
                 titleElement.textContent = 'New Deck';
-            }
-            
-            if (descriptionElement) {
-                descriptionElement.textContent = 'Click to add description';
-                descriptionElement.style.display = 'block';
-                descriptionElement.classList.add('placeholder');
             }
             
             // Clear any existing cards

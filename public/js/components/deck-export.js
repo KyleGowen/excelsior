@@ -49,12 +49,10 @@ async function exportDeckAsJson() {
         
         // Get current deck data from currentDeckData object, fallback to UI elements
         let deckName = 'Untitled Deck';
-        let deckDescription = '';
         
         // Try to get from currentDeckData first
         if (currentDeckData && currentDeckData.metadata) {
             deckName = currentDeckData.metadata.name || 'Untitled Deck';
-            deckDescription = currentDeckData.metadata.description || '';
         } else {
             // Only try UI elements if metadata is not available
             // Look for the deck title in the deck editor area, not the deck list
@@ -94,13 +92,6 @@ async function exportDeckAsJson() {
                 if (titleText) {
                     deckName = titleText;
                 }
-            }
-            const deckDescElement = document.querySelector('.deck-description') || 
-                                  document.querySelector('.deck-desc') ||
-                                  document.querySelector('[data-deck-description]');
-            
-            if (deckDescElement && deckDescElement.textContent.trim()) {
-                deckDescription = deckDescElement.textContent.trim();
             }
         }
         
@@ -718,7 +709,7 @@ async function exportDeckAsJson() {
         // Create export data structure with data at top level
         const exportData = {
             name: deckName,
-            description: deckDescription,
+            description: '',
             total_cards: totalCards,
             max_energy: maxEnergy,
             max_combat: maxCombat,

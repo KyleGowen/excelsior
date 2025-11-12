@@ -272,21 +272,11 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             // Set limited state from loaded deck
             isDeckLimited = currentDeckData.metadata.is_limited || false;
             
-            // Update modal title and description
+            // Update modal title
             document.getElementById('deckEditorTitle').textContent = currentDeckData.metadata.name;
             
             // Update deck title validation
             updateDeckTitleValidation(currentDeckData.cards || []);
-            const descriptionElement = document.getElementById('deckEditorDescription');
-            if (currentDeckData.metadata.description) {
-                descriptionElement.textContent = currentDeckData.metadata.description;
-                descriptionElement.classList.remove('placeholder');
-                descriptionElement.style.display = 'block';
-            } else {
-                descriptionElement.textContent = 'Click to add description';
-                descriptionElement.classList.add('placeholder');
-                descriptionElement.style.display = 'block';
-            }
             
             // Load available cards first, then display deck cards
             console.log('[DeckEditor] About to call loadAvailableCards for existing deck...');
@@ -495,7 +485,7 @@ async function saveDeckChanges() {
         const validation = validateDeck(window.deckEditorCards);
         const isDeckValid = validation.errors.length === 0;
         
-        // Save deck metadata (name, description, is_limited, is_valid, and reserve_character)
+        // Save deck metadata (name, is_limited, is_valid, and reserve_character)
         await fetch(`/api/decks/${currentDeckId}`, {
             method: 'PUT',
             headers: {
@@ -504,7 +494,7 @@ async function saveDeckChanges() {
             credentials: 'include',
             body: JSON.stringify({
                 name: currentDeckData.metadata.name,
-                description: currentDeckData.metadata.description || '',
+                description: '',
                 is_limited: isDeckLimited,
                 is_valid: isDeckValid,
                 reserve_character: currentDeckData.metadata.reserve_character

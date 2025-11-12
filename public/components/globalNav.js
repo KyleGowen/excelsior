@@ -189,18 +189,9 @@ function createNewDeck() {
         
         // Set up the deck editor with the new blank deck data
         const titleElement = document.getElementById('deckEditorTitle');
-        const descriptionElement = document.getElementById('deckEditorDescription');
         
         if (titleElement) {
             titleElement.textContent = currentDeckData.metadata.name;
-        }
-        
-        if (descriptionElement) {
-            descriptionElement.textContent = currentDeckData.metadata.description || 'Click to add description';
-            descriptionElement.style.display = 'block';
-            if (!currentDeckData.metadata.description) {
-                descriptionElement.classList.add('placeholder');
-            }
         }
         
         // Load available cards if function exists

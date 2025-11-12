@@ -1187,18 +1187,6 @@
             overflow-wrap: break-word;
         }
 
-        .deck-description {
-            color: #bdc3c7;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            white-space: pre-wrap;
-            max-width: 100%;
-            line-height: 1.4;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
 
         .deck-characters {
             color: #4ecdc4;
@@ -2324,56 +2312,6 @@
             cursor: text;
         }
 
-        .editable-description {
-            cursor: pointer;
-            transition: all 0.2s ease;
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 2px solid transparent;
-            background: transparent;
-            min-height: 20px;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            white-space: pre-wrap;
-            width: 100%;
-            max-width: 100%;
-            line-height: 1.4;
-            box-sizing: border-box;
-            overflow: hidden;
-        }
-
-        .editable-description:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(78, 205, 196, 0.3);
-        }
-
-        .editable-description.editing {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: #4ecdc4;
-            cursor: text;
-            width: 100%;
-            max-width: 100%;
-        }
-
-        .editable-description.editing textarea {
-            width: 100%;
-            max-width: 100%;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            white-space: pre-wrap;
-            resize: vertical;
-            min-height: 40px;
-            max-height: 120px;
-            box-sizing: border-box;
-            overflow-x: hidden;
-            overflow-y: auto;
-            min-width: 0;
-        }
-
-        .editable-description.placeholder {
-            color: #7f8c8d;
-            font-style: italic;
-        }
 
 
         .edit-input {
@@ -2577,13 +2515,6 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        .deck-description {
-            margin: 0;
-            color: #bdc3c7;
-            font-size: 0.9rem;
-            font-style: italic;
-            opacity: 0.8;
-        }
         .close-btn {
             background: none;
             border: none;
