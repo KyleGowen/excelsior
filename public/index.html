@@ -3437,7 +3437,7 @@
         // window.koCharacters will be created by SimulateKO.init()
         let deckEditorExpansionState = {}; // Track expansion state of deck type sections
         let characterGroupExpansionState = {}; // Track expansion state of character groups within special cards
-        let powerCardsSortMode = 'type'; // Track power cards sort mode: 'type' or 'value'
+        let powerCardsSortMode = 'value'; // Track power cards sort mode: 'type' or 'value' (default: 'value')
         let lastAddedCardType = null; // Track which card type was just added
 
 
@@ -5501,8 +5501,14 @@
 
         // Toggle power cards sort mode between type and value
         async function togglePowerCardsSort() {
-            const checkbox = document.getElementById('powerCardsSortToggle');
-            powerCardsSortMode = checkbox.checked ? 'value' : 'type';
+            // Toggle the sort mode
+            powerCardsSortMode = powerCardsSortMode === 'value' ? 'type' : 'value';
+            
+            // Update button text
+            const sortButton = document.getElementById('powerCardsSortToggle');
+            if (sortButton) {
+                sortButton.textContent = powerCardsSortMode === 'value' ? 'Sort by Type' : 'Sort by Value';
+            }
             
             // Save sort mode to localStorage
             if (currentDeckId) {
@@ -6890,9 +6896,9 @@
             // Apply power cards sort mode
             if (preferences.powerCardsSortMode) {
                 powerCardsSortMode = preferences.powerCardsSortMode;
-                const checkbox = document.getElementById('powerCardsSortToggle');
-                if (checkbox) {
-                    checkbox.checked = powerCardsSortMode === 'value';
+                const sortButton = document.getElementById('powerCardsSortToggle');
+                if (sortButton) {
+                    sortButton.textContent = powerCardsSortMode === 'value' ? 'Sort by Type' : 'Sort by Value';
                 }
             }
 
@@ -7967,13 +7973,9 @@
                             <button class="remove-all-btn" onclick="event.stopPropagation(); removeAllCardsFromDeck('${type}')">Remove All</button>
                         `;
                     } else if (type === 'power') {
+                        const sortButtonText = powerCardsSortMode === 'value' ? 'Sort by Type' : 'Sort by Value';
                         removeAllButton = `
-                            <div class="power-cards-sort-toggle">
-                                <label class="sort-toggle-label">
-                                    <input type="checkbox" id="powerCardsSortToggle" ${powerCardsSortMode === 'value' ? 'checked' : ''} onchange="togglePowerCardsSort()">
-                                    <span class="sort-toggle-text">Sort by Value</span>
-                                </label>
-                            </div>
+                            <button class="remove-all-btn" id="powerCardsSortToggle" onclick="event.stopPropagation(); togglePowerCardsSort()">${sortButtonText}</button>
                             <button class="remove-all-btn" onclick="event.stopPropagation(); removeAllCardsFromDeck('${type}')">Remove All</button>
                         `;
                     } else {
