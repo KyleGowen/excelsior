@@ -164,13 +164,42 @@ quantityButtons = `<button class="quantity-btn card-view-btn" onclick="removeCar
 ```
 
 ### Alternate Art Support
-Cards with alternate images display a "Change Art" button:
+Cards with alternate images display a "Change Art" button. The Card View uses the same logic as the Tile View to detect alternate arts by checking if multiple cards exist in `availableCardsMap` with matching characteristics:
+
+- **Characters**: Matched by name and universe
+- **Special Cards**: Matched by character name and card name
+- **Power Cards**: Matched by value, universe, and power type
 
 ```javascript
-if (availableCard.alternateImages && availableCard.alternateImages.length > 0) {
-    alternateArtButton = `<button class="alternate-art-btn card-view-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>`;
+// Check if this card has alternate arts (same logic as tile view)
+let hasAlternateArts = false;
+if (availableCard && window.availableCardsMap) {
+    if (card.type === 'character') {
+        const name = (availableCard.name || '').trim();
+        const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+        let count = 0;
+        window.availableCardsMap.forEach((c, id) => {
+            const cardType = c.cardType || c.type || '';
+            if ((cardType === 'character' || id.startsWith('char_')) && 
+                (c.name || '').trim() === name && 
+                (c.universe || 'ERB').trim() === universe) {
+                count++;
+            }
+        });
+        hasAlternateArts = count > 1;
+    } else if (card.type === 'special') {
+        // Similar logic for special cards...
+    } else if (card.type === 'power') {
+        // Similar logic for power cards...
+    }
 }
+
+// Create Change Art button if card has alternate arts
+const changeArtButton = hasAlternateArts ? 
+    `<button class="alternate-art-btn card-view-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
 ```
+
+The Change Art button appears before the quantity buttons in the card actions section.
 
 ## CSS Styling System
 

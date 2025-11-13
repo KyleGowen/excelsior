@@ -3614,6 +3614,116 @@
                 
                 // Use the original function to maintain exact behavior
                 await displayDeckCardsForEditing();
+                
+                // Force layout recalculation to ensure tiles stretch properly
+                // This fixes the issue where tiles don't take up full width initially
+                if (this.deckCardsEditor) {
+                    // Wait for DOM to be fully updated
+                    await new Promise(resolve => requestAnimationFrame(resolve));
+                    
+                    // CRITICAL FIX: Ensure two-column layout is properly set up
+                    // First, ensure the two-column class is present
+                    if (!this.deckCardsEditor.classList.contains('two-column')) {
+                        this.deckCardsEditor.classList.add('two-column');
+                    }
+                    
+                    // Ensure columns exist - create them if they don't
+                    let deckColumns = this.deckCardsEditor.querySelectorAll('.deck-column');
+                    if (deckColumns.length === 0) {
+                        // Columns don't exist yet - create them
+                        if (typeof createTwoColumnLayout === 'function') {
+                            createTwoColumnLayout();
+                            // Re-query after creation
+                            deckColumns = this.deckCardsEditor.querySelectorAll('.deck-column');
+                        }
+                    }
+                    
+                    // Force columns to stretch properly
+                    if (deckColumns.length > 0) {
+                        // Ensure deckCardsEditor is set up as flex container
+                        this.deckCardsEditor.style.display = 'flex';
+                        this.deckCardsEditor.style.flexDirection = 'row';
+                        this.deckCardsEditor.style.gap = '20px';
+                        this.deckCardsEditor.style.alignItems = 'flex-start';
+                        
+                        deckColumns.forEach(column => {
+                            // Force column to stretch by setting flex properties directly
+                            column.style.flex = '1 1 0%';
+                            column.style.display = 'flex';
+                            column.style.flexDirection = 'column';
+                            column.style.gap = '20px';
+                            column.style.width = '';
+                            column.style.maxWidth = '';
+                            column.style.minWidth = '0';
+                            column.style.flexBasis = '0%';
+                            
+                            // Force reflow
+                            void column.offsetWidth;
+                            void column.offsetHeight;
+                        });
+                        
+                        // Force deckCardsEditor reflow to ensure it calculates column widths
+                        void this.deckCardsEditor.offsetWidth;
+                        void this.deckCardsEditor.offsetHeight;
+                    }
+                    
+                    // Force grid containers to recalculate by accessing their layout properties
+                    const gridContainers = this.deckCardsEditor.querySelectorAll('.deck-type-cards');
+                    gridContainers.forEach(container => {
+                        // Force reflow by accessing layout properties
+                        void container.offsetWidth;
+                        void container.offsetHeight;
+                        // Force grid recalculation by temporarily toggling display
+                        const originalDisplay = window.getComputedStyle(container).display;
+                        if (originalDisplay === 'grid') {
+                            container.style.display = 'block';
+                            void container.offsetHeight; // Force reflow
+                            container.style.display = 'grid';
+                            void container.offsetHeight; // Force reflow again
+                        }
+                    });
+                    
+                    // Force container reflow
+                    void this.deckCardsEditor.offsetWidth;
+                    void this.deckCardsEditor.offsetHeight;
+                    
+                    // Wait another frame for layout to settle
+                    await new Promise(resolve => requestAnimationFrame(resolve));
+                    
+                    // Access tile layout properties to ensure they stretch
+                    const tiles = this.deckCardsEditor.querySelectorAll('.deck-card-editor-item.preview-view');
+                    tiles.forEach(tile => {
+                        void tile.offsetWidth;
+                    });
+                    
+                    // Trigger a synthetic resize event to force any resize listeners to recalculate
+                    window.dispatchEvent(new Event('resize'));
+                    
+                    // One more frame to ensure everything is settled
+                    await new Promise(resolve => requestAnimationFrame(resolve));
+                    
+                    // Final check: Force columns to stretch one more time after everything settles
+                    if (deckColumns.length > 0) {
+                        deckColumns.forEach(column => {
+                            void column.offsetWidth;
+                            void column.offsetHeight;
+                        });
+                    }
+                    
+                    // Trigger layout update to ensure proper column widths
+                    // This calls updateDeckLayout which handles the two-column logic
+                    if (typeof updateDeckLayout === 'function') {
+                        const deckPane = document.querySelector('.deck-pane');
+                        if (deckPane) {
+                            const layout = document.querySelector('.deck-editor-layout');
+                            if (layout) {
+                                const deckWidth = deckPane.getBoundingClientRect().width;
+                                const layoutWidth = layout.getBoundingClientRect().width;
+                                updateDeckLayout(deckWidth, layoutWidth);
+                            }
+                        }
+                    }
+                }
             }
 
             async switchToListView() {
@@ -4653,6 +4763,57 @@
                         // Get card image path
                         const cardImagePath = getCardImagePath(availableCard, card.type);
                         
+                        // Check if this card has alternate arts (same logic as tile view)
+                        let hasAlternateArts = false;
+                        if (availableCard && window.availableCardsMap) {
+                            if (card.type === 'character') {
+                                const name = (availableCard.name || '').trim();
+                                const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                                let count = 0;
+                                window.availableCardsMap.forEach((c, id) => {
+                                    const cardType = c.cardType || c.type || '';
+                                    if ((cardType === 'character' || id.startsWith('char_')) && 
+                                        (c.name || '').trim() === name && 
+                                        (c.universe || 'ERB').trim() === universe) {
+                                        count++;
+                                    }
+                                });
+                                hasAlternateArts = count > 1;
+                            } else if (card.type === 'special') {
+                                const characterName = (availableCard.character || '').trim();
+                                const cardName = (availableCard.name || availableCard.card_name || '').trim();
+                                let count = 0;
+                                window.availableCardsMap.forEach((c, id) => {
+                                    const cardType = c.cardType || c.type || '';
+                                    if ((cardType === 'special' || id.startsWith('special_')) && 
+                                        (c.character || '').trim() === characterName && 
+                                        (c.name || c.card_name || '').trim() === cardName) {
+                                        count++;
+                                    }
+                                });
+                                hasAlternateArts = count > 1;
+                            } else if (card.type === 'power') {
+                                const value = String(availableCard.value || '').trim();
+                                const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                                const powerType = (availableCard.power_type || '').trim();
+                                let count = 0;
+                                window.availableCardsMap.forEach((c, id) => {
+                                    const cardType = c.cardType || c.type || '';
+                                    if ((cardType === 'power' || id.startsWith('power_')) && 
+                                        String(c.value || '').trim() === value && 
+                                        (c.universe || 'ERB').trim() === universe &&
+                                        (c.power_type || '').trim() === powerType) {
+                                        count++;
+                                    }
+                                });
+                                hasAlternateArts = count > 1;
+                            }
+                        }
+                        
+                        // Create Change Art button if card has alternate arts
+                        const changeArtButton = hasAlternateArts ? 
+                            `<button class="alternate-art-btn card-view-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
+                        
                         // Add quantity buttons for applicable card types
                         let quantityButtons = '';
                         if (card.type !== 'character' && card.type !== 'location' && card.type !== 'mission') {
@@ -4691,6 +4852,7 @@
                                      onmouseleave="hideCardHoverModal()">
                                     <img src="${cardImagePath}" alt="${availableCard.name || availableCard.card_name || 'Card'}" class="card-view-image">
                                     <div class="card-view-actions">
+                                        ${changeArtButton}
                                         ${quantityButtons}
                                     </div>
                                 </div>
@@ -7698,9 +7860,14 @@
 
         // loadDeckForEditing function moved to external file
         async function displayDeckCardsForEditing() {
+            console.log(`[ChangeArt] ===== displayDeckCardsForEditing CALLED =====`);
+            console.log(`[ChangeArt] deckEditorCards.length=${window.deckEditorCards ? window.deckEditorCards.length : 'undefined'}`);
+            console.log(`[ChangeArt] availableCardsMap size=${window.availableCardsMap ? window.availableCardsMap.size : 'undefined'}`);
+            
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             
             if (window.deckEditorCards.length === 0) {
+                console.log(`[ChangeArt] Deck is empty, returning early`);
                 deckCardsEditor.innerHTML = `
                     <div class="empty-deck-message">
                         <p>No cards in this deck yet.</p>
@@ -7713,12 +7880,16 @@
                 return;
             }
             
+            // Log all cards in deck
+            console.log(`[ChangeArt] Cards in deck:`, window.deckEditorCards.map((c, i) => ({ index: i, cardId: c.cardId, type: c.type })));
+            
             // Validate deck and show results
             await showDeckValidation(window.window.deckEditorCards);
             
             // Group cards by type (normalize underscore format to hyphen format)
             const cardsByType = {};
             window.deckEditorCards.forEach((card, index) => {
+                console.log(`[ChangeArt] Grouping card index=${index}, cardId=${card.cardId}, type=${card.type}`);
                 let type = card.type;
                 // Convert underscore format to hyphen format for consistency
                 if (type === 'ally_universe') {
@@ -7762,6 +7933,7 @@
             // Render each type group
             typeOrder.forEach(type => {
                 if (cardsByType[type] && cardsByType[type].length > 0) {
+                    console.log(`[ChangeArt] Rendering type="${type}", count=${cardsByType[type].length}`);
                     const typeCards = cardsByType[type];
                     const typeName = typeDisplayNames[type] || formatCardType(type);
                     const cardCount = typeCards.reduce((total, card) => total + (card.quantity || 1), 0);
@@ -7838,10 +8010,12 @@
                     
                     
                     if (type === 'special') {
+                        console.log(`[ChangeArt] Entering SPECIAL cards rendering path, typeCards.length=${typeCards.length}`);
                         // Special handling for special cards - group by character
                         const characterGroups = {};
                         
                         typeCards.forEach(cardData => {
+                            console.log(`[ChangeArt] Processing special card in forEach: cardId=${cardData.cardId}, index=${cardData.originalIndex}`);
                             const card = cardData;
                             // Convert internal type format to map key format
                             let mapKeyType = card.type;
@@ -7963,6 +8137,31 @@
                                     cardDisplayName = availableCard.name || availableCard.card_name || getCardName(card);
                                 }
                                 
+                                // Check if this special card has alternate arts
+                                console.log(`[ChangeArt] SPECIAL CARD: Processing cardId=${card.cardId}, index=${index}, type=${card.type}`);
+                                let hasAlternateArtsSpecial = false;
+                                if (availableCard && window.availableCardsMap) {
+                                    const characterName = (availableCard.character || '').trim();
+                                    const cardName = (availableCard.name || availableCard.card_name || '').trim();
+                                    console.log(`[ChangeArt] SPECIAL CARD: Looking for character="${characterName}", cardName="${cardName}"`);
+                                    let count = 0;
+                                    window.availableCardsMap.forEach((c, id) => {
+                                        const cardType = c.cardType || c.type || '';
+                                        if ((cardType === 'special' || id.startsWith('special_')) && 
+                                            (c.character || '').trim() === characterName && 
+                                            (c.name || c.card_name || '').trim() === cardName) {
+                                            count++;
+                                        }
+                                    });
+                                    hasAlternateArtsSpecial = count > 1;
+                                    console.log(`[ChangeArt] SPECIAL CARD: Found ${count} matches, hasAlternateArts=${hasAlternateArtsSpecial}`);
+                                } else {
+                                    console.log(`[ChangeArt] SPECIAL CARD: Missing availableCard or availableCardsMap`);
+                                }
+                                const changeArtButtonSpecial = hasAlternateArtsSpecial ? 
+                                    `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
+                                console.log(`[ChangeArt] SPECIAL CARD: Button HTML length=${changeArtButtonSpecial.length}`);
+                                
                                 cardsHtml += `
                                     <div class="deck-card-editor-item preview-view ${cardClass}" draggable="true" data-index="${index}" data-type="${card.type}"
                                          data-bg-image="${getCardImagePath(availableCard, card.type)}"
@@ -7977,26 +8176,7 @@
                                             <div class="deck-card-editor-stats">${cardDetails}</div>
                                         </div>
                                         <div class="deck-card-editor-actions">
-                                            ${(() => {
-                                                // Check if this special card has alternate arts
-                                                let hasAlternateArts = false;
-                                                if (availableCard && window.availableCardsMap) {
-                                                    const characterName = (availableCard.character || '').trim();
-                                                    const cardName = (availableCard.name || availableCard.card_name || '').trim();
-                                                    let count = 0;
-                                                    window.availableCardsMap.forEach((c, id) => {
-                                                        const cardType = c.cardType || c.type || '';
-                                                        if ((cardType === 'special' || id.startsWith('special_')) && 
-                                                            (c.character || '').trim() === characterName && 
-                                                            (c.name || c.card_name || '').trim() === cardName) {
-                                                            count++;
-                                                        }
-                                                    });
-                                                    hasAlternateArts = count > 1;
-                                                }
-                                                return hasAlternateArts ? 
-                                                    `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
-                                            })()}
+                                            ${changeArtButtonSpecial}
                                             <button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>
                                             <button class="add-one-btn" onclick="addOneCardToEditor(${index})">+1</button>
                                         </div>
@@ -8010,11 +8190,14 @@
                             `;
                         });
                     } else if (type === 'power') {
+                        console.log(`[ChangeArt] Entering POWER cards rendering path, powerCardsSortMode=${powerCardsSortMode}, typeCards.length=${typeCards.length}`);
                         if (powerCardsSortMode === 'type') {
+                            console.log(`[ChangeArt] Using TYPE-SORTED power cards path`);
                             // Special handling for power cards - group by power type
                             const powerTypeGroups = {};
                             
                             typeCards.forEach(cardData => {
+                                console.log(`[ChangeArt] Processing power card (type-sorted) in forEach: cardId=${cardData.cardId}, index=${cardData.originalIndex}`);
                                 const card = cardData;
                                 // Convert internal type format to map key format
                                 let mapKeyType = card.type;
@@ -8100,6 +8283,32 @@
                                     // Power card details - no additional details needed
                                     const cardDetails = '';
                                     
+                                    // Check if this power card has alternate arts
+                                    console.log(`[ChangeArt] POWER CARD (type-sorted): Processing cardId=${card.cardId}, index=${index}`);
+                                    let hasAlternateArtsPower1 = false;
+                                    if (availableCard && window.availableCardsMap) {
+                                        const value = String(availableCard.value || '').trim();
+                                        const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                                        const powerType = (availableCard.power_type || '').trim();
+                                        console.log(`[ChangeArt] POWER CARD (type-sorted): Looking for value="${value}", universe="${universe}", powerType="${powerType}"`);
+                                        let count = 0;
+                                        window.availableCardsMap.forEach((c, id) => {
+                                            const cardType = c.cardType || c.type || '';
+                                            if ((cardType === 'power' || id.startsWith('power_')) && 
+                                                String(c.value || '').trim() === value && 
+                                                (c.universe || 'ERB').trim() === universe &&
+                                                (c.power_type || '').trim() === powerType) {
+                                                count++;
+                                            }
+                                        });
+                                        hasAlternateArtsPower1 = count > 1;
+                                        console.log(`[ChangeArt] POWER CARD (type-sorted): Found ${count} matches, hasAlternateArts=${hasAlternateArtsPower1}`);
+                                    } else {
+                                        console.log(`[ChangeArt] POWER CARD (type-sorted): Missing availableCard or availableCardsMap`);
+                                    }
+                                    const changeArtButtonPower1 = hasAlternateArtsPower1 ? 
+                                        `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
+                                    console.log(`[ChangeArt] POWER CARD (type-sorted): Button HTML length=${changeArtButtonPower1.length}`);
                                     
                                     cardsHtml += `
                                         <div class="deck-card-editor-item preview-view power-card" draggable="true" data-index="${index}" data-type="${card.type}"
@@ -8115,28 +8324,7 @@
                                                 <div class="deck-card-editor-stats">${cardDetails}</div>
                                             </div>
                                             <div class="deck-card-editor-actions">
-                                                ${(() => {
-                                                    // Check if this power card has alternate arts
-                                                    let hasAlternateArts = false;
-                                                    if (availableCard && window.availableCardsMap) {
-                                                        const value = String(availableCard.value || '').trim();
-                                                        const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
-                                                        const powerType = (availableCard.power_type || '').trim();
-                                                        let count = 0;
-                                                        window.availableCardsMap.forEach((c, id) => {
-                                                            const cardType = c.cardType || c.type || '';
-                                                            if ((cardType === 'power' || id.startsWith('power_')) && 
-                                                                String(c.value || '').trim() === value && 
-                                                                (c.universe || 'ERB').trim() === universe &&
-                                                                (c.power_type || '').trim() === powerType) {
-                                                                count++;
-                                                            }
-                                                        });
-                                                        hasAlternateArts = count > 1;
-                                                    }
-                                                    return hasAlternateArts ? 
-                                                        `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
-                                                })()}
+                                                ${changeArtButtonPower1}
                                                 ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
                                                 ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="add-one-btn" onclick="addOneCardToEditor(${index})">+1</button>` : ''}
                                                 ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">-</button>` : ''}
@@ -8182,6 +8370,32 @@
                                 // Power card details - no additional details needed
                                 const cardDetails = '';
                                 
+                                // Check if this power card has alternate arts
+                                console.log(`[ChangeArt] POWER CARD (value-sorted): Processing cardId=${card.cardId}, index=${index}`);
+                                let hasAlternateArtsPower2 = false;
+                                if (availableCard && window.availableCardsMap) {
+                                    const value = String(availableCard.value || '').trim();
+                                    const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                                    const powerType = (availableCard.power_type || '').trim();
+                                    console.log(`[ChangeArt] POWER CARD (value-sorted): Looking for value="${value}", universe="${universe}", powerType="${powerType}"`);
+                                    let count = 0;
+                                    window.availableCardsMap.forEach((c, id) => {
+                                        const cardType = c.cardType || c.type || '';
+                                        if ((cardType === 'power' || id.startsWith('power_')) && 
+                                            String(c.value || '').trim() === value && 
+                                            (c.universe || 'ERB').trim() === universe &&
+                                            (c.power_type || '').trim() === powerType) {
+                                            count++;
+                                        }
+                                    });
+                                    hasAlternateArtsPower2 = count > 1;
+                                    console.log(`[ChangeArt] POWER CARD (value-sorted): Found ${count} matches, hasAlternateArts=${hasAlternateArtsPower2}`);
+                                } else {
+                                    console.log(`[ChangeArt] POWER CARD (value-sorted): Missing availableCard or availableCardsMap`);
+                                }
+                                const changeArtButtonPower2 = hasAlternateArtsPower2 ? 
+                                    `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
+                                console.log(`[ChangeArt] POWER CARD (value-sorted): Button HTML length=${changeArtButtonPower2.length}`);
                                 
                                 cardsHtml += `
                                     <div class="deck-card-editor-item preview-view power-card" draggable="true" data-index="${index}" data-type="${card.type}"
@@ -8197,28 +8411,7 @@
                                             <div class="deck-card-editor-stats">${cardDetails}</div>
                                         </div>
                                         <div class="deck-card-editor-actions">
-                                            ${(() => {
-                                                // Check if this power card has alternate arts
-                                                let hasAlternateArts = false;
-                                                if (availableCard && window.availableCardsMap) {
-                                                    const value = String(availableCard.value || '').trim();
-                                                    const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
-                                                    const powerType = (availableCard.power_type || '').trim();
-                                                    let count = 0;
-                                                    window.availableCardsMap.forEach((c, id) => {
-                                                        const cardType = c.cardType || c.type || '';
-                                                        if ((cardType === 'power' || id.startsWith('power_')) && 
-                                                            String(c.value || '').trim() === value && 
-                                                            (c.universe || 'ERB').trim() === universe &&
-                                                            (c.power_type || '').trim() === powerType) {
-                                                            count++;
-                                                        }
-                                                    });
-                                                    hasAlternateArts = count > 1;
-                                                }
-                                                return hasAlternateArts ? 
-                                                    `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
-                                            })()}
+                                            ${changeArtButtonPower2}
                                             ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="remove-one-btn" onclick="removeOneCardFromEditor(${index})">-1</button>` : ''}
                                             ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `<button class="add-one-btn" onclick="addOneCardToEditor(${index})">+1</button>` : ''}
                                             ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">-</button>` : ''}
@@ -8405,11 +8598,13 @@
                         const koDimmedClass = isKOd ? 'ko-dimmed' : '';
                         
                         // Check if this card has alternate arts
+                        console.log(`[ChangeArt] REGULAR: Processing cardId=${card.cardId}, index=${index}, type=${card.type}`);
                         let hasAlternateArts = false;
                         if (availableCard && window.availableCardsMap) {
                             if (card.type === 'character') {
                                 const name = (availableCard.name || '').trim();
                                 const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                                console.log(`[ChangeArt] REGULAR CHARACTER: Looking for name="${name}", universe="${universe}"`);
                                 let count = 0;
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
@@ -8420,12 +8615,11 @@
                                     }
                                 });
                                 hasAlternateArts = count > 1;
-                                if (hasAlternateArts) {
-                                    console.log(`[ChangeArt] Character "${name}" has ${count} alternate arts`);
-                                }
+                                console.log(`[ChangeArt] REGULAR CHARACTER: Found ${count} matches, hasAlternateArts=${hasAlternateArts}`);
                             } else if (card.type === 'special') {
                                 const characterName = (availableCard.character || '').trim();
                                 const cardName = (availableCard.name || availableCard.card_name || '').trim();
+                                console.log(`[ChangeArt] REGULAR SPECIAL: Looking for character="${characterName}", cardName="${cardName}"`);
                                 let count = 0;
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
@@ -8436,13 +8630,12 @@
                                     }
                                 });
                                 hasAlternateArts = count > 1;
-                                if (hasAlternateArts) {
-                                    console.log(`[ChangeArt] Special card "${cardName}" for "${characterName}" has ${count} alternate arts`);
-                                }
+                                console.log(`[ChangeArt] REGULAR SPECIAL: Found ${count} matches, hasAlternateArts=${hasAlternateArts}`);
                             } else if (card.type === 'power') {
                                 const value = String(availableCard.value || '').trim();
                                 const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
                                 const powerType = (availableCard.power_type || '').trim();
+                                console.log(`[ChangeArt] REGULAR POWER: Looking for value="${value}", universe="${universe}", powerType="${powerType}"`);
                                 let count = 0;
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
@@ -8454,25 +8647,21 @@
                                     }
                                 });
                                 hasAlternateArts = count > 1;
-                                if (hasAlternateArts) {
-                                    console.log(`[ChangeArt] Power card "${value} - ${powerType}" has ${count} alternate arts`);
-                                }
+                                console.log(`[ChangeArt] REGULAR POWER: Found ${count} matches, hasAlternateArts=${hasAlternateArts}`);
                             }
                         } else {
                             if (!availableCard) {
-                                console.log(`[ChangeArt] No availableCard for cardId: ${card.cardId}, type: ${card.type}`);
+                                console.log(`[ChangeArt] REGULAR: No availableCard for cardId: ${card.cardId}, type: ${card.type}`);
                             }
                             if (!window.availableCardsMap) {
-                                console.log(`[ChangeArt] availableCardsMap not available`);
+                                console.log(`[ChangeArt] REGULAR: availableCardsMap not available`);
                             }
                         }
                         
                         const changeArtButton = hasAlternateArts ? 
                             `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
                         
-                        if (hasAlternateArts) {
-                            console.log(`[ChangeArt] Adding Change Art button for cardId: ${card.cardId}, index: ${index}`);
-                        }
+                        console.log(`[ChangeArt] REGULAR: Button HTML length=${changeArtButton.length}, hasAlternateArts=${hasAlternateArts}`);
                         
                         cardsHtml += `
                                 <div class="deck-card-editor-item preview-view ${characterClass} ${powerClass} ${locationClass} ${missionClass} ${eventClass} ${aspectClass} ${teamworkClass} ${allyUniverseClass} ${basicUniverseClass} ${advancedUniverseClass} ${trainingClass} ${koDimmedClass}" draggable="true" data-index="${index}" data-type="${card.type}" data-card-id="${card.cardId}"
