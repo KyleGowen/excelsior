@@ -10635,7 +10635,23 @@
                     } else if (cardType !== 'character' && cardType !== 'mission' && cardType !== 'location') {
                         // Only update non-character/non-mission/non-location cards here
                         // Character, mission, and location dimming is handled by updateCharacterLimitStatus(), updateMissionLimitStatus(), and updateLocationLimitStatus()
-                        if (cardElement.classList.contains('disabled')) {
+                        
+                        // CRITICAL: For special cards, check if they should remain disabled for OTHER reasons
+                        // (Assist, Ambush, Cataclysm) before removing the disabled class
+                        if (cardType === 'special' && cardData) {
+                            // Check if this special card should remain disabled for Assist/Ambush/Cataclysm reasons
+                            const shouldRemainDisabled = shouldSpecialCardBeDisabled(cardId, cardData);
+                            if (cardElement.classList.contains('disabled') && !shouldRemainDisabled) {
+                                // Only un-dim if it's not disabled for other reasons
+                                cardElement.classList.remove('disabled');
+                                cardElement.setAttribute('draggable', 'true');
+                                cardElement.title = '';
+                                console.log(`🟢 Un-dimming card (One Per Deck): ${cardData ? cardData.name : 'Unknown'}`);
+                            } else if (cardElement.classList.contains('disabled') && shouldRemainDisabled) {
+                                console.log(`🟡 Keeping card dimmed (other reason): ${cardData ? cardData.name : 'Unknown'}`);
+                            }
+                        } else if (cardElement.classList.contains('disabled')) {
+                            // For non-special cards, un-dim normally
                             cardElement.classList.remove('disabled');
                             cardElement.setAttribute('draggable', 'true');
                             cardElement.title = '';
@@ -10644,6 +10660,59 @@
                     }
                 }
             });
+        }
+
+        // Helper function to check if a special card should be disabled for ANY reason
+        // This must be defined BEFORE the dimming functions that use it
+        function shouldSpecialCardBeDisabled(cardId, cardData) {
+            if (!cardData) return false;
+            
+            // Check Assist limit
+            const assistCardsInDeck = new Set();
+            window.deckEditorCards.forEach(card => {
+                const deckCardData = window.availableCardsMap.get(card.cardId);
+                if (deckCardData && deckCardData.is_assist === true) {
+                    assistCardsInDeck.add(card.cardId);
+                }
+            });
+            const isAssist = cardData.is_assist === true;
+            const isAssistInDeck = assistCardsInDeck.has(cardId);
+            const hasOtherAssist = assistCardsInDeck.size > 0;
+            if (isAssist && (isAssistInDeck || hasOtherAssist)) {
+                return true;
+            }
+            
+            // Check Ambush limit
+            const ambushCardsInDeck = new Set();
+            window.deckEditorCards.forEach(card => {
+                const deckCardData = window.availableCardsMap.get(card.cardId);
+                if (deckCardData && deckCardData.is_ambush === true) {
+                    ambushCardsInDeck.add(card.cardId);
+                }
+            });
+            const isAmbush = cardData.is_ambush === true;
+            const isAmbushInDeck = ambushCardsInDeck.has(cardId);
+            const hasOtherAmbush = ambushCardsInDeck.size > 0;
+            if (isAmbush && (isAmbushInDeck || hasOtherAmbush)) {
+                return true;
+            }
+            
+            // Check Cataclysm limit
+            const cataclysmCardsInDeck = new Set();
+            window.deckEditorCards.forEach(card => {
+                const deckCardData = window.availableCardsMap.get(card.cardId);
+                if (deckCardData && deckCardData.is_cataclysm === true) {
+                    cataclysmCardsInDeck.add(card.cardId);
+                }
+            });
+            const isCataclysm = cardData.is_cataclysm === true;
+            const isCataclysmInDeck = cataclysmCardsInDeck.has(cardId);
+            const hasOtherCataclysm = cataclysmCardsInDeck.size > 0;
+            if (isCataclysm && (isCataclysmInDeck || hasOtherCataclysm)) {
+                return true;
+            }
+            
+            return false;
         }
 
         // Function to update Cataclysm card dimming status
@@ -10665,30 +10734,40 @@
                 if (cardId) {
                     const cardData = window.availableCardsMap.get(cardId);
                     const isCataclysm = cardData && cardData.is_cataclysm === true;
-                    const isInDeck = cataclysmCardsInDeck.has(cardId);
-                    const hasOtherCataclysm = cataclysmCardsInDeck.size > 0;
                     
-                    if (isCataclysm && (isInDeck || hasOtherCataclysm)) {
-                        // This is a Cataclysm card and either it's in the deck or another cataclysm is in the deck - dim it
-                        cardElement.classList.add('disabled');
-                        cardElement.setAttribute('draggable', 'false');
-                        if (isInDeck) {
-                            cardElement.title = 'Cataclysm - already in deck';
+                    if (isCataclysm) {
+                        // This is a Cataclysm card - check if it should be dimmed
+                        const isInDeck = cataclysmCardsInDeck.has(cardId);
+                        const hasOtherCataclysm = cataclysmCardsInDeck.size > 0;
+                        
+                        if (isInDeck || hasOtherCataclysm) {
+                            // This is a Cataclysm card and either it's in the deck or another cataclysm is in the deck - dim it
+                            cardElement.classList.add('disabled');
+                            cardElement.setAttribute('draggable', 'false');
+                            if (isInDeck) {
+                                cardElement.title = 'Cataclysm - already in deck';
+                            } else {
+                                cardElement.title = 'Cataclysm - another cataclysm already selected';
+                            }
                         } else {
-                            cardElement.title = 'Cataclysm - another cataclysm already selected';
+                            // This is a Cataclysm card but no cataclysm is in the deck
+                            // Only enable it if it's not disabled for OTHER reasons (Assist, Ambush, etc.)
+                            if (!shouldSpecialCardBeDisabled(cardId, cardData)) {
+                                cardElement.classList.remove('disabled');
+                                cardElement.setAttribute('draggable', 'true');
+                                cardElement.title = '';
+                            }
                         }
-                    } else if (isCataclysm && !hasOtherCataclysm) {
-                        // This is a Cataclysm card but no cataclysm is in the deck - enable it
-                        cardElement.classList.remove('disabled');
-                        cardElement.setAttribute('draggable', 'true');
-                        cardElement.title = '';
                     }
+                    // If it's not a Cataclysm card, don't touch it - let other functions handle it
                 }
             });
         }
 
         // Function to update Assist card dimming status
         function updateAssistLimitStatus() {
+            console.log('[Assist] updateAssistLimitStatus called');
+            
             // Get all Assist cards currently in the deck
             const assistCardsInDeck = new Set();
             window.deckEditorCards.forEach(card => {
@@ -10698,38 +10777,66 @@
                 }
             });
             
+            console.log('[Assist] Assist cards in deck:', assistCardsInDeck.size, Array.from(assistCardsInDeck));
+            
             // Update all special card items for assist dimming
             const specialCardItems = document.querySelectorAll('.card-item[data-type="special"][data-id]');
+            console.log('[Assist] Found', specialCardItems.length, 'special card items');
+            
             specialCardItems.forEach(cardElement => {
                 const cardId = cardElement.getAttribute('data-id');
                 
                 if (cardId) {
                     const cardData = window.availableCardsMap.get(cardId);
                     const isAssist = cardData && cardData.is_assist === true;
-                    const isInDeck = assistCardsInDeck.has(cardId);
-                    const hasOtherAssist = assistCardsInDeck.size > 0;
+                    const isAmbush = cardData && cardData.is_ambush === true;
                     
-                    if (isAssist && (isInDeck || hasOtherAssist)) {
-                        // This is an Assist card and either it's in the deck or another assist is in the deck - dim it
-                        cardElement.classList.add('disabled');
-                        cardElement.setAttribute('draggable', 'false');
-                        if (isInDeck) {
-                            cardElement.title = 'Assist - already in deck';
+                    // CRITICAL: Only process Assist cards, skip Ambush cards entirely
+                    if (isAssist) {
+                        // This is an Assist card - check if it should be dimmed
+                        const isInDeck = assistCardsInDeck.has(cardId);
+                        const hasOtherAssist = assistCardsInDeck.size > 0;
+                        
+                        console.log(`[Assist] Processing Assist card: ${cardData.name || cardData.card_name}, isInDeck: ${isInDeck}, hasOtherAssist: ${hasOtherAssist}`);
+                        
+                        if (isInDeck || hasOtherAssist) {
+                            // This is an Assist card and either it's in the deck or another assist is in the deck - dim it
+                            cardElement.classList.add('disabled');
+                            cardElement.setAttribute('draggable', 'false');
+                            if (isInDeck) {
+                                cardElement.title = 'Assist - already in deck';
+                            } else {
+                                cardElement.title = 'Assist - another assist already selected';
+                            }
+                            console.log(`[Assist] Dimmed: ${cardData.name || cardData.card_name}`);
                         } else {
-                            cardElement.title = 'Assist - another assist already selected';
+                            // This is an Assist card but no assist is in the deck
+                            // Only enable it if it's not disabled for OTHER reasons (Ambush, Cataclysm, etc.)
+                            const shouldBeDisabled = shouldSpecialCardBeDisabled(cardId, cardData);
+                            console.log(`[Assist] Checking if should remain disabled for other reasons: ${shouldBeDisabled}`);
+                            if (!shouldBeDisabled) {
+                                cardElement.classList.remove('disabled');
+                                cardElement.setAttribute('draggable', 'true');
+                                cardElement.title = '';
+                                console.log(`[Assist] Un-dimmed: ${cardData.name || cardData.card_name}`);
+                            } else {
+                                console.log(`[Assist] Kept dimmed (other reason): ${cardData.name || cardData.card_name}`);
+                            }
                         }
-                    } else if (isAssist && !hasOtherAssist) {
-                        // This is an Assist card but no assist is in the deck - enable it
-                        cardElement.classList.remove('disabled');
-                        cardElement.setAttribute('draggable', 'true');
-                        cardElement.title = '';
+                    } else if (isAmbush) {
+                        // This is an Ambush card - DO NOT TOUCH IT in this function
+                        console.log(`[Assist] Skipping Ambush card: ${cardData.name || cardData.card_name} (will be handled by updateAmbushLimitStatus)`);
                     }
+                    // If it's not an Assist card, don't touch it - let other functions handle it
                 }
             });
+            console.log('[Assist] updateAssistLimitStatus complete');
         }
 
         // Function to update Ambush card dimming status
         function updateAmbushLimitStatus() {
+            console.log('[Ambush] updateAmbushLimitStatus called');
+            
             // Get all Ambush cards currently in the deck
             const ambushCardsInDeck = new Set();
             window.deckEditorCards.forEach(card => {
@@ -10739,8 +10846,12 @@
                 }
             });
             
+            console.log('[Ambush] Ambush cards in deck:', ambushCardsInDeck.size, Array.from(ambushCardsInDeck));
+            
             // Update all special card items for ambush dimming
             const specialCardItems = document.querySelectorAll('.card-item[data-type="special"][data-id]');
+            console.log('[Ambush] Found', specialCardItems.length, 'special card items');
+            
             if (specialCardItems && specialCardItems.forEach) {
                 specialCardItems.forEach(cardElement => {
                     const cardId = cardElement.getAttribute('data-id');
@@ -10748,27 +10859,49 @@
                     if (cardId) {
                         const cardData = window.availableCardsMap.get(cardId);
                         const isAmbush = cardData && cardData.is_ambush === true;
-                        const isInDeck = ambushCardsInDeck.has(cardId);
-                        const hasOtherAmbush = ambushCardsInDeck.size > 0;
+                        const isAssist = cardData && cardData.is_assist === true;
                         
-                        if (isAmbush && (isInDeck || hasOtherAmbush)) {
-                            // This is an Ambush card and either it's in the deck or another ambush is in the deck - dim it
-                            cardElement.classList.add('disabled');
-                            cardElement.setAttribute('draggable', 'false');
-                            if (isInDeck) {
-                                cardElement.title = 'Ambush - already in deck';
+                        // CRITICAL: Only process Ambush cards, skip Assist cards entirely
+                        if (isAmbush) {
+                            // This is an Ambush card - check if it should be dimmed
+                            const isInDeck = ambushCardsInDeck.has(cardId);
+                            const hasOtherAmbush = ambushCardsInDeck.size > 0;
+                            
+                            console.log(`[Ambush] Processing Ambush card: ${cardData.name || cardData.card_name}, isInDeck: ${isInDeck}, hasOtherAmbush: ${hasOtherAmbush}`);
+                            
+                            if (isInDeck || hasOtherAmbush) {
+                                // This is an Ambush card and either it's in the deck or another ambush is in the deck - dim it
+                                cardElement.classList.add('disabled');
+                                cardElement.setAttribute('draggable', 'false');
+                                if (isInDeck) {
+                                    cardElement.title = 'Ambush - already in deck';
+                                } else {
+                                    cardElement.title = 'Ambush - another ambush already selected';
+                                }
+                                console.log(`[Ambush] Dimmed: ${cardData.name || cardData.card_name}`);
                             } else {
-                                cardElement.title = 'Ambush - another ambush already selected';
+                                // This is an Ambush card but no ambush is in the deck
+                                // Only enable it if it's not disabled for OTHER reasons (Assist, Cataclysm, etc.)
+                                const shouldBeDisabled = shouldSpecialCardBeDisabled(cardId, cardData);
+                                console.log(`[Ambush] Checking if should remain disabled for other reasons: ${shouldBeDisabled}`);
+                                if (!shouldBeDisabled) {
+                                    cardElement.classList.remove('disabled');
+                                    cardElement.setAttribute('draggable', 'true');
+                                    cardElement.title = '';
+                                    console.log(`[Ambush] Un-dimmed: ${cardData.name || cardData.card_name}`);
+                                } else {
+                                    console.log(`[Ambush] Kept dimmed (other reason): ${cardData.name || cardData.card_name}`);
+                                }
                             }
-                        } else if (isAmbush && !hasOtherAmbush) {
-                            // This is an Ambush card but no ambush is in the deck - enable it
-                            cardElement.classList.remove('disabled');
-                            cardElement.setAttribute('draggable', 'true');
-                            cardElement.title = '';
+                        } else if (isAssist) {
+                            // This is an Assist card - DO NOT TOUCH IT in this function
+                            console.log(`[Ambush] Skipping Assist card: ${cardData.name || cardData.card_name} (will be handled by updateAssistLimitStatus)`);
                         }
+                        // If it's not an Ambush card, don't touch it - let other functions handle it
                     }
                 });
             }
+            console.log('[Ambush] updateAmbushLimitStatus complete');
         }
 
         // KO Feature Functions - Now handled by SimulateKO module
@@ -12054,9 +12187,16 @@
                 // Update power cards filter to show correct counts after categories are loaded
                 updatePowerCardsFilter();
                 
+                // Update Assist and Ambush dimming status after cards are loaded
+                updateAssistLimitStatus();
+                updateAmbushLimitStatus();
+                
                 // Also update counts immediately for initial display
                 setTimeout(() => {
                     updatePowerCardsFilter();
+                    // Ensure dimming is applied after DOM is fully rendered
+                    updateAssistLimitStatus();
+                    updateAmbushLimitStatus();
                 }, 100);
             } catch (error) {
                 console.error('Error loading available cards:', error);
