@@ -12169,18 +12169,17 @@
                 const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
                 
                 // Search through all available cards to find matches
+                // Use same logic as Card View detection: cardType || type
                 window.availableCardsMap.forEach((card, id) => {
-                    if (card.type === 'character' || id.startsWith('char_')) {
-                        const cardName = (card.name || '').trim();
-                        const cardUniverse = (card.universe || 'ERB').trim() || 'ERB';
-                        
-                        if (cardName === name && cardUniverse === universe) {
-                            allAlternateArts.push({
-                                id: card.id || id,
-                                imagePath: getCardImagePath(card, 'character'),
-                                name: cardName
-                            });
-                        }
+                    const iterCardType = card.cardType || card.type || '';
+                    if ((iterCardType === 'character' || id.startsWith('char_')) && 
+                        (card.name || '').trim() === name && 
+                        (card.universe || 'ERB').trim() === universe) {
+                        allAlternateArts.push({
+                            id: card.id || id,
+                            imagePath: getCardImagePath(card, 'character'),
+                            name: (card.name || '').trim()
+                        });
                     }
                 });
             } else if (cardType === 'special') {
@@ -12188,18 +12187,17 @@
                 const characterName = (availableCard.character || '').trim();
                 const cardName = (availableCard.name || availableCard.card_name || '').trim();
                 
+                // Use same logic as Card View detection: cardType || type
                 window.availableCardsMap.forEach((card, id) => {
-                    if (card.type === 'special' || id.startsWith('special_')) {
-                        const cardCharacterName = (card.character || '').trim();
-                        const cardCardName = (card.name || card.card_name || '').trim();
-                        
-                        if (cardCharacterName === characterName && cardCardName === cardName) {
-                            allAlternateArts.push({
-                                id: card.id || id,
-                                imagePath: getCardImagePath(card, 'special'),
-                                name: cardCardName
-                            });
-                        }
+                    const iterCardType = card.cardType || card.type || '';
+                    if ((iterCardType === 'special' || id.startsWith('special_')) && 
+                        (card.character || '').trim() === characterName && 
+                        (card.name || card.card_name || '').trim() === cardName) {
+                        allAlternateArts.push({
+                            id: card.id || id,
+                            imagePath: getCardImagePath(card, 'special'),
+                            name: (card.name || card.card_name || '').trim()
+                        });
                     }
                 });
             } else if (cardType === 'power') {
@@ -12208,25 +12206,35 @@
                 const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
                 const powerType = (availableCard.power_type || '').trim();
                 
+                // Use same logic as Card View detection: cardType || type
                 window.availableCardsMap.forEach((card, id) => {
-                    if (card.type === 'power' || id.startsWith('power_')) {
-                        const cardValue = String(card.value || '').trim();
-                        const cardUniverse = (card.universe || 'ERB').trim() || 'ERB';
-                        const cardPowerType = (card.power_type || '').trim();
-                        
-                        if (cardValue === value && cardUniverse === universe && cardPowerType === powerType) {
-                            allAlternateArts.push({
-                                id: card.id || id,
-                                imagePath: getCardImagePath(card, 'power'),
-                                name: `${value} - ${powerType}`
-                            });
-                        }
+                    const iterCardType = card.cardType || card.type || '';
+                    if ((iterCardType === 'power' || id.startsWith('power_')) && 
+                        String(card.value || '').trim() === value && 
+                        (card.universe || 'ERB').trim() === universe &&
+                        (card.power_type || '').trim() === powerType) {
+                        allAlternateArts.push({
+                            id: card.id || id,
+                            imagePath: getCardImagePath(card, 'power'),
+                            name: `${value} - ${powerType}`
+                        });
                     }
                 });
             }
             
+            // Deduplicate by image path - only show unique images
+            const uniqueAlternateArts = [];
+            const seenImagePaths = new Set();
+            
+            for (const art of allAlternateArts) {
+                if (!seenImagePaths.has(art.imagePath)) {
+                    seenImagePaths.add(art.imagePath);
+                    uniqueAlternateArts.push(art);
+                }
+            }
+            
             // Sort: original art first, then alternates
-            allAlternateArts.sort((a, b) => {
+            uniqueAlternateArts.sort((a, b) => {
                 const aIsAlternate = a.imagePath.includes('/alternate/');
                 const bIsAlternate = b.imagePath.includes('/alternate/');
                 if (aIsAlternate && !bIsAlternate) return 1;
@@ -12234,7 +12242,7 @@
                 return 0;
             });
             
-            if (allAlternateArts.length <= 1) {
+            if (uniqueAlternateArts.length <= 1) {
                 console.log('No alternate arts found for this card');
                 return;
             }
@@ -12257,11 +12265,11 @@
             const grid = document.createElement('div');
             grid.className = 'alternate-art-options';
             
-            // Find current card index in allAlternateArts
-            const currentCardIndex = allAlternateArts.findIndex(art => art.id === cardId);
+            // Find current card index in uniqueAlternateArts
+            const currentCardIndex = uniqueAlternateArts.findIndex(art => art.id === cardId);
             
             // Add each card as an option
-            allAlternateArts.forEach((card, index) => {
+            uniqueAlternateArts.forEach((card, index) => {
                 const cardOption = document.createElement('div');
                 cardOption.className = 'art-option';
                 
@@ -12275,10 +12283,19 @@
                 img.alt = card.name;
                 
                 const label = document.createElement('span');
-                if (index === 0 && !card.imagePath.includes('/alternate/')) {
+                // Label: first non-alternate is "Original Art", alternates are numbered sequentially
+                const isAlternate = card.imagePath.includes('/alternate/');
+                if (!isAlternate) {
                     label.textContent = 'Original Art';
                 } else {
-                    label.textContent = `Alternate Art ${index}`;
+                    // Count how many alternates come before this one
+                    let alternateCount = 0;
+                    for (let i = 0; i < index; i++) {
+                        if (uniqueAlternateArts[i].imagePath.includes('/alternate/')) {
+                            alternateCount++;
+                        }
+                    }
+                    label.textContent = `Alternate Art ${alternateCount + 1}`;
                 }
                 
                 cardOption.appendChild(img);
@@ -12289,8 +12306,17 @@
                     // Update the card ID in the deck
                     window.deckEditorCards[cardIndex].cardId = card.id;
                     
-                    // Re-render deck cards
-                    displayDeckCardsForEditing();
+                    // Re-render deck cards based on current view
+                    const deckCardsEditor = document.querySelector('.deck-cards-editor');
+                    if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                        // Card View - use renderDeckCardsCardView
+                        if (typeof renderDeckCardsCardView === 'function') {
+                            renderDeckCardsCardView();
+                        }
+                    } else {
+                        // Tile View or other views - use displayDeckCardsForEditing
+                        displayDeckCardsForEditing();
+                    }
                     
                     // Close modal
                     document.body.removeChild(overlay);
