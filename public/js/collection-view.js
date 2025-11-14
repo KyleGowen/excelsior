@@ -249,11 +249,15 @@ function displayCollectionCards(cards) {
     }
 
     let html = `
-        <table class="collection-category-table" id="collection-table">
+        <table class="collection-category-table" id="collection-table" data-sort="set_number" data-sort-dir="asc">
             <thead>
                 <tr>
                     <th class="collection-col-quantity sortable resizable" data-sort="quantity">
                         <div class="th-content">Qty <span class="sort-indicator"></span></div>
+                        <div class="resize-handle"></div>
+                    </th>
+                    <th class="collection-col-set-number sortable resizable" data-sort="set_number">
+                        <div class="th-content"># <span class="sort-indicator"> ▲</span></div>
                         <div class="resize-handle"></div>
                     </th>
                     <th class="collection-col-name sortable resizable" data-sort="name">
@@ -300,6 +304,10 @@ function displayCollectionCards(cards) {
         
         const cardSet = translateUniverse(card.universe);
         
+        // Get set_number from card_data
+        const setNumber = card.card_data?.set_number || '';
+        const setNumberValue = setNumber ? parseInt(setNumber) : 999999; // Use high number for null values to sort them last
+        
         // Check if this is an alternate art by checking if image_path contains '/alternate/'
         const isAlternateArt = card.image_path && card.image_path.includes('/alternate/');
         const displayName = isAlternateArt ? `${cardName} (Alternate Art)` : cardName;
@@ -321,11 +329,13 @@ function displayCollectionCards(cards) {
                 data-card-type="${card.card_type}"
                 data-image-path="${escapedImagePathAttr}"
                 data-quantity="${card.quantity}"
+                data-set-number="${setNumberValue}"
                 data-card-name="${displayName.replace(/"/g, '&quot;')}"
                 data-card-set="${cardSet.replace(/"/g, '&quot;')}"
                 onmouseenter="showCardHoverModal('${escapedImagePath}', '${displayName.replace(/'/g, "\\'")}')"
                 onmouseleave="hideCardHoverModal()">
                 <td class="collection-card-quantity">${card.quantity}</td>
+                <td class="collection-card-set-number">${setNumber || ''}</td>
                 <td class="collection-card-name">${displayName}</td>
                 <td class="collection-card-type">${formatCardType(cardType)}</td>
                 <td class="collection-card-set">${cardSet}</td>
@@ -357,6 +367,19 @@ function displayCollectionCards(cards) {
     
     // Add event listeners for sortable column headers
     initializeCollectionSorting();
+    
+    // Apply default sort by set_number ascending
+    if (table) {
+        // Update sort indicator for set_number column
+        const setNumberHeader = table.querySelector('[data-sort="set_number"]');
+        if (setNumberHeader) {
+            const indicator = setNumberHeader.querySelector('.sort-indicator');
+            if (indicator) {
+                indicator.textContent = ' ▲';
+            }
+        }
+        sortCollectionTable(table, 'set_number', 'asc');
+    }
     
     // Add event listeners for resizable columns
     initializeCollectionResizing();
@@ -798,6 +821,10 @@ function sortCollectionTable(table, sortField, direction) {
             case 'quantity':
                 aValue = parseInt(a.getAttribute('data-quantity') || '0');
                 bValue = parseInt(b.getAttribute('data-quantity') || '0');
+                break;
+            case 'set_number':
+                aValue = parseInt(a.getAttribute('data-set-number') || '999999');
+                bValue = parseInt(b.getAttribute('data-set-number') || '999999');
                 break;
             case 'name':
                 aValue = (a.getAttribute('data-card-name') || '').toLowerCase();
