@@ -576,6 +576,9 @@
     <link rel="stylesheet" href="/components/globalNav.css">
     <script src="/components/globalNav.js"></script>
     
+    <!-- Login Component -->
+    <link rel="stylesheet" href="/components/login/login.css">
+    
     <!-- Extracted JavaScript Files -->
     <script src="/js/utilities.js"></script>
     <script src="/js/layout-manager.js"></script>
@@ -585,6 +588,7 @@
     <script src="/js/search-filter.js"></script>
     <script src="/js/modal-ui.js"></script>
     <script src="/js/auth-app-init.js"></script>
+    <script src="/components/login/login.js"></script>
     <script src="/js/app-initialization.js"></script>
     <script src="/js/data-loading.js"></script>
     <script src="/js/deck-editor-core.js"></script>
@@ -606,28 +610,8 @@
     <script src="/js/filter-functions.js"></script>
 </head>
 <body>
-    <!-- Login Modal -->
-    <div id="loginModal" class="login-modal">
-        <div class="login-modal-content">
-            <div class="login-header">
-                <img src="/src/resources/images/logo/logo5.png" alt="Excelsior Deckbuilder" style="max-width: 300px; height: auto; display: block; margin: 0 auto;" data-click-handler="handleLoginLogoClick">
-            </div>
-            <form id="loginForm" class="login-form">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" autocomplete="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" autocomplete="current-password" required>
-                </div>
-                <div id="loginError" class="error-message" style="display: none;"></div>
-                <button type="submit" class="login-btn">Log In</button>
-            </form>
-            <button type="button" id="guestLoginBtn" class="guest-btn">Continue as Guest</button>
-        </div>
-    </div>
-
+    <!-- Login Modal will be loaded by login.js component -->
+    
     <div class="container" id="mainContainer" style="display: block; opacity: 1;">
         <!-- Global Navigation Component -->
         <div id="globalNav"></div>
@@ -2657,27 +2641,7 @@
                 showLoginModal();
             }
             
-            // Login form event listener
-            document.getElementById('loginForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                hideLoginError();
-                
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                
-                if (!username || !password) {
-                    showLoginError('Please enter both username and password');
-                    return;
-                }
-                
-                await login(username, password);
-            });
-            
-            // Guest login button event listener
-            document.getElementById('guestLoginBtn').addEventListener('click', async () => {
-                hideLoginError();
-                await login('guest', 'guest');
-            });
+            // Login form and guest login button event listeners are now handled by login.js component
             
             // Logout button event listener
             document.getElementById('logoutBtn').addEventListener('click', logout);
