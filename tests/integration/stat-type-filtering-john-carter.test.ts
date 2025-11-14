@@ -42,9 +42,10 @@ describe('Stat Type Filtering - John Carter special case', () => {
     expect(johnCarter).toBeTruthy();
 
     // Add John Carter to deck
+    // Ensure cardId is a string (UUIDs from database might be objects)
     await apiClient.addCardToDeck(testDeckId!, {
       cardType: 'character',
-      cardId: johnCarter.id,
+      cardId: String(johnCarter.id),
       quantity: 1,
     });
 

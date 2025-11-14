@@ -510,15 +510,24 @@ export class PostgreSQLDeckRepository implements DeckRepository {
   }
 
   // Deck card management methods
-  async addCardToDeck(deckId: string, cardType: string, cardId: string, quantity: number = 1): Promise<boolean> {
+  async addCardToDeck(deckId: string, cardType: string, cardId: string, quantity: number = 1, selectedAlternateImage?: string): Promise<boolean> {
+    // Note: selectedAlternateImage parameter is accepted for API compatibility but ignored
+    // since selected_alternate_image column was removed in migration V181
     const client = await this.pool.connect();
     try {
       // First, validate that the card exists in the appropriate card table
       let cardExists = false;
       switch (cardType) {
         case 'character':
-          const characterResult = await client.query('SELECT id FROM characters WHERE id = $1', [cardId]);
-          cardExists = characterResult.rows.length > 0;
+          // Try both UUID cast and string comparison since IDs might be stored differently
+          try {
+            const characterResult = await client.query('SELECT id FROM characters WHERE id::text = $1 OR id = $1::uuid', [cardId]);
+            cardExists = characterResult.rows.length > 0;
+          } catch (uuidError: any) {
+            // If UUID cast fails, try string comparison
+            const characterResult = await client.query('SELECT id FROM characters WHERE id::text = $1', [String(cardId)]);
+            cardExists = characterResult.rows.length > 0;
+          }
           break;
         case 'special':
           const specialResult = await client.query('SELECT id FROM special_cards WHERE id = $1', [cardId]);
@@ -570,7 +579,12 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       }
 
       if (!cardExists) {
-        console.error(`Card with ID ${cardId} does not exist in ${cardType} table`);
+        console.error(`Card with ID ${cardId} (type: ${typeof cardId}) does not exist in ${cardType} table`);
+        // Try to find similar IDs for debugging
+        if (cardType === 'character') {
+          const debugResult = await client.query('SELECT id::text, name FROM characters LIMIT 5');
+          console.error(`Sample character IDs: ${debugResult.rows.map((r: any) => r.id).join(', ')}`);
+        }
         return false;
       }
 

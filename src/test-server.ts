@@ -123,9 +123,27 @@ export async function initializeTestServer() {
     console.log('✅ Test server repositories initialized');
     
     // Start the server for integration tests
-    testServer = app.listen(PORT, () => {
-      console.log(`🌐 Test server is listening on port ${PORT}`);
-    });
+    // Handle port conflicts gracefully
+    try {
+      testServer = app.listen(PORT, () => {
+        console.log(`🌐 Test server is listening on port ${PORT}`);
+      });
+    } catch (error: any) {
+      // If port is already in use, check if it's our test server
+      if (error.code === 'EADDRINUSE') {
+        console.log(`⚠️ Port ${PORT} is already in use. Checking if it's our test server...`);
+        // Try to use the existing server instance
+        // The server might already be running from a previous test suite
+        if (testServer) {
+          console.log('✅ Reusing existing test server instance');
+          serverInitialized = true;
+          return { app, server: testServer };
+        } else {
+          throw new Error(`Port ${PORT} is already in use by another process. Please stop it before running tests.`);
+        }
+      }
+      throw error;
+    }
     
     serverInitialized = true;
     

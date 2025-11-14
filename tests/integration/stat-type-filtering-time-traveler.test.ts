@@ -38,9 +38,10 @@ describe('Stat Type Filtering - Time Traveler special case', () => {
     const timeTraveler = characters.find((c: any) => (c.name || '').toLowerCase() === 'time traveler');
     expect(timeTraveler).toBeTruthy();
 
+    // Ensure cardId is a string (UUIDs from database might be objects)
     await apiClient.addCardToDeck(testDeckId!, {
       cardType: 'character',
-      cardId: timeTraveler.id,
+      cardId: String(timeTraveler.id),
       quantity: 1,
     });
 

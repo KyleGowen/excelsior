@@ -1364,6 +1364,7 @@
                             <span id="deckTitleValidationBadge" class="deck-validation-badge"></span>
                             <span id="readOnlyBadge" class="deck-validation-badge read-only" style="display: none;">Read-Only</span>
                         </div>
+                        <p id="deckEditorDescription" class="deck-description editable-description" data-edit-handler="startEditingDescription"></p>
                         <div id="readOnlyIndicator" class="read-only-indicator" style="display: none;">
                             <span class="read-only-text">📖 Read Only Mode</span>
                         </div>
@@ -1842,13 +1843,10 @@
             
             // Show selected tab
             const selectedTab = document.getElementById(tabName + '-tab');
-            console.log('🔍 DEBUG: Tab switching - tabName:', tabName, 'selectedTab:', !!selectedTab);
             if (selectedTab) {
-                console.log('🔍 DEBUG: Setting', tabName + '-tab', 'to display: block');
                 selectedTab.style.display = 'block';
-                console.log('🔍 DEBUG: After setting, display style is:', selectedTab.style.display);
             } else {
-                console.error('❌ DEBUG: Tab element not found:', tabName + '-tab');
+                console.error('Tab element not found:', tabName + '-tab');
             }
             
             // Update search placeholder for all tabs
@@ -1885,9 +1883,7 @@
                 setupSearch();
                 loadCharacters();
             } else if (tabName === 'special-cards') {
-                console.log('🔍 DEBUG: Switching to special-cards tab, calling setupSpecialCardSearch()');
                 setupSpecialCardSearch();
-                console.log('🔍 DEBUG: Calling loadSpecialCards()');
                 loadSpecialCards();
             } else if (tabName === 'advanced-universe') {
                 setupAdvancedUniverseSearch();
@@ -2452,9 +2448,6 @@
         const isReadOnlyFromQuery = urlParams.get('readonly') === 'true';
         
         // Note: Read-only mode class will be applied in loadDeckForEditing() after ownership verification
-        if (isReadOnlyFromQuery) {
-            console.log('🔍 Read-only parameter detected in URL - will verify ownership in loadDeckForEditing()');
-        }
         
         // Show/hide Read-Only badge based on read-only mode
         window.updateReadOnlyBadge = function() {
@@ -2525,7 +2518,6 @@
                 mutations.forEach(function(mutation) {
                     if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
                         // characters-tab style changed
-                        console.trace('🚨 ALERT: characters-tab style change call stack');
                     }
                 });
             });
@@ -2607,20 +2599,15 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                console.log('🚀 Page initialization started');
-                
                 // Load global navigation first
                 await loadGlobalNav();
-                console.log('✅ Global navigation loaded');
                 
                 const authResult = await checkAuthentication();
-                console.log('🔐 Authentication result:', authResult);
                 currentUser = authResult.currentUser; // Update global currentUser after checkAuthentication
                 window.currentUser = currentUser; // Also set on window for modules to access
 
                 // Initialize ViewManager
                 viewManager.initialize();
-                console.log('✅ ViewManager initialized');
 
                 // Update user welcome message and show/hide Create User button based on role
                 if (typeof updateUserWelcome === 'function') {
@@ -2632,9 +2619,7 @@
                     if (typeof updateUserWelcome === 'function') {
                         updateUserWelcome();
                     }
-                    console.log('✅ User is authenticated');
                     if (authResult.deckId) {
-                        console.log('🎯 Deck ID detected:', authResult.deckId);
                         // Going directly to deck editor - skip showing main app to avoid flash
                         
                         // Ensure database view is hidden to prevent flash
@@ -2657,17 +2642,13 @@
                         const urlParams = new URLSearchParams(window.location.search);
                         const isReadOnlyFromQuery = urlParams.get('readonly') === 'true';
                         
-                        console.log('📥 Loading deck for editing...');
                         await loadDeckForEditing(authResult.deckId, authResult.urlUserId, isReadOnlyFromQuery);
-                        console.log('✅ Deck loaded, showing editor');
                         showDeckEditor();
                     } else {
-                        console.log('📋 No deck ID - showing main app');
                         // No deck ID - show main app normally
                         showMainApp(); // This will load general app data (characters, etc.)
                     }
                 } else {
-                    console.log('🔒 User not authenticated - showing login modal');
                     showLoginModal();
                 }
             } catch (error) {
@@ -4122,8 +4103,6 @@
             
             // If columns exist, preserve them by updating content within them
             if (hasColumns) {
-                console.log('🔄 renderDeckCardsListView: Updating existing columns');
-                
                 // Map existing sections to their columns by type to prevent redistribution
                 const leftColumnTypes = new Set();
                 const rightColumnTypes = new Set();
@@ -4165,10 +4144,6 @@
                     }
                 });
                 
-                console.log('📊 Left column types:', Array.from(leftColumnTypes));
-                console.log('📊 Right column types:', Array.from(rightColumnTypes));
-                console.log('📏 Preserved section heights:', Object.fromEntries(sectionHeights));
-                
                 // Prepare new content first
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = html;
@@ -4184,10 +4159,8 @@
                         const type = itemsContainer.id.replace('deck-list-items-', '');
                         if (leftColumnTypes.has(type)) {
                             leftSections.push(section);
-                            console.log(`✅ ${type} → left column (preserved)`);
                         } else if (rightColumnTypes.has(type)) {
                             rightSections.push(section);
-                            console.log(`✅ ${type} → right column (preserved)`);
                         } else {
                             // New section type - use original distribution logic
                             const totalExisting = leftColumnTypes.size + rightColumnTypes.size;
@@ -4388,7 +4361,6 @@
                         const width = qty.offsetWidth;
                         const computedWidth = window.getComputedStyle(qty).width;
                         if (idx < 5) { // Log first 5 for debugging
-                            console.log(`🔢 After replaceChildren - Quantity[${idx}]: "${text}" → offsetWidth: ${width}px, computedWidth: ${computedWidth}`);
                         }
                     });
                     
@@ -4612,7 +4584,6 @@
             if (!deckCardsEditor) return;
 
             // FORCE flex-direction to column for Card View
-            console.log('🔧 FORCING Card View flex-direction to column');
             deckCardsEditor.style.display = 'flex';
             deckCardsEditor.style.flexDirection = 'column';
             deckCardsEditor.style.flexWrap = 'nowrap';
@@ -4724,34 +4695,14 @@
                         // Direct lookup using UUID
                         let availableCard = window.availableCardsMap.get(card.cardId);
                         
-                        // Debug logging for basic-universe cards
+                        // Try alternate key formats for basic-universe cards
                         if ((card.type === 'basic-universe' || card.type === 'basic_universe') && !availableCard) {
-                            console.log(`🔍 CARD VIEW DEBUG: Basic universe card not found with direct lookup:`, {
-                                cardId: card.cardId,
-                                type: card.type,
-                                cardName: card.cardName,
-                                fullCard: card
-                            });
-                            
-                            // Try alternate key formats
                             const normalizedType = 'basic-universe';
                             availableCard = window.availableCardsMap.get(`${normalizedType}_${card.cardId}`) ||
                                           window.availableCardsMap.get(`${card.type}_${card.cardId}`);
                             
-                            if (availableCard) {
-                                console.log(`✅ CARD VIEW DEBUG: Found basic universe card with alternate key`);
-                            } else {
-                                // Check what basic-universe cards exist in the map
-                                const allBasicUniverseInMap = Array.from(window.availableCardsMap.entries()).filter(([k, v]) => 
-                                    v && (v.type === 'basic-universe' || v.cardType === 'basic-universe' || v.card_type === 'basic-universe' || v.card_type === 'basic_universe')
-                                );
-                                console.log(`❌ CARD VIEW DEBUG: Basic universe card still not found. Total basic-universe in map:`, allBasicUniverseInMap.length);
-                                console.log(`❌ CARD VIEW DEBUG: Sample keys from map:`, allBasicUniverseInMap.slice(0, 5).map(([k, v]) => ({
-                                    key: k,
-                                    id: v.id,
-                                    name: v.card_name || v.name
-                                })));
-                                console.log(`❌ CARD VIEW DEBUG: Looking for cardId:`, card.cardId);
+                            if (!availableCard) {
+                                // Card not found - will use placeholder
                             }
                         }
                         
@@ -4920,7 +4871,6 @@
                     // Debug logging for quantity width changes
                     const currentWidth = quantity.offsetWidth;
                     const currentText = quantity.textContent.trim();
-                    console.log(`🔢 Quantity element: "${currentText}" → width: ${currentWidth}px`);
                 }
                 if (name) {
                     name.style.setProperty('display', 'inline-block', 'important');
@@ -5335,30 +5285,17 @@
             setTimeout(() => {
                 const statLabels = document.querySelectorAll('.deck-summary-stats .stat-label');
                 const statValues = document.querySelectorAll('.deck-summary-stats .stat-value');
-                console.log('🔍 [DEBUG] Font size check - found', statLabels.length, 'labels and', statValues.length, 'values');
                 if (statLabels.length > 0) {
-                    const label = statLabels[0];
-                    const computedStyle = window.getComputedStyle(label);
-                    console.log('  Stat Label font-size:', computedStyle.fontSize);
-                    console.log('  Stat Label inline style:', label.style.fontSize);
-                    console.log('  Stat Label classes:', label.className);
                     // Force apply font size to ALL labels
                     statLabels.forEach(l => {
                         l.style.setProperty('font-size', '0.65rem', 'important');
                     });
-                    console.log('  ✅ Applied 0.65rem to all', statLabels.length, 'labels');
                 }
                 if (statValues.length > 0) {
-                    const value = statValues[0];
-                    const computedStyle = window.getComputedStyle(value);
-                    console.log('  Stat Value font-size:', computedStyle.fontSize);
-                    console.log('  Stat Value inline style:', value.style.fontSize);
-                    console.log('  Stat Value classes:', value.className);
                     // Force apply font size to ALL values
                     statValues.forEach(v => {
                         v.style.setProperty('font-size', '0.85rem', 'important');
                     });
-                    console.log('  ✅ Applied 0.85rem to all', statValues.length, 'values');
                 }
             }, 100);
             
@@ -6715,7 +6652,6 @@
         async function loadUIPreferences(deckId) {
             // Skip loading UI preferences for guest users
             if (isGuestUser()) {
-                console.log('Skipping UI preferences load for guest user');
                 return {};
             }
             
@@ -6746,7 +6682,6 @@
         async function saveUIPreferences(deckId, preferences) {
             // Skip saving UI preferences for guest users
             if (isGuestUser()) {
-                console.log('Skipping UI preferences save for guest user');
                 return;
             }
             
@@ -7836,11 +7771,18 @@
             window.deckEditorCards = [];
             currentDeckId = null;
             
-            // Update modal title
+            // Update modal title and description
             const titleElement = document.getElementById('deckEditorTitle');
+            const descriptionElement = document.getElementById('deckEditorDescription');
             
             if (titleElement) {
                 titleElement.textContent = 'New Deck';
+            }
+            
+            if (descriptionElement) {
+                descriptionElement.textContent = 'Click to add description';
+                descriptionElement.style.display = 'block';
+                descriptionElement.classList.add('placeholder');
             }
             
             // Clear any existing cards
@@ -7866,14 +7808,9 @@
 
         // loadDeckForEditing function moved to external file
         async function displayDeckCardsForEditing() {
-            console.log(`[ChangeArt] ===== displayDeckCardsForEditing CALLED =====`);
-            console.log(`[ChangeArt] deckEditorCards.length=${window.deckEditorCards ? window.deckEditorCards.length : 'undefined'}`);
-            console.log(`[ChangeArt] availableCardsMap size=${window.availableCardsMap ? window.availableCardsMap.size : 'undefined'}`);
-            
             const deckCardsEditor = document.getElementById('deckCardsEditor');
             
             if (window.deckEditorCards.length === 0) {
-                console.log(`[ChangeArt] Deck is empty, returning early`);
                 deckCardsEditor.innerHTML = `
                     <div class="empty-deck-message">
                         <p>No cards in this deck yet.</p>
@@ -7886,16 +7823,12 @@
                 return;
             }
             
-            // Log all cards in deck
-            console.log(`[ChangeArt] Cards in deck:`, window.deckEditorCards.map((c, i) => ({ index: i, cardId: c.cardId, type: c.type })));
-            
             // Validate deck and show results
             await showDeckValidation(window.window.deckEditorCards);
             
             // Group cards by type (normalize underscore format to hyphen format)
             const cardsByType = {};
             window.deckEditorCards.forEach((card, index) => {
-                console.log(`[ChangeArt] Grouping card index=${index}, cardId=${card.cardId}, type=${card.type}`);
                 let type = card.type;
                 // Convert underscore format to hyphen format for consistency
                 if (type === 'ally_universe') {
@@ -7939,7 +7872,6 @@
             // Render each type group
             typeOrder.forEach(type => {
                 if (cardsByType[type] && cardsByType[type].length > 0) {
-                    console.log(`[ChangeArt] Rendering type="${type}", count=${cardsByType[type].length}`);
                     const typeCards = cardsByType[type];
                     const typeName = typeDisplayNames[type] || formatCardType(type);
                     const cardCount = typeCards.reduce((total, card) => total + (card.quantity || 1), 0);
@@ -8012,12 +7944,10 @@
                     
                     
                     if (type === 'special') {
-                        console.log(`[ChangeArt] Entering SPECIAL cards rendering path, typeCards.length=${typeCards.length}`);
                         // Special handling for special cards - group by character
                         const characterGroups = {};
                         
                         typeCards.forEach(cardData => {
-                            console.log(`[ChangeArt] Processing special card in forEach: cardId=${cardData.cardId}, index=${cardData.originalIndex}`);
                             const card = cardData;
                             // Convert internal type format to map key format
                             let mapKeyType = card.type;
@@ -8085,12 +8015,9 @@
                                 
                                 if (!availableCard && (card.type === 'basic-universe' || card.type === 'basic_universe')) {
                                     // Try alternate key formats for basic-universe cards
-                                    console.log(`🔍 BASIC_UNIVERSE DISPLAY: Card not found with direct lookup, trying alternate keys for cardId: ${card.cardId}`);
                                     availableCard = window.availableCardsMap.get(`basic-universe_${card.cardId}`) || 
                                                    window.availableCardsMap.get(`basic_universe_${card.cardId}`);
-                                    if (availableCard) {
-                                        console.log(`✅ BASIC_UNIVERSE DISPLAY: Found card with alternate key`);
-                                    } else {
+                                    if (!availableCard) {
                                         console.warn('❌ BASIC_UNIVERSE DISPLAY: Card not found with any key format:', {
                                             cardId: card.cardId,
                                             type: card.type,
@@ -8140,12 +8067,10 @@
                                 }
                                 
                                 // Check if this special card has alternate arts
-                                console.log(`[ChangeArt] SPECIAL CARD: Processing cardId=${card.cardId}, index=${index}, type=${card.type}`);
                                 let hasAlternateArtsSpecial = false;
                                 if (availableCard && window.availableCardsMap) {
                                     const characterName = (availableCard.character || '').trim();
                                     const cardName = (availableCard.name || availableCard.card_name || '').trim();
-                                    console.log(`[ChangeArt] SPECIAL CARD: Looking for character="${characterName}", cardName="${cardName}"`);
                                     let count = 0;
                                     window.availableCardsMap.forEach((c, id) => {
                                         const cardType = c.cardType || c.type || '';
@@ -8156,13 +8081,9 @@
                                         }
                                     });
                                     hasAlternateArtsSpecial = count > 1;
-                                    console.log(`[ChangeArt] SPECIAL CARD: Found ${count} matches, hasAlternateArts=${hasAlternateArtsSpecial}`);
-                                } else {
-                                    console.log(`[ChangeArt] SPECIAL CARD: Missing availableCard or availableCardsMap`);
                                 }
                                 const changeArtButtonSpecial = hasAlternateArtsSpecial ? 
                                     `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
-                                console.log(`[ChangeArt] SPECIAL CARD: Button HTML length=${changeArtButtonSpecial.length}`);
                                 
                                 cardsHtml += `
                                     <div class="deck-card-editor-item preview-view ${cardClass}" draggable="true" data-index="${index}" data-type="${card.type}"
@@ -8192,14 +8113,11 @@
                             `;
                         });
                     } else if (type === 'power') {
-                        console.log(`[ChangeArt] Entering POWER cards rendering path, powerCardsSortMode=${powerCardsSortMode}, typeCards.length=${typeCards.length}`);
                         if (powerCardsSortMode === 'type') {
-                            console.log(`[ChangeArt] Using TYPE-SORTED power cards path`);
                             // Special handling for power cards - group by power type
                             const powerTypeGroups = {};
                             
                             typeCards.forEach(cardData => {
-                                console.log(`[ChangeArt] Processing power card (type-sorted) in forEach: cardId=${cardData.cardId}, index=${cardData.originalIndex}`);
                                 const card = cardData;
                                 // Convert internal type format to map key format
                                 let mapKeyType = card.type;
@@ -8286,13 +8204,11 @@
                                     const cardDetails = '';
                                     
                                     // Check if this power card has alternate arts
-                                    console.log(`[ChangeArt] POWER CARD (type-sorted): Processing cardId=${card.cardId}, index=${index}`);
                                     let hasAlternateArtsPower1 = false;
                                     if (availableCard && window.availableCardsMap) {
                                         const value = String(availableCard.value || '').trim();
                                         const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
                                         const powerType = (availableCard.power_type || '').trim();
-                                        console.log(`[ChangeArt] POWER CARD (type-sorted): Looking for value="${value}", universe="${universe}", powerType="${powerType}"`);
                                         let count = 0;
                                         window.availableCardsMap.forEach((c, id) => {
                                             const cardType = c.cardType || c.type || '';
@@ -8304,13 +8220,9 @@
                                             }
                                         });
                                         hasAlternateArtsPower1 = count > 1;
-                                        console.log(`[ChangeArt] POWER CARD (type-sorted): Found ${count} matches, hasAlternateArts=${hasAlternateArtsPower1}`);
-                                    } else {
-                                        console.log(`[ChangeArt] POWER CARD (type-sorted): Missing availableCard or availableCardsMap`);
                                     }
                                     const changeArtButtonPower1 = hasAlternateArtsPower1 ? 
                                         `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
-                                    console.log(`[ChangeArt] POWER CARD (type-sorted): Button HTML length=${changeArtButtonPower1.length}`);
                                     
                                     cardsHtml += `
                                         <div class="deck-card-editor-item preview-view power-card" draggable="true" data-index="${index}" data-type="${card.type}"
@@ -8373,13 +8285,11 @@
                                 const cardDetails = '';
                                 
                                 // Check if this power card has alternate arts
-                                console.log(`[ChangeArt] POWER CARD (value-sorted): Processing cardId=${card.cardId}, index=${index}`);
                                 let hasAlternateArtsPower2 = false;
                                 if (availableCard && window.availableCardsMap) {
                                     const value = String(availableCard.value || '').trim();
                                     const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
                                     const powerType = (availableCard.power_type || '').trim();
-                                    console.log(`[ChangeArt] POWER CARD (value-sorted): Looking for value="${value}", universe="${universe}", powerType="${powerType}"`);
                                     let count = 0;
                                     window.availableCardsMap.forEach((c, id) => {
                                         const cardType = c.cardType || c.type || '';
@@ -8391,13 +8301,9 @@
                                         }
                                     });
                                     hasAlternateArtsPower2 = count > 1;
-                                    console.log(`[ChangeArt] POWER CARD (value-sorted): Found ${count} matches, hasAlternateArts=${hasAlternateArtsPower2}`);
-                                } else {
-                                    console.log(`[ChangeArt] POWER CARD (value-sorted): Missing availableCard or availableCardsMap`);
                                 }
                                 const changeArtButtonPower2 = hasAlternateArtsPower2 ? 
                                     `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
-                                console.log(`[ChangeArt] POWER CARD (value-sorted): Button HTML length=${changeArtButtonPower2.length}`);
                                 
                                 cardsHtml += `
                                     <div class="deck-card-editor-item preview-view power-card" draggable="true" data-index="${index}" data-type="${card.type}"
@@ -8448,9 +8354,6 @@
                                                       'advanced-universe';
                                 availableCard = window.availableCardsMap.get(`${normalizedType}_${card.cardId}`) ||
                                               window.availableCardsMap.get(`${card.type}_${card.cardId}`);
-                                if (availableCard) {
-                                    console.log(`✅ Found ${normalizedType} card with alternate key format for cardId: ${card.cardId}`);
-                                }
                             }
                         
                         if (!availableCard) {
@@ -8479,9 +8382,6 @@
                             `;
                             return;
                         }
-                        
-                        // Debug: Log card being processed
-                        console.log(`[ChangeArt] Processing card: ${card.cardId}, type: ${card.type}, name: ${availableCard.name || availableCard.card_name || 'unknown'}`);
                         
                         let cardDetails = '';
                         if (card.type === 'character') {
@@ -8600,13 +8500,11 @@
                         const koDimmedClass = isKOd ? 'ko-dimmed' : '';
                         
                         // Check if this card has alternate arts
-                        console.log(`[ChangeArt] REGULAR: Processing cardId=${card.cardId}, index=${index}, type=${card.type}`);
                         let hasAlternateArts = false;
                         if (availableCard && window.availableCardsMap) {
                             if (card.type === 'character') {
                                 const name = (availableCard.name || '').trim();
                                 const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
-                                console.log(`[ChangeArt] REGULAR CHARACTER: Looking for name="${name}", universe="${universe}"`);
                                 let count = 0;
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
@@ -8617,11 +8515,9 @@
                                     }
                                 });
                                 hasAlternateArts = count > 1;
-                                console.log(`[ChangeArt] REGULAR CHARACTER: Found ${count} matches, hasAlternateArts=${hasAlternateArts}`);
                             } else if (card.type === 'special') {
                                 const characterName = (availableCard.character || '').trim();
                                 const cardName = (availableCard.name || availableCard.card_name || '').trim();
-                                console.log(`[ChangeArt] REGULAR SPECIAL: Looking for character="${characterName}", cardName="${cardName}"`);
                                 let count = 0;
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
@@ -8632,12 +8528,10 @@
                                     }
                                 });
                                 hasAlternateArts = count > 1;
-                                console.log(`[ChangeArt] REGULAR SPECIAL: Found ${count} matches, hasAlternateArts=${hasAlternateArts}`);
                             } else if (card.type === 'power') {
                                 const value = String(availableCard.value || '').trim();
                                 const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
                                 const powerType = (availableCard.power_type || '').trim();
-                                console.log(`[ChangeArt] REGULAR POWER: Looking for value="${value}", universe="${universe}", powerType="${powerType}"`);
                                 let count = 0;
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
@@ -8649,21 +8543,11 @@
                                     }
                                 });
                                 hasAlternateArts = count > 1;
-                                console.log(`[ChangeArt] REGULAR POWER: Found ${count} matches, hasAlternateArts=${hasAlternateArts}`);
-                            }
-                        } else {
-                            if (!availableCard) {
-                                console.log(`[ChangeArt] REGULAR: No availableCard for cardId: ${card.cardId}, type: ${card.type}`);
-                            }
-                            if (!window.availableCardsMap) {
-                                console.log(`[ChangeArt] REGULAR: availableCardsMap not available`);
                             }
                         }
                         
                         const changeArtButton = hasAlternateArts ? 
                             `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
-                        
-                        console.log(`[ChangeArt] REGULAR: Button HTML length=${changeArtButton.length}, hasAlternateArts=${hasAlternateArts}`);
                         
                         cardsHtml += `
                                 <div class="deck-card-editor-item preview-view ${characterClass} ${powerClass} ${locationClass} ${missionClass} ${eventClass} ${aspectClass} ${teamworkClass} ${allyUniverseClass} ${basicUniverseClass} ${advancedUniverseClass} ${trainingClass} ${koDimmedClass}" draggable="true" data-index="${index}" data-type="${card.type}" data-card-id="${card.cardId}"
@@ -9803,7 +9687,6 @@
             const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
             
             const removedCard = window.deckEditorCards[index];
-            console.log('🎯 Removing card:', removedCard);
             
             // If removing a character, also remove it from KO set
             if (removedCard && removedCard.type === 'character' && window.SimulateKO) {
@@ -9996,10 +9879,8 @@
                 // Check "One Per Deck" limit before increasing quantity
                 const card = window.window.deckEditorCards[index];
                 const cardData = window.availableCardsMap.get(card.cardId);
-                console.log('🔍 One-per-deck check for +1 button on', card.type, card.cardId, ':', cardData);
                 const isOnePerDeck = cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
                 if (isOnePerDeck) {
-                    console.log('🚫 Card is one-per-deck, blocking quantity increase');
                     const cardName = cardData.name || cardData.card_name || 'Unknown Card';
                     showNotification(`Cannot add more than 1 copy of "${cardName}" - One Per Deck`, 'error');
                     return;
@@ -10560,9 +10441,6 @@
 
         // Function to update One Per Deck card dimming status
         function updateOnePerDeckLimitStatus() {
-            console.log('🔍 updateOnePerDeckLimitStatus called');
-            console.log('📊 Current deckEditorCards:', window.deckEditorCards);
-            
             // Get all One Per Deck cards currently in the deck
             const onePerDeckCardsInDeck = new Set();
             window.deckEditorCards.forEach(card => {
@@ -10581,16 +10459,11 @@
                 
                 if (cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true)) {
                     onePerDeckCardsInDeck.add(card.cardId);
-                    const cardName = cardData.name || cardData.card_name || 'Unknown';
-                    console.log(`✅ Found OPD card in deck: ${cardName} (ID: ${card.cardId})`);
                 }
             });
             
-            console.log('🎯 One Per Deck cards in deck:', Array.from(onePerDeckCardsInDeck));
-            
             // Update all card items for all card types
             const allCardItems = document.querySelectorAll('.card-item[data-id]');
-            console.log(`🔍 Found ${allCardItems.length} card items to process`);
             
             allCardItems.forEach(cardElement => {
                 const cardId = cardElement.getAttribute('data-id');
@@ -10622,15 +10495,12 @@
                         );
                     }
                     
-                    console.log(`🎯 Processing card: ${cardData ? (cardData.name || cardData.card_name || 'Unknown') : 'Unknown'} (ID: ${cardId}, Type: ${cardType}, isOnePerDeck: ${isOnePerDeck}, isInDeck: ${isInDeck}, isBasicUniverseInDeck: ${isBasicUniverseInDeck})`);
-                    
                     if (isOnePerDeck && isInDeck) {
                         // This is a One Per Deck card that's already in the deck - dim it
                         if (!cardElement.classList.contains('disabled')) {
                             cardElement.classList.add('disabled');
                             cardElement.setAttribute('draggable', 'false');
                             cardElement.title = 'One Per Deck - already in deck';
-                            console.log(`🔴 Dimming card: ${cardData.name}`);
                         }
                     } else if (cardType !== 'character' && cardType !== 'mission' && cardType !== 'location') {
                         // Only update non-character/non-mission/non-location cards here
@@ -10646,16 +10516,12 @@
                                 cardElement.classList.remove('disabled');
                                 cardElement.setAttribute('draggable', 'true');
                                 cardElement.title = '';
-                                console.log(`🟢 Un-dimming card (One Per Deck): ${cardData ? cardData.name : 'Unknown'}`);
-                            } else if (cardElement.classList.contains('disabled') && shouldRemainDisabled) {
-                                console.log(`🟡 Keeping card dimmed (other reason): ${cardData ? cardData.name : 'Unknown'}`);
                             }
                         } else if (cardElement.classList.contains('disabled')) {
                             // For non-special cards, un-dim normally
                             cardElement.classList.remove('disabled');
                             cardElement.setAttribute('draggable', 'true');
                             cardElement.title = '';
-                            console.log(`🟢 Un-dimming card: ${cardData ? cardData.name : 'Unknown'}`);
                         }
                     }
                 }
@@ -10766,8 +10632,6 @@
 
         // Function to update Assist card dimming status
         function updateAssistLimitStatus() {
-            console.log('[Assist] updateAssistLimitStatus called');
-            
             // Get all Assist cards currently in the deck
             const assistCardsInDeck = new Set();
             window.deckEditorCards.forEach(card => {
@@ -10777,11 +10641,8 @@
                 }
             });
             
-            console.log('[Assist] Assist cards in deck:', assistCardsInDeck.size, Array.from(assistCardsInDeck));
-            
             // Update all special card items for assist dimming
             const specialCardItems = document.querySelectorAll('.card-item[data-type="special"][data-id]');
-            console.log('[Assist] Found', specialCardItems.length, 'special card items');
             
             specialCardItems.forEach(cardElement => {
                 const cardId = cardElement.getAttribute('data-id');
@@ -10797,8 +10658,6 @@
                         const isInDeck = assistCardsInDeck.has(cardId);
                         const hasOtherAssist = assistCardsInDeck.size > 0;
                         
-                        console.log(`[Assist] Processing Assist card: ${cardData.name || cardData.card_name}, isInDeck: ${isInDeck}, hasOtherAssist: ${hasOtherAssist}`);
-                        
                         if (isInDeck || hasOtherAssist) {
                             // This is an Assist card and either it's in the deck or another assist is in the deck - dim it
                             cardElement.classList.add('disabled');
@@ -10808,35 +10667,24 @@
                             } else {
                                 cardElement.title = 'Assist - another assist already selected';
                             }
-                            console.log(`[Assist] Dimmed: ${cardData.name || cardData.card_name}`);
                         } else {
                             // This is an Assist card but no assist is in the deck
                             // Only enable it if it's not disabled for OTHER reasons (Ambush, Cataclysm, etc.)
                             const shouldBeDisabled = shouldSpecialCardBeDisabled(cardId, cardData);
-                            console.log(`[Assist] Checking if should remain disabled for other reasons: ${shouldBeDisabled}`);
                             if (!shouldBeDisabled) {
                                 cardElement.classList.remove('disabled');
                                 cardElement.setAttribute('draggable', 'true');
                                 cardElement.title = '';
-                                console.log(`[Assist] Un-dimmed: ${cardData.name || cardData.card_name}`);
-                            } else {
-                                console.log(`[Assist] Kept dimmed (other reason): ${cardData.name || cardData.card_name}`);
                             }
                         }
-                    } else if (isAmbush) {
-                        // This is an Ambush card - DO NOT TOUCH IT in this function
-                        console.log(`[Assist] Skipping Ambush card: ${cardData.name || cardData.card_name} (will be handled by updateAmbushLimitStatus)`);
                     }
                     // If it's not an Assist card, don't touch it - let other functions handle it
                 }
             });
-            console.log('[Assist] updateAssistLimitStatus complete');
         }
 
         // Function to update Ambush card dimming status
         function updateAmbushLimitStatus() {
-            console.log('[Ambush] updateAmbushLimitStatus called');
-            
             // Get all Ambush cards currently in the deck
             const ambushCardsInDeck = new Set();
             window.deckEditorCards.forEach(card => {
@@ -10846,11 +10694,8 @@
                 }
             });
             
-            console.log('[Ambush] Ambush cards in deck:', ambushCardsInDeck.size, Array.from(ambushCardsInDeck));
-            
             // Update all special card items for ambush dimming
             const specialCardItems = document.querySelectorAll('.card-item[data-type="special"][data-id]');
-            console.log('[Ambush] Found', specialCardItems.length, 'special card items');
             
             if (specialCardItems && specialCardItems.forEach) {
                 specialCardItems.forEach(cardElement => {
@@ -10859,15 +10704,12 @@
                     if (cardId) {
                         const cardData = window.availableCardsMap.get(cardId);
                         const isAmbush = cardData && cardData.is_ambush === true;
-                        const isAssist = cardData && cardData.is_assist === true;
                         
                         // CRITICAL: Only process Ambush cards, skip Assist cards entirely
                         if (isAmbush) {
                             // This is an Ambush card - check if it should be dimmed
                             const isInDeck = ambushCardsInDeck.has(cardId);
                             const hasOtherAmbush = ambushCardsInDeck.size > 0;
-                            
-                            console.log(`[Ambush] Processing Ambush card: ${cardData.name || cardData.card_name}, isInDeck: ${isInDeck}, hasOtherAmbush: ${hasOtherAmbush}`);
                             
                             if (isInDeck || hasOtherAmbush) {
                                 // This is an Ambush card and either it's in the deck or another ambush is in the deck - dim it
@@ -10878,30 +10720,21 @@
                                 } else {
                                     cardElement.title = 'Ambush - another ambush already selected';
                                 }
-                                console.log(`[Ambush] Dimmed: ${cardData.name || cardData.card_name}`);
                             } else {
                                 // This is an Ambush card but no ambush is in the deck
                                 // Only enable it if it's not disabled for OTHER reasons (Assist, Cataclysm, etc.)
                                 const shouldBeDisabled = shouldSpecialCardBeDisabled(cardId, cardData);
-                                console.log(`[Ambush] Checking if should remain disabled for other reasons: ${shouldBeDisabled}`);
                                 if (!shouldBeDisabled) {
                                     cardElement.classList.remove('disabled');
                                     cardElement.setAttribute('draggable', 'true');
                                     cardElement.title = '';
-                                    console.log(`[Ambush] Un-dimmed: ${cardData.name || cardData.card_name}`);
-                                } else {
-                                    console.log(`[Ambush] Kept dimmed (other reason): ${cardData.name || cardData.card_name}`);
                                 }
                             }
-                        } else if (isAssist) {
-                            // This is an Assist card - DO NOT TOUCH IT in this function
-                            console.log(`[Ambush] Skipping Assist card: ${cardData.name || cardData.card_name} (will be handled by updateAssistLimitStatus)`);
                         }
                         // If it's not an Ambush card, don't touch it - let other functions handle it
                     }
                 });
             }
-            console.log('[Ambush] updateAmbushLimitStatus complete');
         }
 
         // KO Feature Functions - Now handled by SimulateKO module
@@ -10988,8 +10821,6 @@
         }
 
         async function loadAvailableCards() {
-            console.log('[IndexHTML] ===== loadAvailableCards() CALLED (from index.html) =====');
-            console.trace('[IndexHTML] Stack trace:');
             try {
                 const cardCategories = document.getElementById('cardCategories');
                 
@@ -11082,9 +10913,6 @@
                             let cardsHtml = '';
                             
                             if (category.type === 'character') {
-                                console.log(`[IndexHTML] ===== PROCESSING CHARACTER CARDS =====`);
-                                console.log(`[IndexHTML] Received ${data.data.length} character cards from API`);
-                                
                                 // Special handling for characters with stats
                                 const currentCharacterCount = window.deckEditorCards
                                     .filter(card => card.type === 'character')
@@ -11093,7 +10921,6 @@
                                 const isCharacterLimitReached = currentCharacterCount >= 4;
                                 
                                 // Group characters by name and universe (same type, name, universe = same card)
-                                console.log('[IndexHTML] Grouping characters by name and universe...');
                                 const groups = new Map();
                                 data.data.forEach(card => {
                                     const name = (card.name || '').trim();
@@ -11103,7 +10930,6 @@
                                     }
                                     
                                     if (!name) {
-                                        console.warn('[IndexHTML] Skipping card with empty name:', card);
                                         return;
                                     }
                                     
@@ -11128,19 +10954,12 @@
                                     });
                                 });
                                 
-                                console.log(`[IndexHTML] Grouped ${data.data.length} cards into ${groups.size} unique groups`);
                                 
                                 // Store the grouped tile count for use in header rendering
                                 characterTileCount = groups.size;
                                 
                                 // Debug: Log groups with multiple cards
                                 const groupsWithMultiple = Array.from(groups.entries()).filter(([key, group]) => group.length > 1);
-                                if (groupsWithMultiple.length > 0) {
-                                    console.log(`[IndexHTML] Found ${groupsWithMultiple.length} groups with multiple cards (alternate arts):`);
-                                    groupsWithMultiple.slice(0, 5).forEach(([key, group]) => {
-                                        console.log(`  - "${key}": ${group.length} cards`, group.map(c => ({ id: c.id, name: c.name, image: c.image_path || c.image })));
-                                    });
-                                }
                                 
                                 // Track rendered cards to prevent duplicates
                                 const renderedKeys = new Set();
@@ -11157,7 +10976,6 @@
                                     
                                     // Skip if already rendered
                                     if (renderedKeys.has(renderKey)) {
-                                        console.warn(`[IndexHTML] SKIPPING duplicate: "${renderKey}"`);
                                         return;
                                     }
                                     
@@ -11225,7 +11043,6 @@
                                     `;
                                 });
                                 
-                                console.log(`[IndexHTML] Rendered ${renderedKeys.size} unique character cards`);
                                                     } else if (category.type === 'mission') {
                             // Special handling for missions - group by mission set
                             const missionSetGroups = {};
@@ -11353,8 +11170,6 @@
                             });
                                                     } else if (category.type === 'special') {
                             // Special handling for special cards - group by character name, then by card name to consolidate alternate arts
-                            console.log(`[IndexHTML] ===== PROCESSING SPECIAL CARDS =====`);
-                            console.log(`[IndexHTML] Received ${data.data.length} special cards from API`);
                             
                             // First, group by character name
                             const characterGroups = {};
@@ -11493,8 +11308,6 @@
                             // Store the grouped tile count for use in header rendering
                             specialCardTileCount = totalUniqueSpecialCards;
                             
-                            console.log(`[IndexHTML] Rendered special cards grouped by character and consolidated alternate arts`);
-                            console.log(`[IndexHTML] Grouped ${data.data.length} special cards into ${totalUniqueSpecialCards} unique cards`);
                         } else if (category.type === 'advanced-universe') {
                             // Special handling for advanced universe cards - group by character name
                             const characterGroups = {};
@@ -11716,8 +11529,6 @@
                             }).join('');
                         } else if (category.type === 'power') {
                             // Special handling for power cards - group by power type, then by value and universe to consolidate alternate arts
-                            console.log(`[IndexHTML] ===== PROCESSING POWER CARDS =====`);
-                            console.log(`[IndexHTML] Received ${data.data.length} power cards from API`);
                             
                             // First, group by power type
                             const typeGroups = {};
@@ -11883,8 +11694,6 @@
                             // Store the grouped tile count for use in header rendering
                             powerCardTileCount = totalUniquePowerCards;
                             
-                            console.log(`[IndexHTML] Rendered power cards grouped by type and consolidated alternate arts`);
-                            console.log(`[IndexHTML] Grouped ${data.data.length} power cards into ${totalUniquePowerCards} unique cards`);
                         } else if (category.type === 'location') {
                             // Special handling for locations with threat level and validation
                             const currentLocationCount = window.deckEditorCards
@@ -12944,23 +12753,18 @@
 
             // Update local deck data only - changes will be persisted when user clicks Save
             if (!currentDeckData.metadata) {
-                console.log('🔧 Creating metadata object');
                 currentDeckData.metadata = {};
             }
             
-            console.log('🔧 Setting reserve_character to:', cardId);
             currentDeckData.metadata.reserve_character = cardId;
             
             showNotification('Reserve character selected! (Click Save to persist changes)', 'success');
             
-            console.log('🔧 Updating reserve buttons');
             // Update reserve buttons without re-rendering the entire deck to preserve layout
             updateReserveButtons();
             
-            console.log('🔧 Updating deck summary');
             // Update deck summary to reflect new threat calculation
             // Use window.deckEditorCards which is the working copy of deck cards
-            console.log('🔧 Current window.deckEditorCards:', window.window.deckEditorCards.length);
             await updateDeckSummary(window.deckEditorCards);
             
         }
@@ -12982,23 +12786,18 @@
 
             // Update local deck data only - changes will be persisted when user clicks Save
             if (!currentDeckData.metadata) {
-                console.log('🔧 Creating metadata object');
                 currentDeckData.metadata = {};
             }
             
-            console.log('🔧 Clearing reserve_character');
             currentDeckData.metadata.reserve_character = null;
             
             showNotification('Reserve character deselected! (Click Save to persist changes)', 'success');
             
-            console.log('🔧 Updating reserve buttons');
             // Update reserve buttons without re-rendering the entire deck to preserve layout
             updateReserveButtons();
             
-            console.log('🔧 Updating deck summary');
             // Update deck summary to reflect new threat calculation
             // Use window.deckEditorCards which is the working copy of deck cards
-            console.log('🔧 Current window.deckEditorCards:', window.window.deckEditorCards.length);
             await updateDeckSummary(window.deckEditorCards);
             
         }

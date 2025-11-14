@@ -48,11 +48,15 @@ async function exportDeckAsJson() {
         }
         
         // Get current deck data from currentDeckData object, fallback to UI elements
+        // Try window.currentDeckData if currentDeckData is not available in scope
+        const deckData = currentDeckData || (typeof window !== 'undefined' ? window.currentDeckData : null);
         let deckName = 'Untitled Deck';
+        let deckDescription = '';
         
         // Try to get from currentDeckData first
-        if (currentDeckData && currentDeckData.metadata) {
-            deckName = currentDeckData.metadata.name || 'Untitled Deck';
+        if (deckData && deckData.metadata) {
+            deckName = deckData.metadata.name || 'Untitled Deck';
+            deckDescription = deckData.metadata.description || '';
         } else {
             // Only try UI elements if metadata is not available
             // Look for the deck title in the deck editor area, not the deck list
@@ -91,6 +95,24 @@ async function exportDeckAsJson() {
                 
                 if (titleText) {
                     deckName = titleText;
+                }
+            }
+            
+            // Try to get description from DOM element
+            // First try by ID, then by class as fallback
+            let deckDescriptionElement = document.getElementById('deckEditorDescription');
+            if (!deckDescriptionElement) {
+                // Fallback to class selector
+                deckDescriptionElement = document.querySelector('.deck-description');
+            }
+            if (deckDescriptionElement) {
+                // If it's in editing mode, get value from textarea
+                const textarea = deckDescriptionElement.querySelector('textarea');
+                if (textarea) {
+                    deckDescription = textarea.value.trim();
+                } else {
+                    // Otherwise get text content
+                    deckDescription = deckDescriptionElement.textContent.trim();
                 }
             }
         }
@@ -709,7 +731,7 @@ async function exportDeckAsJson() {
         // Create export data structure with data at top level
         const exportData = {
             name: deckName,
-            description: '',
+            description: deckDescription,
             total_cards: totalCards,
             max_energy: maxEnergy,
             max_combat: maxCombat,

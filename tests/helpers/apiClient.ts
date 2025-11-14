@@ -74,11 +74,21 @@ export class ApiClient {
   }
 
   async addCardToDeck(deckId: string, cardData: { cardType: string; cardId: string; quantity: number }) {
-    return request(this.app)
+    const response = await request(this.app)
       .post(`/api/decks/${deckId}/cards`)
       .set('Cookie', this.cookies)
-      .send(cardData)
-      .expect(200);
+      .send(cardData);
+    
+    if (response.status !== 200) {
+      const errorMsg = response.body?.error || response.body?.message || JSON.stringify(response.body);
+      console.error(`❌ Card addition failed: ${response.status}`);
+      console.error(`   Request: ${JSON.stringify(cardData)}`);
+      console.error(`   Response: ${errorMsg}`);
+      throw new Error(`Card addition failed with status ${response.status}: ${errorMsg}`);
+    }
+    
+    expect(response.status).toBe(200);
+    return response;
   }
 
   async removeCardFromDeck(deckId: string, cardData: { cardType: string; cardId: string; quantity: number }) {

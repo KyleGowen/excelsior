@@ -168,15 +168,11 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             }
         
         // Load available cards
-        console.log('[DeckEditor] Checking for loadAvailableCards function...');
-        console.log('[DeckEditor] typeof loadAvailableCards:', typeof loadAvailableCards);
         if (typeof loadAvailableCards === 'function') {
-            console.log('[DeckEditor] ✅ loadAvailableCards function found, calling it...');
             try {
                 await loadAvailableCards();
-                console.log('[DeckEditor] ✅ loadAvailableCards completed');
             } catch (error) {
-                console.error('[DeckEditor] ❌ Error calling loadAvailableCards:', error);
+                console.error('[DeckEditor] Error calling loadAvailableCards:', error);
             }
         } else {
             console.error('[DeckEditor] ❌ loadAvailableCards function not found!');
@@ -279,14 +275,11 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             updateDeckTitleValidation(currentDeckData.cards || []);
             
             // Load available cards first, then display deck cards
-            console.log('[DeckEditor] About to call loadAvailableCards for existing deck...');
-            console.log('[DeckEditor] typeof loadAvailableCards:', typeof loadAvailableCards);
             if (typeof loadAvailableCards === 'function') {
                 try {
                     await loadAvailableCards();
-                    console.log('[DeckEditor] ✅ loadAvailableCards completed for existing deck');
                 } catch (error) {
-                    console.error('[DeckEditor] ❌ Error calling loadAvailableCards:', error);
+                    console.error('[DeckEditor] Error calling loadAvailableCards:', error);
                     console.error('[DeckEditor] Error stack:', error.stack);
                 }
             } else {

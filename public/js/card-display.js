@@ -253,16 +253,14 @@ function displayCharacters(characters) {
  * @param {number} direction - -1 for previous, 1 for next
  */
 function navigateCardImage(groupId, direction) {
-    console.log('🔄 [navigateCardImage] Starting navigation:', { groupId, direction });
     const container = document.querySelector(`#${groupId}-img`).closest('.card-image-container');
     if (!container) {
-        console.error('🔄 [navigateCardImage] Container not found for:', groupId);
+        console.error('Container not found for:', groupId);
         return;
     }
     
     const imageData = JSON.parse(container.getAttribute('data-image-data') || '[]');
     if (imageData.length <= 1) {
-        console.log('🔄 [navigateCardImage] Only one image, no navigation needed');
         return; // No navigation needed for single image
     }
     
@@ -272,23 +270,11 @@ function navigateCardImage(groupId, direction) {
     let lockedCellHeight = null;
     let lockedRowHeight = null;
     
-    console.log('🔄 [navigateCardImage] Row info before change:', {
-        rowExists: !!row,
-        imageCellExists: !!imageCell,
-        cellHeightLocked: imageCell ? !!imageCell.dataset.heightLocked : false,
-        rowHeightLocked: row ? !!row.dataset.heightLocked : false,
-        currentCellHeight: imageCell ? imageCell.offsetHeight : 0,
-        currentRowHeight: row ? row.offsetHeight : 0,
-        cellStyleHeight: imageCell ? imageCell.style.height : '',
-        rowStyleHeight: row ? row.style.height : ''
-    });
-    
     // Always lock heights if not already locked (defensive approach)
     if (imageCell) {
         if (imageCell.dataset.heightLocked) {
             // Preserve the locked cell height
             lockedCellHeight = imageCell.style.height || imageCell.style.minHeight || imageCell.offsetHeight + 'px';
-            console.log('🔄 [navigateCardImage] Preserved cell height:', lockedCellHeight);
         } else {
             // Lock the height now if not already locked
             const cellHeight = imageCell.offsetHeight;
@@ -298,9 +284,6 @@ function navigateCardImage(groupId, direction) {
                 imageCell.style.setProperty('min-height', lockedCellHeight, 'important');
                 imageCell.style.setProperty('max-height', lockedCellHeight, 'important');
                 imageCell.dataset.heightLocked = 'true';
-                console.log('🔄 [navigateCardImage] Locked cell height now:', lockedCellHeight);
-            } else {
-                console.warn('🔄 [navigateCardImage] Cell height is 0, cannot lock!');
             }
         }
     }
@@ -309,7 +292,6 @@ function navigateCardImage(groupId, direction) {
         if (row.dataset.heightLocked) {
             // Preserve the locked row height
             lockedRowHeight = row.style.height || row.style.minHeight || row.offsetHeight + 'px';
-            console.log('🔄 [navigateCardImage] Preserved row height:', lockedRowHeight);
         } else {
             // Lock the height now if not already locked
             const rowHeight = row.offsetHeight;
@@ -319,9 +301,6 @@ function navigateCardImage(groupId, direction) {
                 row.style.setProperty('min-height', lockedRowHeight, 'important');
                 row.style.setProperty('max-height', lockedRowHeight, 'important');
                 row.dataset.heightLocked = 'true';
-                console.log('🔄 [navigateCardImage] Locked row height now:', lockedRowHeight);
-            } else {
-                console.warn('🔄 [navigateCardImage] Row height is 0, cannot lock!');
             }
         }
     }
@@ -344,20 +323,16 @@ function navigateCardImage(groupId, direction) {
     // If we have locked heights, maintain them BEFORE changing the image
     // Use setProperty with important to prevent override
     if (lockedCellHeight && imageCell) {
-        console.log('🔄 [navigateCardImage] Applying locked cell height BEFORE image change:', lockedCellHeight);
         imageCell.style.setProperty('height', lockedCellHeight, 'important');
         imageCell.style.setProperty('min-height', lockedCellHeight, 'important');
         imageCell.style.setProperty('max-height', lockedCellHeight, 'important');
     }
     
     if (lockedRowHeight && row) {
-        console.log('🔄 [navigateCardImage] Applying locked row height BEFORE image change:', lockedRowHeight);
         row.style.setProperty('height', lockedRowHeight, 'important');
         row.style.setProperty('min-height', lockedRowHeight, 'important');
         row.style.setProperty('max-height', lockedRowHeight, 'important');
     }
-    
-    console.log('🔄 [navigateCardImage] Changing image to:', newImagePath);
     
     // Constrain the image to never exceed the locked cell height
     if (lockedCellHeight && imageCell) {
@@ -410,10 +385,7 @@ function navigateCardImage(groupId, direction) {
     // Re-apply locked heights after image loads to ensure they're maintained
     // Use multiple timeouts to catch any layout recalculation
     if ((lockedCellHeight || lockedRowHeight) && img) {
-        const reapplyHeights = (label = '') => {
-            const beforeCellHeight = imageCell ? imageCell.offsetHeight : 0;
-            const beforeRowHeight = row ? row.offsetHeight : 0;
-            
+        const reapplyHeights = () => {
             if (lockedCellHeight && imageCell && imageCell.dataset.heightLocked) {
                 imageCell.style.setProperty('height', lockedCellHeight, 'important');
                 imageCell.style.setProperty('min-height', lockedCellHeight, 'important');
@@ -424,47 +396,28 @@ function navigateCardImage(groupId, direction) {
                 row.style.setProperty('min-height', lockedRowHeight, 'important');
                 row.style.setProperty('max-height', lockedRowHeight, 'important');
             }
-            
-            const afterCellHeight = imageCell ? imageCell.offsetHeight : 0;
-            const afterRowHeight = row ? row.offsetHeight : 0;
-            
-            console.log(`🔄 [navigateCardImage] Reapplied heights ${label}:`, {
-                beforeCellHeight,
-                afterCellHeight,
-                beforeRowHeight,
-                afterRowHeight,
-                lockedCellHeight,
-                lockedRowHeight
-            });
         };
         
         // Reapply immediately
-        reapplyHeights('(immediate)');
+        reapplyHeights();
         
         // Reapply after image loads
         if (img.complete) {
-            setTimeout(() => reapplyHeights('(10ms)'), 10);
-            setTimeout(() => reapplyHeights('(50ms)'), 50);
-            setTimeout(() => reapplyHeights('(100ms)'), 100);
+            setTimeout(() => reapplyHeights(), 10);
+            setTimeout(() => reapplyHeights(), 50);
+            setTimeout(() => reapplyHeights(), 100);
         } else {
             img.addEventListener('load', () => {
-                console.log('🔄 [navigateCardImage] Image loaded, reapplying heights');
-                reapplyHeights('(onload)');
-                setTimeout(() => reapplyHeights('(onload+10ms)'), 10);
-                setTimeout(() => reapplyHeights('(onload+50ms)'), 50);
-                setTimeout(() => reapplyHeights('(onload+100ms)'), 100);
+                reapplyHeights();
+                setTimeout(() => reapplyHeights(), 10);
+                setTimeout(() => reapplyHeights(), 50);
+                setTimeout(() => reapplyHeights(), 100);
             }, { once: true });
             // Also reapply after short delays to catch any layout recalculation
-            setTimeout(() => reapplyHeights('(50ms)'), 50);
-            setTimeout(() => reapplyHeights('(100ms)'), 100);
-            setTimeout(() => reapplyHeights('(200ms)'), 200);
+            setTimeout(() => reapplyHeights(), 50);
+            setTimeout(() => reapplyHeights(), 100);
+            setTimeout(() => reapplyHeights(), 200);
         }
-    } else {
-        console.warn('🔄 [navigateCardImage] No locked heights to reapply!', {
-            hasLockedCellHeight: !!lockedCellHeight,
-            hasLockedRowHeight: !!lockedRowHeight,
-            hasImg: !!img
-        });
     }
 }
 
@@ -790,13 +743,3 @@ window.navigateCardImage = navigateCardImage;
 window.groupCardsByVariant = groupCardsByVariant;
 window.getCardImagePathForDisplay = getCardImagePathForDisplay;
 
-// Debug: Log that functions are exported
-console.log('🔵 [card-display.js] Functions exported:', {
-    displayCharacters: typeof window.displayCharacters,
-    displaySpecialCards: typeof window.displaySpecialCards,
-    displayLocations: typeof window.displayLocations,
-    groupCardsByVariant: typeof window.groupCardsByVariant,
-    navigateCardImage: typeof window.navigateCardImage,
-    getCardImagePathForDisplay: typeof window.getCardImagePathForDisplay,
-    handleCardClick: typeof window.handleCardClick
-});

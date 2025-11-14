@@ -29,11 +29,8 @@ let isDragging = false; // Track if currently dragging
 
 // Setup drag and drop functionality
 function setupDragAndDrop() {
-    console.log('setupDragAndDrop called');
-    
     // Skip drag and drop setup in read-only mode
     if (isReadOnlyMode) {
-        console.log('Skipping drag and drop setup - read-only mode');
         return;
     }
     
@@ -43,8 +40,6 @@ function setupDragAndDrop() {
             console.error('deckCardsEditor element not found');
             return;
         }
-        
-        console.log('Setting up drag and drop for deckCardsEditor');
     
         // Drag over effects
         deckCardsEditor.addEventListener('dragover', (e) => {
@@ -86,8 +81,6 @@ function setupDragAndDrop() {
                 e.target.classList.remove('dragging');
             }
         });
-        
-        console.log('Drag and drop setup complete');
     } catch (error) {
         console.error('Error in setupDragAndDrop:', error);
     }
@@ -95,106 +88,70 @@ function setupDragAndDrop() {
 
 // Function to handle plus button clicks
 function handlePlusButtonClick(event, cardType, cardId, cardName, allCardsJson = null) {
-    console.log('🟡 [handlePlusButtonClick] ===== FUNCTION CALLED =====');
-    console.log('🟡 [handlePlusButtonClick] Arguments:', { cardType, cardId, cardName, allCardsJson: allCardsJson ? 'provided' : 'null' });
-    console.log('🟡 [handlePlusButtonClick] Event:', event);
-    console.log('🟡 [handlePlusButtonClick] typeof addCardToEditor:', typeof addCardToEditor);
-    console.log('🟡 [handlePlusButtonClick] typeof showAlternateArtSelectionModal:', typeof showAlternateArtSelectionModal);
-    
     event.stopPropagation(); // Prevent drag event
     
     // If allCardsJson is provided and contains multiple cards, show alternate art selection
     if (allCardsJson && allCardsJson.trim() !== '') {
         try {
             const allCards = JSON.parse(allCardsJson.replace(/&quot;/g, '"'));
-            console.log('🟡 [handlePlusButtonClick] Parsed allCards:', allCards);
-            console.log('🟡 [handlePlusButtonClick] Number of cards:', allCards ? allCards.length : 0);
             
             if (allCards && Array.isArray(allCards) && allCards.length > 1) {
-                console.log('🟡 [handlePlusButtonClick] Multiple cards found, showing modal');
                 // Show alternate art selection modal
                 if (typeof showAlternateArtSelectionModal === 'function') {
-                    console.log('🟡 [handlePlusButtonClick] Calling showAlternateArtSelectionModal');
                     showAlternateArtSelectionModal(cardType, cardName, allCards);
                     return;
-                } else {
-                    console.warn('🟡 [handlePlusButtonClick] showAlternateArtSelectionModal function not found, adding card directly');
                 }
-            } else {
-                console.log('🟡 [handlePlusButtonClick] Only one card or invalid array, adding directly');
             }
         } catch (e) {
-            console.error('🟡 [handlePlusButtonClick] Error parsing allCardsJson:', e);
-            console.error('🟡 [handlePlusButtonClick] allCardsJson value:', allCardsJson);
+            console.error('Error parsing allCardsJson:', e);
         }
-    } else {
-        console.log('🟡 [handlePlusButtonClick] No allCardsJson provided, adding card directly');
     }
     
     // Otherwise, add the card directly
-    console.log('🟡 [handlePlusButtonClick] About to call addCardToEditor with:', { cardType, cardId, cardName });
     if (typeof addCardToEditor === 'function') {
         addCardToEditor(cardType, cardId, cardName);
-        console.log('🟡 [handlePlusButtonClick] addCardToEditor called successfully');
     } else {
-        console.error('🟡 [handlePlusButtonClick] ERROR: addCardToEditor is not a function!');
+        console.error('ERROR: addCardToEditor is not a function!');
     }
 }
 
 // Function to handle card clicks
 function handleCardClick(event, cardType, cardId, cardName) {
-    console.log('🟡 [handleCardClick] ===== FUNCTION CALLED =====');
-    console.log('🟡 [handleCardClick] Arguments:', { cardType, cardId, cardName });
-    console.log('🟡 [handleCardClick] Event target:', event.target);
-    console.log('🟡 [handleCardClick] Event target classes:', event.target.className);
-    console.log('🟡 [handleCardClick] typeof addCardToEditor:', typeof addCardToEditor);
-    console.log('🟡 [handleCardClick] typeof showAlternateArtSelectionModal:', typeof showAlternateArtSelectionModal);
-    
     // Only add card if it's not disabled and the click wasn't on the plus button
     if (event.target.classList.contains('card-item-plus')) {
-        console.log('🟡 [handleCardClick] Click was on plus button, ignoring');
         return; // Let the plus button handle its own click
     }
     
     // Check if the card has alternate arts by looking at data-all-cards attribute
     const cardElement = event.currentTarget;
     const allCardsJson = cardElement.getAttribute('data-all-cards');
-    console.log('🟡 [handleCardClick] allCardsJson:', allCardsJson);
     
     if (allCardsJson && allCardsJson.trim() !== '') {
         try {
             const allCards = JSON.parse(allCardsJson.replace(/&quot;/g, '"'));
-            console.log('🟡 [handleCardClick] Parsed allCards:', allCards);
             if (allCards && Array.isArray(allCards) && allCards.length > 1) {
-                console.log('🟡 [handleCardClick] Card has alternate arts, showing modal');
                 // Show alternate art selection modal
                 if (typeof showAlternateArtSelectionModal === 'function') {
                     event.stopPropagation();
-                    console.log('🟡 [handleCardClick] Calling showAlternateArtSelectionModal');
                     showAlternateArtSelectionModal(cardType, cardName, allCards);
                     return;
-                } else {
-                    console.error('🟡 [handleCardClick] showAlternateArtSelectionModal function not found');
                 }
             }
         } catch (e) {
-            console.error('🟡 [handleCardClick] Error parsing allCardsJson:', e);
+            console.error('Error parsing allCardsJson:', e);
         }
     }
     
     // Check if the card is disabled
     if (cardElement.classList.contains('disabled')) {
-        console.log('🟡 [handleCardClick] Card is disabled, not adding');
         return; // Don't add disabled cards
     }
     
     // Add the card to the editor
-    console.log('🟡 [handleCardClick] About to call addCardToEditor with:', { cardType, cardId, cardName });
     if (typeof addCardToEditor === 'function') {
         addCardToEditor(cardType, cardId, cardName);
-        console.log('🟡 [handleCardClick] addCardToEditor called successfully');
     } else {
-        console.error('🟡 [handleCardClick] ERROR: addCardToEditor is not a function!');
+        console.error('ERROR: addCardToEditor is not a function!');
     }
 }
 
@@ -416,12 +373,11 @@ function updateDragLayout() {
 }
 
 function reorderDeckCards(fromIndex, toIndex) {
-    console.log('🟡 [reorderDeckCards] Called with:', { fromIndex, toIndex });
     // Get the card being moved
     const cardToMove = deckEditorCards[fromIndex];
     
     if (!cardToMove) {
-        console.error('🟡 [reorderDeckCards] No card found at index:', fromIndex);
+        console.error('No card found at index:', fromIndex);
         return;
     }
     
@@ -445,23 +401,8 @@ function reorderDeckCards(fromIndex, toIndex) {
     
     // Save the deck
     saveDeck();
-    
-    console.log('🟡 [reorderDeckCards] Card reordered successfully');
 }
 
 // Export functions to global scope
-console.log('🟡 [layout-drag-drop-functions.js] About to export functions...');
-console.log('🟡 [layout-drag-drop-functions.js] typeof handleCardClick:', typeof handleCardClick);
-console.log('🟡 [layout-drag-drop-functions.js] typeof handlePlusButtonClick:', typeof handlePlusButtonClick);
-
 window.handleCardClick = handleCardClick;
 window.handlePlusButtonClick = handlePlusButtonClick;
-
-// Debug: Log that functions are exported
-console.log('🟡 [layout-drag-drop-functions.js] ===== FUNCTIONS EXPORTED =====');
-console.log('🟡 [layout-drag-drop-functions.js] window.handleCardClick:', typeof window.handleCardClick);
-console.log('🟡 [layout-drag-drop-functions.js] window.handlePlusButtonClick:', typeof window.handlePlusButtonClick);
-console.log('🟡 [layout-drag-drop-functions.js] Functions exported:', {
-    handleCardClick: typeof window.handleCardClick,
-    handlePlusButtonClick: typeof window.handlePlusButtonClick
-});

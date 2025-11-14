@@ -512,14 +512,3 @@ window.displayAspects = displayAspects;
 window.displayMissions = displayMissions;
 window.displayEvents = displayEvents;
 window.displayLocations = displayLocations;
-
-
-// Debug: Log that functions are exported
-console.log('🟢 [card-display-functions.js] Functions exported:', {
-    displayPowerCards: typeof window.displayPowerCards,
-    displayAspects: typeof window.displayAspects,
-    displayMissions: typeof window.displayMissions,
-    displayEvents: typeof window.displayEvents,
-    displayLocations: typeof window.displayLocations,
-    displayAdvancedUniverse: typeof window.displayAdvancedUniverse
-});

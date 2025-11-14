@@ -175,15 +175,6 @@
         const hasOnlyOneActiveCharacter = activeCharacters.length === 1;
         const shouldDimTeamworkAndAllyForSingleCharacter = totalCharacters > 1 && hasKOdCharacters && hasOnlyOneActiveCharacter;
         
-        console.log('🔍 KO Dimming Debug:', {
-            totalCharacters,
-            hasKOdCharacters,
-            hasOnlyOneActiveCharacter,
-            shouldDimTeamworkAndAllyForSingleCharacter,
-            activeCharacterCount: activeCharacters.length,
-            koCount: koCharacters.size
-        });
-        
         // Get all deck cards (excluding characters which are handled separately)
         // Handle tile view, card view, and list view
         const deckCardElements = document.querySelectorAll('.deck-card-editor-item[data-card-id], .deck-card-card-view-item[data-card-id], .deck-list-item[data-card-id]');
@@ -193,16 +184,6 @@
             const cardType = cardElement.getAttribute('data-type');
             
             if (!cardId) return;
-            
-            // Debug teamwork cards specifically
-            if (cardType === 'teamwork') {
-                console.log('🔍 Processing teamwork card:', {
-                    cardId,
-                    cardType,
-                    shouldDimTeamworkAndAllyForSingleCharacter,
-                    element: cardElement
-                });
-            }
             
             // Skip characters - they're dimmed separately
             if (cardType === 'character') {
@@ -549,14 +530,8 @@
             // Apply or remove dimming
             if (shouldDim) {
                 cardElement.classList.add('ko-dimmed');
-                if (cardType === 'teamwork') {
-                    console.log('✅ Dimming teamwork card:', cardId, cardData ? (cardData.name || cardData.card_name || 'Unknown') : 'Unknown');
-                }
             } else {
                 cardElement.classList.remove('ko-dimmed');
-                if (cardType === 'teamwork') {
-                    console.log('❌ NOT dimming teamwork card:', cardId, cardData ? (cardData.name || cardData.card_name || 'Unknown') : 'Unknown', 'shouldDim:', shouldDim);
-                }
             }
         });
     }
@@ -917,37 +892,30 @@
             try {
                 // Check both window.currentUser and global currentUser (which is a let variable in index.html)
                 const user = window.currentUser || (typeof currentUser !== 'undefined' ? currentUser : null);
-                console.log('👤 Current user:', user ? { role: user.role, name: user.name || user.username } : 'null');
                 // KO feature is available to all authenticated users
                 if (!user) {
-                    console.log('⚠️ No user logged in, skipping KO toggle');
                     return;
                 }
                 
                 // Toggle KO state (syncState is called inside toggleKO)
                 toggleKO(cardId);
-                console.log('✅ KO state toggled, current KO set:', Array.from(koCharacters));
                 
                 // Preserve current view when re-rendering
                 const deckCardsEditor = document.querySelector('.deck-cards-editor');
-                console.log('📋 Current view:', deckCardsEditor ? deckCardsEditor.className : 'not found');
                 
                 // Re-render the deck in the current view mode to update button states and apply dimming
                 if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
                     // Card View: re-render Card View
-                    console.log('🔄 Re-rendering Card View');
                     if (renderFunctions && renderFunctions.renderCardView) {
                         renderFunctions.renderCardView();
                     }
                 } else if (deckCardsEditor && deckCardsEditor.classList.contains('list-view')) {
                     // List View: re-render List View
-                    console.log('🔄 Re-rendering List View');
                     if (renderFunctions && renderFunctions.renderListView) {
                         renderFunctions.renderListView();
                     }
                 } else {
                     // Tile View (default): re-render Tile View
-                    console.log('🔄 Re-rendering Tile View');
                     if (renderFunctions && renderFunctions.renderTileView) {
                         await renderFunctions.renderTileView();
                     }
