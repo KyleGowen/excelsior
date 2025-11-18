@@ -11545,16 +11545,13 @@
                             typeNames.forEach(typeName => {
                                 const cardsInTypeGroup = typeGroups[typeName];
                                 
-                                // Group cards by value and universe to consolidate alternate arts
+                                // Group cards by value only (not by set) to consolidate alternate arts across all sets
                                 const cardGroups = new Map();
                                 cardsInTypeGroup.forEach(card => {
                                     const value = String(card.value || '').trim();
-                                    let set = (card.set || 'ERB').trim();
-                                    if (!set || set === '') {
-                                        set = 'ERB';
-                                    }
                                     
-                                    const key = `${value}|${set}`;
+                                    // Group by value only, so cards from different sets are together
+                                    const key = value;
                                     if (!cardGroups.has(key)) {
                                         cardGroups.set(key, []);
                                     }
@@ -11564,9 +11561,19 @@
                                 // Add to total count
                                 totalUniquePowerCards += cardGroups.size;
                                 
-                                // Sort each group: original art first, then alternates
+                                // Sort each group: ERB set first, then other sets; original art first, then alternates
                                 cardGroups.forEach((group, key) => {
                                     group.sort((a, b) => {
+                                        // First, prioritize ERB set
+                                        const aSet = (a.set || 'ERB').trim();
+                                        const bSet = (b.set || 'ERB').trim();
+                                        const aIsERB = aSet === 'ERB';
+                                        const bIsERB = bSet === 'ERB';
+                                        
+                                        if (aIsERB && !bIsERB) return -1; // ERB first
+                                        if (!aIsERB && bIsERB) return 1;  // ERB first
+                                        
+                                        // If same set priority, then sort by original vs alternate art
                                         const aImage = a.image_path || a.image || '';
                                         const bImage = b.image_path || b.image || '';
                                         const aIsAlternate = aImage.includes('/alternate/');
@@ -11578,10 +11585,10 @@
                                     });
                                 });
                                 
-                                // Sort groups by value
+                                // Sort groups by value (key is now just the value, not value|set)
                                 const sortedCardGroups = Array.from(cardGroups.entries()).sort((a, b) => {
-                                    const valueA = parseInt(a[0].split('|')[0]) || 0;
-                                    const valueB = parseInt(b[0].split('|')[0]) || 0;
+                                    const valueA = parseInt(a[0]) || 0;
+                                    const valueB = parseInt(b[0]) || 0;
                                     return valueA - valueB;
                                 });
                                 
@@ -12175,9 +12182,8 @@
                     }
                 });
             } else if (cardType === 'power') {
-                // For power cards, group by value|set
+                // For power cards, group by value and power_type (not by set) to include all alternate arts across sets
                 const value = String(availableCard.value || '').trim();
-                const set = (availableCard.set || 'ERB').trim() || 'ERB';
                 const powerType = (availableCard.power_type || '').trim();
                 
                 // Use same logic as Card View detection: cardType || type
@@ -12185,7 +12191,6 @@
                     const iterCardType = card.cardType || card.type || '';
                     if ((iterCardType === 'power' || id.startsWith('power_')) && 
                         String(card.value || '').trim() === value && 
-                        (card.set || 'ERB').trim() === set &&
                         (card.power_type || '').trim() === powerType) {
                         allAlternateArts.push({
                             id: card.id || id,
@@ -12207,8 +12212,20 @@
                 }
             }
             
-            // Sort: original art first, then alternates
+            // Sort: ERB set first, then original art first, then alternates
             uniqueAlternateArts.sort((a, b) => {
+                // First, prioritize ERB set cards
+                const aCard = Array.from(window.availableCardsMap.values()).find(c => c.id === a.id);
+                const bCard = Array.from(window.availableCardsMap.values()).find(c => c.id === b.id);
+                const aSet = (aCard?.set || 'ERB').trim();
+                const bSet = (bCard?.set || 'ERB').trim();
+                const aIsERB = aSet === 'ERB';
+                const bIsERB = bSet === 'ERB';
+                
+                if (aIsERB && !bIsERB) return -1; // ERB first
+                if (!aIsERB && bIsERB) return 1;  // ERB first
+                
+                // Then sort by original vs alternate art
                 const aIsAlternate = a.imagePath.includes('/alternate/');
                 const bIsAlternate = b.imagePath.includes('/alternate/');
                 if (aIsAlternate && !bIsAlternate) return 1;
