@@ -172,7 +172,7 @@ window.applyPowerCardFilters = async function applyPowerCardFilters() {
         let filtered = data.data;
 
         // Filter by power type
-        const selectedTypes = Array.from(document.querySelectorAll('#power-cards-tab input[type="checkbox"]:checked'))
+        const selectedTypes = Array.from(document.querySelectorAll('#power-cards-tab input[type="checkbox"][data-filter-type="power-type"]:checked'))
             .map(cb => cb.value);
 
         // If no types are selected, show no cards
@@ -180,6 +180,20 @@ window.applyPowerCardFilters = async function applyPowerCardFilters() {
             filtered = [];
         } else {
             filtered = filtered.filter(card => selectedTypes.includes(card.power_type));
+        }
+
+        // Filter by set
+        const selectedSets = Array.from(document.querySelectorAll('#power-cards-tab input[type="checkbox"][data-filter-type="set"]:checked'))
+            .map(cb => cb.value);
+
+        // If no sets are selected, show no cards
+        if (selectedSets.length === 0) {
+            filtered = [];
+        } else {
+            filtered = filtered.filter(card => {
+                const cardSet = card.set || 'ERB';
+                return selectedSets.includes(cardSet);
+            });
         }
 
         // Filter by value range

@@ -1141,6 +1141,7 @@
                             <th></th>
                             <th>Power Type</th>
                             <th>Value</th>
+                            <th>Set</th>
                         </tr>
                         <tr class="filter-row">
                             <th>
@@ -1151,14 +1152,14 @@
                                 <div class="column-filters">
                                     <div class="checkbox-group power-cards-checkbox-group">
                                         <div class="checkbox-column">
-                                            <label><input type="checkbox" value="Energy" checked> Energy</label>
-                                            <label><input type="checkbox" value="Combat" checked> Combat</label>
-                                            <label><input type="checkbox" value="Brute Force" checked> Brute Force</label>
+                                            <label><input type="checkbox" value="Energy" checked data-filter-type="power-type"> Energy</label>
+                                            <label><input type="checkbox" value="Combat" checked data-filter-type="power-type"> Combat</label>
+                                            <label><input type="checkbox" value="Brute Force" checked data-filter-type="power-type"> Brute Force</label>
                                         </div>
                                         <div class="checkbox-column">
-                                            <label><input type="checkbox" value="Intelligence" checked> Intelligence</label>
-                                            <label><input type="checkbox" value="Any-Power" checked> Any-Power</label>
-                                            <label><input type="checkbox" value="Multi Power" checked> Multi-Power</label>
+                                            <label><input type="checkbox" value="Intelligence" checked data-filter-type="power-type"> Intelligence</label>
+                                            <label><input type="checkbox" value="Any-Power" checked data-filter-type="power-type"> Any-Power</label>
+                                            <label><input type="checkbox" value="Multi Power" checked data-filter-type="power-type"> Multi-Power</label>
                                         </div>
                                     </div>
                                 </div>
@@ -1172,11 +1173,20 @@
                                     </div>
                                 </div>
                             </th>
+                            <th>
+                                <div class="column-filters">
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" value="ERB" checked data-filter-type="set"> ERB</label>
+                                        <label><input type="checkbox" value="SKY" checked data-filter-type="set"> SKY</label>
+                                        <label><input type="checkbox" value="TFCP" checked data-filter-type="set"> TFCP</label>
+                                    </div>
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody id="power-cards-tbody">
                         <tr>
-                            <td colspan="3" class="loading">Loading power cards...</td>
+                            <td colspan="5" class="loading">Loading power cards...</td>
                         </tr>
                     </tbody>
                 </table>

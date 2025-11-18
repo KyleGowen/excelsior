@@ -320,8 +320,8 @@ function displayPowerCards(cards) {
     
     tbody.innerHTML = '';
     
-    // Group power cards by power_type, value, and universe
-    // Cards with the same power_type, value, and universe are alternate arts of the same card
+    // Group power cards by power_type, value, and set
+    // Cards with the same power_type, value, and set are alternate arts of the same card
     const groups = new Map();
     
     cards.forEach(card => {
@@ -438,6 +438,7 @@ function displayPowerCards(cards) {
             </td>
             <td><strong>${representative.power_type || representative.type || ''}</strong></td>
             <td>${representative.value || ''}</td>
+            <td>${representative.set_name || 'Edgar Rice Burroughs and the World Legends'}</td>
         `;
         
         // Store image data in data attribute for navigation

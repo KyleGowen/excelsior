@@ -163,7 +163,7 @@ export class PostgreSQLCardRepository implements CardRepository {
               card_effect: card.card_effect,
               image: card.image_path,
               image_path: card.image_path,
-              universe: card.universe || 'ERB',
+              set: card.set || 'ERB',
               icons: card.icons || undefined,
               value: card.value ?? null,
               is_cataclysm: card.cataclysm || false,
@@ -214,7 +214,14 @@ export class PostgreSQLCardRepository implements CardRepository {
   async getAllPowerCards(): Promise<PowerCard[]> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query('SELECT * FROM power_cards ORDER BY power_type, value');
+      const result = await client.query(`
+        SELECT 
+          pc.*,
+          s.name as set_name
+        FROM power_cards pc
+        LEFT JOIN sets s ON pc.set = s.code
+        ORDER BY pc.power_type, pc.value
+      `);
       
       return result.rows.map(card => ({
         id: card.id,
@@ -223,7 +230,8 @@ export class PostgreSQLCardRepository implements CardRepository {
         value: card.value,
         image: card.image_path,
         image_path: card.image_path,
-        universe: card.universe || 'ERB',
+        set: card.set || 'ERB',
+        set_name: card.set_name || 'Edgar Rice Burroughs and the World Legends',
         one_per_deck: card.one_per_deck || false
       }));
     } finally {
