@@ -33,7 +33,7 @@ export interface Deck {
 export interface Character {
   id: string;
   name: string;
-  universe?: string; // Optional for backward compatibility
+  set?: string; // Optional for backward compatibility (renamed from universe)
   energy: number;
   combat: number;
   brute_force: number;

@@ -58,7 +58,7 @@ class MockCollectionsRepository {
       created_at: new Date(),
       updated_at: new Date(),
       card_name: `Card ${cardId}`,
-      universe: 'ERB'
+      set: 'ERB'
     };
 
     cards.push(newCard);
@@ -151,44 +151,44 @@ describe('CollectionService', () => {
     collectionService = new CollectionService(mockRepository as any);
   });
 
-  describe('translateUniverse', () => {
-    it('should return default universe name when universeCode is null', () => {
-      const result = collectionService.translateUniverse(null);
+  describe('translateSet', () => {
+    it('should return default set name when setCode is null', () => {
+      const result = collectionService.translateSet(null);
       expect(result).toBe('Edgar Rice Burroughs and the World Legends');
     });
 
-    it('should return default universe name when universeCode is undefined', () => {
-      const result = collectionService.translateUniverse(undefined);
+    it('should return default set name when setCode is undefined', () => {
+      const result = collectionService.translateSet(undefined);
       expect(result).toBe('Edgar Rice Burroughs and the World Legends');
     });
 
-    it('should return default universe name when universeCode is empty string', () => {
-      const result = collectionService.translateUniverse('');
+    it('should return default set name when setCode is empty string', () => {
+      const result = collectionService.translateSet('');
       expect(result).toBe('Edgar Rice Burroughs and the World Legends');
     });
 
-    it('should translate ERB to full universe name', () => {
-      const result = collectionService.translateUniverse('ERB');
+    it('should translate ERB to full set name', () => {
+      const result = collectionService.translateSet('ERB');
       expect(result).toBe('Edgar Rice Burroughs and the World Legends');
     });
 
-    it('should translate erb (lowercase) to full universe name', () => {
-      const result = collectionService.translateUniverse('erb');
+    it('should translate erb (lowercase) to full set name', () => {
+      const result = collectionService.translateSet('erb');
       expect(result).toBe('Edgar Rice Burroughs and the World Legends');
     });
 
-    it('should translate ERB (uppercase) to full universe name', () => {
-      const result = collectionService.translateUniverse('ERB');
+    it('should translate ERB (uppercase) to full set name', () => {
+      const result = collectionService.translateSet('ERB');
       expect(result).toBe('Edgar Rice Burroughs and the World Legends');
     });
 
-    it('should return original code for unknown universe codes', () => {
-      const result = collectionService.translateUniverse('UNKNOWN');
+    it('should return original code for unknown set codes', () => {
+      const result = collectionService.translateSet('UNKNOWN');
       expect(result).toBe('UNKNOWN');
     });
 
-    it('should handle mixed case universe codes', () => {
-      const result = collectionService.translateUniverse('ErB');
+    it('should handle mixed case set codes', () => {
+      const result = collectionService.translateSet('ErB');
       expect(result).toBe('Edgar Rice Burroughs and the World Legends');
     });
   });
@@ -229,7 +229,7 @@ describe('CollectionService', () => {
       expect(cards).toEqual([]);
     });
 
-    it('should return cards with translated universe names', async () => {
+    it('should return cards with translated set names', async () => {
       const collectionId = 'collection-123';
       const card: CollectionCardWithDetails = {
         id: 'cc-1',
@@ -241,17 +241,17 @@ describe('CollectionService', () => {
         created_at: new Date(),
         updated_at: new Date(),
         card_name: 'Test Card',
-        universe: 'ERB'
+        set: 'ERB'
       };
       mockRepository.addCardToMockCollection(collectionId, card);
 
       const cards = await collectionService.getCollectionCards(collectionId);
       
       expect(cards).toHaveLength(1);
-      expect(cards[0].universe).toBe('Edgar Rice Burroughs and the World Legends');
+      expect(cards[0].set).toBe('Edgar Rice Burroughs and the World Legends');
     });
 
-    it('should translate multiple cards with ERB universe', async () => {
+    it('should translate multiple cards with ERB set', async () => {
       const collectionId = 'collection-123';
       const card1: CollectionCardWithDetails = {
         id: 'cc-1',
@@ -263,7 +263,7 @@ describe('CollectionService', () => {
         created_at: new Date(),
         updated_at: new Date(),
         card_name: 'Card 1',
-        universe: 'ERB'
+        set: 'ERB'
       };
       const card2: CollectionCardWithDetails = {
         id: 'cc-2',
@@ -275,7 +275,7 @@ describe('CollectionService', () => {
         created_at: new Date(),
         updated_at: new Date(),
         card_name: 'Card 2',
-        universe: 'ERB'
+        set: 'ERB'
       };
       mockRepository.addCardToMockCollection(collectionId, card1);
       mockRepository.addCardToMockCollection(collectionId, card2);
@@ -283,11 +283,11 @@ describe('CollectionService', () => {
       const cards = await collectionService.getCollectionCards(collectionId);
       
       expect(cards).toHaveLength(2);
-      expect(cards[0].universe).toBe('Edgar Rice Burroughs and the World Legends');
-      expect(cards[1].universe).toBe('Edgar Rice Burroughs and the World Legends');
+      expect(cards[0].set).toBe('Edgar Rice Burroughs and the World Legends');
+      expect(cards[1].set).toBe('Edgar Rice Burroughs and the World Legends');
     });
 
-    it('should preserve other universe codes', async () => {
+    it('should preserve other set codes', async () => {
       const collectionId = 'collection-123';
       const card: CollectionCardWithDetails = {
         id: 'cc-1',
@@ -299,17 +299,17 @@ describe('CollectionService', () => {
         created_at: new Date(),
         updated_at: new Date(),
         card_name: 'Test Card',
-        universe: 'UNKNOWN'
+        set: 'UNKNOWN'
       };
       mockRepository.addCardToMockCollection(collectionId, card);
 
       const cards = await collectionService.getCollectionCards(collectionId);
       
       expect(cards).toHaveLength(1);
-      expect(cards[0].universe).toBe('UNKNOWN');
+      expect(cards[0].set).toBe('UNKNOWN');
     });
 
-    it('should handle null universe codes', async () => {
+    it('should handle null set codes', async () => {
       const collectionId = 'collection-123';
       const card: CollectionCardWithDetails = {
         id: 'cc-1',
@@ -321,14 +321,14 @@ describe('CollectionService', () => {
         created_at: new Date(),
         updated_at: new Date(),
         card_name: 'Test Card',
-        universe: null as any
+        set: null as any
       };
       mockRepository.addCardToMockCollection(collectionId, card);
 
       const cards = await collectionService.getCollectionCards(collectionId);
       
       expect(cards).toHaveLength(1);
-      expect(cards[0].universe).toBe('Edgar Rice Burroughs and the World Legends');
+      expect(cards[0].set).toBe('Edgar Rice Burroughs and the World Legends');
     });
   });
 
@@ -482,7 +482,7 @@ describe('CollectionService', () => {
         created_at: new Date(),
         updated_at: new Date(),
         card_name: 'Test Card',
-        universe: 'ERB'
+        set: 'ERB'
       };
       mockRepository.addCardToMockCollection(collectionId, existingCard);
 
@@ -574,7 +574,7 @@ describe('CollectionService', () => {
         created_at: new Date('2020-01-01'),
         updated_at: new Date('2020-01-01'),
         card_name: 'Old Card',
-        universe: 'ERB'
+        set: 'ERB'
       };
       const newerCard: CollectionCardWithDetails = {
         id: 'new-id',
@@ -586,7 +586,7 @@ describe('CollectionService', () => {
         created_at: new Date('2021-01-01'),
         updated_at: new Date('2021-01-01'),
         card_name: 'New Card',
-        universe: 'ERB'
+        set: 'ERB'
       };
       mockRepository.addCardToMockCollection(collectionId, olderCard);
       mockRepository.addCardToMockCollection(collectionId, newerCard);

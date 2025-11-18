@@ -59,7 +59,7 @@ export class PostgreSQLCardRepository implements CardRepository {
       return {
         id: char.id,
         name: char.name,
-        universe: char.universe || 'ERB',
+        set: char.set || 'ERB',
         energy: char.energy,
         combat: char.combat,
         brute_force: char.brute_force,
@@ -88,7 +88,7 @@ export class PostgreSQLCardRepository implements CardRepository {
       const characters = result.rows.map(char => ({
         id: char.id,
         name: char.name,
-        universe: char.universe || 'ERB',
+        set: char.set || 'ERB',
         energy: char.energy,
         combat: char.combat,
         brute_force: char.brute_force,
@@ -322,7 +322,7 @@ export class PostgreSQLCardRepository implements CardRepository {
   async getAllMissions(): Promise<Mission[]> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query('SELECT * FROM missions ORDER BY universe, name');
+      const result = await client.query('SELECT * FROM missions ORDER BY set, name');
       
       return result.rows.map(mission => ({
         id: mission.id,
@@ -366,7 +366,7 @@ export class PostgreSQLCardRepository implements CardRepository {
   async getAllEvents(): Promise<Event[]> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query('SELECT * FROM events ORDER BY universe, name');
+      const result = await client.query('SELECT * FROM events ORDER BY set, name');
       
       return result.rows.map(event => ({
         id: event.id,
@@ -414,7 +414,7 @@ export class PostgreSQLCardRepository implements CardRepository {
   async getAllAspects(): Promise<Aspect[]> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query('SELECT * FROM aspects ORDER BY universe, name');
+      const result = await client.query('SELECT * FROM aspects ORDER BY set, name');
       
       return result.rows.map(aspect => ({
         id: aspect.id,
@@ -465,7 +465,7 @@ export class PostgreSQLCardRepository implements CardRepository {
   async getAllAdvancedUniverse(): Promise<AdvancedUniverse[]> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query('SELECT * FROM advanced_universe_cards ORDER BY universe, name');
+      const result = await client.query('SELECT * FROM advanced_universe_cards ORDER BY set, name');
       
       return result.rows.map(card => ({
         id: card.id,
@@ -516,7 +516,7 @@ export class PostgreSQLCardRepository implements CardRepository {
   async getAllTeamwork(): Promise<Teamwork[]> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query('SELECT * FROM teamwork_cards ORDER BY universe, name');
+      const result = await client.query('SELECT * FROM teamwork_cards ORDER BY set, name');
       
       return result.rows.map(card => ({
         id: card.id,
@@ -566,7 +566,7 @@ export class PostgreSQLCardRepository implements CardRepository {
   async getAllAllyUniverse(): Promise<AllyUniverse[]> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query('SELECT * FROM ally_universe_cards ORDER BY universe, name');
+      const result = await client.query('SELECT * FROM ally_universe_cards ORDER BY set, name');
       
       return result.rows.map(card => ({
         id: card.id,
@@ -614,7 +614,7 @@ export class PostgreSQLCardRepository implements CardRepository {
   async getAllTraining(): Promise<TrainingCard[]> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query('SELECT id, name, type_1, type_2, value_to_use, bonus, image_path, one_per_deck FROM training_cards ORDER BY universe, name');
+      const result = await client.query('SELECT id, name, type_1, type_2, value_to_use, bonus, image_path, one_per_deck FROM training_cards ORDER BY set, name');
       
       return result.rows.map(card => ({
         id: card.id,
@@ -659,7 +659,7 @@ export class PostgreSQLCardRepository implements CardRepository {
   async getAllBasicUniverse(): Promise<BasicUniverse[]> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query('SELECT * FROM basic_universe_cards ORDER BY universe, name');
+      const result = await client.query('SELECT * FROM basic_universe_cards ORDER BY set, name');
       
       return result.rows.map(card => ({
         id: card.id,

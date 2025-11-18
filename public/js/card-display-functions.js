@@ -328,10 +328,10 @@ function displayPowerCards(cards) {
         // Normalize values to ensure consistent grouping
         const powerType = (card.power_type || card.type || '').trim();
         const value = String(card.value || '').trim(); // Convert to string for consistent comparison
-        const universe = (card.universe || 'ERB').trim();
+        const set = (card.set || 'ERB').trim();
         
         // Create a normalized key for grouping
-        const key = `${powerType}|${value}|${universe}`;
+        const key = `${powerType}|${value}|${set}`;
         
         if (!groups.has(key)) {
             groups.set(key, []);

@@ -44,7 +44,7 @@ describe('Tab Title Branding Tests', () => {
 
   describe('Logo Alt Text', () => {
     const filesWithLogos = [
-      'public/index.html',
+      // 'public/index.html', // Logo is rendered via JavaScript, not in static HTML
       'public/deck-builder.html',
       'public/components/globalNav.html'
     ];

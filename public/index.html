@@ -4683,13 +4683,13 @@
                         if (availableCard && window.availableCardsMap) {
                             if (card.type === 'character') {
                                 const name = (availableCard.name || '').trim();
-                                const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                                const set = (availableCard.set || 'ERB').trim() || 'ERB';
                                 let count = 0;
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
                                     if ((cardType === 'character' || id.startsWith('char_')) && 
                                         (c.name || '').trim() === name && 
-                                        (c.universe || 'ERB').trim() === universe) {
+                                        (c.set || 'ERB').trim() === set) {
                                         count++;
                                     }
                                 });
@@ -4709,14 +4709,14 @@
                                 hasAlternateArts = count > 1;
                             } else if (card.type === 'power') {
                                 const value = String(availableCard.value || '').trim();
-                                const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                                const set = (availableCard.set || 'ERB').trim() || 'ERB';
                                 const powerType = (availableCard.power_type || '').trim();
                                 let count = 0;
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
                                     if ((cardType === 'power' || id.startsWith('power_')) && 
                                         String(c.value || '').trim() === value && 
-                                        (c.universe || 'ERB').trim() === universe &&
+                                        (c.set || 'ERB').trim() === set &&
                                         (c.power_type || '').trim() === powerType) {
                                         count++;
                                     }
@@ -8171,14 +8171,14 @@
                                     let hasAlternateArtsPower1 = false;
                                     if (availableCard && window.availableCardsMap) {
                                         const value = String(availableCard.value || '').trim();
-                                        const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                                        const set = (availableCard.set || 'ERB').trim() || 'ERB';
                                         const powerType = (availableCard.power_type || '').trim();
                                         let count = 0;
                                         window.availableCardsMap.forEach((c, id) => {
                                             const cardType = c.cardType || c.type || '';
                                             if ((cardType === 'power' || id.startsWith('power_')) && 
                                                 String(c.value || '').trim() === value && 
-                                                (c.universe || 'ERB').trim() === universe &&
+                                                (c.set || 'ERB').trim() === set &&
                                                 (c.power_type || '').trim() === powerType) {
                                                 count++;
                                             }
@@ -8252,14 +8252,14 @@
                                 let hasAlternateArtsPower2 = false;
                                 if (availableCard && window.availableCardsMap) {
                                     const value = String(availableCard.value || '').trim();
-                                    const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                                    const set = (availableCard.set || 'ERB').trim() || 'ERB';
                                     const powerType = (availableCard.power_type || '').trim();
                                     let count = 0;
                                     window.availableCardsMap.forEach((c, id) => {
                                         const cardType = c.cardType || c.type || '';
                                         if ((cardType === 'power' || id.startsWith('power_')) && 
                                             String(c.value || '').trim() === value && 
-                                            (c.universe || 'ERB').trim() === universe &&
+                                            (c.set || 'ERB').trim() === set &&
                                             (c.power_type || '').trim() === powerType) {
                                             count++;
                                         }
@@ -8468,13 +8468,13 @@
                         if (availableCard && window.availableCardsMap) {
                             if (card.type === 'character') {
                                 const name = (availableCard.name || '').trim();
-                                const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                                const set = (availableCard.set || 'ERB').trim() || 'ERB';
                                 let count = 0;
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
                                     if ((cardType === 'character' || id.startsWith('char_')) && 
                                         (c.name || '').trim() === name && 
-                                        (c.universe || 'ERB').trim() === universe) {
+                                        (c.set || 'ERB').trim() === set) {
                                         count++;
                                     }
                                 });
@@ -8494,14 +8494,14 @@
                                 hasAlternateArts = count > 1;
                             } else if (card.type === 'power') {
                                 const value = String(availableCard.value || '').trim();
-                                const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                                const set = (availableCard.set || 'ERB').trim() || 'ERB';
                                 const powerType = (availableCard.power_type || '').trim();
                                 let count = 0;
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
                                     if ((cardType === 'power' || id.startsWith('power_')) && 
                                         String(c.value || '').trim() === value && 
-                                        (c.universe || 'ERB').trim() === universe &&
+                                        (c.set || 'ERB').trim() === set &&
                                         (c.power_type || '').trim() === powerType) {
                                         count++;
                                     }
@@ -10884,20 +10884,20 @@
                                 
                                 const isCharacterLimitReached = currentCharacterCount >= 4;
                                 
-                                // Group characters by name and universe (same type, name, universe = same card)
+                                // Group characters by name and set (same type, name, set = same card)
                                 const groups = new Map();
                                 data.data.forEach(card => {
                                     const name = (card.name || '').trim();
-                                    let universe = (card.universe || 'ERB').trim();
-                                    if (!universe || universe === '') {
-                                        universe = 'ERB';
+                                    let set = (card.set || 'ERB').trim();
+                                    if (!set || set === '') {
+                                        set = 'ERB';
                                     }
                                     
                                     if (!name) {
                                         return;
                                     }
                                     
-                                    const key = `${name}|${universe}`;
+                                    const key = `${name}|${set}`;
                                     if (!groups.has(key)) {
                                         groups.set(key, []);
                                     }
@@ -10935,8 +10935,8 @@
                                     // Use first card (original art) as representative
                                     const representative = group[0];
                                     const name = (representative.name || '').trim();
-                                    const universe = (representative.universe || 'ERB').trim() || 'ERB';
-                                    const renderKey = `${name}|${universe}`;
+                                    const set = (representative.set || 'ERB').trim() || 'ERB';
+                                    const renderKey = `${name}|${set}`;
                                     
                                     // Skip if already rendered
                                     if (renderedKeys.has(renderKey)) {
@@ -11539,12 +11539,12 @@
                                 const cardGroups = new Map();
                                 cardsInTypeGroup.forEach(card => {
                                     const value = String(card.value || '').trim();
-                                    let universe = (card.universe || 'ERB').trim();
-                                    if (!universe || universe === '') {
-                                        universe = 'ERB';
+                                    let set = (card.set || 'ERB').trim();
+                                    if (!set || set === '') {
+                                        set = 'ERB';
                                     }
                                     
-                                    const key = `${value}|${universe}`;
+                                    const key = `${value}|${set}`;
                                     if (!cardGroups.has(key)) {
                                         cardGroups.set(key, []);
                                     }
@@ -12128,9 +12128,9 @@
             let allAlternateArts = [];
             
             if (cardType === 'character') {
-                // For characters, group by name|universe
+                // For characters, group by name|set
                 const name = (availableCard.name || '').trim();
-                const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                const set = (availableCard.set || 'ERB').trim() || 'ERB';
                 
                 // Search through all available cards to find matches
                 // Use same logic as Card View detection: cardType || type
@@ -12138,7 +12138,7 @@
                     const iterCardType = card.cardType || card.type || '';
                     if ((iterCardType === 'character' || id.startsWith('char_')) && 
                         (card.name || '').trim() === name && 
-                        (card.universe || 'ERB').trim() === universe) {
+                        (card.set || 'ERB').trim() === set) {
                         allAlternateArts.push({
                             id: card.id || id,
                             imagePath: getCardImagePath(card, 'character'),
@@ -12165,9 +12165,9 @@
                     }
                 });
             } else if (cardType === 'power') {
-                // For power cards, group by value|universe
+                // For power cards, group by value|set
                 const value = String(availableCard.value || '').trim();
-                const universe = (availableCard.universe || 'ERB').trim() || 'ERB';
+                const set = (availableCard.set || 'ERB').trim() || 'ERB';
                 const powerType = (availableCard.power_type || '').trim();
                 
                 // Use same logic as Card View detection: cardType || type
@@ -12175,7 +12175,7 @@
                     const iterCardType = card.cardType || card.type || '';
                     if ((iterCardType === 'power' || id.startsWith('power_')) && 
                         String(card.value || '').trim() === value && 
-                        (card.universe || 'ERB').trim() === universe &&
+                        (card.set || 'ERB').trim() === set &&
                         (card.power_type || '').trim() === powerType) {
                         allAlternateArts.push({
                             id: card.id || id,

@@ -26,9 +26,9 @@ function groupCardsByVariant(cards, nameField = 'name', universeField = 'univers
     
     cards.forEach(card => {
         const name = card[nameField] || card.name || '';
-        const universe = card[universeField] || card.universe || 'ERB';
+        const set = card[universeField] || card.set || 'ERB';
         const cardType = card.card_type || 'character';
-        const key = `${name}|${universe}|${cardType}`;
+        const key = `${name}|${set}|${cardType}`;
         
         if (!groups.has(key)) {
             groups.set(key, []);

@@ -4,18 +4,18 @@ export class CollectionService {
   constructor(private collectionsRepository: CollectionsRepository) {}
 
   /**
-   * Translate universe code to display name
+   * Translate set code to display name
    */
-  translateUniverse(universeCode: string | null | undefined): string {
-    if (!universeCode) {
+  translateSet(setCode: string | null | undefined): string {
+    if (!setCode) {
       return 'Edgar Rice Burroughs and the World Legends';
     }
 
-    switch (universeCode.toUpperCase()) {
+    switch (setCode.toUpperCase()) {
       case 'ERB':
         return 'Edgar Rice Burroughs and the World Legends';
       default:
-        return universeCode;
+        return setCode;
     }
   }
 
@@ -27,15 +27,15 @@ export class CollectionService {
   }
 
   /**
-   * Get all cards in user's collection with translated universe names
+   * Get all cards in user's collection with translated set names
    */
   async getCollectionCards(collectionId: string): Promise<CollectionCardWithDetails[]> {
     const cards = await this.collectionsRepository.getCollectionCards(collectionId);
     
-    // Translate universe codes to display names
+    // Translate set codes to display names
     return cards.map(card => ({
       ...card,
-      universe: this.translateUniverse(card.universe)
+      set: this.translateSet(card.set)
     }));
   }
 

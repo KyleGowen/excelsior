@@ -5,18 +5,18 @@ let collectionCards = [];
 let collectionSearchTimeout = null;
 
 /**
- * Translate universe code to display name
+ * Translate set code to display name
  */
-function translateUniverse(universeCode) {
-    if (!universeCode) {
+function translateSet(setCode) {
+    if (!setCode) {
         return 'Edgar Rice Burroughs and the World Legends';
     }
 
-    switch (universeCode.toUpperCase()) {
+    switch (setCode.toUpperCase()) {
         case 'ERB':
             return 'Edgar Rice Burroughs and the World Legends';
         default:
-            return universeCode;
+            return setCode;
     }
 }
 
@@ -302,7 +302,7 @@ function displayCollectionCards(cards) {
             cardType
         });
         
-        const cardSet = translateUniverse(card.universe);
+        const cardSet = translateSet(card.set);
         
         // Get set_number from card_data
         const setNumber = card.card_data?.set_number || '';
@@ -1036,7 +1036,8 @@ function initializeCollectionView() {
 }
 
 // Expose functions globally for inline HTML usage
-window.translateUniverse = translateUniverse;
+window.translateSet = translateSet;
+window.translateUniverse = translateSet; // Backward compatibility alias
 window.formatCardType = formatCardType;
 window.loadCollection = loadCollection;
 window.displayCollectionCards = displayCollectionCards;

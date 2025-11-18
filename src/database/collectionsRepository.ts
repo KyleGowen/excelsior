@@ -21,7 +21,7 @@ export interface CollectionCard {
 export interface CollectionCardWithDetails extends CollectionCard {
   card_name?: string;
   card_data?: any;
-  universe?: string;
+  set?: string; // Renamed from universe
 }
 
 export class CollectionsRepository {
@@ -195,7 +195,7 @@ export class CollectionsRepository {
         
         let cardData: any = null;
         let cardName: string = '';
-        let universe: string = '';
+        let set: string = '';
 
         try {
           switch (cc.card_type) {
@@ -204,7 +204,7 @@ export class CollectionsRepository {
               if (charResult.rows.length > 0) {
                 cardData = charResult.rows[0];
                 cardName = cardData.name;
-                universe = cardData.universe || 'ERB';
+                set = cardData.set || 'ERB';
               }
               break;
             case 'special':
@@ -212,7 +212,7 @@ export class CollectionsRepository {
               if (specialResult.rows.length > 0) {
                 cardData = specialResult.rows[0];
                 cardName = cardData.name;
-                universe = cardData.universe || 'ERB';
+                set = cardData.set || 'ERB';
               }
               break;
             case 'power':
@@ -220,7 +220,7 @@ export class CollectionsRepository {
               if (powerResult.rows.length > 0) {
                 cardData = powerResult.rows[0];
                 cardName = `${cardData.value} - ${cardData.power_type}`;
-                universe = cardData.universe || 'ERB';
+                set = cardData.set || 'ERB';
               }
               break;
             case 'location':
@@ -228,7 +228,7 @@ export class CollectionsRepository {
               if (locationResult.rows.length > 0) {
                 cardData = locationResult.rows[0];
                 cardName = locationResult.rows[0].name;
-                universe = cardData.universe || 'ERB';
+                set = cardData.set || 'ERB';
               }
               break;
             case 'mission':
@@ -236,7 +236,7 @@ export class CollectionsRepository {
               if (missionResult.rows.length > 0) {
                 cardData = missionResult.rows[0];
                 cardName = cardData.card_name || cardData.name;
-                universe = cardData.universe || 'ERB';
+                set = cardData.set || 'ERB';
               }
               break;
             case 'event':
@@ -244,7 +244,7 @@ export class CollectionsRepository {
               if (eventResult.rows.length > 0) {
                 cardData = eventResult.rows[0];
                 cardName = cardData.name;
-                universe = cardData.universe || 'ERB';
+                set = cardData.set || 'ERB';
               }
               break;
             case 'aspect':
@@ -252,7 +252,7 @@ export class CollectionsRepository {
               if (aspectResult.rows.length > 0) {
                 cardData = aspectResult.rows[0];
                 cardName = cardData.card_name || cardData.name;
-                universe = cardData.universe || 'ERB';
+                set = cardData.set || 'ERB';
               }
               break;
             case 'advanced_universe':
@@ -260,7 +260,7 @@ export class CollectionsRepository {
               if (advUniResult.rows.length > 0) {
                 cardData = advUniResult.rows[0];
                 cardName = cardData.card_name || cardData.name;
-                universe = cardData.universe || 'ERB';
+                set = cardData.set || 'ERB';
               }
               break;
             case 'teamwork':
@@ -268,7 +268,7 @@ export class CollectionsRepository {
               if (teamworkResult.rows.length > 0) {
                 cardData = teamworkResult.rows[0];
                 cardName = cardData.card_type || cardData.name;
-                universe = cardData.universe || 'ERB';
+                set = cardData.set || 'ERB';
               }
               break;
             case 'ally_universe':
@@ -276,7 +276,7 @@ export class CollectionsRepository {
               if (allyResult.rows.length > 0) {
                 cardData = allyResult.rows[0];
                 cardName = cardData.card_name || cardData.name;
-                universe = cardData.universe || 'ERB';
+                set = cardData.set || 'ERB';
               }
               break;
             case 'training':
@@ -284,7 +284,7 @@ export class CollectionsRepository {
               if (trainingResult.rows.length > 0) {
                 cardData = trainingResult.rows[0];
                 cardName = cardData.card_name || cardData.name;
-                universe = cardData.universe || 'ERB';
+                set = cardData.set || 'ERB';
               }
               break;
             case 'basic_universe':
@@ -292,7 +292,7 @@ export class CollectionsRepository {
               if (basicResult.rows.length > 0) {
                 cardData = basicResult.rows[0];
                 cardName = cardData.card_name || cardData.name;
-                universe = cardData.universe || 'ERB';
+                set = cardData.set || 'ERB';
               }
               break;
           }
@@ -311,7 +311,7 @@ export class CollectionsRepository {
           updated_at: cc.updated_at,
           card_name: cardName,
           card_data: cardData,
-          universe: universe
+          set: set
         });
         
         console.log('🟠 [Repo] Pushed card with details:', {
