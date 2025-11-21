@@ -4618,6 +4618,20 @@
 
             let cardsHtml = '';
 
+            // Extract character order from Characters section for sorting special cards
+            const characterOrder = [];
+            if (cardsByType['character'] && cardsByType['character'].length > 0) {
+                cardsByType['character'].forEach(cardData => {
+                    const characterCard = window.availableCardsMap.get(cardData.cardId);
+                    if (characterCard && characterCard.name) {
+                        const characterName = (characterCard.name || '').trim();
+                        if (characterName && !characterOrder.includes(characterName)) {
+                            characterOrder.push(characterName);
+                        }
+                    }
+                });
+            }
+
             // Render each type group as a full-width vertical section - completely independent structure
             typeOrder.forEach(type => {
                 if (cardsByType[type] && cardsByType[type].length > 0) {
@@ -4639,6 +4653,7 @@
                     
                     // Render cards in horizontal rows - Card View specific rendering
                     // For power cards: sort by value with Overpower type tiebreaker (Energy, Combat, Brute Force, Intelligence, Multi Power, Any-Power)
+                    // For special cards: sort by character order matching Characters section, with "Any Character" specials last
                     const cardsForRendering = (type === 'power') ? (() => {
                         const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Multi Power', 'Any-Power'];
                         const orderIndex = (t) => {
@@ -4656,6 +4671,56 @@
                             const aType = cardA.power_type || '';
                             const bType = cardB.power_type || '';
                             return orderIndex(aType) - orderIndex(bType);
+                        });
+                        return copy;
+                    })() : (type === 'special') ? (() => {
+                        // Sort special cards by character order, with "Any Character" specials last
+                        const copy = [...typeCards];
+                        copy.sort((a, b) => {
+                            const cardA = window.availableCardsMap.get(a.cardId);
+                            const cardB = window.availableCardsMap.get(b.cardId);
+                            if (!cardA || !cardB) return 0;
+                            
+                            const charA = (cardA.character || '').trim();
+                            const charB = (cardB.character || '').trim();
+                            
+                            // Check if either is "Any Character" (case-insensitive)
+                            const aIsAnyCharacter = !charA || charA.toLowerCase().includes('any character') || charA.toLowerCase() === 'any';
+                            const bIsAnyCharacter = !charB || charB.toLowerCase().includes('any character') || charB.toLowerCase() === 'any';
+                            
+                            // "Any Character" specials always go last
+                            if (aIsAnyCharacter && !bIsAnyCharacter) return 1;
+                            if (!aIsAnyCharacter && bIsAnyCharacter) return -1;
+                            if (aIsAnyCharacter && bIsAnyCharacter) {
+                                // Both are "Any Character", sort by card name
+                                const nameA = (cardA.name || cardA.card_name || '').trim();
+                                const nameB = (cardB.name || cardB.card_name || '').trim();
+                                return nameA.localeCompare(nameB);
+                            }
+                            
+                            // Both are regular character specials - sort by character order
+                            const indexA = characterOrder.indexOf(charA);
+                            const indexB = characterOrder.indexOf(charB);
+                            
+                            // If character not found in order, put it at the end (after "Any Character")
+                            if (indexA === -1 && indexB === -1) {
+                                // Neither found, sort by character name then card name
+                                const charCompare = charA.localeCompare(charB);
+                                if (charCompare !== 0) return charCompare;
+                                const nameA = (cardA.name || cardA.card_name || '').trim();
+                                const nameB = (cardB.name || cardB.card_name || '').trim();
+                                return nameA.localeCompare(nameB);
+                            }
+                            if (indexA === -1) return 1; // A not found, put it after B
+                            if (indexB === -1) return -1; // B not found, put it after A
+                            
+                            // Both found in order - sort by character order
+                            if (indexA !== indexB) return indexA - indexB;
+                            
+                            // Same character - sort by card name
+                            const nameA = (cardA.name || cardA.card_name || '').trim();
+                            const nameB = (cardB.name || cardB.card_name || '').trim();
+                            return nameA.localeCompare(nameB);
                         });
                         return copy;
                     })() : typeCards;
@@ -4707,16 +4772,18 @@
                             } else if (card.type === 'special') {
                                 const characterName = (availableCard.character || '').trim();
                                 const cardName = (availableCard.name || availableCard.card_name || '').trim();
-                                let count = 0;
+                                const uniqueImagePaths = new Set();
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
                                     if ((cardType === 'special' || id.startsWith('special_')) && 
                                         (c.character || '').trim() === characterName && 
                                         (c.name || c.card_name || '').trim() === cardName) {
-                                        count++;
+                                        const imagePath = getCardImagePath(c, 'special');
+                                        uniqueImagePaths.add(imagePath);
                                     }
                                 });
-                                hasAlternateArts = count > 1;
+                                // Only show button if there are multiple unique image paths
+                                hasAlternateArts = uniqueImagePaths.size > 1;
                             } else if (card.type === 'power') {
                                 const value = String(availableCard.value || '').trim();
                                 const set = (availableCard.set || 'ERB').trim() || 'ERB';
@@ -8040,21 +8107,24 @@
                                     cardDisplayName = availableCard.name || availableCard.card_name || getCardName(card);
                                 }
                                 
-                                // Check if this special card has alternate arts
+                                // Check if this special card has alternate arts (different image paths)
                                 let hasAlternateArtsSpecial = false;
                                 if (availableCard && window.availableCardsMap) {
                                     const characterName = (availableCard.character || '').trim();
                                     const cardName = (availableCard.name || availableCard.card_name || '').trim();
-                                    let count = 0;
+                                    const currentImagePath = getCardImagePath(availableCard, 'special');
+                                    const uniqueImagePaths = new Set();
                                     window.availableCardsMap.forEach((c, id) => {
                                         const cardType = c.cardType || c.type || '';
                                         if ((cardType === 'special' || id.startsWith('special_')) && 
                                             (c.character || '').trim() === characterName && 
                                             (c.name || c.card_name || '').trim() === cardName) {
-                                            count++;
+                                            const imagePath = getCardImagePath(c, 'special');
+                                            uniqueImagePaths.add(imagePath);
                                         }
                                     });
-                                    hasAlternateArtsSpecial = count > 1;
+                                    // Only show button if there are multiple unique image paths
+                                    hasAlternateArtsSpecial = uniqueImagePaths.size > 1;
                                 }
                                 const changeArtButtonSpecial = hasAlternateArtsSpecial ? 
                                     `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
@@ -8492,16 +8562,18 @@
                             } else if (card.type === 'special') {
                                 const characterName = (availableCard.character || '').trim();
                                 const cardName = (availableCard.name || availableCard.card_name || '').trim();
-                                let count = 0;
+                                const uniqueImagePaths = new Set();
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
                                     if ((cardType === 'special' || id.startsWith('special_')) && 
                                         (c.character || '').trim() === characterName && 
                                         (c.name || c.card_name || '').trim() === cardName) {
-                                        count++;
+                                        const imagePath = getCardImagePath(c, 'special');
+                                        uniqueImagePaths.add(imagePath);
                                     }
                                 });
-                                hasAlternateArts = count > 1;
+                                // Only show button if there are multiple unique image paths
+                                hasAlternateArts = uniqueImagePaths.size > 1;
                             } else if (card.type === 'power') {
                                 const value = String(availableCard.value || '').trim();
                                 const set = (availableCard.set || 'ERB').trim() || 'ERB';
