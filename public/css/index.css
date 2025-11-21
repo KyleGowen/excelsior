@@ -3328,6 +3328,15 @@
             justify-content: center;
         }
 
+        /* Increase width of "Remove Unusables" button in tile view */
+        /* Target buttons with "Remove Unusables" text that are not in card view */
+        .remove-all-btn:not(.card-view-remove-unusables-btn)[onclick*="removeUnusable"] {
+            padding-left: 11px !important; /* 12px * 0.9 = 10.8px (10% reduction) */
+            padding-right: 11px !important;
+            width: auto !important; /* Override width: 100% to allow button to size to content */
+            min-width: auto !important; /* Override min-width: 80px to allow natural sizing */
+        }
+
         .remove-all-btn:hover {
             background: rgba(78, 205, 196, 0.3);
             border-color: rgba(78, 205, 196, 0.4);

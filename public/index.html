@@ -415,13 +415,16 @@
             padding: 8px 16px;
             margin-bottom: 20px;
             width: 100%;
+            max-width: 100%; /* Ensure header doesn't exceed container */
             box-sizing: border-box;
             display: flex;
-            justify-content: space-between;
             align-items: center;
             cursor: pointer;
             transition: all 0.2s ease;
             min-height: 36px;
+            gap: 16px; /* Add gap between name and controls */
+            overflow: hidden; /* Prevent overflow */
+            position: relative; /* Contain absolutely positioned children */
         }
 
         .card-view-category-header:hover {
@@ -432,11 +435,43 @@
         .card-view-category-controls {
             display: flex !important;
             align-items: center;
-            gap: 8px;
+            gap: 12px; /* Increased gap for better spacing */
             position: relative;
             z-index: 1;
             visibility: visible !important;
             opacity: 1 !important;
+            flex-shrink: 0; /* Don't shrink controls */
+            margin-left: auto; /* Push controls to the right */
+            justify-content: flex-end; /* Right-align items within controls */
+            min-width: fit-content; /* Size to content */
+        }
+        
+        /* Remove Unusables button in Card View */
+        .card-view-remove-unusables-btn {
+            font-size: 10px;
+            padding: 1px 4px !important; /* Increased padding - 6% wider */
+            min-width: auto !important; /* Override remove-all-btn min-width: 80px */
+            width: auto !important; /* Override remove-all-btn width: 100% */
+            max-width: none !important; /* Remove any max-width constraints */
+            height: auto !important; /* Let height adjust to content */
+            line-height: 1.2; /* Tight line height */
+            border-radius: 4px;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            font-weight: 500;
+            flex-shrink: 0; /* Prevent button from shrinking */
+            box-sizing: border-box; /* Include border in width calculation */
+            display: inline-block !important; /* Override remove-all-btn display: inline-flex */
+        }
+        
+        .card-view-remove-unusables-btn:hover {
+            background: rgba(78, 205, 196, 0.3);
+            border-color: rgba(78, 205, 196, 0.5);
+            transform: translateY(-1px);
         }
 
         .card-view-category-toggle {
@@ -448,12 +483,15 @@
             display: inline-block !important;
             visibility: visible !important;
             opacity: 1 !important;
-            min-width: 18px !important;
+            min-width: auto !important; /* Allow natural width */
+            width: auto !important; /* Allow natural width */
             text-align: center !important;
             background: rgba(78, 205, 196, 0.1) !important;
             border: 1px solid rgba(78, 205, 196, 0.3) !important;
             border-radius: 3px !important;
-            padding: 3px 6px !important;
+            padding: 2px 4px !important; /* Minimal padding to prevent squishing */
+            margin: 0 !important; /* Remove any margin */
+            line-height: 1 !important; /* Tight line height */
         }
 
         .card-view-category-toggle.collapsed {
@@ -470,6 +508,11 @@
             color: #4ecdc4;
             font-weight: 600;
             font-size: 1rem;
+            flex-shrink: 1; /* Allow name to shrink if needed */
+            min-width: 0; /* Allow flex shrinking */
+            overflow: hidden; /* Prevent text overflow */
+            text-overflow: ellipsis; /* Show ellipsis if text is too long */
+            white-space: nowrap; /* Keep name on one line */
         }
         
         .card-view-category-count {
@@ -477,6 +520,8 @@
             font-size: 0.9rem !important;
             visibility: visible !important;
             opacity: 1 !important;
+            flex-shrink: 0; /* Prevent count from shrinking */
+            white-space: nowrap; /* Keep count on one line */
         }
         
         .card-view-category-cards {
@@ -4639,11 +4684,30 @@
                     const typeName = typeDisplayNames[type] || type;
                     const cardCount = typeCards.reduce((total, card) => total + (card.quantity || 1), 0);
                     
+                    // Add "Remove Unusables" button for applicable card types
+                    let removeUnusablesButton = '';
+                    if (type === 'special') {
+                        removeUnusablesButton = `<button class="remove-all-btn card-view-remove-unusables-btn" onclick="event.stopPropagation(); removeUnusableSpecialCards()">Remove Unusables</button>`;
+                    } else if (type === 'event') {
+                        removeUnusablesButton = `<button class="remove-all-btn card-view-remove-unusables-btn" onclick="event.stopPropagation(); removeUnusableEvents()">Remove Unusables</button>`;
+                    } else if (type === 'advanced-universe') {
+                        removeUnusablesButton = `<button class="remove-all-btn card-view-remove-unusables-btn" onclick="event.stopPropagation(); removeUnusableAdvancedUniverse()">Remove Unusables</button>`;
+                    } else if (type === 'training') {
+                        removeUnusablesButton = `<button class="remove-all-btn card-view-remove-unusables-btn" onclick="event.stopPropagation(); removeUnusableTraining()">Remove Unusables</button>`;
+                    } else if (type === 'ally-universe') {
+                        removeUnusablesButton = `<button class="remove-all-btn card-view-remove-unusables-btn" onclick="event.stopPropagation(); removeUnusableAllyUniverse()">Remove Unusables</button>`;
+                    } else if (type === 'basic-universe') {
+                        removeUnusablesButton = `<button class="remove-all-btn card-view-remove-unusables-btn" onclick="event.stopPropagation(); removeUnusableBasicUniverse()">Remove Unusables</button>`;
+                    } else if (type === 'power') {
+                        removeUnusablesButton = `<button class="remove-all-btn card-view-remove-unusables-btn" onclick="event.stopPropagation(); removeUnusablePowerCards()">Remove Unusables</button>`;
+                    }
+                    
                     cardsHtml += `
                         <div class="card-view-category-section" data-type="${type}">
                             <div class="card-view-category-header" onclick="toggleCardViewCategory('${type}')">
                                 <span class="card-view-category-name">${typeName}</span>
                                 <div class="card-view-category-controls">
+                                    ${removeUnusablesButton}
                                     <span class="card-view-category-count">${cardCount} card${cardCount !== 1 ? 's' : ''}</span>
                                     <span class="card-view-category-toggle" id="toggle-${type}">▼</span>
                                 </div>
@@ -10185,7 +10249,7 @@
 
         async function removeUnusableSpecialCards() {
             // Get all selected characters
-            const selectedCharacters = window.window.deckEditorCards.filter(card => card.type === 'character');
+            const selectedCharacters = window.deckEditorCards.filter(card => card.type === 'character');
             
             if (selectedCharacters.length === 0) {
                 showNotification('No characters selected - cannot determine usable special cards', 'info');
@@ -10200,7 +10264,7 @@
             }).filter(name => name);
             
             // Get all special cards
-            const specialCards = window.window.deckEditorCards.filter(card => card.type === 'special');
+            const specialCards = window.deckEditorCards.filter(card => card.type === 'special');
             
             if (specialCards.length === 0) {
                 showNotification('No special cards to check', 'info');
@@ -10239,7 +10303,7 @@
             
             // Remove unusable special cards
             const unusableIndices = unusableCards.map(card => 
-                window.window.deckEditorCards.findIndex(deckCard => 
+                window.deckEditorCards.findIndex(deckCard => 
                     deckCard.type === card.type && deckCard.cardId === card.cardId
                 )
             ).sort((a, b) => b - a); // Sort in descending order to remove from end first
@@ -10248,10 +10312,16 @@
             const currentExpansionState = getExpansionState();
             
             unusableIndices.forEach(index => {
-                window.window.deckEditorCards.splice(index, 1);
+                window.deckEditorCards.splice(index, 1);
             });
             
-            await displayDeckCardsForEditing();
+            // Check if we're in Card View and render accordingly
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                renderDeckCardsCardView();
+            } else {
+                await displayDeckCardsForEditing();
+            }
             
             // Restore the expansion state after re-rendering
             applyUIPreferences({ expansionState: currentExpansionState });
@@ -10265,6 +10335,579 @@
             await showDeckValidation(window.deckEditorCards);
             
             showNotification(`Removed ${unusableCards.length} unusable special cards`, 'success');
+        }
+
+        async function removeUnusableEvents() {
+            // Get mission sets from current deck missions
+            const deckMissionCards = window.deckEditorCards.filter(card => card.type === 'mission');
+            const deckMissionSets = new Set();
+            
+            deckMissionCards.forEach(card => {
+                const mission = window.availableCardsMap.get(card.cardId);
+                if (mission && mission.mission_set) {
+                    deckMissionSets.add(mission.mission_set);
+                }
+            });
+            
+            // Get all event cards
+            const eventCards = window.deckEditorCards.filter(card => card.type === 'event');
+            
+            if (eventCards.length === 0) {
+                showNotification('No event cards to check', 'info');
+                return;
+            }
+            
+            // If no missions selected, all events are considered usable
+            if (deckMissionSets.size === 0) {
+                showNotification('No missions selected - all events are considered usable', 'info');
+                return;
+            }
+            
+            // Find unusable event cards (those whose mission_set doesn't match any deck mission set)
+            const unusableCards = eventCards.filter(eventCard => {
+                const availableCard = window.availableCardsMap.get(eventCard.cardId);
+                if (!availableCard) return true; // Remove if card not found
+                
+                const eventMissionSet = availableCard.mission_set;
+                return !eventMissionSet || !deckMissionSets.has(eventMissionSet);
+            });
+            
+            if (unusableCards.length === 0) {
+                showNotification('All event cards are usable with selected missions', 'info');
+                return;
+            }
+            
+            // Remove unusable event cards
+            const unusableIndices = unusableCards.map(card => 
+                window.deckEditorCards.findIndex(deckCard => 
+                    deckCard.type === card.type && deckCard.cardId === card.cardId
+                )
+            ).sort((a, b) => b - a); // Sort in descending order to remove from end first
+            
+            // Capture current expansion state before re-rendering
+            const currentExpansionState = getExpansionState();
+            
+            unusableIndices.forEach(index => {
+                window.deckEditorCards.splice(index, 1);
+            });
+            
+            // Check if we're in Card View and render accordingly
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                renderDeckCardsCardView();
+            } else {
+                await displayDeckCardsForEditing();
+            }
+            
+            // Restore the expansion state after re-rendering
+            applyUIPreferences({ expansionState: currentExpansionState });
+            updateDeckEditorCardCount();
+            
+            // Validate deck after removing cards
+            await showDeckValidation(window.deckEditorCards);
+            
+            showNotification(`Removed ${unusableCards.length} unusable event cards`, 'success');
+        }
+
+        async function removeUnusableAdvancedUniverse() {
+            // Get all selected characters
+            const selectedCharacters = window.deckEditorCards.filter(card => card.type === 'character');
+            
+            if (selectedCharacters.length === 0) {
+                showNotification('No characters selected - cannot determine usable advanced universe cards', 'info');
+                return;
+            }
+            
+            // Get character names
+            const characterNames = selectedCharacters.map(charCard => {
+                const availableCard = window.availableCardsMap.get(charCard.cardId);
+                return availableCard ? (availableCard.name || availableCard.card_name) : null;
+            }).filter(name => name);
+            
+            // Get all advanced universe cards
+            const advancedUniverseCards = window.deckEditorCards.filter(card => 
+                card.type === 'advanced-universe' || card.type === 'advanced_universe'
+            );
+            
+            if (advancedUniverseCards.length === 0) {
+                showNotification('No advanced universe cards to check', 'info');
+                return;
+            }
+            
+            // Find unusable advanced universe cards (those that belong to KO'd characters or don't belong to any selected character)
+            const unusableCards = advancedUniverseCards.filter(card => {
+                const availableCard = window.availableCardsMap.get(card.cardId);
+                if (!availableCard) return true; // Remove if card not found
+                
+                const characterName = availableCard.character;
+                if (!characterName || characterName === 'Any Character') {
+                    return false; // Don't remove "Any Character" cards
+                }
+                
+                // Check if this card belongs to any selected character
+                return !characterNames.includes(characterName);
+            });
+            
+            if (unusableCards.length === 0) {
+                showNotification('All advanced universe cards are usable with selected characters', 'info');
+                return;
+            }
+            
+            // Remove unusable cards
+            const unusableIndices = unusableCards.map(card => 
+                window.deckEditorCards.findIndex(deckCard => 
+                    deckCard.type === card.type && deckCard.cardId === card.cardId
+                )
+            ).sort((a, b) => b - a);
+            
+            const currentExpansionState = getExpansionState();
+            
+            unusableIndices.forEach(index => {
+                window.deckEditorCards.splice(index, 1);
+            });
+            
+            // Check if we're in Card View and render accordingly
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                renderDeckCardsCardView();
+            } else {
+                await displayDeckCardsForEditing();
+            }
+            
+            applyUIPreferences({ expansionState: currentExpansionState });
+            updateDeckEditorCardCount();
+            await showDeckValidation(window.deckEditorCards);
+            
+            showNotification(`Removed ${unusableCards.length} unusable advanced universe cards`, 'success');
+        }
+
+        async function removeUnusableTraining() {
+            // Get all selected characters
+            const selectedCharacters = window.deckEditorCards.filter(card => card.type === 'character');
+            
+            if (selectedCharacters.length === 0) {
+                showNotification('No characters selected - cannot determine usable training cards', 'info');
+                return;
+            }
+            
+            // Get active characters with stats
+            const activeCharacters = selectedCharacters.map(charCard => {
+                const availableCard = window.availableCardsMap.get(charCard.cardId);
+                if (!availableCard) return null;
+                
+                const nameLower = (availableCard.name || availableCard.card_name || '').toLowerCase();
+                return {
+                    cardId: charCard.cardId,
+                    name: availableCard.name || availableCard.card_name,
+                    energy: availableCard.energy || 0,
+                    combat: availableCard.combat || 0,
+                    brute_force: Math.max(availableCard.brute_force || 0, nameLower.includes('john carter') ? 8 : 0),
+                    intelligence: Math.max(availableCard.intelligence || 0, nameLower.includes('time traveler') ? 8 : 0)
+                };
+            }).filter(char => char !== null);
+            
+            // Get all training cards
+            const trainingCards = window.deckEditorCards.filter(card => card.type === 'training');
+            
+            if (trainingCards.length === 0) {
+                showNotification('No training cards to check', 'info');
+                return;
+            }
+            
+            // Find unusable training cards (those that no active character can use)
+            const unusableCards = trainingCards.filter(card => {
+                const availableCard = window.availableCardsMap.get(card.cardId);
+                if (!availableCard) return true;
+                
+                const type1 = availableCard.type_1;
+                const type2 = availableCard.type_2;
+                const valueToUse = parseInt(availableCard.value_to_use) || 0;
+                
+                if (!type1 || !type2 || valueToUse <= 0) return false; // Skip invalid cards
+                
+                // Check if any active character can use this training card
+                let canUse = false;
+                activeCharacters.forEach(char => {
+                    if (canUse) return;
+                    
+                    let type1Stat = 0;
+                    let type2Stat = 0;
+                    
+                    switch (type1) {
+                        case 'Energy': type1Stat = char.energy; break;
+                        case 'Combat': type1Stat = char.combat; break;
+                        case 'Brute Force': type1Stat = char.brute_force; break;
+                        case 'Intelligence': type1Stat = char.intelligence; break;
+                    }
+                    
+                    switch (type2) {
+                        case 'Energy': type2Stat = char.energy; break;
+                        case 'Combat': type2Stat = char.combat; break;
+                        case 'Brute Force': type2Stat = char.brute_force; break;
+                        case 'Intelligence': type2Stat = char.intelligence; break;
+                    }
+                    
+                    // Card is usable if EITHER type meets the requirement (value_to_use or less)
+                    if (type1Stat <= valueToUse || type2Stat <= valueToUse) {
+                        canUse = true;
+                    }
+                });
+                
+                return !canUse;
+            });
+            
+            if (unusableCards.length === 0) {
+                showNotification('All training cards are usable with selected characters', 'info');
+                return;
+            }
+            
+            // Remove unusable cards
+            const unusableIndices = unusableCards.map(card => 
+                window.deckEditorCards.findIndex(deckCard => 
+                    deckCard.type === card.type && deckCard.cardId === card.cardId
+                )
+            ).sort((a, b) => b - a);
+            
+            const currentExpansionState = getExpansionState();
+            
+            unusableIndices.forEach(index => {
+                window.deckEditorCards.splice(index, 1);
+            });
+            
+            // Check if we're in Card View and render accordingly
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                renderDeckCardsCardView();
+            } else {
+                await displayDeckCardsForEditing();
+            }
+            
+            applyUIPreferences({ expansionState: currentExpansionState });
+            updateDeckEditorCardCount();
+            await showDeckValidation(window.deckEditorCards);
+            
+            showNotification(`Removed ${unusableCards.length} unusable training cards`, 'success');
+        }
+
+        async function removeUnusableAllyUniverse() {
+            // Get all selected characters
+            const selectedCharacters = window.deckEditorCards.filter(card => card.type === 'character');
+            
+            if (selectedCharacters.length === 0) {
+                showNotification('No characters selected - cannot determine usable ally universe cards', 'info');
+                return;
+            }
+            
+            // Get active characters with stats
+            const activeCharacters = selectedCharacters.map(charCard => {
+                const availableCard = window.availableCardsMap.get(charCard.cardId);
+                if (!availableCard) return null;
+                
+                return {
+                    cardId: charCard.cardId,
+                    name: availableCard.name || availableCard.card_name,
+                    energy: availableCard.energy || 0,
+                    combat: availableCard.combat || 0,
+                    brute_force: availableCard.brute_force || 0,
+                    intelligence: availableCard.intelligence || 0
+                };
+            }).filter(char => char !== null);
+            
+            // Get all ally universe cards
+            const allyCards = window.deckEditorCards.filter(card => 
+                card.type === 'ally-universe' || card.type === 'ally_universe'
+            );
+            
+            if (allyCards.length === 0) {
+                showNotification('No ally universe cards to check', 'info');
+                return;
+            }
+            
+            // Special rule: If only one character, all ally cards are unusable (they require multiple characters)
+            const shouldDimAllAlly = selectedCharacters.length === 1;
+            
+            // Find unusable ally cards
+            const unusableCards = allyCards.filter(card => {
+                if (shouldDimAllAlly) return true;
+                
+                const availableCard = window.availableCardsMap.get(card.cardId);
+                if (!availableCard) return true;
+                
+                const statToUse = availableCard.stat_to_use || '';
+                const statTypeToUse = availableCard.stat_type_to_use || '';
+                const valueMatch = statToUse.match(/(\d+) or (less|higher)/);
+                
+                if (!valueMatch || !statTypeToUse) return false; // Skip invalid cards
+                
+                const requiredValue = parseInt(valueMatch[1]);
+                const isLessThan = valueMatch[2] === 'less';
+                
+                // Check if any active character meets the requirement
+                let canUse = false;
+                activeCharacters.forEach(char => {
+                    if (canUse) return;
+                    
+                    let characterStat = 0;
+                    switch (statTypeToUse) {
+                        case 'Energy': characterStat = char.energy; break;
+                        case 'Combat': characterStat = char.combat; break;
+                        case 'Brute Force': characterStat = char.brute_force; break;
+                        case 'Intelligence': characterStat = char.intelligence; break;
+                    }
+                    
+                    const usable = isLessThan ? characterStat <= requiredValue : characterStat >= requiredValue;
+                    if (usable) {
+                        canUse = true;
+                    }
+                });
+                
+                return !canUse;
+            });
+            
+            if (unusableCards.length === 0) {
+                showNotification('All ally universe cards are usable with selected characters', 'info');
+                return;
+            }
+            
+            // Remove unusable cards
+            const unusableIndices = unusableCards.map(card => 
+                window.deckEditorCards.findIndex(deckCard => 
+                    deckCard.type === card.type && deckCard.cardId === card.cardId
+                )
+            ).sort((a, b) => b - a);
+            
+            const currentExpansionState = getExpansionState();
+            
+            unusableIndices.forEach(index => {
+                window.deckEditorCards.splice(index, 1);
+            });
+            
+            // Check if we're in Card View and render accordingly
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                renderDeckCardsCardView();
+            } else {
+                await displayDeckCardsForEditing();
+            }
+            
+            applyUIPreferences({ expansionState: currentExpansionState });
+            updateDeckEditorCardCount();
+            await showDeckValidation(window.deckEditorCards);
+            
+            showNotification(`Removed ${unusableCards.length} unusable ally universe cards`, 'success');
+        }
+
+        async function removeUnusableBasicUniverse() {
+            // Get all selected characters
+            const selectedCharacters = window.deckEditorCards.filter(card => card.type === 'character');
+            
+            if (selectedCharacters.length === 0) {
+                showNotification('No characters selected - cannot determine usable basic universe cards', 'info');
+                return;
+            }
+            
+            // Get active characters with stats
+            const activeCharacters = selectedCharacters.map(charCard => {
+                const availableCard = window.availableCardsMap.get(charCard.cardId);
+                if (!availableCard) return null;
+                
+                return {
+                    cardId: charCard.cardId,
+                    name: availableCard.name || availableCard.card_name,
+                    energy: availableCard.energy || 0,
+                    combat: availableCard.combat || 0,
+                    brute_force: availableCard.brute_force || 0,
+                    intelligence: availableCard.intelligence || 0
+                };
+            }).filter(char => char !== null);
+            
+            // Get all basic universe cards
+            const basicCards = window.deckEditorCards.filter(card => 
+                card.type === 'basic-universe' || card.type === 'basic_universe'
+            );
+            
+            if (basicCards.length === 0) {
+                showNotification('No basic universe cards to check', 'info');
+                return;
+            }
+            
+            // Find unusable basic universe cards (those that no active character can use)
+            const unusableCards = basicCards.filter(card => {
+                const availableCard = window.availableCardsMap.get(card.cardId);
+                if (!availableCard) return true;
+                
+                const buType = availableCard.type;
+                const buValueMatch = (availableCard.value_to_use || '').match(/(\d+) or greater/);
+                const buRequiredValue = buValueMatch ? parseInt(buValueMatch[1]) : 0;
+                
+                if (!buType || buRequiredValue <= 0) return false; // Skip invalid cards
+                
+                // Check if any active character meets the requirement
+                let canUse = false;
+                activeCharacters.forEach(char => {
+                    if (canUse) return;
+                    
+                    let characterStat = 0;
+                    switch (buType) {
+                        case 'Energy': characterStat = char.energy; break;
+                        case 'Combat': characterStat = char.combat; break;
+                        case 'Brute Force': characterStat = char.brute_force; break;
+                        case 'Intelligence': characterStat = char.intelligence; break;
+                    }
+                    
+                    if (characterStat >= buRequiredValue) {
+                        canUse = true;
+                    }
+                });
+                
+                return !canUse;
+            });
+            
+            if (unusableCards.length === 0) {
+                showNotification('All basic universe cards are usable with selected characters', 'info');
+                return;
+            }
+            
+            // Remove unusable cards
+            const unusableIndices = unusableCards.map(card => 
+                window.deckEditorCards.findIndex(deckCard => 
+                    deckCard.type === card.type && deckCard.cardId === card.cardId
+                )
+            ).sort((a, b) => b - a);
+            
+            const currentExpansionState = getExpansionState();
+            
+            unusableIndices.forEach(index => {
+                window.deckEditorCards.splice(index, 1);
+            });
+            
+            // Check if we're in Card View and render accordingly
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                renderDeckCardsCardView();
+            } else {
+                await displayDeckCardsForEditing();
+            }
+            
+            applyUIPreferences({ expansionState: currentExpansionState });
+            updateDeckEditorCardCount();
+            await showDeckValidation(window.deckEditorCards);
+            
+            showNotification(`Removed ${unusableCards.length} unusable basic universe cards`, 'success');
+        }
+
+        async function removeUnusablePowerCards() {
+            // Get all selected characters
+            const selectedCharacters = window.deckEditorCards.filter(card => card.type === 'character');
+            
+            if (selectedCharacters.length === 0) {
+                showNotification('No characters selected - cannot determine usable power cards', 'info');
+                return;
+            }
+            
+            // Get active characters with stats
+            const activeCharacters = selectedCharacters.map(charCard => {
+                const availableCard = window.availableCardsMap.get(charCard.cardId);
+                if (!availableCard) return null;
+                
+                const nameLower = (availableCard.name || availableCard.card_name || '').toLowerCase();
+                return {
+                    cardId: charCard.cardId,
+                    name: availableCard.name || availableCard.card_name,
+                    energy: availableCard.energy || 0,
+                    combat: availableCard.combat || 0,
+                    brute_force: Math.max(availableCard.brute_force || 0, nameLower.includes('john carter') ? 8 : 0),
+                    intelligence: Math.max(availableCard.intelligence || 0, nameLower.includes('time traveler') ? 8 : 0)
+                };
+            }).filter(char => char !== null);
+            
+            // Get all power cards
+            const powerCards = window.deckEditorCards.filter(card => card.type === 'power');
+            
+            if (powerCards.length === 0) {
+                showNotification('No power cards to check', 'info');
+                return;
+            }
+            
+            // Find unusable power cards (those that no active character can play)
+            const unusableCards = powerCards.filter(card => {
+                const availableCard = window.availableCardsMap.get(card.cardId);
+                if (!availableCard) return true;
+                
+                const powerValue = parseInt(availableCard.value) || 0;
+                const powerType = availableCard.power_type;
+                
+                if (!powerType || powerValue <= 0) return false; // Skip invalid cards
+                
+                // Check if any active character can play this power card
+                let canUse = false;
+                activeCharacters.forEach(char => {
+                    if (canUse) return;
+                    
+                    let characterStat = 0;
+                    switch (powerType) {
+                        case 'Energy':
+                            characterStat = char.energy;
+                            break;
+                        case 'Combat':
+                            characterStat = char.combat;
+                            break;
+                        case 'Brute Force':
+                            characterStat = char.brute_force;
+                            break;
+                        case 'Intelligence':
+                            characterStat = char.intelligence;
+                            break;
+                        case 'Any-Power':
+                            characterStat = Math.max(char.energy, char.combat, char.brute_force, char.intelligence);
+                            break;
+                        case 'Multi-Power':
+                        case 'Multi Power':
+                            // Multi-Power requires sum of two highest stats
+                            const stats = [char.energy, char.combat, char.brute_force, char.intelligence].sort((a, b) => b - a);
+                            characterStat = (stats[0] || 0) + (stats[1] || 0);
+                            break;
+                    }
+                    
+                    if (characterStat >= powerValue) {
+                        canUse = true;
+                    }
+                });
+                
+                return !canUse;
+            });
+            
+            if (unusableCards.length === 0) {
+                showNotification('All power cards are usable with selected characters', 'info');
+                return;
+            }
+            
+            // Remove unusable cards
+            const unusableIndices = unusableCards.map(card => 
+                window.deckEditorCards.findIndex(deckCard => 
+                    deckCard.type === card.type && deckCard.cardId === card.cardId
+                )
+            ).sort((a, b) => b - a);
+            
+            const currentExpansionState = getExpansionState();
+            
+            unusableIndices.forEach(index => {
+                window.deckEditorCards.splice(index, 1);
+            });
+            
+            // Check if we're in Card View and render accordingly
+            const deckCardsEditor = document.getElementById('deckCardsEditor');
+            if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                renderDeckCardsCardView();
+            } else {
+                await displayDeckCardsForEditing();
+            }
+            
+            applyUIPreferences({ expansionState: currentExpansionState });
+            updateDeckEditorCardCount();
+            await showDeckValidation(window.deckEditorCards);
+            
+            showNotification(`Removed ${unusableCards.length} unusable power cards`, 'success');
         }
 
         function addAllSpecialCardsForCharacter(characterName) {
