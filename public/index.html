@@ -393,6 +393,30 @@
             height: 18px;
         }
         
+        /* KO Button in Card View - Red color scheme matching Tile View */
+        .card-view-btn.ko-btn {
+            background: rgba(255, 107, 107, 0.2) !important;
+            color: #ff6b6b !important;
+            border: 1px solid rgba(255, 107, 107, 0.3) !important;
+        }
+        
+        .card-view-btn.ko-btn:hover {
+            background: rgba(255, 107, 107, 0.3) !important;
+            border-color: rgba(255, 107, 107, 0.4) !important;
+        }
+        
+        /* Inverted color scheme when character is KO'd */
+        .card-view-btn.ko-btn.active {
+            background: #ff6b6b !important;
+            color: rgba(26, 26, 46, 0.9) !important;
+            border-color: #ff6b6b !important;
+        }
+        
+        .card-view-btn.ko-btn.active:hover {
+            background: #ff5252 !important;
+            border-color: #ff5252 !important;
+        }
+        
         /* Card View Category Sections - Vertical Stack */
         .card-view-category-section {
             width: 100% !important;
