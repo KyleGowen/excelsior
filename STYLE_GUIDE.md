@@ -18,10 +18,11 @@
 15. [Assist Card Dimming](#assist-card-dimming)
 16. [Ambush Card Dimming](#ambush-card-dimming)
 17. [Fortification Card Dimming](#fortification-card-dimming)
-18. [Deck Editor Card View Styling](#deck-editor-card-view-styling)
-19. [Deck Editor List View Styling](#deck-editor-list-view-styling)
-20. [Export Modal Styling](#export-modal-styling)
-21. [Import Modal Styling](#import-modal-styling)
+18. [Pre-Placed Button Styling (Spartan Training Ground)](#pre-placed-button-styling-spartan-training-ground)
+19. [Deck Editor Card View Styling](#deck-editor-card-view-styling)
+20. [Deck Editor List View Styling](#deck-editor-list-view-styling)
+21. [Export Modal Styling](#export-modal-styling)
+22. [Import Modal Styling](#import-modal-styling)
 
 ## Overview
 
@@ -1257,6 +1258,102 @@ function updateFortificationLimitStatus() {
 - **Unit Tests**: `tests/unit/fortification-backend-validation.test.ts`
 - **Frontend Tests**: `tests/unit/fortification-frontend-validation.test.ts`
 - **Test Scenarios**: Adding/removing fortification cards, multiple fortification handling, visual state consistency
+
+## Pre-Placed Button Styling (Spartan Training Ground)
+
+### Overview
+The "Pre-Placed" button appears below Training cards in Card View when the "Spartan Training Ground" location is selected in the deck. It allows users to mark Training cards as excluded from the Draw Hand feature, representing cards that are pre-placed under Spartan Training Ground at game start.
+
+### Button Appearance
+- **Text**: "Pre-Placed"
+- **Color Scheme**: Info Blue (#48dbfb) - matches the application's info/status color palette
+- **Location**: Below Training cards in Card View, alongside quantity buttons (-1, +1)
+
+### Base Styling (`.draw-training-btn`)
+- **Background**: `rgba(72, 219, 251, 0.2)` (Info Blue with 20% opacity)
+- **Text Color**: `#48dbfb` (Info Blue)
+- **Border**: `1px solid rgba(72, 219, 251, 0.3)` (Info Blue with 30% opacity)
+- **Border Radius**: `3.3px`
+- **Padding**: `3.3px 6.6px`
+- **Font Size**: `11px`
+- **Font Family**: `monospace` (matches quantity buttons)
+- **Font Weight**: `normal` (400)
+- **Cursor**: `pointer`
+- **Transition**: `all 0.3s ease`
+- **Text Align**: `center`
+- **Box Sizing**: `border-box`
+- **Line Height**: `1`
+
+### Hover State
+- **Background**: `rgba(72, 219, 251, 0.3)` (Info Blue with 30% opacity)
+- **Border Color**: `rgba(72, 219, 251, 0.5)` (Info Blue with 50% opacity)
+
+### Active State (`.draw-training-btn.active`)
+When a Training card is marked as Pre-Placed (excluded from Draw Hand), the button shows a dimmed appearance similar to KO and reserve buttons:
+
+- **Background**: `rgba(72, 219, 251, 0.15)` (Info Blue with 15% opacity - dimmed)
+- **Border Color**: `rgba(72, 219, 251, 0.25)` (Info Blue with 25% opacity - dimmed)
+- **Text Color**: `rgba(72, 219, 251, 0.6)` (Info Blue with 60% opacity - dimmed)
+- **Opacity**: `0.7` (overall dimming effect)
+- **Visual Effect**: Muted, dimmed appearance indicating the card is excluded
+
+### Active Hover State
+- **Background**: `rgba(72, 219, 251, 0.2)` (slightly brighter but still dimmed)
+- **Border Color**: `rgba(72, 219, 251, 0.3)` (slightly brighter but still dimmed)
+- **Text Color**: `rgba(72, 219, 251, 0.7)` (slightly brighter but still dimmed)
+
+### CSS Implementation
+```css
+/* Draw Training button styling - Blue button for Spartan Training Ground */
+.draw-training-btn {
+    background: rgba(72, 219, 251, 0.2);
+    color: #48dbfb;
+    border: 1px solid rgba(72, 219, 251, 0.3);
+    border-radius: 3.3px;
+    padding: 3.3px 6.6px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-family: monospace;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+.draw-training-btn:hover {
+    background: rgba(72, 219, 251, 0.3);
+    border-color: rgba(72, 219, 251, 0.5);
+}
+
+/* Dimmed state when Pre-Placed is active (similar to KO and reserve buttons) */
+.draw-training-btn.active {
+    background: rgba(72, 219, 251, 0.15);
+    border-color: rgba(72, 219, 251, 0.25);
+    color: rgba(72, 219, 251, 0.6);
+    opacity: 0.7;
+}
+
+.draw-training-btn.active:hover {
+    background: rgba(72, 219, 251, 0.2);
+    border-color: rgba(72, 219, 251, 0.3);
+    color: rgba(72, 219, 251, 0.7);
+}
+```
+
+### Visual Consistency
+- **Matches Quantity Buttons**: Same font family (monospace), similar sizing and padding
+- **Matches Active States**: Dimmed appearance similar to `.ko-btn.active` and `.reserve-btn.active`
+- **Color Consistency**: Uses Info Blue (#48dbfb) from the application's status color palette
+- **Interaction Pattern**: Toggle behavior similar to other deck editor buttons
+
+### Usage Context
+- **Conditional Display**: Only appears when:
+  - Card type is "training"
+  - "Spartan Training Ground" location is in the deck
+  - View mode is Card View
+- **Functionality**: Toggles `exclude_from_draw` flag on the card
+- **Persistence**: Flag is saved to database and persists across sessions
+- **Effect**: Excluded cards are not included in Draw Hand random selection
 
 ## Deck Editor Card View Styling
 

@@ -10,6 +10,7 @@ The Draw Hand feature provides a visual interface for drawing random hands from 
 
 - **Random Hand Drawing**: Draws 8 random cards from playable cards (powers, specials, events, training, etc.)
 - **Event Card Bonus**: Draws a 9th card if event cards are present in the initial 8 cards
+- **Card Exclusion**: Supports excluding Training cards from Draw Hand when Spartan Training Ground location is selected
 - **Drag and Drop Reordering**: Reorder drawn cards by dragging and dropping
 - **KO Integration**: Automatically dims cards that become unusable when characters are KO'd
 - **Button State Management**: Button is enabled only when deck has 8+ playable cards
@@ -104,6 +105,7 @@ Draws a random hand of 8 cards (9 if events are present) from playable cards.
 
 **Behavior:**
 - Filters out characters, locations, and missions
+- Filters out cards with `exclude_from_draw: true` (Pre-Placed Training cards)
 - Draws 8 random cards from the remaining cards
 - If event cards are present in the first 8, draws a 9th card
 - Handles decks with fewer than 8 playable cards gracefully
@@ -352,6 +354,152 @@ When hovering over one card, other cards recede:
 - **Applied By**: `SimulateKO.shouldDimCard()` function
 - **Integration**: Automatically applied during `displayDrawnCards()` rendering
 
+## Card Exclusion from Draw Hand
+
+### Overview
+
+The Draw Hand feature supports excluding specific cards from being drawn. This is primarily used for Training cards when the "Spartan Training Ground" location is selected in the deck.
+
+### When Cards Are Excluded
+
+Cards are excluded from Draw Hand when:
+- **Training Cards**: When "Spartan Training Ground" location is in the deck, Training cards can be marked as "Pre-Placed" (excluded from Draw Hand)
+- **User Action**: Users click the "Pre-Placed" button on Training cards in Card View to toggle exclusion
+- **Persistent State**: Exclusion state is saved to the database and persists across sessions
+
+### Why Cards Are Excluded
+
+The exclusion feature supports game mechanics:
+- **Spartan Training Ground**: According to the location's special ability, "At the beginning of the game, place three unique Training Universe cards, excluding 'Any-Power,' under Spartan Training Ground. Once per battle, you may remove one of these cards to combine it with a legal attack or defense."
+- **Pre-Placed Cards**: Training cards marked as "Pre-Placed" represent cards that are already placed under Spartan Training Ground at game start
+- **Draw Hand Accuracy**: Excluding pre-placed cards ensures Draw Hand simulations reflect the actual available draw pile
+
+### How Cards Are Excluded
+
+#### Database Storage
+
+- **Column**: `exclude_from_draw` (boolean) in `deck_cards` table
+- **Default**: `FALSE` (cards are included by default)
+- **Migration**: Added in V205 migration
+
+#### User Interface
+
+1. **Pre-Placed Button**: Appears below Training cards in Card View when Spartan Training Ground is in the deck
+2. **Toggle Action**: Clicking the button toggles the `exclude_from_draw` flag
+3. **Visual Feedback**: Button shows active/dimmed state when card is excluded
+4. **Card Remains**: Excluded cards remain in the deck (not removed)
+
+#### Implementation
+
+**Frontend:**
+- Button rendered in Card View for Training cards when location is present
+- `drawTrainingCard(cardId, index)` function toggles `exclude_from_draw` flag
+- Flag is included when saving deck cards to database
+
+**Backend:**
+- `exclude_from_draw` column stored in `deck_cards` table
+- Flag is loaded when deck is retrieved
+- Flag is saved when deck cards are updated
+
+**Draw Hand Filtering:**
+- `drawHand()` function filters out cards with `exclude_from_draw: true`
+- Excluded cards are not added to the draw pile
+- Exclusion happens before random selection
+
+### Pre-Placed Button Styling
+
+The "Pre-Placed" button appears below Training cards in Card View when Spartan Training Ground is selected.
+
+#### Base Styling (`.draw-training-btn`)
+- **Background**: `rgba(72, 219, 251, 0.2)` (Info Blue #48dbfb with 20% opacity)
+- **Text Color**: `#48dbfb` (Info Blue)
+- **Border**: `1px solid rgba(72, 219, 251, 0.3)` (Info Blue with 30% opacity)
+- **Border Radius**: `3.3px`
+- **Padding**: `3.3px 6.6px`
+- **Font Size**: `11px`
+- **Font Family**: `monospace`
+- **Cursor**: `pointer`
+- **Transition**: `all 0.3s ease`
+- **Text**: "Pre-Placed"
+
+#### Hover State
+- **Background**: `rgba(72, 219, 251, 0.3)` (Info Blue with 30% opacity)
+- **Border Color**: `rgba(72, 219, 251, 0.5)` (Info Blue with 50% opacity)
+
+#### Active State (`.draw-training-btn.active`)
+When a card is marked as Pre-Placed (excluded), the button shows a dimmed appearance:
+- **Background**: `rgba(72, 219, 251, 0.15)` (Info Blue with 15% opacity - dimmed)
+- **Border Color**: `rgba(72, 219, 251, 0.25)` (Info Blue with 25% opacity - dimmed)
+- **Text Color**: `rgba(72, 219, 251, 0.6)` (Info Blue with 60% opacity - dimmed)
+- **Opacity**: `0.7` (overall dimming effect)
+- **Visual Effect**: Similar to KO button and reserve button active states
+
+#### Active Hover State
+- **Background**: `rgba(72, 219, 251, 0.2)` (slightly brighter but still dimmed)
+- **Border Color**: `rgba(72, 219, 251, 0.3)` (slightly brighter but still dimmed)
+- **Text Color**: `rgba(72, 219, 251, 0.7)` (slightly brighter but still dimmed)
+
+#### CSS Implementation
+
+```css
+/* Draw Training button styling - Blue button for Spartan Training Ground */
+.draw-training-btn {
+    background: rgba(72, 219, 251, 0.2);
+    color: #48dbfb;
+    border: 1px solid rgba(72, 219, 251, 0.3);
+    border-radius: 3.3px;
+    padding: 3.3px 6.6px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-family: monospace;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+.draw-training-btn:hover {
+    background: rgba(72, 219, 251, 0.3);
+    border-color: rgba(72, 219, 251, 0.5);
+}
+
+/* Dimmed state when Pre-Placed is active (similar to KO and reserve buttons) */
+.draw-training-btn.active {
+    background: rgba(72, 219, 251, 0.15);
+    border-color: rgba(72, 219, 251, 0.25);
+    color: rgba(72, 219, 251, 0.6);
+    opacity: 0.7;
+}
+
+.draw-training-btn.active:hover {
+    background: rgba(72, 219, 251, 0.2);
+    border-color: rgba(72, 219, 251, 0.3);
+    color: rgba(72, 219, 251, 0.7);
+}
+```
+
+### Usage Example
+
+```javascript
+// Training card with exclude_from_draw flag
+const trainingCard = {
+    type: 'training',
+    cardId: 'training-123',
+    quantity: 1,
+    exclude_from_draw: true  // This card will be excluded from Draw Hand
+};
+
+// Draw Hand automatically filters out excluded cards
+window.DrawHand.drawHand();  // Excluded cards are not included in draw pile
+```
+
+### Integration Points
+
+- **Card View Rendering**: Button appears conditionally based on location presence
+- **Deck Loading**: `exclude_from_draw` flag is loaded from database
+- **Deck Saving**: Flag is persisted when deck is saved
+- **Draw Hand Logic**: Filtering happens in `drawHand()` function before random selection
+
 ### CSS Implementation
 
 ```css
@@ -468,6 +616,8 @@ When hovering over one card, other cards recede:
 | `.drawn-card:hover` | Card hover state | Lift, scale, glow effects |
 | `.drawn-card.dragging` | Card being dragged | Opacity, rotation, shadow |
 | `.drawn-card.ko-dimmed` | KO dimmed card | Reduced opacity |
+| `.draw-training-btn` | Pre-Placed button (Training cards) | Info Blue styling, monospace font |
+| `.draw-training-btn.active` | Pre-Placed active state | Dimmed appearance when excluded |
 
 ### Color Values
 
@@ -477,6 +627,15 @@ When hovering over one card, other cards recede:
   - `rgba(78, 205, 196, 0.3)` - 30% opacity (borders)
   - `rgba(78, 205, 196, 0.4)` - 40% opacity (hover borders, shadows)
   - `rgba(78, 205, 196, 0.8)` - 80% opacity (active borders)
+- **Info Blue**: `#48dbfb` - Used for Pre-Placed button (Spartan Training Ground feature)
+- **Info Blue Opacity Variants**:
+  - `rgba(72, 219, 251, 0.2)` - 20% opacity (button background)
+  - `rgba(72, 219, 251, 0.3)` - 30% opacity (button border, hover background)
+  - `rgba(72, 219, 251, 0.5)` - 50% opacity (hover border)
+  - `rgba(72, 219, 251, 0.15)` - 15% opacity (active state background - dimmed)
+  - `rgba(72, 219, 251, 0.25)` - 25% opacity (active state border - dimmed)
+  - `rgba(72, 219, 251, 0.6)` - 60% opacity (active state text - dimmed)
+  - `rgba(72, 219, 251, 0.7)` - 70% opacity (active hover text - dimmed)
 - **Background**: `rgba(255, 255, 255, 0.05)` - 5% white overlay
 - **Text**: `#888` (gray) for close button, `#fff` (white) on hover
 
