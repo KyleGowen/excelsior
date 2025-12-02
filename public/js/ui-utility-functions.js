@@ -11,32 +11,38 @@
  *   - showToast() - Toast notifications
  *   - startEditingTitle() / saveTitleEdit() - Title editing
  *   - cancelTitleEdit() - Edit cancellation
- *   - toggleDrawHand() - Draw hand toggle
+ *   - toggleDrawHand() - Draw hand toggle (delegates to DrawHand module)
+ *   - closeDrawHand() - Draw hand close (delegates to DrawHand module)
  *   - screenshotView() - Screenshot functionality
+ * 
+ * Note: Draw Hand functionality is now handled by the DrawHand module
+ * (public/js/components/draw-hand.js). These functions are thin wrappers
+ * for backward compatibility.
  * 
  * ======================================== */
 
 // UI utility functions
 function toggleDrawHand() {
-    const drawHandSection = document.getElementById('drawHandSection');
-    const drawHandBtn = document.getElementById('drawHandBtn');
-    
-    if (drawHandSection.style.display === 'none') {
-        drawHandSection.style.display = 'block';
-        drawHandBtn.textContent = 'Draw New Hand';
-        drawHand();
+    // Draw Hand functionality is now handled by the Draw Hand module
+    if (window.DrawHand && window.DrawHand.toggle) {
+        window.DrawHand.toggle();
     } else {
-        drawHand();
+        console.warn('Draw Hand module not loaded');
     }
 }
 
 function closeDrawHand() {
-    const drawHandSection = document.getElementById('drawHandSection');
-    const drawHandBtn = document.getElementById('drawHandBtn');
-    
-    drawHandSection.style.display = 'none';
-    drawHandBtn.textContent = 'Draw Hand';
+    // Draw Hand functionality is now handled by the Draw Hand module
+    if (window.DrawHand && window.DrawHand.close) {
+        window.DrawHand.close();
+    } else {
+        console.warn('Draw Hand module not loaded');
+    }
 }
+
+// Expose functions on window for event binder (data-click-handler)
+window.toggleDrawHand = toggleDrawHand;
+window.closeDrawHand = closeDrawHand;
 
 function toggleScreenshotView() {
     const screenshotViewSection = document.getElementById('screenshotViewSection');

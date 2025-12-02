@@ -9,6 +9,7 @@
     <link rel="icon" href="/public/resources/images/icons/threat.png" type="image/png">
     <title>Excelsior Deckbuilder - Characters Database</title>
     <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/draw-hand.css">
     <link rel="stylesheet" href="/css/collection-view.css">
     <link rel="stylesheet" href="/css/database-view.css">
     <style>
@@ -640,6 +641,7 @@
     <!-- Authentication Service -->
     <script src="/js/auth-service.js"></script>
     <script src="/js/components/simulate-ko.js"></script>
+    <script src="/js/components/draw-hand.js"></script>
     
     <!-- Global Navigation Component -->
     <link rel="stylesheet" href="/components/globalNav.css">
@@ -5144,173 +5146,7 @@
             });
         }
 
-        function drawHand() {
-            const deckCards = window.deckEditorCards;
-            const totalCards = deckCards.reduce((sum, card) => sum + card.quantity, 0);
-            
-            // Filter out characters, locations, and missions to create draw pile
-            const drawPile = [];
-            deckCards.forEach(card => {
-                if (card.type !== 'character' && card.type !== 'location' && card.type !== 'mission') {
-                    // Add each copy of the card to the draw pile
-                    for (let i = 0; i < card.quantity; i++) {
-                        drawPile.push(card);
-                    }
-                }
-            });
-
-
-            // Draw 8 random cards, then check for event cards to determine if we need a 9th
-            const drawnCards = [];
-            const usedIndices = new Set();
-            const targetHandSize = 8;
-            
-            while (drawnCards.length < targetHandSize) {
-                const randomIndex = Math.floor(Math.random() * drawPile.length);
-                if (!usedIndices.has(randomIndex)) {
-                    usedIndices.add(randomIndex);
-                    drawnCards.push(drawPile[randomIndex]);
-                }
-            }
-
-            // Check if we have any event cards and draw a 9th card if so (maximum 9 cards total)
-            const hasEventCards = drawnCards.some(card => card.type === 'event');
-            if (hasEventCards && drawPile.length > 8 && drawnCards.length < 9) {
-                // Draw exactly one more card to make it 9 total (never more than 9)
-                while (drawnCards.length < 9) {
-                    const randomIndex = Math.floor(Math.random() * drawPile.length);
-                    if (!usedIndices.has(randomIndex)) {
-                        usedIndices.add(randomIndex);
-                        drawnCards.push(drawPile[randomIndex]);
-                        break; // Only draw one additional card
-                    }
-                }
-            }
-
-            // Store drawn cards globally for drag and drop
-            window.drawnCards = drawnCards;
-            
-            // Display the drawn cards
-            displayDrawnCards(drawnCards);
-        }
-
-        // Make displayDrawnCards globally accessible for KO refresh
-        window.displayDrawnCards = function displayDrawnCards(cards) {
-            const drawHandContent = document.getElementById('drawHandContent');
-            drawHandContent.innerHTML = '';
-
-            cards.forEach((card, index) => {
-                const cardElement = document.createElement('div');
-                cardElement.className = 'drawn-card';
-                cardElement.draggable = true;
-                cardElement.dataset.index = index;
-                
-                // Add event-card class for horizontal orientation
-                if (card.type === 'event') {
-                    cardElement.classList.add('event-card');
-                }
-                
-                // Check if card should be dimmed based on KO'd characters
-                if (window.SimulateKO && window.SimulateKO.shouldDimCard) {
-                    const shouldDim = window.SimulateKO.shouldDimCard(
-                        card, 
-                        window.availableCardsMap || new Map(), 
-                        window.deckEditorCards || []
-                    );
-                    if (shouldDim) {
-                        cardElement.classList.add('ko-dimmed');
-                    }
-                }
-                
-                // Get the card image path
-                const availableCard = window.availableCardsMap.get(card.cardId);
-                if (availableCard) {
-                    const imagePath = getCardImagePath(availableCard, card.type);
-                    cardElement.style.backgroundImage = `url('${imagePath}')`;
-                    
-                    // Add hover tooltip
-                    cardElement.title = availableCard.name || availableCard.card_name || card.name || 'Unknown Card';
-                } else {
-                    // Fallback for unknown cards
-                    cardElement.style.backgroundImage = 'url("/src/resources/cards/images/placeholder.webp")';
-                    cardElement.title = 'Unknown Card';
-                }
-                
-                // Add drag and drop event listeners
-                cardElement.addEventListener('dragstart', handleDrawHandDragStart);
-                cardElement.addEventListener('dragend', handleDrawHandDragEnd);
-                cardElement.addEventListener('dragover', handleDrawHandDragOver);
-                cardElement.addEventListener('drop', handleDrawHandDrop);
-                
-                // Hover effect removed - using magnification instead
-                
-                drawHandContent.appendChild(cardElement);
-            });
-            
-            // Add drag and drop to the container
-            drawHandContent.addEventListener('dragover', handleDrawHandContainerDragOver);
-            drawHandContent.addEventListener('drop', handleDrawHandContainerDrop);
-        }
-
-        // Draw Hand drag and drop handlers
-        let drawHandDraggedIndex = null;
-
-        function handleDrawHandDragStart(e) {
-            drawHandDraggedIndex = parseInt(e.target.dataset.index);
-            e.target.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/html', e.target.outerHTML);
-            
-            // Add visual feedback to other cards
-            const allCards = document.querySelectorAll('.drawn-card');
-            allCards.forEach((card, index) => {
-                if (index !== drawHandDraggedIndex) {
-                    card.classList.add('drag-target');
-                }
-            });
-        }
-
-        function handleDrawHandDragEnd(e) {
-            e.target.classList.remove('dragging');
-            drawHandDraggedIndex = null;
-            
-            // Remove visual feedback from all cards
-            const allCards = document.querySelectorAll('.drawn-card');
-            allCards.forEach(card => {
-                card.classList.remove('drag-target');
-            });
-        }
-
-        function handleDrawHandDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        }
-
-        function handleDrawHandDrop(e) {
-            e.preventDefault();
-            const targetIndex = parseInt(e.target.dataset.index);
-            
-            if (drawHandDraggedIndex !== null && targetIndex !== null && drawHandDraggedIndex !== targetIndex) {
-                // Swap the cards
-                const temp = window.drawnCards[drawHandDraggedIndex];
-                window.drawnCards[drawHandDraggedIndex] = window.drawnCards[targetIndex];
-                window.drawnCards[targetIndex] = temp;
-                
-                // Re-render the cards
-                displayDrawnCards(window.drawnCards);
-            }
-        }
-
-        function handleDrawHandContainerDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            e.target.classList.add('drag-over');
-        }
-
-        function handleDrawHandContainerDrop(e) {
-            e.preventDefault();
-            e.target.classList.remove('drag-over');
-        }
+        // Draw Hand functionality has been moved to public/js/components/draw-hand.js module
 
         // validateDeck function moved to external file
 
@@ -5446,27 +5282,33 @@
             document.getElementById('deckTotalCards').textContent = totalCardsDisplay;
             
             // Enable/disable Draw Hand button based on playable cards
-            const drawHandBtn = document.getElementById('drawHandBtn');
-            
-            if (drawHandBtn) {
-                // Count playable cards (excluding characters, locations, missions)
-                const playableCardsCount = deckCards
-                    .filter(card => card.type !== 'character' && card.type !== 'location' && card.type !== 'mission')
-                    .reduce((sum, card) => sum + card.quantity, 0);
+            // Use Draw Hand module if available, otherwise use original implementation
+            if (window.DrawHand && window.DrawHand.updateButtonState) {
+                window.DrawHand.updateButtonState(deckCards);
+            } else {
+                // Fallback to original implementation (for backward compatibility during transition)
+                const drawHandBtn = document.getElementById('drawHandBtn');
                 
-                
-                if (playableCardsCount >= 8) {
-                    drawHandBtn.disabled = false;
-                    drawHandBtn.style.opacity = "1";
-                    drawHandBtn.style.cursor = "pointer";
-                    drawHandBtn.title = ""; // Remove tooltip when enabled
-                } else {
-                    drawHandBtn.disabled = true;
-                    drawHandBtn.style.opacity = "0.5";
-                    drawHandBtn.style.cursor = "not-allowed";
-                    drawHandBtn.title = "Deck must contain at least 8 playable cards."; // Add tooltip when disabled
+                if (drawHandBtn) {
+                    // Count playable cards (excluding characters, locations, missions)
+                    const playableCardsCount = deckCards
+                        .filter(card => card.type !== 'character' && card.type !== 'location' && card.type !== 'mission')
+                        .reduce((sum, card) => sum + card.quantity, 0);
+                    
+                    
+                    if (playableCardsCount >= 8) {
+                        drawHandBtn.disabled = false;
+                        drawHandBtn.style.opacity = "1";
+                        drawHandBtn.style.cursor = "pointer";
+                        drawHandBtn.title = ""; // Remove tooltip when enabled
+                    } else {
+                        drawHandBtn.disabled = true;
+                        drawHandBtn.style.opacity = "0.5";
+                        drawHandBtn.style.cursor = "not-allowed";
+                        drawHandBtn.title = "Deck must contain at least 8 playable cards."; // Add tooltip when disabled
+                    }
+                    
                 }
-                
             }            
             // Calculate maximum character stats and total threat level
             const characterCards = deckCards.filter(card => card.type === 'character');

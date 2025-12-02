@@ -925,7 +925,10 @@
                 setTimeout(() => {
                     applyDimming(window.deckEditorCards || [], window.availableCardsMap || new Map());
                     // Refresh draw hand if it's currently displayed
-                    if (window.drawnCards && window.drawnCards.length > 0 && typeof displayDrawnCards === 'function') {
+                    // Use Draw Hand module if available, otherwise fall back to global function
+                    if (window.DrawHand && window.DrawHand.refresh) {
+                        window.DrawHand.refresh();
+                    } else if (window.drawnCards && window.drawnCards.length > 0 && typeof displayDrawnCards === 'function') {
                         displayDrawnCards(window.drawnCards);
                     }
                 }, 100);
