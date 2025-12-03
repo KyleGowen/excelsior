@@ -341,7 +341,15 @@ describe('Draw Hand Exclusion Feature Tests', () => {
                         }
                         card.exclude_from_draw = !card.exclude_from_draw;
                         if (window.renderDeckCardsCardView) await window.renderDeckCardsCardView();
-                        if (window.showNotification) window.showNotification(`${card.cardId} ${card.exclude_from_draw ? 'excluded' : 'included'}`, 'success');
+                        if (window.showNotification) {
+                            const message = card.exclude_from_draw 
+                                ? `${card.cardId} excluded from Draw Hand`
+                                : `${card.cardId} included in Draw Hand`;
+                            window.showNotification(message, 'success');
+                        }
+                        if (window.showDeckValidation) {
+                            await window.showDeckValidation(mockDeckEditorCards);
+                        }
                     };
                 }
             } else {
@@ -354,7 +362,15 @@ describe('Draw Hand Exclusion Feature Tests', () => {
                     }
                     card.exclude_from_draw = !card.exclude_from_draw;
                     if (window.renderDeckCardsCardView) await window.renderDeckCardsCardView();
-                    if (window.showNotification) window.showNotification(`${card.cardId} ${card.exclude_from_draw ? 'excluded' : 'included'}`, 'success');
+                    if (window.showNotification) {
+                        const message = card.exclude_from_draw 
+                            ? `${card.cardId} excluded from Draw Hand`
+                            : `${card.cardId} included in Draw Hand`;
+                        window.showNotification(message, 'success');
+                    }
+                    if (window.showDeckValidation) {
+                        await window.showDeckValidation(mockDeckEditorCards);
+                    }
                 };
             }
 

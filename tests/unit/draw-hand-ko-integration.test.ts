@@ -95,6 +95,7 @@ describe('Draw Hand KO Integration', () => {
         (window as any).availableCardsMap = mockAvailableCardsMap;
         (window as any).getCardImagePath = jest.fn(() => '/path/to/image.webp');
         (window as any).koCharacters = new Set();
+        (window as any).currentUser = { id: 1, username: 'testuser' }; // Required for toggleKOCharacter
 
         // Initialize modules
         if (window.SimulateKO) {
@@ -224,10 +225,10 @@ describe('Draw Hand KO Integration', () => {
             expect(window.drawnCards).toBeDefined();
             expect(window.drawnCards?.length).toBeGreaterThan(0);
 
-            // Now run all pending timers to execute the setTimeout callback
+            // Now advance timers to execute the setTimeout callback
             // This will trigger the setTimeout callback that calls refresh
             // Note: With fake timers, setTimeout callbacks execute synchronously
-            jest.runAllTimers();
+            jest.advanceTimersByTime(100);
 
             expect(refreshSpy).toHaveBeenCalled();
             

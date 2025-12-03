@@ -927,6 +927,7 @@
                     // Refresh draw hand if it's currently displayed
                     // Use Draw Hand module if available, otherwise fall back to global function
                     if (window.DrawHand && window.DrawHand.refresh) {
+                        // Refresh will check for drawn cards internally
                         window.DrawHand.refresh();
                     } else if (window.drawnCards && window.drawnCards.length > 0 && typeof displayDrawnCards === 'function') {
                         displayDrawnCards(window.drawnCards);

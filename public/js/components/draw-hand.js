@@ -74,9 +74,14 @@
         const deckCards = window.deckEditorCards || [];
         
         // Filter out characters, locations, and missions to create draw pile
+        // Also filter out cards with exclude_from_draw: true
         const drawPile = [];
         deckCards.forEach(card => {
             if (card.type !== 'character' && card.type !== 'location' && card.type !== 'mission') {
+                // Skip cards that are excluded from draw hand
+                if (card.exclude_from_draw === true) {
+                    return;
+                }
                 // Add each copy of the card to the draw pile
                 for (let i = 0; i < card.quantity; i++) {
                     drawPile.push(card);
@@ -379,8 +384,10 @@
      * @function refresh
      */
     function refresh() {
-        if (drawnCards && drawnCards.length > 0) {
-            displayDrawnCards(drawnCards);
+        // Use private drawnCards if available, otherwise fall back to window.drawnCards
+        const cardsToDisplay = (drawnCards && drawnCards.length > 0) ? drawnCards : (window.drawnCards || []);
+        if (cardsToDisplay && cardsToDisplay.length > 0) {
+            displayDrawnCards(cardsToDisplay);
         }
     }
 
