@@ -231,4 +231,283 @@ describe('PUT /api/decks/:id/cards route logic', () => {
     expect(response.body.success).toBe(false);
     expect(response.body.error).toBe('Failed to replace cards in deck');
   });
+
+  describe('exclude_from_draw flag handling', () => {
+    it('should pass exclude_from_draw: true to repository when provided', async () => {
+      const mockDeck = {
+        id: 'test-deck-id',
+        user_id: 'user-id',
+        name: 'Test Deck',
+        cards: []
+      };
+
+      mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
+
+      const cardsData = [
+        { 
+          cardType: 'training', 
+          cardId: 'training-1', 
+          quantity: 1,
+          exclude_from_draw: true
+        }
+      ];
+
+      const response = await request(app)
+        .put('/api/decks/test-deck-id/cards')
+        .send({ cards: cardsData });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(mockDeckRepository.replaceAllCardsInDeck).toHaveBeenCalledWith('test-deck-id', cardsData);
+      expect(mockDeckRepository.replaceAllCardsInDeck).toHaveBeenCalledWith(
+        'test-deck-id',
+        expect.arrayContaining([
+          expect.objectContaining({
+            cardType: 'training',
+            cardId: 'training-1',
+            quantity: 1,
+            exclude_from_draw: true
+          })
+        ])
+      );
+    });
+
+    it('should pass exclude_from_draw: false to repository when provided', async () => {
+      const mockDeck = {
+        id: 'test-deck-id',
+        user_id: 'user-id',
+        name: 'Test Deck',
+        cards: []
+      };
+
+      mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
+
+      const cardsData = [
+        { 
+          cardType: 'training', 
+          cardId: 'training-1', 
+          quantity: 1,
+          exclude_from_draw: false
+        }
+      ];
+
+      const response = await request(app)
+        .put('/api/decks/test-deck-id/cards')
+        .send({ cards: cardsData });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(mockDeckRepository.replaceAllCardsInDeck).toHaveBeenCalledWith('test-deck-id', cardsData);
+      expect(mockDeckRepository.replaceAllCardsInDeck).toHaveBeenCalledWith(
+        'test-deck-id',
+        expect.arrayContaining([
+          expect.objectContaining({
+            exclude_from_draw: false
+          })
+        ])
+      );
+    });
+
+    it('should handle cards without exclude_from_draw flag', async () => {
+      const mockDeck = {
+        id: 'test-deck-id',
+        user_id: 'user-id',
+        name: 'Test Deck',
+        cards: []
+      };
+
+      mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
+
+      const cardsData = [
+        { 
+          cardType: 'power', 
+          cardId: 'power-1', 
+          quantity: 1
+          // No exclude_from_draw property
+        }
+      ];
+
+      const response = await request(app)
+        .put('/api/decks/test-deck-id/cards')
+        .send({ cards: cardsData });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(mockDeckRepository.replaceAllCardsInDeck).toHaveBeenCalledWith('test-deck-id', cardsData);
+    });
+
+    it('should handle mixed cards with and without exclude_from_draw', async () => {
+      const mockDeck = {
+        id: 'test-deck-id',
+        user_id: 'user-id',
+        name: 'Test Deck',
+        cards: []
+      };
+
+      mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
+
+      const cardsData = [
+        { 
+          cardType: 'training', 
+          cardId: 'training-1', 
+          quantity: 1,
+          exclude_from_draw: true
+        },
+        { 
+          cardType: 'training', 
+          cardId: 'training-2', 
+          quantity: 1,
+          exclude_from_draw: false
+        },
+        { 
+          cardType: 'power', 
+          cardId: 'power-1', 
+          quantity: 1
+          // No exclude_from_draw
+        },
+        { 
+          cardType: 'special', 
+          cardId: 'special-1', 
+          quantity: 1,
+          exclude_from_draw: true
+        }
+      ];
+
+      const response = await request(app)
+        .put('/api/decks/test-deck-id/cards')
+        .send({ cards: cardsData });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(mockDeckRepository.replaceAllCardsInDeck).toHaveBeenCalledWith('test-deck-id', cardsData);
+      
+      // Verify all cards are passed correctly
+      const callArgs = mockDeckRepository.replaceAllCardsInDeck.mock.calls[0][1];
+      expect(callArgs).toHaveLength(4);
+      expect(callArgs[0]).toHaveProperty('exclude_from_draw', true);
+      expect(callArgs[1]).toHaveProperty('exclude_from_draw', false);
+      expect(callArgs[2]).not.toHaveProperty('exclude_from_draw');
+      expect(callArgs[3]).toHaveProperty('exclude_from_draw', true);
+    });
+
+    it('should handle exclude_from_draw with selectedAlternateImage together', async () => {
+      const mockDeck = {
+        id: 'test-deck-id',
+        user_id: 'user-id',
+        name: 'Test Deck',
+        cards: []
+      };
+
+      mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
+
+      const cardsData = [
+        { 
+          cardType: 'training', 
+          cardId: 'training-1', 
+          quantity: 1,
+          exclude_from_draw: true,
+          selectedAlternateImage: 'alternate_image.webp'
+        }
+      ];
+
+      const response = await request(app)
+        .put('/api/decks/test-deck-id/cards')
+        .send({ cards: cardsData });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(mockDeckRepository.replaceAllCardsInDeck).toHaveBeenCalledWith('test-deck-id', cardsData);
+      expect(mockDeckRepository.replaceAllCardsInDeck).toHaveBeenCalledWith(
+        'test-deck-id',
+        expect.arrayContaining([
+          expect.objectContaining({
+            exclude_from_draw: true,
+            selectedAlternateImage: 'alternate_image.webp'
+          })
+        ])
+      );
+    });
+
+    it('should handle multiple cards with exclude_from_draw: true', async () => {
+      const mockDeck = {
+        id: 'test-deck-id',
+        user_id: 'user-id',
+        name: 'Test Deck',
+        cards: []
+      };
+
+      mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
+
+      const cardsData = [
+        { cardType: 'training', cardId: 'training-1', quantity: 1, exclude_from_draw: true },
+        { cardType: 'training', cardId: 'training-2', quantity: 1, exclude_from_draw: true },
+        { cardType: 'training', cardId: 'training-3', quantity: 1, exclude_from_draw: true }
+      ];
+
+      const response = await request(app)
+        .put('/api/decks/test-deck-id/cards')
+        .send({ cards: cardsData });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(mockDeckRepository.replaceAllCardsInDeck).toHaveBeenCalledWith('test-deck-id', cardsData);
+      
+      const callArgs = mockDeckRepository.replaceAllCardsInDeck.mock.calls[0][1];
+      expect(callArgs).toHaveLength(3);
+      callArgs.forEach(card => {
+        expect(card).toHaveProperty('exclude_from_draw', true);
+      });
+    });
+
+    it('should handle exclude_from_draw with quantity > 1', async () => {
+      const mockDeck = {
+        id: 'test-deck-id',
+        user_id: 'user-id',
+        name: 'Test Deck',
+        cards: []
+      };
+
+      mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
+
+      const cardsData = [
+        { 
+          cardType: 'training', 
+          cardId: 'training-1', 
+          quantity: 3,
+          exclude_from_draw: true
+        }
+      ];
+
+      const response = await request(app)
+        .put('/api/decks/test-deck-id/cards')
+        .send({ cards: cardsData });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(mockDeckRepository.replaceAllCardsInDeck).toHaveBeenCalledWith('test-deck-id', cardsData);
+      expect(mockDeckRepository.replaceAllCardsInDeck).toHaveBeenCalledWith(
+        'test-deck-id',
+        expect.arrayContaining([
+          expect.objectContaining({
+            quantity: 3,
+            exclude_from_draw: true
+          })
+        ])
+      );
+    });
+  });
 });
