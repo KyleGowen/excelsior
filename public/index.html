@@ -4919,12 +4919,19 @@
                         }
                         
                         // Add Pre-Placed button for Training cards when Spartan Training Ground is present
+                        // Add Pre-Placed button for Basic Universe cards when Dracula's Armory is present
                         let prePlacedButton = '';
                         if (card.type === 'training' && hasSpartanTrainingGround()) {
                             const isExcluded = card.exclude_from_draw === true;
                             const activeClass = isExcluded ? 'active' : '';
                             prePlacedButton = `
                                 <button class="draw-training-btn card-view-btn ${activeClass}" onclick="drawTrainingCard('${card.cardId}', ${index})" title="${isExcluded ? 'Unmark as Pre-Placed (include in Draw Hand)' : 'Mark as Pre-Placed (exclude from Draw Hand)'}">Pre-Placed</button>
+                            `;
+                        } else if (card.type === 'basic-universe' && hasDraculasArmory()) {
+                            const isExcluded = card.exclude_from_draw === true;
+                            const activeClass = isExcluded ? 'active' : '';
+                            prePlacedButton = `
+                                <button class="draw-training-btn card-view-btn ${activeClass}" onclick="drawBasicUniverseCard('${card.cardId}', ${index})" title="${isExcluded ? 'Unmark as Pre-Placed (include in Draw Hand)' : 'Mark as Pre-Placed (exclude from Draw Hand)'}">Pre-Placed</button>
                             `;
                         }
                         
@@ -11353,6 +11360,22 @@
         }
         
         /**
+         * Check if Dracula's Armory location is in the deck
+         * @returns {boolean} True if Dracula's Armory is present
+         */
+        function hasDraculasArmory() {
+            if (!window.deckEditorCards || !window.availableCardsMap) {
+                return false;
+            }
+            
+            return window.deckEditorCards.some(card => {
+                if (card.type !== 'location') return false;
+                const locationData = window.availableCardsMap.get(card.cardId);
+                return locationData && (locationData.name === "Dracula's Armory" || locationData.card_name === "Dracula's Armory");
+            });
+        }
+        
+        /**
          * Toggle exclude_from_draw flag for a Training card (Pre-Placed button)
          * @param {string} cardId - The card ID
          * @param {number} index - The index of the card in deckEditorCards
@@ -11412,6 +11435,70 @@
                 await showDeckValidation(window.deckEditorCards);
             } catch (error) {
                 console.error('Error in drawTrainingCard:', error);
+                showNotification('Error toggling Pre-Placed status', 'error');
+            }
+        }
+        
+        /**
+         * Toggle exclude_from_draw flag for a Basic Universe card (Pre-Placed button)
+         * @param {string} cardId - The card ID
+         * @param {number} index - The index of the card in deckEditorCards
+         */
+        async function drawBasicUniverseCard(cardId, index) {
+            try {
+                const card = window.deckEditorCards[index];
+                
+                // Validate card exists and is a Basic Universe card
+                if (!card || card.cardId !== cardId || card.type !== 'basic-universe') {
+                    console.warn('drawBasicUniverseCard: Card not found or not a Basic Universe card', { cardId, index });
+                    return;
+                }
+                
+                // Toggle exclude_from_draw flag
+                // If undefined or false, set to true; if true, set to false
+                card.exclude_from_draw = card.exclude_from_draw === true ? false : true;
+                
+                // Capture current expansion state before re-rendering
+                const currentExpansionState = getExpansionState();
+                
+                // Capture current scroll position before re-rendering
+                const deckCardsEditor = document.querySelector('.deck-cards-editor');
+                const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
+                
+                // Re-render the current view
+                if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
+                    // Card View is active - re-render Card View
+                    await renderDeckCardsCardView();
+                } else if (deckCardsEditor && deckCardsEditor.classList.contains('list-view')) {
+                    // List View is active - re-render List View
+                    await renderDeckCardsListView();
+                } else {
+                    // Tile View is active - re-render Tile View
+                    await displayDeckCardsForEditing();
+                }
+                
+                // Restore scroll position after re-rendering
+                setTimeout(() => {
+                    if (deckCardsEditor) {
+                        deckCardsEditor.scrollTop = currentScrollTop;
+                    }
+                }, 10);
+                
+                // Restore the expansion state after re-rendering
+                applyUIPreferences({ expansionState: currentExpansionState });
+                
+                // Show notification
+                const cardData = window.availableCardsMap.get(cardId);
+                const cardName = cardData ? (cardData.name || cardData.card_name || cardId) : cardId;
+                const message = card.exclude_from_draw 
+                    ? `"${cardName}" marked as Pre-Placed (excluded from Draw Hand)`
+                    : `"${cardName}" included in Draw Hand`;
+                showNotification(message, 'success');
+                
+                // Update deck validation
+                await showDeckValidation(window.deckEditorCards);
+            } catch (error) {
+                console.error('Error in drawBasicUniverseCard:', error);
                 showNotification('Error toggling Pre-Placed status', 'error');
             }
         }
