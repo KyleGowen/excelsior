@@ -135,6 +135,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         type: card.card_type,
         cardId: card.card_id,
         quantity: card.quantity,
+        exclude_from_draw: card.exclude_from_draw || false,
       }));
       
       const fullDeck = {
@@ -768,7 +769,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
   }
 
   // Bulk replace all cards in a deck (used for save operations)
-  async replaceAllCardsInDeck(deckId: string, cards: Array<{cardType: string, cardId: string, quantity: number}>): Promise<boolean> {
+  async replaceAllCardsInDeck(deckId: string, cards: Array<{cardType: string, cardId: string, quantity: number, exclude_from_draw?: boolean}>): Promise<boolean> {
     const client = await this.pool.connect();
     try {
       // Start a transaction to ensure atomicity
@@ -779,10 +780,18 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       
       // Insert all new cards
       for (const card of cards) {
-        await client.query(
-          'INSERT INTO deck_cards (deck_id, card_type, card_id, quantity) VALUES ($1, $2, $3, $4)',
-          [deckId, card.cardType, card.cardId, card.quantity]
-        );
+        // Include exclude_from_draw if present (for Training cards with Spartan Training Ground)
+        if (card.exclude_from_draw !== undefined) {
+          await client.query(
+            'INSERT INTO deck_cards (deck_id, card_type, card_id, quantity, exclude_from_draw) VALUES ($1, $2, $3, $4, $5)',
+            [deckId, card.cardType, card.cardId, card.quantity, card.exclude_from_draw]
+          );
+        } else {
+          await client.query(
+            'INSERT INTO deck_cards (deck_id, card_type, card_id, quantity) VALUES ($1, $2, $3, $4)',
+            [deckId, card.cardType, card.cardId, card.quantity]
+          );
+        }
       }
       
       // Commit the transaction
@@ -823,6 +832,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         type: card.card_type,
         cardId: card.card_id,
         quantity: card.quantity,
+        exclude_from_draw: card.exclude_from_draw || false,
       }));
     } finally {
       client.release();

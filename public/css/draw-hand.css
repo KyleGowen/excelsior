@@ -106,3 +106,38 @@
     border: 2px dashed #4ecdc4;
 }
 
+/* Draw Training button styling - Blue button for Spartan Training Ground */
+.draw-training-btn {
+    background: rgba(72, 219, 251, 0.2);
+    color: #48dbfb;
+    border: 1px solid rgba(72, 219, 251, 0.3);
+    border-radius: 3.3px;
+    padding: 3.3px 6.6px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-family: monospace;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+.draw-training-btn:hover {
+    background: rgba(72, 219, 251, 0.3);
+    border-color: rgba(72, 219, 251, 0.5);
+}
+
+/* Dimmed state when Pre-Placed is active (similar to KO and reserve buttons) */
+.draw-training-btn.active {
+    background: rgba(72, 219, 251, 0.15);
+    border-color: rgba(72, 219, 251, 0.25);
+    color: rgba(72, 219, 251, 0.6);
+    opacity: 0.7;
+}
+
+.draw-training-btn.active:hover {
+    background: rgba(72, 219, 251, 0.2);
+    border-color: rgba(72, 219, 251, 0.3);
+    color: rgba(72, 219, 251, 0.7);
+}
+

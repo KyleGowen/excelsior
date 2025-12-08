@@ -457,6 +457,11 @@ async function saveDeckChanges() {
                 quantity: card.quantity
             };
             
+            // Include exclude_from_draw flag if present (for Training cards with Spartan Training Ground)
+            if (card.exclude_from_draw !== undefined) {
+                cardData.exclude_from_draw = card.exclude_from_draw;
+            }
+            
             return cardData;
         });
         
