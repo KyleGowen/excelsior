@@ -219,19 +219,17 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
                 return { ...card, type: convertedType };
             });
             
-            // SECURITY: Check if readonly=true query parameter is set, but only allow it if user is deck owner
+            // Determine read-only mode based on URL parameter and ownership
             const urlParams = new URLSearchParams(window.location.search);
             const isReadOnlyFromQuery = urlParams.get('readonly') === 'true';
             const isDeckOwner = data.data.metadata && data.data.metadata.isOwner === true;
             
-            if (isReadOnlyFromQuery && isDeckOwner) {
-                // Only allow read-only mode from URL parameter if user is the deck owner
+            if (isReadOnlyFromQuery) {
+                // If readonly=true is in URL, always use read-only mode (regardless of ownership)
                 isReadOnlyMode = true;
-            } else if (isReadOnlyFromQuery && !isDeckOwner) {
-                // Security violation: non-owner trying to use readonly=true parameter
-                isReadOnlyMode = false; // Force edit mode to prevent unauthorized access
             } else if (data.data.metadata && data.data.metadata.isOwner !== undefined) {
                 // Use API response for ownership-based read-only mode
+                // Non-owners should always be in read-only mode
                 isReadOnlyMode = !data.data.metadata.isOwner;
             } else {
                 // Fallback: if no ownership info, assume read-only for safety
