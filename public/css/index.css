@@ -3826,7 +3826,7 @@
         
 
         .deck-card-editor-item {
-            background: rgba(0, 0, 0, 1) !important; /* 0% transparency - fully opaque to block deck editor background */
+            background: transparent !important; /* No background - let card images show through */
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 6px;
             padding: 10px;
@@ -3840,7 +3840,7 @@
         }
 
         .deck-card-editor-item:hover {
-            background: rgba(20, 20, 20, 1) !important; /* Slightly lighter on hover but still opaque */
+            background: transparent !important; /* Keep transparent on hover */
         }
 
         .deck-card-editor-item.dragging {
@@ -4102,7 +4102,7 @@
         }
         /* Character background styling for deck editor tiles */
         .deck-card-editor-item.character-card {
-            background: rgba(0, 0, 0, 1) !important; /* 0% transparency - fully opaque to block deck editor background */
+            background: transparent !important; /* No background - let card images show through */
             position: relative;
             overflow: hidden;
         }
@@ -4118,8 +4118,8 @@
             background-size: 100% auto;
             background-position: right 10%;
             background-repeat: no-repeat;
-            opacity: 0.3;
-            z-index: 0; /* Above the opaque background but below content */
+            opacity: 1.0; /* Full opacity - gray overlay will dim */
+            z-index: 0; /* Behind content */
             border-radius: 6px;
         }
         
@@ -4134,6 +4134,7 @@
             background-position: right 5%;
         }
 
+        /* Gray overlay to dim card images */
         .deck-card-editor-item.character-card::after {
             content: '';
             position: absolute;
@@ -4141,11 +4142,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to right, 
-                rgba(54, 54, 54, 0.4) 0%, 
-                rgba(54, 54, 54, 0.2) 50%, 
-                rgba(54, 54, 54, 0.05) 100%);
-            z-index: 0; /* Same level as ::before, but will be layered on top of it */
+            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
+            z-index: 0; /* Same level as ::before, but will be layered on top */
             border-radius: 6px;
             pointer-events: none;
         }
@@ -4304,7 +4302,7 @@
             background-size: 100% auto;
             background-position: right top; /* Aligned to upper right */
             background-repeat: no-repeat;
-            opacity: 0.3;
+            opacity: 1.0; /* Full opacity - gray overlay will dim */
             z-index: -1;
             border-radius: 6px;
         }
@@ -4321,7 +4319,7 @@
             background-size: 100% auto;
             background-position: center top; /* Centered horizontally, anchored to top */
             background-repeat: no-repeat;
-            opacity: 0.3;
+            opacity: 1.0; /* Full opacity - gray overlay will dim */
             z-index: -1;
             border-radius: 6px;
         }
@@ -4332,16 +4330,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to right, 
-                rgba(54, 54, 54, 0.4) 0%, 
-                rgba(54, 54, 54, 0.2) 50%, 
-                rgba(54, 54, 54, 0.05) 100%);
+            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
         }
 
-        /* Location card gradient overlay */
+        /* Location card gray overlay */
         .deck-card-editor-item.location-card::after {
             content: '';
             position: absolute;
@@ -4349,10 +4344,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to right, 
-                rgba(54, 54, 54, 0.4) 0%, 
-                rgba(54, 54, 54, 0.2) 50%, 
-                rgba(54, 54, 54, 0.05) 100%);
+            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4373,12 +4365,12 @@
             background-size: 125% auto;
             background-position: right top; /* Aligned to upper right */
             background-repeat: no-repeat;
-            opacity: 0.3;
+            opacity: 1.0; /* Full opacity - gray overlay will dim */
             z-index: -1;
             border-radius: 6px;
         }
 
-        /* Special card gradient overlay */
+        /* Special card gray overlay */
         .deck-card-editor-item.special-card::after {
             content: '';
             position: absolute;
@@ -4386,10 +4378,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to right, 
-                rgba(54, 54, 54, 0.4) 0%, 
-                rgba(54, 54, 54, 0.2) 50%, 
-                rgba(54, 54, 54, 0.05) 100%);
+            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4429,11 +4418,12 @@
             background-size: 125% auto;
             background-position: right top; /* Aligned to upper right */
             background-repeat: no-repeat;
+            opacity: 1.0; /* Full opacity - gray overlay will dim */
             z-index: -1;
             border-radius: 6px;
         }
 
-        /* Aspect card gradient overlay */
+        /* Aspect card gray overlay */
         .deck-card-editor-item.aspect-card::after {
             content: '';
             position: absolute;
@@ -4441,10 +4431,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to right, 
-                rgba(54, 54, 54, 0.4) 0%, 
-                rgba(54, 54, 54, 0.2) 50%, 
-                rgba(54, 54, 54, 0.05) 100%);
+            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4472,12 +4459,12 @@
             background-size: 125% auto;
             background-position: right top; /* Aligned to upper right */
             background-repeat: no-repeat;
-            opacity: 0.3;
+            opacity: 1.0; /* Full opacity - gray overlay will dim */
             z-index: -1;
             border-radius: 6px;
         }
 
-        /* Mission card gradient overlay */
+        /* Mission card gray overlay */
         .deck-card-editor-item.mission-card::after {
             content: '';
             position: absolute;
@@ -4485,10 +4472,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to right, 
-                rgba(54, 54, 54, 0.4) 0%, 
-                rgba(54, 54, 54, 0.2) 50%, 
-                rgba(54, 54, 54, 0.05) 100%);
+            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4516,12 +4500,12 @@
             background-size: 187.5% auto;
             background-position: left top; /* Aligned to upper left */
             background-repeat: no-repeat;
-            opacity: 0.3;
+            opacity: 1.0; /* Full opacity - gray overlay will dim */
             z-index: -1;
             border-radius: 6px;
         }
 
-        /* Event card gradient overlay */
+        /* Event card gray overlay */
         .deck-card-editor-item.event-card::after {
             content: '';
             position: absolute;
@@ -4529,10 +4513,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to right, 
-                rgba(54, 54, 54, 0.4) 0%, 
-                rgba(54, 54, 54, 0.2) 50%, 
-                rgba(54, 54, 54, 0.05) 100%);
+            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4559,7 +4540,7 @@
             background-size: 125% auto;
             background-position: right center; /* Middle right of image aligned to middle right of tile */
             background-repeat: no-repeat;
-            opacity: 0.3;
+            opacity: 1.0; /* Full opacity - gray overlay will dim */
             z-index: -1;
             border-radius: 6px;
         }
@@ -4571,10 +4552,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to left, 
-                rgba(54, 54, 54, 0.4) 0%, 
-                rgba(54, 54, 54, 0.2) 50%, 
-                rgba(54, 54, 54, 0.05) 100%);
+            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4611,7 +4589,7 @@
             background-size: 125% auto;
             background-position: right center; /* Middle right of image aligned to middle right of tile */
             background-repeat: no-repeat;
-            opacity: 0.3;
+            opacity: 1.0; /* Full opacity - gray overlay will dim */
             z-index: -1;
             border-radius: 6px;
         }
@@ -4623,10 +4601,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to left, 
-                rgba(54, 54, 54, 0.4) 0%, 
-                rgba(54, 54, 54, 0.2) 50%, 
-                rgba(54, 54, 54, 0.05) 100%);
+            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4653,12 +4628,12 @@
             background-size: 125% auto;
             background-position: right top; /* Aligned to upper right */
             background-repeat: no-repeat;
-            opacity: 0.3;
+            opacity: 1.0; /* Full opacity - gray overlay will dim */
             z-index: -1;
             border-radius: 6px;
         }
         
-        /* Training card gradient overlay */
+        /* Training card gray overlay */
         .deck-card-editor-item.training-card::after {
             content: '';
             position: absolute;
@@ -4666,10 +4641,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to right, 
-                rgba(54, 54, 54, 0.4) 0%, 
-                rgba(54, 54, 54, 0.2) 50%, 
-                rgba(54, 54, 54, 0.05) 100%);
+            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -5013,7 +4985,7 @@
             background-size: 125% auto;
             background-position: right center; /* Middle right of image aligned to middle right of tile */
             background-repeat: no-repeat;
-            opacity: 0.3;
+            opacity: 1.0; /* Full opacity - gray overlay will dim */
             z-index: -1;
             border-radius: 6px;
         }
@@ -5025,10 +4997,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to left, 
-                rgba(54, 54, 54, 0.4) 0%, 
-                rgba(54, 54, 54, 0.2) 50%, 
-                rgba(54, 54, 54, 0.05) 100%);
+            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -5050,7 +5019,7 @@
             background-size: 125% auto;
             background-position: right center; /* Middle right of image aligned to middle right of tile */
             background-repeat: no-repeat;
-            opacity: 0.3;
+            opacity: 1.0; /* Full opacity - gray overlay will dim */
             z-index: -1;
             border-radius: 6px;
         }
@@ -5062,10 +5031,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to left, 
-                rgba(54, 54, 54, 0.4) 0%, 
-                rgba(54, 54, 54, 0.2) 50%, 
-                rgba(54, 54, 54, 0.05) 100%);
+            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
