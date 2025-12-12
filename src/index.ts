@@ -1928,8 +1928,16 @@ app.get('/health', async (req, res) => {
     try {
       const dbStartTime = Date.now();
       
-      // Test database connection
+      // Test database connection - check if dataSource is initialized
+      if (!dataSource) {
+        throw new Error('DataSource not initialized');
+      }
+      
       const pool = (dataSource as any).pool;
+      if (!pool) {
+        throw new Error('Database connection pool not initialized');
+      }
+      
       const client = await pool.connect();
       
       // Check if GUEST user exists
@@ -2037,6 +2045,7 @@ app.get('/health', async (req, res) => {
         error: dbError instanceof Error ? dbError.message : 'Unknown database error',
         connection: 'Failed'
       };
+      // Database errors are non-critical - server can still respond
       healthData.status = 'DEGRADED';
     }
 
@@ -2045,14 +2054,10 @@ app.get('/health', async (req, res) => {
     const totalLatency = Date.now() - startTime;
     healthData.latency = `${totalLatency}ms`;
 
-    // Determine overall status
-    if (healthData.database.status === 'ERROR') {
-      healthData.status = 'ERROR';
-    }
-
     // Set appropriate HTTP status code
-    const httpStatus = healthData.status === 'OK' ? 200 : 
-                      healthData.status === 'DEGRADED' ? 200 : 503;
+    // Always return 200 unless there's a critical server error
+    // DEGRADED status (database issues) is acceptable for health checks
+    const httpStatus = healthData.status === 'ERROR' ? 503 : 200;
 
     res.status(httpStatus).json(healthData);
 
