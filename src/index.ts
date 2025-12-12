@@ -470,10 +470,13 @@ async function initializeServer() {
     console.log('🚀 Excelsior Deckbuilder server running on port', PORT);
     console.log('📖 API documentation available at http://localhost:' + PORT);
     
-    // Start the server first (bind to localhost to avoid macOS firewall restrictions)
+    // Start the server
+    // In production/Docker, bind to 0.0.0.0 to accept connections from nginx
+    // In development, bind to 127.0.0.1 to avoid macOS firewall restrictions
     const port = typeof PORT === 'string' ? parseInt(PORT) : PORT;
-    app.listen(port, '127.0.0.1', () => {
-      console.log('🌐 Server is listening on port', port);
+    const bindAddress = process.env.NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1';
+    app.listen(port, bindAddress, () => {
+      console.log('🌐 Server is listening on port', port, 'on', bindAddress);
     });
     
     // Try to get card stats in the background (non-blocking)
