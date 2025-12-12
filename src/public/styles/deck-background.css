@@ -1,0 +1,211 @@
+/* Deck Background Feature Styles */
+
+/* Background Modal - Similar to Alternate Art Modal */
+.background-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.background-modal-content {
+    background: rgba(20, 20, 20, 0.95);
+    border: 1px solid rgba(78, 205, 196, 0.3);
+    border-radius: 8px;
+    padding: 2rem;
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.background-modal-content h3 {
+    color: #4ecdc4;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    margin-top: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.background-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    margin-top: 0;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.background-options-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.background-option {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+}
+
+.background-option:hover {
+    border-color: #4ecdc4;
+    background: rgba(78, 205, 196, 0.1);
+    transform: translateY(-2px);
+}
+
+.background-option.selected {
+    border-color: #4ecdc4;
+    background: rgba(78, 205, 196, 0.2);
+    box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+}
+
+.background-option img {
+    width: 100%;
+    height: auto;
+    max-height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 0.25rem;
+}
+
+.background-none-icon {
+    font-size: 2rem;
+    color: #ffffff;
+    margin-bottom: 0.25rem;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.432);
+}
+
+.background-option.selected .background-none-icon {
+    border-color: #4ecdc4;
+    background: rgba(78, 205, 196, 0.2);
+    box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+}
+
+.background-error {
+    color: #ff6b6b;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.background-option span {
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+.background-modal-actions {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* Ensure deck editor modal can display full-width background */
+.deck-editor-modal {
+    position: relative;
+    overflow: visible;
+}
+
+/* Background should cover full width including both panes */
+.deck-editor-layout {
+    position: relative;
+    min-height: 100%;
+}
+
+/* Dark overlay for background images - standardized to match content sections */
+/* Apply to modal-content to cover full height including areas beyond modal-body */
+/* The overlay will be behind header/stats (z-index: 0) which have z-index: 10 */
+#deckEditorModal .modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.432); /* Increased shading by 20% (was 0.36) */
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Remove overlay from deck-editor-modal to prevent it covering stats bar */
+
+/* Ensure background is visible behind content - use semi-transparent backgrounds */
+.deck-pane {
+    position: relative;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.432); /* Increased shading by 20% (was 0.36) */
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.card-selector-pane {
+    position: relative;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.432); /* Increased shading by 20% (was 0.36) */
+    border-radius: 8px;
+    padding: 10px;
+}
+
+/* Make sure modal content allows background to show */
+.modal-content.deck-editor-modal {
+    background-color: transparent !important;
+}
+
+/* Apply background to modal-content so it covers draw-hand-section too */
+#deckEditorModal .modal-content {
+    background-color: transparent !important;
+    position: relative;
+}
+
+/* Ensure stats bar and header have solid backgrounds to prevent background image showing through */
+.modal-header {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    position: relative;
+    z-index: 10;
+}
+
+.deck-summary-section {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    position: relative;
+    z-index: 10;
+}
+
+/* Ensure modal-body is positioned relative for overlay */
+.modal-body {
+    position: relative;
+}
+
+/* Ensure deck editor modal body can display background image */
+#deckEditorModal .modal-body {
+    background-color: transparent !important;
+    min-height: 400px; /* Ensure it has height to display background */
+}
+
+/* In read-only mode, make deck pane full width with background */
+.read-only-mode .deck-pane {
+    background: rgba(0, 0, 0, 0.432); /* Increased shading by 20% (was 0.36) */
+}

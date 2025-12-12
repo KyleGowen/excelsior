@@ -10,7 +10,7 @@
 
 /* Draw Hand Section */
 .draw-hand-section {
-    background: rgba(0, 0, 0, 0.432) !important; /* Increased shading by 20% (was 0.36) */
+    background: rgba(0, 0, 0, 0.4) !important; /* Less transparent - decreased transparency by half (was 0.1, now 0.4) */
     border: 1px solid rgba(78, 205, 196, 0.2); /* Reduced opacity to match deck content section shading */
     border-radius: 8px;
     margin: 20px;

@@ -68,6 +68,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         ui_preferences: updatedDeck.ui_preferences,
         is_limited: updatedDeck.is_limited,
         reserve_character: updatedDeck.reserve_character,
+        background_image_path: updatedDeck.background_image_path,
         threat: updatedDeck.threat,
         created_at: updatedDeck.created_at,
         updated_at: updatedDeck.updated_at
@@ -146,6 +147,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
         reserve_character: deck.reserve_character,
+        background_image_path: deck.background_image_path,
         threat: deck.threat,
         created_at: deck.created_at,
         updated_at: deck.updated_at,
@@ -321,6 +323,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
         reserve_character: deck.reserve_character,
+        background_image_path: deck.background_image_path,
         threat: deck.threat,
         created_at: deck.created_at,
         updated_at: deck.updated_at,
@@ -389,6 +392,10 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         setClause.push(`reserve_character = $${paramCount++}`);
         values.push(updates.reserve_character);
       }
+      if (updates.background_image_path !== undefined) {
+        setClause.push(`background_image_path = $${paramCount++}`);
+        values.push(updates.background_image_path);
+      }
 
       if (setClause.length === 0) {
         return this.getDeckById(id);
@@ -418,6 +425,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         card_count: deck.card_count,
         threat: deck.threat,
         reserve_character: deck.reserve_character,
+        background_image_path: deck.background_image_path,
         created_at: deck.created_at,
         updated_at: deck.updated_at
       };

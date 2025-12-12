@@ -338,6 +338,9 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
                 setupLayoutObserver();
             }
             
+            // Update card count
+            updateDeckEditorCardCount();
+            
             // Initialize background manager (loads background for all users, button only for admin)
             // Use setTimeout to ensure DOM is fully ready
             setTimeout(async () => {
@@ -351,9 +354,6 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
                     }
                 }
             }, 500); // Small delay to ensure DOM is ready
-            
-            // Update card count
-            updateDeckEditorCardCount();
             
             // Auto-activate special cards character filter if deck has characters
             const hasCharacters = window.deckEditorCards.some(card => card.type === 'character');
@@ -522,20 +522,23 @@ async function saveDeckChanges() {
         console.log('deckBackgroundManager exists:', !!window.deckBackgroundManager);
         console.log('currentDeckId:', currentDeckId);
         
+        const deckUpdateData = {
+            name: currentDeckData.metadata.name,
+            description: '',
+            is_limited: isDeckLimited,
+            is_valid: isDeckValid,
+            reserve_character: currentDeckData.metadata.reserve_character,
+            background_image_path: backgroundPath
+        };
+        console.log('Deck update payload:', deckUpdateData);
+        
         const updateResponse = await fetch(`/api/decks/${currentDeckId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
             credentials: 'include',
-            body: JSON.stringify({
-                name: currentDeckData.metadata.name,
-                description: '',
-                is_limited: isDeckLimited,
-                is_valid: isDeckValid,
-                reserve_character: currentDeckData.metadata.reserve_character,
-                background_image_path: backgroundPath
-            })
+            body: JSON.stringify(deckUpdateData)
         });
         
         if (!updateResponse.ok) {
@@ -546,14 +549,6 @@ async function saveDeckChanges() {
         
         const updateResult = await updateResponse.json();
         console.log('Deck update response:', updateResult);
-        
-        // Update background manager after save
-        if (updateResult.success && window.deckBackgroundManager) {
-            const savedBackground = updateResult.data?.metadata?.background_image_path;
-            if (savedBackground !== undefined) {
-                window.deckBackgroundManager.updateSelectedBackground(savedBackground);
-            }
-        }
         
         // Save expansion state
         saveDeckExpansionState();

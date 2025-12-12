@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import express from 'express';
+import express, { Response } from 'express';
 import { DataSourceConfig } from './config/DataSourceConfig';
 import { DeckPersistenceService } from './services/deckPersistence';
 import { DatabaseInitializationService } from './services/databaseInitialization';
@@ -8,6 +8,7 @@ import { AuthenticationService } from './services/AuthenticationService';
 import { DeckValidationService } from './services/deckValidationService';
 import { CollectionsRepository } from './database/collectionsRepository';
 import { CollectionService } from './services/collectionService';
+import { DeckBackgroundService } from './services/deckBackgroundService';
 import { Character } from './types';
 import path from 'path';
 import { execSync } from 'child_process';
@@ -16,7 +17,7 @@ import { execSync } from 'child_process';
 // import securityMiddleware from './middleware/securityMiddleware';
 
 export const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8085;
 
 // Deck building rules constants
 const DECK_RULES = {
@@ -372,6 +373,9 @@ const authService = new AuthenticationService(userRepository);
 const collectionsRepository = new CollectionsRepository((dataSource as any).pool);
 const collectionService = new CollectionService(collectionsRepository);
 
+// Initialize deck background service
+const deckBackgroundService = new DeckBackgroundService();
+
 // Function to get git information
 function getGitInfo() {
   // In production (Docker), use environment variables set during build
@@ -466,13 +470,20 @@ async function initializeServer() {
     console.log('🚀 Excelsior Deckbuilder server running on port', PORT);
     console.log('📖 API documentation available at http://localhost:' + PORT);
     
-    const cardStats = await cardRepository.getCardStats();
-    console.log('🔍 Database loaded:', cardStats.characters, 'characters,', cardStats.locations, 'locations');
-    
-    // Start the server
-    app.listen(PORT, () => {
-      console.log('🌐 Server is listening on port', PORT);
+    // Start the server first (bind to localhost to avoid macOS firewall restrictions)
+    const port = typeof PORT === 'string' ? parseInt(PORT) : PORT;
+    app.listen(port, '127.0.0.1', () => {
+      console.log('🌐 Server is listening on port', port);
     });
+    
+    // Try to get card stats in the background (non-blocking)
+    cardRepository.getCardStats()
+      .then(cardStats => {
+        console.log('🔍 Database loaded:', cardStats.characters, 'characters,', cardStats.locations, 'locations');
+      })
+      .catch(err => {
+        console.warn('⚠️ Could not load card stats (server still running):', err.message);
+      });
     
   } catch (error) {
     console.error('❌ Server initialization failed:', error);
@@ -606,6 +617,30 @@ app.get('/api/power-cards', async (req, res) => {
     res.json({ success: true, data: powerCards });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch power cards' });
+  }
+});
+
+// Helper function to check if user is ADMIN
+function requireAdmin(req: any, res: Response): boolean {
+  if (req.user?.role !== 'ADMIN') {
+    res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
+    return false;
+  }
+  return true;
+}
+
+// Get available background images (admin only)
+app.get('/api/deck-backgrounds', authenticateUser, async (req: any, res) => {
+  try {
+    if (!requireAdmin(req, res)) {
+      return;
+    }
+
+    const backgrounds = await deckBackgroundService.getAvailableBackgrounds();
+    res.json({ success: true, data: backgrounds });
+  } catch (error) {
+    console.error('Error fetching background images:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch background images' });
   }
 });
 
@@ -852,7 +887,8 @@ app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
         uiPreferences: deckData.ui_preferences,
         isOwner: deckData.isOwner,
         is_limited: deckData.is_limited,
-        reserve_character: deckData.reserve_character
+        reserve_character: deckData.reserve_character,
+        background_image_path: deckData.background_image_path
       },
       cards: deckData.cards || []
     };
@@ -894,7 +930,8 @@ app.get('/api/decks/:id/full', authenticateUser, async (req: any, res) => {
         uiPreferences: deckData.ui_preferences,
         isOwner: deckData.isOwner,
         is_limited: deckData.is_limited,
-        reserve_character: deckData.reserve_character
+        reserve_character: deckData.reserve_character,
+        background_image_path: deckData.background_image_path
       },
       cards: deckData.cards || []
     };
@@ -924,7 +961,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
-    const { name, description, is_limited, is_valid, reserve_character } = req.body;
+    const { name, description, is_limited, is_valid, reserve_character, background_image_path } = req.body;
     
     // SECURITY: Comprehensive input validation
     if (name !== undefined && (!name || typeof name !== 'string' || name.trim().length === 0)) {
@@ -951,6 +988,19 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(400).json({ success: false, error: 'Reserve character must be a string with 50 characters or less' });
     }
     
+    if (background_image_path !== undefined && background_image_path !== null) {
+      if (typeof background_image_path !== 'string') {
+        return res.status(400).json({ success: false, error: 'background_image_path must be a string or null' });
+      }
+      if (background_image_path.length > 500) {
+        return res.status(400).json({ success: false, error: 'background_image_path must be 500 characters or less' });
+      }
+      // Validate the path exists (only if not null/empty)
+      if (background_image_path && !(await deckBackgroundService.validateBackgroundPath(background_image_path))) {
+        return res.status(400).json({ success: false, error: 'Invalid background image path' });
+      }
+    }
+    
     // Check if deck exists
     const deck = await deckRepository.getDeckById(req.params.id);
     if (!deck) {
@@ -963,7 +1013,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
-    const updatedDeck = await deckRepository.updateDeck(req.params.id, { name, description, is_limited, is_valid, reserve_character });
+    const updatedDeck = await deckRepository.updateDeck(req.params.id, { name, description, is_limited, is_valid, reserve_character, background_image_path });
     if (!updatedDeck) {
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }
@@ -990,7 +1040,8 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
         uiPreferences: deckData.ui_preferences,
         isOwner: deckData.isOwner,
         is_limited: deckData.is_limited,
-        reserve_character: deckData.reserve_character
+        reserve_character: deckData.reserve_character,
+        background_image_path: deckData.background_image_path
       },
       cards: deckData.cards || []
     };
