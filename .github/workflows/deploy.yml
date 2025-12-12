@@ -1844,7 +1844,11 @@ jobs:
         echo "🏥 Calling health check endpoint on production server..."
         echo "=========================================="
         
-        MAX_RETRIES=2
+        # Wait a bit for server to be fully ready after deployment
+        echo "⏳ Waiting 15 seconds for server to be fully ready..."
+        sleep 15
+        
+        MAX_RETRIES=3
         RETRY_DELAY=30
         ATTEMPT=0
         SUCCESS=0
@@ -1856,7 +1860,7 @@ jobs:
           fi
           
           echo "🔎 Health check attempt $((ATTEMPT+1))..."
-          HEALTH_RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" "http://excelsior.cards/health" || echo "HTTP_STATUS:000")
+          HEALTH_RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" --max-time 10 "http://excelsior.cards/health" || echo "HTTP_STATUS:000")
           
           # Extract HTTP status code
           HTTP_STATUS=$(echo "$HEALTH_RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
@@ -1869,6 +1873,19 @@ jobs:
           echo "Response Body:"
           echo "$HEALTH_BODY" | jq . 2>/dev/null || echo "$HEALTH_BODY"
           echo ""
+          
+          # Check for specific error conditions
+          if [ "$HTTP_STATUS" = "000" ]; then
+            echo "⚠️  Connection failed - server may not be responding or DNS issue"
+          elif [ "$HTTP_STATUS" = "503" ]; then
+            echo "⚠️  Service Unavailable - server may be starting or database connection issue"
+            # Try to extract error message from response
+            ERROR_MSG=$(echo "$HEALTH_BODY" | jq -r '.error // .database.error // "Unknown error"' 2>/dev/null || echo "Unknown error")
+            echo "   Error details: $ERROR_MSG"
+          elif [ "$HTTP_STATUS" != "200" ]; then
+            echo "⚠️  Unexpected HTTP status: $HTTP_STATUS"
+          fi
+          
           echo "=========================================="
           
           if [ "$HTTP_STATUS" = "200" ]; then
@@ -1886,6 +1903,11 @@ jobs:
           exit 0
         else
           echo "❌ Health check FAILED after $((MAX_RETRIES+1)) attempts"
+          echo "💡 Troubleshooting tips:"
+          echo "   - Check if server is running: curl -I http://excelsior.cards"
+          echo "   - Check server logs on EC2 instance"
+          echo "   - Verify database connectivity"
+          echo "   - Check DNS resolution for excelsior.cards"
           exit 1
         fi
         
