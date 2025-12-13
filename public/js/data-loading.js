@@ -147,14 +147,16 @@ async function loadLocations() {
 // Load and display Character+ data (characters with their special cards)
 async function loadCharacterPlus() {
     try {
-        // Fetch both characters and special cards in parallel
-        const [charactersResponse, specialCardsResponse] = await Promise.all([
+        // Fetch characters, special cards, and advanced universe cards in parallel
+        const [charactersResponse, specialCardsResponse, advancedUniverseResponse] = await Promise.all([
             fetch('/api/characters'),
-            fetch('/api/special-cards')
+            fetch('/api/special-cards'),
+            fetch('/api/advanced-universe')
         ]);
         
         const charactersData = await charactersResponse.json();
         const specialCardsData = await specialCardsResponse.json();
+        const advancedUniverseData = await advancedUniverseResponse.json();
         
         if (!charactersData.success) {
             throw new Error('Failed to load characters');
@@ -162,6 +164,10 @@ async function loadCharacterPlus() {
         
         if (!specialCardsData.success) {
             throw new Error('Failed to load special cards');
+        }
+        
+        if (!advancedUniverseData.success) {
+            throw new Error('Failed to load advanced universe cards');
         }
         
         // Group special cards by character_name
@@ -174,10 +180,24 @@ async function loadCharacterPlus() {
             specialCardsByCharacter.get(characterName).push(specialCard);
         });
         
-        // Process each character and pair with their special cards
+        // Group advanced universe cards by character
+        const advancedUniverseByCharacter = new Map();
+        advancedUniverseData.data.forEach(advancedCard => {
+            const characterName = advancedCard.character || 'Any Character';
+            if (!advancedUniverseByCharacter.has(characterName)) {
+                advancedUniverseByCharacter.set(characterName, []);
+            }
+            advancedUniverseByCharacter.get(characterName).push(advancedCard);
+        });
+        
+        // Process each character and pair with their special cards and advanced universe cards
         const charactersWithSpecials = charactersData.data.map(character => {
             const characterName = character.name || '';
             let specialCards = [];
+            let advancedUniverseCards = [];
+            
+            // Get advanced universe cards for this character
+            advancedUniverseCards = advancedUniverseByCharacter.get(characterName) || [];
             
             // Special handling for Angry Mob characters
             if (characterName.startsWith('Angry Mob')) {
@@ -249,20 +269,38 @@ async function loadCharacterPlus() {
                 return nameA.localeCompare(nameB);
             });
             
-            // Take first 6 special cards and pad with null if needed
-            const specialCardsArray = sortedSpecials.slice(0, 6);
-            while (specialCardsArray.length < 6) {
-                specialCardsArray.push(null);
+            // Sort advanced universe cards alphabetically by name
+            const sortedAdvancedUniverse = advancedUniverseCards.sort((a, b) => {
+                const nameA = (a.name || '').toLowerCase();
+                const nameB = (b.name || '').toLowerCase();
+                return nameA.localeCompare(nameB);
+            });
+            
+            // Combine special cards and advanced universe cards, then sort alphabetically
+            const allCards = [...sortedSpecials.map(card => ({ ...card, cardType: 'special' })), 
+                             ...sortedAdvancedUniverse.map(card => ({ ...card, cardType: 'advanced-universe' }))];
+            
+            // Sort combined cards alphabetically by name
+            const sortedAllCards = allCards.sort((a, b) => {
+                const nameA = (a.name || '').toLowerCase();
+                const nameB = (b.name || '').toLowerCase();
+                return nameA.localeCompare(nameB);
+            });
+            
+            // Take first 6 cards and pad with null if needed
+            const cardsArray = sortedAllCards.slice(0, 6);
+            while (cardsArray.length < 6) {
+                cardsArray.push(null);
             }
             
             return {
                 character: character,
-                specialCards: specialCardsArray
+                specialCards: cardsArray
             };
         });
         
-        // Display the data (pass all special cards for proper alternate art grouping)
-        displayCharacterPlus(charactersWithSpecials, specialCardsData.data);
+        // Display the data (pass all special cards and advanced universe cards for proper alternate art grouping)
+        displayCharacterPlus(charactersWithSpecials, specialCardsData.data, advancedUniverseData.data);
         
     } catch (error) {
         console.error('Error loading Character+ data:', error);

@@ -625,10 +625,10 @@ function displaySpecialCards(specialCards) {
 }
 
 /**
- * Display Character+ data (characters with their special cards)
- * Each row shows one character with up to 6 special cards in columns
+ * Display Character+ data (characters with their special cards and advanced universe cards)
+ * Each row shows one character with up to 6 cards (specials + advanced universe) in columns
  */
-function displayCharacterPlus(charactersWithSpecials, allSpecialCards = []) {
+function displayCharacterPlus(charactersWithSpecials, allSpecialCards = [], allAdvancedUniverse = []) {
     const tbody = document.getElementById('character-plus-tbody');
     
     if (!tbody) {
@@ -646,6 +646,9 @@ function displayCharacterPlus(charactersWithSpecials, allSpecialCards = []) {
     
     // Group all special cards by name and universe for alternate art detection (do this once)
     const groupedAllSpecials = groupCardsByVariant(allSpecialCards, 'name', 'universe');
+    
+    // Group all advanced universe cards by name and universe for alternate art detection
+    const groupedAllAdvancedUniverse = groupCardsByVariant(allAdvancedUniverse, 'name', 'universe');
     
     // Group characters by name and universe for alternate art handling
     const groupedCharacters = groupCardsByVariant(
@@ -690,48 +693,57 @@ function displayCharacterPlus(charactersWithSpecials, allSpecialCards = []) {
         // Build special card columns
         let specialCardColumns = '';
         
-        characterData.specialCards.forEach((specialCard, index) => {
-            if (specialCard === null) {
-                // Empty cell for missing special card
+        characterData.specialCards.forEach((card, index) => {
+            if (card === null) {
+                // Empty cell for missing card
                 specialCardColumns += '<td></td>';
             } else {
-                // Find the group for this special card
-                const specialName = specialCard.name || '';
-                const specialUniverse = specialCard.universe || specialCard.set || 'ERB';
-                const specialKey = `${specialName}|${specialUniverse}|special`;
-                const specialGroup = groupedAllSpecials.get(specialKey) || [specialCard];
+                // Determine card type and get appropriate group
+                const cardType = card.cardType || 'special';
+                const cardName = card.name || '';
+                const cardUniverse = card.universe || card.set || 'ERB';
+                const cardKey = `${cardName}|${cardUniverse}|${cardType}`;
                 
-                const specialImageData = specialGroup.map(special => ({
-                    id: special.id,
-                    imagePath: getCardImagePathForDisplay(special, 'special'),
-                    name: special.name
+                let cardGroup = [];
+                if (cardType === 'special') {
+                    cardGroup = groupedAllSpecials.get(cardKey) || [card];
+                } else if (cardType === 'advanced-universe') {
+                    cardGroup = groupedAllAdvancedUniverse.get(cardKey) || [card];
+                } else {
+                    cardGroup = [card];
+                }
+                
+                const cardImageData = cardGroup.map(c => ({
+                    id: c.id,
+                    imagePath: getCardImagePathForDisplay(c, cardType),
+                    name: c.name
                 }));
                 
-                const specialGroupId = `char-plus-special-${specialCard.id}-${index}`;
-                const hasMultipleSpecialImages = specialImageData.length > 1;
-                const specialNavArrows = hasMultipleSpecialImages ? `
-                    <button class="card-nav-arrow card-nav-prev" onclick="navigateCardImage('${specialGroupId}', -1)" aria-label="Previous art" type="button">‹</button>
-                    <button class="card-nav-arrow card-nav-next" onclick="navigateCardImage('${specialGroupId}', 1)" aria-label="Next art" type="button">›</button>
+                const cardGroupId = `char-plus-card-${card.id}-${index}`;
+                const hasMultipleCardImages = cardImageData.length > 1;
+                const cardNavArrows = hasMultipleCardImages ? `
+                    <button class="card-nav-arrow card-nav-prev" onclick="navigateCardImage('${cardGroupId}', -1)" aria-label="Previous art" type="button">‹</button>
+                    <button class="card-nav-arrow card-nav-next" onclick="navigateCardImage('${cardGroupId}', 1)" aria-label="Next art" type="button">›</button>
                 ` : '';
                 
-                const currentSpecialImage = specialImageData[0];
-                const currentSpecialImagePath = currentSpecialImage.imagePath;
-                const currentSpecialName = currentSpecialImage.name;
+                const currentCardImage = cardImageData[0];
+                const currentCardImagePath = currentCardImage.imagePath;
+                const currentCardName = currentCardImage.name;
                 
                 specialCardColumns += `
                     <td>
                         <div class="card-image-container">
-                            ${specialNavArrows}
-                            <img id="${specialGroupId}-img"
-                                 src="${currentSpecialImagePath}" 
-                                 alt="${currentSpecialName}" 
+                            ${cardNavArrows}
+                            <img id="${cardGroupId}-img"
+                                 src="${currentCardImagePath}" 
+                                 alt="${currentCardName}" 
                                  style="width: 120px; height: auto; max-height: 180px; object-fit: contain; border-radius: 5px; cursor: pointer;"
                                  onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
-                                 onmouseenter="showCardHoverModal('${currentSpecialImagePath}', '${currentSpecialName.replace(/'/g, "\\'")}')"
+                                 onmouseenter="showCardHoverModal('${currentCardImagePath}', '${currentCardName.replace(/'/g, "\\'")}')"
                                  onmouseleave="hideCardHoverModal()"
                                  onclick="openModal(this)">
                         </div>
-                        <button class="add-to-deck-btn" onclick="showDeckSelection('special', '${currentSpecialImage.id}', '${currentSpecialName.replace(/'/g, "\\'")}', this)" style="margin-top: 4px; width: 100%;">
+                        <button class="add-to-deck-btn" onclick="showDeckSelection('${cardType}', '${currentCardImage.id}', '${currentCardName.replace(/'/g, "\\'")}', this)" style="margin-top: 4px; width: 100%;">
                             Add to Deck
                         </button>
                     </td>
@@ -768,27 +780,36 @@ function displayCharacterPlus(charactersWithSpecials, allSpecialCards = []) {
             characterContainer.setAttribute('data-current-index', '0');
         }
         
-        // Store image data for each special card navigation
-        characterData.specialCards.forEach((specialCard, index) => {
-            if (specialCard !== null) {
-                const specialGroupId = `char-plus-special-${specialCard.id}-${index}`;
-                const specialImg = row.querySelector(`#${specialGroupId}-img`);
-                if (specialImg) {
-                    const specialContainer = specialImg.closest('.card-image-container');
-                    if (specialContainer) {
-                        // Find the group for this special card to get all alternate arts
-                        const specialName = specialCard.name || '';
-                        const specialUniverse = specialCard.universe || specialCard.set || 'ERB';
-                        const specialKey = `${specialName}|${specialUniverse}|special`;
-                        const specialGroup = groupedAllSpecials.get(specialKey) || [specialCard];
+        // Store image data for each card navigation (special or advanced universe)
+        characterData.specialCards.forEach((card, index) => {
+            if (card !== null) {
+                const cardGroupId = `char-plus-card-${card.id}-${index}`;
+                const cardImg = row.querySelector(`#${cardGroupId}-img`);
+                if (cardImg) {
+                    const cardContainer = cardImg.closest('.card-image-container');
+                    if (cardContainer) {
+                        // Find the group for this card to get all alternate arts
+                        const cardType = card.cardType || 'special';
+                        const cardName = card.name || '';
+                        const cardUniverse = card.universe || card.set || 'ERB';
+                        const cardKey = `${cardName}|${cardUniverse}|${cardType}`;
                         
-                        const specialImageData = specialGroup.map(special => ({
-                            id: special.id,
-                            imagePath: getCardImagePathForDisplay(special, 'special'),
-                            name: special.name
+                        let cardGroup = [];
+                        if (cardType === 'special') {
+                            cardGroup = groupedAllSpecials.get(cardKey) || [card];
+                        } else if (cardType === 'advanced-universe') {
+                            cardGroup = groupedAllAdvancedUniverse.get(cardKey) || [card];
+                        } else {
+                            cardGroup = [card];
+                        }
+                        
+                        const cardImageData = cardGroup.map(c => ({
+                            id: c.id,
+                            imagePath: getCardImagePathForDisplay(c, cardType),
+                            name: c.name
                         }));
-                        specialContainer.setAttribute('data-image-data', JSON.stringify(specialImageData));
-                        specialContainer.setAttribute('data-current-index', '0');
+                        cardContainer.setAttribute('data-image-data', JSON.stringify(cardImageData));
+                        cardContainer.setAttribute('data-current-index', '0');
                     }
                 }
             }
