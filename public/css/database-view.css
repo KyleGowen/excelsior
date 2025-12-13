@@ -964,13 +964,15 @@ td:last-child {
     background: linear-gradient(135deg, #59CCBE, #4AB3A6);
     color: #2E3236;
     border: none;
-    padding: 6px 12px;
+    padding: 6px 18px;
     border-radius: 4px;
     cursor: pointer;
     font-weight: 600;
     font-size: 0.8rem;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(89, 204, 190, 0.3);
+    min-width: 90px;
+    box-sizing: border-box;
 }
 
 .add-to-deck-btn:hover {
@@ -982,6 +984,41 @@ td:last-child {
 .add-to-deck-btn:active {
     transform: translateY(0);
     box-shadow: 0 2px 6px rgba(89, 204, 190, 0.3);
+}
+
+.add-to-collection-btn {
+    background: linear-gradient(135deg, #4ecdc4, #2cb1a6);
+    color: #1a1a2e;
+    border: none;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 90px;
+    box-sizing: border-box;
+}
+
+.add-to-collection-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(78, 205, 196, 0.4);
+}
+
+.add-to-collection-btn:active {
+    transform: translateY(0);
+}
+
+/* Ensure buttons match width when in table cells */
+table td .add-to-deck-btn {
+    width: 100% !important;
+    display: block;
+}
+
+table td .add-to-collection-btn {
+    width: 100% !important;
+    display: block;
+    margin-top: 4px;
 }
 
 /* ========================================
@@ -1061,13 +1098,15 @@ table {
     background: linear-gradient(135deg, #59CCBE, #4AB3A6);
     color: #2E3236;
     border: none;
-    padding: 6px 12px;
+    padding: 6px 18px;
     border-radius: 4px;
     cursor: pointer;
     font-weight: 600;
     font-size: 0.8rem;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(89, 204, 190, 0.3);
+    min-width: 90px;
+    box-sizing: border-box;
 }
 
 .add-to-deck-btn:hover {
@@ -1079,6 +1118,41 @@ table {
 .add-to-deck-btn:active {
     transform: translateY(0);
     box-shadow: 0 2px 6px rgba(89, 204, 190, 0.3);
+}
+
+.add-to-collection-btn {
+    background: linear-gradient(135deg, #4ecdc4, #2cb1a6);
+    color: #1a1a2e;
+    border: none;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 90px;
+    box-sizing: border-box;
+}
+
+.add-to-collection-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(78, 205, 196, 0.4);
+}
+
+.add-to-collection-btn:active {
+    transform: translateY(0);
+}
+
+/* Ensure buttons match width when in table cells */
+table td .add-to-deck-btn {
+    width: 100% !important;
+    display: block;
+}
+
+table td .add-to-collection-btn {
+    width: 100% !important;
+    display: block;
+    margin-top: 4px;
 }
 
 /* ========================================
@@ -1158,13 +1232,15 @@ table {
     background: linear-gradient(135deg, #59CCBE, #4AB3A6);
     color: #2E3236;
     border: none;
-    padding: 6px 12px;
+    padding: 6px 18px;
     border-radius: 4px;
     cursor: pointer;
     font-weight: 600;
     font-size: 0.8rem;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(89, 204, 190, 0.3);
+    min-width: 90px;
+    box-sizing: border-box;
 }
 
 .add-to-deck-btn:hover {
@@ -1176,6 +1252,41 @@ table {
 .add-to-deck-btn:active {
     transform: translateY(0);
     box-shadow: 0 2px 6px rgba(89, 204, 190, 0.3);
+}
+
+.add-to-collection-btn {
+    background: linear-gradient(135deg, #4ecdc4, #2cb1a6);
+    color: #1a1a2e;
+    border: none;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 90px;
+    box-sizing: border-box;
+}
+
+.add-to-collection-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(78, 205, 196, 0.4);
+}
+
+.add-to-collection-btn:active {
+    transform: translateY(0);
+}
+
+/* Ensure buttons match width when in table cells */
+table td .add-to-deck-btn {
+    width: 100% !important;
+    display: block;
+}
+
+table td .add-to-collection-btn {
+    width: 100% !important;
+    display: block;
+    margin-top: 4px;
 }
 
 /* ========================================
@@ -1255,13 +1366,15 @@ table {
     background: linear-gradient(135deg, #59CCBE, #4AB3A6);
     color: #2E3236;
     border: none;
-    padding: 6px 12px;
+    padding: 6px 18px;
     border-radius: 4px;
     cursor: pointer;
     font-weight: 600;
     font-size: 0.8rem;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(89, 204, 190, 0.3);
+    min-width: 90px;
+    box-sizing: border-box;
 }
 
 .add-to-deck-btn:hover {
@@ -1273,6 +1386,41 @@ table {
 .add-to-deck-btn:active {
     transform: translateY(0);
     box-shadow: 0 2px 6px rgba(89, 204, 190, 0.3);
+}
+
+.add-to-collection-btn {
+    background: linear-gradient(135deg, #4ecdc4, #2cb1a6);
+    color: #1a1a2e;
+    border: none;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 90px;
+    box-sizing: border-box;
+}
+
+.add-to-collection-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(78, 205, 196, 0.4);
+}
+
+.add-to-collection-btn:active {
+    transform: translateY(0);
+}
+
+/* Ensure buttons match width when in table cells */
+table td .add-to-deck-btn {
+    width: 100% !important;
+    display: block;
+}
+
+table td .add-to-collection-btn {
+    width: 100% !important;
+    display: block;
+    margin-top: 4px;
 }
 
 /* ========================================
@@ -1348,23 +1496,55 @@ table {
     word-wrap: break-word;
     word-break: break-word;
     white-space: normal;
-    vertical-align: top;
+    vertical-align: bottom;
     padding: 8px 12px;
     line-height: 1.4;
     text-align: center;
+    position: relative;
 }
 
-/* Character column (first column) - wider for character card */
+/* Add All column (first column) - narrow for buttons */
 #character-plus-table th:nth-child(1),
 #character-plus-table td:nth-child(1) {
+    width: 10%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Style buttons in Add All column */
+#character-plus-table td:nth-child(1) .add-to-deck-btn,
+#character-plus-table td:nth-child(1) .add-to-collection-btn {
+    width: 100%;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.75rem;
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 1.2;
+}
+
+#character-plus-table td:nth-child(1) .add-to-deck-btn {
+    padding: 6px 18px;
+}
+
+#character-plus-table td:nth-child(1) .add-to-collection-btn {
+    padding: 6px 8px;
+}
+
+#character-plus-table td:nth-child(1) .add-to-deck-btn:last-child,
+#character-plus-table td:nth-child(1) .add-to-collection-btn:last-child {
+    margin-bottom: 0;
+}
+
+/* Character column (second column) - wider for character card */
+#character-plus-table th:nth-child(2),
+#character-plus-table td:nth-child(2) {
     width: 20%;
     text-align: center;
     vertical-align: middle;
 }
 
-/* Special card columns (columns 2-7) - equal width */
-#character-plus-table th:nth-child(2),
-#character-plus-table td:nth-child(2),
+/* Special card columns (columns 3-8) - equal width */
 #character-plus-table th:nth-child(3),
 #character-plus-table td:nth-child(3),
 #character-plus-table th:nth-child(4),
@@ -1374,14 +1554,16 @@ table {
 #character-plus-table th:nth-child(6),
 #character-plus-table td:nth-child(6),
 #character-plus-table th:nth-child(7),
-#character-plus-table td:nth-child(7) {
-    width: 13.33%; /* ~80% / 6 columns */
+#character-plus-table td:nth-child(7),
+#character-plus-table th:nth-child(8),
+#character-plus-table td:nth-child(8) {
+    width: 11.67%; /* ~70% / 6 columns */
     text-align: center;
     vertical-align: middle;
 }
 
 /* Character image styling */
-#character-plus-table td:nth-child(1) img {
+#character-plus-table td:nth-child(2) img {
     max-width: 316px;
     height: auto;
     object-fit: contain;
@@ -1406,8 +1588,56 @@ table {
     min-height: fit-content;
 }
 
+/* Bottom-align buttons in character-plus table cells */
 #character-plus-table tbody td {
     min-height: 200px;
+    vertical-align: bottom;
+    position: relative;
+}
+
+/* Flex container wrapper for cell content */
+#character-plus-table tbody td .cell-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: 100%;
+}
+
+/* Ensure card containers don't grow */
+#character-plus-table tbody td .card-image-container {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Position navigation arrows in empty space beside character card images */
+#character-plus-table tbody td:nth-child(2) .card-image-container .card-nav-arrow {
+    position: static;
+    background: transparent;
+    border-radius: 4px;
+    padding: 8px 4px;
+    z-index: 20;
+    color: rgba(255, 255, 255, 0.9);
+    flex-shrink: 0;
+}
+
+#character-plus-table tbody td:nth-child(2) .card-image-container .card-nav-arrow:hover {
+    background: transparent;
+    color: rgba(255, 255, 255, 1);
+}
+
+/* Make character card images larger to fill more of their cell */
+#character-plus-table tbody td:nth-child(2) .card-image-container img {
+    max-width: 180px !important;
+    width: auto !important;
+}
+
+/* Push buttons to bottom */
+#character-plus-table tbody td .add-to-deck-btn {
+    margin-top: auto;
 }
 
 #character-plus-table tbody tr[data-height-locked="true"] {

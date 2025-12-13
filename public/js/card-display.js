@@ -172,11 +172,11 @@ function displayCharacters(characters) {
             </td>
             <td>
                 <button class="add-to-deck-btn" onclick="showDeckSelection('character', '${currentImage.id}', '${currentImageName.replace(/'/g, "\\'")}', this)">
-                    Add to Deck
+                    +Deck
                 </button>
                 ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
-                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${currentImage.id}', 'character')" style="margin-top: 4px; display: block; width: 100%;">
-                    Add to Collection
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${currentImage.id}', 'character')" style="margin-top: 4px; display: block;">
+                    +Collection
                 </button>
                 ` : ''}
             </td>
@@ -546,11 +546,11 @@ function displaySpecialCards(specialCards) {
             </td>
             <td>
                 <button class="add-to-deck-btn" onclick="showDeckSelection('special', '${currentImage.id}', '${currentImageName.replace(/'/g, "\\'")}', this)">
-                    Add to Deck
+                    +Deck
                 </button>
                 ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
-                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${currentImage.id}', 'special')" style="margin-top: 4px; display: block; width: 100%;">
-                    Add to Collection
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${currentImage.id}', 'special')" style="margin-top: 4px; display: block;">
+                    +Collection
                 </button>
                 ` : ''}
             </td>
@@ -623,6 +623,298 @@ function displaySpecialCards(specialCards) {
         }
     });
 }
+
+/**
+ * Get all card IDs from a Character+ table row, considering alternate art selection
+ * Returns an array of objects with { cardType, cardId, cardName }
+ */
+function getAllCardIdsFromRow(row) {
+    const cards = [];
+    
+    // Get character card (second column, index 1)
+    const characterCell = row.querySelector('td:nth-child(2)');
+    if (characterCell) {
+        const characterImg = characterCell.querySelector('img');
+        if (characterImg) {
+            const characterContainer = characterImg.closest('.card-image-container');
+            if (characterContainer) {
+                const imageDataStr = characterContainer.getAttribute('data-image-data');
+                const currentIndexStr = characterContainer.getAttribute('data-current-index') || '0';
+                if (imageDataStr) {
+                    try {
+                        const imageData = JSON.parse(imageDataStr);
+                        const currentIndex = parseInt(currentIndexStr, 10) || 0;
+                        const currentImage = imageData[currentIndex] || imageData[0];
+                        if (currentImage) {
+                            cards.push({
+                                cardType: 'character',
+                                cardId: currentImage.id,
+                                cardName: currentImage.name || ''
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error parsing character image data:', e);
+                    }
+                }
+            }
+        }
+    }
+    
+    // Get special cards (columns 3-8)
+    for (let i = 3; i <= 8; i++) {
+        const cardCell = row.querySelector(`td:nth-child(${i})`);
+        if (cardCell) {
+            const cardImg = cardCell.querySelector('img');
+            if (cardImg) {
+                const cardContainer = cardImg.closest('.card-image-container');
+                if (cardContainer) {
+                    const imageDataStr = cardContainer.getAttribute('data-image-data');
+                    const currentIndexStr = cardContainer.getAttribute('data-current-index') || '0';
+                    if (imageDataStr) {
+                        try {
+                            const imageData = JSON.parse(imageDataStr);
+                            const currentIndex = parseInt(currentIndexStr, 10) || 0;
+                            const currentImage = imageData[currentIndex] || imageData[0];
+                            if (currentImage) {
+                                // Get card type from data attribute
+                                const cardType = cardContainer.getAttribute('data-card-type') || 'special';
+                                
+                                cards.push({
+                                    cardType: cardType,
+                                    cardId: currentImage.id,
+                                    cardName: currentImage.name || ''
+                                });
+                            }
+                        } catch (e) {
+                            console.error('Error parsing card image data:', e);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    return cards;
+}
+
+/**
+ * Add all cards from a Character+ table row to deck
+ */
+async function addAllCardsToDeckFromRow(buttonElement) {
+    const row = buttonElement.closest('tr');
+    if (!row) {
+        showNotification('Could not find row', 'error');
+        return;
+    }
+    
+    const cards = getAllCardIdsFromRow(row);
+    if (cards.length === 0) {
+        showNotification('No cards found in row', 'error');
+        return;
+    }
+    
+    // Check if user is authenticated
+    const currentUser = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+    if (!currentUser) {
+        showNotification('Please log in to add cards to decks', 'error');
+        return;
+    }
+    
+    // Load user decks if needed
+    if (typeof loadUserDecks === 'function') {
+        if (typeof userDecks === 'undefined' || userDecks.length === 0) {
+            await loadUserDecks();
+        }
+    }
+    
+    // Check if user has any decks
+    if (typeof userDecks === 'undefined' || userDecks.length === 0) {
+        showNotification('You need to create a deck first', 'error');
+        return;
+    }
+    
+    // Show deck selection menu, then add all cards to selected deck
+    if (typeof createDeckSelectionMenu === 'function') {
+        // Create a custom menu that adds all cards
+        const menu = document.createElement('div');
+        menu.className = 'deck-selection-menu';
+        menu.style.cssText = `
+            position: absolute;
+            background: #2a2a3e;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 12px;
+            z-index: 10000;
+            min-width: 200px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        `;
+        
+        const title = document.createElement('div');
+        title.textContent = `Add ${cards.length} cards to deck:`;
+        title.style.cssText = `
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        `;
+        menu.appendChild(title);
+        
+        // Get userDecks from global scope
+        const decks = typeof userDecks !== 'undefined' ? userDecks : [];
+        decks.forEach(deck => {
+            const deckOption = document.createElement('div');
+            deckOption.className = 'deck-option';
+            deckOption.textContent = deck.name || deck.metadata?.name || 'Unnamed Deck';
+            deckOption.style.cssText = `
+                color: #fff;
+                font-size: 14px;
+                padding: 8px 12px;
+                cursor: pointer;
+                border-radius: 4px;
+                margin-bottom: 2px;
+                transition: background-color 0.2s;
+            `;
+            
+            deckOption.addEventListener('mouseenter', () => {
+                deckOption.style.backgroundColor = '#3a3a4e';
+            });
+            deckOption.addEventListener('mouseleave', () => {
+                deckOption.style.backgroundColor = 'transparent';
+            });
+            
+            deckOption.addEventListener('click', async () => {
+                const deckId = deck.id || deck.metadata?.id || deck.deckId;
+                if (!deckId) {
+                    showNotification('Error: Could not identify deck ID', 'error');
+                    return;
+                }
+                
+                // Add all cards to the selected deck
+                let successCount = 0;
+                let errorCount = 0;
+                
+                for (const card of cards) {
+                    try {
+                        if (typeof addCardToDatabaseDeck === 'function') {
+                            await addCardToDatabaseDeck(deckId, card.cardType, card.cardId, card.cardName);
+                            successCount++;
+                        } else {
+                            // Fallback: direct API call
+                            const response = await fetch(`/api/decks/${deckId}/cards`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                credentials: 'include',
+                                body: JSON.stringify({
+                                    cardType: card.cardType,
+                                    cardId: card.cardId,
+                                    quantity: 1
+                                })
+                            });
+                            if (response.ok) {
+                                successCount++;
+                            } else {
+                                errorCount++;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error adding card:', error);
+                        errorCount++;
+                    }
+                }
+                
+                menu.remove();
+                
+                if (successCount > 0) {
+                    showNotification(`Added ${successCount} card${successCount !== 1 ? 's' : ''} to deck${errorCount > 0 ? ` (${errorCount} failed)` : ''}`, 'success');
+                } else {
+                    showNotification('Failed to add cards to deck', 'error');
+                }
+            });
+            
+            menu.appendChild(deckOption);
+        });
+        
+        // Position menu near button
+        const rect = buttonElement.getBoundingClientRect();
+        menu.style.left = rect.left + 'px';
+        menu.style.top = (rect.bottom + 5) + 'px';
+        
+        document.body.appendChild(menu);
+        
+        // Close menu when clicking outside
+        const closeMenuOnClickOutside = (event) => {
+            if (!menu.contains(event.target) && event.target !== buttonElement) {
+                menu.remove();
+                document.removeEventListener('click', closeMenuOnClickOutside);
+            }
+        };
+        
+        setTimeout(() => {
+            document.addEventListener('click', closeMenuOnClickOutside);
+        }, 100);
+    }
+}
+
+/**
+ * Add all cards from a Character+ table row to collection
+ */
+async function addAllCardsToCollectionFromRow(buttonElement) {
+    const row = buttonElement.closest('tr');
+    if (!row) {
+        showNotification('Could not find row', 'error');
+        return;
+    }
+    
+    const cards = getAllCardIdsFromRow(row);
+    if (cards.length === 0) {
+        showNotification('No cards found in row', 'error');
+        return;
+    }
+    
+    // Add all cards to collection
+    let successCount = 0;
+    let errorCount = 0;
+    
+    for (const card of cards) {
+        try {
+            if (typeof addCardToCollectionFromDatabase === 'function') {
+                await addCardToCollectionFromDatabase(card.cardId, card.cardType);
+                successCount++;
+            } else {
+                // Fallback: direct API call
+                const response = await fetch('/api/collections/me/cards', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        cardId: card.cardId,
+                        cardType: card.cardType,
+                        quantity: 1
+                    })
+                });
+                if (response.ok) {
+                    successCount++;
+                } else {
+                    errorCount++;
+                }
+            }
+        } catch (error) {
+            console.error('Error adding card to collection:', error);
+            errorCount++;
+        }
+    }
+    
+    if (successCount > 0) {
+        showNotification(`Added ${successCount} card${successCount !== 1 ? 's' : ''} to collection${errorCount > 0 ? ` (${errorCount} failed)` : ''}`, 'success');
+    } else {
+        showNotification('Failed to add cards to collection', 'error');
+    }
+}
+
+// Make functions globally available
+window.getAllCardIdsFromRow = getAllCardIdsFromRow;
+window.addAllCardsToDeckFromRow = addAllCardsToDeckFromRow;
+window.addAllCardsToCollectionFromRow = addAllCardsToCollectionFromRow;
 
 /**
  * Display Character+ data (characters with their special cards and advanced universe cards)
@@ -732,43 +1024,62 @@ function displayCharacterPlus(charactersWithSpecials, allSpecialCards = [], allA
                 
                 specialCardColumns += `
                     <td>
-                        <div class="card-image-container">
-                            ${cardNavArrows}
-                            <img id="${cardGroupId}-img"
-                                 src="${currentCardImagePath}" 
-                                 alt="${currentCardName}" 
-                                 style="width: 120px; height: auto; max-height: 180px; object-fit: contain; border-radius: 5px; cursor: pointer;"
-                                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
-                                 onmouseenter="showCardHoverModal('${currentCardImagePath}', '${currentCardName.replace(/'/g, "\\'")}')"
-                                 onmouseleave="hideCardHoverModal()"
-                                 onclick="openModal(this)">
+                        <div class="cell-content-wrapper">
+                            <div class="card-image-container">
+                                ${cardNavArrows}
+                                <img id="${cardGroupId}-img"
+                                     src="${currentCardImagePath}" 
+                                     alt="${currentCardName}" 
+                                     style="width: 120px; height: auto; max-height: 180px; object-fit: contain; border-radius: 5px; cursor: pointer;"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                                     onmouseenter="showCardHoverModal('${currentCardImagePath}', '${currentCardName.replace(/'/g, "\\'")}')"
+                                     onmouseleave="hideCardHoverModal()"
+                                     onclick="openModal(this)">
+                            </div>
+                            <button class="add-to-deck-btn" onclick="showDeckSelection('${cardType}', '${currentCardImage.id}', '${currentCardName.replace(/'/g, "\\'")}', this)" style="margin-top: 4px;">
+                                +Deck
+                            </button>
                         </div>
-                        <button class="add-to-deck-btn" onclick="showDeckSelection('${cardType}', '${currentCardImage.id}', '${currentCardName.replace(/'/g, "\\'")}', this)" style="margin-top: 4px; width: 100%;">
-                            Add to Deck
-                        </button>
                     </td>
                 `;
             }
         });
         
+        // Check if user is ADMIN for collection button
+        const isAdmin = typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN';
+        
         // Create the row
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>
-                <div class="card-image-container">
-                    ${characterNavArrows}
-                    <img id="${characterGroupId}-img"
-                         src="${currentCharacterImagePath}" 
-                         alt="${currentCharacterName}" 
-                         style="width: auto; max-width: 316px; height: auto; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
-                         onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iMTIwIiB2aWV3Qm94PSIwIDAgODAgMTIwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iMTIwIiBmaWxsPSIjMzMzIi8+Cjx0ZXh0IHg9IjQwIiB5PSI2MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Tm8gSW1hZ2U8L3RleHQ+Cjwvc3ZnPg=='; this.style.cursor='default'; this.onclick=null;"
-                         onmouseenter="showCardHoverModal('${currentCharacterImagePath}', '${currentCharacterName.replace(/'/g, "\\'")}')"
-                         onmouseleave="hideCardHoverModal()"
-                         onclick="openModal(this)">
+                <div class="cell-content-wrapper">
+                    <button class="add-to-deck-btn" onclick="addAllCardsToDeckFromRow(this)" style="margin-bottom: 4px;">
+                        +Deck
+                    </button>
+                    ${isAdmin ? `
+                    <button class="add-to-collection-btn" onclick="addAllCardsToCollectionFromRow(this)">
+                        +Collection
+                    </button>
+                    ` : ''}
                 </div>
-                <button class="add-to-deck-btn" onclick="showDeckSelection('character', '${currentCharacterImage.id}', '${currentCharacterName.replace(/'/g, "\\'")}', this)" style="margin-top: 4px; width: 100%;">
-                    Add to Deck
-                </button>
+            </td>
+            <td>
+                <div class="cell-content-wrapper">
+                    <div class="card-image-container">
+                        ${characterNavArrows}
+                        <img id="${characterGroupId}-img"
+                             src="${currentCharacterImagePath}" 
+                             alt="${currentCharacterName}" 
+                             style="width: auto; max-width: 240px; height: auto; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer; object-fit: contain;"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iMTIwIiB2aWV3Qm94PSIwIDAgODAgMTIwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iMTIwIiBmaWxsPSIjMzMzIi8+Cjx0ZXh0IHg9IjQwIiB5PSI2MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Tm8gSW1hZ2U8L3RleHQ+Cjwvc3ZnPg=='; this.style.cursor='default'; this.onclick=null;"
+                             onmouseenter="showCardHoverModal('${currentCharacterImagePath}', '${currentCharacterName.replace(/'/g, "\\'")}')"
+                             onmouseleave="hideCardHoverModal()"
+                             onclick="openModal(this)">
+                    </div>
+                    <button class="add-to-deck-btn" onclick="showDeckSelection('character', '${currentCharacterImage.id}', '${currentCharacterName.replace(/'/g, "\\'")}', this)" style="margin-top: 4px;">
+                        +Deck
+                    </button>
+                </div>
             </td>
             ${specialCardColumns}
         `;
@@ -810,6 +1121,7 @@ function displayCharacterPlus(charactersWithSpecials, allSpecialCards = [], allA
                         }));
                         cardContainer.setAttribute('data-image-data', JSON.stringify(cardImageData));
                         cardContainer.setAttribute('data-current-index', '0');
+                        cardContainer.setAttribute('data-card-type', cardType);
                     }
                 }
             }
@@ -863,6 +1175,18 @@ function displayCharacterPlus(charactersWithSpecials, allSpecialCards = [], allA
                 btn.setAttribute('data-guest-disabled', 'true');
             });
         }
+        
+        // Also disable "Add All to Deck" button for guest users
+        if (typeof isGuestUser === 'function' && isGuestUser()) {
+            const addAllToDeckBtn = row.querySelector('td:nth-child(1) .add-to-deck-btn');
+            if (addAllToDeckBtn) {
+                addAllToDeckBtn.disabled = true;
+                addAllToDeckBtn.style.opacity = '0.5';
+                addAllToDeckBtn.style.cursor = 'not-allowed';
+                addAllToDeckBtn.title = 'Log in to add to decks...';
+                addAllToDeckBtn.setAttribute('data-guest-disabled', 'true');
+            }
+        }
     });
 }
 
@@ -899,11 +1223,11 @@ function displayLocations(locations) {
             </td>
             <td>
                 <button class="add-to-deck-btn" onclick="showDeckSelection('location', '${location.id}', '${location.name.replace(/'/g, "\\'")}', this)">
-                    Add to Deck
+                    +Deck
                 </button>
                 ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
-                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${location.id}', 'location')" style="margin-top: 4px; display: block; width: 100%;">
-                    Add to Collection
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${location.id}', 'location')" style="margin-top: 4px; display: block;">
+                    +Collection
                 </button>
                 ` : ''}
             </td>

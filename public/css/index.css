@@ -921,13 +921,26 @@
             background: linear-gradient(135deg, #4ecdc4, #2cb1a6);
             color: #1a1a2e;
             border: none;
-            padding: 6px 12px;
+            padding: 6px 8px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 11px;
             font-weight: 600;
             transition: all 0.3s ease;
-            width: 100%;
+            min-width: 90px;
+            box-sizing: border-box;
+        }
+        
+        /* Ensure buttons match width when in table cells */
+        table td .add-to-deck-btn {
+            width: 100% !important;
+            display: block;
+        }
+        
+        table td .add-to-collection-btn {
+            width: 100% !important;
+            display: block;
+            margin-top: 4px;
         }
 
         .add-to-collection-btn:hover {
@@ -944,13 +957,15 @@
             background: linear-gradient(135deg, #59CCBE, #4AB3A6);
             color: #2E3236;
             border: none;
-            padding: 6px 12px;
+            padding: 6px 18px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 12px;
             font-weight: bold;
             transition: all 0.3s ease;
             white-space: nowrap;
+            min-width: 90px;
+            box-sizing: border-box;
         }
         
         .add-to-deck-btn:hover {

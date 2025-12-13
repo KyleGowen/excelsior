@@ -1270,6 +1270,7 @@
                 <table id="character-plus-table">
                     <thead>
                         <tr>
+                            <th>Add All</th>
                             <th>Character</th>
                             <th>Special 1</th>
                             <th>Special 2</th>
@@ -2168,11 +2169,11 @@
                     </td>
                     <td>
                         <button class="add-to-deck-btn" onclick="showDeckSelection('teamwork', '${card.id}', '${(card.card_type || '').replace(/'/g, "\\'")}', this)">
-                            Add to Deck
+                            +Deck
                         </button>
                         ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
-                        <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'teamwork')" style="margin-top: 4px; display: block; width: 100%;">
-                            Add to Collection
+                        <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'teamwork')" style="margin-top: 4px; display: block;">
+                            +Collection
                         </button>
                         ` : ''}
                     </td>
@@ -2240,7 +2241,7 @@
                     </td>
                     <td>
                         <button class="add-to-deck-btn" onclick="showDeckSelection('ally-universe', '${card.id}', '${(card.card_name || '').replace(/'/g, "\\'")}', this)">
-                            Add to Deck
+                            +Deck
                         </button>
                     </td>
                     <td><strong>${card.card_name}</strong></td>
@@ -2283,11 +2284,11 @@
                     </td>
                     <td>
                         <button class="add-to-deck-btn" onclick="showDeckSelection('training', '${card.id}', '${(card.card_name || '').replace(/'/g, "\\'")}', this)">
-                            Add to Deck
+                            +Deck
                         </button>
                         ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
-                        <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'training')" style="margin-top: 4px; display: block; width: 100%;">
-                            Add to Collection
+                        <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'training')" style="margin-top: 4px; display: block;">
+                            +Collection
                         </button>
                         ` : ''}
                     </td>
@@ -2412,11 +2413,11 @@
                     </td>
                     <td>
                         <button class="add-to-deck-btn" onclick="showDeckSelection('basic-universe', '${card.id}', '${(card.card_name || '').replace(/'/g, "\\'")}', this)">
-                            Add to Deck
+                            +Deck
                         </button>
                         ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
-                        <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'basic-universe')" style="margin-top: 4px; display: block; width: 100%;">
-                            Add to Collection
+                        <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'basic-universe')" style="margin-top: 4px; display: block;">
+                            +Collection
                         </button>
                         ` : ''}
                     </td>

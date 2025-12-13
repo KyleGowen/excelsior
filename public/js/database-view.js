@@ -389,7 +389,7 @@ function displayBasicUniverse(cards) {
             <td>${card.text || ''}</td>
             <td>
                 <button class="add-to-deck-btn" onclick="addCardToDeck('basic-universe', '${card.id}', 1)">
-                    Add to Deck
+                    +Deck
                 </button>
             </td>
         </tr>

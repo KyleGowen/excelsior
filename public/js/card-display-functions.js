@@ -31,11 +31,11 @@ function displayMissions(missions) {
             </td>
             <td>
                 <button class="add-to-deck-btn" onclick="showDeckSelection('mission', '${mission.id}', '${mission.card_name.replace(/'/g, "\\'")}', this)">
-                    Add to Deck
+                    +Deck
                 </button>
                 ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
-                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${mission.id}', 'mission')" style="margin-top: 4px; display: block; width: 100%;">
-                    Add to Collection
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${mission.id}', 'mission')" style="margin-top: 4px; display: block;">
+                    +Collection
                 </button>
                 ` : ''}
             </td>
@@ -78,11 +78,11 @@ function displayEvents(events) {
             </td>
             <td>
                 <button class="add-to-deck-btn" onclick="showDeckSelection('event', '${event.id}', '${event.name.replace(/'/g, "\\'")}', this)">
-                    Add to Deck
+                    +Deck
                 </button>
                 ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
-                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${event.id}', 'event')" style="margin-top: 4px; display: block; width: 100%;">
-                    Add to Collection
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${event.id}', 'event')" style="margin-top: 4px; display: block;">
+                    +Collection
                 </button>
                 ` : ''}
             </td>
@@ -130,11 +130,11 @@ function displayAspects(aspects) {
             </td>
             <td>
                 <button class="add-to-deck-btn" onclick="showDeckSelection('aspect', '${aspect.id}', '${aspect.card_name.replace(/'/g, "\\'")}', this)">
-                    Add to Deck
+                    +Deck
                 </button>
                 ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
-                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${aspect.id}', 'aspect')" style="margin-top: 4px; display: block; width: 100%;">
-                    Add to Collection
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${aspect.id}', 'aspect')" style="margin-top: 4px; display: block;">
+                    +Collection
                 </button>
                 ` : ''}
             </td>
@@ -229,11 +229,11 @@ function displayAdvancedUniverse(advancedUniverse) {
             </td>
             <td>
                 <button class="add-to-deck-btn" onclick="showDeckSelection('advanced-universe', '${card.id}', '${card.name.replace(/'/g, "\\'")}', this)">
-                    Add to Deck
+                    +Deck
                 </button>
                 ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
-                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'advanced-universe')" style="margin-top: 4px; display: block; width: 100%;">
-                    Add to Collection
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', 'advanced-universe')" style="margin-top: 4px; display: block;">
+                    +Collection
                 </button>
                 ` : ''}
             </td>
@@ -428,11 +428,11 @@ function displayPowerCards(cards) {
             </td>
             <td>
                 <button class="add-to-deck-btn" onclick="showDeckSelection('power', '${currentImage.id}', '${currentImageName.replace(/'/g, "\\'")}', this)">
-                    Add to Deck
+                    +Deck
                 </button>
                 ${(typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN') ? `
-                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${currentImage.id}', 'power')" style="margin-top: 4px; display: block; width: 100%;">
-                    Add to Collection
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${currentImage.id}', 'power')" style="margin-top: 4px; display: block;">
+                    +Collection
                 </button>
                 ` : ''}
             </td>
