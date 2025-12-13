@@ -625,6 +625,230 @@ function displaySpecialCards(specialCards) {
 }
 
 /**
+ * Display Character+ data (characters with their special cards)
+ * Each row shows one character with up to 6 special cards in columns
+ */
+function displayCharacterPlus(charactersWithSpecials, allSpecialCards = []) {
+    const tbody = document.getElementById('character-plus-tbody');
+    
+    if (!tbody) {
+        console.error('❌ character-plus-tbody element not found!');
+        return;
+    }
+    
+    // Ensure the character-plus tab is visible
+    const characterPlusTab = document.getElementById('character-plus-tab');
+    if (characterPlusTab && characterPlusTab.style.display === 'none') {
+        characterPlusTab.style.display = 'block';
+    }
+    
+    tbody.innerHTML = '';
+    
+    // Group all special cards by name and universe for alternate art detection (do this once)
+    const groupedAllSpecials = groupCardsByVariant(allSpecialCards, 'name', 'universe');
+    
+    // Group characters by name and universe for alternate art handling
+    const groupedCharacters = groupCardsByVariant(
+        charactersWithSpecials.map(c => c.character),
+        'name',
+        'universe'
+    );
+    
+    // Process each character group
+    groupedCharacters.forEach((characterGroup, key) => {
+        if (characterGroup.length === 0) return;
+        
+        // Use the first character (original art) as representative
+        const representative = characterGroup[0];
+        
+        // Find the character data with special cards (match by name since alternate arts have different IDs)
+        const characterName = representative.name || '';
+        const characterData = charactersWithSpecials.find(
+            c => (c.character.name || '') === characterName
+        );
+        
+        if (!characterData) return;
+        
+        // Prepare character image data for navigation
+        const characterImageData = characterGroup.map(char => ({
+            id: char.id,
+            imagePath: getCardImagePathForDisplay(char, 'character'),
+            name: char.name
+        }));
+        
+        const characterGroupId = `char-plus-char-${representative.id}`;
+        const hasMultipleCharacterImages = characterImageData.length > 1;
+        const characterNavArrows = hasMultipleCharacterImages ? `
+            <button class="card-nav-arrow card-nav-prev" onclick="navigateCardImage('${characterGroupId}', -1)" aria-label="Previous art" type="button">‹</button>
+            <button class="card-nav-arrow card-nav-next" onclick="navigateCardImage('${characterGroupId}', 1)" aria-label="Next art" type="button">›</button>
+        ` : '';
+        
+        const currentCharacterImage = characterImageData[0];
+        const currentCharacterImagePath = currentCharacterImage.imagePath;
+        const currentCharacterName = currentCharacterImage.name;
+        
+        // Build special card columns
+        let specialCardColumns = '';
+        
+        characterData.specialCards.forEach((specialCard, index) => {
+            if (specialCard === null) {
+                // Empty cell for missing special card
+                specialCardColumns += '<td></td>';
+            } else {
+                // Find the group for this special card
+                const specialName = specialCard.name || '';
+                const specialUniverse = specialCard.universe || specialCard.set || 'ERB';
+                const specialKey = `${specialName}|${specialUniverse}|special`;
+                const specialGroup = groupedAllSpecials.get(specialKey) || [specialCard];
+                
+                const specialImageData = specialGroup.map(special => ({
+                    id: special.id,
+                    imagePath: getCardImagePathForDisplay(special, 'special'),
+                    name: special.name
+                }));
+                
+                const specialGroupId = `char-plus-special-${specialCard.id}-${index}`;
+                const hasMultipleSpecialImages = specialImageData.length > 1;
+                const specialNavArrows = hasMultipleSpecialImages ? `
+                    <button class="card-nav-arrow card-nav-prev" onclick="navigateCardImage('${specialGroupId}', -1)" aria-label="Previous art" type="button">‹</button>
+                    <button class="card-nav-arrow card-nav-next" onclick="navigateCardImage('${specialGroupId}', 1)" aria-label="Next art" type="button">›</button>
+                ` : '';
+                
+                const currentSpecialImage = specialImageData[0];
+                const currentSpecialImagePath = currentSpecialImage.imagePath;
+                const currentSpecialName = currentSpecialImage.name;
+                
+                specialCardColumns += `
+                    <td>
+                        <div class="card-image-container">
+                            ${specialNavArrows}
+                            <img id="${specialGroupId}-img"
+                                 src="${currentSpecialImagePath}" 
+                                 alt="${currentSpecialName}" 
+                                 style="width: 120px; height: auto; max-height: 180px; object-fit: contain; border-radius: 5px; cursor: pointer;"
+                                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
+                                 onmouseenter="showCardHoverModal('${currentSpecialImagePath}', '${currentSpecialName.replace(/'/g, "\\'")}')"
+                                 onmouseleave="hideCardHoverModal()"
+                                 onclick="openModal(this)">
+                        </div>
+                        <button class="add-to-deck-btn" onclick="showDeckSelection('special', '${currentSpecialImage.id}', '${currentSpecialName.replace(/'/g, "\\'")}', this)" style="margin-top: 4px; width: 100%;">
+                            Add to Deck
+                        </button>
+                    </td>
+                `;
+            }
+        });
+        
+        // Create the row
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>
+                <div class="card-image-container">
+                    ${characterNavArrows}
+                    <img id="${characterGroupId}-img"
+                         src="${currentCharacterImagePath}" 
+                         alt="${currentCharacterName}" 
+                         style="width: auto; max-width: 316px; height: auto; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
+                         onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iMTIwIiB2aWV3Qm94PSIwIDAgODAgMTIwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iMTIwIiBmaWxsPSIjMzMzIi8+Cjx0ZXh0IHg9IjQwIiB5PSI2MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Tm8gSW1hZ2U8L3RleHQ+Cjwvc3ZnPg=='; this.style.cursor='default'; this.onclick=null;"
+                         onmouseenter="showCardHoverModal('${currentCharacterImagePath}', '${currentCharacterName.replace(/'/g, "\\'")}')"
+                         onmouseleave="hideCardHoverModal()"
+                         onclick="openModal(this)">
+                </div>
+                <button class="add-to-deck-btn" onclick="showDeckSelection('character', '${currentCharacterImage.id}', '${currentCharacterName.replace(/'/g, "\\'")}', this)" style="margin-top: 4px; width: 100%;">
+                    Add to Deck
+                </button>
+            </td>
+            ${specialCardColumns}
+        `;
+        
+        // Store image data for character navigation
+        const characterContainer = row.querySelector(`#${characterGroupId}-img`).closest('.card-image-container');
+        if (characterContainer) {
+            characterContainer.setAttribute('data-image-data', JSON.stringify(characterImageData));
+            characterContainer.setAttribute('data-current-index', '0');
+        }
+        
+        // Store image data for each special card navigation
+        characterData.specialCards.forEach((specialCard, index) => {
+            if (specialCard !== null) {
+                const specialGroupId = `char-plus-special-${specialCard.id}-${index}`;
+                const specialImg = row.querySelector(`#${specialGroupId}-img`);
+                if (specialImg) {
+                    const specialContainer = specialImg.closest('.card-image-container');
+                    if (specialContainer) {
+                        // Find the group for this special card to get all alternate arts
+                        const specialName = specialCard.name || '';
+                        const specialUniverse = specialCard.universe || specialCard.set || 'ERB';
+                        const specialKey = `${specialName}|${specialUniverse}|special`;
+                        const specialGroup = groupedAllSpecials.get(specialKey) || [specialCard];
+                        
+                        const specialImageData = specialGroup.map(special => ({
+                            id: special.id,
+                            imagePath: getCardImagePathForDisplay(special, 'special'),
+                            name: special.name
+                        }));
+                        specialContainer.setAttribute('data-image-data', JSON.stringify(specialImageData));
+                        specialContainer.setAttribute('data-current-index', '0');
+                    }
+                }
+            }
+        });
+        
+        tbody.appendChild(row);
+        
+        // Lock row height after images load
+        const imgs = row.querySelectorAll('img');
+        imgs.forEach(img => {
+            const lockRowHeight = () => {
+                const imageCell = img.closest('td');
+                if (imageCell && !imageCell.dataset.heightLocked) {
+                    const cellHeight = imageCell.offsetHeight;
+                    const rowHeight = row.offsetHeight;
+                    
+                    if (cellHeight > 0) {
+                        const cellHeightStr = cellHeight + 'px';
+                        imageCell.style.setProperty('height', cellHeightStr, 'important');
+                        imageCell.style.setProperty('min-height', cellHeightStr, 'important');
+                        imageCell.style.setProperty('max-height', cellHeightStr, 'important');
+                        imageCell.dataset.heightLocked = 'true';
+                    }
+                    
+                    if (rowHeight > 0) {
+                        const rowHeightStr = rowHeight + 'px';
+                        row.style.setProperty('height', rowHeightStr, 'important');
+                        row.style.setProperty('min-height', rowHeightStr, 'important');
+                        row.style.setProperty('max-height', rowHeightStr, 'important');
+                        row.dataset.heightLocked = 'true';
+                    }
+                }
+            };
+            
+            if (img.complete) {
+                setTimeout(lockRowHeight, 100);
+            } else {
+                img.addEventListener('load', lockRowHeight, { once: true });
+                setTimeout(lockRowHeight, 1000);
+            }
+        });
+        
+        // Disable Add to Deck buttons for guest users
+        if (typeof isGuestUser === 'function' && isGuestUser()) {
+            const addToDeckBtns = row.querySelectorAll('.add-to-deck-btn');
+            addToDeckBtns.forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+                btn.title = 'Log in to add to decks...';
+                btn.setAttribute('data-guest-disabled', 'true');
+            });
+        }
+    });
+}
+
+// Make function globally available
+window.displayCharacterPlus = displayCharacterPlus;
+
+/**
  * Display location cards in the locations table
  */
 function displayLocations(locations) {

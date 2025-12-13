@@ -199,18 +199,36 @@ export class DeckValidationService {
                             message: `"${cardName}" requires an "Angry Mob" character in your team`
                         });
                     } else {
-                        // Check if it's a subtype-specific special
-                        const hasColon = characterName.includes(':');
-                        if (hasColon) {
-                            const subtype = characterName.split(':')[1].trim();
-                            const hasMatchingSubtype = angryMobCharacters.some(char => char.includes(subtype));
-                            if (!hasMatchingSubtype) {
+                        // Check if it's a variant-specific special (has colon or dash)
+                        const hasVariantQualifier = characterName.includes(':') || characterName.includes(' - ');
+                        if (hasVariantQualifier) {
+                            // Extract variant from special card (e.g., "Middle Ages" from "Angry Mob: Middle Ages" or "Angry Mob - Middle Ages")
+                            const separator = characterName.includes(':') ? ':' : ' - ';
+                            const specialVariant = characterName.split(separator)[1].trim();
+                            
+                            // Normalize variant names for matching (handle pluralization and case)
+                            const normalizeVariant = (v: string) => {
+                                return v.toLowerCase().replace(/\s+/g, ' ').trim().replace(/s$/, '');
+                            };
+                            const normalizedSpecialVariant = normalizeVariant(specialVariant);
+                            
+                            // Check if any Angry Mob character matches this variant
+                            // Character names are like "Angry Mob (Middle Ages)" - extract variant from parentheses
+                            const hasMatchingVariant = angryMobCharacters.some(charName => {
+                                const variantMatch = charName.match(/\(([^)]+)\)/);
+                                if (!variantMatch) return false;
+                                const charVariant = normalizeVariant(variantMatch[1]);
+                                return charVariant === normalizedSpecialVariant;
+                            });
+                            
+                            if (!hasMatchingVariant) {
                                 errors.push({
                                     rule: 'unusable_special',
-                                    message: `"${cardName}" requires an "Angry Mob: ${subtype}" character in your team`
+                                    message: `"${cardName}" requires an "Angry Mob (${specialVariant})" character in your team`
                                 });
                             }
                         }
+                        // If no variant qualifier, it's a generic "Angry Mob" special - any Angry Mob variant can use it
                     }
                 } else {
                     // Regular character special validation

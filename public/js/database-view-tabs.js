@@ -134,6 +134,12 @@ class DatabaseViewTabs {
                 searchPlaceholder: 'Search power cards by type or value...',
                 dataLoader: 'loadPowerCards',
                 searchSetup: 'setupPowerCardsSearch'
+            },
+            'character-plus': {
+                hasSearch: false,
+                searchPlaceholder: '',
+                dataLoader: 'loadCharacterPlus',
+                searchSetup: null
             }
         };
 

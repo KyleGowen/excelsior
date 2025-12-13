@@ -100,7 +100,17 @@ Represents attacks that combine multiple Power Types together and act as any one
 
 # SPECIAL CARDS 
 
-Special cards are specific for each character and show off all their unique powers and cool abilities! A character may always play a Special card with their name on it. Special cards are played as either offensive actions or defensive actions which is determined by the icons in the bottom right corner. You may include any number of copies of most Special cards in your deck; however, certain Special cards (usually with powerful effects) have "One Per Deck" printed at the bottom of the card. Only a single copy of these Special cards can be included in your deck. Special cards used to attack and defend may have icons denoting Power Types and Values, just like the Power cards (mentioned above), while others may Target a Character on your Opponent's team, attach to a Character for a given duration, or go directly to the Astral Plane, all while creating a variety of different effects.
+Special cards are specific for each character and show off all their unique powers and cool abilities! A character may always play a Special card with their name on it. 
+
+**Angry Mob Variants**: Angry Mob has three character variants (Middle Ages, Industrial Age, Modern Age). Special cards for Angry Mob can be:
+- **Generic "Angry Mob" specials**: Can be played by any Angry Mob variant (character name is exactly "Angry Mob")
+- **Variant-specific specials**: Can only be played by the matching variant (character name includes variant like "Angry Mob: Middle Ages" or "Angry Mob - Middle Ages")
+- A character with a variant suffix (e.g., "Angry Mob (Industrial Age)") can play:
+  - All generic "Angry Mob" specials (no colon/dash qualifier)
+  - All specials matching their variant (e.g., "Angry Mob: Industrial Age" or "Angry Mob - Industrial Age")
+  - Never specials for other variants (e.g., cannot play "Angry Mob: Middle Ages" specials)
+
+Special cards are played as either offensive actions or defensive actions which is determined by the icons in the bottom right corner. You may include any number of copies of most Special cards in your deck; however, certain Special cards (usually with powerful effects) have "One Per Deck" printed at the bottom of the card. Only a single copy of these Special cards can be included in your deck. Special cards used to attack and defend may have icons denoting Power Types and Values, just like the Power cards (mentioned above), while others may Target a Character on your Opponent's team, attach to a Character for a given duration, or go directly to the Astral Plane, all while creating a variety of different effects.
 
 ## Function Icons
 

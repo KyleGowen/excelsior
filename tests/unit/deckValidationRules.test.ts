@@ -118,18 +118,28 @@ describe('Deck Validation Rules', () => {
             if (!angryMobCharacterName) {
               errors.push(`"${specialName}" requires an "Angry Mob" character in your team`);
             } else {
-              // Check if the special is for a specific Angry Mob subtype
-              if (specialCharacter.includes(':')) {
-                // Special is for a specific subtype (e.g., "Angry Mob: Middle Ages")
-                const specialSubtype = specialCharacter.split(':')[1].trim();
-                const characterSubtype = angryMobCharacterName.includes(':') ? 
-                  angryMobCharacterName.split(':')[1].trim() : null;
+              // Check if the special is for a specific Angry Mob variant
+              const hasVariantQualifier = specialCharacter.includes(':') || specialCharacter.includes(' - ');
+              if (hasVariantQualifier) {
+                // Extract variant from special card (e.g., "Middle Ages" from "Angry Mob: Middle Ages" or "Angry Mob - Middle Ages")
+                const separator = specialCharacter.includes(':') ? ':' : ' - ';
+                const specialVariant = specialCharacter.split(separator)[1].trim();
                 
-                if (characterSubtype !== specialSubtype) {
-                  errors.push(`"${specialName}" requires "Angry Mob: ${specialSubtype}" character in your team`);
+                // Extract variant from character name (e.g., "Middle Ages" from "Angry Mob (Middle Ages)")
+                const charVariantMatch = angryMobCharacterName.match(/\(([^)]+)\)/);
+                const characterVariant = charVariantMatch ? charVariantMatch[1].trim() : null;
+                
+                // Normalize for comparison (handle pluralization and case)
+                const normalize = (v: string) => {
+                  if (!v) return '';
+                  return v.toLowerCase().replace(/\s+/g, ' ').trim().replace(/s$/, '');
+                };
+                
+                if (!characterVariant || normalize(specialVariant) !== normalize(characterVariant)) {
+                  errors.push(`"${specialName}" requires an "Angry Mob (${specialVariant})" character in your team`);
                 }
               }
-              // If special is just "Angry Mob" (no subtype), any Angry Mob character can use it
+              // If special is just "Angry Mob" (no variant qualifier), any Angry Mob character can use it
             }
           } else {
             // Regular character special validation

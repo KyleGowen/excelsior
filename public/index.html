@@ -741,6 +741,7 @@
                     <button class="tab-button" data-click-handler="switchTab" data-tab="training">Universe: Training</button>
                     <button class="tab-button" data-click-handler="switchTab" data-tab="basic-universe">Universe: Basic</button>
                     <button class="tab-button" data-click-handler="switchTab" data-tab="power-cards">Power Cards</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="character-plus">Character+</button>
                 </div>
             </div>
 
@@ -1260,6 +1261,27 @@
                     <tbody id="power-cards-tbody">
                         <tr>
                             <td colspan="5" class="loading">Loading power cards...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-container" id="character-plus-tab" style="display: none;">
+                <table id="character-plus-table">
+                    <thead>
+                        <tr>
+                            <th>Character</th>
+                            <th>Special 1</th>
+                            <th>Special 2</th>
+                            <th>Special 3</th>
+                            <th>Special 4</th>
+                            <th>Special 5</th>
+                            <th>Special 6</th>
+                        </tr>
+                    </thead>
+                    <tbody id="character-plus-tbody">
+                        <tr>
+                            <td colspan="7" class="loading">Loading Character+ data...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1859,7 +1881,8 @@
         // clearTrainingFilters function moved to filter-functions.js
 
         // Tab switching functionality
-        function switchTab(tabName) {
+        // Make switchTab globally available immediately
+        window.switchTab = function switchTab(tabName) {
             const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
             
             // Removed overly aggressive tab switching protection
@@ -1895,6 +1918,7 @@
             document.getElementById('training-tab').style.display = 'none';
             document.getElementById('basic-universe-tab').style.display = 'none';
             document.getElementById('power-cards-tab').style.display = 'none';
+            document.getElementById('character-plus-tab').style.display = 'none';
             
             // Hide search container for all tabs
             document.getElementById('search-container').style.display = 'none';
@@ -1942,6 +1966,9 @@
                 searchInput.placeholder = 'Search basic universe by name, type, or bonus...';
             } else if (tabName === 'power-cards') {
                 searchInput.placeholder = 'Search power cards by type or value...';
+            } else if (tabName === 'character-plus') {
+                // Hide search container for character-plus tab
+                document.getElementById('search-container').style.display = 'none';
             }
             
             
@@ -1982,6 +2009,9 @@
             } else if (tabName === 'power-cards') {
                 setupPowerCardsSearch();
                 loadPowerCards();
+            } else if (tabName === 'character-plus') {
+                // No search setup needed for character-plus
+                loadCharacterPlus();
             }
             
             // Disable "Add to Deck" buttons for guest users immediately
@@ -5734,14 +5764,36 @@
                             return true;
                         }
                         
-                        // Handle special cases like "Angry Mob" vs "Angry Mob (Middle Ages)"
-                        const deckNameClean = deckName.split(' (')[0];
-                        if (deckNameClean === characterName) {
-                            return true;
+                        // Handle Angry Mob variants
+                        if (characterName.startsWith('Angry Mob') && deckName.startsWith('Angry Mob')) {
+                            // Generic "Angry Mob" group should show for any Angry Mob variant
+                            if (characterName === 'Angry Mob') {
+                                return true;
+                            }
+                            
+                            // Variant-specific groups (e.g., "Angry Mob: Middle Ages" or "Angry Mob - Middle Ages")
+                            const hasVariantQualifier = characterName.includes(':') || characterName.includes(' - ');
+                            if (hasVariantQualifier) {
+                                // Extract variant from group name
+                                const separator = characterName.includes(':') ? ':' : ' - ';
+                                const groupVariant = characterName.split(separator)[1].trim();
+                                
+                                // Extract variant from deck character name (e.g., "Middle Ages" from "Angry Mob (Middle Ages)")
+                                const deckVariantMatch = deckName.match(/\(([^)]+)\)/);
+                                if (!deckVariantMatch) return false;
+                                const deckVariant = deckVariantMatch[1].trim();
+                                
+                                // Normalize for comparison (handle pluralization and case)
+                                const normalize = (v) => v.toLowerCase().replace(/\s+/g, ' ').trim().replace(/s$/, '');
+                                return normalize(groupVariant) === normalize(deckVariant);
+                            }
+                            
+                            return false;
                         }
                         
-                        // Handle partial matches (e.g., "Angry Mob (Middle Ages)" should match "Angry Mob")
-                        if (deckName.includes(characterName) || characterName.includes(deckName)) {
+                        // Handle other special cases (non-Angry Mob)
+                        const deckNameClean = deckName.split(' (')[0];
+                        if (deckNameClean === characterName) {
                             return true;
                         }
                         
@@ -10186,8 +10238,42 @@
                 
                 // Check if this special card belongs to any selected character
                 const belongsToCharacter = characterNames.some(charName => {
-                    return availableCard.character === charName || 
-                           availableCard.character_name === charName ||
+                    const specialCharacter = availableCard.character || availableCard.character_name || '';
+                    
+                    // Handle "Any Character" specials
+                    if (specialCharacter === 'Any Character') {
+                        return true;
+                    }
+                    
+                    // Handle Angry Mob variants
+                    if (specialCharacter.startsWith('Angry Mob') && charName.startsWith('Angry Mob')) {
+                        // Generic "Angry Mob" specials can be used by any Angry Mob variant
+                        if (specialCharacter === 'Angry Mob') {
+                            return true;
+                        }
+                        
+                        // Variant-specific specials (e.g., "Angry Mob: Middle Ages" or "Angry Mob - Middle Ages")
+                        const hasVariantQualifier = specialCharacter.includes(':') || specialCharacter.includes(' - ');
+                        if (hasVariantQualifier) {
+                            // Extract variant from special card
+                            const separator = specialCharacter.includes(':') ? ':' : ' - ';
+                            const specialVariant = specialCharacter.split(separator)[1].trim();
+                            
+                            // Extract variant from character name (e.g., "Middle Ages" from "Angry Mob (Middle Ages)")
+                            const charVariantMatch = charName.match(/\(([^)]+)\)/);
+                            if (!charVariantMatch) return false;
+                            const charVariant = charVariantMatch[1].trim();
+                            
+                            // Normalize for comparison (handle pluralization and case)
+                            const normalize = (v) => v.toLowerCase().replace(/\s+/g, ' ').trim().replace(/s$/, '');
+                            return normalize(specialVariant) === normalize(charVariant);
+                        }
+                        
+                        return false;
+                    }
+                    
+                    // Regular character matching
+                    return specialCharacter === charName || 
                            (availableCard.characters && availableCard.characters.includes(charName));
                 });
                 
@@ -10821,9 +10907,44 @@
                     }
                     
                     // Filter cards for the specific character
-                    const characterCards = data.data.filter(card => 
-                        (card.character || 'Any Character') === characterName
-                    );
+                    const characterCards = data.data.filter(card => {
+                        const specialCharacter = card.character || card.character_name || '';
+                        
+                        // Handle "Any Character" specials
+                        if (specialCharacter === 'Any Character') {
+                            return true;
+                        }
+                        
+                        // Handle Angry Mob variants
+                        if (specialCharacter.startsWith('Angry Mob') && characterName.startsWith('Angry Mob')) {
+                            // Generic "Angry Mob" specials can be used by any Angry Mob variant
+                            if (specialCharacter === 'Angry Mob') {
+                                return true;
+                            }
+                            
+                            // Variant-specific specials (e.g., "Angry Mob: Middle Ages" or "Angry Mob - Middle Ages")
+                            const hasVariantQualifier = specialCharacter.includes(':') || specialCharacter.includes(' - ');
+                            if (hasVariantQualifier) {
+                                // Extract variant from special card
+                                const separator = specialCharacter.includes(':') ? ':' : ' - ';
+                                const specialVariant = specialCharacter.split(separator)[1].trim();
+                                
+                                // Extract variant from character name (e.g., "Middle Ages" from "Angry Mob (Middle Ages)")
+                                const charVariantMatch = characterName.match(/\(([^)]+)\)/);
+                                if (!charVariantMatch) return false;
+                                const charVariant = charVariantMatch[1].trim();
+                                
+                                // Normalize for comparison (handle pluralization and case)
+                                const normalize = (v) => v.toLowerCase().replace(/\s+/g, ' ').trim().replace(/s$/, '');
+                                return normalize(specialVariant) === normalize(charVariant);
+                            }
+                            
+                            return false;
+                        }
+                        
+                        // Regular character matching
+                        return specialCharacter === characterName;
+                    });
                     
                     if (characterCards.length === 0) {
                         showNotification(`No special cards found for ${characterName}`, 'info');
@@ -12125,11 +12246,16 @@
                                     return aName.localeCompare(bName);
                                 });
                                 
+                                // Escape single quotes and HTML-encode characterName for use in onclick handler
+                                const escapedCharacterName = characterName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                                // Also escape for HTML display
+                                const htmlEscapedCharacterName = characterName.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                                
                                 cardsHtml += `
                                     <div class="character-group">
                                         <div class="character-group-header" onclick="toggleCharacterGroup(this)">
-                                            <span>${characterName} (${cardGroups.size})</span>
-                                            <button class="add-all-special-btn" onclick="event.stopPropagation(); addAllSpecialCardsForCharacter('${characterName}')">Add All</button>
+                                            <span>${htmlEscapedCharacterName} (${cardGroups.size})</span>
+                                            <button class="add-all-special-btn" onclick="event.stopPropagation(); addAllSpecialCardsForCharacter('${escapedCharacterName}')">Add All</button>
                                             <span class="collapse-icon">▶</span>
                                         </div>
                                         <div class="character-group-content collapsed">

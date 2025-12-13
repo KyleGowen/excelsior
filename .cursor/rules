@@ -192,6 +192,13 @@ OverPower is a card game where players control teams of legendary heroes and vil
 
 #### Special Cards
 - **Character-Specific**: Only characters with matching names can play them
+- **Angry Mob Variants**: Angry Mob has three character variants (Middle Ages, Industrial Age, Modern Age). Special cards can be:
+  - **Generic "Angry Mob" specials**: Can be played by any Angry Mob variant (character name is exactly "Angry Mob")
+  - **Variant-specific specials**: Can only be played by the matching variant (character name includes variant like "Angry Mob: Middle Ages" or "Angry Mob - Middle Ages")
+  - A character with a variant suffix (e.g., "Angry Mob (Industrial Age)") can play:
+    - All generic "Angry Mob" specials (no colon/dash qualifier)
+    - All specials matching their variant (e.g., "Angry Mob: Industrial Age" or "Angry Mob - Industrial Age")
+    - Never specials for other variants (e.g., cannot play "Angry Mob: Middle Ages" specials)
 - **Copies**: Most allow multiple copies; "One Per Deck" cards limited to 1 copy
 - **Actions**: Played as offensive (Crossed Swords) or defensive (Shield) actions
 - **Duration Icons**:

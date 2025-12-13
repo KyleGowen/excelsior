@@ -1333,3 +1333,96 @@ table {
     color: #4ecdc4;
     font-size: 0.9rem;
 }
+
+/* ========================================
+ * CHARACTER+ TABLE STYLING
+ * ======================================== */
+
+#character-plus-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+#character-plus-table th,
+#character-plus-table td {
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+    vertical-align: top;
+    padding: 8px 12px;
+    line-height: 1.4;
+    text-align: center;
+}
+
+/* Character column (first column) - wider for character card */
+#character-plus-table th:nth-child(1),
+#character-plus-table td:nth-child(1) {
+    width: 20%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Special card columns (columns 2-7) - equal width */
+#character-plus-table th:nth-child(2),
+#character-plus-table td:nth-child(2),
+#character-plus-table th:nth-child(3),
+#character-plus-table td:nth-child(3),
+#character-plus-table th:nth-child(4),
+#character-plus-table td:nth-child(4),
+#character-plus-table th:nth-child(5),
+#character-plus-table td:nth-child(5),
+#character-plus-table th:nth-child(6),
+#character-plus-table td:nth-child(6),
+#character-plus-table th:nth-child(7),
+#character-plus-table td:nth-child(7) {
+    width: 13.33%; /* ~80% / 6 columns */
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Character image styling */
+#character-plus-table td:nth-child(1) img {
+    max-width: 316px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Special card image styling */
+#character-plus-table td:nth-child(n+2) img {
+    width: 120px;
+    height: auto;
+    max-height: 180px;
+    object-fit: contain;
+}
+
+/* Empty cell styling */
+#character-plus-table td:empty {
+    background: rgba(255, 255, 255, 0.02);
+    min-height: 200px;
+}
+
+/* Lock row height after initial render to prevent changes when cycling images */
+#character-plus-table tbody tr {
+    min-height: fit-content;
+}
+
+#character-plus-table tbody td {
+    min-height: 200px;
+}
+
+#character-plus-table tbody tr[data-height-locked="true"] {
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+#character-plus-table tbody td[data-height-locked="true"] {
+    overflow: hidden;
+    box-sizing: border-box;
+    position: relative;
+}
+
+#character-plus-table tbody td[data-height-locked="true"] img {
+    max-height: 100% !important;
+    object-fit: contain;
+    display: block;
+}

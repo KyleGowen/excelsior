@@ -127,6 +127,11 @@ class DatabaseViewDisplay {
                 displayFunction: 'displayPowerCards',
                 containerId: 'power-cards-tbody',
                 loadingId: 'power-cards-loading'
+            },
+            'character-plus': {
+                displayFunction: 'displayCharacterPlus',
+                containerId: 'character-plus-tbody',
+                loadingId: 'character-plus-loading'
             }
         };
 
