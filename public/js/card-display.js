@@ -733,21 +733,11 @@ async function addAllCardsToDeckFromRow(buttonElement) {
         return;
     }
     
-    // Show deck selection menu, then add all cards to selected deck
+        // Show deck selection menu, then add all cards to selected deck
     if (typeof createDeckSelectionMenu === 'function') {
         // Create a custom menu that adds all cards
         const menu = document.createElement('div');
         menu.className = 'deck-selection-menu';
-        menu.style.cssText = `
-            position: absolute;
-            background: #2a2a3e;
-            border: 1px solid #444;
-            border-radius: 8px;
-            padding: 12px;
-            z-index: 10000;
-            min-width: 200px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        `;
         
         const title = document.createElement('div');
         title.textContent = `Add ${cards.length} cards to deck:`;
@@ -834,10 +824,51 @@ async function addAllCardsToDeckFromRow(buttonElement) {
             menu.appendChild(deckOption);
         });
         
-        // Position menu near button
-        const rect = buttonElement.getBoundingClientRect();
-        menu.style.left = rect.left + 'px';
-        menu.style.top = (rect.bottom + 5) + 'px';
+        // Position menu near button using fixed positioning (like createDeckSelectionMenu)
+        const buttonRect = buttonElement.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        // Estimate menu height
+        const estimatedHeight = Math.min(400, (decks.length * 36) + 60);
+        
+        // Calculate position - prefer below button, adjust if near viewport edges
+        let top = buttonRect.bottom + 5;
+        let left = buttonRect.left;
+        
+        // Adjust if menu would go off bottom of viewport
+        if (top + estimatedHeight > viewportHeight) {
+            top = buttonRect.top - estimatedHeight - 5;
+            // If still off screen, position at top of viewport
+            if (top < 0) {
+                top = 10;
+            }
+        }
+        
+        // Adjust if menu would go off right edge
+        if (left + 200 > viewportWidth) {
+            left = viewportWidth - 220;
+        }
+        
+        // Adjust if menu would go off left edge
+        if (left < 10) {
+            left = 10;
+        }
+        
+        menu.style.cssText = `
+            position: fixed;
+            top: ${top}px;
+            left: ${left}px;
+            width: 200px;
+            max-height: ${estimatedHeight}px;
+            background: #2a2a3e;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 12px;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+        `;
         
         document.body.appendChild(menu);
         
