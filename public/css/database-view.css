@@ -1682,16 +1682,11 @@ table {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-#all-cards-filter-container > div:first-child {
-    color: #ffffff;
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
 #all-cards-type-filters {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    justify-content: center;
 }
 
 .card-type-filter-btn {
