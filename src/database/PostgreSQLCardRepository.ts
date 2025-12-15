@@ -89,6 +89,7 @@ export class PostgreSQLCardRepository implements CardRepository {
         id: char.id,
         name: char.name,
         set: char.set || 'ERB',
+        set_number: char.set_number || null,
         energy: char.energy,
         combat: char.combat,
         brute_force: char.brute_force,
@@ -164,6 +165,7 @@ export class PostgreSQLCardRepository implements CardRepository {
               image: card.image_path,
               image_path: card.image_path,
               set: card.set || 'ERB',
+              set_number: card.set_number || null,
               icons: card.icons || undefined,
               value: card.value ?? null,
               is_cataclysm: card.cataclysm || false,
@@ -231,6 +233,7 @@ export class PostgreSQLCardRepository implements CardRepository {
         image: card.image_path,
         image_path: card.image_path,
         set: card.set || 'ERB',
+        set_number: card.set_number || null,
         set_name: card.set_name || 'Edgar Rice Burroughs and the World Legends',
         one_per_deck: card.one_per_deck || false
       }));
@@ -287,6 +290,8 @@ export class PostgreSQLCardRepository implements CardRepository {
       const locations = result.rows.map(loc => ({
         id: loc.id,
         name: loc.name,
+        set: loc.set || 'ERB',
+        set_number: loc.set_number || null,
         threat_level: loc.threat_level,
         special_ability: loc.special_ability,
         image: loc.image_path
@@ -335,7 +340,10 @@ export class PostgreSQLCardRepository implements CardRepository {
       return result.rows.map(mission => ({
         id: mission.id,
         mission_set: mission.mission_set,
+        set: mission.set || 'ERB',
+        set_number: mission.set_number || null,
         card_name: mission.name,
+        name: mission.name,
         image: mission.image_path
       }));
     } finally {
@@ -380,6 +388,8 @@ export class PostgreSQLCardRepository implements CardRepository {
         id: event.id,
         name: event.name,
         mission_set: event.mission_set,
+        set: event.set || 'ERB',
+        set_number: event.set_number || null,
         game_effect: event.game_effect,
         flavor_text: event.flavor_text,
         image: event.image_path,
@@ -427,10 +437,13 @@ export class PostgreSQLCardRepository implements CardRepository {
       return result.rows.map(aspect => ({
         id: aspect.id,
         card_name: aspect.name,
+        name: aspect.name,
         card_type: aspect.card_type,
         location: aspect.location,
         card_effect: aspect.card_effect,
         aspect_description: aspect.aspect_description,
+        set: aspect.set || 'ERB',
+        set_number: aspect.set_number || null,
         image: aspect.image_path,
         icons: aspect.icons || undefined,
         value: aspect.value ?? null,
@@ -482,6 +495,8 @@ export class PostgreSQLCardRepository implements CardRepository {
         character: card.character,
         card_effect: card.card_effect,
         card_description: card.card_description,
+        set: card.set || 'ERB',
+        set_number: card.set_number || null,
         image: card.image_path,
         is_one_per_deck: card.one_per_deck || false
       }));
@@ -535,6 +550,8 @@ export class PostgreSQLCardRepository implements CardRepository {
         followup_attack_types: card.followup_attack_types,
         first_attack_bonus: card.first_attack_bonus,
         second_attack_bonus: card.second_attack_bonus,
+        set: card.set || 'ERB',
+        set_number: card.set_number || null,
         image: card.image_path,
         one_per_deck: card.one_per_deck || false
       }));
@@ -579,12 +596,15 @@ export class PostgreSQLCardRepository implements CardRepository {
       return result.rows.map(card => ({
         id: card.id,
         card_name: card.name,
+        name: card.name,
         card_type: card.card_type,
         stat_to_use: card.stat_to_use,
         stat_type_to_use: card.stat_type_to_use,
         attack_value: card.attack_value,
         attack_type: card.attack_type,
         card_text: card.card_text,
+        set: card.set || 'ERB',
+        set_number: card.set_number || null,
         image: card.image_path,
         one_per_deck: card.one_per_deck || false
       }));
@@ -622,15 +642,18 @@ export class PostgreSQLCardRepository implements CardRepository {
   async getAllTraining(): Promise<TrainingCard[]> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query('SELECT id, name, type_1, type_2, value_to_use, bonus, image_path, one_per_deck FROM training_cards ORDER BY set, name');
+      const result = await client.query('SELECT * FROM training_cards ORDER BY set, name');
       
       return result.rows.map(card => ({
         id: card.id,
         card_name: card.name,
+        name: card.name,
         type_1: card.type_1,
         type_2: card.type_2,
         value_to_use: card.value_to_use,
         bonus: card.bonus,
+        set: card.set || 'ERB',
+        set_number: card.set_number || null,
         image: card.image_path,
         one_per_deck: card.one_per_deck || false
       }));
@@ -672,9 +695,12 @@ export class PostgreSQLCardRepository implements CardRepository {
       return result.rows.map(card => ({
         id: card.id,
         card_name: card.name,
+        name: card.name,
         type: card.type,
         value_to_use: card.value_to_use,
         bonus: card.bonus,
+        set: card.set || 'ERB',
+        set_number: card.set_number || null,
         image: card.image_path,
         one_per_deck: card.one_per_deck || false
       }));

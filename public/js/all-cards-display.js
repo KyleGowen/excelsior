@@ -98,6 +98,43 @@ async function loadAllCards() {
         }
     });
     
+    // Sort all cards by set, then set_number (from database)
+    // This ensures proper database order regardless of card type
+    allCardsData.sort((a, b) => {
+        // Primary sort: set (ascending)
+        const setA = String(a.set || a.universe || 'ERB').toUpperCase().trim();
+        const setB = String(b.set || b.universe || 'ERB').toUpperCase().trim();
+        
+        if (setA !== setB) {
+            return setA.localeCompare(setB);
+        }
+        
+        // Secondary sort: set_number (ascending, numeric)
+        // Use the set_number field directly from the database
+        // Treat null/undefined/empty as a very high number so they appear last
+        const numAStr = String(a.set_number || '').trim();
+        const numBStr = String(b.set_number || '').trim();
+        
+        // If both are empty/null, maintain order
+        if (!numAStr && !numBStr) {
+            return 0;
+        }
+        // If only A is empty, put it last
+        if (!numAStr) {
+            return 1;
+        }
+        // If only B is empty, put it last
+        if (!numBStr) {
+            return -1;
+        }
+        
+        // Both have values, parse and compare
+        const numA = parseInt(numAStr, 10) || 0;
+        const numB = parseInt(numBStr, 10) || 0;
+        
+        return numA - numB;
+    });
+    
     const endTime = performance.now();
     const totalDuration = endTime - startTime;
     const totalCount = allCardsData.length;
@@ -174,24 +211,45 @@ function renderCardCell(card) {
     const deckButtonDisabled = isGuest ? 'disabled style="opacity: 0.5; cursor: not-allowed;" title="Log in to add to decks..."' : '';
     const deckButtonOnClick = isGuest ? '' : `onclick="showDeckSelection('${apiCardType}', '${card.id}', '${escapedName}', this)"`;
     
+    // Add onload handler to detect horizontal orientation
+    const imageOnLoad = `
+        (function(img) {
+            if (img.complete && img.naturalWidth && img.naturalHeight) {
+                if (img.naturalWidth > img.naturalHeight) {
+                    img.classList.add('horizontal-card');
+                }
+            } else {
+                img.onload = function() {
+                    if (this.naturalWidth > this.naturalHeight) {
+                        this.classList.add('horizontal-card');
+                    }
+                };
+            }
+        })(this);
+    `;
+    
     return `
-        <div class="all-cards-cell" style="display: flex; flex-direction: column; align-items: center; padding: 10px; background: rgba(0, 0, 0, 0.2); border-radius: 5px;">
-            <img src="${imagePath}" 
-                 alt="${escapedName}" 
-                 style="width: 100%; max-width: 200px; height: auto; border-radius: 5px; cursor: pointer; margin-bottom: 8px;"
-                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iMTAwIiB5PSIxNTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pgo8L3N2Zz4='; this.style.cursor='default';"
-                 onmouseenter="showCardHoverModal('${imagePath}', '${escapedName}')"
-                 onmouseleave="hideCardHoverModal()"
-                 onclick="openModal(this)">
-            <div style="font-size: 12px; color: #fff; text-align: center; margin-bottom: 8px; word-wrap: break-word; max-width: 100%;">${cardName}</div>
-            <button class="add-to-deck-btn" ${deckButtonOnClick} ${deckButtonDisabled} style="margin-bottom: 4px; width: 100%;">
-                +Deck
-            </button>
-            ${isAdmin ? `
-            <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', '${apiCardType}')" style="width: 100%;">
-                +Collection
-            </button>
-            ` : ''}
+        <div class="all-cards-cell">
+            <div class="card-image-wrapper">
+                <img src="${imagePath}" 
+                     alt="${escapedName}" 
+                     onload="${imageOnLoad}"
+                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iMTAwIiB5PSIxNTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pgo8L3N2Zz4='; this.style.cursor='default';"
+                     onmouseenter="showCardHoverModal('${imagePath}', '${escapedName}')"
+                     onmouseleave="hideCardHoverModal()"
+                     onclick="openModal(this)">
+            </div>
+            <div class="card-content-bottom">
+                <div style="font-size: 12px; color: #fff; text-align: center; margin-bottom: 8px; word-wrap: break-word; max-width: 100%;">${cardName}</div>
+                <button class="add-to-deck-btn" ${deckButtonOnClick} ${deckButtonDisabled} style="margin-bottom: 4px; width: 100%;">
+                    +Deck
+                </button>
+                ${isAdmin ? `
+                <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${card.id}', '${apiCardType}')" style="width: 100%;">
+                    +Collection
+                </button>
+                ` : ''}
+            </div>
         </div>
     `;
 }
@@ -209,22 +267,21 @@ function displayAllCards(cards = null) {
     // Use provided cards or filtered cards
     const cardsToDisplay = cards || allCardsFiltered || allCardsData;
     
-    // Sort cards by set, then set_number
-    const sortedCards = [...cardsToDisplay].sort((a, b) => {
-        // Primary sort: set (ascending)
-        const setA = (a.set || a.universe || 'ERB').toUpperCase();
-        const setB = (b.set || b.universe || 'ERB').toUpperCase();
-        
-        if (setA !== setB) {
-            return setA.localeCompare(setB);
-        }
-        
-        // Secondary sort: set_number (ascending, numeric)
-        const numA = parseInt(a.set_number || a.card_number || '0', 10) || 0;
-        const numB = parseInt(b.set_number || b.card_number || '0', 10) || 0;
-        
-        return numA - numB;
-    });
+    // Cards are already sorted by set -> set_number in loadAllCards()
+    // Just use the filtered cards directly (they maintain the sort order)
+    const sortedCards = cardsToDisplay;
+    
+    // Debug: Log first few sorted cards to verify sorting
+    if (sortedCards.length > 0) {
+        console.log('First 10 sorted cards (set -> set_number):');
+        sortedCards.slice(0, 10).forEach((card, idx) => {
+            const setName = card.set || card.universe || 'ERB';
+            const setNum = card.set_number || '0';
+            const cardName = getCardName(card);
+            const cardType = card.cardType || 'unknown';
+            console.log(`  ${idx + 1}. [${setName}] ${setNum} - ${cardName} (${cardType})`);
+        });
+    }
     
     // Render all cards
     container.innerHTML = sortedCards.map(card => renderCardCell(card)).join('');
