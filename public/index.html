@@ -4908,20 +4908,21 @@
                                 // Only show button if there are multiple unique image paths
                                 hasAlternateArts = uniqueImagePaths.size > 1;
                             } else if (card.type === 'power') {
+                                // Group by value and power_type only (not by set) to include alternates across all sets
+                                // Check for unique image paths, not just card count
                                 const value = String(availableCard.value || '').trim();
-                                const set = (availableCard.set || 'ERB').trim() || 'ERB';
                                 const powerType = (availableCard.power_type || '').trim();
-                                let count = 0;
+                                const uniqueImagePaths = new Set();
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
                                     if ((cardType === 'power' || id.startsWith('power_')) && 
                                         String(c.value || '').trim() === value && 
-                                        (c.set || 'ERB').trim() === set &&
                                         (c.power_type || '').trim() === powerType) {
-                                        count++;
+                                        const imagePath = getCardImagePath(c, 'power');
+                                        uniqueImagePaths.add(imagePath);
                                     }
                                 });
-                                hasAlternateArts = count > 1;
+                                hasAlternateArts = uniqueImagePaths.size > 1;
                             }
                         }
                         
@@ -8263,22 +8264,23 @@
                                     const cardDetails = '';
                                     
                                     // Check if this power card has alternate arts
+                                    // Group by value and power_type only (not by set) to include alternates across all sets
+                                    // Check for unique image paths, not just card count
                                     let hasAlternateArtsPower1 = false;
                                     if (availableCard && window.availableCardsMap) {
                                         const value = String(availableCard.value || '').trim();
-                                        const set = (availableCard.set || 'ERB').trim() || 'ERB';
                                         const powerType = (availableCard.power_type || '').trim();
-                                        let count = 0;
+                                        const uniqueImagePaths = new Set();
                                         window.availableCardsMap.forEach((c, id) => {
                                             const cardType = c.cardType || c.type || '';
                                             if ((cardType === 'power' || id.startsWith('power_')) && 
                                                 String(c.value || '').trim() === value && 
-                                                (c.set || 'ERB').trim() === set &&
                                                 (c.power_type || '').trim() === powerType) {
-                                                count++;
+                                                const imagePath = getCardImagePath(c, 'power');
+                                                uniqueImagePaths.add(imagePath);
                                             }
                                         });
-                                        hasAlternateArtsPower1 = count > 1;
+                                        hasAlternateArtsPower1 = uniqueImagePaths.size > 1;
                                     }
                                     const changeArtButtonPower1 = hasAlternateArtsPower1 ? 
                                         `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
@@ -8344,22 +8346,23 @@
                                 const cardDetails = '';
                                 
                                 // Check if this power card has alternate arts
+                                // Group by value and power_type only (not by set) to include alternates across all sets
+                                // Check for unique image paths, not just card count
                                 let hasAlternateArtsPower2 = false;
                                 if (availableCard && window.availableCardsMap) {
                                     const value = String(availableCard.value || '').trim();
-                                    const set = (availableCard.set || 'ERB').trim() || 'ERB';
                                     const powerType = (availableCard.power_type || '').trim();
-                                    let count = 0;
+                                    const uniqueImagePaths = new Set();
                                     window.availableCardsMap.forEach((c, id) => {
                                         const cardType = c.cardType || c.type || '';
                                         if ((cardType === 'power' || id.startsWith('power_')) && 
                                             String(c.value || '').trim() === value && 
-                                            (c.set || 'ERB').trim() === set &&
                                             (c.power_type || '').trim() === powerType) {
-                                            count++;
+                                            const imagePath = getCardImagePath(c, 'power');
+                                            uniqueImagePaths.add(imagePath);
                                         }
                                     });
-                                    hasAlternateArtsPower2 = count > 1;
+                                    hasAlternateArtsPower2 = uniqueImagePaths.size > 1;
                                 }
                                 const changeArtButtonPower2 = hasAlternateArtsPower2 ? 
                                     `<button class="alternate-art-btn" onclick="showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})">Change Art</button>` : '';
@@ -8590,20 +8593,21 @@
                                 // Only show button if there are multiple unique image paths
                                 hasAlternateArts = uniqueImagePaths.size > 1;
                             } else if (card.type === 'power') {
+                                // Group by value and power_type only (not by set) to include alternates across all sets
+                                // Check for unique image paths, not just card count
                                 const value = String(availableCard.value || '').trim();
-                                const set = (availableCard.set || 'ERB').trim() || 'ERB';
                                 const powerType = (availableCard.power_type || '').trim();
-                                let count = 0;
+                                const uniqueImagePaths = new Set();
                                 window.availableCardsMap.forEach((c, id) => {
                                     const cardType = c.cardType || c.type || '';
                                     if ((cardType === 'power' || id.startsWith('power_')) && 
                                         String(c.value || '').trim() === value && 
-                                        (c.set || 'ERB').trim() === set &&
                                         (c.power_type || '').trim() === powerType) {
-                                        count++;
+                                        const imagePath = getCardImagePath(c, 'power');
+                                        uniqueImagePaths.add(imagePath);
                                     }
                                 });
-                                hasAlternateArts = count > 1;
+                                hasAlternateArts = uniqueImagePaths.size > 1;
                             }
                         }
                         
