@@ -655,6 +655,7 @@
     <script src="/js/layout-manager.js"></script>
     <script src="/js/deck-management.js"></script>
     <script src="/js/card-display.js"></script>
+    <script src="/js/all-cards-display.js"></script>
     <script src="/js/deck-editor-simple.js"></script>
     <script src="/js/search-filter.js"></script>
     <script src="/js/modal-ui.js"></script>
@@ -727,7 +728,8 @@
             
             <div class="tab-container">
                 <div class="tab-row">
-                    <button class="tab-button active" data-click-handler="switchTab" data-tab="characters">Characters</button>
+                    <button class="tab-button active" data-click-handler="switchTab" data-tab="all-cards">All</button>
+                    <button class="tab-button" data-click-handler="switchTab" data-tab="characters">Characters</button>
                     <button class="tab-button" data-click-handler="switchTab" data-tab="special-cards">Special Cards</button>
                     <button class="tab-button" data-click-handler="switchTab" data-tab="advanced-universe">Universe: Advanced</button>
                     <button class="tab-button" data-click-handler="switchTab" data-tab="locations">Locations</button>
@@ -753,7 +755,30 @@
 
 
 
-            <div class="table-container" id="characters-tab" style="display: block;">
+            <div class="table-container" id="all-cards-tab" style="display: block;">
+                <div id="all-cards-filter-container" style="margin-bottom: 15px; padding: 10px; background: rgba(0, 0, 0, 0.5); border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div style="margin-bottom: 8px; font-weight: bold; color: #ffffff;">Filter by Card Type:</div>
+                    <div id="all-cards-type-filters" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <button class="card-type-filter-btn active" data-card-type="character">Characters</button>
+                        <button class="card-type-filter-btn active" data-card-type="special">Special Cards</button>
+                        <button class="card-type-filter-btn active" data-card-type="advanced-universe">Advanced Universe</button>
+                        <button class="card-type-filter-btn active" data-card-type="location">Locations</button>
+                        <button class="card-type-filter-btn active" data-card-type="aspect">Aspects</button>
+                        <button class="card-type-filter-btn active" data-card-type="mission">Missions</button>
+                        <button class="card-type-filter-btn active" data-card-type="event">Events</button>
+                        <button class="card-type-filter-btn active" data-card-type="teamwork">Teamwork</button>
+                        <button class="card-type-filter-btn active" data-card-type="ally-universe">Ally Universe</button>
+                        <button class="card-type-filter-btn active" data-card-type="training">Training</button>
+                        <button class="card-type-filter-btn active" data-card-type="basic-universe">Basic Universe</button>
+                        <button class="card-type-filter-btn active" data-card-type="power">Power Cards</button>
+                    </div>
+                </div>
+                <div id="all-cards-grid-container" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 15px;">
+                    <!-- Cards will be rendered here -->
+                </div>
+            </div>
+
+            <div class="table-container" id="characters-tab" style="display: none;">
                 <table id="characters-table">
                     <thead>
                         <tr>
@@ -1907,19 +1932,13 @@
             clearAllFiltersGlobally();
             
             // Hide all tabs
-            document.getElementById('characters-tab').style.display = 'none';
-            document.getElementById('special-cards-tab').style.display = 'none';
-            document.getElementById('advanced-universe-tab').style.display = 'none';
-            document.getElementById('missions-tab').style.display = 'none';
-            document.getElementById('locations-tab').style.display = 'none';
-            document.getElementById('aspects-tab').style.display = 'none';
-            document.getElementById('events-tab').style.display = 'none';
-            document.getElementById('teamwork-tab').style.display = 'none';
-            document.getElementById('ally-universe-tab').style.display = 'none';
-            document.getElementById('training-tab').style.display = 'none';
-            document.getElementById('basic-universe-tab').style.display = 'none';
-            document.getElementById('power-cards-tab').style.display = 'none';
-            document.getElementById('character-plus-tab').style.display = 'none';
+            const allTabs = ['all-cards', 'characters', 'special-cards', 'advanced-universe', 'missions', 'locations', 'aspects', 'events', 'teamwork', 'ally-universe', 'training', 'basic-universe', 'power-cards', 'character-plus'];
+            allTabs.forEach(tab => {
+                const tabElement = document.getElementById(tab + '-tab');
+                if (tabElement) {
+                    tabElement.style.display = 'none';
+                }
+            });
             
             // Hide search container for all tabs
             document.getElementById('search-container').style.display = 'none';
@@ -1974,7 +1993,16 @@
             
             
             // Update search functionality and reload data based on tab
-            if (tabName === 'characters') {
+            if (tabName === 'all-cards') {
+                // Hide search container for All tab
+                document.getElementById('search-container').style.display = 'none';
+                // Load and display all cards
+                if (typeof loadAndDisplayAllCards === 'function') {
+                    loadAndDisplayAllCards();
+                } else {
+                    console.warn('loadAndDisplayAllCards function not available');
+                }
+            } else if (tabName === 'characters') {
                 setupSearch();
                 loadCharacters();
             } else if (tabName === 'special-cards') {
@@ -2822,6 +2850,16 @@
                     document.getElementById('deckBuilderBtn').classList.remove('active');
                     const collectionBtn = document.getElementById('collectionViewBtn');
                     if (collectionBtn) collectionBtn.classList.remove('active');
+                    
+                    // Load All tab if it's the active tab
+                    setTimeout(() => {
+                        const allTabButton = document.querySelector('[data-tab="all-cards"]');
+                        if (allTabButton && allTabButton.classList.contains('active')) {
+                            if (typeof switchTab === 'function') {
+                                switchTab('all-cards');
+                            }
+                        }
+                    }, 100);
                 }
                 
                 // Show database statistics in initial database view

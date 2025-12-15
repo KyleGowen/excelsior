@@ -1508,7 +1508,16 @@ table {
 #character-plus-table td:nth-child(1) {
     width: 10%;
     text-align: center;
-    vertical-align: middle;
+    vertical-align: bottom;
+}
+
+/* Ensure Add All column cell-content-wrapper uses flexbox for bottom alignment */
+#character-plus-table td:nth-child(1) .cell-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: 100%;
 }
 
 /* Style buttons in Add All column */
@@ -1655,4 +1664,112 @@ table {
     max-height: 100% !important;
     object-fit: contain;
     display: block;
+}
+
+/* ========================================
+ * ALL CARDS TAB STYLES
+ * ======================================== */
+
+#all-cards-tab {
+    padding: 0;
+}
+
+#all-cards-filter-container {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#all-cards-filter-container > div:first-child {
+    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+#all-cards-type-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.card-type-filter-btn {
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+}
+
+.card-type-filter-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.card-type-filter-btn.active {
+    background: #4ecdc4;
+    border-color: #4ecdc4;
+    color: #1a1a2e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.card-type-filter-btn.active:hover {
+    background: #4ecdc4;
+    border-color: #4ecdc4;
+}
+
+#all-cards-grid-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    padding: 15px;
+}
+
+.all-cards-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    transition: background 0.2s ease;
+}
+
+.all-cards-cell:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.all-cards-cell img {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 8px;
+}
+
+.all-cards-cell .add-to-deck-btn,
+.all-cards-cell .add-to-collection-btn {
+    width: 100%;
+    margin-top: 4px;
+}
+
+/* Responsive: 3 columns on smaller screens */
+@media (max-width: 1200px) {
+    #all-cards-grid-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Responsive: 2 columns on mobile */
+@media (max-width: 768px) {
+    #all-cards-grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }

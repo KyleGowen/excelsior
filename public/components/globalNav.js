@@ -37,9 +37,21 @@ function switchToDatabaseView() {
     
     if (totalCharacters && totalCharacters.textContent === '-') {
         if (typeof loadDatabaseViewData === 'function') {
-            loadDatabaseViewData(true); // Force characters tab when user explicitly switches to database view
+            loadDatabaseViewData(false); // Load data without forcing characters tab
         }
     }
+    
+    // Switch to All tab by default (it's the first tab and should be active)
+    // Small delay to ensure DOM is ready
+    setTimeout(() => {
+        if (typeof switchTab === 'function') {
+            // Check if All tab button exists and is active
+            const allTabButton = document.querySelector('[data-tab="all-cards"]');
+            if (allTabButton && allTabButton.classList.contains('active')) {
+                switchTab('all-cards');
+            }
+        }
+    }, 100);
 }
 
 function switchToDeckBuilder() {
