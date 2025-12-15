@@ -10911,9 +10911,9 @@
                     const characterCards = data.data.filter(card => {
                         const specialCharacter = card.character || card.character_name || '';
                         
-                        // Handle "Any Character" specials
+                        // Handle "Any Character" specials - only include them when clicking "Any Character" Add All
                         if (specialCharacter === 'Any Character') {
-                            return true;
+                            return characterName === 'Any Character';
                         }
                         
                         // Handle Angry Mob variants
