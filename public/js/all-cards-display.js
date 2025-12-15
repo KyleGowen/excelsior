@@ -152,10 +152,50 @@ async function loadAllCards() {
  * Get card name based on card type and name field
  */
 function getCardName(card) {
-    if (card.nameField) {
-        return card[card.nameField] || card.name || card.card_name || 'Unknown';
+    if (!card) {
+        return 'Unknown Card';
     }
-    return card.name || card.card_name || card.card_type || 'Unknown';
+    
+    const cardType = card.cardType || '';
+    
+    // For power cards, format as "value - power_type"
+    if (cardType === 'power') {
+        const value = card.value || '';
+        const powerType = card.power_type || '';
+        if (value && powerType) {
+            return `${value} - ${powerType}`;
+        }
+        return card.name || card.power_type || 'Power Card';
+    }
+    
+    // For missions, use card_name (mapped from name) or name
+    if (cardType === 'mission') {
+        return card.card_name || card.name || 'Mission';
+    }
+    
+    // For aspects, use card_name (mapped from name) or name
+    if (cardType === 'aspect') {
+        return card.card_name || card.name || 'Aspect';
+    }
+    
+    // For training, ally-universe, basic-universe - use card_name (mapped from name) or name
+    if (cardType === 'training' || cardType === 'ally-universe' || cardType === 'basic-universe') {
+        return card.card_name || card.name || 'Card';
+    }
+    
+    // For advanced-universe, use name
+    if (cardType === 'advanced-universe') {
+        return card.name || 'Advanced Universe';
+    }
+    
+    // For teamwork, use name
+    if (cardType === 'teamwork') {
+        return card.name || card.card_type || 'Teamwork';
+    }
+    
+    // For characters, special cards, events, locations - use name
+    // Default: try name first (most common), then card_name, then card_type
+    return card.name || card.card_name || card.card_type || 'Unknown Card';
 }
 
 /**
@@ -187,7 +227,26 @@ function getCardImagePathForAllCards(card, cardType) {
  * Render a single card cell
  */
 function renderCardCell(card) {
-    const cardName = getCardName(card);
+    // Extract card name - try multiple approaches
+    let cardName = 'Unknown Card';
+    
+    if (card) {
+        // Direct field access based on card type
+        if (card.name) {
+            cardName = card.name;
+        } else if (card.card_name) {
+            cardName = card.card_name;
+        } else if (card.cardType === 'power' && card.value && card.power_type) {
+            cardName = `${card.value} - ${card.power_type}`;
+        } else if (card.card_type) {
+            cardName = card.card_type;
+        }
+    }
+    
+    // Fallback to getCardName function if still unknown
+    if (cardName === 'Unknown Card' && typeof getCardName === 'function') {
+        cardName = getCardName(card);
+    }
     const cardType = card.cardType || 'character';
     const imagePath = getCardImagePathForAllCards(card, cardType);
     const escapedName = cardName.replace(/'/g, "\\'");
@@ -392,10 +451,16 @@ async function loadAndDisplayAllCards() {
     }
 }
 
-// Make functions globally available
+// Make functions and data globally available
 window.loadAllCards = loadAllCards;
 window.displayAllCards = displayAllCards;
 window.filterAllCardsByType = filterAllCardsByType;
 window.initializeAllCardsFilters = initializeAllCardsFilters;
 window.loadAndDisplayAllCards = loadAndDisplayAllCards;
+window.getCardName = getCardName;
+// Expose allCardsData for debugging
+Object.defineProperty(window, 'allCardsData', {
+    get: function() { return allCardsData; },
+    set: function(value) { allCardsData = value; }
+});
 
