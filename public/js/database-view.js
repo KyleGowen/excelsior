@@ -72,7 +72,6 @@ function switchTabFallback(tabName) {
     document.getElementById('training-tab').style.display = 'none';
     document.getElementById('basic-universe-tab').style.display = 'none';
     document.getElementById('power-cards-tab').style.display = 'none';
-    document.getElementById('character-plus-tab').style.display = 'none';
 
     // Show search container for all tabs including characters
     const searchContainer = document.getElementById('search-container');
@@ -125,11 +124,6 @@ function switchTabFallback(tabName) {
             searchInput.placeholder = 'Search basic universe by name, type, or bonus...';
         } else if (tabName === 'power-cards') {
             searchInput.placeholder = 'Search power cards by type or value...';
-        } else if (tabName === 'character-plus') {
-            // Hide search container for character-plus tab
-            if (searchContainer) {
-                searchContainer.style.display = 'none';
-            }
         }
 
     // Add active class to selected tab button programmatically-safe
@@ -180,10 +174,6 @@ function switchTabFallback(tabName) {
     } else if (tabName === 'power-cards') {
         setupPowerCardsSearch();
         loadPowerCards();
-    } else if (tabName === 'character-plus') {
-        // No search setup needed for character-plus
-        loadCharacterPlus();
-    }
 
     // Disable "Add to Deck" buttons for guest users immediately
     disableAddToDeckButtonsImmediate();

@@ -135,12 +135,6 @@ class DatabaseViewTabs {
                 dataLoader: 'loadPowerCards',
                 searchSetup: 'setupPowerCardsSearch'
             },
-            'character-plus': {
-                hasSearch: false,
-                searchPlaceholder: '',
-                dataLoader: 'loadCharacterPlus',
-                searchSetup: null
-            }
         };
 
         this.tabConfigs = new Map(Object.entries(tabConfigs));

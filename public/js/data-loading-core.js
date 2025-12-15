@@ -132,11 +132,6 @@ class DataLoadingCore {
                 cacheKey: 'power-cards',
                 priority: 12
             },
-            'character-plus': {
-                loadFunction: 'loadCharacterPlus',
-                cacheKey: 'character-plus',
-                priority: 13
-            },
             'user-decks': {
                 loadFunction: 'loadUserDecks',
                 cacheKey: 'user-decks',
