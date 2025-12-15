@@ -2661,6 +2661,29 @@
             }
         });
         
+        // Global fetch interceptor to handle 401 responses (session expired)
+        // This ensures login modal is shown whenever session expires during any API call
+        const originalFetch = window.fetch;
+        window.fetch = async function(...args) {
+            const response = await originalFetch.apply(this, args);
+            
+            // Check for 401 Unauthorized responses
+            if (response.status === 401) {
+                // Session expired - clear user and show login modal
+                if (window.authService) {
+                    window.authService.currentUser = null;
+                    window.authService.clearStoredUser();
+                    await window.authService.showLoginModal();
+                } else if (typeof showLoginModal === 'function') {
+                    await showLoginModal();
+                } else if (typeof window.showLoginModal === 'function') {
+                    await window.showLoginModal();
+                }
+            }
+            
+            return response;
+        };
+        
         // Check for stored user immediately to prevent any flash
         (function() {
             const storedUser = getCurrentUser();
@@ -2747,12 +2770,12 @@
                         showMainApp(); // This will load general app data (characters, etc.)
                     }
                 } else {
-                    showLoginModal();
+                    await showLoginModal();
                 }
             } catch (error) {
                 console.error('❌ Error during page initialization:', error);
                 // Fallback: show login modal if initialization fails
-                showLoginModal();
+                await showLoginModal();
             }
             
             // Login form and guest login button event listeners are now handled by login.js component

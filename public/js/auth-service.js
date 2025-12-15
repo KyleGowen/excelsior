@@ -92,12 +92,16 @@ class FrontendAuthService {
           this.clearStoredUser();
           this.currentUser = null;
           authResult.currentUser = null;
+          // Show login modal when session expires
+          await this.showLoginModal();
         }
       } catch (error) {
         console.error('Error verifying session:', error);
         this.clearStoredUser();
         this.currentUser = null;
         authResult.currentUser = null;
+        // Show login modal on error
+        await this.showLoginModal();
       }
     }
 
@@ -222,10 +226,31 @@ class FrontendAuthService {
     }
   }
 
-  showLoginModal() {
-    const loginModal = document.getElementById('loginModal');
+  async showLoginModal() {
+    // Ensure login modal exists before showing it
+    let loginModal = document.getElementById('loginModal');
+    
+    if (!loginModal) {
+      // Try to load login template if available
+      if (typeof loadLoginTemplate === 'function') {
+        await loadLoginTemplate();
+      } else if (typeof window.loadLoginTemplate === 'function') {
+        await window.loadLoginTemplate();
+      }
+      
+      // Try again after loading
+      loginModal = document.getElementById('loginModal');
+    }
+    
     if (loginModal) {
       loginModal.style.display = 'flex';
+    } else {
+      // If still no modal, call the global showLoginModal function which has fallback
+      if (typeof showLoginModal === 'function') {
+        await showLoginModal();
+      } else if (typeof window.showLoginModal === 'function') {
+        await window.showLoginModal();
+      }
     }
   }
 
