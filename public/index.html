@@ -4855,13 +4855,15 @@
                         const quantity = card.quantity || 1;
                         
                         // Direct lookup using UUID
-                        let availableCard = window.availableCardsMap.get(card.cardId);
+                        // If selectedAlternateCardId exists, use that for image lookup; otherwise use original cardId
+                        const cardIdForImage = card.selectedAlternateCardId || card.cardId;
+                        let availableCard = window.availableCardsMap.get(cardIdForImage);
                         
                         // Try alternate key formats for basic-universe cards
                         if ((card.type === 'basic-universe' || card.type === 'basic_universe') && !availableCard) {
                             const normalizedType = 'basic-universe';
-                            availableCard = window.availableCardsMap.get(`${normalizedType}_${card.cardId}`) ||
-                                          window.availableCardsMap.get(`${card.type}_${card.cardId}`);
+                            availableCard = window.availableCardsMap.get(`${normalizedType}_${cardIdForImage}`) ||
+                                          window.availableCardsMap.get(`${card.type}_${cardIdForImage}`);
                             
                             if (!availableCard) {
                                 // Card not found - will use placeholder
@@ -4869,11 +4871,11 @@
                         }
                         
                         if (!availableCard) {
-                            console.warn('Card not found in availableCardsMap:', card);
+                            console.warn('Card not found in availableCardsMap:', cardIdForImage);
                             return;
                         }
                         
-                        // Get card image path
+                        // Get card image path - use the alternate card's image if selected
                         const cardImagePath = getCardImagePath(availableCard, card.type);
                         
                         // Check if this card has alternate arts (same logic as tile view)
@@ -4987,17 +4989,37 @@
                         
                         // Render multiple instances of the card based on quantity
                         for (let i = 0; i < quantity; i++) {
+                            // Get instance-specific alternate card ID if it exists
+                            const instanceCardId = (card.selectedAlternateCardIds && card.selectedAlternateCardIds[i]) 
+                                ? card.selectedAlternateCardIds[i] 
+                                : (card.selectedAlternateCardId || card.cardId);
+                            
+                            // Look up the card for this instance
+                            let instanceAvailableCard = window.availableCardsMap.get(instanceCardId);
+                            if (!instanceAvailableCard) {
+                                instanceAvailableCard = availableCard; // Fallback to original
+                            }
+                            
+                            // Get instance-specific image path
+                            const instanceImagePath = getCardImagePath(instanceAvailableCard, card.type);
+                            
+                            // Create instance-specific Change Art button
+                            const instanceChangeArtButton = changeArtButton.replace(
+                                `showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})`,
+                                `showAlternateArtSelectionForExistingCard('${card.cardId}', ${index}, ${i})`
+                            );
+                            
                             cardsHtml += `
                                 <div class="deck-card-card-view-item ${koDimmedClassCardView}" 
                                      data-index="${index}" 
                                      data-card-id="${card.cardId}"
                                      data-type="${card.type}"
                                      data-instance="${i + 1}"
-                                     onmouseenter="showCardHoverModal('${cardImagePath}', '${(availableCard.name || availableCard.card_name || 'Card').replace(/'/g, "\\'")}')"
+                                     onmouseenter="showCardHoverModal('${instanceImagePath}', '${(instanceAvailableCard.name || instanceAvailableCard.card_name || 'Card').replace(/'/g, "\\'")}')"
                                      onmouseleave="hideCardHoverModal()">
-                                    <img src="${cardImagePath}" alt="${availableCard.name || availableCard.card_name || 'Card'}" class="card-view-image">
+                                    <img src="${instanceImagePath}" alt="${instanceAvailableCard.name || instanceAvailableCard.card_name || 'Card'}" class="card-view-image">
                                     <div class="card-view-actions">
-                                        ${changeArtButton}
+                                        ${instanceChangeArtButton}
                                         ${quantityButtons}
                                         ${prePlacedButton}
                                     </div>
@@ -8068,25 +8090,34 @@
                     mapKeyType = 'advanced-universe';
                 }
                 // Direct lookup using UUID
-                let availableCard = window.availableCardsMap.get(card.cardId);
+                // If selectedAlternateCardId exists, use that for image lookup; otherwise use original cardId
+                // Use per-instance alternate card ID if available, otherwise fall back
+                const cardIdForLookup = (card.selectedAlternateCardIds && card.selectedAlternateCardIds[0]) 
+                    ? card.selectedAlternateCardIds[0] 
+                    : (card.selectedAlternateCardId || card.cardId);
+                let availableCard = window.availableCardsMap.get(cardIdForLookup);
                                 
                                 if (!availableCard && (card.type === 'basic-universe' || card.type === 'basic_universe')) {
                                     // Try alternate key formats for basic-universe cards
-                                    availableCard = window.availableCardsMap.get(`basic-universe_${card.cardId}`) || 
-                                                   window.availableCardsMap.get(`basic_universe_${card.cardId}`);
+                                    availableCard = window.availableCardsMap.get(`basic-universe_${cardIdForLookup}`) || 
+                                                   window.availableCardsMap.get(`basic_universe_${cardIdForLookup}`);
                                     if (!availableCard) {
                                         console.warn('❌ BASIC_UNIVERSE DISPLAY: Card not found with any key format:', {
-                                            cardId: card.cardId,
+                                            cardId: cardIdForLookup,
                                             type: card.type,
-                                            availableKeysSample: Array.from(window.availableCardsMap.keys()).filter(k => k.includes('basic') || k.includes(card.cardId)).slice(0, 10)
+                                            availableKeysSample: Array.from(window.availableCardsMap.keys()).filter(k => k.includes('basic') || k.includes(cardIdForLookup)).slice(0, 10)
                                         });
                                     }
                                 }
                                 
                                 if (!availableCard) {
-                                    console.warn('Card not found in availableCardsMap:', card);
+                                    console.warn('Card not found in availableCardsMap:', cardIdForLookup);
                                     return;
                                 }
+                                
+                                // For display purposes, if we used alternate card, we still need the original card for other data
+                                // But for image, we'll use the alternate card's image
+                                const imageCard = availableCard; // Use alternate card for image if selected
                                 
                                 // Special card - no additional details
                                 const cardDetails = '';
@@ -13220,7 +13251,7 @@
          * Show alternate art selection for existing card in deck
          * Finds all alternate arts for the given card and allows user to change the art
          */
-        window.showAlternateArtSelectionForExistingCard = function showAlternateArtSelectionForExistingCard(cardId, cardIndex) {
+        window.showAlternateArtSelectionForExistingCard = function showAlternateArtSelectionForExistingCard(cardId, cardIndex, instanceIndex = 0) {
             if (cardIndex === null || cardIndex === undefined || !window.deckEditorCards || !window.deckEditorCards[cardIndex]) {
                 console.error('Invalid card index:', cardIndex);
                 return;
@@ -13229,7 +13260,19 @@
             const deckCard = window.deckEditorCards[cardIndex];
             const cardType = deckCard.type;
             
-            // Get the card from availableCardsMap
+            // Store the instance index on the card for use in the click handler
+            deckCard.currentInstanceIndex = instanceIndex;
+            
+            // Use the currently selected alternate card ID for this instance if it exists, otherwise use the original cardId
+            // Check per-instance array first, then fall back to single selectedAlternateCardId, then original cardId
+            let currentCardId = cardId;
+            if (deckCard.selectedAlternateCardIds && deckCard.selectedAlternateCardIds[instanceIndex]) {
+                currentCardId = deckCard.selectedAlternateCardIds[instanceIndex];
+            } else if (deckCard.selectedAlternateCardId) {
+                currentCardId = deckCard.selectedAlternateCardId;
+            }
+            
+            // Get the card from availableCardsMap (use original cardId to find base card for alternate art lookup)
             const availableCard = window.availableCardsMap.get(cardId);
             if (!availableCard) {
                 console.error('Card not found in availableCardsMap:', cardId);
@@ -13351,16 +13394,16 @@
             const grid = document.createElement('div');
             grid.className = 'alternate-art-options';
             
-            // Find current card index in uniqueAlternateArts
-            const currentCardIndex = uniqueAlternateArts.findIndex(art => art.id === cardId);
+            // Find current card index in uniqueAlternateArts using the currently selected card ID
+            const currentCardIndex = uniqueAlternateArts.findIndex(art => art.id === currentCardId);
             
             // Add each card as an option
             uniqueAlternateArts.forEach((card, index) => {
                 const cardOption = document.createElement('div');
                 cardOption.className = 'art-option';
                 
-                // Mark current card as selected
-                if (card.id === cardId || (currentCardIndex === -1 && index === 0)) {
+                // Mark current card as selected (use currentCardId which may be selectedAlternateCardId)
+                if (card.id === currentCardId || (currentCardIndex === -1 && index === 0)) {
                     cardOption.classList.add('selected');
                 }
                 
@@ -13389,8 +13432,28 @@
                 
                 // Add click handler to update existing card
                 cardOption.addEventListener('click', () => {
-                    // Update the card ID in the deck
-                    window.deckEditorCards[cardIndex].cardId = card.id;
+                    // Store the selected alternate card ID per instance
+                    const targetCard = window.deckEditorCards[cardIndex];
+                    if (!targetCard) {
+                        console.error(`Card at index ${cardIndex} not found!`);
+                        return;
+                    }
+                    
+                    // Get the instance index that was stored when opening the modal
+                    const instanceIndex = targetCard.currentInstanceIndex !== undefined ? targetCard.currentInstanceIndex : 0;
+                    
+                    // Initialize selectedAlternateCardIds as an array if it doesn't exist
+                    if (!targetCard.selectedAlternateCardIds) {
+                        targetCard.selectedAlternateCardIds = [];
+                    }
+                    
+                    // Store the selected alternate card ID for this specific instance
+                    targetCard.selectedAlternateCardIds[instanceIndex] = card.id;
+                    
+                    // Also keep selectedAlternateCardId for backward compatibility (for quantity = 1)
+                    if (targetCard.quantity === 1) {
+                        targetCard.selectedAlternateCardId = card.id;
+                    }
                     
                     // Re-render deck cards based on current view
                     const deckCardsEditor = document.querySelector('.deck-cards-editor');
