@@ -24,6 +24,15 @@ export interface CollectionCardWithDetails extends CollectionCard {
   set?: string; // Renamed from universe
 }
 
+export interface CollectionHistory {
+  id: string;
+  collection_id: string;
+  card_id: string;
+  action: 'ADD' | 'REMOVE';
+  new_quantity: number;
+  created_at: Date;
+}
+
 export class CollectionsRepository {
   private pool: Pool;
 
@@ -472,6 +481,34 @@ export class CollectionsRepository {
       );
       console.log('🟠 [Repo] removeCardFromCollection deleted rows:', result.rowCount);
       return result.rowCount !== null && result.rowCount > 0;
+    } finally {
+      client.release();
+    }
+  }
+
+  /**
+   * Get collection history for a collection
+   * Returns history entries ordered by created_at DESC (most recent first)
+   */
+  async getCollectionHistory(collectionId: string, limit?: number): Promise<CollectionHistory[]> {
+    const client = await this.pool.connect();
+    try {
+      let query = `
+        SELECT id, collection_id, card_id, action, new_quantity, created_at
+        FROM collection_history
+        WHERE collection_id = $1
+        ORDER BY created_at DESC
+      `;
+      
+      const params: any[] = [collectionId];
+      
+      if (limit && limit > 0) {
+        query += ' LIMIT $2';
+        params.push(limit);
+      }
+      
+      const result = await client.query<CollectionHistory>(query, params);
+      return result.rows;
     } finally {
       client.release();
     }

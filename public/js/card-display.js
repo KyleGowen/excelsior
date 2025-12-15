@@ -1013,6 +1013,9 @@ function displayCharacterPlus(charactersWithSpecials, allSpecialCards = [], allA
         const currentCharacterImagePath = currentCharacterImage.imagePath;
         const currentCharacterName = currentCharacterImage.name;
         
+        // Check if user is ADMIN for collection button
+        const isAdmin = typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN';
+        
         // Build special card columns
         let specialCardColumns = '';
         
@@ -1070,14 +1073,16 @@ function displayCharacterPlus(charactersWithSpecials, allSpecialCards = [], allA
                             <button class="add-to-deck-btn" onclick="showDeckSelection('${cardType}', '${currentCardImage.id}', '${currentCardName.replace(/'/g, "\\'")}', this)" style="margin-top: 4px;">
                                 +Deck
                             </button>
+                            ${isAdmin ? `
+                            <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${currentCardImage.id}', '${cardType}')" style="margin-top: 4px; display: block;">
+                                +Collection
+                            </button>
+                            ` : ''}
                         </div>
                     </td>
                 `;
             }
         });
-        
-        // Check if user is ADMIN for collection button
-        const isAdmin = typeof getCurrentUser === 'function' && getCurrentUser() && getCurrentUser().role === 'ADMIN';
         
         // Create the row
         const row = document.createElement('tr');
@@ -1110,6 +1115,11 @@ function displayCharacterPlus(charactersWithSpecials, allSpecialCards = [], allA
                     <button class="add-to-deck-btn" onclick="showDeckSelection('character', '${currentCharacterImage.id}', '${currentCharacterName.replace(/'/g, "\\'")}', this)" style="margin-top: 4px;">
                         +Deck
                     </button>
+                    ${isAdmin ? `
+                    <button class="add-to-collection-btn" onclick="addCardToCollectionFromDatabase('${currentCharacterImage.id}', 'character')" style="margin-top: 4px; display: block;">
+                        +Collection
+                    </button>
+                    ` : ''}
                 </div>
             </td>
             ${specialCardColumns}

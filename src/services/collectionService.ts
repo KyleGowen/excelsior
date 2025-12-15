@@ -1,4 +1,4 @@
-import { CollectionsRepository, CollectionCardWithDetails } from '../database/collectionsRepository';
+import { CollectionsRepository, CollectionCardWithDetails, CollectionHistory } from '../database/collectionsRepository';
 
 export class CollectionService {
   constructor(private collectionsRepository: CollectionsRepository) {}
@@ -245,6 +245,14 @@ export class CollectionService {
    */
   async verifyCardExists(cardId: string, cardType: string): Promise<boolean> {
     return await this.collectionsRepository.verifyCardExists(cardId, cardType);
+  }
+
+  /**
+   * Get collection history for a collection
+   * Returns history entries ordered by created_at DESC (most recent first)
+   */
+  async getCollectionHistory(collectionId: string, limit?: number): Promise<CollectionHistory[]> {
+    return await this.collectionsRepository.getCollectionHistory(collectionId, limit);
   }
 }
 

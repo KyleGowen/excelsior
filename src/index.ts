@@ -1759,6 +1759,30 @@ app.delete('/api/collections/me/cards/:cardId', authenticateUser, async (req: an
   }
 });
 
+// Get collection history
+app.get('/api/collections/me/history', authenticateUser, async (req: any, res) => {
+  try {
+    // Check if user is ADMIN
+    if (req.user.role !== 'ADMIN') {
+      return res.status(403).json({ success: false, error: 'Only ADMIN users can access collection history' });
+    }
+
+    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
+    
+    if (limit !== undefined && (isNaN(limit) || limit < 1)) {
+      return res.status(400).json({ success: false, error: 'limit must be a positive integer' });
+    }
+
+    const collectionId = await collectionService.getOrCreateCollection(req.user.id);
+    const history = await collectionService.getCollectionHistory(collectionId, limit);
+    
+    res.json({ success: true, data: history });
+  } catch (error) {
+    console.error('Error getting collection history:', error);
+    res.status(500).json({ success: false, error: 'Failed to get collection history' });
+  }
+});
+
 // Main page route - displays characters table
 // Main application route - serves the app with login modal
 app.get('/', (req, res) => {
