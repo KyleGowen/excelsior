@@ -6,7 +6,8 @@ import * as path from 'path';
  * Provides caching for background image listings
  */
 export class DeckBackgroundService {
-  private readonly BACKGROUNDS_DIR = path.join(__dirname, '../resources/cards/images/backgrounds');
+  // Use process.cwd() to get project root, works in both dev and production
+  private readonly BACKGROUNDS_DIR = path.join(process.cwd(), 'src/resources/cards/images/backgrounds');
   private cachedBackgrounds: string[] | null = null;
   private cacheTimestamp: number = 0;
   private readonly CACHE_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
@@ -33,9 +34,12 @@ export class DeckBackgroundService {
         .sort();
       
       this.cacheTimestamp = now;
+      console.log(`DeckBackgroundService: Found ${this.cachedBackgrounds.length} background images`);
       return this.cachedBackgrounds;
     } catch (error) {
       console.error('Error reading backgrounds directory:', error);
+      console.error('Backgrounds directory path:', this.BACKGROUNDS_DIR);
+      console.error('Current working directory:', process.cwd());
       return [];
     }
   }
@@ -50,7 +54,8 @@ export class DeckBackgroundService {
     }
 
     try {
-      const projectRoot = path.join(__dirname, '../..'); // Go up from dist/services or src/services to project root
+      // Use process.cwd() to get project root, works in both dev and production
+      const projectRoot = process.cwd();
       const fullPath = path.join(projectRoot, imagePath); // Resolves "src/resources/..." from project root
       
       if (!imagePath.includes('backgrounds')) {
@@ -62,7 +67,7 @@ export class DeckBackgroundService {
       console.log('Background path validation: Valid path:', fullPath);
       return true;
     } catch (error) {
-      console.error('Background path validation failed:', imagePath, 'Resolved to:', path.join(__dirname, '../..', imagePath), error);
+      console.error('Background path validation failed:', imagePath, 'Resolved to:', path.join(process.cwd(), imagePath), error);
       return false;
     }
   }
