@@ -52,7 +52,6 @@ function switchTabFallback(tabName) {
 
     // Also check if this is a call to switch to characters tab
     if (tabName === 'characters') {
-
         // Check if this is happening after a filter interaction
     }
 
@@ -174,6 +173,7 @@ function switchTabFallback(tabName) {
     } else if (tabName === 'power-cards') {
         setupPowerCardsSearch();
         loadPowerCards();
+    }
 
     // Disable "Add to Deck" buttons for guest users immediately
     disableAddToDeckButtonsImmediate();

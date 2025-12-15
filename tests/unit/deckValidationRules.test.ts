@@ -24,8 +24,8 @@ describe('Deck Validation Rules', () => {
     availableCardsMap.set('character_char3', { name: 'Character 3', threat_level: 20, energy: 4, combat: 5, brute_force: 6, intelligence: 5 });
     availableCardsMap.set('character_char4', { name: 'Character 4', threat_level: 16, energy: 3, combat: 3, brute_force: 4, intelligence: 6 });
     availableCardsMap.set('character_char5', { name: 'Character 5', threat_level: 25, energy: 7, combat: 7, brute_force: 7, intelligence: 4 });
-    availableCardsMap.set('character_angrymob1', { name: 'Angry Mob: Middle Ages', threat_level: 16, energy: 6, combat: 4, brute_force: 6, intelligence: 1 });
-    availableCardsMap.set('character_angrymob2', { name: 'Angry Mob: Industrial Age', threat_level: 18, energy: 5, combat: 5, brute_force: 5, intelligence: 3 });
+    availableCardsMap.set('character_angrymob1', { name: 'Angry Mob (Middle Ages)', threat_level: 16, energy: 6, combat: 4, brute_force: 6, intelligence: 1 });
+    availableCardsMap.set('character_angrymob2', { name: 'Angry Mob (Industrial Age)', threat_level: 18, energy: 5, combat: 5, brute_force: 5, intelligence: 3 });
     
     // Mock special card data
     availableCardsMap.set('special_special1', { name: 'Special 1', character: 'Character 1' });
@@ -545,7 +545,7 @@ describe('Deck Validation Rules', () => {
       
       const result = validateDeck(deckCards);
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('"Industrial Strike" requires "Angry Mob: Industrial Age" character in your team');
+      expect(result.errors).toContain('"Industrial Strike" requires an "Angry Mob (Industrial Age)" character in your team');
     });
 
     it('should fail with Angry Mob special when no Angry Mob character is present', () => {

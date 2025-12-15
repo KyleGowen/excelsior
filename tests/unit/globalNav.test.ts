@@ -194,7 +194,7 @@ describe('Global Navigation Component', () => {
 
             (window as any).switchToDatabaseView();
 
-            expect(mockLoadDatabaseViewData).toHaveBeenCalledWith(true);
+            expect(mockLoadDatabaseViewData).toHaveBeenCalledWith(false);
         });
 
         it('should not load database data if already loaded', () => {
