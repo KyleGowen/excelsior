@@ -11148,10 +11148,29 @@
             });
         }
 
+        // Helper function to generate OPD key that groups all art versions
+        function getOPDKeyForDimming(cardData, cardType) {
+            if (!cardData) return null;
+            
+            // For special cards, use name + character_name + universe to group all art versions
+            if (cardType === 'special' && cardData.character_name) {
+                const universe = cardData.universe || 'ERB';
+                return `${cardType}_${cardData.name}_${cardData.character_name}_${universe}`;
+            }
+            
+            // For other cards, use name + universe to group all art versions
+            const name = cardData.name || cardData.card_name || '';
+            const universe = cardData.universe || '';
+            if (universe) {
+                return `${cardType}_${name}_${universe}`;
+            }
+            return `${cardType}_${name}`;
+        }
+        
         // Function to update One Per Deck card dimming status
         function updateOnePerDeckLimitStatus() {
-            // Get all One Per Deck cards currently in the deck
-            const onePerDeckCardsInDeck = new Set();
+            // Get all One Per Deck cards currently in the deck (using OPD keys to group art versions)
+            const onePerDeckKeysInDeck = new Set();
             window.deckEditorCards.forEach(card => {
                 let cardData = window.availableCardsMap.get(card.cardId);
                 
@@ -11167,7 +11186,10 @@
                 }
                 
                 if (cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true)) {
-                    onePerDeckCardsInDeck.add(card.cardId);
+                    const opdKey = getOPDKeyForDimming(cardData, card.type);
+                    if (opdKey) {
+                        onePerDeckKeysInDeck.add(opdKey);
+                    }
                 }
             });
             
@@ -11193,7 +11215,8 @@
                     }
                     
                     const isOnePerDeck = cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
-                    const isInDeck = onePerDeckCardsInDeck.has(cardId);
+                    const opdKey = isOnePerDeck ? getOPDKeyForDimming(cardData, cardType) : null;
+                    const isInDeck = opdKey ? onePerDeckKeysInDeck.has(opdKey) : false;
                     
                     // For basic-universe cards, also check if the card is in deckEditorCards by matching cardId and type
                     let isBasicUniverseInDeck = false;
@@ -13033,6 +13056,48 @@
          * Make it globally accessible
          */
         window.showAlternateArtSelectionModal = function showAlternateArtSelectionModal(cardType, cardName, allCards) {
+            // Check if this card is One Per Deck and already in deck (check all art versions)
+            // Get card data from first card to check OPD status
+            const firstCardData = window.availableCardsMap.get(allCards[0].id);
+            const isOnePerDeck = firstCardData && (firstCardData.one_per_deck === true || firstCardData.is_one_per_deck === true);
+            
+            let isAlreadyInDeck = false;
+            if (isOnePerDeck) {
+                // Check if ANY art version of this card is already in the deck
+                // For special cards, check by name + character_name
+                if (cardType === 'special' && firstCardData && firstCardData.character_name) {
+                    isAlreadyInDeck = window.deckEditorCards.some(deckCard => {
+                        if (deckCard.type !== 'special') return false;
+                        const deckCardData = window.availableCardsMap.get(deckCard.cardId);
+                        if (!deckCardData) return false;
+                        return deckCardData.name === firstCardData.name && 
+                               deckCardData.character_name === firstCardData.character_name &&
+                               (deckCardData.universe || 'ERB') === (firstCardData.universe || 'ERB');
+                    });
+                } else {
+                    // For other cards, check by name + universe
+                    const cardNameToCheck = firstCardData?.name || firstCardData?.card_name || cardName;
+                    const cardUniverse = firstCardData?.universe || '';
+                    isAlreadyInDeck = window.deckEditorCards.some(deckCard => {
+                        if (deckCard.type !== cardType) return false;
+                        const deckCardData = window.availableCardsMap.get(deckCard.cardId);
+                        if (!deckCardData) return false;
+                        const deckCardName = deckCardData.name || deckCardData.card_name || '';
+                        const deckCardUniverse = deckCardData.universe || '';
+                        if (cardUniverse && deckCardUniverse) {
+                            return deckCardName === cardNameToCheck && deckCardUniverse === cardUniverse;
+                        }
+                        return deckCardName === cardNameToCheck;
+                    });
+                }
+            }
+            
+            // If card is already in deck and is OPD, show error and don't open modal
+            if (isAlreadyInDeck && isOnePerDeck) {
+                showNotification(`Cannot add more than 1 copy of "${cardName}" - One Per Deck`, 'error');
+                return;
+            }
+            
             // Create modal overlay (uses CSS class)
             const overlay = document.createElement('div');
             overlay.className = 'alternate-art-modal';
@@ -13069,8 +13134,47 @@
                 cardOption.appendChild(img);
                 cardOption.appendChild(label);
                 
-                // Add click handler
+                // Add click handler - validate OPD before adding
                 cardOption.addEventListener('click', () => {
+                    // Double-check OPD before adding (in case deck changed)
+                    const cardData = window.availableCardsMap.get(card.id);
+                    const isOPD = cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
+                    
+                    if (isOPD) {
+                        // Check if ANY art version is already in deck
+                        let alreadyInDeck = false;
+                        if (cardType === 'special' && cardData && cardData.character_name) {
+                            alreadyInDeck = window.deckEditorCards.some(deckCard => {
+                                if (deckCard.type !== 'special') return false;
+                                const deckCardData = window.availableCardsMap.get(deckCard.cardId);
+                                if (!deckCardData) return false;
+                                return deckCardData.name === cardData.name && 
+                                       deckCardData.character_name === cardData.character_name &&
+                                       (deckCardData.universe || 'ERB') === (cardData.universe || 'ERB');
+                            });
+                        } else {
+                            const cardNameToCheck = cardData?.name || cardData?.card_name || cardName;
+                            const cardUniverse = cardData?.universe || '';
+                            alreadyInDeck = window.deckEditorCards.some(deckCard => {
+                                if (deckCard.type !== cardType) return false;
+                                const deckCardData = window.availableCardsMap.get(deckCard.cardId);
+                                if (!deckCardData) return false;
+                                const deckCardName = deckCardData.name || deckCardData.card_name || '';
+                                const deckCardUniverse = deckCardData.universe || '';
+                                if (cardUniverse && deckCardUniverse) {
+                                    return deckCardName === cardNameToCheck && deckCardUniverse === cardUniverse;
+                                }
+                                return deckCardName === cardNameToCheck;
+                            });
+                        }
+                        
+                        if (alreadyInDeck) {
+                            showNotification(`Cannot add more than 1 copy of "${cardName}" - One Per Deck`, 'error');
+                            document.body.removeChild(overlay);
+                            return;
+                        }
+                    }
+                    
                     addCardToEditor(cardType, card.id, card.name);
                     document.body.removeChild(overlay);
                 });
@@ -13380,10 +13484,34 @@
             const cardData = window.availableCardsMap.get(cardId);
             const isOnePerDeck = cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
             if (isOnePerDeck) {
-                // Check if we already have this "One Per Deck" card in the deck
-                const existingOnePerDeckCard = window.deckEditorCards.find(card => 
-                    card.type === cardType && card.cardId === cardId
-                );
+                // Check if ANY art version of this card is already in the deck
+                // For special cards, check by name + character_name + universe
+                let existingOnePerDeckCard = null;
+                if (cardType === 'special' && cardData && cardData.character_name) {
+                    existingOnePerDeckCard = window.deckEditorCards.find(deckCard => {
+                        if (deckCard.type !== 'special') return false;
+                        const deckCardData = window.availableCardsMap.get(deckCard.cardId);
+                        if (!deckCardData) return false;
+                        return deckCardData.name === cardData.name && 
+                               deckCardData.character_name === cardData.character_name &&
+                               (deckCardData.universe || 'ERB') === (cardData.universe || 'ERB');
+                    });
+                } else {
+                    // For other cards, check by name + universe
+                    const cardNameToCheck = cardData?.name || cardData?.card_name || cardName;
+                    const cardUniverse = cardData?.universe || '';
+                    existingOnePerDeckCard = window.deckEditorCards.find(deckCard => {
+                        if (deckCard.type !== cardType) return false;
+                        const deckCardData = window.availableCardsMap.get(deckCard.cardId);
+                        if (!deckCardData) return false;
+                        const deckCardName = deckCardData.name || deckCardData.card_name || '';
+                        const deckCardUniverse = deckCardData.universe || '';
+                        if (cardUniverse && deckCardUniverse) {
+                            return deckCardName === cardNameToCheck && deckCardUniverse === cardUniverse;
+                        }
+                        return deckCardName === cardNameToCheck;
+                    });
+                }
                 
                 if (existingOnePerDeckCard) {
                     showNotification(`Cannot add more than 1 copy of "${cardName}" - One Per Deck`, 'error');
