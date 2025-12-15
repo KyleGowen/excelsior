@@ -1,0 +1,141 @@
+# Cursor Rules for Collection Integration Tests
+
+## Documentation Requirements
+
+**ALWAYS add documentation when creating new integration tests in this directory.**
+
+### Required Documentation Elements
+
+1. **File Header Comment**
+   - Every test file MUST start with a JSDoc-style comment block
+   - Include:
+     - Brief description of what the test file covers
+     - List of key features/scenarios tested
+     - Any important notes about test setup or data requirements
+
+2. **Test Suite Documentation**
+   - Each `describe` block should have a clear, descriptive name
+   - Add comments for complex test scenarios explaining the "why"
+
+3. **README Updates**
+   - When adding a new test file, update `README.md`:
+     - Add the file to the "Test Organization" section
+     - Document what it covers
+     - List key test scenarios
+
+### Documentation Template
+
+```typescript
+/**
+ * Integration tests for [Feature Name]
+ * 
+ * Tests [brief description]:
+ * - [Feature 1]
+ * - [Feature 2]
+ * - [Feature 3]
+ * 
+ * Key scenarios covered:
+ * - [Scenario 1]
+ * - [Scenario 2]
+ */
+
+describe('Feature Name Integration Tests', () => {
+  // Test implementation
+});
+```
+
+## Code Style Guidelines
+
+1. **Test Organization**
+   - Group related tests in `describe` blocks
+   - Use descriptive test names that explain what is being tested
+   - Follow the pattern: "should [expected behavior] when [condition]"
+
+2. **Test Data**
+   - Use unique timestamps for test user names to avoid conflicts
+   - Always track test users with `integrationTestUtils.trackTestUser()`
+   - Clean up test data in `beforeEach` or `afterAll`
+
+3. **Assertions**
+   - Use specific assertions (e.g., `toBe(200)` not `toBeGreaterThan(199)`)
+   - Include meaningful error messages in assertions when helpful
+   - Verify both success status and response data structure
+
+4. **Error Handling**
+   - Test both success and error cases
+   - Verify error messages are user-friendly
+   - Test edge cases and boundary conditions
+
+## Test File Naming
+
+- Use kebab-case: `collection-feature-name.test.ts`
+- Be descriptive: `collection-api-endpoints.test.ts` not `collection.test.ts`
+- Group related tests in the same file
+
+## Best Practices
+
+1. **Isolation**: Each test should be independent and not rely on other tests
+2. **Cleanup**: Always clean up test data to avoid affecting other tests
+3. **Realistic Data**: Use real card IDs from the database when possible
+4. **Performance**: Use `beforeAll` for expensive setup, `beforeEach` for test-specific setup
+5. **Readability**: Prefer clear, verbose test names over clever abbreviations
+
+## When to Add Documentation
+
+- ✅ Creating a new test file
+- ✅ Adding a new test suite (`describe` block) for a major feature
+- ✅ Adding complex test scenarios that need explanation
+- ✅ Documenting test data requirements or setup steps
+- ✅ Explaining why a test exists (e.g., regression test for a bug)
+
+- ❌ Simple, self-explanatory test cases
+- ❌ Obvious assertions that don't need explanation
+- ❌ Standard setup/teardown code
+
+## Examples
+
+### Good Documentation
+
+```typescript
+/**
+ * Integration tests for Collection API Endpoints
+ * 
+ * Tests all CRUD operations for the collection feature:
+ * - GET /api/collections/me - Get current user's collection
+ * - POST /api/collections/me/cards - Add card to collection
+ * 
+ * All endpoints require ADMIN role.
+ */
+
+describe('Collection API Endpoints', () => {
+  describe('POST /api/collections/me/cards', () => {
+    // Tests for adding cards
+    it('should add character card to collection', async () => {
+      // Test implementation
+    });
+  });
+});
+```
+
+### Insufficient Documentation
+
+```typescript
+// Bad: No file header, no context
+describe('Collection Tests', () => {
+  it('test 1', async () => {
+    // Test implementation
+  });
+});
+```
+
+## Review Checklist
+
+Before committing new tests, ensure:
+
+- [ ] File has a descriptive header comment
+- [ ] Test names clearly describe what is being tested
+- [ ] Test data is properly cleaned up
+- [ ] README.md is updated if adding a new test file
+- [ ] Tests follow existing patterns and conventions
+- [ ] Error cases are tested, not just success cases
+
