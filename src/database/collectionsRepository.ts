@@ -403,13 +403,16 @@ export class CollectionsRepository {
 
   /**
    * Update card quantity in collection
+   * If imagePath doesn't match an existing row, finds the existing row and updates its image_path
+   * If oldImagePath is provided, uses it to find the exact row to update
    */
   async updateCardQuantity(
     collectionId: string,
     cardId: string,
     cardType: string,
     quantity: number,
-    imagePath: string
+    imagePath: string,
+    oldImagePath?: string
   ): Promise<CollectionCard | null> {
     if (quantity < 0) {
       throw new Error('Quantity cannot be negative');
@@ -425,20 +428,124 @@ export class CollectionsRepository {
 
     const client = await this.pool.connect();
     try {
+      await client.query('BEGIN');
+
       if (quantity === 0) {
-        // Remove card if quantity is 0
-        const deleteResult = await client.query(
+        // Remove card if quantity is 0 - try to find by image_path first, then by card_id/card_type
+        let deleteResult = await client.query(
           'DELETE FROM collection_cards WHERE collection_id = $1 AND card_id = $2 AND card_type = $3 AND image_path = $4',
           [collectionId, cardId, cardType, imagePath]
         );
+        
+        // If no row found with the new image_path, try to find any row for this card
+        if (deleteResult.rowCount === 0) {
+          const existingRows = await client.query(
+            'SELECT id, image_path FROM collection_cards WHERE collection_id = $1 AND card_id = $2 AND card_type = $3',
+            [collectionId, cardId, cardType]
+          );
+          
+          if (existingRows.rows.length > 0) {
+            // Delete the first matching row (or all if user wants to remove all variants)
+            deleteResult = await client.query(
+              'DELETE FROM collection_cards WHERE collection_id = $1 AND card_id = $2 AND card_type = $3 LIMIT 1',
+              [collectionId, cardId, cardType]
+            );
+          }
+        }
+        
+        await client.query('COMMIT');
         console.log('🟠 [Repo] Removed card because quantity set to 0, rows deleted:', deleteResult.rowCount);
         return null;
       }
 
-      const result = await client.query(
-        'UPDATE collection_cards SET quantity = $1, updated_at = NOW() WHERE collection_id = $2 AND card_id = $3 AND card_type = $4 AND image_path = $5 RETURNING *',
-        [quantity, collectionId, cardId, cardType, imagePath]
-      );
+      // If oldImagePath is provided, use it to find the exact row to update
+      if (oldImagePath && oldImagePath !== imagePath) {
+        console.log('🟠 [Repo] Updating with oldImagePath to find exact row:', {
+          oldImagePath,
+          newImagePath: imagePath
+        });
+        
+        // Try to find row with old image path first
+        const oldPathResult = await client.query(
+          'SELECT id FROM collection_cards WHERE collection_id = $1 AND card_id = $2 AND card_type = $3 AND image_path = $4',
+          [collectionId, cardId, cardType, oldImagePath]
+        );
+        
+        if (oldPathResult.rows.length > 0) {
+          // Found the row with old path, update it with new path and quantity
+          result = await client.query(
+            'UPDATE collection_cards SET image_path = $1, quantity = $2, updated_at = NOW() WHERE collection_id = $3 AND card_id = $4 AND card_type = $5 AND image_path = $6 RETURNING *',
+            [imagePath, quantity, collectionId, cardId, cardType, oldImagePath]
+          );
+        } else {
+          // Old path not found, fall through to normal logic
+          console.log('🟠 [Repo] Row with oldImagePath not found, using normal update logic');
+        }
+      }
+
+      // Try to update with the new image_path first (exact match)
+      if (!result || result.rows.length === 0) {
+        result = await client.query(
+          'UPDATE collection_cards SET quantity = $1, updated_at = NOW() WHERE collection_id = $2 AND card_id = $3 AND card_type = $4 AND image_path = $5 RETURNING *',
+          [quantity, collectionId, cardId, cardType, imagePath]
+        );
+      }
+
+      // If no row found with the new image_path, find existing row and update its image_path
+      if (result.rows.length === 0) {
+        console.log('🟠 [Repo] No row found with new image_path, searching for existing rows...');
+        
+        // Get all existing rows for this card to see what we're working with
+        const allExistingRows = await client.query(
+          'SELECT id, image_path, quantity, created_at FROM collection_cards WHERE collection_id = $1 AND card_id = $2 AND card_type = $3 ORDER BY created_at ASC',
+          [collectionId, cardId, cardType]
+        );
+
+        console.log('🟠 [Repo] Found existing rows:', allExistingRows.rows.map(r => ({
+          id: r.id,
+          image_path: r.image_path,
+          quantity: r.quantity
+        })));
+
+        if (allExistingRows.rows.length > 0) {
+          // Check if a row with the new image_path already exists (maybe with different case or whitespace)
+          const normalizedNewPath = imagePath.trim();
+          const checkResult = await client.query(
+            'SELECT id, image_path FROM collection_cards WHERE collection_id = $1 AND card_id = $2 AND card_type = $3 AND TRIM(image_path) = $4',
+            [collectionId, cardId, cardType, normalizedNewPath]
+          );
+
+          if (checkResult.rows.length > 0) {
+            // Row with new image_path already exists (maybe with different whitespace), update its quantity
+            console.log('🟠 [Repo] Found row with normalized image_path match, updating quantity');
+            result = await client.query(
+              'UPDATE collection_cards SET quantity = $1, updated_at = NOW() WHERE collection_id = $2 AND card_id = $3 AND card_type = $4 AND TRIM(image_path) = $5 RETURNING *',
+              [quantity, collectionId, cardId, cardType, normalizedNewPath]
+            );
+          } else {
+            // No row with new image_path exists, update the first existing row's image_path and quantity
+            const existingRow = allExistingRows.rows[0];
+            const oldImagePath = existingRow.image_path;
+            
+            console.log('🟠 [Repo] Updating existing row with new image_path:', {
+              rowId: existingRow.id,
+              oldImagePath,
+              newImagePath: imagePath,
+              oldQuantity: existingRow.quantity,
+              newQuantity: quantity
+            });
+
+            // Update the existing row's image_path and quantity
+            // Use the row ID to ensure we update the correct row
+            result = await client.query(
+              'UPDATE collection_cards SET image_path = $1, quantity = $2, updated_at = NOW() WHERE id = $3 RETURNING *',
+              [imagePath, quantity, existingRow.id]
+            );
+          }
+        }
+      }
+
+      await client.query('COMMIT');
 
       if (result.rows.length === 0) {
         console.warn('🟠 [Repo] updateCardQuantity found no rows to update. Query params:', {
@@ -453,6 +560,7 @@ export class CollectionsRepository {
       console.log('🟠 [Repo] updateCardQuantity result:', result.rows[0]);
       return result.rows[0];
     } catch (error) {
+      await client.query('ROLLBACK');
       console.error('🟠 [Repo] Error in updateCardQuantity:', error);
       throw error;
     } finally {
