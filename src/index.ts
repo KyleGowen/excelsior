@@ -1341,10 +1341,22 @@ app.put('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
     console.log('Attempting to replace cards in deck:', req.params.id);
     console.log('Cards to replace:', JSON.stringify(cards, null, 2));
     
-    const success = await deckRepository.replaceAllCardsInDeck(req.params.id, cards);
-    if (!success) {
-      console.error('Failed to replace cards in deck:', req.params.id);
-      return res.status(404).json({ success: false, error: 'Deck not found or failed to replace cards' });
+    try {
+      const success = await deckRepository.replaceAllCardsInDeck(req.params.id, cards);
+      if (!success) {
+        console.error('Failed to replace cards in deck:', req.params.id);
+        return res.status(404).json({ success: false, error: 'Deck not found or failed to replace cards' });
+      }
+    } catch (error: any) {
+      console.error('Error in replaceAllCardsInDeck:', error);
+      console.error('Error stack:', error?.stack);
+      console.error('Deck ID:', req.params.id);
+      console.error('Cards being replaced:', JSON.stringify(cards, null, 2));
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Failed to replace cards in deck',
+        details: error?.message || String(error)
+      });
     }
     
     console.log('Successfully replaced cards in deck:', req.params.id);

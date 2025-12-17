@@ -815,12 +815,24 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       }
       
       return true;
-    } catch (error) {
+    } catch (error: any) {
       // Rollback on error
-      await client.query('ROLLBACK');
+      try {
+        await client.query('ROLLBACK');
+      } catch (rollbackError) {
+        console.error('Error rolling back transaction:', rollbackError);
+      }
       console.error('Error replacing all cards in deck:', error);
+      console.error('Error message:', error?.message);
+      console.error('Error code:', error?.code);
+      console.error('Error detail:', error?.detail);
+      console.error('Error constraint:', error?.constraint);
       console.error('Deck ID:', deckId);
       console.error('Cards being inserted:', JSON.stringify(cards, null, 2));
+      // Log first few cards that might be problematic
+      if (cards && cards.length > 0) {
+        console.error('First 5 cards:', JSON.stringify(cards.slice(0, 5), null, 2));
+      }
       return false;
     } finally {
       client.release();
