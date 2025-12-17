@@ -228,6 +228,7 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             }
             
             // Convert database type format to frontend format
+            // Also detect if cardId is an alternate art and set selectedAlternateCardId accordingly
             window.deckEditorCards = window.deckEditorCards.map(card => {
                 let convertedType = card.type;
                 if (card.type === 'ally_universe') {
@@ -237,7 +238,13 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
                 } else if (card.type === 'advanced_universe') {
                     convertedType = 'advanced-universe';
                 }
-                return { ...card, type: convertedType };
+                
+                const convertedCard = { ...card, type: convertedType };
+                
+                // Note: We'll process alternate art detection after availableCardsMap is loaded
+                // This will be done in a separate step after loadAvailableCards completes
+                
+                return convertedCard;
             });
             
             // Determine read-only mode based on URL parameter and ownership
@@ -303,6 +310,221 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
                 }
             } else {
                 console.error('[DeckEditor] ❌ loadAvailableCards function not found!');
+            }
+            
+            // After available cards are loaded, process deck cards to detect alternate art selections
+            // If a cardId is an alternate art card, find the base card and set selectedAlternateCardId
+            if (window.availableCardsMap && window.deckEditorCards) {
+                window.deckEditorCards = window.deckEditorCards.map(card => {
+                    // Check if this cardId corresponds to an alternate art card
+                    const cardData = window.availableCardsMap.get(card.cardId);
+                    if (!cardData) {
+                        console.warn('[DeckEditor] Card not found in availableCardsMap:', card.cardId);
+                        return card;
+                    }
+                    
+                    // Check if this is an alternate art by checking image path
+                    const imagePath = cardData.image_path || cardData.image || '';
+                    const isAlternateArt = imagePath && imagePath.includes('/alternate/');
+                    
+                    console.log('[DeckEditor] Processing card for alternate art detection:', {
+                        cardId: card.cardId,
+                        cardType: card.type,
+                        imagePath: imagePath,
+                        isAlternateArt: isAlternateArt,
+                        hasSelectedAlternateCardId: !!card.selectedAlternateCardId
+                    });
+                    
+                    if (isAlternateArt) {
+                        // This cardId is an alternate art, find the base card
+                        let baseCardId = null;
+                        let baseCard = null;
+                        
+                        // Find base card by searching for cards with same name/universe but non-alternate image
+                        if (card.type === 'character') {
+                            const name = (cardData.name || '').trim();
+                            const set = (cardData.set || 'ERB').trim() || 'ERB';
+                            
+                            window.availableCardsMap.forEach((candidateCard, candidateId) => {
+                                const candidateType = candidateCard.cardType || candidateCard.type || '';
+                                if ((candidateType === 'character' || candidateId.startsWith('char_')) &&
+                                    (candidateCard.name || '').trim() === name &&
+                                    (candidateCard.set || 'ERB').trim() === set) {
+                                    const candidateImagePath = candidateCard.image_path || candidateCard.image || '';
+                                    if (!candidateImagePath.includes('/alternate/')) {
+                                        baseCardId = candidateId;
+                                        baseCard = candidateCard;
+                                    }
+                                }
+                            });
+                        } else if (card.type === 'special') {
+                            const name = (cardData.name || '').trim();
+                            const characterName = (cardData.character_name || '').trim();
+                            const universe = (cardData.universe || 'ERB').trim() || 'ERB';
+                            
+                            window.availableCardsMap.forEach((candidateCard, candidateId) => {
+                                const candidateType = candidateCard.cardType || candidateCard.type || '';
+                                if ((candidateType === 'special' || candidateId.startsWith('special_')) &&
+                                    (candidateCard.name || '').trim() === name &&
+                                    (candidateCard.character_name || '').trim() === characterName &&
+                                    (candidateCard.universe || 'ERB').trim() === universe) {
+                                    const candidateImagePath = candidateCard.image_path || candidateCard.image || '';
+                                    if (!candidateImagePath.includes('/alternate/')) {
+                                        baseCardId = candidateId;
+                                        baseCard = candidateCard;
+                                    }
+                                }
+                            });
+                        } else if (card.type === 'power') {
+                            const value = String(cardData.value || '').trim();
+                            const powerType = (cardData.power_type || '').trim();
+                            
+                            window.availableCardsMap.forEach((candidateCard, candidateId) => {
+                                const candidateType = candidateCard.cardType || candidateCard.type || '';
+                                if ((candidateType === 'power' || candidateId.startsWith('power_')) &&
+                                    String(candidateCard.value || '').trim() === value &&
+                                    (candidateCard.power_type || '').trim() === powerType) {
+                                    const candidateImagePath = candidateCard.image_path || candidateCard.image || '';
+                                    if (!candidateImagePath.includes('/alternate/')) {
+                                        baseCardId = candidateId;
+                                        baseCard = candidateCard;
+                                    }
+                                }
+                            });
+                        }
+                        
+                        if (baseCardId && baseCard) {
+                            // Found base card, set selectedAlternateCardId to the alternate card ID
+                            console.log('[DeckEditor] Detected alternate art card, setting selectedAlternateCardId:', {
+                                originalCardId: card.cardId,
+                                baseCardId: baseCardId,
+                                alternateCardId: card.cardId,
+                                cardType: card.type
+                            });
+                            
+                            return {
+                                ...card,
+                                cardId: baseCardId, // Use base card ID for grouping
+                                selectedAlternateCardId: card.cardId, // Store alternate card ID as selected
+                                // For quantity > 1, initialize selectedAlternateCardIds array
+                                selectedAlternateCardIds: card.quantity > 1 ? Array(card.quantity).fill(card.cardId) : undefined
+                            };
+                        } else {
+                            // Could not find base card - this might mean the cardId IS the base card
+                            // or it's an alternate art but we can't find the base
+                            // In this case, keep the cardId as-is but still set selectedAlternateCardId
+                            // This handles edge cases where alternate arts might not have a clear base
+                            console.warn('[DeckEditor] Could not find base card for alternate art, keeping cardId as-is:', {
+                                cardId: card.cardId,
+                                cardType: card.type,
+                                imagePath: imagePath
+                            });
+                            
+                            // Still set selectedAlternateCardId to indicate this is the selected art
+                            // The cardId might already be correct (alternate art card ID)
+                            return {
+                                ...card,
+                                selectedAlternateCardId: card.cardId, // Mark as selected
+                                selectedAlternateCardIds: card.quantity > 1 ? Array(card.quantity).fill(card.cardId) : undefined
+                            };
+                        }
+                    }
+                    
+                    return card;
+                });
+                
+                // Consolidate multiple entries for the same base card with different alternate arts
+                // Only consolidate if there are actually multiple entries for the same base card
+                // Group by base cardId (after alternate art detection) and type
+                const cardGroups = new Map();
+                
+                window.deckEditorCards.forEach(card => {
+                    const key = `${card.type}_${card.cardId}`;
+                    if (!cardGroups.has(key)) {
+                        cardGroups.set(key, []);
+                    }
+                    cardGroups.get(key).push(card);
+                });
+                
+                // Only consolidate if there are multiple entries for the same base card
+                const needsConsolidation = Array.from(cardGroups.values()).some(group => group.length > 1);
+                
+                if (needsConsolidation) {
+                    const consolidatedCards = new Map();
+                    
+                    cardGroups.forEach((group, key) => {
+                        if (group.length === 1) {
+                            // Single entry, no consolidation needed - just ensure selectedAlternateCardIds is set if needed
+                            const card = group[0];
+                            const alternateId = card.selectedAlternateCardId || card.cardId;
+                            
+                            if (card.quantity > 1 && !card.selectedAlternateCardIds) {
+                                // Initialize array if quantity > 1
+                                card.selectedAlternateCardIds = Array(card.quantity).fill(alternateId);
+                                card.selectedAlternateCardId = undefined; // Clear single ID when using array
+                            } else if (card.quantity === 1 && !card.selectedAlternateCardId && alternateId !== card.cardId) {
+                                // Set selectedAlternateCardId if we have an alternate
+                                card.selectedAlternateCardId = alternateId;
+                            }
+                            
+                            consolidatedCards.set(key, card);
+                        } else {
+                            // Multiple entries - consolidate them
+                            const firstCard = group[0];
+                            const consolidated = {
+                                ...firstCard,
+                                quantity: 0,
+                                selectedAlternateCardIds: []
+                            };
+                            
+                            group.forEach(entry => {
+                                consolidated.quantity += entry.quantity;
+                                const alternateId = entry.selectedAlternateCardId || entry.cardId;
+                                
+                                // Add alternate ID for each instance
+                                for (let i = 0; i < entry.quantity; i++) {
+                                    consolidated.selectedAlternateCardIds.push(alternateId);
+                                }
+                            });
+                            
+                            // Set selectedAlternateCardId only if quantity is 1
+                            if (consolidated.quantity === 1 && consolidated.selectedAlternateCardIds.length > 0) {
+                                consolidated.selectedAlternateCardId = consolidated.selectedAlternateCardIds[0];
+                            } else {
+                                consolidated.selectedAlternateCardId = undefined;
+                            }
+                            
+                            consolidatedCards.set(key, consolidated);
+                        }
+                    });
+                    
+                    const beforeConsolidation = window.deckEditorCards.length;
+                    window.deckEditorCards = Array.from(consolidatedCards.values());
+                    
+                    console.log('[DeckEditor] Consolidated deck cards after alternate art detection:', {
+                        beforeConsolidation,
+                        afterConsolidation: window.deckEditorCards.length,
+                        cards: window.deckEditorCards.map(c => ({
+                            type: c.type,
+                            cardId: c.cardId,
+                            quantity: c.quantity,
+                            selectedAlternateCardId: c.selectedAlternateCardId,
+                            selectedAlternateCardIds: c.selectedAlternateCardIds
+                        }))
+                    });
+                } else {
+                    // No consolidation needed, but ensure selectedAlternateCardId is set correctly
+                    window.deckEditorCards = window.deckEditorCards.map(card => {
+                        if (card.selectedAlternateCardId) {
+                            // Already set, ensure selectedAlternateCardIds is initialized if quantity > 1
+                            if (card.quantity > 1 && !card.selectedAlternateCardIds) {
+                                card.selectedAlternateCardIds = Array(card.quantity).fill(card.selectedAlternateCardId);
+                                card.selectedAlternateCardId = undefined;
+                            }
+                        }
+                        return card;
+                    });
+                }
             }
             
             // Display deck cards after available cards are loaded
@@ -483,19 +705,73 @@ async function saveDeckChanges() {
         }
         
         // Prepare cards data for bulk replacement
-        const cardsData = window.deckEditorCards.map(card => {
-            const cardData = {
-                cardType: card.type,
-                cardId: card.cardId,
-                quantity: card.quantity
-            };
+        // For cards with quantity > 1, we need to create separate entries for each instance
+        // since each instance can have a different alternate art selection
+        const cardsData = [];
+        
+        window.deckEditorCards.forEach(card => {
+            // Determine which card ID(s) to save based on alternate art selections
+            // Priority: selectedAlternateCardIds array > selectedAlternateCardId > cardId
             
-            // Include exclude_from_draw flag if present (for Training cards with Spartan Training Ground)
-            if (card.exclude_from_draw !== undefined) {
-                cardData.exclude_from_draw = card.exclude_from_draw;
+            // Check if we have per-instance alternate selections
+            const hasPerInstanceSelections = card.selectedAlternateCardIds && 
+                                            Array.isArray(card.selectedAlternateCardIds) && 
+                                            card.selectedAlternateCardIds.length > 0 &&
+                                            card.selectedAlternateCardIds.some(id => id !== undefined && id !== null);
+            
+            if (hasPerInstanceSelections && card.quantity > 1) {
+                // Create an entry for each instance with its specific alternate art
+                for (let i = 0; i < card.quantity; i++) {
+                    // Use the selected alternate card ID for this instance, or fall back to selectedAlternateCardId or base cardId
+                    const cardIdForInstance = (card.selectedAlternateCardIds[i] !== undefined && card.selectedAlternateCardIds[i] !== null)
+                        ? card.selectedAlternateCardIds[i]
+                        : (card.selectedAlternateCardId || card.cardId);
+                    
+                    const instanceData = {
+                        cardType: card.type,
+                        cardId: cardIdForInstance,
+                        quantity: 1
+                    };
+                    
+                    // Include exclude_from_draw flag if present
+                    if (card.exclude_from_draw !== undefined) {
+                        instanceData.exclude_from_draw = card.exclude_from_draw;
+                    }
+                    
+                    cardsData.push(instanceData);
+                }
+            } else {
+                // Single instance or all instances use the same art
+                // Use selectedAlternateCardId if present, otherwise use cardId
+                // If cardId itself is an alternate art (detected during load), use it
+                const cardIdToSave = card.selectedAlternateCardId || card.cardId;
+                
+                console.log('💾 [saveDeckChanges] Preparing single card entry:', {
+                    type: card.type,
+                    cardId: card.cardId,
+                    selectedAlternateCardId: card.selectedAlternateCardId,
+                    cardIdToSave: cardIdToSave,
+                    quantity: card.quantity
+                });
+                
+                const cardData = {
+                    cardType: card.type,
+                    cardId: cardIdToSave,
+                    quantity: card.quantity
+                };
+                
+                // Include exclude_from_draw flag if present (for Training cards with Spartan Training Ground)
+                if (card.exclude_from_draw !== undefined) {
+                    cardData.exclude_from_draw = card.exclude_from_draw;
+                }
+                
+                cardsData.push(cardData);
             }
-            
-            return cardData;
+        });
+        
+        console.log('💾 [saveDeckChanges] Prepared cards data:', {
+            totalCards: cardsData.length,
+            cards: cardsData.map(c => ({ type: c.cardType, id: c.cardId, qty: c.quantity }))
         });
         
         // Bulk replace all cards in one atomic operation
