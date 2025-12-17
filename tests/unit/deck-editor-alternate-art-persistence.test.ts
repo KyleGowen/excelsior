@@ -875,4 +875,165 @@ describe('Deck Editor - Alternate Art Persistence', () => {
       expect(processed[0].selectedAlternateCardId).toBe('char_alt_path_only');
     });
   });
+
+  describe('Reserve Character with Alternate Art', () => {
+    beforeEach(() => {
+      // Mock the reserve character update logic
+      (global as any).updateReserveCharacterForAlternateArt = (
+        reserveCharacterId: string | null,
+        deckEditorCards: any[]
+      ): string | null => {
+        if (!reserveCharacterId) {
+          return null;
+        }
+
+        // Find the character card that matches the reserve_character ID
+        const reservedCharacterCard = deckEditorCards.find(
+          (card: any) => card.type === 'character' && card.cardId === reserveCharacterId
+        );
+
+        if (reservedCharacterCard) {
+          // If this character has alternate art selected, use the alternate card ID
+          const alternateCardId = reservedCharacterCard.selectedAlternateCardId ||
+            (reservedCharacterCard.selectedAlternateCardIds && reservedCharacterCard.selectedAlternateCardIds[0]) ||
+            null;
+
+          if (alternateCardId && alternateCardId !== reserveCharacterId) {
+            return alternateCardId;
+          }
+        } else {
+          // Reserve character not found in deck - check if it matches any alternate card IDs
+          for (const card of deckEditorCards) {
+            if (card.type === 'character') {
+              if (card.selectedAlternateCardId === reserveCharacterId ||
+                (card.selectedAlternateCardIds && card.selectedAlternateCardIds.includes(reserveCharacterId))) {
+                // Reserve character matches an alternate card ID, keep it as-is
+                return reserveCharacterId;
+              }
+            }
+          }
+        }
+
+        return reserveCharacterId;
+      };
+    });
+
+    it('should update reserve_character to use alternate card ID when character has alternate art', () => {
+      // Arrange
+      const deckEditorCards = [
+        {
+          cardId: 'char_base_wicked_witch',
+          type: 'character',
+          quantity: 1,
+          selectedAlternateCardId: 'char_alt1_wicked_witch'
+        },
+        {
+          cardId: 'char_base_hercules',
+          type: 'character',
+          quantity: 1
+        }
+      ];
+      const reserveCharacterId = 'char_base_wicked_witch'; // Base card ID
+
+      // Act
+      const updatedReserveId = (global as any).updateReserveCharacterForAlternateArt(
+        reserveCharacterId,
+        deckEditorCards
+      );
+
+      // Assert
+      expect(updatedReserveId).toBe('char_alt1_wicked_witch');
+    });
+
+    it('should keep reserve_character unchanged when character has no alternate art', () => {
+      // Arrange
+      const deckEditorCards = [
+        {
+          cardId: 'char_base_wicked_witch',
+          type: 'character',
+          quantity: 1
+        },
+        {
+          cardId: 'char_base_hercules',
+          type: 'character',
+          quantity: 1
+        }
+      ];
+      const reserveCharacterId = 'char_base_wicked_witch';
+
+      // Act
+      const updatedReserveId = (global as any).updateReserveCharacterForAlternateArt(
+        reserveCharacterId,
+        deckEditorCards
+      );
+
+      // Assert
+      expect(updatedReserveId).toBe('char_base_wicked_witch');
+    });
+
+    it('should keep reserve_character unchanged when it already matches alternate card ID', () => {
+      // Arrange
+      const deckEditorCards = [
+        {
+          cardId: 'char_base_wicked_witch',
+          type: 'character',
+          quantity: 1,
+          selectedAlternateCardId: 'char_alt1_wicked_witch'
+        }
+      ];
+      const reserveCharacterId = 'char_alt1_wicked_witch'; // Already alternate card ID
+
+      // Act
+      const updatedReserveId = (global as any).updateReserveCharacterForAlternateArt(
+        reserveCharacterId,
+        deckEditorCards
+      );
+
+      // Assert
+      expect(updatedReserveId).toBe('char_alt1_wicked_witch');
+    });
+
+    it('should return null when reserve_character is null', () => {
+      // Arrange
+      const deckEditorCards = [
+        {
+          cardId: 'char_base_wicked_witch',
+          type: 'character',
+          quantity: 1,
+          selectedAlternateCardId: 'char_alt1_wicked_witch'
+        }
+      ];
+
+      // Act
+      const updatedReserveId = (global as any).updateReserveCharacterForAlternateArt(
+        null,
+        deckEditorCards
+      );
+
+      // Assert
+      expect(updatedReserveId).toBeNull();
+    });
+
+    it('should handle reserve character with per-instance alternate selections', () => {
+      // Arrange
+      const deckEditorCards = [
+        {
+          cardId: 'char_base_wicked_witch',
+          type: 'character',
+          quantity: 2,
+          selectedAlternateCardIds: ['char_alt1_wicked_witch', 'char_alt2_wicked_witch']
+        }
+      ];
+      const reserveCharacterId = 'char_base_wicked_witch';
+
+      // Act
+      const updatedReserveId = (global as any).updateReserveCharacterForAlternateArt(
+        reserveCharacterId,
+        deckEditorCards
+      );
+
+      // Assert - should use first instance's alternate art
+      expect(updatedReserveId).toBe('char_alt1_wicked_witch');
+    });
+  });
 });

@@ -792,11 +792,49 @@ async function saveDeckChanges() {
         const validation = validateDeck(window.deckEditorCards);
         const isDeckValid = validation.errors.length === 0;
         
+        // Update reserve_character to use alternate card ID if the reserved character has alternate art selected
+        let reserveCharacterToSave = currentDeckData.metadata.reserve_character;
+        if (reserveCharacterToSave) {
+            // Find the character card that matches the reserve_character ID
+            const reservedCharacterCard = window.deckEditorCards.find(
+                card => card.type === 'character' && card.cardId === reserveCharacterToSave
+            );
+            
+            if (reservedCharacterCard) {
+                // If this character has alternate art selected, use the alternate card ID
+                const alternateCardId = reservedCharacterCard.selectedAlternateCardId || 
+                                      (reservedCharacterCard.selectedAlternateCardIds && reservedCharacterCard.selectedAlternateCardIds[0]) ||
+                                      null;
+                
+                if (alternateCardId && alternateCardId !== reserveCharacterToSave) {
+                    console.log('💾 [saveDeckChanges] Updating reserve_character to use alternate art:', {
+                        baseCardId: reserveCharacterToSave,
+                        alternateCardId: alternateCardId
+                    });
+                    reserveCharacterToSave = alternateCardId;
+                }
+            } else {
+                // Reserve character not found in deck - might have been removed
+                // Check if it matches any alternate card IDs
+                for (const card of window.deckEditorCards) {
+                    if (card.type === 'character') {
+                        if (card.selectedAlternateCardId === reserveCharacterToSave ||
+                            (card.selectedAlternateCardIds && card.selectedAlternateCardIds.includes(reserveCharacterToSave))) {
+                            // Reserve character matches an alternate card ID, keep it as-is
+                            console.log('💾 [saveDeckChanges] Reserve character matches alternate card ID, keeping:', reserveCharacterToSave);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
         // Save deck metadata (name, is_limited, is_valid, reserve_character, and background_image_path)
         const backgroundPath = window.deckBackgroundManager ? window.deckBackgroundManager.getSelectedBackground() : null;
         console.log('Saving deck with background_image_path:', backgroundPath);
         console.log('deckBackgroundManager exists:', !!window.deckBackgroundManager);
         console.log('currentDeckId:', currentDeckId);
+        console.log('💾 [saveDeckChanges] Saving reserve_character:', reserveCharacterToSave);
         
         const updateResponse = await fetch(`/api/decks/${currentDeckId}`, {
             method: 'PUT',
@@ -809,7 +847,7 @@ async function saveDeckChanges() {
                 description: '',
                 is_limited: isDeckLimited,
                 is_valid: isDeckValid,
-                reserve_character: currentDeckData.metadata.reserve_character,
+                reserve_character: reserveCharacterToSave,
                 background_image_path: backgroundPath
             })
         });
