@@ -13898,16 +13898,58 @@
                 const onclickFunction = `deselectReserveCharacter(${index})`;
                 return `<button class="${buttonClass}" onclick="${onclickFunction}">${buttonText}</button>`;
             }
-            // If a reserve character is selected (but this isn't it), hide the button
-            else if (hasReserveCharacter) {
-                return ''; 
-            }
-            // If no reserve character is selected, show "Select Reserve" button
+            // If a reserve character is selected but doesn't match any card, show "Select Reserve" on all cards
+            // This allows users to fix invalid reserve character references
+            // Otherwise, if reserve matches another card, hide the button
             else {
-                const buttonText = 'Select Reserve';
-                const buttonClass = 'reserve-btn';
-                const onclickFunction = `selectReserveCharacter('${cardId}', ${index})`;
-                return `<button class="${buttonClass}" onclick="${onclickFunction}">${buttonText}</button>`;
+                // Check if the reserve character matches any card in the deck
+                let reserveMatchesAnyCard = false;
+                if (hasReserveCharacter && window.deckEditorCards) {
+                    const normalizedReserveId = extractUUID(reserveCharacterId);
+                    for (const card of window.deckEditorCards) {
+                        if (card.type === 'character') {
+                            const normalizedCardId = extractUUID(card.cardId);
+                            if (normalizedReserveId === normalizedCardId) {
+                                reserveMatchesAnyCard = true;
+                                break;
+                            }
+                            if (card.selectedAlternateCardId) {
+                                const normalizedAltId = extractUUID(card.selectedAlternateCardId);
+                                if (normalizedReserveId === normalizedAltId) {
+                                    reserveMatchesAnyCard = true;
+                                    break;
+                                }
+                            }
+                            if (card.selectedAlternateCardIds && Array.isArray(card.selectedAlternateCardIds)) {
+                                for (const altId of card.selectedAlternateCardIds) {
+                                    const normalizedAltId = extractUUID(altId);
+                                    if (normalizedReserveId === normalizedAltId) {
+                                        reserveMatchesAnyCard = true;
+                                        break;
+                                    }
+                                }
+                                if (reserveMatchesAnyCard) break;
+                            }
+                        }
+                    }
+                }
+                
+                // If reserve doesn't match any card, show "Select Reserve" button (allows fixing invalid reference)
+                // If reserve matches another card, hide the button
+                if (hasReserveCharacter && !reserveMatchesAnyCard) {
+                    const buttonText = 'Select Reserve';
+                    const buttonClass = 'reserve-btn';
+                    const onclickFunction = `selectReserveCharacter('${cardId}', ${index})`;
+                    return `<button class="${buttonClass}" onclick="${onclickFunction}">${buttonText}</button>`;
+                } else if (hasReserveCharacter && reserveMatchesAnyCard) {
+                    return ''; // Reserve matches another card, hide button
+                } else {
+                    // No reserve character selected, show "Select Reserve" button
+                    const buttonText = 'Select Reserve';
+                    const buttonClass = 'reserve-btn';
+                    const onclickFunction = `selectReserveCharacter('${cardId}', ${index})`;
+                    return `<button class="${buttonClass}" onclick="${onclickFunction}">${buttonText}</button>`;
+                }
             }
         }
 
