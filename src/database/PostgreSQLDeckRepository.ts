@@ -857,8 +857,10 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         }
         
         if (!cardExists) {
-          console.error(`Card ${card.cardId} of type ${card.cardType} does not exist in database`);
-          throw new Error(`Card ${card.cardId} of type ${card.cardType} does not exist in database`);
+          const errorMsg = `Card ${card.cardId} of type ${card.cardType} does not exist in database`;
+          console.error(errorMsg);
+          console.error('Card details:', JSON.stringify(card, null, 2));
+          throw new Error(errorMsg);
         }
         
         // Include exclude_from_draw if present (for Training cards with Spartan Training Ground)
@@ -900,13 +902,15 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       console.error('Error code:', error?.code);
       console.error('Error detail:', error?.detail);
       console.error('Error constraint:', error?.constraint);
+      console.error('Error stack:', error?.stack);
       console.error('Deck ID:', deckId);
       console.error('Cards being inserted:', JSON.stringify(cards, null, 2));
       // Log first few cards that might be problematic
       if (cards && cards.length > 0) {
         console.error('First 5 cards:', JSON.stringify(cards.slice(0, 5), null, 2));
       }
-      return false;
+      // Re-throw the error so route handler can catch it and return proper error response
+      throw error;
     } finally {
       client.release();
     }
