@@ -13836,8 +13836,58 @@
 
         // Reserve Character Functions
         function getReserveCharacterButton(cardId, index) {
-            const isReserveCharacter = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character === cardId;
-            const hasReserveCharacter = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
+            const reserveCharacterId = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
+            const hasReserveCharacter = !!reserveCharacterId;
+            
+            // Check if this card matches the reserve character
+            // Need to check: base cardId, selectedAlternateCardId, and selectedAlternateCardIds array
+            let isReserveCharacter = false;
+            if (reserveCharacterId && window.deckEditorCards && window.deckEditorCards[index]) {
+                const card = window.deckEditorCards[index];
+                
+                // Helper function to extract UUID from cardId (removes prefixes like "character_")
+                const extractUUID = (id) => {
+                    if (!id) return null;
+                    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                    if (uuidPattern.test(id)) return id;
+                    const prefixedMatch = id.match(/^[a-z]+_([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i);
+                    if (prefixedMatch && prefixedMatch[1]) return prefixedMatch[1];
+                    const parts = id.split('_');
+                    for (let i = 1; i < parts.length; i++) {
+                        const candidate = parts.slice(i).join('_');
+                        if (uuidPattern.test(candidate)) return candidate;
+                    }
+                    return id;
+                };
+                
+                const normalizedReserveId = extractUUID(reserveCharacterId);
+                const normalizedCardId = extractUUID(card.cardId);
+                
+                // Check if reserve_character matches base cardId
+                if (normalizedReserveId === normalizedCardId) {
+                    isReserveCharacter = true;
+                }
+                // Check if reserve_character matches selectedAlternateCardId
+                else if (card.selectedAlternateCardId) {
+                    const normalizedAlternateId = extractUUID(card.selectedAlternateCardId);
+                    if (normalizedReserveId === normalizedAlternateId) {
+                        isReserveCharacter = true;
+                    }
+                }
+                // Check if reserve_character matches any ID in selectedAlternateCardIds array
+                else if (card.selectedAlternateCardIds && Array.isArray(card.selectedAlternateCardIds)) {
+                    for (const altId of card.selectedAlternateCardIds) {
+                        const normalizedAltId = extractUUID(altId);
+                        if (normalizedReserveId === normalizedAltId) {
+                            isReserveCharacter = true;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                // Fallback: simple comparison if card data not available
+                isReserveCharacter = reserveCharacterId === cardId;
+            }
             
             // If this card is the selected reserve character, show the "Reserve" button
             if (isReserveCharacter) {
