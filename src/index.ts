@@ -999,8 +999,16 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
         return res.status(400).json({ success: false, error: 'background_image_path must be 500 characters or less' });
       }
       // Validate the path exists (only if not null/empty)
-      if (background_image_path && !(await deckBackgroundService.validateBackgroundPath(background_image_path))) {
-        return res.status(400).json({ success: false, error: 'Invalid background image path' });
+      if (background_image_path) {
+        try {
+          const isValid = await deckBackgroundService.validateBackgroundPath(background_image_path);
+          if (!isValid) {
+            return res.status(400).json({ success: false, error: 'Invalid background image path' });
+          }
+        } catch (validationError) {
+          console.error('❌ Error validating background path:', validationError);
+          return res.status(400).json({ success: false, error: 'Invalid background image path', details: validationError instanceof Error ? validationError.message : String(validationError) });
+        }
       }
     }
     
@@ -1031,6 +1039,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
     };
     
     // Transform deck data to match frontend expectations (same as GET endpoint)
+    // Note: deckData from updateDeck doesn't include cards, so we need to fetch them separately if needed
     const transformedDeck = {
       metadata: {
         id: deckData.id,
@@ -1038,7 +1047,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
         description: deckData.description,
         created: deckData.created_at,
         lastModified: deckData.updated_at,
-        cardCount: deckData.cards?.length || 0,
+        cardCount: deckData.card_count || 0,
         userId: deckData.user_id,
         uiPreferences: deckData.ui_preferences,
         isOwner: deckData.isOwner,
@@ -1046,12 +1055,14 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
         reserve_character: deckData.reserve_character,
         background_image_path: deckData.background_image_path
       },
-      cards: deckData.cards || []
+      cards: [] // Cards are not included in updateDeck response
     };
     
     res.json({ success: true, data: transformedDeck });
   } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to update deck' });
+    console.error('❌ Error updating deck:', error);
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    res.status(500).json({ success: false, error: 'Failed to update deck', details: error instanceof Error ? error.message : String(error) });
   }
 });
 
@@ -1660,7 +1671,7 @@ app.put('/api/collections/me/cards/:cardId', authenticateUser, async (req: any, 
     }
 
     const { cardId } = req.params;
-    const { quantity, cardType, imagePath } = req.body;
+    const { quantity, cardType, imagePath, oldImagePath } = req.body;
 
     if (quantity === undefined || quantity === null) {
       return res.status(400).json({ success: false, error: 'quantity is required' });
@@ -1687,7 +1698,8 @@ app.put('/api/collections/me/cards/:cardId', authenticateUser, async (req: any, 
       cardId,
       cardType,
       quantity,
-      imagePath
+      imagePath,
+      oldImagePath
     });
     
     const updatedCard = await collectionService.updateCardQuantity(
@@ -1695,7 +1707,8 @@ app.put('/api/collections/me/cards/:cardId', authenticateUser, async (req: any, 
       cardId,
       cardType,
       quantity,
-      imagePath
+      imagePath,
+      oldImagePath
     );
 
     console.log('🟢 [API] updateCardQuantity returned:', updatedCard);
