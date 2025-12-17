@@ -786,8 +786,25 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       // Clear all existing cards
       await client.query('DELETE FROM deck_cards WHERE deck_id = $1', [deckId]);
       
-      // Insert all new cards
+      // Consolidate duplicate cards (same deck_id, card_type, card_id) by summing quantities
+      const cardMap = new Map<string, {cardType: string, cardId: string, quantity: number, exclude_from_draw?: boolean}>();
       for (const card of cards) {
+        const key = `${card.cardType}:${card.cardId}`;
+        const existing = cardMap.get(key);
+        if (existing) {
+          // Sum quantities for duplicate cards
+          existing.quantity += card.quantity;
+          // If either card has exclude_from_draw, preserve it
+          if (card.exclude_from_draw !== undefined) {
+            existing.exclude_from_draw = card.exclude_from_draw;
+          }
+        } else {
+          cardMap.set(key, { ...card });
+        }
+      }
+      
+      // Insert all consolidated cards
+      for (const card of Array.from(cardMap.values())) {
         // Validate that the card exists in the appropriate card table before inserting
         let cardExists = false;
         try {
