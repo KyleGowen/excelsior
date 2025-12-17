@@ -429,6 +429,8 @@ export class CollectionsRepository {
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
+      
+      let result: any = null; // Initialize result variable
 
       if (quantity === 0) {
         // Remove card if quantity is 0 - try to find by image_path first, then by card_id/card_type
