@@ -184,7 +184,8 @@ export class CollectionService {
     cardId: string,
     cardType: string,
     quantity: number,
-    imagePath: string
+    imagePath: string,
+    oldImagePath?: string
   ): Promise<CollectionCardWithDetails | null> {
     // Validate quantity
     if (quantity < 0) {
@@ -204,7 +205,8 @@ export class CollectionService {
       cardId,
       cardType,
       quantity,
-      imagePath
+      imagePath,
+      oldImagePath
     );
     console.log('🟡 [Service] updateCardQuantity repository result:', updatedCard);
 
