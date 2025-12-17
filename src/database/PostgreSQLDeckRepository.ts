@@ -788,6 +788,79 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       
       // Insert all new cards
       for (const card of cards) {
+        // Validate that the card exists in the appropriate card table before inserting
+        let cardExists = false;
+        try {
+          switch (card.cardType) {
+            case 'character':
+              // Try both UUID cast and string comparison since IDs might be stored differently
+              try {
+                const characterResult = await client.query('SELECT id FROM characters WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+                cardExists = characterResult.rows.length > 0;
+              } catch (uuidError: any) {
+                // If UUID cast fails, try string comparison
+                const characterResult = await client.query('SELECT id FROM characters WHERE id::text = $1', [String(card.cardId)]);
+                cardExists = characterResult.rows.length > 0;
+              }
+              break;
+            case 'special':
+              const specialResult = await client.query('SELECT id FROM special_cards WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+              cardExists = specialResult.rows.length > 0;
+              break;
+            case 'power':
+              const powerResult = await client.query('SELECT id FROM power_cards WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+              cardExists = powerResult.rows.length > 0;
+              break;
+            case 'mission':
+              const missionResult = await client.query('SELECT id FROM missions WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+              cardExists = missionResult.rows.length > 0;
+              break;
+            case 'event':
+              const eventResult = await client.query('SELECT id FROM events WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+              cardExists = eventResult.rows.length > 0;
+              break;
+            case 'aspect':
+              const aspectResult = await client.query('SELECT id FROM aspects WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+              cardExists = aspectResult.rows.length > 0;
+              break;
+            case 'location':
+              const locationResult = await client.query('SELECT id FROM locations WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+              cardExists = locationResult.rows.length > 0;
+              break;
+            case 'teamwork':
+              const teamworkResult = await client.query('SELECT id FROM teamwork_cards WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+              cardExists = teamworkResult.rows.length > 0;
+              break;
+            case 'ally-universe':
+              const allyResult = await client.query('SELECT id FROM ally_universe_cards WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+              cardExists = allyResult.rows.length > 0;
+              break;
+            case 'training':
+              const trainingResult = await client.query('SELECT id FROM training_cards WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+              cardExists = trainingResult.rows.length > 0;
+              break;
+            case 'basic-universe':
+              const basicResult = await client.query('SELECT id FROM basic_universe_cards WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+              cardExists = basicResult.rows.length > 0;
+              break;
+            case 'advanced-universe':
+              const advancedResult = await client.query('SELECT id FROM advanced_universe_cards WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+              cardExists = advancedResult.rows.length > 0;
+              break;
+            default:
+              console.warn(`Unknown card type: ${card.cardType}, skipping validation`);
+              cardExists = true; // Allow unknown types to pass through
+          }
+        } catch (validationError: any) {
+          console.error(`Error validating card ${card.cardId} of type ${card.cardType}:`, validationError);
+          cardExists = false;
+        }
+        
+        if (!cardExists) {
+          console.error(`Card ${card.cardId} of type ${card.cardType} does not exist in database`);
+          throw new Error(`Card ${card.cardId} of type ${card.cardType} does not exist in database`);
+        }
+        
         // Include exclude_from_draw if present (for Training cards with Spartan Training Ground)
         if (card.exclude_from_draw !== undefined) {
           await client.query(
