@@ -795,10 +795,45 @@ async function saveDeckChanges() {
         // Update reserve_character to use alternate card ID if the reserved character has alternate art selected
         let reserveCharacterToSave = currentDeckData.metadata.reserve_character;
         if (reserveCharacterToSave) {
-            // Find the character card that matches the reserve_character ID
-            const reservedCharacterCard = window.deckEditorCards.find(
-                card => card.type === 'character' && card.cardId === reserveCharacterToSave
-            );
+            // Helper function to extract UUID from cardId (removes prefixes like "character_")
+            const extractUUID = (cardId) => {
+                if (!cardId) return null;
+                
+                // First check if it's already a pure UUID (matches UUID pattern exactly)
+                const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                if (uuidPattern.test(cardId)) {
+                    return cardId;
+                }
+                
+                // If it has a prefix like "character_", extract the UUID part
+                // Pattern: "character_" followed by UUID
+                const prefixedMatch = cardId.match(/^[a-z]+_([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i);
+                if (prefixedMatch && prefixedMatch[1]) {
+                    return prefixedMatch[1];
+                }
+                
+                // Try splitting by underscore and checking if any part is a UUID
+                const parts = cardId.split('_');
+                for (let i = 1; i < parts.length; i++) {
+                    const candidate = parts.slice(i).join('_');
+                    if (uuidPattern.test(candidate)) {
+                        return candidate;
+                    }
+                }
+                
+                // If no UUID pattern found, return as-is (might be a legacy ID)
+                return cardId;
+            };
+            
+            // Normalize the reserve_character ID (remove prefix if present)
+            reserveCharacterToSave = extractUUID(reserveCharacterToSave);
+            
+            // Find the character card that matches the reserve_character ID (compare normalized)
+            const reservedCharacterCard = window.deckEditorCards.find(card => {
+                if (card.type !== 'character') return false;
+                const normalizedCardId = extractUUID(card.cardId);
+                return normalizedCardId === reserveCharacterToSave || card.cardId === reserveCharacterToSave;
+            });
             
             if (reservedCharacterCard) {
                 // If this character has alternate art selected, use the alternate card ID
@@ -806,20 +841,27 @@ async function saveDeckChanges() {
                                       (reservedCharacterCard.selectedAlternateCardIds && reservedCharacterCard.selectedAlternateCardIds[0]) ||
                                       null;
                 
-                if (alternateCardId && alternateCardId !== reserveCharacterToSave) {
-                    console.log('💾 [saveDeckChanges] Updating reserve_character to use alternate art:', {
-                        baseCardId: reserveCharacterToSave,
-                        alternateCardId: alternateCardId
-                    });
-                    reserveCharacterToSave = alternateCardId;
+                if (alternateCardId) {
+                    // Normalize alternate card ID as well
+                    const normalizedAlternateId = extractUUID(alternateCardId);
+                    if (normalizedAlternateId && normalizedAlternateId !== reserveCharacterToSave) {
+                        console.log('💾 [saveDeckChanges] Updating reserve_character to use alternate art:', {
+                            baseCardId: reserveCharacterToSave,
+                            alternateCardId: normalizedAlternateId
+                        });
+                        reserveCharacterToSave = normalizedAlternateId;
+                    }
                 }
             } else {
                 // Reserve character not found in deck - might have been removed
-                // Check if it matches any alternate card IDs
+                // Check if it matches any alternate card IDs (normalized)
                 for (const card of window.deckEditorCards) {
                     if (card.type === 'character') {
-                        if (card.selectedAlternateCardId === reserveCharacterToSave ||
-                            (card.selectedAlternateCardIds && card.selectedAlternateCardIds.includes(reserveCharacterToSave))) {
+                        const normalizedCardId = extractUUID(card.cardId);
+                        const normalizedAlternateId = card.selectedAlternateCardId ? extractUUID(card.selectedAlternateCardId) : null;
+                        
+                        if (normalizedAlternateId === reserveCharacterToSave || normalizedCardId === reserveCharacterToSave ||
+                            (card.selectedAlternateCardIds && card.selectedAlternateCardIds.some(id => extractUUID(id) === reserveCharacterToSave))) {
                             // Reserve character matches an alternate card ID, keep it as-is
                             console.log('💾 [saveDeckChanges] Reserve character matches alternate card ID, keeping:', reserveCharacterToSave);
                             break;

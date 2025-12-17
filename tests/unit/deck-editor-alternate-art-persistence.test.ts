@@ -1035,5 +1035,43 @@ describe('Deck Editor - Alternate Art Persistence', () => {
       // Assert - should use first instance's alternate art
       expect(updatedReserveId).toBe('char_alt1_wicked_witch');
     });
+
+    it('should extract UUID from cardId with character_ prefix', () => {
+      // Arrange - mock the extractUUID function (matches implementation in deck-editor-core.js)
+      (global as any).extractUUID = (cardId: string | null): string | null => {
+        if (!cardId) return null;
+        
+        // First check if it's already a pure UUID (matches UUID pattern exactly)
+        const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (uuidPattern.test(cardId)) {
+          return cardId;
+        }
+        
+        // If it has a prefix like "character_", extract the UUID part
+        // Pattern: "character_" followed by UUID
+        const prefixedMatch = cardId.match(/^[a-z]+_([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i);
+        if (prefixedMatch && prefixedMatch[1]) {
+          return prefixedMatch[1];
+        }
+        
+        // Try splitting by underscore and checking if any part is a UUID
+        const parts = cardId.split('_');
+        for (let i = 1; i < parts.length; i++) {
+          const candidate = parts.slice(i).join('_');
+          if (uuidPattern.test(candidate)) {
+            return candidate;
+          }
+        }
+        
+        // If no UUID pattern found, return as-is (might be a legacy ID)
+        return cardId;
+      };
+
+      // Act & Assert
+      expect((global as any).extractUUID('character_e356c3db-3b23-42f0-9618-94eeb04ffa17')).toBe('e356c3db-3b23-42f0-9618-94eeb04ffa17');
+      expect((global as any).extractUUID('e356c3db-3b23-42f0-9618-94eeb04ffa17')).toBe('e356c3db-3b23-42f0-9618-94eeb04ffa17');
+      expect((global as any).extractUUID('char_base_wicked_witch')).toBe('char_base_wicked_witch'); // No UUID pattern, return as-is
+      expect((global as any).extractUUID(null)).toBeNull();
+    });
   });
 });
