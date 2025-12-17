@@ -775,7 +775,11 @@ async function saveDeckChanges() {
         });
         
         // Bulk replace all cards in one atomic operation
-        const replaceResponse = await fetch(`/api/decks/${deckId}/cards`, {
+        const cardsEndpoint = `/api/decks/${deckId}/cards`;
+        console.log('💾 [saveDeckChanges] Saving cards to endpoint:', cardsEndpoint);
+        console.log('💾 [saveDeckChanges] deckId:', deckId, 'currentDeckId:', currentDeckId);
+        
+        const replaceResponse = await fetch(cardsEndpoint, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -785,7 +789,14 @@ async function saveDeckChanges() {
         });
         
         if (!replaceResponse.ok) {
-            throw new Error('Failed to save deck cards');
+            const errorText = await replaceResponse.text();
+            console.error('💾 [saveDeckChanges] Failed to save deck cards:', {
+                status: replaceResponse.status,
+                statusText: replaceResponse.statusText,
+                error: errorText,
+                endpoint: cardsEndpoint
+            });
+            throw new Error(`Failed to save deck cards: ${replaceResponse.status} ${replaceResponse.statusText}`);
         }
         
         // Check validation status before saving
