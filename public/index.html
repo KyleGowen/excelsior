@@ -13841,26 +13841,26 @@
             const reserveCharacterId = deckData && deckData.metadata && deckData.metadata.reserve_character;
             const hasReserveCharacter = !!reserveCharacterId;
             
+            // Helper function to extract UUID from cardId (removes prefixes like "character_")
+            const extractUUID = (id) => {
+                if (!id) return null;
+                const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                if (uuidPattern.test(id)) return id;
+                const prefixedMatch = id.match(/^[a-z]+_([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i);
+                if (prefixedMatch && prefixedMatch[1]) return prefixedMatch[1];
+                const parts = id.split('_');
+                for (let i = 1; i < parts.length; i++) {
+                    const candidate = parts.slice(i).join('_');
+                    if (uuidPattern.test(candidate)) return candidate;
+                }
+                return id;
+            };
+            
             // Check if this card matches the reserve character
             // Need to check: base cardId, selectedAlternateCardId, and selectedAlternateCardIds array
             let isReserveCharacter = false;
             if (reserveCharacterId && window.deckEditorCards && window.deckEditorCards[index]) {
                 const card = window.deckEditorCards[index];
-                
-                // Helper function to extract UUID from cardId (removes prefixes like "character_")
-                const extractUUID = (id) => {
-                    if (!id) return null;
-                    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-                    if (uuidPattern.test(id)) return id;
-                    const prefixedMatch = id.match(/^[a-z]+_([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i);
-                    if (prefixedMatch && prefixedMatch[1]) return prefixedMatch[1];
-                    const parts = id.split('_');
-                    for (let i = 1; i < parts.length; i++) {
-                        const candidate = parts.slice(i).join('_');
-                        if (uuidPattern.test(candidate)) return candidate;
-                    }
-                    return id;
-                };
                 
                 const normalizedReserveId = extractUUID(reserveCharacterId);
                 const normalizedCardId = extractUUID(card.cardId);
