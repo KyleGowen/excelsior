@@ -720,12 +720,30 @@ async function saveDeckChanges() {
                                             card.selectedAlternateCardIds.some(id => id !== undefined && id !== null);
             
             if (hasPerInstanceSelections && card.quantity > 1) {
+                // Helper function to extract UUID from cardId (removes prefixes like "character_")
+                const extractUUID = (cardId) => {
+                    if (!cardId) return null;
+                    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                    if (uuidPattern.test(cardId)) return cardId;
+                    const prefixedMatch = cardId.match(/^[a-z]+_([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i);
+                    if (prefixedMatch && prefixedMatch[1]) return prefixedMatch[1];
+                    const parts = cardId.split('_');
+                    for (let i = 1; i < parts.length; i++) {
+                        const candidate = parts.slice(i).join('_');
+                        if (uuidPattern.test(candidate)) return candidate;
+                    }
+                    return cardId;
+                };
+                
                 // Create an entry for each instance with its specific alternate art
                 for (let i = 0; i < card.quantity; i++) {
                     // Use the selected alternate card ID for this instance, or fall back to selectedAlternateCardId or base cardId
-                    const cardIdForInstance = (card.selectedAlternateCardIds[i] !== undefined && card.selectedAlternateCardIds[i] !== null)
+                    const rawCardIdForInstance = (card.selectedAlternateCardIds[i] !== undefined && card.selectedAlternateCardIds[i] !== null)
                         ? card.selectedAlternateCardIds[i]
                         : (card.selectedAlternateCardId || card.cardId);
+                    
+                    // Extract UUID from card ID (remove prefixes)
+                    const cardIdForInstance = extractUUID(rawCardIdForInstance);
                     
                     const instanceData = {
                         cardType: card.type,
@@ -744,12 +762,29 @@ async function saveDeckChanges() {
                 // Single instance or all instances use the same art
                 // Use selectedAlternateCardId if present, otherwise use cardId
                 // If cardId itself is an alternate art (detected during load), use it
-                const cardIdToSave = card.selectedAlternateCardId || card.cardId;
+                // Extract UUID from card ID (remove prefixes like "character_", "power_", etc.)
+                const extractUUID = (cardId) => {
+                    if (!cardId) return null;
+                    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                    if (uuidPattern.test(cardId)) return cardId;
+                    const prefixedMatch = cardId.match(/^[a-z]+_([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i);
+                    if (prefixedMatch && prefixedMatch[1]) return prefixedMatch[1];
+                    const parts = cardId.split('_');
+                    for (let i = 1; i < parts.length; i++) {
+                        const candidate = parts.slice(i).join('_');
+                        if (uuidPattern.test(candidate)) return candidate;
+                    }
+                    return cardId;
+                };
+                
+                const rawCardIdToSave = card.selectedAlternateCardId || card.cardId;
+                const cardIdToSave = extractUUID(rawCardIdToSave);
                 
                 console.log('💾 [saveDeckChanges] Preparing single card entry:', {
                     type: card.type,
                     cardId: card.cardId,
                     selectedAlternateCardId: card.selectedAlternateCardId,
+                    rawCardIdToSave: rawCardIdToSave,
                     cardIdToSave: cardIdToSave,
                     quantity: card.quantity
                 });
