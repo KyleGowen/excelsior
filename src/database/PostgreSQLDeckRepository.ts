@@ -777,7 +777,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
   }
 
   // Bulk replace all cards in a deck (used for save operations)
-  async replaceAllCardsInDeck(deckId: string, cards: Array<{cardType: string, cardId: string, quantity: number, exclude_from_draw?: boolean}>): Promise<boolean> {
+  async replaceAllCardsInDeck(deckId: string, cards: Array<{cardType: string, cardId: string, quantity: number, exclude_from_draw?: boolean}>): Promise<void> {
     const client = await this.pool.connect();
     try {
       // Start a transaction to ensure atomicity
@@ -804,12 +804,24 @@ export class PostgreSQLDeckRepository implements DeckRepository {
               }
               break;
             case 'special':
-              const specialResult = await client.query('SELECT id FROM special_cards WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
-              cardExists = specialResult.rows.length > 0;
+              try {
+                const specialResult = await client.query('SELECT id FROM special_cards WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+                cardExists = specialResult.rows.length > 0;
+              } catch (uuidError: any) {
+                // If UUID cast fails, try string comparison
+                const specialResult = await client.query('SELECT id FROM special_cards WHERE id::text = $1', [String(card.cardId)]);
+                cardExists = specialResult.rows.length > 0;
+              }
               break;
             case 'power':
-              const powerResult = await client.query('SELECT id FROM power_cards WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
-              cardExists = powerResult.rows.length > 0;
+              try {
+                const powerResult = await client.query('SELECT id FROM power_cards WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
+                cardExists = powerResult.rows.length > 0;
+              } catch (uuidError: any) {
+                // If UUID cast fails, try string comparison
+                const powerResult = await client.query('SELECT id FROM power_cards WHERE id::text = $1', [String(card.cardId)]);
+                cardExists = powerResult.rows.length > 0;
+              }
               break;
             case 'mission':
               const missionResult = await client.query('SELECT id FROM missions WHERE id::text = $1 OR id = $1::uuid', [card.cardId]);
@@ -889,7 +901,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         this.deckCache.delete(`user_decks_${userId}`);
       }
       
-      return true;
+      // Success - function now throws errors instead of returning false
     } catch (error: any) {
       // Rollback on error
       try {
