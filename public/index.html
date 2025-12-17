@@ -13836,7 +13836,9 @@
 
         // Reserve Character Functions
         function getReserveCharacterButton(cardId, index) {
-            const reserveCharacterId = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
+            // Use window.currentDeckData if available, otherwise fall back to currentDeckData (local scope)
+            const deckData = window.currentDeckData || currentDeckData;
+            const reserveCharacterId = deckData && deckData.metadata && deckData.metadata.reserve_character;
             const hasReserveCharacter = !!reserveCharacterId;
             
             // Check if this card matches the reserve character

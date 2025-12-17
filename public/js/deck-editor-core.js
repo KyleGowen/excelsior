@@ -220,6 +220,7 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
         
         if (data.success) {
             currentDeckData = data.data;
+            window.currentDeckData = data.data; // Also set on window for global access
             window.deckEditorCards = [...data.data.cards]; // Create working copy
             
             // Load background immediately from deck data (before other initialization)
