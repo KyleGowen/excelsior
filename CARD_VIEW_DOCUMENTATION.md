@@ -147,6 +147,19 @@ onmouseenter="showCardHoverModal('${cardImagePath}', '${cardName}')"
 onmouseleave="hideCardHoverModal()"
 ```
 
+**Detailed Documentation**: See [Card Hover Modal Documentation](../docs/card-hover-modal.md) for comprehensive details on:
+- Function API and parameters
+- Positioning algorithm (mouse tracking, viewport boundaries, button avoidance)
+- Button avoidance logic for different card contexts
+- Usage examples and implementation details
+
+**Key Features**:
+- **Smart Positioning**: Modal follows mouse cursor while avoiding buttons and staying within viewport
+- **Button Avoidance**: Automatically repositions to avoid overlapping with interactive buttons (120px buffer for deck cards, 60px for plus buttons)
+- **Mouse Tracking**: Continuously updates position via `mousemove` event listener
+- **Delayed Hide**: 100ms timeout prevents flickering on rapid mouse movements
+- **Universal Support**: Works across deck editor, collection view, and card browser contexts
+
 ### Quantity Management
 Different card types have different quantity control patterns:
 
