@@ -106,6 +106,18 @@ export class DeckValidationService {
             });
         }
 
+        // Rule 1.5: Check for banned cards
+        for (const card of cards) {
+            const availableCard = availableCardsMap.get(`${card.type}_${card.cardId}`);
+            if (availableCard && availableCard.banned === true) {
+                const cardName = availableCard.name || 'Unknown Card';
+                errors.push({
+                    rule: 'banned_card',
+                    message: `Contains Banned Card: ${cardName}`
+                });
+            }
+        }
+
         // Rule 2: 7 mission cards of the same mission set
         const missionCards = cards.filter(card => card.type === 'mission');
         const missionCount = missionCards.reduce((sum, card) => sum + (card.quantity || 1), 0);

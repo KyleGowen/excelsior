@@ -144,7 +144,8 @@ export class PostgreSQLCardRepository implements CardRepository {
               is_cataclysm: card.cataclysm || false,
               is_assist: card.assist || false,
               is_ambush: card.ambush || false,
-              one_per_deck: card.one_per_deck || false
+              one_per_deck: card.one_per_deck || false,
+              banned: card.banned || false
             };
     } finally {
       client.release();
@@ -171,7 +172,8 @@ export class PostgreSQLCardRepository implements CardRepository {
               is_cataclysm: card.cataclysm || false,
               is_assist: card.assist || false,
               is_ambush: card.ambush || false,
-              one_per_deck: card.one_per_deck || false
+              one_per_deck: card.one_per_deck || false,
+              banned: card.banned || false
             }));
     } finally {
       client.release();

@@ -60,7 +60,16 @@ function validateDeck(deckCards) {
         errors.push(`Deck must have exactly ${DECK_RULES.EXACT_CHARACTERS} characters (${characterCards.length}/${DECK_RULES.EXACT_CHARACTERS})`);
     }
     
-    // Rule 1.5: Angry Mob character restrictions
+    // Rule 1.5: Check for banned cards
+    deckCards.forEach(card => {
+        const availableCard = availableCardsMap.get(card.cardId);
+        if (availableCard && availableCard.banned === true) {
+            const cardName = availableCard.name || availableCard.card_name || 'Unknown Card';
+            errors.push(`Contains Banned Card: ${cardName}`);
+        }
+    });
+    
+    // Rule 1.6: Angry Mob character restrictions
     const angryMobCharacters = characterCards.filter(card => {
         const availableCard = availableCardsMap.get(card.cardId);
         return availableCard && (availableCard.name === 'Angry Mob' || availableCard.card_name === 'Angry Mob');

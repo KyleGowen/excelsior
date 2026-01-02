@@ -77,6 +77,7 @@ export interface SpecialCard {
   is_assist: boolean;
   is_ambush: boolean;
   one_per_deck: boolean;
+  banned?: boolean;     // Indicates if the card is banned from legal deck construction
 }
 
 export interface Mission {
