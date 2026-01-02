@@ -1685,6 +1685,467 @@ describe('Card Hover Modal Module - Comprehensive Tests', () => {
             });
         });
 
+        describe('Placed First Hand Duplicate Probability', () => {
+            describe('Power Cards', () => {
+                it('should calculate placed first hand probability for power cards with 2+ duplicates', () => {
+                    const cardId = 'power-123';
+                    const cardType = 'power';
+                    const cardName = 'Power 5';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName, value: 5 });
+                    mockAvailableCardsMap.set('power-456', { name: 'Power 5 Combat', value: 5 });
+                    
+                    // Add 3 power cards of value 5 (total duplicates = 3)
+                    // Draw pile size = 20 (enough for calculation)
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 2 },
+                        { cardId: 'power-456', type: cardType, quantity: 1 },
+                        { cardId: 'power-999', type: 'power', quantity: 17, exclude_from_draw: false }
+                    );
+                    mockAvailableCardsMap.set('power-999', { name: 'Power 3', value: 3 });
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand:');
+                    expect(mockStats.innerHTML).toMatch(/Chance to duplicate if placed first hand: \d+\.\d+% of Hands/);
+                });
+
+                it('should show 0% for power cards with only 1 duplicate', () => {
+                    const cardId = 'power-123';
+                    const cardType = 'power';
+                    const cardName = 'Power 5';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName, value: 5 });
+                    
+                    // Only 1 power card of value 5
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 1 },
+                        { cardId: 'power-999', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    mockAvailableCardsMap.set('power-999', { name: 'Power 3', value: 3 });
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand: 0.0% of Hands');
+                });
+
+                it('should handle power cards without value (fallback to cardId)', () => {
+                    const cardId = 'power-123';
+                    const cardType = 'power';
+                    const cardName = 'Power 5';
+                    
+                    // No value property
+                    mockAvailableCardsMap.set(cardId, { name: cardName });
+                    
+                    // Add 2 copies of same cardId
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 2 },
+                        { cardId: 'power-999', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    mockAvailableCardsMap.set('power-999', { name: 'Power 3', value: 3 });
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand:');
+                });
+            });
+
+            describe('Special Cards', () => {
+                it('should calculate placed first hand probability for special cards with 2+ copies', () => {
+                    const cardId = 'special-123';
+                    const cardType = 'special';
+                    const cardName = 'Special Card';
+                    const character = 'Hercules';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName, character: character });
+                    
+                    // Add 3 copies of the same special card
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 3 },
+                        { cardId: 'power-1', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand:');
+                    expect(mockStats.innerHTML).toMatch(/Chance to duplicate if placed first hand: \d+\.\d+% of Hands/);
+                });
+
+                it('should show 0% for special cards with only 1 copy', () => {
+                    const cardId = 'special-123';
+                    const cardType = 'special';
+                    const cardName = 'Special Card';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName });
+                    
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 1 },
+                        { cardId: 'power-1', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand: 0.0% of Hands');
+                });
+            });
+
+            describe('Universe Cards', () => {
+                it('should calculate placed first hand probability for ally-universe cards', () => {
+                    const cardId = 'ally-123';
+                    const cardType = 'ally-universe';
+                    const cardName = 'Ally Card';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName });
+                    
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 3 },
+                        { cardId: 'power-1', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand:');
+                    expect(mockStats.innerHTML).toMatch(/Chance to duplicate if placed first hand: \d+\.\d+% of Hands/);
+                });
+
+                it('should calculate placed first hand probability for basic-universe cards', () => {
+                    const cardId = 'basic-123';
+                    const cardType = 'basic-universe';
+                    const cardName = 'Basic Card';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName });
+                    
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 2 },
+                        { cardId: 'power-1', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand:');
+                });
+
+                it('should calculate placed first hand probability for training cards', () => {
+                    const cardId = 'training-123';
+                    const cardType = 'training';
+                    const cardName = 'Training Card';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName });
+                    
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 2 },
+                        { cardId: 'power-1', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand:');
+                });
+
+                it('should calculate placed first hand probability for aspect cards', () => {
+                    const cardId = 'aspect-123';
+                    const cardType = 'aspect';
+                    const cardName = 'Aspect Card';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName });
+                    
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 2 },
+                        { cardId: 'power-1', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand:');
+                });
+
+                it('should calculate placed first hand probability for advanced-universe cards', () => {
+                    const cardId = 'advanced-123';
+                    const cardType = 'advanced-universe';
+                    const cardName = 'Advanced Card';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName });
+                    
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 2 },
+                        { cardId: 'power-1', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand:');
+                });
+            });
+
+            describe('Teamwork Cards', () => {
+                it('should calculate placed first hand probability for teamwork cards', () => {
+                    const cardId = 'teamwork-123';
+                    const cardType = 'teamwork';
+                    const cardName = 'Teamwork Card';
+                    
+                    mockAvailableCardsMap.set(cardId, { 
+                        name: cardName, 
+                        to_use: '6 Energy',
+                        followup_attack_types: 'Brute Force + Energy'
+                    });
+                    
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 2 },
+                        { cardId: 'power-1', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand:');
+                });
+            });
+
+            describe('Event Cards', () => {
+                it('should NOT show placed first hand statistic for event cards', () => {
+                    const cardId = 'event-123';
+                    const cardType = 'event';
+                    const cardName = 'Event Card';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName });
+                    
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 3 },
+                        { cardId: 'power-1', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    // Event cards cannot be placed, so this statistic should not appear
+                    expect(mockStats.innerHTML).not.toContain('Chance to duplicate if placed first hand:');
+                    // But duplication risk should still appear
+                    expect(mockStats.innerHTML).toContain('Duplication Risk:');
+                });
+            });
+
+            describe('Edge Cases', () => {
+                it('should handle draw pile smaller than 8 cards', () => {
+                    const cardId = 'power-123';
+                    const cardType = 'power';
+                    const cardName = 'Power 5';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName, value: 5 });
+                    mockAvailableCardsMap.set('power-456', { name: 'Power 5 Combat', value: 5 });
+                    
+                    // Only 5 cards total (less than 8 for first hand)
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 2 },
+                        { cardId: 'power-456', type: cardType, quantity: 3, exclude_from_draw: false }
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    // Should handle gracefully (remaining draw pile would be negative, so returns null)
+                    // Statistic should not appear or should handle null
+                    expect(mockStats.innerHTML).toContain('Duplication Risk:');
+                });
+
+                it('should handle remaining draw pile smaller than hand size', () => {
+                    const cardId = 'power-123';
+                    const cardType = 'power';
+                    const cardName = 'Power 5';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName, value: 5 });
+                    mockAvailableCardsMap.set('power-456', { name: 'Power 5 Combat', value: 5 });
+                    
+                    // 10 cards total: after removing 8, remaining = 2 (less than hand size of 8)
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 2 },
+                        { cardId: 'power-456', type: cardType, quantity: 1 },
+                        { cardId: 'power-999', type: 'power', quantity: 7, exclude_from_draw: false }
+                    );
+                    mockAvailableCardsMap.set('power-999', { name: 'Power 3', value: 3 });
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    // Should handle gracefully (returns 100% if duplicates exist, 0% otherwise)
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand:');
+                });
+
+                it('should handle card not found in deckEditorCards', () => {
+                    const cardId = 'power-123';
+                    const cardType = 'power';
+                    const cardName = 'Power 5';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName, value: 5 });
+                    
+                    // Card not in deckEditorCards
+                    mockDeckEditorCards.push(
+                        { cardId: 'power-999', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    // Should handle gracefully (returns null, statistic should not appear)
+                    expect(mockStats.style.display).toBe('none');
+                });
+
+                it('should handle empty draw pile', () => {
+                    const cardId = 'power-123';
+                    const cardType = 'power';
+                    const cardName = 'Power 5';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName, value: 5 });
+                    
+                    // Only characters/locations/missions (not in draw pile)
+                    mockDeckEditorCards.push(
+                        { cardId: 'char-1', type: 'character', quantity: 1 }
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    // Should handle gracefully (returns null, statistic should not appear)
+                    expect(mockStats.style.display).toBe('none');
+                });
+
+                it('should handle remaining duplicates = 0 after placing one', () => {
+                    const cardId = 'power-123';
+                    const cardType = 'power';
+                    const cardName = 'Power 5';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName, value: 5 });
+                    
+                    // Only 2 copies total: after placing 1, remaining = 1 (less than 1, so returns 0)
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 2 },
+                        { cardId: 'power-999', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    mockAvailableCardsMap.set('power-999', { name: 'Power 3', value: 3 });
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    // Should show 0% (remaining duplicates = 1 - 1 = 0, which is < 1)
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand: 0.0% of Hands');
+                });
+
+                it('should not display statistic when calculation returns null', () => {
+                    const cardId = 'power-123';
+                    const cardType = 'power';
+                    const cardName = 'Power 5';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName, value: 5 });
+                    
+                    // Empty draw pile (will return null)
+                    mockDeckEditorCards.push(
+                        { cardId: 'char-1', type: 'character', quantity: 1 } // Only non-draw-pile cards
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    // Statistic should not appear when calculation returns null
+                    expect(mockStats.innerHTML).not.toContain('Chance to duplicate if placed first hand:');
+                });
+
+                it('should display statistic for power cards without value (fallback path)', () => {
+                    const cardId = 'power-123';
+                    const cardType = 'power';
+                    const cardName = 'Power 5';
+                    
+                    // No value property (fallback to cardId matching)
+                    mockAvailableCardsMap.set(cardId, { name: cardName });
+                    
+                    // Add 2 copies of same cardId
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 2 },
+                        { cardId: 'power-999', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    mockAvailableCardsMap.set('power-999', { name: 'Power 3', value: 3 });
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    // Should show statistic in fallback format (count format)
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand:');
+                });
+
+                it('should display both duplication risk and placed first hand statistics together', () => {
+                    const cardId = 'special-123';
+                    const cardType = 'special';
+                    const cardName = 'Special Card';
+                    
+                    mockAvailableCardsMap.set(cardId, { name: cardName });
+                    
+                    mockDeckEditorCards.push(
+                        { cardId, type: cardType, quantity: 3 },
+                        { cardId: 'power-1', type: 'power', quantity: 20, exclude_from_draw: false }
+                    );
+                    
+                    const mockEvent = createMockMouseEvent(100, 100);
+                    (window as any).event = mockEvent;
+                    
+                    window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
+                    
+                    // Both statistics should appear
+                    expect(mockStats.innerHTML).toContain('Duplication Risk:');
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand:');
+                    // Duplication Risk should appear before placed first hand
+                    const duplicationRiskIndex = mockStats.innerHTML.indexOf('Duplication Risk:');
+                    const placedFirstHandIndex = mockStats.innerHTML.indexOf('Chance to duplicate if placed first hand:');
+                    expect(duplicationRiskIndex).toBeLessThan(placedFirstHandIndex);
+                });
+            });
+        });
+
         it('should handle cards with quantity undefined (default to 1)', () => {
             const cardId = 'power-123';
             const cardType = 'power';
