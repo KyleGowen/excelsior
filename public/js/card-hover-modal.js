@@ -404,23 +404,49 @@
             const prob = 1 - prob0Events - prob1Event;
             return Math.max(0, Math.min(100, prob * 100));
         } else {
+            // For power cards, count ALL power cards with the same value (all are duplicates)
             // For other card types, count cards that would be duplicates
-            // Exclude the hovered card itself from the count (a card can't be a duplicate of itself)
-            duplicateCount = drawPile.filter(card => {
-                // Skip if this is the same card instance
-                if (card.cardId === hoveredCard.cardId && card.type === hoveredCard.type) {
-                    return false;
+            let totalDuplicateCards;
+            let hoveredCardCopies;
+            
+            if (cardType === 'power') {
+                // For power cards, all cards with the same value are duplicates
+                const hoveredCardData = window.availableCardsMap ? window.availableCardsMap.get(hoveredCard.cardId) : null;
+                const hoveredValue = hoveredCardData ? (hoveredCardData.value || null) : null;
+                if (hoveredValue !== null) {
+                    // Count ALL power cards with the same value (this is the total duplicate count)
+                    totalDuplicateCards = drawPile.filter(card => {
+                        if (card.type !== 'power') return false;
+                        const cardData = window.availableCardsMap ? window.availableCardsMap.get(card.cardId) : null;
+                        return cardData && cardData.value === hoveredValue;
+                    }).length;
+                    hoveredCardCopies = totalDuplicateCards; // Same count for power cards
+                } else {
+                    // Fallback to cardId matching if value is not available
+                    hoveredCardCopies = drawPile.filter(card => 
+                        card.cardId === hoveredCard.cardId && card.type === hoveredCard.type
+                    ).length;
+                    totalDuplicateCards = hoveredCardCopies;
                 }
-                return isDuplicate(card, hoveredCard, cardType);
-            }).length;
-            
-            // Count copies of the hovered card itself
-            const hoveredCardCopies = drawPile.filter(card => 
-                card.cardId === hoveredCard.cardId && card.type === hoveredCard.type
-            ).length;
-            
-            // Calculate total number of duplicate cards (including the hovered card itself)
-            const totalDuplicateCards = duplicateCount + hoveredCardCopies;
+            } else {
+                // For other card types, count cards that would be duplicates
+                // Exclude the hovered card itself from the count (a card can't be a duplicate of itself)
+                duplicateCount = drawPile.filter(card => {
+                    // Skip if this is the same card instance
+                    if (card.cardId === hoveredCard.cardId && card.type === hoveredCard.type) {
+                        return false;
+                    }
+                    return isDuplicate(card, hoveredCard, cardType);
+                }).length;
+                
+                // Count copies of the hovered card itself
+                hoveredCardCopies = drawPile.filter(card => 
+                    card.cardId === hoveredCard.cardId && card.type === hoveredCard.type
+                ).length;
+                
+                // Calculate total number of duplicate cards (including the hovered card itself)
+                totalDuplicateCards = duplicateCount + hoveredCardCopies;
+            }
             
             // If there are 2+ duplicate cards total, calculate probability of drawing 2+
             if (totalDuplicateCards >= 2) {
