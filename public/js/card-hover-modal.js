@@ -486,6 +486,101 @@
     }
     
     /**
+     * Calculates the probability of drawing a duplicate after placing one copy in the first hand
+     * Assumes:
+     * - One copy is already placed on the board
+     * - A hand of 8 cards has been drawn
+     * - One of those 8 cards was the placed copy
+     * - Calculates probability of drawing at least 1 duplicate from remaining draw pile
+     * 
+     * @param {string} cardId - ID of the hovered card
+     * @param {string} cardType - Type of the hovered card
+     * @returns {number} Probability as percentage (0-100), or null if calculation not possible
+     * @private
+     */
+    function calculatePlacedFirstHandDuplicateProbability(cardId, cardType) {
+        const drawPile = getDrawPile();
+        const handSize = getHandSize();
+        
+        // Edge cases
+        if (drawPile.length === 0) return null;
+        
+        // Find the hovered card in deckEditorCards
+        const hoveredCard = window.deckEditorCards?.find(c => c.cardId === cardId && c.type === cardType);
+        if (!hoveredCard) return null;
+        
+        // Get total duplicate count (reuse logic from calculateDuplicateProbability)
+        let totalDuplicateCards;
+        let hoveredCardCopies;
+        
+        if (cardType === 'event') {
+            // For events, count all event cards
+            totalDuplicateCards = drawPile.filter(card => card.type === 'event').length;
+            hoveredCardCopies = totalDuplicateCards;
+        } else if (cardType === 'power') {
+            // For power cards, count ALL power cards with the same value
+            const hoveredCardData = window.availableCardsMap ? window.availableCardsMap.get(hoveredCard.cardId) : null;
+            const hoveredValue = hoveredCardData ? (hoveredCardData.value || null) : null;
+            if (hoveredValue !== null) {
+                totalDuplicateCards = drawPile.filter(card => {
+                    if (card.type !== 'power') return false;
+                    const cardData = window.availableCardsMap ? window.availableCardsMap.get(card.cardId) : null;
+                    return cardData && cardData.value === hoveredValue;
+                }).length;
+                hoveredCardCopies = totalDuplicateCards;
+            } else {
+                // Fallback to cardId matching if value is not available
+                hoveredCardCopies = drawPile.filter(card => 
+                    card.cardId === hoveredCard.cardId && card.type === hoveredCard.type
+                ).length;
+                totalDuplicateCards = hoveredCardCopies;
+            }
+        } else {
+            // For other card types, count duplicates
+            const duplicateCount = drawPile.filter(card => {
+                if (card.cardId === hoveredCard.cardId && card.type === hoveredCard.type) {
+                    return false;
+                }
+                return isDuplicate(card, hoveredCard, cardType);
+            }).length;
+            
+            hoveredCardCopies = drawPile.filter(card => 
+                card.cardId === hoveredCard.cardId && card.type === hoveredCard.type
+            ).length;
+            
+            totalDuplicateCards = duplicateCount + hoveredCardCopies;
+        }
+        
+        // If there are fewer than 2 duplicates, return 0%
+        if (totalDuplicateCards < 2) return 0;
+        
+        // Calculate remaining draw pile after first hand (8 cards drawn, 1 duplicate placed)
+        const originalDrawPileSize = drawPile.length;
+        const remainingDrawPileSize = originalDrawPileSize - 8;
+        const remainingDuplicates = totalDuplicateCards - 1;
+        
+        // Edge cases
+        if (remainingDrawPileSize <= 0) return null;
+        if (remainingDuplicates < 1) return 0;
+        if (remainingDrawPileSize < handSize) {
+            // If remaining pile is smaller than hand size, check if duplicates exist
+            return remainingDuplicates > 0 ? 100 : 0;
+        }
+        
+        // Calculate probability of drawing at least 1 duplicate from remaining pile
+        // P(at least 1 duplicate) = 1 - P(0 duplicates)
+        // P(0 duplicates) = C(nonDuplicates, handSize) / C(remainingDrawPileSize, handSize)
+        const nonDuplicates = remainingDrawPileSize - remainingDuplicates;
+        
+        // P(0 duplicates) = C(nonDuplicates, handSize) / C(remainingDrawPileSize, handSize)
+        const prob0Duplicates = combinations(nonDuplicates, handSize) / combinations(remainingDrawPileSize, handSize);
+        
+        // P(at least 1 duplicate) = 1 - P(0 duplicates)
+        const prob = 1 - prob0Duplicates;
+        return Math.max(0, Math.min(100, prob * 100));
+    }
+    
+    /**
      * Shows the card hover modal with an enlarged preview of the card.
      * 
      * The modal is positioned near the mouse cursor, avoiding buttons and staying
@@ -601,6 +696,7 @@
                         const duplicateProb = calculateDuplicateProbability(cardId, cardType);
                         
                         // Display statistics: "{number of events} Events / {cards in draw pile} Cards in Draw Pile"
+                        // Note: Event cards cannot be placed, so we don't show "placed first hand" statistic
                         if (totalEventCount > 0) {
                             let statsHtml = `<div class="card-hover-stats-name">${dbCardName}</div><div class="card-hover-stats-count">${totalEventCount} Events / ${drawPileSize} Cards in Draw Pile</div>`;
                             if (duplicateProb !== null && duplicateProb !== undefined) {
@@ -620,6 +716,7 @@
                         
                         // Calculate duplicate probability
                         const duplicateProb = calculateDuplicateProbability(cardId, cardType);
+                        const placedFirstHandProb = calculatePlacedFirstHandDuplicateProbability(cardId, cardType);
                         
                         // Display statistics: "{number of copies} Copy/Copies / {Cards in draw pile} Cards in Draw Pile"
                         if (totalCount > 0) {
@@ -627,6 +724,9 @@
                             let statsHtml = `<div class="card-hover-stats-name">${dbCardName}</div><div class="card-hover-stats-count">${totalCount} ${copyText} / ${drawPileSize} Cards in Draw Pile</div>`;
                             if (duplicateProb !== null && duplicateProb !== undefined) {
                                 statsHtml += `<div class="card-hover-stats-count">Duplication Risk: ${duplicateProb.toFixed(1)}% of Hands</div>`;
+                            }
+                            if (placedFirstHandProb !== null && placedFirstHandProb !== undefined) {
+                                statsHtml += `<div class="card-hover-stats-count">Chance to duplicate if placed first hand: ${placedFirstHandProb.toFixed(1)}% of Hands</div>`;
                             }
                             stats.innerHTML = statsHtml;
                             stats.style.display = 'block';
@@ -650,12 +750,16 @@
                             
                             // Calculate duplicate probability
                             const duplicateProb = calculateDuplicateProbability(cardId, cardType);
+                            const placedFirstHandProb = calculatePlacedFirstHandDuplicateProbability(cardId, cardType);
                             
                             // Display statistics: "{number of power cards with this value} Power Cards of Value {value} / {num cards in draw pile} Cards in Draw Pile"
                             if (powerCardsWithSameValue > 0) {
                                 let statsHtml = `<div class="card-hover-stats-name">${dbCardName}</div><div class="card-hover-stats-count">${powerCardsWithSameValue} Power Cards of Value ${powerValue} / ${drawPileSize} Cards in Draw Pile</div>`;
                                 if (duplicateProb !== null && duplicateProb !== undefined) {
                                     statsHtml += `<div class="card-hover-stats-count">Duplication Risk: ${duplicateProb.toFixed(1)}% of Hands</div>`;
+                                }
+                                if (placedFirstHandProb !== null && placedFirstHandProb !== undefined) {
+                                    statsHtml += `<div class="card-hover-stats-count">Chance to duplicate if placed first hand: ${placedFirstHandProb.toFixed(1)}% of Hands</div>`;
                                 }
                                 stats.innerHTML = statsHtml;
                                 stats.style.display = 'block';
@@ -670,11 +774,15 @@
                             
                             // Calculate duplicate probability
                             const duplicateProb = calculateDuplicateProbability(cardId, cardType);
+                            const placedFirstHandProb = calculatePlacedFirstHandDuplicateProbability(cardId, cardType);
                             
                             if (totalCount > 0) {
                                 let statsHtml = `<div class="card-hover-stats-name">${dbCardName}</div><div class="card-hover-stats-count">${totalCount}/${drawPileSize}</div>`;
                                 if (duplicateProb !== null && duplicateProb !== undefined) {
                                     statsHtml += `<div class="card-hover-stats-count">Duplication Risk: ${duplicateProb.toFixed(1)}% of Hands</div>`;
+                                }
+                                if (placedFirstHandProb !== null && placedFirstHandProb !== undefined) {
+                                    statsHtml += `<div class="card-hover-stats-count">Chance to duplicate if placed first hand: ${placedFirstHandProb.toFixed(1)}% of Hands</div>`;
                                 }
                                 stats.innerHTML = statsHtml;
                                 stats.style.display = 'block';
@@ -691,6 +799,7 @@
                         
                         // Calculate duplicate probability
                         const duplicateProb = calculateDuplicateProbability(cardId, cardType);
+                        const placedFirstHandProb = calculatePlacedFirstHandDuplicateProbability(cardId, cardType);
                         
                         // Display statistics
                         if (totalCount > 0) {
@@ -698,6 +807,9 @@
                             let statsHtml = `<div class="card-hover-stats-name">${dbCardName}</div><div class="card-hover-stats-count">${totalCount}/${drawPileSize}</div>`;
                             if (duplicateProb !== null && duplicateProb !== undefined) {
                                 statsHtml += `<div class="card-hover-stats-count">Duplication Risk: ${duplicateProb.toFixed(1)}% of Hands</div>`;
+                            }
+                            if (placedFirstHandProb !== null && placedFirstHandProb !== undefined) {
+                                statsHtml += `<div class="card-hover-stats-count">Chance to duplicate if placed first hand: ${placedFirstHandProb.toFixed(1)}% of Hands</div>`;
                             }
                             stats.innerHTML = statsHtml;
                             stats.style.display = 'block';
