@@ -1830,6 +1830,13 @@ app.get('/users/:userId/decks', authenticateUser, (req: any, res) => {
   if (!isGuestAccess && !isOwnAccess) {
     return res.status(403).json({ success: false, error: 'Access denied' });
   }
+
+  // Prevent stale HTML in production (critical for new script tags like /js/alphabetization.js)
+  res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
   
   res.sendFile(path.join(process.cwd(), 'public/index.html'));
 });
@@ -1872,6 +1879,12 @@ app.get('/users/:userId/collection', authenticateUser, (req: any, res) => {
 
 // Database View route (Image 3) - serve original database view
 app.get('/data', (req, res) => {
+  // Prevent stale HTML in production
+  res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
   res.sendFile(path.join(process.cwd(), 'public/index.html'));
 });
 
