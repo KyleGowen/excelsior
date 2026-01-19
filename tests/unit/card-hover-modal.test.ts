@@ -24,7 +24,7 @@ declare global {
         showCardHoverModal?: (imagePath: string, cardName: string, cardId?: string, cardType?: string) => void;
         hideCardHoverModal?: () => void;
         hoverHideTimeout?: NodeJS.Timeout | null;
-        deckEditorCards?: Array<{ cardId: string; type: string; quantity?: number }>;
+        deckEditorCards?: any[];
         availableCardsMap?: Map<string, any>;
         currentDeckData?: {
             metadata?: {
@@ -2057,7 +2057,7 @@ describe('Card Hover Modal Module - Comprehensive Tests', () => {
                     
                     mockAvailableCardsMap.set(cardId, { name: cardName, value: 5 });
                     
-                    // Only 2 copies total: after placing 1, remaining = 1 (less than 1, so returns 0)
+                    // Two copies total: after placing 1, there is still 1 duplicate copy that could be drawn
                     mockDeckEditorCards.push(
                         { cardId, type: cardType, quantity: 2 },
                         { cardId: 'power-999', type: 'power', quantity: 20, exclude_from_draw: false }
@@ -2069,8 +2069,10 @@ describe('Card Hover Modal Module - Comprehensive Tests', () => {
                     
                     window.showCardHoverModal!('test.webp', cardName, cardId, cardType);
                     
-                    // Should show 0% (remaining duplicates = 1 - 1 = 0, which is < 1)
-                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand: 0.0% of Hands');
+                    // With a 22-card draw pile and 2 duplicates of the same value:
+                    // remaining pile after drawing 8 cards is 14 cards, with 1 duplicate remaining.
+                    // P(draw duplicate) = 1 - C(13,8)/C(14,8) = 57.1%
+                    expect(mockStats.innerHTML).toContain('Chance to duplicate if placed first hand: 57.1% of Hands');
                 });
 
                 it('should not display statistic when calculation returns null', () => {

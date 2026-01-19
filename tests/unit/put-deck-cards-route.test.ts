@@ -53,13 +53,14 @@ app.put('/api/decks/:id/cards', mockAuthenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
-    const success = await mockDeckRepository.replaceAllCardsInDeck(req.params.id, cards);
-    if (!success) {
-      return res.status(404).json({ success: false, error: 'Deck not found or failed to replace cards' });
-    }
+    // replaceAllCardsInDeck is an atomic operation; it throws on failure.
+    await mockDeckRepository.replaceAllCardsInDeck(req.params.id, cards);
     
     // Return the updated deck
     const updatedDeck = await mockDeckRepository.getDeckById(req.params.id);
+    if (!updatedDeck) {
+      return res.status(404).json({ success: false, error: 'Deck not found or failed to replace cards' });
+    }
     res.json({ success: true, data: updatedDeck });
   } catch (error) {
     console.error('Error replacing cards in deck:', error);
@@ -124,7 +125,7 @@ describe('PUT /api/decks/:id/cards route logic', () => {
   it('should return 403 when user does not own the deck', async () => {
     // Ensure the mock is properly set up
     mockDeckRepository.userOwnsDeck.mockResolvedValue(false);
-    mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+    mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(undefined);
     mockDeckRepository.getDeckById.mockResolvedValue({ 
       id: 'test-deck-id', 
       name: 'Test Deck',
@@ -146,7 +147,8 @@ describe('PUT /api/decks/:id/cards route logic', () => {
 
   it('should return 404 when deck replacement fails', async () => {
     mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
-    mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(false);
+    mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(undefined);
+    mockDeckRepository.getDeckById.mockResolvedValue(undefined);
 
     const response = await request(app)
       .put('/api/decks/test-deck-id/cards')
@@ -170,7 +172,7 @@ describe('PUT /api/decks/:id/cards route logic', () => {
     };
 
     mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
-    mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+    mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(undefined);
     mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
 
     const cardsData = [
@@ -199,7 +201,7 @@ describe('PUT /api/decks/:id/cards route logic', () => {
     };
 
     mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
-    mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+    mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(undefined);
     mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
 
     const cardsData = [
@@ -242,7 +244,7 @@ describe('PUT /api/decks/:id/cards route logic', () => {
       };
 
       mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
-      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(undefined);
       mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
 
       const cardsData = [
@@ -283,7 +285,7 @@ describe('PUT /api/decks/:id/cards route logic', () => {
       };
 
       mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
-      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(undefined);
       mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
 
       const cardsData = [
@@ -321,7 +323,7 @@ describe('PUT /api/decks/:id/cards route logic', () => {
       };
 
       mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
-      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(undefined);
       mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
 
       const cardsData = [
@@ -351,7 +353,7 @@ describe('PUT /api/decks/:id/cards route logic', () => {
       };
 
       mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
-      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(undefined);
       mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
 
       const cardsData = [
@@ -407,7 +409,7 @@ describe('PUT /api/decks/:id/cards route logic', () => {
       };
 
       mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
-      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(undefined);
       mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
 
       const cardsData = [
@@ -447,7 +449,7 @@ describe('PUT /api/decks/:id/cards route logic', () => {
       };
 
       mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
-      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(undefined);
       mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
 
       const cardsData = [
@@ -480,7 +482,7 @@ describe('PUT /api/decks/:id/cards route logic', () => {
       };
 
       mockDeckRepository.userOwnsDeck.mockResolvedValue(true);
-      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(true);
+      mockDeckRepository.replaceAllCardsInDeck.mockResolvedValue(undefined);
       mockDeckRepository.getDeckById.mockResolvedValue(mockDeck);
 
       const cardsData = [

@@ -59,8 +59,13 @@ class MockDeckRepository {
     return true;
   }
 
-  async replaceAllCardsInDeck(deckId: string, cards: Array<{cardType: string, cardId: string, quantity: number, selectedAlternateImage?: string}>): Promise<boolean> {
-    return true;
+  async replaceAllCardsInDeck(
+    deckId: string,
+    cards: Array<{ cardType: string; cardId: string; quantity: number; selectedAlternateImage?: string; exclude_from_draw?: boolean }>
+  ): Promise<void> {
+    // Mock implementation (no-op)
+    void deckId;
+    void cards;
   }
 
   async getDeckCards(deckId: string): Promise<any[]> {

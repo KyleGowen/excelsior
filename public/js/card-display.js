@@ -497,11 +497,53 @@ function displaySpecialCards(specialCards) {
     const specialCardsTab = document.getElementById('special-cards-tab');
     const charactersTab = document.getElementById('characters-tab');
 
-    // Group special cards by name, universe, and card_type
+    // Group special cards by name, universe, and card_type (keeps alternate-art navigation)
     const groupedCards = groupCardsByVariant(specialCards, 'name', 'universe');
-    
-    // Process each group
-    groupedCards.forEach((group, key) => {
+
+    // Re-sort groups for the Special Cards tab: by character name (A→Z, ignores leading "The"),
+    // then by card name, with "Any Character" always last for character-sorts.
+    const compareText =
+        (typeof Alphabetization !== 'undefined' && Alphabetization && typeof Alphabetization.compare === 'function')
+            ? Alphabetization.compare
+            : (a, b) => String(a ?? '').localeCompare(String(b ?? ''));
+
+    function isAnyCharacterName(value) {
+        return String(value ?? '').trim().toLowerCase() === 'any character';
+    }
+
+    function compareCharacterNames(a, b) {
+        const aIsAny = isAnyCharacterName(a);
+        const bIsAny = isAnyCharacterName(b);
+        if (aIsAny !== bIsAny) return aIsAny ? 1 : -1;
+        return compareText(a, b);
+    }
+
+    const sortedGroups = Array.from(groupedCards.entries()).sort(([_keyA, groupA], [_keyB, groupB]) => {
+        const repA = groupA?.[0] || {};
+        const repB = groupB?.[0] || {};
+
+        const charA = String(repA.character || repA.character_name || '').trim();
+        const charB = String(repB.character || repB.character_name || '').trim();
+        const charCmp = compareCharacterNames(charA, charB);
+        if (charCmp !== 0) return charCmp;
+
+        const nameA = String(repA.name || '').trim();
+        const nameB = String(repB.name || '').trim();
+        const nameCmp = compareText(nameA, nameB);
+        if (nameCmp !== 0) return nameCmp;
+
+        const setA = String(repA.universe || repA.set || 'ERB').trim();
+        const setB = String(repB.universe || repB.set || 'ERB').trim();
+        const setCmp = compareText(setA, setB);
+        if (setCmp !== 0) return setCmp;
+
+        const typeA = String(repA.card_type || '').trim();
+        const typeB = String(repB.card_type || '').trim();
+        return compareText(typeA, typeB);
+    });
+
+    // Process each group in our preferred order
+    sortedGroups.forEach(([key, group]) => {
         if (group.length === 0) return;
         
         // Use the first card (original art) as the representative
@@ -555,7 +597,7 @@ function displaySpecialCards(specialCards) {
                 ` : ''}
             </td>
             <td><strong>${representative.name}</strong></td>
-            <td>${representative.character}</td>
+            <td>${representative.character || ''}</td>
             <td>${formatSpecialCardEffect(representative.card_effect, representative)}</td>
         `;
         
@@ -631,7 +673,16 @@ function displayLocations(locations) {
     const tbody = document.getElementById('locations-tbody');
     tbody.innerHTML = '';
 
-    locations.forEach(location => {
+    const compareText =
+        (typeof Alphabetization !== 'undefined' && Alphabetization && typeof Alphabetization.compare === 'function')
+            ? Alphabetization.compare
+            : (a, b) => String(a ?? '').localeCompare(String(b ?? ''));
+
+    const sortedLocations = Array.isArray(locations)
+        ? [...locations].sort((a, b) => compareText(a?.name, b?.name))
+        : [];
+
+    sortedLocations.forEach(location => {
         const row = document.createElement('tr');
         
         // Set the data-id attribute for location identification

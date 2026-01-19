@@ -98,41 +98,64 @@ async function loadAllCards() {
         }
     });
     
-    // Sort all cards by set, then set_number (from database)
-    // This ensures proper database order regardless of card type
+    // Sort all cards primarily by "character / group name" (ignoring leading "The"),
+    // then by card display name, then by database set + set_number for stable ordering.
+    //
+    // This matches the rest of the UI's alphabetization expectations (e.g. "The Mummy" under M).
+    const compareText =
+        (typeof Alphabetization !== 'undefined' && Alphabetization && typeof Alphabetization.compare === 'function')
+            ? Alphabetization.compare
+            : (a, b) => String(a ?? '').localeCompare(String(b ?? ''));
+
+    function isAnyCharacterName(value) {
+        return String(value ?? '').trim().toLowerCase() === 'any character';
+    }
+
+    // Sorting rule: when sorting by character/group name, "Any Character" always comes last.
+    function compareCharacterNames(a, b) {
+        const aIsAny = isAnyCharacterName(a);
+        const bIsAny = isAnyCharacterName(b);
+        if (aIsAny !== bIsAny) return aIsAny ? 1 : -1;
+        return compareText(a, b);
+    }
+
+    function getGroupNameForSorting(card) {
+        if (!card) return '';
+        // Many card types (special cards in particular) expose their owning character as `character`.
+        // Prefer that when available so specials sort/group under the character name.
+        if (card.character) return String(card.character).trim();
+        if (card.character_name) return String(card.character_name).trim();
+        // Character cards: name is the character name.
+        if (card.cardType === 'character' && card.name) return String(card.name).trim();
+        // Fallback: whatever we display as the card name.
+        return String(getCardName(card)).trim();
+    }
+
     allCardsData.sort((a, b) => {
-        // Primary sort: set (ascending)
-        const setA = String(a.set || a.universe || 'ERB').toUpperCase().trim();
-        const setB = String(b.set || b.universe || 'ERB').toUpperCase().trim();
-        
-        if (setA !== setB) {
-            return setA.localeCompare(setB);
+        const groupCmp = compareCharacterNames(getGroupNameForSorting(a), getGroupNameForSorting(b));
+        if (groupCmp !== 0) return groupCmp;
+
+        const nameCmp = compareText(getCardName(a), getCardName(b));
+        if (nameCmp !== 0) return nameCmp;
+
+        // Stable tie-breakers: set + set_number (so order doesn't "jump" between reloads)
+        const setA = String(a?.set || a?.universe || 'ERB').trim();
+        const setB = String(b?.set || b?.universe || 'ERB').trim();
+        const setCmp = compareText(setA, setB);
+        if (setCmp !== 0) return setCmp;
+
+        const numAStr = String(a?.set_number || '').trim();
+        const numBStr = String(b?.set_number || '').trim();
+        const aHasNum = !!numAStr;
+        const bHasNum = !!numBStr;
+        if (aHasNum !== bHasNum) return aHasNum ? -1 : 1;
+        if (aHasNum && bHasNum) {
+            const numA = parseInt(numAStr, 10);
+            const numB = parseInt(numBStr, 10);
+            if (Number.isFinite(numA) && Number.isFinite(numB) && numA !== numB) return numA - numB;
         }
-        
-        // Secondary sort: set_number (ascending, numeric)
-        // Use the set_number field directly from the database
-        // Treat null/undefined/empty as a very high number so they appear last
-        const numAStr = String(a.set_number || '').trim();
-        const numBStr = String(b.set_number || '').trim();
-        
-        // If both are empty/null, maintain order
-        if (!numAStr && !numBStr) {
-            return 0;
-        }
-        // If only A is empty, put it last
-        if (!numAStr) {
-            return 1;
-        }
-        // If only B is empty, put it last
-        if (!numBStr) {
-            return -1;
-        }
-        
-        // Both have values, parse and compare
-        const numA = parseInt(numAStr, 10) || 0;
-        const numB = parseInt(numBStr, 10) || 0;
-        
-        return numA - numB;
+
+        return 0;
     });
     
     const endTime = performance.now();
