@@ -103,8 +103,10 @@ async function loadAllCards() {
     //
     // This matches the rest of the UI's alphabetization expectations (e.g. "The Mummy" under M).
     const compareText =
-        (typeof Alphabetization !== 'undefined' && Alphabetization && typeof Alphabetization.compare === 'function')
-            ? Alphabetization.compare
+        (typeof window !== 'undefined' &&
+            window.Alphabetization &&
+            typeof window.Alphabetization.compare === 'function')
+            ? window.Alphabetization.compare
             : (a, b) => String(a ?? '').localeCompare(String(b ?? ''));
 
     function isAnyCharacterName(value) {

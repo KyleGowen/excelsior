@@ -48,8 +48,36 @@ function groupCardsByVariant(cards, nameField = 'name', universeField = 'univers
             return 0; // Keep original order for same type
         });
     });
-    
-    return groups;
+
+    // Ensure stable, user-friendly ordering for display:
+    // sort groups alphabetically by card name using the global Alphabetization scheme when available.
+    const compareText =
+        (typeof window !== 'undefined' &&
+            window.Alphabetization &&
+            typeof window.Alphabetization.compare === 'function')
+            ? window.Alphabetization.compare
+            : (a, b) => String(a ?? '').localeCompare(String(b ?? ''));
+
+    const sortedEntries = Array.from(groups.entries()).sort(([_keyA, groupA], [_keyB, groupB]) => {
+        const repA = groupA?.[0] || {};
+        const repB = groupB?.[0] || {};
+
+        const nameA = repA[nameField] || repA.name || '';
+        const nameB = repB[nameField] || repB.name || '';
+        const nameCmp = compareText(nameA, nameB);
+        if (nameCmp !== 0) return nameCmp;
+
+        const setA = repA[universeField] || repA.set || 'ERB';
+        const setB = repB[universeField] || repB.set || 'ERB';
+        const setCmp = compareText(setA, setB);
+        if (setCmp !== 0) return setCmp;
+
+        const typeA = repA.card_type || '';
+        const typeB = repB.card_type || '';
+        return compareText(typeA, typeB);
+    });
+
+    return new Map(sortedEntries);
 }
 
 /**
@@ -503,8 +531,10 @@ function displaySpecialCards(specialCards) {
     // Re-sort groups for the Special Cards tab: by character name (A→Z, ignores leading "The"),
     // then by card name, with "Any Character" always last for character-sorts.
     const compareText =
-        (typeof Alphabetization !== 'undefined' && Alphabetization && typeof Alphabetization.compare === 'function')
-            ? Alphabetization.compare
+        (typeof window !== 'undefined' &&
+            window.Alphabetization &&
+            typeof window.Alphabetization.compare === 'function')
+            ? window.Alphabetization.compare
             : (a, b) => String(a ?? '').localeCompare(String(b ?? ''));
 
     function isAnyCharacterName(value) {
@@ -674,8 +704,10 @@ function displayLocations(locations) {
     tbody.innerHTML = '';
 
     const compareText =
-        (typeof Alphabetization !== 'undefined' && Alphabetization && typeof Alphabetization.compare === 'function')
-            ? Alphabetization.compare
+        (typeof window !== 'undefined' &&
+            window.Alphabetization &&
+            typeof window.Alphabetization.compare === 'function')
+            ? window.Alphabetization.compare
             : (a, b) => String(a ?? '').localeCompare(String(b ?? ''));
 
     const sortedLocations = Array.isArray(locations)

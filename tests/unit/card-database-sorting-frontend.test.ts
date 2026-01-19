@@ -183,5 +183,32 @@ describe('Card Database frontend sorting (All/Special/Locations)', () => {
     // Barsoom (B), Event Horizon (E), The Round Table (R...), Spartan (S)
     expect(names).toEqual(['Barsoom', 'Event Horizon: The Future', 'The Round Table', 'Spartan Training Ground']);
   });
+
+  it('Characters tab: sorts character names using Alphabetization (leading "The" ignored)', () => {
+    loadAlphabetization();
+    ensureMinimalImageHelpers();
+
+    execFrontendScript('public/js/card-display.js');
+    expect(typeof (window as any).displayCharacters).toBe('function');
+
+    document.body.innerHTML = `<table><tbody id="characters-tbody"></tbody></table><div id="characters-tab" style="display:block;"></div>`;
+
+    const characters = [
+      { id: 'c1', name: 'Tarzan', universe: 'MA', threat_level: 10, energy: 1, combat: 1, brute_force: 1, intelligence: 1, image: 't.webp' },
+      { id: 'c2', name: 'The Mummy', universe: 'MA', threat_level: 10, energy: 1, combat: 1, brute_force: 1, intelligence: 1, image: 'm.webp' },
+      { id: 'c3', name: 'Morgan le Fay', universe: 'MA', threat_level: 10, energy: 1, combat: 1, brute_force: 1, intelligence: 1, image: 'mlf.webp' },
+      { id: 'c4', name: 'Zebra', universe: 'MA', threat_level: 10, energy: 1, combat: 1, brute_force: 1, intelligence: 1, image: 'z.webp' }
+    ];
+
+    (window as any).displayCharacters(characters);
+
+    const names = Array.from(document.querySelectorAll('#characters-tbody tr td:nth-child(3)')).map((td) =>
+      (td.textContent || '').trim()
+    );
+
+    // Alphabetization ignores leading "The " for sorting:
+    // Morgan (Morg...), The Mummy (Mummy...), Tarzan (T...), Zebra (Z...)
+    expect(names).toEqual(['Morgan le Fay', 'The Mummy', 'Tarzan', 'Zebra']);
+  });
 });
 
