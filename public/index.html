@@ -12909,8 +12909,18 @@
             const grid = document.createElement('div');
             grid.className = 'alternate-art-options';
             
+            // Sort options deterministically:
+            // original art first, then alternates by image path (so numbering is stable).
+            const sortedCards = [...allCards].sort((a, b) => {
+                const aIsAlternate = (a.imagePath || '').includes('/alternate/');
+                const bIsAlternate = (b.imagePath || '').includes('/alternate/');
+                if (aIsAlternate && !bIsAlternate) return 1;
+                if (!aIsAlternate && bIsAlternate) return -1;
+                return String(a.imagePath || '').localeCompare(String(b.imagePath || ''), undefined, { sensitivity: 'base' });
+            });
+
             // Add each card as an option
-            allCards.forEach((card, index) => {
+            sortedCards.forEach((card, index) => {
                 const cardOption = document.createElement('div');
                 cardOption.className = 'art-option';
                 
@@ -13128,7 +13138,9 @@
                 const bIsAlternate = b.imagePath.includes('/alternate/');
                 if (aIsAlternate && !bIsAlternate) return 1;
                 if (!aIsAlternate && bIsAlternate) return -1;
-                return 0;
+                
+                // Finally, make alternate ordering stable and predictable
+                return String(a.imagePath || '').localeCompare(String(b.imagePath || ''), undefined, { sensitivity: 'base' });
             });
             
             if (uniqueAlternateArts.length <= 1) {
