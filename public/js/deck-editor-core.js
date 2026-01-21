@@ -192,13 +192,13 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
         // Set initial view based on user role for new decks
         await viewManager.applyInitialView();
         
-        // Initialize background manager for new decks (admin only)
+        // Initialize background manager for new decks (all users)
         // Use setTimeout to ensure DOM is fully ready
         setTimeout(async () => {
             if (window.deckBackgroundManager) {
                 try {
                     const currentUser = getCurrentUser();
-                    if (currentUser && currentUser.role === 'ADMIN') {
+                    if (currentUser) {
                         await window.deckBackgroundManager.loadBackgrounds();
                         window.deckBackgroundManager.createBackgroundButton();
                     }

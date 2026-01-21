@@ -121,8 +121,7 @@ describe('Card Duplication Bug Integration Test', () => {
     ];
 
     // Step 3: Add cards to deck using bulk replacement
-    const success = await deckRepository.replaceAllCardsInDeck(testDeckId, initialCards);
-    expect(success).toBe(true);
+    await deckRepository.replaceAllCardsInDeck(testDeckId, initialCards);
 
     // Step 4: Verify initial quantities are correct
     let deckCards = await deckRepository.getDeckCards(testDeckId);
@@ -132,8 +131,7 @@ describe('Card Duplication Bug Integration Test', () => {
     });
 
     // Step 5: Save again (simulate user saving multiple times)
-    const success2 = await deckRepository.replaceAllCardsInDeck(testDeckId, initialCards);
-    expect(success2).toBe(true);
+    await deckRepository.replaceAllCardsInDeck(testDeckId, initialCards);
 
     // Step 6: Verify quantities are still correct after second save
     deckCards = await deckRepository.getDeckCards(testDeckId);
@@ -143,8 +141,7 @@ describe('Card Duplication Bug Integration Test', () => {
     });
 
     // Step 7: Save a third time
-    const success3 = await deckRepository.replaceAllCardsInDeck(testDeckId, initialCards);
-    expect(success3).toBe(true);
+    await deckRepository.replaceAllCardsInDeck(testDeckId, initialCards);
 
     // Step 8: Verify quantities are still correct after third save
     deckCards = await deckRepository.getDeckCards(testDeckId);
@@ -159,8 +156,7 @@ describe('Card Duplication Bug Integration Test', () => {
       quantity: 2 // Change all quantities to 2
     }));
 
-    const success4 = await deckRepository.replaceAllCardsInDeck(testDeckId, modifiedCards);
-    expect(success4).toBe(true);
+    await deckRepository.replaceAllCardsInDeck(testDeckId, modifiedCards);
 
     // Step 10: Verify quantities were properly replaced (not added to)
     deckCards = await deckRepository.getDeckCards(testDeckId);
@@ -171,8 +167,7 @@ describe('Card Duplication Bug Integration Test', () => {
 
     // Step 11: Test with fewer cards to ensure removal works
     const reducedCards = initialCards.slice(0, 6); // Only first 6 card types
-    const success5 = await deckRepository.replaceAllCardsInDeck(testDeckId, reducedCards);
-    expect(success5).toBe(true);
+    await deckRepository.replaceAllCardsInDeck(testDeckId, reducedCards);
 
     // Step 12: Verify only 6 cards remain
     deckCards = await deckRepository.getDeckCards(testDeckId);
@@ -182,8 +177,7 @@ describe('Card Duplication Bug Integration Test', () => {
     });
 
     // Step 13: Test with empty deck
-    const success6 = await deckRepository.replaceAllCardsInDeck(testDeckId, []);
-    expect(success6).toBe(true);
+    await deckRepository.replaceAllCardsInDeck(testDeckId, []);
 
     // Step 14: Verify deck is empty
     deckCards = await deckRepository.getDeckCards(testDeckId);
@@ -245,14 +239,17 @@ describe('Card Duplication Bug Integration Test', () => {
       { cardType: 'power', cardId: powerCards[0].id, quantity: 3 }
     ];
 
-    // Simulate concurrent saves using Promise.all
-    const [result1, result2] = await Promise.all([
+    // Simulate concurrent saves; replaceAllCardsInDeck returns Promise<void> and may reject
+    // if one of the concurrent operations fails. We accept either:
+    // - both succeed, or
+    // - one succeeds and one fails
+    const results = await Promise.allSettled([
       deckRepository.replaceAllCardsInDeck(testDeckId, cards1),
       deckRepository.replaceAllCardsInDeck(testDeckId, cards2)
     ]);
 
     // At least one should succeed
-    expect(result1 || result2).toBe(true);
+    expect(results.some(r => r.status === 'fulfilled')).toBe(true);
 
     // Verify final state is consistent (not a mix of both)
     const deckCards = await deckRepository.getDeckCards(testDeckId);

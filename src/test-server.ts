@@ -7,6 +7,8 @@ import { DeckService } from './services/deckService';
 import { AuthenticationService } from './services/AuthenticationService';
 import { DeckValidationService } from './services/deckValidationService';
 import { DeckBackgroundService } from './services/deckBackgroundService';
+import { CollectionsRepository } from './database/collectionsRepository';
+import { CollectionService } from './services/collectionService';
 import { Character } from './types';
 import path from 'path';
 import { Response } from 'express';
@@ -31,6 +33,10 @@ const authService = new AuthenticationService(userRepository);
 
 // Initialize deck background service
 const deckBackgroundService = new DeckBackgroundService();
+
+// Initialize collection repository and service (mirrors main server)
+const collectionsRepository = new CollectionsRepository((dataSource as any).pool);
+const collectionService = new CollectionService(collectionsRepository);
 
 // Helper function to check if user is ADMIN
 function requireAdmin(req: any, res: Response): boolean {
@@ -215,13 +221,9 @@ app.get('/api/special-cards', async (req, res) => {
   }
 });
 
-// Get available background images (admin only)
+// Get available background images (all authenticated users)
 app.get('/api/deck-backgrounds', authenticateUser, async (req: any, res) => {
   try {
-    if (!requireAdmin(req, res)) {
-      return;
-    }
-
     const backgrounds = await deckBackgroundService.getAvailableBackgrounds();
     res.json({ success: true, data: backgrounds });
   } catch (error) {
@@ -1111,6 +1113,180 @@ app.put('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res)
   }
 });
 
+// Collection API routes - ADMIN only (mirrors main server behavior)
+app.get('/api/collections/me', authenticateUser, async (req: any, res) => {
+  try {
+    if (req.user.role !== 'ADMIN') {
+      return res.status(403).json({ success: false, error: 'Only ADMIN users can access collections' });
+    }
+
+    const collectionId = await collectionService.getOrCreateCollection(req.user.id);
+    res.json({ success: true, data: { id: collectionId, user_id: req.user.id } });
+  } catch (error) {
+    console.error('Error getting collection:', error);
+    res.status(500).json({ success: false, error: 'Failed to get collection' });
+  }
+});
+
+app.get('/api/collections/me/cards', authenticateUser, async (req: any, res) => {
+  try {
+    if (req.user.role !== 'ADMIN') {
+      return res.status(403).json({ success: false, error: 'Only ADMIN users can access collections' });
+    }
+
+    const collectionId = await collectionService.getOrCreateCollection(req.user.id);
+    const cards = await collectionService.getCollectionCards(collectionId);
+    res.json({ success: true, data: cards });
+  } catch (error: any) {
+    console.error('Error getting collection cards:', error);
+    const errorMessage = error?.message || 'Failed to get collection cards';
+    res.status(500).json({ success: false, error: errorMessage });
+  }
+});
+
+app.post('/api/collections/me/cards', authenticateUser, async (req: any, res) => {
+  try {
+    if (req.user.role !== 'ADMIN') {
+      return res.status(403).json({ success: false, error: 'Only ADMIN users can modify collections' });
+    }
+
+    const { cardId, cardType, quantity, imagePath } = req.body;
+    if (!cardId || !cardType) {
+      return res.status(400).json({ success: false, error: 'cardId and cardType are required' });
+    }
+
+    const collectionId = await collectionService.getOrCreateCollection(req.user.id);
+    const card = await collectionService.addCardToCollection(
+      collectionId,
+      cardId,
+      cardType,
+      quantity || 1,
+      imagePath
+    );
+
+    res.json({ success: true, data: card });
+  } catch (error: any) {
+    console.error('Error adding card to collection:', error);
+    if (error instanceof Error && error.message.includes('does not exist')) {
+      return res.status(404).json({ success: false, error: error.message });
+    }
+    res.status(500).json({ success: false, error: error?.message || 'Failed to add card to collection' });
+  }
+});
+
+app.put('/api/collections/me/cards/:cardId', authenticateUser, async (req: any, res) => {
+  try {
+    if (req.user.role !== 'ADMIN') {
+      return res.status(403).json({ success: false, error: 'Only ADMIN users can modify collections' });
+    }
+
+    const { cardId } = req.params;
+    const { quantity, cardType, imagePath, oldImagePath } = req.body;
+
+    if (quantity === undefined || quantity === null) {
+      return res.status(400).json({ success: false, error: 'quantity is required' });
+    }
+    if (!cardType) {
+      return res.status(400).json({ success: false, error: 'cardType is required' });
+    }
+    if (!imagePath) {
+      return res.status(400).json({ success: false, error: 'imagePath is required' });
+    }
+    if (quantity < 0) {
+      return res.status(400).json({ success: false, error: 'Quantity cannot be negative' });
+    }
+
+    // Guard against invalid UUIDs (prevents Postgres 22P02 -> 500)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(cardId)) {
+      return res.status(404).json({ success: false, error: 'Card not found in collection' });
+    }
+
+    const collectionId = await collectionService.getOrCreateCollection(req.user.id);
+    const updatedCard = await collectionService.updateCardQuantity(
+      collectionId,
+      cardId,
+      cardType,
+      quantity,
+      imagePath,
+      oldImagePath
+    );
+
+    if (updatedCard === null && quantity === 0) {
+      res.json({ success: true, data: null, message: 'Card removed from collection' });
+    } else if (updatedCard === null) {
+      res.status(404).json({ success: false, error: 'Card not found in collection' });
+    } else {
+      res.json({ success: true, data: updatedCard });
+    }
+  } catch (error: any) {
+    console.error('Error updating card quantity:', error);
+    // Common Postgres invalid UUID error (22P02) should be treated as not-found for these endpoints
+    const message = error?.message || '';
+    if (message.includes('invalid input syntax for type uuid')) {
+      return res.status(404).json({ success: false, error: 'Card not found in collection' });
+    }
+    res.status(500).json({ success: false, error: message || 'Failed to update card quantity' });
+  }
+});
+
+app.delete('/api/collections/me/cards/:cardId', authenticateUser, async (req: any, res) => {
+  try {
+    if (req.user.role !== 'ADMIN') {
+      return res.status(403).json({ success: false, error: 'Only ADMIN users can modify collections' });
+    }
+
+    const { cardId } = req.params;
+    const { cardType } = req.query;
+
+    if (!cardType) {
+      return res.status(400).json({ success: false, error: 'cardType query parameter is required' });
+    }
+
+    // Guard against invalid UUIDs (prevents Postgres 22P02 -> 500)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(cardId)) {
+      return res.status(404).json({ success: false, error: 'Card not found in collection' });
+    }
+
+    const collectionId = await collectionService.getOrCreateCollection(req.user.id);
+    const success = await collectionService.removeCardFromCollection(collectionId, cardId, cardType as string);
+
+    if (success) {
+      res.json({ success: true, message: 'Card removed from collection' });
+    } else {
+      res.status(404).json({ success: false, error: 'Card not found in collection' });
+    }
+  } catch (error) {
+    console.error('Error removing card from collection:', error);
+    const message = (error as any)?.message || '';
+    if (message.includes('invalid input syntax for type uuid')) {
+      return res.status(404).json({ success: false, error: 'Card not found in collection' });
+    }
+    res.status(500).json({ success: false, error: 'Failed to remove card from collection' });
+  }
+});
+
+app.get('/api/collections/me/history', authenticateUser, async (req: any, res) => {
+  try {
+    if (req.user.role !== 'ADMIN') {
+      return res.status(403).json({ success: false, error: 'Only ADMIN users can access collection history' });
+    }
+
+    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
+    if (limit !== undefined && (isNaN(limit) || limit < 1)) {
+      return res.status(400).json({ success: false, error: 'limit must be a positive integer' });
+    }
+
+    const collectionId = await collectionService.getOrCreateCollection(req.user.id);
+    const history = await collectionService.getCollectionHistory(collectionId, limit);
+    res.json({ success: true, data: history });
+  } catch (error) {
+    console.error('Error getting collection history:', error);
+    res.status(500).json({ success: false, error: 'Failed to get collection history' });
+  }
+});
+
 // Serve static files
 app.use(express.static('public'));
 
@@ -1256,6 +1432,10 @@ app.get('/test', async (req, res) => {
 // Error handling middleware
 app.use((err: any, req: any, res: any, next: any) => {
   console.error('Unhandled error:', err);
+  // Handle invalid JSON bodies from express.json()
+  if (err instanceof SyntaxError && (err as any).status === 400 && 'body' in err) {
+    return res.status(400).json({ success: false, error: 'Invalid JSON' });
+  }
   res.status(500).json({ success: false, error: 'Internal server error' });
 });
 

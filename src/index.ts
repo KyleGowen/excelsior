@@ -632,13 +632,9 @@ function requireAdmin(req: any, res: Response): boolean {
   return true;
 }
 
-// Get available background images (admin only)
+// Get available background images (all authenticated users)
 app.get('/api/deck-backgrounds', authenticateUser, async (req: any, res) => {
   try {
-    if (!requireAdmin(req, res)) {
-      return;
-    }
-
     const backgrounds = await deckBackgroundService.getAvailableBackgrounds();
     res.json({ success: true, data: backgrounds });
   } catch (error) {

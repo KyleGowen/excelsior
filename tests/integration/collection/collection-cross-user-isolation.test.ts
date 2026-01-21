@@ -11,8 +11,8 @@
 
 import request from 'supertest';
 import { Pool } from 'pg';
-import { app } from '../../src/test-server';
-import { DataSourceConfig } from '../../src/config/DataSourceConfig';
+import { app } from '../../../src/test-server';
+import { DataSourceConfig } from '../../../src/config/DataSourceConfig';
 import { integrationTestUtils } from '../../setup-integration';
 
 describe('Collection Cross-User Isolation Integration Tests', () => {
@@ -531,7 +531,7 @@ describe('Collection Cross-User Isolation Integration Tests', () => {
       );
 
       const cards2 = await pool.query(
-        'SELECT * FROM collection_cards WHERE collection_id = $2',
+        'SELECT * FROM collection_cards WHERE collection_id = $1',
         [collectionId2]
       );
 

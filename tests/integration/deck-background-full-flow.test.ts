@@ -250,14 +250,14 @@ describe('Deck Background Full Flow Integration Tests', () => {
   });
 
   describe('Non-Admin Access Restrictions', () => {
-    it('should block regular users from accessing background list endpoint', async () => {
+    it('should allow regular users to access background list endpoint', async () => {
       const response = await request(app)
         .get('/api/deck-backgrounds')
         .set('Cookie', regularAuthCookie)
-        .expect(403);
+        .expect(200);
 
-      expect(response.body.success).toBe(false);
-      expect(response.body.error).toContain('Only ADMIN users can access this endpoint');
+      expect(response.body.success).toBe(true);
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
 
     it('should allow regular users to view decks with backgrounds (read-only)', async () => {

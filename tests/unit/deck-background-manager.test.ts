@@ -346,22 +346,14 @@ describe('DeckBackgroundManager', () => {
   });
 
   describe('createBackgroundButton', () => {
-    it('should not create button for non-admin users', () => {
-      (global as any).window.currentUser = { id: 'user-1', role: 'USER' };
-      
-      manager.createBackgroundButton();
-
-      expect(mockDocument.createElement).not.toHaveBeenCalled();
-    });
-
     it('should not create button if no user', () => {
       manager.createBackgroundButton();
 
       expect(mockDocument.createElement).not.toHaveBeenCalled();
     });
 
-    it('should create button for admin users when DOM is ready', () => {
-      (global as any).window.currentUser = { id: 'admin-1', role: 'ADMIN' };
+    it('should create button for user sessions when DOM is ready', () => {
+      (global as any).window.currentUser = { id: 'user-1', role: 'USER' };
       
       // Mock DOM elements
       const mockListViewBtn = { nextSibling: null };
@@ -452,7 +444,7 @@ describe('DeckBackgroundManager', () => {
       expect(manager.createBackgroundButton).not.toHaveBeenCalled();
     });
 
-    it('should skip button creation for non-admin users', async () => {
+    it('should initialize for non-admin users in edit mode', async () => {
       manager.currentDeckId = 'deck-123';
       (global as any).window.currentUser = { id: 'user-1', role: 'USER' };
       
@@ -464,9 +456,9 @@ describe('DeckBackgroundManager', () => {
       await manager.initialize('deck-123', false);
 
       expect(manager.loadDeckBackground).toHaveBeenCalled();
-      // loadBackgrounds is NOT called for non-admin users
-      expect(manager.loadBackgrounds).not.toHaveBeenCalled();
-      expect(manager.createBackgroundButton).not.toHaveBeenCalled();
+      expect(manager.applyBackground).toHaveBeenCalled();
+      expect(manager.loadBackgrounds).toHaveBeenCalled();
+      expect(manager.createBackgroundButton).toHaveBeenCalled();
     });
 
     it('should skip button creation if no user found', async () => {

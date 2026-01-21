@@ -107,14 +107,14 @@ describe('Deck Background API Integration Tests', () => {
       });
     });
 
-    it('should block non-ADMIN users from accessing background list', async () => {
+    it('should allow non-ADMIN users to access background list', async () => {
       const response = await request(app)
         .get('/api/deck-backgrounds')
         .set('Cookie', regularAuthCookie)
-        .expect(403);
+        .expect(200);
 
-      expect(response.body.success).toBe(false);
-      expect(response.body.error).toContain('Only ADMIN users can access this endpoint');
+      expect(response.body.success).toBe(true);
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
 
     it('should handle service errors gracefully', async () => {
@@ -133,28 +133,18 @@ describe('Deck Background API Integration Tests', () => {
     });
   });
 
-  describe('requireAdmin helper function', () => {
-    it('should return 403 for non-ADMIN users', async () => {
+  describe('All roles can access backgrounds list', () => {
+    it('should allow USER users to proceed', async () => {
       const response = await request(app)
         .get('/api/deck-backgrounds')
         .set('Cookie', regularAuthCookie)
-        .expect(403);
-
-      expect(response.body.success).toBe(false);
-      expect(response.body.error).toBe('Only ADMIN users can access this endpoint');
-    });
-
-    it('should allow ADMIN users to proceed', async () => {
-      const response = await request(app)
-        .get('/api/deck-backgrounds')
-        .set('Cookie', adminAuthCookie)
         .expect(200);
 
       expect(response.body.success).toBe(true);
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
 
-    it('should handle missing user role', async () => {
-      // Create a user without explicit role (should default to USER)
+    it('should allow newly created USER users to proceed', async () => {
       const timestamp = Date.now();
       const userRepository = DataSourceConfig.getInstance().getUserRepository();
       const testUser = await userRepository.createUser(
@@ -177,9 +167,10 @@ describe('Deck Background API Integration Tests', () => {
       const response = await request(app)
         .get('/api/deck-backgrounds')
         .set('Cookie', testAuthCookie)
-        .expect(403);
+        .expect(200);
 
-      expect(response.body.success).toBe(false);
+      expect(response.body.success).toBe(true);
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
   });
 });

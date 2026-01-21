@@ -10,8 +10,8 @@
 
 import request from 'supertest';
 import { Pool } from 'pg';
-import { app } from '../../src/test-server';
-import { DataSourceConfig } from '../../src/config/DataSourceConfig';
+import { app } from '../../../src/test-server';
+import { DataSourceConfig } from '../../../src/config/DataSourceConfig';
 import { integrationTestUtils } from '../../setup-integration';
 
 describe('Collection Admin Access Control Integration Tests', () => {
@@ -424,8 +424,9 @@ describe('Collection Admin Access Control Integration Tests', () => {
       ];
 
       for (const endpoint of endpoints) {
-        const response = await request(app)
-          [endpoint.method](endpoint.path)
+        // supertest's request agent isn't indexable in TS; cast to any for dynamic method selection
+        const agent = request(app) as any;
+        const response = await agent[endpoint.method](endpoint.path)
           .set('Cookie', regularAuthCookie)
           .send(endpoint.body || {})
           .expect(403);

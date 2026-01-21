@@ -7,7 +7,7 @@ import request from 'supertest';
 import { Pool } from 'pg';
 import { app } from '../../src/test-server';
 import { DataSourceConfig } from '../../src/config/DataSourceConfig';
-import { integrationTestUtils } from '../../setup-integration';
+import { integrationTestUtils } from '../setup-integration';
 
 describe('All Tab Integration Tests', () => {
   let pool: Pool;
@@ -23,7 +23,7 @@ describe('All Tab Integration Tests', () => {
     await integrationTestUtils.ensureAdminUser();
 
     pool = new Pool({
-      connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower'
+      connectionString: process.env.DATABASE_URL || 'postgresql://localhost:5432/overpower_deckbuilder_test'
     });
 
     // Create ADMIN user
@@ -115,7 +115,7 @@ describe('All Tab Integration Tests', () => {
       const [charactersRes, specialsRes, powerRes] = await Promise.all([
         request(app).get('/api/characters'),
         request(app).get('/api/special-cards'),
-        request(app).get('/api/special-cards')
+        request(app).get('/api/power-cards')
       ]);
 
       const allCards = [
@@ -155,8 +155,11 @@ describe('All Tab Integration Tests', () => {
         const nextSet = String(next.set || next.universe || 'ERB').toUpperCase();
         
         if (currentSet === nextSet) {
-          const currentNum = parseInt(String(current.set_number || '').trim(), 10) || 0;
-          const nextNum = parseInt(String(next.set_number || '').trim(), 10) || 0;
+          const currentNumStr = String(current.set_number || '').trim();
+          const nextNumStr = String(next.set_number || '').trim();
+          // Match the sort rule: missing set_number sorts last
+          const currentNum = currentNumStr ? (parseInt(currentNumStr, 10) || Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER;
+          const nextNum = nextNumStr ? (parseInt(nextNumStr, 10) || Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER;
           expect(currentNum).toBeLessThanOrEqual(nextNum);
         }
       }
@@ -298,12 +301,8 @@ describe('All Tab Integration Tests', () => {
 
         // Cleanup
         await request(app)
-          .delete('/api/collections/me/cards')
-          .set('Cookie', adminAuthCookie)
-          .send({
-            cardId: card.id,
-            cardType: 'character'
-          });
+          .delete(`/api/collections/me/cards/${card.id}?cardType=character`)
+          .set('Cookie', adminAuthCookie);
       }
     });
 
@@ -383,54 +382,40 @@ describe('All Tab Integration Tests', () => {
 
   describe('Card Sorting Verification', () => {
     it('should verify cards are sorted by set then set_number in database', async () => {
-      // Query database directly to verify sorting
-      const result = await pool.query(`
-        SELECT 
-          'character' as card_type,
-          id,
-          name,
-          set,
-          set_number
-        FROM characters
-        WHERE set IS NOT NULL AND set_number IS NOT NULL
-        ORDER BY set, CAST(set_number AS INTEGER)
-        LIMIT 20
-        
-        UNION ALL
-        
-        SELECT 
-          'special' as card_type,
-          id,
-          name,
-          set,
-          set_number
-        FROM special_cards
-        WHERE set IS NOT NULL AND set_number IS NOT NULL
-        ORDER BY set, CAST(set_number AS INTEGER)
-        LIMIT 20
-        
-        ORDER BY set, CAST(set_number AS INTEGER)
-        LIMIT 40
-      `);
+      // Verify sorting within each table (avoids invalid ORDER BY + UNION syntax)
+      const [characters, specials] = await Promise.all([
+        pool.query(`
+          SELECT set, set_number
+          FROM characters
+          WHERE set IS NOT NULL AND set_number IS NOT NULL
+          ORDER BY set, CAST(set_number AS INTEGER)
+          LIMIT 50
+        `),
+        pool.query(`
+          SELECT set, set_number
+          FROM special_cards
+          WHERE set IS NOT NULL AND set_number IS NOT NULL
+          ORDER BY set, CAST(set_number AS INTEGER)
+          LIMIT 50
+        `)
+      ]);
 
-      if (result.rows.length > 1) {
-        // Verify sorting
-        for (let i = 0; i < result.rows.length - 1; i++) {
-          const current = result.rows[i];
-          const next = result.rows[i + 1];
-
-          const currentSet = current.set.toUpperCase();
-          const nextSet = next.set.toUpperCase();
-
+      const verifySorted = (rows: any[]) => {
+        for (let i = 0; i < rows.length - 1; i++) {
+          const currentSet = String(rows[i].set).toUpperCase();
+          const nextSet = String(rows[i + 1].set).toUpperCase();
           if (currentSet === nextSet) {
-            const currentNum = parseInt(current.set_number, 10);
-            const nextNum = parseInt(next.set_number, 10);
+            const currentNum = parseInt(String(rows[i].set_number), 10);
+            const nextNum = parseInt(String(rows[i + 1].set_number), 10);
             expect(currentNum).toBeLessThanOrEqual(nextNum);
           } else {
             expect(currentSet.localeCompare(nextSet)).toBeLessThanOrEqual(0);
           }
         }
-      }
+      };
+
+      verifySorted(characters.rows);
+      verifySorted(specials.rows);
     });
 
     it('should handle cards with missing set_number gracefully', async () => {

@@ -1,6 +1,6 @@
 /**
  * Deck Background Management Module
- * Handles background image selection for deck editor (admin only)
+ * Handles background image selection for deck editor (all authenticated users)
  */
 
 class DeckBackgroundManager {
@@ -25,7 +25,7 @@ class DeckBackgroundManager {
     // Apply background to editor (works for all users)
     this.applyBackground();
     
-    // Only show button and load backgrounds list for admin users in edit mode
+    // Show button and load backgrounds list for all users in edit mode
     if (!readOnly) {
       const currentUser = this.getCurrentUser();
       console.log('Background manager: Current user:', currentUser);
@@ -35,12 +35,7 @@ class DeckBackgroundManager {
         return;
       }
       
-      if (currentUser.role !== 'ADMIN') {
-        console.log('Background manager: User is not ADMIN (role:', currentUser.role, '), skipping button creation');
-        return; // Don't show button for non-admin users
-      }
-
-      console.log('Background manager: Initializing for admin user');
+      console.log('Background manager: Initializing for user');
 
       // Load available backgrounds
       await this.loadBackgrounds();
@@ -82,7 +77,7 @@ class DeckBackgroundManager {
       
       if (!response.ok) {
         if (response.status === 403) {
-          console.log('Background feature not available: Admin access required');
+          console.log('Background feature not available: Access denied');
           return;
         }
         throw new Error('Failed to load backgrounds');
@@ -138,11 +133,11 @@ class DeckBackgroundManager {
    * Create the Background button
    */
   createBackgroundButton() {
-    // Check if user is admin before creating button
+    // Check if user exists before creating button
     const currentUser = this.getCurrentUser();
-    if (!currentUser || currentUser.role !== 'ADMIN') {
-      console.log('Background manager: Not creating button - user is not ADMIN');
-      return; // Don't create button for non-admin users
+    if (!currentUser) {
+      console.log('Background manager: Not creating button - no current user');
+      return; // Don't create button if we can't identify a user session
     }
 
     // Wait for DOM to be ready
