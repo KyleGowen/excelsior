@@ -345,7 +345,7 @@ function checkRateLimit(req: any, res: any, operation: string): boolean {
 }
 
 // Clean up expired rate limit entries periodically
-setInterval(() => {
+const rateLimitCleanupInterval = setInterval(() => {
   const now = Date.now();
   for (const [key, value] of rateLimitMap.entries()) {
     if (now > value.resetTime) {
@@ -353,6 +353,12 @@ setInterval(() => {
     }
   }
 }, 5 * 60 * 1000); // Clean up every 5 minutes
+
+// In unit tests, do not keep the event loop alive due to this interval.
+// (Some unit tests import from src/index.ts, and Jest expects the process to exit.)
+if (process.env.NODE_ENV === 'test' && typeof (rateLimitCleanupInterval as any).unref === 'function') {
+  (rateLimitCleanupInterval as any).unref();
+}
 
 // Initialize services
 const deckService = new DeckPersistenceService();
