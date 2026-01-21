@@ -4165,7 +4165,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
+            background: rgba(0, 0, 0, 0.55); /* Black dimming overlay */
             z-index: 0; /* Same level as ::before, but will be layered on top */
             border-radius: 6px;
             pointer-events: none;
@@ -4353,7 +4353,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
+            background: rgba(0, 0, 0, 0.55); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4367,7 +4367,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
+            background: rgba(0, 0, 0, 0.55); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4401,7 +4401,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
+            background: rgba(0, 0, 0, 0.55); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4454,7 +4454,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
+            background: rgba(0, 0, 0, 0.55); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4495,7 +4495,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
+            background: rgba(0, 0, 0, 0.55); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4536,7 +4536,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
+            background: rgba(0, 0, 0, 0.55); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4575,7 +4575,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
+            background: rgba(0, 0, 0, 0.55); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4624,7 +4624,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
+            background: rgba(0, 0, 0, 0.55); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4664,7 +4664,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
+            background: rgba(0, 0, 0, 0.55); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -4686,6 +4686,57 @@
             gap: 0.5rem;
             align-items: center;
             z-index: 10;
+        }
+
+        /* Tile View: action buttons must stay bottom-right (not vertically centered).
+           This is intentionally scoped to Tile View so Card View / List View layouts are unaffected. */
+        .deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions {
+            position: absolute !important;
+            right: 8px !important;
+            bottom: 8px !important;
+            top: auto !important;
+            left: auto !important;
+            transform: none !important;
+            align-self: auto !important;
+        }
+
+        /* Tile View: slightly shade action buttons for readability (subtle bump vs defaults).
+           Keep this light — we don't want the heavy dark overlay look. */
+        .deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions .quantity-btn,
+        .deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions .remove-one-btn,
+        .deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions .add-one-btn,
+        .deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions .reserve-btn {
+            /* Reduce transparency by ~1/3 vs current bump (i.e., opacity * 4/3) */
+            background: rgba(255, 255, 255, 0.20) !important; /* was 0.15 */
+            border-color: rgba(255, 255, 255, 0.33) !important; /* was 0.25 */
+        }
+
+        .deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions .quantity-btn:hover,
+        .deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions .remove-one-btn:hover,
+        .deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions .add-one-btn:hover,
+        .deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions .reserve-btn:hover {
+            background: rgba(255, 255, 255, 0.33) !important; /* was 0.25 */
+            border-color: rgba(255, 255, 255, 0.47) !important; /* was 0.35 */
+        }
+
+        .deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions .alternate-art-btn {
+            background: rgba(78, 205, 196, 0.33) !important; /* was 0.25 */
+            border-color: rgba(78, 205, 196, 0.47) !important; /* was 0.35 */
+        }
+
+        .deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions .alternate-art-btn:hover {
+            background: rgba(78, 205, 196, 0.47) !important; /* was 0.35 */
+            border-color: rgba(78, 205, 196, 0.73) !important; /* was 0.55 */
+        }
+
+        .deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions .ko-btn {
+            background: rgba(255, 107, 107, 0.33) !important; /* was 0.25 */
+            border-color: rgba(255, 107, 107, 0.47) !important; /* was 0.35 */
+        }
+
+        .deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions .ko-btn:hover {
+            background: rgba(255, 107, 107, 0.47) !important; /* was 0.35 */
+            border-color: rgba(255, 107, 107, 0.60) !important; /* was 0.45 */
         }
 
         /* Remove One button styling - exactly matches quantity-btn */
@@ -5020,7 +5071,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
+            background: rgba(0, 0, 0, 0.55); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;
@@ -5054,7 +5105,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Black dimming overlay */
+            background: rgba(0, 0, 0, 0.55); /* Black dimming overlay */
             z-index: -1;
             border-radius: 6px;
             pointer-events: none;

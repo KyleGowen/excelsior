@@ -393,6 +393,41 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
 
 ### Search Bar Integration
 - **Location**: Inside `.card-selector-pane`, replaces "Available Cards" heading
+
+### Deck Editor Tile View — Action Button Placement
+
+- **Goal**: In **Tile View**, per-tile action buttons (e.g. **Change Art**, **KO**, **Reserve**, **-1/+1**) must be **bottom-right aligned** within the tile (not vertically centered).
+- **Why**: Keeps actions visually consistent and prevents regressions where buttons drift to mid-right due to layout/cascade changes.
+- **Selectors**:
+  - **Actions container**: `.deck-card-editor-actions`
+  - **Tile View scope** (do not affect List/Card views): `.deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions`
+- **Positioning**:
+  - **position**: `absolute`
+  - **right**: `8px`
+  - **bottom**: `8px`
+  - **top/left**: `auto` (explicitly)
+  - **transform**: `none` (explicitly)
+- **Shade bump (subtle)**:
+  - Tile View buttons sit on top of card art, so we apply a **small opacity increase** (not the heavy dark overlay) for readability.
+  - **Target**: Reduce transparency by **~1/3** from the previous bump (equivalently, opacity scaled by **4/3**).
+  - **White buttons** (`.quantity-btn`, `.remove-one-btn`, `.add-one-btn`, `.reserve-btn`): background `0.10 → 0.20` (hover `0.20 → 0.33`), border `0.20 → 0.33`
+  - **Teal** (`.alternate-art-btn`): background `0.20 → 0.33` (hover `0.30 → 0.47`), border `0.30 → 0.47`
+  - **Red** (`.ko-btn`): background `0.20 → 0.33` (hover `0.30 → 0.47`), border `0.30 → 0.47`
+- **Tile background darkening**:
+  - Deck Editor Tile View shows card art as a background image with a black dimming overlay (pseudo-element).
+  - **Overlay opacity**: `rgba(0, 0, 0, 0.55)` (was `0.50`) — ~10% darker for readability/contrast.
+  - **Selectors**: `.deck-card-editor-item.<type>-card::after` (characters, power, location, special, mission, event, aspect, teamwork, ally/basic/advanced universe, training).
+
+```css
+.deck-cards-editor:not(.list-view):not(.card-view) .deck-card-editor-item.preview-view .deck-card-editor-actions {
+  position: absolute !important;
+  right: 8px !important;
+  bottom: 8px !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+}
+```
 - **Container**: `.deck-editor-search-container`
 - **Margins**: `margin-top: 7px`, `margin-bottom: 0px` (minimal spacing)
 - **Flex Properties**: `flex-shrink: 0`
