@@ -9,6 +9,7 @@ import { DeckValidationService } from './services/deckValidationService';
 import { CollectionsRepository } from './database/collectionsRepository';
 import { CollectionService } from './services/collectionService';
 import { DeckBackgroundService } from './services/deckBackgroundService';
+import { createDeckRoutes } from './routes/decks.routes';
 import { Character } from './types';
 import path from 'path';
 import { execSync } from 'child_process';
@@ -752,36 +753,7 @@ app.post('/api/users/change-password', authenticateUser, async (req: any, res) =
   }
 });
 
-app.get('/api/decks', authenticateUser, async (req: any, res) => {
-  try {
-    const decks = await deckRepository.getDecksByUserId(req.user.id);
-    
-    // Transform deck data to match frontend expectations
-    // Note: getDecksByUserId now returns decks with metadata columns for performance
-    const transformedDecks = decks.map(deck => ({
-      metadata: {
-        id: deck.id,
-        name: deck.name,
-        description: deck.description,
-        created: deck.created_at,
-        lastModified: deck.updated_at,
-        cardCount: deck.card_count || 0, // Use metadata column instead of cards.length
-        threat: deck.threat || 0, // Use metadata column
-        is_valid: deck.is_valid || false, // Use metadata column
-        userId: deck.user_id,
-        uiPreferences: deck.ui_preferences,
-        is_limited: deck.is_limited,
-        background_image_path: deck.background_image_path || null
-      },
-      cards: deck.cards || [] // Character and location cards from metadata
-    }));
-    
-    res.json({ success: true, data: transformedDecks });
-  } catch (error) {
-    console.error('Error fetching decks:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch decks' });
-  }
-});
+app.use('/api', createDeckRoutes({ deckRepository, authenticateUser }));
 
 // Deck management API routes
 app.post('/api/decks', authenticateUser, /* securityMiddleware.csrfProtection, securityMiddleware.securityAudit('DECK_CREATION'), */ async (req: any, res) => {
