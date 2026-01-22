@@ -257,6 +257,12 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
       - Characters stack: `.deck-character-card-display` (`190px × 140px`, overlap via `margin-left: -38px`)
       - Location preview: `.deck-tile-preview-card.deck-tile-location-preview` (`250px × 160px`, border `rgba(254, 202, 87, 0.45)`)
       - Mission preview: `.deck-tile-preview-card.deck-tile-mission-preview` (`140px × 200px`)
+      - Empty preview state (no selection): `.deck-tile-preview-card--empty`
+        - **Goal**: look “blank/neutral” (uncolored) to clearly communicate “not selected”
+        - **Border**: dashed, `rgba(255, 255, 255, 0.12)`
+        - **Background**: `transparent`
+        - **Shadow**: `none`
+        - **Hover**: no lift/scale (empty placeholders should not animate like real previews)
     - **Preview alignment**:
       - Compact tiles add `padding-left: 26px` on `.deck-card.deck-tile--compact .deck-character-cards-row` to keep the character accordion from overlapping the tile border
     - **Right-side stats**:

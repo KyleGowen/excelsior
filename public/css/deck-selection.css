@@ -153,7 +153,36 @@
 
 .deck-tile-preview-card--empty {
     border-style: dashed;
-    border-color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.12);
+    background: transparent;
+    box-shadow: none;
+    filter: grayscale(1) saturate(0);
+    opacity: 0.85;
+    will-change: auto;
+}
+
+/* Empty state must override type-specific preview borders (e.g. location yellow) */
+.deck-card.deck-tile.deck-tile--compact .deck-tile-preview-card.deck-tile-preview-card--empty {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.deck-card.deck-tile.deck-tile--compact .deck-tile-location-preview.deck-tile-preview-card--empty {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Empty preview cards should look neutral and not “lift” on hover */
+.deck-card.deck-tile.deck-tile--compact .deck-tile-preview-card--empty:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(255, 255, 255, 0.12);
+    filter: grayscale(1) saturate(0);
+}
+
+/* When hovering other previews, keep empties steady/neutral */
+.deck-card.deck-tile.deck-tile--compact .deck-tile-previews:hover .deck-tile-preview-card--empty {
+    transform: none;
+    opacity: 0.85;
+    filter: grayscale(1) saturate(0);
 }
 
 /* Right-side stats under ellipsis */
