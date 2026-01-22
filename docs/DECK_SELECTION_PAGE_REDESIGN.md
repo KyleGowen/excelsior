@@ -13,10 +13,12 @@ This document describes the redesign work for the **Deck Selection / Deck Builde
 
 ## Key Files
 
-- **Deck list UI + rendering**: `public/index.html`
-- **Deck list styling**: `public/css/index.css`
+- **Deck list wiring (script + CSS includes)**: `public/index.html`
+- **Deck list UI + rendering**: `public/js/deck-selection/deckTilesRenderer.js` (and related modules under `public/js/deck-selection/`)
+- **Deck list styling**: `public/css/deck-selection.css`
 - **Deck backgrounds (editor selection + application)**: `public/js/deck-background.js`, `public/css/deck-background.css`
-- **Deck list API mapping**: `src/index.ts` (`GET /api/decks`)
+- **Deck list API route**: `src/routes/decks.routes.ts` (`GET /api/decks`)
+- **Deck list API mapping**: `src/api/deckTransform.ts`
 - **Deck list DB query + caching**: `src/database/PostgreSQLDeckRepository.ts` (`getDecksByUserId`)
 - **UI documentation**: `STYLE_GUIDE.md`
 
@@ -31,12 +33,12 @@ Each deck in the list is rendered as a two-column tile:
 
 ### Implementation
 
-- **HTML structure** (per deck tile) is generated in `public/index.html` inside `displayDecks(decks)`.
+- **HTML structure** (per deck tile) is generated in `public/js/deck-selection/deckTilesRenderer.js` inside `displayDecks(decks)`.
   - Root tile class: `.deck-card.deck-tile.deck-tile--compact`
   - Left: `.deck-tile-main`
   - Right: `.deck-tile-side`
 
-- **CSS grid layout** in `public/css/index.css`:
+- **CSS grid layout** in `public/css/deck-selection.css`:
   - `.deck-card.deck-tile.deck-tile--compact { display: grid; grid-template-columns: 1fr 220px; ... }`
 
 ## Feature: Preview “accordion” (characters + location + mission)
@@ -80,7 +82,7 @@ The deck list resolves these consistently for:
 
 ### Implementation
 
-- Function: `getDeckCardImagePath(card)` in `public/index.html`
+- Function: `getDeckCardImagePath(card)` in `public/js/deck-selection/deckTileImages.js`
   - If `defaultImage` contains `/`, it’s treated as already prefixed.
   - Otherwise, the filename is prefixed based on `card.type`.
   - Fallback to snake_case name-based path when needed.
@@ -115,8 +117,8 @@ Replaces three buttons with a single **ellipsis menu**.
   - Dropdown container: `.deck-tile-menu-dropdown` (id: `deckTileMenu-${deckId}`)
 
 - **JS**
-  - `toggleDeckTileMenu(event, deckId)`
-  - `closeAllDeckTileMenus()`
+  - `toggleDeckTileMenu(event, deckId)` in `public/js/deck-selection/deckTileMenu.js`
+  - `closeAllDeckTileMenus()` in `public/js/deck-selection/deckTileMenu.js`
   - Document listeners:
     - close on outside click
     - close on Escape key
@@ -170,7 +172,7 @@ If a deck’s Created/Updated timestamp is **today** (local time), show a time (
 
 ### Implementation
 
-- Function: `formatDeckTimestamp(value)` in `public/index.html`
+- Function: `formatDeckTimestamp(value)` in `public/js/deck-selection/deckTileTimestamps.js`
   - Uses `toDateString()` comparison against `new Date()` for a local “today” check.
   - Returns time via `toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })`.
   - Otherwise returns `toLocaleDateString()`.
@@ -204,7 +206,7 @@ If a deck has a selected background image, the deck tile displays that image beh
   - `getDecksByUserId()` includes `background_image_path` in returned deck summary objects.
   - Cache bypass ensures older cached deck lists (missing the field) don’t hide backgrounds.
 
-- `src/index.ts`:
+- `src/routes/decks.routes.ts` + `src/api/deckTransform.ts`:
   - `GET /api/decks` includes `background_image_path` in `metadata`.
 
 ## Troubleshooting
@@ -219,6 +221,6 @@ If a deck has a selected background image, the deck tile displays that image beh
 
 ## Notes on testing
 
-- Many deck list behaviors are currently embedded in `public/index.html` (template generation + helper functions).
-- Unit tests cover core backend and some frontend modules, but deeper deck list UI testing is easiest if these helpers are moved into testable JS modules under `public/js/`.
+- Deck list behaviors now live in dedicated modules under `public/js/deck-selection/`.
+- Unit tests cover key deck list UI behaviors via a jsdom test in `tests/unit/deck-selection/deck-selection-modules.test.ts`.
 
