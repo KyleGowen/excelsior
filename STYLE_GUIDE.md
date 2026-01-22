@@ -258,11 +258,12 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
       - Location preview: `.deck-tile-preview-card.deck-tile-location-preview` (`250px × 160px`, border `rgba(254, 202, 87, 0.45)`)
       - Mission preview: `.deck-tile-preview-card.deck-tile-mission-preview` (`140px × 200px`)
       - Empty preview state (no selection): `.deck-tile-preview-card--empty`
-        - **Goal**: look “blank/neutral” (uncolored) to clearly communicate “not selected”
-        - **Border**: dashed, `rgba(255, 255, 255, 0.12)`
-        - **Background**: `transparent`
-        - **Shadow**: `none`
-        - **Hover**: no lift/scale (empty placeholders should not animate like real previews)
+        - **Goal**: empty **Location** and **Mission** slots should match empty **Character** slots
+        - **Unified empty styling** (matches `.deck-character-card-display.empty`):
+          - **Border**: `1px dashed rgba(78, 205, 196, 0.2)`
+          - **Background**: `rgba(255, 255, 255, 0.05)`
+          - **Text**: centered “Empty” label, `color: rgba(78, 205, 196, 0.5)`, `font-size: 0.6rem`
+        - **Implementation note**: Location/Mission placeholders render as empty divs; the “Empty” label is provided via `::after` on `.deck-tile-preview-card--empty`
     - **Preview alignment**:
       - Compact tiles add `padding-left: 26px` on `.deck-card.deck-tile--compact .deck-character-cards-row` to keep the character accordion from overlapping the tile border
     - **Right-side stats**:
@@ -282,6 +283,10 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
     - **Preview hover behavior (location + mission)**:
       - `.deck-tile-preview-card:hover`: lift/scale to match the character-accordion “focus” feel (`translateY(-10px) scale(1.08)`)
       - `.deck-tile-previews:hover .deck-tile-preview-card:not(:hover)`: non-hovered previews recede (`translateY(8px) scale(0.94)`) with slight desaturation
+      - **Hover glow accents**:
+        - Characters: teal glow (character stack hover)
+        - Location: yellow glow (`.deck-tile-location-preview:hover`)
+        - Mission: green glow (`.deck-tile-mission-preview:hover`)
 
 ### Database View (database.html)
 - **Character Cards**: Teal borders with gold text for character names
