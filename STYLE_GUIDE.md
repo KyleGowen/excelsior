@@ -240,6 +240,42 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
 - **Header**: Unified header with logo, navigation tabs, and user menu
 - **Deck Cards**: Grid layout with teal accents and gold highlights
 - **Statistics**: Gold text for values, teal for labels
+- **Deck Builder tab (deck list previews)**:
+  - **Full redesign notes**: See `docs/DECK_SELECTION_PAGE_REDESIGN.md` for the complete feature-by-feature implementation details.
+  - **Tile layout (compact modern)**: `.deck-card.deck-tile.deck-tile--compact`
+    - **Structure**:
+      - Left column: `.deck-tile-main` containing header + unified preview accordion
+      - Right column: `.deck-tile-side` containing ellipsis + stats block
+      - Header: `.deck-tile-header` with `.deck-tile-title`
+      - Preview strip: `.deck-tile-previews` (characters stack + location + first mission)
+    - **Deck tile background (selected background)**:
+      - If `metadata.background_image_path` is set, the tile gets `.deck-tile--has-bg` and uses `--deck-tile-bg` for the image URL
+      - Image is rendered via `::before` and shaded via `::after` using `rgba(0, 0, 0, 0.432)` to match deck editor overlay
+    - **Deck title styling**:
+      - `.deck-tile-title` uses **Info Blue** at ~90% opacity (`rgba(72, 219, 251, 0.9)`) and a retro-futuristic system font stack (`"Trebuchet MS"`, `"Avenir Next"`, `"Segoe UI"`, `system-ui`)
+    - **Preview sizing**:
+      - Characters stack: `.deck-character-card-display` (`190px × 140px`, overlap via `margin-left: -38px`)
+      - Location preview: `.deck-tile-preview-card.deck-tile-location-preview` (`250px × 160px`, border `rgba(254, 202, 87, 0.45)`)
+      - Mission preview: `.deck-tile-preview-card.deck-tile-mission-preview` (`140px × 200px`)
+    - **Preview alignment**:
+      - Compact tiles add `padding-left: 26px` on `.deck-card.deck-tile--compact .deck-character-cards-row` to keep the character accordion from overlapping the tile border
+    - **Right-side stats**:
+      - Container: `.deck-tile-side-meta` (subtle glass panel, `background: rgba(0, 0, 0, 0.44)`)
+      - Rows: `.deck-tile-side-item` with `.deck-tile-side-label` and `.deck-tile-side-value` (value uses `#4ecdc4`)
+      - Icons:
+        - Threat uses `public/resources/images/icons/threat.png` via `.deck-tile-side-icon-img`
+        - Cards uses `public/resources/images/icons/cards.svg`
+        - Updated uses `public/resources/images/icons/updated.svg`
+        - Created uses `public/resources/images/icons/created.svg`
+      - Timestamps: if Created/Updated is today (local), show time (`h:mm`); otherwise show date (`M/D/YYYY`)
+      - Legality banner: `.deck-tile-side-legality` (contains `.deck-validation-badge`)
+    - **Actions menu**:
+      - **Trigger**: `.deck-tile-menu-button` (ellipsis)
+      - **Dropdown**: `.deck-tile-menu-dropdown` with `z-index: 9999` to ensure it layers above tile content
+      - **Items**: `.deck-tile-menu-item` (danger variant: `.deck-tile-menu-item--danger`)
+    - **Preview hover behavior (location + mission)**:
+      - `.deck-tile-preview-card:hover`: lift/scale to match the character-accordion “focus” feel (`translateY(-10px) scale(1.08)`)
+      - `.deck-tile-previews:hover .deck-tile-preview-card:not(:hover)`: non-hovered previews recede (`translateY(8px) scale(0.94)`) with slight desaturation
 
 ### Database View (database.html)
 - **Character Cards**: Teal borders with gold text for character names

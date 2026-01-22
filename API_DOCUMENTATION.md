@@ -455,7 +455,8 @@ Get all decks for the authenticated user.
         "is_valid": "boolean",
         "userId": "string",
         "uiPreferences": "object",
-        "is_limited": "boolean"
+        "is_limited": "boolean",
+        "background_image_path": "string|null"
       },
       "cards": [
         {

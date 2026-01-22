@@ -770,7 +770,8 @@ app.get('/api/decks', authenticateUser, async (req: any, res) => {
         is_valid: deck.is_valid || false, // Use metadata column
         userId: deck.user_id,
         uiPreferences: deck.ui_preferences,
-        is_limited: deck.is_limited
+        is_limited: deck.is_limited,
+        background_image_path: deck.background_image_path || null
       },
       cards: deck.cards || [] // Character and location cards from metadata
     }));

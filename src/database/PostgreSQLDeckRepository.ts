@@ -170,12 +170,24 @@ export class PostgreSQLDeckRepository implements DeckRepository {
     const cached = this.deckCache.get(cacheKey);
     const now = Date.now();
     if (cached && (now - cached.timestamp) < this.DECK_CACHE_TTL) {
-      return cached.deck as unknown as Deck[];
+      const cachedDecks = cached.deck as unknown as Deck[];
+      // If cached decks don't include mission preview cards, bypass cache.
+      // This prevents stale cache from hiding newly-added preview data fields.
+      const hasAnyMissionPreview = Array.isArray(cachedDecks) && cachedDecks.some((d: any) =>
+        Array.isArray(d?.cards) && d.cards.some((c: any) => c?.type === 'mission')
+      );
+      const hasBackgroundField = Array.isArray(cachedDecks) && cachedDecks.every((d: any) =>
+        d && Object.prototype.hasOwnProperty.call(d, 'background_image_path')
+      );
+      if (hasAnyMissionPreview && hasBackgroundField) {
+        return cachedDecks;
+      }
+      this.deckCache.delete(cacheKey);
     }
 
     const client = await this.pool.connect();
     try {
-      // Get deck metadata with character and location information using joins
+      // Get deck metadata with character/location + first mission preview (for deck list tiles)
       const deckResult = await client.query(`
         SELECT 
           d.*,
@@ -188,13 +200,28 @@ export class PostgreSQLDeckRepository implements DeckRepository {
           c4.name as character_4_name,
           c4.image_path as character_4_default_image,
           l.name as location_name,
-          l.image_path as location_default_image
+          l.image_path as location_default_image,
+          dm1.mission_id as mission_1_id,
+          dm1.mission_name as mission_1_name,
+          dm1.mission_image_path as mission_1_default_image
         FROM decks d
         LEFT JOIN characters c1 ON d.character_1_id = c1.id
         LEFT JOIN characters c2 ON d.character_2_id = c2.id
         LEFT JOIN characters c3 ON d.character_3_id = c3.id
         LEFT JOIN characters c4 ON d.character_4_id = c4.id
         LEFT JOIN locations l ON d.location_id = l.id
+        LEFT JOIN LATERAL (
+          SELECT 
+            dc.card_id as mission_id,
+            m.name as mission_name,
+            m.image_path as mission_image_path
+          FROM deck_cards dc
+          JOIN missions m ON m.id::text = dc.card_id
+          WHERE dc.deck_id = d.id AND dc.card_type = 'mission'
+          -- Prefer the first mission in the set by set_number; fall back to name/id.
+          ORDER BY NULLIF(m.set_number, '')::int ASC NULLS LAST, m.name ASC, dc.card_id ASC
+          LIMIT 1
+        ) dm1 ON true
         WHERE d.user_id = $1 
         ORDER BY d.created_at DESC
       `, [userId]);
@@ -256,7 +283,20 @@ export class PostgreSQLDeckRepository implements DeckRepository {
             type: 'location',
             cardId: deck.location_id,
             quantity: 1,
+            defaultImage: deck.location_default_image,
             name: deck.location_name
+          });
+        }
+
+        // Add first mission card preview (if any)
+        if (deck.mission_1_id) {
+          cards.push({
+            id: `mission1_${deck.id}`,
+            type: 'mission',
+            cardId: deck.mission_1_id,
+            quantity: 1,
+            defaultImage: deck.mission_1_default_image,
+            name: deck.mission_1_name
           });
         }
         
@@ -271,6 +311,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
           card_count: deck.card_count,
           threat: deck.threat,
           reserve_character: deck.reserve_character,
+          background_image_path: deck.background_image_path,
           created_at: deck.created_at,
           updated_at: deck.updated_at,
           cards: cards

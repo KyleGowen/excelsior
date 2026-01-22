@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+  <defs>
+    <!-- Metallic body gradient (similar shine vibe to threat.png) -->
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f1f3f5"/>
+      <stop offset="0.35" stop-color="#cfd4da"/>
+      <stop offset="0.6" stop-color="#aeb6bf"/>
+      <stop offset="1" stop-color="#e6eaee"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="rgba(255,255,255,0.9)"/>
+      <stop offset="1" stop-color="rgba(0,0,0,0.25)"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.6" flood-color="rgba(0,0,0,0.35)"/>
+    </filter>
+  </defs>
+
+  <!-- Back card -->
+  <g filter="url(#shadow)">
+    <rect x="6" y="5" width="12" height="15" rx="3.2" fill="url(#metal)"/>
+    <rect x="6.7" y="5.7" width="10.6" height="13.6" rx="2.6" fill="none" stroke="url(#edge)" stroke-width="1"/>
+  </g>
+
+  <!-- Front card -->
+  <g filter="url(#shadow)">
+    <rect x="4" y="7" width="12.5" height="15" rx="3.2" fill="url(#metal)"/>
+    <rect x="4.7" y="7.7" width="11.1" height="13.6" rx="2.6" fill="none" stroke="url(#edge)" stroke-width="1"/>
+    <!-- Subtle inner panel -->
+    <rect x="6.2" y="9.6" width="8.2" height="8.8" rx="2" fill="rgba(0,0,0,0.06)"/>
+    <path d="M6.3 10.2c2.2-1.2 6.2-1.2 8.1 0" stroke="rgba(255,255,255,0.55)" stroke-width="1" stroke-linecap="round"/>
+  </g>
+</svg>
