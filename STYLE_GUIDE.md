@@ -168,6 +168,18 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
 - **Border**: `1px solid #e74c3c`
 - <span style="display: inline-block; width: 20px; height: 20px; background-color: #e74c3c; border: 1px solid #ccc; vertical-align: middle; margin-right: 4px;"></span> → <span style="display: inline-block; width: 20px; height: 20px; background-color: #c0392b; border: 1px solid #ccc; vertical-align: middle;"></span>
 
+### Login Modal — Contact Section
+
+- **Purpose**: Provide a clear contact path for questions/account creation from the login tile.
+- **Container**: `.login-contact`
+  - **Spacing**: `margin-top: 18px; padding-top: 20px`
+  - **Divider**: `border-top: 1px solid rgba(255, 255, 255, 0.14)`
+  - **Text**: `color: rgba(255, 255, 255, 0.7)`; `font-size: 0.95rem`; `line-height: 1.35`
+- **Email link**: `.login-contact-link`
+  - **Color**: `#4ecdc4`
+  - **Weight**: `400`
+  - **Hover**: underline
+
 #### Deck Editor Utility Buttons (Draw Hand / List View)
 - **Class**: `.remove-all-btn`
 - **Background**: `rgba(78, 205, 196, 0.2)`

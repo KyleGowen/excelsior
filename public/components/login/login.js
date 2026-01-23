@@ -52,6 +52,10 @@ function createFallbackLoginModal() {
                     <button type="submit" class="login-btn">Log In</button>
                 </form>
                 <button type="button" id="guestLoginBtn" class="guest-btn">Continue as Guest</button>
+                <div class="login-contact" aria-label="Contact">
+                    For questions or account creation requests, email
+                    <a class="login-contact-link" href="mailto:kyle@excelsior.cards">kyle@excelsior.cards</a>
+                </div>
             </div>
         </div>
     `;

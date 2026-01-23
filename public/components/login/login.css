@@ -117,6 +117,26 @@
     border-color: rgba(78, 205, 196, 0.4);
 }
 
+.login-contact {
+    margin-top: 18px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    line-height: 1.35;
+}
+
+.login-contact-link {
+    color: #4ecdc4;
+    text-decoration: none;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.login-contact-link:hover {
+    text-decoration: underline;
+}
+
 .error-message {
     color: #ff6b6b;
     background: rgba(255, 107, 107, 0.1);
