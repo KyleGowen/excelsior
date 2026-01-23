@@ -51,7 +51,7 @@ describe('Read-Only Mode +1/-1 Button Visibility Tests', () => {
             { id: 'quantityListBtn1', className: 'deck-list-item-quantity-btn', textContent: '+1', style: { display: '' } },
             { id: 'quantityListBtn2', className: 'deck-list-item-quantity-btn', textContent: '-1', style: { display: '' } },
             
-            // Buttons that should remain visible
+            // Reserve button is hidden in read-only mode unless selected
             { id: 'reserveBtn1', className: 'reserve-btn', textContent: 'Reserve', style: { display: '' } },
             { id: 'listViewBtn', className: 'remove-all-btn', textContent: 'List View', style: { display: '' } },
             { id: 'drawHandBtn', className: 'remove-all-btn', textContent: 'Draw Hand', style: { display: '' } }
@@ -95,6 +95,7 @@ describe('Read-Only Mode +1/-1 Button Visibility Tests', () => {
             const addOneButtons = mockDocument.querySelectorAll('.add-one-btn');
             const removeOneButtons = mockDocument.querySelectorAll('.remove-one-btn');
             const quantityListButtons = mockDocument.querySelectorAll('.deck-list-item-quantity-btn');
+            const reserveButtons = mockDocument.querySelectorAll('.reserve-btn');
             
             addOneButtons.forEach((button: any) => {
                 button.style.display = 'none';
@@ -107,6 +108,11 @@ describe('Read-Only Mode +1/-1 Button Visibility Tests', () => {
             quantityListButtons.forEach((button: any) => {
                 button.style.display = 'none';
             });
+
+            // Reserve buttons are hidden in read-only mode unless selected (not modeled here)
+            reserveButtons.forEach((button: any) => {
+                button.style.display = 'none';
+            });
         } else {
             (mockBody.classList.contains as jest.Mock).mockReturnValue(false);
             
@@ -114,7 +120,8 @@ describe('Read-Only Mode +1/-1 Button Visibility Tests', () => {
             const allButtons = [
                 ...mockDocument.querySelectorAll('.add-one-btn'),
                 ...mockDocument.querySelectorAll('.remove-one-btn'),
-                ...mockDocument.querySelectorAll('.deck-list-item-quantity-btn')
+                ...mockDocument.querySelectorAll('.deck-list-item-quantity-btn'),
+                ...mockDocument.querySelectorAll('.reserve-btn')
             ];
             
             allButtons.forEach((button: any) => {
@@ -285,7 +292,7 @@ describe('Read-Only Mode +1/-1 Button Visibility Tests', () => {
                 { selector: '.add-one-btn', className: 'add-one-btn', shouldBeHidden: true },
                 { selector: '.remove-one-btn', className: 'remove-one-btn', shouldBeHidden: true },
                 { selector: '.deck-list-item-quantity-btn', className: 'deck-list-item-quantity-btn', shouldBeHidden: true },
-                { selector: '.reserve-btn', className: 'reserve-btn', shouldBeHidden: false },
+                { selector: '.reserve-btn', className: 'reserve-btn', shouldBeHidden: true },
                 { selector: '.remove-all-btn', className: 'remove-all-btn', shouldBeHidden: false }
             ];
 
@@ -346,7 +353,7 @@ describe('Read-Only Mode +1/-1 Button Visibility Tests', () => {
 
         test('should preserve other button visibility when toggling +1/-1 buttons', () => {
             // Buttons that should always remain visible
-            const alwaysVisibleSelectors = ['.reserve-btn', '.remove-all-btn'];
+            const alwaysVisibleSelectors = ['.remove-all-btn'];
             
             // Test in both modes
             [true, false].forEach(isReadOnly => {

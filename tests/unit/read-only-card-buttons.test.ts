@@ -9,7 +9,7 @@
  * - Change Art buttons should be hidden
  * - - (remove) buttons should be hidden
  * - +1 buttons should remain visible (for draw pile cards)
- * - Reserve buttons should remain visible
+ * - Reserve buttons should be hidden unless a reserve character is already selected
  */
 
 describe('Read-Only Mode Card Button Visibility Tests', () => {
@@ -297,11 +297,11 @@ describe('Read-Only Mode Card Button Visibility Tests', () => {
 
     describe('Buttons That Should Remain Visible', () => {
 
-        test('should keep Reserve buttons visible in read-only mode', () => {
+        test('should treat Reserve buttons as hidden in read-only mode (unless selected)', () => {
             // Mock read-only mode
             mockBody.classList.contains.mockReturnValue(true);
 
-            // Mock Reserve buttons (these should remain visible)
+            // Mock Reserve buttons (these should generally be hidden in read-only mode)
             const reserveButtons = [
                 { className: 'reserve-btn' },
                 { className: 'reserve-btn' }
@@ -311,10 +311,10 @@ describe('Read-Only Mode Card Button Visibility Tests', () => {
                 const hasReserveBtnClass = button.className === 'reserve-btn';
                 const isInReadOnlyMode = mockBody.classList.contains('read-only-mode');
 
-                // Reserve buttons should NOT be hidden because they don't match any of the hidden selectors
-                const shouldBeHidden = false; // Reserve buttons are not targeted by any CSS rule
+                // In the real UI these are omitted/disabled by rendering logic in read-only mode.
+                const shouldBeHidden = isInReadOnlyMode && hasReserveBtnClass;
 
-                expect(shouldBeHidden).toBe(false);
+                expect(shouldBeHidden).toBe(true);
                 expect(hasReserveBtnClass).toBe(true);
             });
         });
@@ -335,7 +335,7 @@ describe('Read-Only Mode Card Button Visibility Tests', () => {
                 { buttonClass: 'add-one-btn', isReadOnlyMode: true, expectedHidden: true },
                 { buttonClass: 'remove-one-btn', isReadOnlyMode: true, expectedHidden: true },
                 { buttonClass: 'deck-list-item-quantity-btn', isReadOnlyMode: true, expectedHidden: true },
-                { buttonClass: 'reserve-btn', isReadOnlyMode: true, expectedHidden: false },
+                { buttonClass: 'reserve-btn', isReadOnlyMode: true, expectedHidden: true },
                 { buttonClass: 'alternate-art-btn', isReadOnlyMode: false, expectedHidden: false },
                 { buttonClass: 'quantity-btn', isReadOnlyMode: false, expectedHidden: false },
                 { buttonClass: 'deck-list-item-remove', isReadOnlyMode: false, expectedHidden: false },
@@ -353,7 +353,8 @@ describe('Read-Only Mode Card Button Visibility Tests', () => {
                                       buttonClass === 'deck-list-item-remove' ||
                                       buttonClass === 'add-one-btn' ||
                                       buttonClass === 'remove-one-btn' ||
-                                      buttonClass === 'deck-list-item-quantity-btn');
+                                      buttonClass === 'deck-list-item-quantity-btn' ||
+                                      buttonClass === 'reserve-btn');
 
                 expect(shouldBeHidden).toBe(expectedHidden);
             });

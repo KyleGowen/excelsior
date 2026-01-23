@@ -40,7 +40,7 @@ describe('Read-Only Mode DOM Button Behavior Tests', () => {
             { id: 'removeOneBtn1', className: 'remove-one-btn', style: { display: '' } },
             { id: 'quantityBtn1', className: 'deck-list-item-quantity-btn', style: { display: '' } },
             
-            // Buttons that should remain visible
+            // Reserve button is hidden in read-only mode unless selected
             { id: 'reserveBtn1', className: 'reserve-btn', style: { display: '' } },
             { id: 'listViewBtn', className: 'remove-all-btn', style: { display: '' } }, // Has remove-all-btn class but specific ID
             { id: 'drawHandBtn', className: 'remove-all-btn', style: { display: '' } }  // Has remove-all-btn class but specific ID
@@ -374,19 +374,23 @@ describe('Read-Only Mode DOM Button Behavior Tests', () => {
 
     describe('Buttons That Always Remain Visible', () => {
 
-        test('should keep Reserve buttons visible regardless of read-only mode', () => {
+        test('should keep Reserve buttons hidden in read-only mode (unless selected)', () => {
             // Test in read-only mode
             mockBody.classList.contains.mockReturnValue(true);
             const reserveButtons = mockDocument.querySelectorAll('.reserve-btn');
             
             reserveButtons.forEach((button: any) => {
-                // Reserve buttons are not targeted by any CSS rule, so they remain visible
-                expect(button.style.display).toBe('');
+                // Simulate rendering behavior: reserve buttons are hidden in read-only mode unless selected
+                if (mockBody.classList.contains('read-only-mode')) {
+                    button.style.display = 'none';
+                }
+                expect(button.style.display).toBe('none');
             });
 
             // Test in edit mode
             mockBody.classList.contains.mockReturnValue(false);
             reserveButtons.forEach((button: any) => {
+                button.style.display = '';
                 expect(button.style.display).toBe('');
             });
 
@@ -458,6 +462,9 @@ describe('Read-Only Mode DOM Button Behavior Tests', () => {
             quantityListButtons.forEach((button: any) => {
                 button.style.display = 'none';
             });
+            reserveButtons.forEach((button: any) => {
+                button.style.display = 'none';
+            });
             removeAllButtons.forEach((button: any) => {
                 if (button.id !== 'drawHandBtn' && button.id !== 'listViewBtn') {
                     button.style.display = 'none';
@@ -484,9 +491,9 @@ describe('Read-Only Mode DOM Button Behavior Tests', () => {
                 expect(button.style.display).toBe('none');
             });
 
-            // Verify visible buttons
+            // Verify reserve buttons are hidden in read-only mode unless selected
             reserveButtons.forEach((button: any) => {
-                expect(button.style.display).toBe('');
+                expect(button.style.display).toBe('none');
             });
 
             // Verify List View and Draw Hand buttons remain visible

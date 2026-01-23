@@ -2755,6 +2755,24 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
+        /* Reserve button in read-only mode (disabled but should still look selected) */
+        .reserve-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.85;
+        }
+
+        .reserve-btn:disabled:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .reserve-btn.active:disabled,
+        .reserve-btn.active:disabled:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            opacity: 0.95;
+        }
+
         /* Read-only reserve indicator styling - matches reserve-btn.active */
         .reserve-indicator {
             background: rgba(255, 255, 255, 0.15);

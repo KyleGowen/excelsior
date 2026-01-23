@@ -13500,6 +13500,7 @@
             const deckData = window.currentDeckData || currentDeckData;
             const reserveCharacterId = deckData && deckData.metadata && deckData.metadata.reserve_character;
             const hasReserveCharacter = !!reserveCharacterId;
+            const isReadOnlyUI = !!(document.body && document.body.classList && document.body.classList.contains('read-only-mode'));
             
             // Helper function to extract UUID from cardId (removes prefixes like "character_")
             const extractUUID = (id) => {
@@ -13549,6 +13550,16 @@
             } else {
                 // Fallback: simple comparison if card data not available
                 isReserveCharacter = reserveCharacterId === cardId;
+            }
+
+            // Read-only mode behavior:
+            // - If a reserve character is set, show ONLY the selected reserve state (disabled)
+            // - If no reserve character is set, hide all reserve buttons
+            if (isReadOnlyUI) {
+                if (hasReserveCharacter && isReserveCharacter) {
+                    return `<button class="reserve-btn active" disabled title="Reserve character">Reserve</button>`;
+                }
+                return '';
             }
             
             // If this card is the selected reserve character, show the "Reserve" button

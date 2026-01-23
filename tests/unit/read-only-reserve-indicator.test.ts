@@ -63,13 +63,12 @@ function getReserveCharacterButton(cardId: string, index: number): string {
     const isReserveCharacter = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character === cardId;
     const hasReserveCharacter = currentDeckData && currentDeckData.metadata && currentDeckData.metadata.reserve_character;
     
-    // In read-only mode, show indicator only for the selected reserve character
+    // In read-only mode, show a disabled Reserve button only for the selected reserve character
     if (isReadOnlyMode) {
-        if (isReserveCharacter) {
-            return `<span class="reserve-indicator">Reserve</span>`;
-        } else {
-            return ''; // No indicator for non-reserve characters in read-only mode
+        if (hasReserveCharacter && isReserveCharacter) {
+            return `<button class="reserve-btn active" disabled>Reserve</button>`;
         }
+        return ''; // Hide all reserve buttons when no reserve is selected
     }
     
     // If this card is the selected reserve character, show the "Reserve" button
@@ -157,14 +156,14 @@ describe('Read-Only Reserve Indicator Functionality', () => {
             isReadOnlyMode = true;
         });
 
-        it('should show reserve indicator for selected reserve character', () => {
+        it('should show disabled reserve button for selected reserve character', () => {
             currentDeckData.metadata.reserve_character = 'card-2';
             
             const result = getReserveCharacterButton('card-2', 1);
             expect(result).toContain('Reserve');
-            expect(result).toContain('reserve-indicator');
-            expect(result).toContain('span');
-            expect(result).not.toContain('button');
+            expect(result).toContain('reserve-btn active');
+            expect(result).toContain('button');
+            expect(result).toContain('disabled');
             expect(result).not.toContain('onclick');
         });
 
@@ -185,13 +184,13 @@ describe('Read-Only Reserve Indicator Functionality', () => {
             expect(result3).toBe('');
         });
 
-        it('should not include any interactive elements (onclick, button)', () => {
+        it('should not include any interactive elements (onclick) in read-only mode', () => {
             currentDeckData.metadata.reserve_character = 'card-2';
             
             const result = getReserveCharacterButton('card-2', 1);
             expect(result).not.toContain('onclick');
-            expect(result).not.toContain('button');
-            expect(result).toContain('span');
+            expect(result).toContain('button');
+            expect(result).toContain('disabled');
         });
     });
 
@@ -201,16 +200,16 @@ describe('Read-Only Reserve Indicator Functionality', () => {
             currentDeckData.metadata.reserve_character = 'card-2';
         });
 
-        it('should generate valid HTML for reserve indicator', () => {
+        it('should generate valid HTML for disabled reserve button', () => {
             const result = getReserveCharacterButton('card-2', 1);
             
-            // Should be a span element with reserve-indicator class
-            expect(result).toBe('<span class="reserve-indicator">Reserve</span>');
+            expect(result).toBe('<button class="reserve-btn active" disabled>Reserve</button>');
         });
 
         it('should have correct CSS class for styling', () => {
             const result = getReserveCharacterButton('card-2', 1);
-            expect(result).toContain('class="reserve-indicator"');
+            expect(result).toContain('class="reserve-btn active"');
+            expect(result).toContain('disabled');
         });
 
         it('should have correct text content', () => {
@@ -266,7 +265,8 @@ describe('Read-Only Reserve Indicator Functionality', () => {
             // Test read-only mode
             isReadOnlyMode = true;
             const readOnlyResult = getReserveCharacterButton('card-2', 1);
-            expect(readOnlyResult).toContain('span');
+            expect(readOnlyResult).toContain('button');
+            expect(readOnlyResult).toContain('disabled');
             expect(readOnlyResult).not.toContain('onclick');
         });
     });
