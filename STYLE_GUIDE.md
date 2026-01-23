@@ -179,6 +179,9 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
   - **Color**: `#4ecdc4`
   - **Weight**: `400`
   - **Hover**: underline
+- **Discord links**: `.login-contact-link`
+  - Server invite: `https://discord.com/invite/overpowerlives`
+  - Profile: `https://discord.com/users/414971289267339274`
 
 #### Deck Editor Utility Buttons (Draw Hand / List View)
 - **Class**: `.remove-all-btn`

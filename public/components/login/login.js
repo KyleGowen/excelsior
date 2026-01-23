@@ -54,7 +54,10 @@ function createFallbackLoginModal() {
                 <button type="button" id="guestLoginBtn" class="guest-btn">Continue as Guest</button>
                 <div class="login-contact" aria-label="Contact">
                     For questions or account creation requests, email
-                    <a class="login-contact-link" href="mailto:kyle@excelsior.cards">kyle@excelsior.cards</a>
+                    <a class="login-contact-link" href="mailto:kyle@excelsior.cards">kyle@excelsior.cards</a>.
+                    <br>
+                    Or message me at the
+                    <a class="login-contact-link" href="https://discord.com/invite/overpowerlives" target="_blank" rel="noopener noreferrer">OverPower Discord</a>: <a class="login-contact-link" href="https://discord.com/users/414971289267339274" target="_blank" rel="noopener noreferrer">@GirlsGoneKyle</a>.
                 </div>
             </div>
         </div>

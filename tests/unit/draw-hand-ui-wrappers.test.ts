@@ -16,6 +16,9 @@ import path from 'path';
 declare global {
     interface Window {
         DrawHand?: {
+            init: () => void;
+            refresh: () => void;
+            displayDrawnCards: (cards: any[]) => void;
             toggle: () => void;
             close: () => void;
         };

@@ -18,6 +18,8 @@ declare global {
             init: () => void;
             refresh: () => void;
             displayDrawnCards: (cards: any[]) => void;
+            toggle: () => void;
+            close: () => void;
         };
         SimulateKO?: {
             init: () => void;
