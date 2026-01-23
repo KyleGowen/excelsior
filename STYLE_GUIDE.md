@@ -419,6 +419,8 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
 - **Container**: `.modal-header` with `display: flex`, `flex-direction: column`
 - **Top Row**: `.deck-editor-top-row` with `display: flex`, `justify-content: space-between`
 - **Padding**: `12px 20px 5px 20px` (reduced bottom padding for compact layout)
+- **Background**: Header uses a subtle translucent overlay (`rgba(0, 0, 0, 0.06)` + `backdrop-filter: blur(3px)`) so the selected deck background remains visible and the header remains readable without looking darker than the content panes.
+- **Seam handling**: Header shading extends slightly below the header to avoid a bright strip between the header and deck contents.
 - **Margin Bottom**: `4px` (minimal spacing below header)
 - **Gap**: `15px` between header elements
 - **Border Bottom**: `1px solid rgba(255, 255, 255, 0.2)` (horizontal divider)

@@ -181,15 +181,37 @@
     position: relative;
 }
 
-/* Ensure stats bar and header have solid backgrounds to prevent background image showing through */
+/* Shade header while still showing deck background */
 .modal-header {
-    background-color: rgba(0, 0, 0, 0.8) !important;
+    /* Keep subtle shading; avoid stacking too dark over the global overlay */
+    background-color: rgba(0, 0, 0, 0.06) !important;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     position: relative;
     z-index: 10;
+    /* Remove the gap strip under the header */
+    margin-bottom: 0 !important;
+    /* Softer divider to avoid a bright band */
+    border-bottom-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Extend the header shading slightly into the seam area below */
+#deckEditorModal .modal-header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -10px;
+    height: 10px;
+    /* Fade out to avoid a hard edge line */
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0));
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    pointer-events: none;
 }
 
 .deck-summary-section {
-    background-color: rgba(0, 0, 0, 0.8) !important;
+    background-color: transparent !important;
     position: relative;
     z-index: 10;
 }
@@ -201,6 +223,7 @@
 
 /* Ensure deck editor modal body can display background image */
 #deckEditorModal .modal-body {
+    /* Keep transparent; pane backgrounds + header seam handle the shading */
     background-color: transparent !important;
     min-height: 400px; /* Ensure it has height to display background */
 }
