@@ -405,13 +405,13 @@ describe('Draw Hand Module - Comprehensive Tests', () => {
             window.DrawHand?.toggle();
 
             expect(mockDrawHandSection.style.display).toBe('block');
-            expect(mockDrawHandBtn.textContent).toBe('Draw New Hand');
+            expect(mockDrawHandBtn.textContent).toBe('Draw Hand');
             expect(window.drawnCards?.length).toBeGreaterThan(0);
         });
 
         it('should draw new hand when pane is already visible', () => {
             mockDrawHandSection.style.display = 'block';
-            mockDrawHandBtn.textContent = 'Draw New Hand';
+            mockDrawHandBtn.textContent = 'Draw Hand';
 
             mockDeckEditorCards = Array.from({ length: 10 }, (_, i) => ({
                 type: 'power',
@@ -440,7 +440,7 @@ describe('Draw Hand Module - Comprehensive Tests', () => {
     describe('close() - Close Functionality', () => {
         it('should hide pane and reset button text', () => {
             mockDrawHandSection.style.display = 'block';
-            mockDrawHandBtn.textContent = 'Draw New Hand';
+            mockDrawHandBtn.textContent = 'Draw Hand';
 
             window.DrawHand?.close();
 

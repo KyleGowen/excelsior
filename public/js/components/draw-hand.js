@@ -304,7 +304,8 @@
         
         if (drawHandSection.style.display === 'none' || !drawHandSection.style.display) {
             drawHandSection.style.display = 'block';
-            drawHandBtn.textContent = 'Draw New Hand';
+            // Keep label stable to avoid header button reflow when the pane opens
+            drawHandBtn.textContent = 'Draw Hand';
             drawHand();
         } else {
             drawHand();

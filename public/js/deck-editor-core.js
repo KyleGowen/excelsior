@@ -252,6 +252,11 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             const urlParams = new URLSearchParams(window.location.search);
             const isReadOnlyFromQuery = urlParams.get('readonly') === 'true';
             const isDeckOwner = data.data.metadata && data.data.metadata.isOwner === true;
+            const isForcedReadOnlyMode = isReadOnlyFromQuery || !isDeckOwner;
+
+            // Track forced read-only separately from user-triggered Preview mode
+            window.isForcedReadOnlyMode = isForcedReadOnlyMode;
+            window.isPreviewReadOnlyMode = false;
             
             if (isReadOnlyFromQuery) {
                 // If readonly=true is in URL, always use read-only mode (regardless of ownership)
@@ -271,12 +276,26 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
             } else {
                 document.body.classList.remove('read-only-mode');
             }
+
+            // Keep layout stable in Preview mode; only collapse panes for forced read-only
+            document.body.classList.toggle('forced-read-only-mode', !!window.isForcedReadOnlyMode);
+            document.body.classList.remove('preview-read-only-mode');
             
             // Update Read-Only badge visibility
             updateReadOnlyBadge();
             
             // Update Save button state based on read-only mode
             updateSaveButtonState();
+
+            // Update Preview button state (hide when forced read-only)
+            if (typeof window.updatePreviewButtonState === 'function') {
+                window.updatePreviewButtonState();
+            }
+
+            // Update Background button state if present (disable in read-only)
+            if (typeof window.updateBackgroundButtonState === 'function') {
+                window.updateBackgroundButtonState();
+            }
             
             // Now set up drag and drop based on the correct read-only mode
             setupDragAndDrop();
@@ -561,19 +580,15 @@ async function loadDeckForEditing(deckId, urlUserId = null, isReadOnly = false) 
                 setupLayoutObserver();
             }
             
-            // Initialize background manager (loads background for all users, button only for admin)
-            // Use setTimeout to ensure DOM is fully ready
-            setTimeout(async () => {
-                if (window.deckBackgroundManager && currentDeckId) {
-                    try {
-                        // Pass read-only mode flag
-                        // Background is already set from deck data above, just initialize UI
-                        await window.deckBackgroundManager.initialize(currentDeckId, isReadOnlyMode);
-                    } catch (error) {
-                        console.error('Error initializing background manager:', error);
-                    }
+            // Initialize background manager without delay to avoid header control flicker
+            if (window.deckBackgroundManager && currentDeckId) {
+                try {
+                    // Background is already set from deck data above, just initialize UI
+                    await window.deckBackgroundManager.initialize(currentDeckId, isReadOnlyMode);
+                } catch (error) {
+                    console.error('Error initializing background manager:', error);
                 }
-            }, 500); // Small delay to ensure DOM is ready
+            }
             
             // Update card count
             updateDeckEditorCardCount();
@@ -1031,3 +1046,95 @@ async function closeDeckEditor() {
 // Functions moved to deck-export.js component module
 // Access via window.showExportOverlay(), window.closeExportOverlay(), window.copyJsonToClipboard()
 // or import from deck-export.js
+
+// ========================================
+// Deck Editor Preview Mode (in-place)
+// ========================================
+
+function updatePreviewButtonState() {
+    const previewBtn = document.getElementById('previewBtn');
+    if (!previewBtn) return;
+    
+    const forced = !!window.isForcedReadOnlyMode;
+    const preview = !!window.isPreviewReadOnlyMode;
+    
+    // If the deck is truly read-only (non-owner or readonly=true), hide the Preview toggle.
+    if (forced) {
+        previewBtn.style.display = 'none';
+        return;
+    }
+    
+    previewBtn.style.display = 'inline-block';
+    previewBtn.textContent = preview ? 'Edit' : 'Preview';
+    previewBtn.title = preview ? 'Exit preview (edit mode)' : 'Preview deck (read-only)';
+    previewBtn.classList.toggle('preview-active', preview);
+}
+
+function updateBackgroundButtonState() {
+    const backgroundBtn = document.getElementById('backgroundBtn');
+    if (!backgroundBtn) return;
+    
+    // Background is an edit-only feature; keep it visible but disabled in any read-only state
+    const shouldDisable = typeof isReadOnlyMode !== 'undefined' && isReadOnlyMode;
+    backgroundBtn.disabled = shouldDisable;
+    
+    if (shouldDisable) {
+        backgroundBtn.style.opacity = '0.5';
+        backgroundBtn.style.cursor = 'not-allowed';
+        backgroundBtn.title = 'Background is disabled in read-only mode';
+    } else {
+        backgroundBtn.style.opacity = '1';
+        backgroundBtn.style.cursor = 'pointer';
+        backgroundBtn.title = '';
+    }
+}
+
+async function togglePreviewMode() {
+    // Never allow toggling out of forced read-only mode.
+    if (window.isForcedReadOnlyMode) {
+        updatePreviewButtonState();
+        return;
+    }
+    
+    // Toggle preview flag
+    window.isPreviewReadOnlyMode = !window.isPreviewReadOnlyMode;
+    
+    // Reuse existing read-only mode plumbing
+    isReadOnlyMode = window.isPreviewReadOnlyMode;
+    document.body.classList.toggle('read-only-mode', isReadOnlyMode);
+    // Preview mode should hide Available Cards pane but keep padding/layout stable
+    document.body.classList.remove('forced-read-only-mode');
+    document.body.classList.toggle('preview-read-only-mode', !!window.isPreviewReadOnlyMode);
+    
+    if (typeof updateReadOnlyBadge === 'function') updateReadOnlyBadge();
+    if (typeof updateSaveButtonState === 'function') updateSaveButtonState();
+    updatePreviewButtonState();
+    updateBackgroundButtonState();
+    
+    // Re-render current view so UI updates (buttons, drag attrs, etc.)
+    const deckCardsEditor = document.getElementById('deckCardsEditor');
+    if (!deckCardsEditor) return;
+    
+    try {
+        if (deckCardsEditor.classList.contains('card-view')) {
+            if (typeof renderDeckCardsCardView === 'function') {
+                renderDeckCardsCardView();
+            }
+        } else if (deckCardsEditor.classList.contains('list-view')) {
+            if (typeof renderDeckCardsListView === 'function') {
+                renderDeckCardsListView();
+            }
+        } else {
+            if (typeof displayDeckCardsForEditing === 'function') {
+                await displayDeckCardsForEditing();
+            }
+        }
+    } catch (e) {
+        console.error('[DeckEditor] Error re-rendering after preview toggle:', e);
+    }
+}
+
+// Expose for data-click-handler binder
+window.togglePreviewMode = togglePreviewMode;
+window.updatePreviewButtonState = updatePreviewButtonState;
+window.updateBackgroundButtonState = updateBackgroundButtonState;

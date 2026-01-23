@@ -29,6 +29,10 @@
  * Available to all users (GUEST, USER, ADMIN).
  */
 function importDeckFromJson() {
+    // If user is in Preview mode, auto-exit to Edit before importing
+    if (window.isPreviewReadOnlyMode && typeof window.togglePreviewMode === 'function') {
+        window.togglePreviewMode();
+    }
 
     // Check if deck editor is open (for new decks, currentDeckId might be "new" or null)
     // Allow import if deck editor modal is visible, even if it's a new deck

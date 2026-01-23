@@ -435,15 +435,32 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
 - **Container**: `.deck-summary-section`
 - **Positioning**: `position: absolute`, `left: 50%`, `transform: translateX(-50%)`
 - **Purpose**: Perfect centering in window width regardless of left/right content
-- **Content**: Draw Hand/List View buttons (left of stats), deck statistics (centered)
+- **Content**: Deck statistics (centered)
 - **Layout**: `.deck-summary-content` with `display: flex`, `justify-content: center`, `gap: 30px`
 
 #### Right Section - Action Buttons
-- **Container**: `.deck-editor-actions`
+- **Container**: `.deck-editor-right-controls` containing:
+  - Utility buttons: `.deck-editor-utility-actions` (`#drawHandBtn`, `#listViewBtn`, `#previewBtn`, `#screenshotViewBtn`, and admin-only `#backgroundBtn`)
+  - Divider: `.deck-editor-controls-divider` (vertical separator)
+  - Actions grid: `.deck-editor-actions` (Export/Import/Save/Cancel)
 - **Flex Properties**: `flex: 0 0 auto`, `margin-left: auto` (pushes to right)
-- **Layout**: `display: flex`, `flex-direction: column` (stacked vertically)
-- **Gap**: `8px` between Save and Cancel buttons
-- **Max Width**: `200px`
+
+- **Utility button grid placement**:
+  - Upper-left: `#backgroundBtn`
+  - Upper-right: `#previewBtn`
+  - Lower-left: `#drawHandBtn`
+  - Lower-right: `#listViewBtn`
+  - (Optional) `#screenshotViewBtn` appears on a third row spanning both columns when enabled.
+- **Layout**: `display: flex`, `align-items: center`, with a vertical separator between utility and actions
+
+- **Preview mode**:
+  - Button: `#previewBtn` (`Preview` ↔ `Edit`)
+  - Behavior: toggles the deck editor into read-only mode in-place (no reload)
+  - Hidden when the deck is forced read-only (non-owner or `?readonly=true`)
+
+- **Button grid stability**:
+  - Utility buttons (`.deck-editor-utility-actions`) use fixed row height (`24px`) so the grid does not stretch when the Draw Hand section is opened.
+  - The actions grid (`.deck-editor-actions`) uses `grid-template-rows: auto auto` to prevent vertical stretching.
 
 ### Button Specifications
 #### Action Buttons (Save/Cancel)
@@ -516,11 +533,17 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
 - **Min Width**: Card selector pane has `min-width: 0` and `overflow: hidden`
 
 ### Read-Only Mode Badges
-- **Limited Badge**: Inline with deck title
-- **Read-Only Badge**: Inline to the right of Limited badge
-- **Container**: `.deck-title-with-validation` with `display: flex`, `align-items: center`, `gap: 10px`
-- **Flex Wrap**: `nowrap` to keep badges on same line
+- **Layout**: Badges are **left-aligned on a second line** under the deck title to keep the title width stable when toggling read-only mode.
+- **Badges**:
+  - **Limited/Legality badge**: `#deckTitleValidationBadge`
+  - **Read-Only badge**: `#readOnlyBadge`
+- **Container**: `.deck-title-with-validation` uses `flex-direction: column` and left alignment
+- **Badges row**: `.deck-title-badges` with `display: flex`, `gap: 10px`, `flex-wrap: nowrap`
 - **Badge Styling**: Content-based width (no fixed min-width)
+
+- **Two-pane layout stability**:
+  - Preview mode hides the Available Cards pane without changing deck padding (`body.preview-read-only-mode`).
+  - True read-only mode (non-owner / `?readonly=true`) uses the same full-width layout (`body.forced-read-only-mode`).
 
 ### CSS Specificity Requirements
 - **High Specificity**: Use `.modal-header .deck-editor-actions .action-btn.save-btn` for Save button

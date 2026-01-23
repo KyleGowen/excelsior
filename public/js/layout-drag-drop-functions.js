@@ -89,6 +89,11 @@ function setupDragAndDrop() {
 // Function to handle plus button clicks
 function handlePlusButtonClick(event, cardType, cardId, cardName, allCardsJson = null) {
     event.stopPropagation(); // Prevent drag event
+
+    // Prevent deck modifications in read-only / Preview mode
+    if (typeof isReadOnlyMode !== 'undefined' && isReadOnlyMode) {
+        return;
+    }
     
     // If allCardsJson is provided and contains multiple cards, show alternate art selection
     if (allCardsJson && allCardsJson.trim() !== '') {
@@ -117,6 +122,11 @@ function handlePlusButtonClick(event, cardType, cardId, cardName, allCardsJson =
 
 // Function to handle card clicks
 function handleCardClick(event, cardType, cardId, cardName) {
+    // Prevent deck modifications in read-only / Preview mode
+    if (typeof isReadOnlyMode !== 'undefined' && isReadOnlyMode) {
+        return;
+    }
+
     // Only add card if it's not disabled and the click wasn't on the plus button
     if (event.target.classList.contains('card-item-plus')) {
         return; // Let the plus button handle its own click
@@ -157,6 +167,11 @@ function handleCardClick(event, cardType, cardId, cardName) {
 
 // Enhanced drag and drop functionality for deck cards
 function handleDeckCardDragStart(event) {
+    // Prevent deck modifications in read-only / Preview mode
+    if (typeof isReadOnlyMode !== 'undefined' && isReadOnlyMode) {
+        return;
+    }
+
     draggedCardIndex = parseInt(event.target.dataset.index);
     draggedCardType = deckEditorCards[draggedCardIndex].type;
     draggedCardElement = event.target;
@@ -202,6 +217,11 @@ function handleDeckCardDragEnd(event) {
 }
 
 function handleDeckCardDragOver(event) {
+    // Prevent deck modifications in read-only / Preview mode
+    if (typeof isReadOnlyMode !== 'undefined' && isReadOnlyMode) {
+        return;
+    }
+
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
     
@@ -250,6 +270,11 @@ function handleDeckCardDragOver(event) {
 }
 
 function handleDeckCardDrop(event) {
+    // Prevent deck modifications in read-only / Preview mode
+    if (typeof isReadOnlyMode !== 'undefined' && isReadOnlyMode) {
+        return;
+    }
+
     event.preventDefault();
     
     console.log('Drop event:', dropTargetIndex, draggedCardIndex, dropPosition);
@@ -279,6 +304,11 @@ function handleDeckCardDrop(event) {
 
 // Handle drag over available cards section (for removing cards from deck)
 function handleAvailableCardDragOver(event) {
+    // Prevent deck modifications in read-only / Preview mode
+    if (typeof isReadOnlyMode !== 'undefined' && isReadOnlyMode) {
+        return;
+    }
+
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
     
@@ -302,6 +332,11 @@ function handleAvailableCardDragLeave(event) {
 
 // Handle drop on available cards section (remove card from deck)
 function handleAvailableCardDrop(event) {
+    // Prevent deck modifications in read-only / Preview mode
+    if (typeof isReadOnlyMode !== 'undefined' && isReadOnlyMode) {
+        return;
+    }
+
     event.preventDefault();
     
     // Remove visual feedback
@@ -373,6 +408,11 @@ function updateDragLayout() {
 }
 
 function reorderDeckCards(fromIndex, toIndex) {
+    // Prevent deck modifications in read-only / Preview mode
+    if (typeof isReadOnlyMode !== 'undefined' && isReadOnlyMode) {
+        return;
+    }
+
     // Get the card being moved
     const cardToMove = deckEditorCards[fromIndex];
     

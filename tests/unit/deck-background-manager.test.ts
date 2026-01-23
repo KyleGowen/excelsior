@@ -22,6 +22,19 @@ const mockButton = {
   textContent: ''
 };
 
+const mockListViewBtn = {
+  id: 'listViewBtn',
+  parentNode: { insertBefore: jest.fn() }
+};
+
+const mockBackgroundBtn: any = {
+  id: 'backgroundBtn',
+  style: { visibility: 'hidden', pointerEvents: 'none' },
+  disabled: false,
+  title: '',
+  addEventListener: jest.fn(),
+  removeAttribute: jest.fn()
+};
 
 const mockSummaryStat = {
   querySelector: jest.fn(),
@@ -119,6 +132,8 @@ describe('DeckBackgroundManager', () => {
       if (id === 'backgroundModal') return mockModal;
       if (id === 'deckEditorModal') return mockDeckEditorModal;
       if (id === 'summary-stat') return mockSummaryStat;
+      if (id === 'listViewBtn') return mockListViewBtn;
+      if (id === 'backgroundBtn') return mockBackgroundBtn;
       return null;
     });
   });
@@ -352,18 +367,23 @@ describe('DeckBackgroundManager', () => {
       expect(mockDocument.createElement).not.toHaveBeenCalled();
     });
 
-    it('should create button for user sessions when DOM is ready', () => {
+    it('should reveal and enable existing background button when available', () => {
       (global as any).window.currentUser = { id: 'user-1', role: 'USER' };
-      
-      // Mock DOM elements
-      const mockListViewBtn = { nextSibling: null };
-      mockSummaryStat.querySelector.mockReturnValue(mockListViewBtn);
-      mockDocument.getElementById.mockReturnValue(mockSummaryStat);
+      manager.availableBackgrounds = ['src/resources/cards/images/backgrounds/test.png'];
+
+      // Reset style to simulate initial hidden placeholder
+      mockBackgroundBtn.style.visibility = 'hidden';
+      mockBackgroundBtn.style.pointerEvents = 'none';
+      mockBackgroundBtn.disabled = true;
+      mockBackgroundBtn.title = 'Backgrounds loading...';
 
       manager.createBackgroundButton();
 
-      // Should attempt to create button (with retry logic)
-      expect(mockDocument.getElementById).toHaveBeenCalled();
+      expect(mockBackgroundBtn.style.visibility).toBe('visible');
+      expect(mockBackgroundBtn.style.pointerEvents).toBe('auto');
+      expect(mockBackgroundBtn.removeAttribute).toHaveBeenCalledWith('aria-hidden');
+      expect(mockBackgroundBtn.addEventListener).toHaveBeenCalled();
+      expect(mockBackgroundBtn.disabled).toBe(false);
     });
   });
 

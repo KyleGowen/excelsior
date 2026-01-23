@@ -2098,6 +2098,110 @@
             flex: 0 0 auto;
             margin-left: auto;
         }
+
+        /* Right-side controls cluster (utility + actions with divider) */
+        .modal-header .deck-editor-right-controls {
+            flex: 0 0 auto;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Prevent the inner actions container from re-applying auto-margin inside the cluster */
+        .modal-header .deck-editor-right-controls .deck-editor-actions {
+            margin-left: 0;
+        }
+
+        .deck-editor-utility-actions {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            grid-auto-rows: 24px;
+            gap: 8px 10px;
+            align-items: stretch;
+            align-content: start;
+            justify-items: stretch;
+        }
+
+        .deck-editor-utility-actions .remove-all-btn {
+            height: 24px;
+            min-height: 24px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            box-sizing: border-box;
+            min-width: 0;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Utility button ordering (stable 2x2 grid) */
+        .deck-editor-utility-actions #backgroundBtn {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .deck-editor-utility-actions #previewBtn {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .deck-editor-utility-actions #drawHandBtn {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .deck-editor-utility-actions #listViewBtn {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        /* If enabled, place Screenshot View below the 2x2 grid */
+        .deck-editor-utility-actions #screenshotViewBtn {
+            grid-column: 1 / -1;
+            grid-row: 3;
+        }
+
+        /* Preview button states */
+        #previewBtn.preview-active {
+            background: rgba(78, 205, 196, 0.3) !important;
+            border-color: rgba(78, 205, 196, 0.4) !important;
+        }
+
+        #previewBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Vertical divider between utility and action button clusters */
+        .deck-editor-controls-divider {
+            width: 2px;
+            min-width: 2px;
+            height: 44px;
+            background: linear-gradient(to bottom,
+                transparent 0px,
+                rgba(78, 205, 196, 0.08) 2px,
+                rgba(78, 205, 196, 0.24) 6px,
+                rgba(78, 205, 196, 0.4) 50%,
+                rgba(78, 205, 196, 0.24) calc(100% - 6px),
+                rgba(78, 205, 196, 0.08) calc(100% - 2px),
+                transparent 100%);
+            opacity: 0.95;
+            flex-shrink: 0;
+        }
+
+        /* Prevent action grid from stretching vertically when Draw Hand UI is open */
+        .deck-editor-right-controls .deck-editor-actions {
+            grid-template-rows: auto auto !important;
+            align-content: start;
+        }
         
         .modal-header h3 {
             margin: 0;
@@ -2122,9 +2226,9 @@
 
         .deck-title-with-validation {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: nowrap;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
             flex-shrink: 0;
             margin-top: 25px;
         }
@@ -2132,6 +2236,15 @@
         .deck-title-with-validation h3 {
             margin: 0;
             line-height: 1.3;
+        }
+
+        .deck-title-badges {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+            flex-wrap: nowrap;
+            width: 100%;
         }
         
 
@@ -3707,30 +3820,40 @@
             overflow: hidden;
         }
 
-        /* Read-only mode styles - hide available cards pane and make deck content full width */
-        .read-only-mode .card-selector-pane {
+        /*
+         * Read-only layout variants
+         *
+         * - Preview mode: hide Available Cards pane but keep deck padding stable
+         * - Forced read-only: same layout behavior (full-width deck) for true view-only
+         *
+         * NOTE: The generic `read-only-mode` class is used for interaction restrictions.
+         * Layout changes should be controlled by these more specific classes.
+         */
+        .preview-read-only-mode .card-selector-pane,
+        .forced-read-only-mode .card-selector-pane {
             display: none !important;
         }
         
-        .read-only-mode .resizable-divider {
+        .preview-read-only-mode .resizable-divider,
+        .forced-read-only-mode .resizable-divider {
             display: none !important;
         }
         
-        .read-only-mode .deck-pane {
-            flex: 1 1 100% !important;
-            min-width: 100% !important;
-            max-width: 100% !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
+        .preview-read-only-mode .deck-pane,
+        .forced-read-only-mode .deck-pane {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            /* Keep the normal `padding: 0 8px` from `.deck-pane` */
         }
-        
-        .read-only-mode .deck-editor-content {
-            width: 100% !important;
+
+        .preview-read-only-mode .deck-editor-layout.force-two-pane .deck-pane,
+        .forced-read-only-mode .deck-editor-layout.force-two-pane .deck-pane {
             max-width: none !important;
         }
         
-        /* Hide Remove All buttons in read-only mode, but preserve List View and Draw Hand buttons */
-        .read-only-mode .remove-all-btn:not(#drawHandBtn):not(#listViewBtn) {
+        /* Hide Remove All buttons in read-only mode, but preserve key header controls */
+        .read-only-mode .remove-all-btn:not(#drawHandBtn):not(#listViewBtn):not(#previewBtn):not(#backgroundBtn) {
             display: none !important;
         }
         

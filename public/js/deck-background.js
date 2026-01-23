@@ -37,11 +37,17 @@ class DeckBackgroundManager {
       
       console.log('Background manager: Initializing for user');
 
-      // Load available backgrounds
-      await this.loadBackgrounds();
-      
-      // Create and setup the button (with retry logic)
+      // Show the button immediately (prevents header reflow); keep disabled until backgrounds load
       this.createBackgroundButton();
+      
+      // Load available backgrounds, then enable button if possible
+      await this.loadBackgrounds();
+      const backgroundBtn = document.getElementById('backgroundBtn');
+      if (backgroundBtn && backgroundBtn.style.visibility !== 'hidden') {
+        const hasBackgrounds = Array.isArray(this.availableBackgrounds) && this.availableBackgrounds.length > 0;
+        backgroundBtn.disabled = !hasBackgrounds;
+        backgroundBtn.title = hasBackgrounds ? '' : 'Backgrounds unavailable';
+      }
     }
   }
 
@@ -133,7 +139,7 @@ class DeckBackgroundManager {
    * Create the Background button
    */
   createBackgroundButton() {
-    // Check if user exists before creating button
+    // Check if user exists before showing button
     const currentUser = this.getCurrentUser();
     if (!currentUser) {
       console.log('Background manager: Not creating button - no current user');
@@ -157,23 +163,38 @@ class DeckBackgroundManager {
         return;
       }
 
-      // Check if button already exists
-      if (document.getElementById('backgroundBtn')) {
-        console.log('Background manager: Button already exists');
+      const backgroundBtn = document.getElementById('backgroundBtn');
+      if (!backgroundBtn) {
+        console.warn('Background manager: backgroundBtn not found');
         return;
       }
 
-      console.log('Background manager: Creating Background button');
-      const backgroundBtn = document.createElement('button');
-      backgroundBtn.id = 'backgroundBtn';
-      backgroundBtn.className = 'remove-all-btn';
-      backgroundBtn.textContent = 'Background';
-      backgroundBtn.setAttribute('data-click-handler', 'showBackgroundModal');
-      backgroundBtn.addEventListener('click', () => this.showBackgroundModal());
+      console.log('Background manager: Enabling Background button');
+      backgroundBtn.style.visibility = 'visible';
+      backgroundBtn.style.pointerEvents = 'auto';
+      backgroundBtn.removeAttribute('aria-hidden');
 
-      // Insert before listViewBtn
-      listViewBtn.parentNode.insertBefore(backgroundBtn, listViewBtn);
-      console.log('Background manager: Button created successfully');
+      // Ensure the click handler is bound (idempotent)
+      backgroundBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.showBackgroundModal();
+      });
+
+      // If backgrounds haven't loaded yet, keep disabled until they do
+      if (!this.availableBackgrounds || this.availableBackgrounds.length === 0) {
+        backgroundBtn.disabled = true;
+        backgroundBtn.title = 'Backgrounds loading...';
+      } else {
+        backgroundBtn.disabled = false;
+        backgroundBtn.title = '';
+      }
+
+      console.log('Background manager: Button ready');
+
+      // Ensure correct disabled state if entering/leaving read-only mode
+      if (typeof window.updateBackgroundButtonState === 'function') {
+        window.updateBackgroundButtonState();
+      }
     };
 
     // Start trying to create the button

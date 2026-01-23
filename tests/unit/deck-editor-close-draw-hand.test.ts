@@ -222,7 +222,7 @@ describe('Deck Editor Close Draw Hand', () => {
         }
       };
       const mockDrawHandBtn = {
-        textContent: 'Draw New Hand'
+        textContent: 'Draw Hand'
       };
 
       // Mock closeDrawHand to simulate actual behavior

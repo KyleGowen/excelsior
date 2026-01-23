@@ -1490,8 +1490,10 @@
                     <div class="deck-editor-title-section">
                         <div class="deck-title-with-validation">
                             <h3 id="deckEditorTitle" class="editable-title" data-edit-handler="startEditingTitle">Edit Deck</h3>
-                            <span id="deckTitleValidationBadge" class="deck-validation-badge"></span>
-                            <span id="readOnlyBadge" class="deck-validation-badge read-only" style="display: none;">Read-Only</span>
+                            <div class="deck-title-badges" aria-label="Deck badges">
+                                <span id="deckTitleValidationBadge" class="deck-validation-badge"></span>
+                                <span id="readOnlyBadge" class="deck-validation-badge read-only" style="display: none;">Read-Only</span>
+                            </div>
                         </div>
                         <p id="deckEditorDescription" class="deck-description editable-description" data-edit-handler="startEditingDescription"></p>
                         <div id="readOnlyIndicator" class="read-only-indicator" style="display: none;">
@@ -1502,11 +1504,6 @@
                     <!-- Center: Deck Summary Section -->
                     <div class="deck-summary-section">
                         <div class="deck-summary-content">
-                            <div class="summary-stat">
-                                <button class="remove-all-btn" id="drawHandBtn" data-click-handler="toggleDrawHand" disabled title="Deck must contain at least 8 playable cards.">Draw Hand</button>
-                                <button class="remove-all-btn" id="listViewBtn" data-click-handler="toggleListView">List View</button>
-                                <button class="remove-all-btn" id="screenshotViewBtn" data-click-handler="toggleScreenshotView" style="display: none;">Screenshot View</button>
-                            </div>
                             <div class="deck-summary-stats">
                                 <div class="summary-stat">
                                     <span class="stat-label">Total Cards:</span>
@@ -1557,12 +1554,23 @@
                         </div>
                     </div>
                     
-                    <!-- Right side: Action Buttons -->
-                    <div class="deck-editor-actions">
-                        <button class="export-import-btn" id="exportBtn" data-click-handler="exportDeckAsJson" style="display: none;" title="Export deck as JSON">Export</button>
-                        <button class="export-import-btn" id="importBtn" data-click-handler="importDeckFromJson" style="display: none;" title="Import deck from JSON">Import</button>
-                        <button id="saveDeckButton" class="action-btn save-btn" data-click-handler="saveDeckChanges">Save</button>
-                        <button class="action-btn cancel-btn" data-click-handler="closeDeckEditor">Cancel</button>
+                    <!-- Right side: Utility buttons + Action Buttons -->
+                    <div class="deck-editor-right-controls" aria-label="Deck editor controls">
+                        <div class="deck-editor-utility-actions" aria-label="Deck editor utility buttons">
+                            <button class="remove-all-btn" id="drawHandBtn" data-click-handler="toggleDrawHand" disabled title="Deck must contain at least 8 playable cards.">Draw Hand</button>
+                            <!-- Keep Background button in DOM to prevent header reflow; shown/enabled by DeckBackgroundManager when available -->
+                            <button class="remove-all-btn" id="backgroundBtn" data-click-handler="showBackgroundModal" style="visibility: hidden; pointer-events: none;" aria-hidden="true" title="Backgrounds loading...">Background</button>
+                            <button class="remove-all-btn" id="listViewBtn" data-click-handler="toggleListView">List View</button>
+                            <button class="remove-all-btn" id="screenshotViewBtn" data-click-handler="toggleScreenshotView" style="display: none;">Screenshot View</button>
+                            <button class="remove-all-btn" id="previewBtn" data-click-handler="togglePreviewMode" title="Preview deck (read-only)">Preview</button>
+                        </div>
+                        <div class="deck-editor-controls-divider" role="separator" aria-hidden="true"></div>
+                        <div class="deck-editor-actions" aria-label="Deck editor actions">
+                            <button class="export-import-btn" id="exportBtn" data-click-handler="exportDeckAsJson" style="display: none;" title="Export deck as JSON">Export</button>
+                            <button class="export-import-btn" id="importBtn" data-click-handler="importDeckFromJson" style="display: none;" title="Import deck from JSON">Import</button>
+                            <button id="saveDeckButton" class="action-btn save-btn" data-click-handler="saveDeckChanges">Save</button>
+                            <button class="action-btn cancel-btn" data-click-handler="closeDeckEditor">Cancel</button>
+                        </div>
                     </div>
                 </div>
             </div>
