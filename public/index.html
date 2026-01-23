@@ -13781,6 +13781,11 @@
 
         // Mission Display Tile Selection Functions
         function getDisplayMissionButton(cardId, index) {
+            // Hide in read-only mode
+            if (document.body.classList.contains('read-only-mode')) {
+                return '';
+            }
+
             // Only applies to mission cards
             if (!window.deckEditorCards || !window.deckEditorCards[index] || window.deckEditorCards[index].type !== 'mission') {
                 return '';
