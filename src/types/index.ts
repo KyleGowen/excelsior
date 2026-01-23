@@ -24,6 +24,7 @@ export interface Deck {
   card_count?: number;
   threat?: number;
   reserve_character?: string; // UUID of the character card that serves as the reserve character
+  display_mission_card_id?: string | null; // UUID of the mission card to display on the deck selection tile; NULL falls back to first mission preview.
   background_image_path?: string; // Relative path to background image for deck editor (e.g., src/resources/cards/images/backgrounds/aesclepnotext.png). NULL means default black background.
   created_at?: string;
   updated_at?: string;

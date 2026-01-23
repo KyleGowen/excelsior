@@ -371,7 +371,9 @@ describe('Enhanced Health Check Endpoint', () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    // Use resetAllMocks (not clearAllMocks) so per-test `mockResolvedValueOnce(...)` chains
+    // do not leak between tests and cause hanging requests / mismatched expectations.
+    jest.resetAllMocks();
     
     // Set up default successful mocks
     mockPool.connect.mockResolvedValue(mockClient);

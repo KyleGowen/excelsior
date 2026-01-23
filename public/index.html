@@ -394,6 +394,32 @@
             min-width: 24px;
             height: 18px;
         }
+
+        /* Mission "Display" button: match the teal scheme of "-" */
+        .display-mission-btn {
+            background: rgba(78, 205, 196, 0.2) !important;
+            color: #4ecdc4 !important;
+            border: 1px solid rgba(78, 205, 196, 0.3) !important;
+        }
+
+        .display-mission-btn:hover {
+            background: rgba(78, 205, 196, 0.3) !important;
+            border-color: rgba(78, 205, 196, 0.4) !important;
+        }
+
+        /* Dimmed active state (similar to other toggle buttons) */
+        .display-mission-btn.active {
+            background: rgba(78, 205, 196, 0.15) !important;
+            border-color: rgba(78, 205, 196, 0.25) !important;
+            color: rgba(78, 205, 196, 0.75) !important;
+            opacity: 0.85;
+        }
+
+        .display-mission-btn.active:hover {
+            background: rgba(78, 205, 196, 0.2) !important;
+            border-color: rgba(78, 205, 196, 0.3) !important;
+            color: rgba(78, 205, 196, 0.85) !important;
+        }
         
         /* KO Button in Card View - Red color scheme matching Tile View */
         .card-view-btn.ko-btn {
@@ -3438,7 +3464,7 @@
         if (!screenshotContent) return;
         
         // Filter for character cards only
-        const characterCards = window.window.deckEditorCards.filter(card => card.type === 'character');
+        const characterCards = window.deckEditorCards.filter(card => card.type === 'character');
         
         if (characterCards.length === 0) {
             screenshotContent.innerHTML = '<div class="screenshot-blank-screen">No character cards in deck</div>';
@@ -3830,7 +3856,7 @@
 
             // Group cards by type
             const cardsByType = {};
-            window.window.deckEditorCards.forEach(card => {
+            window.deckEditorCards.forEach(card => {
                 const type = card.type;
                 if (!cardsByType[type]) {
                     cardsByType[type] = [];
@@ -3945,17 +3971,18 @@
                                     <div class="deck-list-item-actions">
                                         ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `
                                             <div class="deck-list-item-quantity-control">
-                                                <button class="deck-list-item-quantity-btn" onclick="removeOneCardFromEditor(${window.window.deckEditorCards.indexOf(card)})">-1</button>
-                                                <button class="deck-list-item-quantity-btn" onclick="addOneCardToEditor(${window.window.deckEditorCards.indexOf(card)})">+1</button>
+                                                <button class="deck-list-item-quantity-btn" onclick="removeOneCardFromEditor(${window.deckEditorCards.indexOf(card)})">-1</button>
+                                                <button class="deck-list-item-quantity-btn" onclick="addOneCardToEditor(${window.deckEditorCards.indexOf(card)})">+1</button>
                                             </div>
                                         ` : ''}
                                         ${type === 'character' ? `
-                                            ${currentUser ? `<button class="ko-btn ${window.SimulateKO && window.SimulateKO.isKOd(card.cardId) ? 'active' : ''}" onclick="toggleKOCharacter('${card.cardId}', ${window.window.deckEditorCards.indexOf(card)})" title="${window.SimulateKO && window.SimulateKO.isKOd(card.cardId) ? 'Un-KO Character' : 'KO Character'}">KO</button>` : ''}
-                                            ${getReserveCharacterButton(card.cardId, window.window.deckEditorCards.indexOf(card))}
-                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${window.window.deckEditorCards.indexOf(card)})">-</button>
+                                            ${currentUser ? `<button class="ko-btn ${window.SimulateKO && window.SimulateKO.isKOd(card.cardId) ? 'active' : ''}" onclick="toggleKOCharacter('${card.cardId}', ${window.deckEditorCards.indexOf(card)})" title="${window.SimulateKO && window.SimulateKO.isKOd(card.cardId) ? 'Un-KO Character' : 'KO Character'}">KO</button>` : ''}
+                                            ${getReserveCharacterButton(card.cardId, window.deckEditorCards.indexOf(card))}
+                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${window.deckEditorCards.indexOf(card)})">-</button>
                                         ` : ''}
                                         ${(type === 'location' || type === 'mission') && type !== 'character' ? `
-                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${window.window.deckEditorCards.indexOf(card)})">-</button>
+                                            ${card.type === 'mission' ? getDisplayMissionButton(card.cardId, window.deckEditorCards.indexOf(card)) : ''}
+                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${window.deckEditorCards.indexOf(card)})">-</button>
                                         ` : ''}
                                     </div>
                                 </div>
@@ -4070,16 +4097,17 @@
                                 <div class="deck-list-item-actions">
                                     ${card.type !== 'character' && card.type !== 'location' && card.type !== 'mission' ? `
                                         <div class="deck-list-item-quantity-control">
-                                            <button class="deck-list-item-quantity-btn" onclick="removeOneCardFromEditor(${window.window.deckEditorCards.indexOf(card)})">-1</button>
-                                            <button class="deck-list-item-quantity-btn" onclick="addOneCardToEditor(${window.window.deckEditorCards.indexOf(card)})">+1</button>
+                                            <button class="deck-list-item-quantity-btn" onclick="removeOneCardFromEditor(${window.deckEditorCards.indexOf(card)})">-1</button>
+                                            <button class="deck-list-item-quantity-btn" onclick="addOneCardToEditor(${window.deckEditorCards.indexOf(card)})">+1</button>
                                         </div>
                                     ` : ''}
                                         ${type === 'character' ? `
-                                            ${getReserveCharacterButton(card.cardId, window.window.deckEditorCards.indexOf(card))}
-                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${window.window.deckEditorCards.indexOf(card)})">-</button>
+                                            ${getReserveCharacterButton(card.cardId, window.deckEditorCards.indexOf(card))}
+                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${window.deckEditorCards.indexOf(card)})">-</button>
                                         ` : ''}
                                         ${(type === 'location' || type === 'mission') && type !== 'character' ? `
-                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${window.window.deckEditorCards.indexOf(card)})">-</button>
+                                            ${card.type === 'mission' ? getDisplayMissionButton(card.cardId, window.deckEditorCards.indexOf(card)) : ''}
+                                            <button class="deck-list-item-remove" onclick="removeCardFromEditor(${window.deckEditorCards.indexOf(card)})">-</button>
                                         ` : ''}
                                 </div>
                             </div>
@@ -4547,7 +4575,7 @@
             // Update deck summary and card count to ensure Draw Hand button state is correct
             updateDeckEditorCardCount();
             if (typeof updateDeckSummary === 'function') {
-                updateDeckSummary(window.window.deckEditorCards || window.deckEditorCards);
+                updateDeckSummary(window.deckEditorCards);
             }
         }
 
@@ -4940,6 +4968,7 @@
                                         ${instanceChangeArtButton}
                                         ${quantityButtons}
                                         ${prePlacedButton}
+                                        ${card.type === 'mission' ? getDisplayMissionButton(card.cardId, index) : ''}
                                     </div>
                                 </div>
                             `;
@@ -5507,7 +5536,7 @@
             
             cards.forEach(card => {
                 // Check if card is already in deck
-                const existingCard = window.window.deckEditorCards.find(deckCard => 
+                const existingCard = window.deckEditorCards.find(deckCard => 
                     deckCard.type === 'mission' && deckCard.cardId === card.id
                 );
                 
@@ -5537,7 +5566,7 @@
             
             cards.forEach(card => {
                 // Check if card is already in deck
-                const existingCard = window.window.deckEditorCards.find(deckCard => 
+                const existingCard = window.deckEditorCards.find(deckCard => 
                     deckCard.type === 'power' && deckCard.cardId === card.id
                 );
                 
@@ -5582,7 +5611,7 @@
             }
             
             // Get mission set names from current deck missions
-            const deckMissionCards = window.window.deckEditorCards.filter(card => card.type === 'mission');
+            const deckMissionCards = window.deckEditorCards.filter(card => card.type === 'mission');
             const deckMissionSets = new Set();
             
             deckMissionCards.forEach(card => {
@@ -5664,7 +5693,7 @@
                 });
             }
             
-            const deckCharacterCards = window.window.deckEditorCards.filter(card => card.type === 'character');
+            const deckCharacterCards = window.deckEditorCards.filter(card => card.type === 'character');
             const deckCharacterNames = deckCharacterCards.map(card => {
                 // Direct lookup using UUID
                 const character = window.availableCardsMap.get(card.cardId);
@@ -5760,10 +5789,10 @@
         
         // Update deck editor card count display
         function updateDeckEditorCardCount() {
-            const totalCards = window.window.deckEditorCards.reduce((total, card) => total + card.quantity, 0);
-            const characterCount = window.window.deckEditorCards.filter(card => card.type === 'character').length;
-            const powerCardCount = window.window.deckEditorCards.filter(card => card.type === 'power').reduce((total, card) => total + card.quantity, 0);
-            const specialCardCount = window.window.deckEditorCards.filter(card => card.type === 'special').reduce((total, card) => total + card.quantity, 0);
+            const totalCards = window.deckEditorCards.reduce((total, card) => total + card.quantity, 0);
+            const characterCount = window.deckEditorCards.filter(card => card.type === 'character').length;
+            const powerCardCount = window.deckEditorCards.filter(card => card.type === 'power').reduce((total, card) => total + card.quantity, 0);
+            const specialCardCount = window.deckEditorCards.filter(card => card.type === 'special').reduce((total, card) => total + card.quantity, 0);
             
             // Update any card count displays in the deck editor
             const cardCountElements = document.querySelectorAll('.deck-card-count');
@@ -6263,7 +6292,7 @@
                     const requiredType = toUseMatch[2];
                     
                     // Check if any character in the deck meets this requirement
-                    const hasUsableCharacter = window.window.deckEditorCards.some(deckCard => {
+                    const hasUsableCharacter = window.deckEditorCards.some(deckCard => {
                         if (deckCard.type !== 'character') return false;
                         
                         // Direct lookup using UUID
@@ -7816,12 +7845,12 @@
                 `;
                 
                 // Validate empty deck
-                await showDeckValidation(window.window.deckEditorCards);
+                await showDeckValidation(window.deckEditorCards);
                 return;
             }
             
             // Validate deck and show results
-            await showDeckValidation(window.window.deckEditorCards);
+            await showDeckValidation(window.deckEditorCards);
             
             // Group cards by type (normalize underscore format to hyphen format)
             const cardsByType = {};
@@ -8583,6 +8612,7 @@
                                     ${card.type === 'character' || card.type === 'location' || card.type === 'mission' ? `<button class="quantity-btn" onclick="removeCardFromEditor(${index})">-</button>` : ''}
                                     ${card.type === 'character' && currentUser ? `<button class="ko-btn ${window.SimulateKO && window.SimulateKO.isKOd(card.cardId) ? 'active' : ''}" onclick="toggleKOCharacter('${card.cardId}', ${index})" title="${window.SimulateKO && window.SimulateKO.isKOd(card.cardId) ? 'Un-KO Character' : 'KO Character'}">KO</button>` : ''}
                                     ${card.type === 'character' ? getReserveCharacterButton(card.cardId, index) : ''}
+                                    ${card.type === 'mission' ? getDisplayMissionButton(card.cardId, index) : ''}
                                 </div>
                             </div>
                         `;
@@ -9516,7 +9546,7 @@
             console.log('🗑️ removeOneCardFromEditor called with index:', index);
             console.log('📊 Before removal - deckEditorCards:', window.deckEditorCards);
             
-            if (window.window.deckEditorCards[index]) {
+            if (window.deckEditorCards[index]) {
                 // Capture current expansion state before re-rendering
                 const currentExpansionState = getExpansionState();
                 
@@ -9524,9 +9554,9 @@
                 const deckCardsEditor = document.querySelector('.deck-cards-editor');
                 const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
                 
-                if (window.window.deckEditorCards[index].quantity > 1) {
+                if (window.deckEditorCards[index].quantity > 1) {
                     // If there are multiple cards, decrease quantity by 1
-                    window.window.deckEditorCards[index].quantity -= 1;
+                    window.deckEditorCards[index].quantity -= 1;
                 } else {
                     // If there's only 1 card, remove the entire card
                     window.deckEditorCards.splice(index, 1);
@@ -9606,7 +9636,7 @@
         }
 
         async function addOneCardToEditor(index) {
-            if (window.window.deckEditorCards[index]) {
+            if (window.deckEditorCards[index]) {
                 // Capture current expansion state before re-rendering
                 const currentExpansionState = getExpansionState();
                 
@@ -9615,7 +9645,7 @@
                 const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
                 
                 // Check "One Per Deck" limit before increasing quantity
-                const card = window.window.deckEditorCards[index];
+                const card = window.deckEditorCards[index];
                 const cardData = window.availableCardsMap.get(card.cardId);
                 const isOnePerDeck = cardData && (cardData.one_per_deck === true || cardData.is_one_per_deck === true);
                 if (isOnePerDeck) {
@@ -9633,7 +9663,7 @@
                 }
                 
                 // Increase quantity by 1
-                window.window.deckEditorCards[index].quantity += 1;
+                window.deckEditorCards[index].quantity += 1;
                 
                 // Re-render the current view instead of always using Tile View
                 if (deckCardsEditor && deckCardsEditor.classList.contains('card-view')) {
@@ -9715,7 +9745,7 @@
         }
 
         async function removeAllMissionsFromDeck() {
-            const missionCount = window.window.deckEditorCards.filter(card => card.type === 'mission').length;
+            const missionCount = window.deckEditorCards.filter(card => card.type === 'mission').length;
             
             if (missionCount === 0) {
                 showNotification('No missions to remove', 'info');
@@ -9730,7 +9760,7 @@
             const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
             
             // Remove all mission cards
-            window.deckEditorCards = window.window.deckEditorCards.filter(card => card.type !== 'mission');
+            window.deckEditorCards = window.deckEditorCards.filter(card => card.type !== 'mission');
             
             await displayDeckCardsForEditing();
             
@@ -9786,7 +9816,7 @@
         }
 
         async function removeAllCardsFromDeck(cardType) {
-            const cardCount = window.window.deckEditorCards.filter(card => card.type === cardType).length;
+            const cardCount = window.deckEditorCards.filter(card => card.type === cardType).length;
             
             if (cardCount === 0) {
                 showNotification(`No ${cardType} cards to remove`, 'info');
@@ -9801,7 +9831,7 @@
             const currentScrollTop = deckCardsEditor ? deckCardsEditor.scrollTop : 0;
             
             // Remove all cards of this type
-            window.deckEditorCards = window.window.deckEditorCards.filter(card => card.type !== cardType);
+            window.deckEditorCards = window.deckEditorCards.filter(card => card.type !== cardType);
             
             await displayDeckCardsForEditing();
             
@@ -10633,7 +10663,7 @@
                     
                     characterCards.forEach(card => {
                         // Check if card is already in deck
-                        const existingCard = window.window.deckEditorCards.find(deckCard => 
+                        const existingCard = window.deckEditorCards.find(deckCard => 
                             deckCard.type === 'special' && deckCard.cardId === card.id
                         );
                         
@@ -10681,7 +10711,7 @@
                     
                     characterCards.forEach(card => {
                         // Check if card is already in deck
-                        const existingCard = window.window.deckEditorCards.find(deckCard => 
+                        const existingCard = window.deckEditorCards.find(deckCard => 
                             deckCard.type === 'advanced-universe' && deckCard.cardId === card.id
                         );
                         
@@ -13344,7 +13374,7 @@
                 }
                 
                 // For other card types, increase quantity
-                window.window.deckEditorCards[existingCardIndex].quantity += 1;
+                window.deckEditorCards[existingCardIndex].quantity += 1;
                 // Show notification for adding additional copies
                     showNotification(`Added another copy of ${cardName}`, 'success');
             } else {
@@ -13588,7 +13618,7 @@
                 if (cardInfo) {
                     // Tile View: Find by card name
                     const cardName = cardInfo.textContent.trim();
-                    matchingCard = window.window.deckEditorCards.find(card => {
+                    matchingCard = window.deckEditorCards.find(card => {
                         if (card.type !== 'character') return false;
                         const character = window.availableCardsMap.get(card.cardId);
                         return character && character.name === cardName;
@@ -13596,8 +13626,8 @@
                 } else if (cardElement.hasAttribute('data-index')) {
                     // Card View: Find by data-index attribute
                     const cardIndex = parseInt(cardElement.getAttribute('data-index'));
-                    if (cardIndex >= 0 && cardIndex < window.window.deckEditorCards.length) {
-                        const card = window.window.deckEditorCards[cardIndex];
+                    if (cardIndex >= 0 && cardIndex < window.deckEditorCards.length) {
+                        const card = window.deckEditorCards[cardIndex];
                         if (card && card.type === 'character') {
                             matchingCard = card;
                         }
@@ -13608,7 +13638,7 @@
                 
                 if (matchingCard) {
                     const cardId = matchingCard.cardId;
-                    const cardIndex = window.window.deckEditorCards.indexOf(matchingCard);
+                    const cardIndex = window.deckEditorCards.indexOf(matchingCard);
                     
                     // Handle both Tile View and Card View
                     let reserveContainer = cardElement.querySelector('.deck-card-editor-reserve');
@@ -13651,7 +13681,7 @@
                 const cardName = cardNameElement.textContent.trim();
                 
                 // Find the corresponding character card in window.deckEditorCards by name
-                const matchingCard = window.window.deckEditorCards.find(card => {
+                const matchingCard = window.deckEditorCards.find(card => {
                     if (card.type !== 'character') return false;
                     const character = window.availableCardsMap.get(card.cardId);
                     return character && character.name === cardName;
@@ -13659,7 +13689,7 @@
                 
                 if (matchingCard) {
                     const cardId = matchingCard.cardId;
-                    const originalIndex = window.window.deckEditorCards.indexOf(matchingCard);
+                    const originalIndex = window.deckEditorCards.indexOf(matchingCard);
                     const actionsContainer = listItem.querySelector('.deck-list-item-actions');
                     
                     if (actionsContainer) {
@@ -13747,6 +13777,144 @@
             // Use window.deckEditorCards which is the working copy of deck cards
             await updateDeckSummary(window.deckEditorCards);
             
+        }
+
+        // Mission Display Tile Selection Functions
+        function getDisplayMissionButton(cardId, index) {
+            // Only applies to mission cards
+            if (!window.deckEditorCards || !window.deckEditorCards[index] || window.deckEditorCards[index].type !== 'mission') {
+                return '';
+            }
+
+            const deckData = window.currentDeckData || currentDeckData;
+            const selectedMissionId = deckData?.metadata?.display_mission_card_id || null;
+            const hasSelection = !!selectedMissionId;
+
+            // Check if selection matches any mission card in deck
+            let selectionMatchesAnyMission = false;
+            if (hasSelection && window.deckEditorCards) {
+                selectionMatchesAnyMission = window.deckEditorCards.some(c => c?.type === 'mission' && c.cardId === selectedMissionId);
+            }
+
+            const isSelected = hasSelection && selectedMissionId === cardId;
+
+            // If selected and this is the selected mission -> show active Display button
+            if (isSelected) {
+                return `<button class="reserve-btn display-mission-btn active" onclick="deselectDisplayMission(${index})">Display</button>`;
+            }
+
+            // If there is a valid selection on another mission -> hide button here
+            if (hasSelection && selectionMatchesAnyMission) {
+                return '';
+            }
+
+            // No selection (or stale selection) -> show Display button on all missions
+            return `<button class="reserve-btn display-mission-btn" onclick="selectDisplayMission('${cardId}', ${index})">Display</button>`;
+        }
+
+        function updateDisplayMissionButtons() {
+            // Update buttons in Tile View (deck-card-editor-item) and Card View (deck-card-card-view-item)
+            const allCards = document.querySelectorAll('.deck-card-editor-item, .deck-card-card-view-item');
+            allCards.forEach((cardElement) => {
+                const cardIndexAttr = cardElement.getAttribute('data-index');
+                if (cardIndexAttr === null || cardIndexAttr === undefined) return;
+                const cardIndex = parseInt(cardIndexAttr);
+                if (Number.isNaN(cardIndex)) return;
+
+                const card = window.deckEditorCards && window.deckEditorCards[cardIndex];
+                if (!card || card.type !== 'mission') return;
+
+                let actionsContainer = cardElement.querySelector('.deck-card-editor-actions');
+                if (!actionsContainer) {
+                    // Card View: actions container uses card-view-actions
+                    actionsContainer = cardElement.querySelector('.card-view-actions');
+                }
+                if (!actionsContainer) return;
+
+                // Remove any existing Display buttons (identified by text and reserve-btn class)
+                actionsContainer.querySelectorAll('button.reserve-btn').forEach(btn => {
+                    if ((btn.textContent || '').trim() === 'Display') {
+                        btn.remove();
+                    }
+                });
+
+                const newButtonHTML = getDisplayMissionButton(card.cardId, cardIndex);
+                if (!newButtonHTML) return;
+
+                // Insert near the other small action buttons
+                actionsContainer.insertAdjacentHTML('beforeend', newButtonHTML);
+            });
+
+            // Update buttons in list view - Missions section only
+            const missionsListItems = document.querySelectorAll('#deck-list-items-mission .deck-list-item');
+            missionsListItems.forEach((listItem) => {
+                const nameEl = listItem.querySelector('.deck-list-item-name');
+                if (!nameEl) return;
+                const cardName = nameEl.textContent.trim();
+
+                const matchingCard = window.deckEditorCards?.find(c => {
+                    if (c.type !== 'mission') return false;
+                    const mission = window.availableCardsMap?.get(c.cardId);
+                    const missionName = mission?.name || mission?.card_name || '';
+                    return missionName === cardName;
+                });
+                if (!matchingCard) return;
+
+                const originalIndex = window.deckEditorCards.indexOf(matchingCard);
+                const actionsContainer = listItem.querySelector('.deck-list-item-actions');
+                if (!actionsContainer) return;
+
+                // Remove existing Display button
+                actionsContainer.querySelectorAll('button.reserve-btn').forEach(btn => {
+                    if ((btn.textContent || '').trim() === 'Display') {
+                        btn.remove();
+                    }
+                });
+
+                const newButtonHTML = getDisplayMissionButton(matchingCard.cardId, originalIndex);
+                if (!newButtonHTML) return;
+
+                const removeBtn = actionsContainer.querySelector('.deck-list-item-remove');
+                if (removeBtn) {
+                    removeBtn.insertAdjacentHTML('beforebegin', newButtonHTML);
+                } else {
+                    actionsContainer.insertAdjacentHTML('beforeend', newButtonHTML);
+                }
+            });
+        }
+
+        async function selectDisplayMission(cardId, index) {
+            if (!currentDeckData) {
+                showNotification('No deck data available', 'error');
+                return;
+            }
+            if (!currentDeckData.metadata) {
+                currentDeckData.metadata = {};
+            }
+
+            // Only allow selecting mission cards
+            const card = window.deckEditorCards && window.deckEditorCards[index];
+            if (!card || card.type !== 'mission') {
+                return;
+            }
+
+            currentDeckData.metadata.display_mission_card_id = cardId;
+            showNotification('Mission selected for deck tile! (Click Save to persist changes)', 'success');
+            updateDisplayMissionButtons();
+        }
+
+        async function deselectDisplayMission(index) {
+            if (!currentDeckData) {
+                showNotification('No deck data available', 'error');
+                return;
+            }
+            if (!currentDeckData.metadata) {
+                currentDeckData.metadata = {};
+            }
+
+            currentDeckData.metadata.display_mission_card_id = null;
+            showNotification('Mission display selection cleared! (Click Save to persist changes)', 'success');
+            updateDisplayMissionButtons();
         }
 
         // saveDeckChanges function moved to external file

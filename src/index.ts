@@ -866,6 +866,7 @@ app.get('/api/decks/:id', authenticateUser, async (req: any, res) => {
         isOwner: deckData.isOwner,
         is_limited: deckData.is_limited,
         reserve_character: deckData.reserve_character,
+        display_mission_card_id: deckData.display_mission_card_id || null,
         background_image_path: deckData.background_image_path
       },
       cards: deckData.cards || []
@@ -909,6 +910,7 @@ app.get('/api/decks/:id/full', authenticateUser, async (req: any, res) => {
         isOwner: deckData.isOwner,
         is_limited: deckData.is_limited,
         reserve_character: deckData.reserve_character,
+        display_mission_card_id: deckData.display_mission_card_id || null,
         background_image_path: deckData.background_image_path
       },
       cards: deckData.cards || []
@@ -939,7 +941,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
     }
     
-    const { name, description, is_limited, is_valid, reserve_character, background_image_path } = req.body;
+    let { name, description, is_limited, is_valid, reserve_character, display_mission_card_id, background_image_path } = req.body;
     
     // SECURITY: Comprehensive input validation
     if (name !== undefined && (!name || typeof name !== 'string' || name.trim().length === 0)) {
@@ -964,6 +966,17 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
     
     if (reserve_character !== undefined && reserve_character !== null && (typeof reserve_character !== 'string' || reserve_character.length > 50)) {
       return res.status(400).json({ success: false, error: 'Reserve character must be a string with 50 characters or less' });
+    }
+
+    // Normalize empty string to null for mission display preference
+    if (display_mission_card_id === '') {
+      display_mission_card_id = null;
+    }
+
+    if (display_mission_card_id !== undefined && display_mission_card_id !== null) {
+      if (typeof display_mission_card_id !== 'string' || display_mission_card_id.length > 50) {
+        return res.status(400).json({ success: false, error: 'display_mission_card_id must be a string with 50 characters or less or null' });
+      }
     }
     
     if (background_image_path !== undefined && background_image_path !== null) {
@@ -999,7 +1012,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
     
-    const updatedDeck = await deckRepository.updateDeck(req.params.id, { name, description, is_limited, is_valid, reserve_character, background_image_path });
+    const updatedDeck = await deckRepository.updateDeck(req.params.id, { name, description, is_limited, is_valid, reserve_character, display_mission_card_id, background_image_path });
     if (!updatedDeck) {
       return res.status(404).json({ success: false, error: 'Deck not found' });
     }
@@ -1028,6 +1041,7 @@ app.put('/api/decks/:id', authenticateUser, async (req: any, res) => {
         isOwner: deckData.isOwner,
         is_limited: deckData.is_limited,
         reserve_character: deckData.reserve_character,
+        display_mission_card_id: deckData.display_mission_card_id || null,
         background_image_path: deckData.background_image_path
       },
       cards: [] // Cards are not included in updateDeck response

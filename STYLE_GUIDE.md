@@ -288,6 +288,21 @@ The Overpower Deckbuilder follows a dark, modern design aesthetic with a focus o
         - Location: yellow glow (`.deck-tile-location-preview:hover`)
         - Mission: green glow (`.deck-tile-mission-preview:hover`)
 
+  - **Mission tile preview selection (“Display” button)**:
+    - **Goal**: choose **one** mission in the deck to be used for the deck selection tile’s mission preview.
+    - **Where it appears**: deck editor mission cards (Tile View / List View), next to other per-card action buttons.
+    - **Button text**: `Display`
+    - **Styling**:
+      - Uses `.reserve-btn` sizing/layout, plus `.display-mission-btn` to match the teal color scheme of the `-` action button.
+    - **Behavior**:
+      - If **no mission cards in deck**: no `Display` buttons appear.
+      - If **no mission selected**: `Display` appears on each mission card.
+      - If **a mission is selected**: `Display` appears only on the selected mission (active state); clicking again clears selection and restores buttons on all missions.
+      - If the saved selection becomes invalid (mission removed): deck selection tile falls back to the first mission card.
+    - **Persistence**:
+      - Stored in `currentDeckData.metadata.display_mission_card_id`.
+      - Persisted to the backend when the user clicks **Save**.
+
 ### Database View (database.html)
 - **Character Cards**: Teal borders with gold text for character names
 - **Stat Cards**: `rgba(255, 255, 255, 0.1)` background with teal numbers

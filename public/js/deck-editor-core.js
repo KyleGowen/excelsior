@@ -918,7 +918,7 @@ async function saveDeckChanges() {
             }
         }
         
-        // Save deck metadata (name, is_limited, is_valid, reserve_character, and background_image_path)
+        // Save deck metadata (name, is_limited, is_valid, reserve_character, display_mission_card_id, and background_image_path)
         const backgroundPath = window.deckBackgroundManager ? window.deckBackgroundManager.getSelectedBackground() : null;
         console.log('Saving deck with background_image_path:', backgroundPath);
         console.log('deckBackgroundManager exists:', !!window.deckBackgroundManager);
@@ -937,6 +937,7 @@ async function saveDeckChanges() {
                 is_limited: isDeckLimited,
                 is_valid: isDeckValid,
                 reserve_character: reserveCharacterToSave,
+                display_mission_card_id: currentDeckData.metadata.display_mission_card_id || null,
                 background_image_path: backgroundPath
             })
         });

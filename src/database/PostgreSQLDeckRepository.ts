@@ -147,6 +147,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
         reserve_character: deck.reserve_character,
+        display_mission_card_id: deck.display_mission_card_id || null,
         background_image_path: deck.background_image_path,
         threat: deck.threat,
         created_at: deck.created_at,
@@ -218,8 +219,15 @@ export class PostgreSQLDeckRepository implements DeckRepository {
           FROM deck_cards dc
           JOIN missions m ON m.id::text = dc.card_id
           WHERE dc.deck_id = d.id AND dc.card_type = 'mission'
-          -- Prefer the first mission in the set by set_number; fall back to name/id.
-          ORDER BY NULLIF(m.set_number, '')::int ASC NULLS LAST, m.name ASC, dc.card_id ASC
+          -- Prefer the user-selected mission when present; otherwise fall back to first by set_number/name/id.
+          ORDER BY
+            CASE
+              WHEN d.display_mission_card_id IS NOT NULL AND dc.card_id = d.display_mission_card_id::text THEN 0
+              ELSE 1
+            END,
+            NULLIF(m.set_number, '')::int ASC NULLS LAST,
+            m.name ASC,
+            dc.card_id ASC
           LIMIT 1
         ) dm1 ON true
         WHERE d.user_id = $1 
@@ -311,6 +319,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
           card_count: deck.card_count,
           threat: deck.threat,
           reserve_character: deck.reserve_character,
+          display_mission_card_id: deck.display_mission_card_id || null,
           background_image_path: deck.background_image_path,
           created_at: deck.created_at,
           updated_at: deck.updated_at,
@@ -364,6 +373,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
         reserve_character: deck.reserve_character,
+        display_mission_card_id: deck.display_mission_card_id || null,
         background_image_path: deck.background_image_path,
         threat: deck.threat,
         created_at: deck.created_at,
@@ -393,6 +403,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         ui_preferences: deck.ui_preferences,
         is_limited: deck.is_limited,
         reserve_character: deck.reserve_character,
+        display_mission_card_id: deck.display_mission_card_id || null,
         threat: deck.threat,
         created_at: deck.created_at,
         updated_at: deck.updated_at
@@ -433,6 +444,10 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         setClause.push(`reserve_character = $${paramCount++}`);
         values.push(updates.reserve_character);
       }
+      if (updates.display_mission_card_id !== undefined) {
+        setClause.push(`display_mission_card_id = $${paramCount++}`);
+        values.push(updates.display_mission_card_id);
+      }
       if (updates.background_image_path !== undefined) {
         setClause.push(`background_image_path = $${paramCount++}`);
         values.push(updates.background_image_path);
@@ -466,6 +481,7 @@ export class PostgreSQLDeckRepository implements DeckRepository {
         card_count: deck.card_count,
         threat: deck.threat,
         reserve_character: deck.reserve_character,
+        display_mission_card_id: deck.display_mission_card_id || null,
         background_image_path: deck.background_image_path,
         created_at: deck.created_at,
         updated_at: deck.updated_at
