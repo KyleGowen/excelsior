@@ -373,9 +373,15 @@ describe('Create User Integration Tests', () => {
     });
 
     describe('GET /api/users', () => {
-        it('should return list of users', async () => {
+        it('should require authentication', async () => {
+            const response = await request(app).get('/api/users');
+            expect(response.status).toBe(401);
+        });
+
+        it('should allow ADMIN to list users', async () => {
             const response = await request(app)
-                .get('/api/users');
+                .get('/api/users')
+                .set('Cookie', adminAuthToken);
 
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
@@ -400,7 +406,8 @@ describe('Create User Integration Tests', () => {
 
             // Get users list
             const listResponse = await request(app)
-                .get('/api/users');
+                .get('/api/users')
+                .set('Cookie', adminAuthToken);
 
             expect(listResponse.status).toBe(200);
             expect(listResponse.body.success).toBe(true);

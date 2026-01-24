@@ -490,8 +490,9 @@ describe('Collection Cross-User Isolation Integration Tests', () => {
       );
 
       expect(result.rows.length).toBe(2);
-      expect(result.rows[0].user_id).toBe(adminUser1.id);
-      expect(result.rows[1].user_id).toBe(adminUser2.id);
+      const userIds = result.rows.map((r: any) => r.user_id);
+      expect(userIds).toContain(adminUser1.id);
+      expect(userIds).toContain(adminUser2.id);
     });
 
     it('should store collection cards with correct collection_id foreign keys', async () => {
@@ -518,12 +519,14 @@ describe('Collection Cross-User Isolation Integration Tests', () => {
 
       // Verify database records
       const collections = await pool.query(
-        'SELECT id FROM collections WHERE user_id IN ($1, $2) ORDER BY user_id',
+        'SELECT id, user_id FROM collections WHERE user_id IN ($1, $2)',
         [adminUser1.id, adminUser2.id]
       );
 
-      const collectionId1 = collections.rows[0].id;
-      const collectionId2 = collections.rows[1].id;
+      const collectionId1 = collections.rows.find((r: any) => r.user_id === adminUser1.id)?.id;
+      const collectionId2 = collections.rows.find((r: any) => r.user_id === adminUser2.id)?.id;
+      expect(collectionId1).toBeDefined();
+      expect(collectionId2).toBeDefined();
 
       const cards1 = await pool.query(
         'SELECT * FROM collection_cards WHERE collection_id = $1',
