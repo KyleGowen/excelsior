@@ -1114,6 +1114,25 @@ app.put('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res)
 });
 
 // Collection API routes - ADMIN only (mirrors main server behavior)
+const COLLECTION_CARD_TYPES = new Set([
+  'character',
+  'special',
+  'power',
+  'location',
+  'mission',
+  'event',
+  'aspect',
+  'advanced_universe',
+  'teamwork',
+  'ally_universe',
+  'training',
+  'basic_universe',
+]);
+
+function isValidCollectionCardType(value: unknown): value is string {
+  return typeof value === 'string' && COLLECTION_CARD_TYPES.has(value);
+}
+
 app.get('/api/collections/me', authenticateUser, async (req: any, res) => {
   try {
     if (req.user.role !== 'ADMIN') {
@@ -1154,6 +1173,9 @@ app.post('/api/collections/me/cards', authenticateUser, async (req: any, res) =>
     if (!cardId || !cardType) {
       return res.status(400).json({ success: false, error: 'cardId and cardType are required' });
     }
+    if (!isValidCollectionCardType(cardType)) {
+      return res.status(400).json({ success: false, error: 'Invalid cardType' });
+    }
 
     const collectionId = await collectionService.getOrCreateCollection(req.user.id);
     const card = await collectionService.addCardToCollection(
@@ -1188,6 +1210,9 @@ app.put('/api/collections/me/cards/:cardId', authenticateUser, async (req: any, 
     }
     if (!cardType) {
       return res.status(400).json({ success: false, error: 'cardType is required' });
+    }
+    if (!isValidCollectionCardType(cardType)) {
+      return res.status(400).json({ success: false, error: 'Invalid cardType' });
     }
     if (!imagePath) {
       return res.status(400).json({ success: false, error: 'imagePath is required' });
@@ -1241,6 +1266,9 @@ app.delete('/api/collections/me/cards/:cardId', authenticateUser, async (req: an
 
     if (!cardType) {
       return res.status(400).json({ success: false, error: 'cardType query parameter is required' });
+    }
+    if (!isValidCollectionCardType(cardType)) {
+      return res.status(400).json({ success: false, error: 'Invalid cardType' });
     }
 
     // Guard against invalid UUIDs (prevents Postgres 22P02 -> 500)

@@ -460,7 +460,8 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       setClause.push(`updated_at = NOW()`);
       values.push(id);
 
-      const result = await client.query(
+      // setClause is built from a fixed whitelist of column assignments; values remain parameterized.
+      const result = await client.query( // nosemgrep: pg-sql-template-interpolation
         `UPDATE decks SET ${setClause.join(', ')} WHERE id = $${paramCount} RETURNING *`,
         values
       );
@@ -783,7 +784,8 @@ export class PostgreSQLDeckRepository implements DeckRepository {
       setClause.push(`updated_at = NOW()`);
       values.push(deckId, cardType, cardId);
 
-      const result = await client.query(
+      // setClause is built from a fixed whitelist of column assignments; values remain parameterized.
+      const result = await client.query( // nosemgrep: pg-sql-template-interpolation
         `UPDATE deck_cards SET ${setClause.join(', ')} WHERE deck_id = $${paramCount} AND card_type = $${paramCount + 1} AND card_id = $${paramCount + 2}`,
         values
       );

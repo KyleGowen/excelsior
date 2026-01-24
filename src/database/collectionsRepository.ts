@@ -628,60 +628,52 @@ export class CollectionsRepository {
    * Verify that a card exists in the specified table
    */
   async verifyCardExists(cardId: string, cardType: string): Promise<boolean> {
-    console.log('🟠 [Repo] verifyCardExists called:', { cardId, cardType });
     const client = await this.pool.connect();
     try {
-      let tableName = '';
+      let query: string;
       switch (cardType) {
         case 'character':
-          tableName = 'characters';
+          query = 'SELECT 1 FROM characters WHERE id = $1';
           break;
         case 'special':
-          tableName = 'special_cards';
+          query = 'SELECT 1 FROM special_cards WHERE id = $1';
           break;
         case 'power':
-          tableName = 'power_cards';
+          query = 'SELECT 1 FROM power_cards WHERE id = $1';
           break;
         case 'location':
-          tableName = 'locations';
+          query = 'SELECT 1 FROM locations WHERE id = $1';
           break;
         case 'mission':
-          tableName = 'missions';
+          query = 'SELECT 1 FROM missions WHERE id = $1';
           break;
         case 'event':
-          tableName = 'events';
+          query = 'SELECT 1 FROM events WHERE id = $1';
           break;
         case 'aspect':
-          tableName = 'aspects';
+          query = 'SELECT 1 FROM aspects WHERE id = $1';
           break;
         case 'advanced_universe':
-          tableName = 'advanced_universe_cards';
+          query = 'SELECT 1 FROM advanced_universe_cards WHERE id = $1';
           break;
         case 'teamwork':
-          tableName = 'teamwork_cards';
+          query = 'SELECT 1 FROM teamwork_cards WHERE id = $1';
           break;
         case 'ally_universe':
-          tableName = 'ally_universe_cards';
+          query = 'SELECT 1 FROM ally_universe_cards WHERE id = $1';
           break;
         case 'training':
-          tableName = 'training_cards';
+          query = 'SELECT 1 FROM training_cards WHERE id = $1';
           break;
         case 'basic_universe':
-          tableName = 'basic_universe_cards';
+          query = 'SELECT 1 FROM basic_universe_cards WHERE id = $1';
           break;
         default:
           return false;
       }
 
-      const result = await client.query(
-        `SELECT 1 FROM ${tableName} WHERE id = $1`,
-        [cardId]
-      );
-
-      const exists = result.rows.length > 0;
-      console.log('🟠 [Repo] verifyCardExists result:', { tableName, exists });
-
-      return exists;
+      const result = await client.query(query, [cardId]);
+      return result.rows.length > 0;
     } finally {
       client.release();
     }

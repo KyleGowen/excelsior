@@ -1,0 +1,22 @@
+rules:
+  # Flag SQL passed to `pg` query methods that uses template interpolation.
+  # Interpolating user-controlled values into SQL strings can lead to injection.
+  - id: pg-sql-template-interpolation
+    languages: [typescript, javascript]
+    message: "Possible SQL injection risk: template interpolation used inside SQL passed to pg `.query(...)`. Use parameter placeholders ($1, $2, ...) with a values array, and avoid interpolating identifiers."
+    severity: ERROR
+    patterns:
+      - pattern-either:
+          - pattern: '$DB.query(`...${...}...`, ...)'
+          - pattern: '$DB.query({ ..., text: `...${...}...`, ... })'
+
+  # Flag SQL passed to `pg` query methods that is built via string concatenation.
+  - id: pg-sql-string-concatenation
+    languages: [typescript, javascript]
+    message: "Possible SQL injection risk: SQL string concatenation used inside SQL passed to pg `.query(...)`. Use parameter placeholders ($1, $2, ...) with a values array."
+    severity: ERROR
+    patterns:
+      - pattern-either:
+          - pattern: '$DB.query($A + $B, ...)'
+          - pattern: '$DB.query({ ..., text: $A + $B, ... })'
+

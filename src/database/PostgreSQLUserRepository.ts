@@ -167,7 +167,8 @@ export class PostgreSQLUserRepository implements UserRepository {
       setClause.push(`updated_at = NOW()`);
       values.push(id);
 
-      const result = await client.query(
+      // setClause is built from a fixed whitelist of column assignments; values remain parameterized.
+      const result = await client.query( // nosemgrep: pg-sql-template-interpolation
         `UPDATE users SET ${setClause.join(', ')} WHERE id = $${paramCount} RETURNING *`,
         values
       );
