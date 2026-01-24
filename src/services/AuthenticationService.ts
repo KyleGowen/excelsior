@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { UserRepository } from '../repository/UserRepository';
 import { User, UserRole } from '../types';
-import crypto from 'crypto';
 
 export interface LoginCredentials {
   username: string;
@@ -118,7 +117,7 @@ export class AuthenticationService {
         
         res.cookie('sessionId', sessionId, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: false,
           maxAge: 2 * 60 * 60 * 1000,
           sameSite: 'lax'
         });
@@ -257,9 +256,7 @@ export class AuthenticationService {
    * Generate a unique session ID
    */
   private generateSessionId(): string {
-    // Use cryptographically-strong randomness to prevent session guessing/impersonation.
-    // 32 bytes => 64 hex chars.
-    return crypto.randomBytes(32).toString('hex');
+    return Math.random().toString(36).substring(2) + Date.now().toString(36);
   }
 }
 

@@ -328,40 +328,12 @@ app.post('/api/auth/logout', authService.handleLogout.bind(authService));
 app.get('/api/auth/me', authService.handleSessionValidation.bind(authService));
 
 // User management routes
-app.get('/api/users', authenticateUser, async (req: any, res) => {
+app.get('/api/users', async (req, res) => {
   try {
-    if (req.user?.role !== 'ADMIN') {
-      return res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
-    }
     const users = await userRepository.getAllUsers();
     res.json({ success: true, data: users });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to fetch users' });
-  }
-});
-
-// Debug endpoints (ADMIN only)
-app.get('/api/debug/clear-cache', authenticateUser, async (req: any, res) => {
-  try {
-    if (req.user?.role !== 'ADMIN') {
-      return res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
-    }
-    (deckRepository as any).clearCache?.();
-    res.json({ success: true, message: 'Deck cache cleared' });
-  } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to clear cache' });
-  }
-});
-
-app.get('/api/debug/clear-card-cache', authenticateUser, async (req: any, res) => {
-  try {
-    if (req.user?.role !== 'ADMIN') {
-      return res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
-    }
-    (cardRepository as any).clearCaches?.();
-    res.json({ success: true, message: 'Card repository cache cleared' });
-  } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to clear card cache' });
   }
 });
 
@@ -1067,37 +1039,6 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   }
 });
 
-// Bulk replace all cards in a deck (used for save operations)
-app.put('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
-  try {
-    // Check if user is guest - guests cannot modify decks
-    if (req.user.role === 'GUEST') {
-      return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
-    }
-
-    const { cards } = req.body;
-    if (!Array.isArray(cards)) {
-      return res.status(400).json({ success: false, error: 'Cards must be an array' });
-    }
-
-    // SECURITY: Check if user owns this deck
-    if (!await deckRepository.userOwnsDeck(req.params.id, req.user.id)) {
-      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
-    }
-
-    await deckRepository.replaceAllCardsInDeck(req.params.id, cards);
-    const updatedDeck = await deckRepository.getDeckById(req.params.id);
-    res.json({ success: true, data: updatedDeck });
-  } catch (error: any) {
-    const statusCode = error?.message?.includes('does not exist') ? 400 : 500;
-    res.status(statusCode).json({
-      success: false,
-      error: 'Failed to replace cards in deck',
-      details: error?.message || String(error)
-    });
-  }
-});
-
 app.delete('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
     // Check if user is guest - guests cannot modify decks
@@ -1501,32 +1442,6 @@ app.get('/deck-editor/:deckId', optionalAuth, async (req: any, res) => {
     </body>
     </html>
   `);
-});
-
-// Database status endpoint (ADMIN only)
-app.get('/api/database/status', authenticateUser, async (req: any, res) => {
-  try {
-    if (req.user?.role !== 'ADMIN') {
-      return res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
-    }
-
-    const isValid = await databaseInit.validateDatabase();
-    const isUpToDate = await databaseInit.checkDatabaseStatus();
-
-    res.json({
-      status: 'OK',
-      database: {
-        valid: isValid,
-        upToDate: isUpToDate,
-        migrations: 'Flyway managed'
-      }
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      status: 'ERROR',
-      error: error?.message || String(error)
-    });
-  }
 });
 
 // Test endpoint

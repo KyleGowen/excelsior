@@ -663,11 +663,8 @@ app.get('/test', async (req, res) => {
   });
 });
 
-app.get('/api/users', authenticateUser, async (req: any, res) => {
+app.get('/api/users', async (req, res) => {
   try {
-    if (req.user?.role !== 'ADMIN') {
-      return res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
-    }
     const users = await userRepository.getAllUsers();
     res.json({ success: true, data: users });
   } catch (error) {
@@ -676,11 +673,8 @@ app.get('/api/users', authenticateUser, async (req: any, res) => {
 });
 
 // Debug endpoint to clear deck cache
-app.get('/api/debug/clear-cache', authenticateUser, async (req: any, res) => {
+app.get('/api/debug/clear-cache', async (req, res) => {
   try {
-    if (req.user?.role !== 'ADMIN') {
-      return res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
-    }
     (deckRepository as any).clearCache();
     res.json({ success: true, message: 'Deck cache cleared' });
   } catch (error) {
@@ -689,11 +683,8 @@ app.get('/api/debug/clear-cache', authenticateUser, async (req: any, res) => {
 });
 
 // Debug endpoint to clear card repository cache (useful after migrations)
-app.get('/api/debug/clear-card-cache', authenticateUser, async (req: any, res) => {
+app.get('/api/debug/clear-card-cache', async (req, res) => {
   try {
-    if (req.user?.role !== 'ADMIN') {
-      return res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
-    }
     (cardRepository as any).clearCaches();
     res.json({ success: true, message: 'Card repository cache cleared' });
   } catch (error) {
@@ -2160,12 +2151,9 @@ app.get('/health', async (req, res) => {
   }
 });
 
-// Database status endpoint (ADMIN only)
-app.get('/api/database/status', authenticateUser, async (req: any, res) => {
+// Database status endpoint
+app.get('/api/database/status', async (req, res) => {
   try {
-    if (req.user?.role !== 'ADMIN') {
-      return res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
-    }
     const isValid = await databaseInit.validateDatabase();
     const isUpToDate = await databaseInit.checkDatabaseStatus();
     

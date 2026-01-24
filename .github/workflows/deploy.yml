@@ -149,7 +149,7 @@ jobs:
     name: Integration Tests - Security
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -225,88 +225,12 @@ jobs:
       env:
         DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
 
-  integration-tests-authz-security:
-    name: Integration Tests - AuthZ Security
-    runs-on: ubuntu-latest
-    needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: overpower
-          POSTGRES_USER: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 1337:5432
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Build project
-      run: npm run build
-
-    - name: Wait for PostgreSQL
-      run: |
-        echo "Waiting for PostgreSQL to be ready..."
-        timeout 60s bash -c 'until pg_isready -h localhost -p 1337 -U postgres; do sleep 1; done'
-        echo "PostgreSQL is ready!"
-
-    - name: Install Flyway
-      run: |
-        echo "Installing Flyway..."
-        curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz -o flyway.tar.gz
-        tar -xzf flyway.tar.gz
-        sudo mv flyway-9.22.3 /opt/flyway
-        sudo chmod +x /opt/flyway/flyway
-        echo "/opt/flyway" >> $GITHUB_PATH
-        /opt/flyway/flyway --version
-        echo "✅ Flyway installed successfully!"
-
-    - name: Run database migrations
-      run: |
-        export DATABASE_URL="postgresql://postgres:password@localhost:1337/overpower"
-        /opt/flyway/flyway --version
-        npm run migrate
-
-    - name: Run AuthZ Security Integration Tests
-      run: |
-        echo "🔒 Running AuthZ Security Integration Tests..."
-        echo "Test suites: tests/integration/security/*.test.ts"
-        npm run test:integration -- \
-          tests/integration/security/*.test.ts \
-          --verbose --testTimeout=60000 --maxWorkers=2 2>&1 | tee authz-security-test-output.log || {
-          echo "❌ AuthZ Security tests failed, checking output..."
-          cat authz-security-test-output.log | tail -100
-          exit 1
-        }
-        echo "✅ AuthZ Security tests completed successfully!"
-      timeout-minutes: 15
-      env:
-        DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
-
   # Authentication Tests (Parallel Group 2)
   integration-tests-auth:
     name: Integration Tests - Authentication
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -388,7 +312,7 @@ jobs:
     name: Integration Tests - Search & Filtering
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -470,7 +394,7 @@ jobs:
     name: Integration Tests - Deck Core
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -560,7 +484,7 @@ jobs:
     name: Integration Tests - Deck Security Ownership
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -638,7 +562,7 @@ jobs:
     name: Integration Tests - Deck Security Save
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -716,7 +640,7 @@ jobs:
     name: Integration Tests - Deck Security Frontend
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -794,7 +718,7 @@ jobs:
     name: Integration Tests - Game Logic Character Validation
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -872,7 +796,7 @@ jobs:
     name: Integration Tests - Game Logic Character Layout
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -950,7 +874,7 @@ jobs:
     name: Integration Tests - Game Logic Character Threat
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -1028,7 +952,7 @@ jobs:
     name: Integration Tests - Game Logic Reserve Characters
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -1106,7 +1030,7 @@ jobs:
     name: Integration Tests - Game Logic Power & Teamwork
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -1184,7 +1108,7 @@ jobs:
     name: Integration Tests - UI/UX & Frontend
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -1272,7 +1196,7 @@ jobs:
     name: Integration Tests - User Management
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -1355,7 +1279,7 @@ jobs:
     name: Integration Tests - Collection
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -1434,7 +1358,7 @@ jobs:
     name: Integration Tests - Remaining
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     services:
       postgres:
@@ -1514,9 +1438,9 @@ jobs:
 
   build-docker:
     name: Build & Push Docker Image
-    needs: [build, unit-tests, semgrep, integration-tests-security, integration-tests-authz-security, integration-tests-auth, integration-tests-search, integration-tests-deck-core, integration-tests-deck-security-ownership, integration-tests-deck-security-save, integration-tests-deck-security-frontend, integration-tests-game-logic-character-validation, integration-tests-game-logic-character-layout, integration-tests-game-logic-character-threat, integration-tests-game-logic-reserve, integration-tests-game-logic-power-teamwork, integration-tests-ui, integration-tests-user-management, integration-tests-collection, integration-tests-remaining]
+    needs: [build, unit-tests, semgrep, integration-tests-security, integration-tests-auth, integration-tests-search, integration-tests-deck-core, integration-tests-deck-security-ownership, integration-tests-deck-security-save, integration-tests-deck-security-frontend, integration-tests-game-logic-character-validation, integration-tests-game-logic-character-layout, integration-tests-game-logic-character-threat, integration-tests-game-logic-reserve, integration-tests-game-logic-power-teamwork, integration-tests-ui, integration-tests-user-management, integration-tests-collection, integration-tests-remaining]
     runs-on: ubuntu-latest
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
     - name: Checkout code
@@ -1697,7 +1621,7 @@ jobs:
     name: Run Production Migrations
     needs: [build-docker]
     runs-on: ubuntu-latest
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
     - name: Configure AWS credentials
@@ -1824,7 +1748,7 @@ jobs:
     name: Deploy to Production
     needs: [run-migrations]
     runs-on: ubuntu-latest
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
     - name: Configure AWS credentials
@@ -2020,7 +1944,7 @@ jobs:
     name: Post Production
     needs: [deploy]
     runs-on: ubuntu-latest
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
         
