@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { UserRepository } from '../repository/UserRepository';
 import { User, UserRole } from '../types';
+import crypto from 'crypto';
 
 export interface LoginCredentials {
   username: string;
@@ -256,7 +257,8 @@ export class AuthenticationService {
    * Generate a unique session ID
    */
   private generateSessionId(): string {
-    return Math.random().toString(36).substring(2) + Date.now().toString(36);
+    // Conservative hardening: crypto-strong session IDs without changing cookie flags.
+    return crypto.randomBytes(32).toString('hex');
   }
 }
 
