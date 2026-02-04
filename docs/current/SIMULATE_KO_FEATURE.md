@@ -681,10 +681,9 @@ npm run test:integration -- ko-feature-dimming.test.ts
 
 ## Related Documentation
 
-- **API Documentation**: `API_DOCUMENTATION.md`
-- **Style Guide**: `STYLE_GUIDE.md` (KO button styling section)
-- **Testing Guide**: `TESTING_GUIDE.md`
-- **Card View Documentation**: `CARD_VIEW_DOCUMENTATION.md`
+- **API Documentation**: `docs/current/API_DOCUMENTATION.md`
+- **Style Guide**: `docs/current/STYLE_GUIDE.md` (KO button styling section)
+- **Card View Documentation**: `docs/current/CARD_VIEW_DOCUMENTATION.md`
 
 ---
 

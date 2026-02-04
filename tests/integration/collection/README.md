@@ -228,7 +228,7 @@ See `.cursorrules` in this directory for additional guidelines.
 
 ## Related Documentation
 
-- [API Documentation](../../../API_DOCUMENTATION.md) - Collection API endpoints
+- [API Documentation](../../../docs/current/API_DOCUMENTATION.md) - Collection API endpoints
 - [Integration Test README](../README.md) - General integration test guidelines
 - [Collection Service Unit Tests](../../unit/collectionService.test.ts) - Unit tests for collection service
 

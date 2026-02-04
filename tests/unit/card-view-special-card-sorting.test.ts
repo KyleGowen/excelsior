@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+export {};
+
 // Mock DOM elements
 const mockDeckCardsEditor = {
     innerHTML: '',

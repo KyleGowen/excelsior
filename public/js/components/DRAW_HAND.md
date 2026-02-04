@@ -717,7 +717,7 @@ Potential improvements:
 
 ## Related Documentation
 
-- [Draw Hand Refactoring Plan](../DRAW_HAND_REFACTORING_PLAN.md)
-- [Draw Hand Test Coverage Summary](../DRAW_HAND_TEST_COVERAGE_SUMMARY.md)
+- [Draw Hand Refactoring Plan](../../../docs/history/DRAW_HAND_REFACTORING_PLAN.md)
+- [Draw Hand Test Coverage Summary](../../../docs/history/DRAW_HAND_TEST_COVERAGE_SUMMARY.md)
 - [Simulate KO Feature](./simulate-ko.js)
 

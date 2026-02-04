@@ -5,6 +5,8 @@
 
 /** @jest-environment jsdom */
 
+export {};
+
 // Mock fetch globally
 global.fetch = jest.fn();
 

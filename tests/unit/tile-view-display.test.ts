@@ -33,8 +33,8 @@ const mockDeckCardsEditor = {
 // Extend Window interface for TypeScript
 declare global {
     interface Window {
-        deckEditorCards: any[];
-        availableCardsMap: Map<string, any>;
+        deckEditorCards?: any[];
+        availableCardsMap?: Map<string, any>;
     }
 }
 
@@ -70,14 +70,14 @@ describe('Tile View Display Tests', () => {
             const renderTileView = async () => {
                 const deckCardsEditor = document.getElementById('deckCardsEditor');
                 
-                if (window.deckEditorCards.length === 0) {
+                if (window.deckEditorCards!.length === 0) {
                     deckCardsEditor!.innerHTML = `<div class="empty-deck-message">Empty</div>`;
                     return;
                 }
                 
                 // Group cards by type
                 const cardsByType: { [key: string]: any[] } = {};
-                window.deckEditorCards.forEach((card: any, index: number) => {
+                window.deckEditorCards!.forEach((card: any, index: number) => {
                     const type = card.type;
                     if (!cardsByType[type]) {
                         cardsByType[type] = [];
@@ -172,14 +172,14 @@ describe('Tile View Display Tests', () => {
             const renderTileView = async () => {
                 const deckCardsEditor = document.getElementById('deckCardsEditor');
                 
-                if (window.deckEditorCards.length === 0) {
+                if (window.deckEditorCards!.length === 0) {
                     deckCardsEditor!.innerHTML = `<div class="empty-deck-message">Empty</div>`;
                     return;
                 }
                 
                 // Group cards by type
                 const cardsByType: { [key: string]: any[] } = {};
-                window.deckEditorCards.forEach((card: any, index: number) => {
+                window.deckEditorCards!.forEach((card: any, index: number) => {
                     const type = card.type;
                     if (!cardsByType[type]) {
                         cardsByType[type] = [];
@@ -255,14 +255,14 @@ describe('Tile View Display Tests', () => {
             const renderTileView = async () => {
                 const deckCardsEditor = document.getElementById('deckCardsEditor');
                 
-                if (window.deckEditorCards.length === 0) {
+                if (window.deckEditorCards!.length === 0) {
                     deckCardsEditor!.innerHTML = `<div class="empty-deck-message">Empty</div>`;
                     return;
                 }
                 
                 // Group cards by type
                 const cardsByType: { [key: string]: any[] } = {};
-                window.deckEditorCards.forEach((card: any, index: number) => {
+                window.deckEditorCards!.forEach((card: any, index: number) => {
                     const type = card.type;
                     if (!cardsByType[type]) {
                         cardsByType[type] = [];
@@ -333,14 +333,14 @@ describe('Tile View Display Tests', () => {
             const renderTileView = async () => {
                 const deckCardsEditor = document.getElementById('deckCardsEditor');
                 
-                if (window.deckEditorCards.length === 0) {
+                if (window.deckEditorCards!.length === 0) {
                     deckCardsEditor!.innerHTML = `<div class="empty-deck-message">Empty</div>`;
                     return;
                 }
                 
                 // Group cards by type
                 const cardsByType: { [key: string]: any[] } = {};
-                window.deckEditorCards.forEach((card: any, index: number) => {
+                window.deckEditorCards!.forEach((card: any, index: number) => {
                     const type = card.type;
                     if (!cardsByType[type]) {
                         cardsByType[type] = [];
@@ -411,14 +411,14 @@ describe('Tile View Display Tests', () => {
             const renderTileView = async () => {
                 const deckCardsEditor = document.getElementById('deckCardsEditor');
                 
-                if (window.deckEditorCards.length === 0) {
+                if (window.deckEditorCards!.length === 0) {
                     deckCardsEditor!.innerHTML = `<div class="empty-deck-message">Empty</div>`;
                     return;
                 }
                 
                 // Group cards by type
                 const cardsByType: { [key: string]: any[] } = {};
-                window.deckEditorCards.forEach((card: any, index: number) => {
+                window.deckEditorCards!.forEach((card: any, index: number) => {
                     const type = card.type;
                     if (!cardsByType[type]) {
                         cardsByType[type] = [];
@@ -488,14 +488,14 @@ describe('Tile View Display Tests', () => {
             const renderTileView = async () => {
                 const deckCardsEditor = document.getElementById('deckCardsEditor');
                 
-                if (window.deckEditorCards.length === 0) {
+                if (window.deckEditorCards!.length === 0) {
                     deckCardsEditor!.innerHTML = `<div class="empty-deck-message">Empty</div>`;
                     return;
                 }
                 
                 // Group cards by type
                 const cardsByType: { [key: string]: any[] } = {};
-                window.deckEditorCards.forEach((card: any, index: number) => {
+                window.deckEditorCards!.forEach((card: any, index: number) => {
                     const type = card.type;
                     if (!cardsByType[type]) {
                         cardsByType[type] = [];
@@ -570,14 +570,14 @@ describe('Tile View Display Tests', () => {
             const renderTileView = async () => {
                 const deckCardsEditor = document.getElementById('deckCardsEditor');
                 
-                if (window.deckEditorCards.length === 0) {
+                if (window.deckEditorCards!.length === 0) {
                     deckCardsEditor!.innerHTML = `<div class="empty-deck-message">Empty</div>`;
                     return;
                 }
                 
                 // Group cards by type
                 const cardsByType: { [key: string]: any[] } = {};
-                window.deckEditorCards.forEach((card: any, index: number) => {
+                window.deckEditorCards!.forEach((card: any, index: number) => {
                     const type = card.type;
                     if (!cardsByType[type]) {
                         cardsByType[type] = [];

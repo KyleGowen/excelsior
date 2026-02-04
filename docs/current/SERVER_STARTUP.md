@@ -98,10 +98,10 @@ npm run migrate:repair
 npm start
 
 # Test health endpoint
-curl http://localhost:3000/health
+curl http://localhost:8085/health
 
 # Test database status
-curl http://localhost:3000/api/database/status
+curl http://localhost:8085/api/database/status
 ```
 
 ## Development Workflow

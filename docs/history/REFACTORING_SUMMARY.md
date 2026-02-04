@@ -7,7 +7,7 @@ This document provides a high-level summary of refactoring work done on the Over
 Successfully refactored the database access pattern to use dependency injection, making the code more testable and maintainable.
 
 ## Database View Refactoring
-**NEW**: Comprehensive 6-step refactoring of the Database View component completed. See [DATABASE_VIEW_REFACTORING.md](DATABASE_VIEW_REFACTORING.md) for detailed documentation.
+**NEW**: Comprehensive 6-step refactoring of the Database View component completed. See [DATABASE_VIEW_REFACTORING.md](./DATABASE_VIEW_REFACTORING.md) for detailed documentation.
 
 ### Quick Summary
 - **6 Steps**: HTML extraction → CSS extraction → JavaScript extraction → Filter system → Component organization → Integration

@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+export {};
+
 // Mock the global functions that ViewManager depends on
 (global as any).displayDeckCardsForEditing = jest.fn();
 (global as any).renderDeckCardsListView = jest.fn();

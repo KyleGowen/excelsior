@@ -2,6 +2,8 @@
  * Integration tests for -1 and +1 button functionality working together
  */
 
+export {};
+
 // Mock DOM environment
 const mockDeckEditorCards = [
     { cardId: 'card1', type: 'power', quantity: 1 },

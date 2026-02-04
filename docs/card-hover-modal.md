@@ -248,8 +248,8 @@ The modal is defined once in the HTML:
 
 ## Related Documentation
 
-- [Card View Documentation](../CARD_VIEW_DOCUMENTATION.md) - Overview of card view system
-- [Style Guide](../STYLE_GUIDE.md) - General styling guidelines
+- [Card View Documentation](./current/CARD_VIEW_DOCUMENTATION.md) - Overview of card view system
+- [Style Guide](./current/STYLE_GUIDE.md) - General styling guidelines
 
 ## See Also
 

@@ -7,14 +7,14 @@ This document provides a comprehensive overview of the Excelsior Deckbuilder pro
 ```
 /Users/kyle/cursored/
 ├── 📄 README.md                    # Main project documentation
-├── 📄 PROJECT_LAYOUT.md            # This file - project structure documentation
-├── 📄 API_DOCUMENTATION.md         # API endpoints and usage documentation
-├── 📄 DEPLOYMENT.md                # Deployment instructions and strategies
-├── 📄 DEPLOYMENT_STRATEGY.md       # Detailed deployment strategy
-├── 📄 REFACTORING_SUMMARY.md       # Database refactoring summary
-├── 📄 SERVER_STARTUP.md            # Server startup and configuration guide
-├── 📄 STYLE_GUIDE.md               # Code style and formatting guidelines
-├── 📄 TESTING_GUIDE.md             # Testing procedures and guidelines
+├── 📄 docs/current/PROJECT_LAYOUT.md  # Project structure documentation
+├── 📄 docs/current/API_DOCUMENTATION.md  # API endpoints and usage documentation
+├── 📄 docs/current/DEPLOYMENT.md   # Deployment instructions and strategies
+├── 📄 docs/current/DEPLOYMENT_STRATEGY.md  # Detailed deployment strategy
+├── 📄 docs/history/REFACTORING_SUMMARY.md  # Database refactoring summary
+├── 📄 docs/current/SERVER_STARTUP.md       # Server startup and configuration guide
+├── 📄 docs/current/STYLE_GUIDE.md          # Code style and formatting guidelines
+├── 📄 docs/current/TESTING_GUIDE.md        # How to run unit/integration tests
 ├── 📄 package.json                 # Node.js dependencies and scripts
 ├── 📄 tsconfig.json                # TypeScript configuration
 ├── 📄 jest.config.js               # Jest testing configuration
@@ -352,14 +352,13 @@ This document provides a comprehensive overview of the Excelsior Deckbuilder pro
 ### **Project Documentation**
 ```
 📄 README.md                        # Main project documentation
-📄 PROJECT_LAYOUT.md                # This file - project structure guide
-📄 API_DOCUMENTATION.md             # API endpoints and usage
-📄 DEPLOYMENT.md                    # Deployment instructions
-📄 DEPLOYMENT_STRATEGY.md           # Detailed deployment strategy
-📄 REFACTORING_SUMMARY.md           # Database refactoring summary
-📄 SERVER_STARTUP.md                # Server startup guide
-📄 STYLE_GUIDE.md                   # Code style guidelines
-📄 TESTING_GUIDE.md                 # Testing procedures
+📄 docs/current/PROJECT_LAYOUT.md   # Project structure guide
+📄 docs/current/API_DOCUMENTATION.md  # API endpoints and usage
+📄 docs/current/DEPLOYMENT.md       # Deployment instructions
+📄 docs/current/DEPLOYMENT_STRATEGY.md  # Detailed deployment strategy
+📄 docs/history/REFACTORING_SUMMARY.md  # Database refactoring summary
+📄 docs/current/SERVER_STARTUP.md       # Server startup guide
+📄 docs/current/STYLE_GUIDE.md          # Code style guidelines
 ```
 
 ## 🔄 **12-Phase Refactoring History**
@@ -394,7 +393,7 @@ This project underwent a comprehensive 12-phase refactoring to transform a monol
 1. **Development**: Run `npm run dev` to start the development server
 2. **Testing**: Run `npm run test:unit` for unit tests or `npm run test:integration` for integration tests
 3. **Building**: Run `npm run build` to compile TypeScript
-4. **Deployment**: Follow instructions in `DEPLOYMENT.md`
+4. **Deployment**: Follow instructions in `docs/current/DEPLOYMENT.md`
 
 ---
 

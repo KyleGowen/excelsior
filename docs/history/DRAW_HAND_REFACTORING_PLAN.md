@@ -176,7 +176,7 @@ This plan outlines a conservative, step-by-step approach to extract the Draw Han
 - Add usage examples
 
 #### Step 6.3: Update Related Documentation
-- Update `SIMULATE_KO_FEATURE.md` if needed
+- Update `SIMULATE_KO_FEATURE.md` (now in `docs/current/`) if needed
 - Update any other docs referencing draw hand
 
 **Verification**:

@@ -20,7 +20,7 @@ This document describes the redesign work for the **Deck Selection / Deck Builde
 - **Deck list API route**: `src/routes/decks.routes.ts` (`GET /api/decks`)
 - **Deck list API mapping**: `src/api/deckTransform.ts`
 - **Deck list DB query + caching**: `src/database/PostgreSQLDeckRepository.ts` (`getDecksByUserId`)
-- **UI documentation**: `STYLE_GUIDE.md`
+- **UI documentation**: `docs/current/STYLE_GUIDE.md`
 
 ## Feature: Compact “tile” layout (two-column)
 
