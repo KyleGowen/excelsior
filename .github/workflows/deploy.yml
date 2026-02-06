@@ -113,6 +113,20 @@ jobs:
         }
       timeout-minutes: 15
 
+    - name: Run unit tests with coverage
+      if: success()
+      run: npm run test:unit:coverage
+      timeout-minutes: 15
+      continue-on-error: true
+
+    - name: Upload coverage reports
+      if: success()
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: unittests
+        fail_ci_if_error: false
+
   semgrep:
     name: Semgrep (SQL injection patterns)
     runs-on: ubuntu-latest
