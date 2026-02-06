@@ -118,7 +118,7 @@ export class AuthenticationService {
         
         res.cookie('sessionId', sessionId, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: process.env.COOKIE_SECURE === 'true',
           maxAge: 2 * 60 * 60 * 1000,
           sameSite: 'lax'
         });
