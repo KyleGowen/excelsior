@@ -291,10 +291,12 @@ class DeckBackgroundManager {
       option.appendChild(img);
     }
 
-    // Create label
-    const labelEl = document.createElement('span');
-    labelEl.textContent = label;
-    option.appendChild(labelEl);
+    // Only show label for the "None" option
+    if (isNone) {
+      const labelEl = document.createElement('span');
+      labelEl.textContent = label;
+      option.appendChild(labelEl);
+    }
 
     // Add click handler
     option.addEventListener('click', () => {
