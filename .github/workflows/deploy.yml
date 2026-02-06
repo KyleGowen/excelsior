@@ -157,6 +157,51 @@ jobs:
         name: semgrep-report
         path: semgrep.json
 
+  trivy:
+    name: Trivy (dependency vulnerabilities)
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@0.28.0
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        severity: 'CRITICAL,HIGH'
+        exit-code: '1'
+        ignore-unfixed: true
+        scanners: 'vuln'
+
+    - name: Run Trivy (JSON artifact)
+      if: always()
+      uses: aquasecurity/trivy-action@0.28.0
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        severity: 'CRITICAL,HIGH'
+        format: 'json'
+        output: 'trivy-report.json'
+        ignore-unfixed: true
+        scanners: 'vuln'
+
+    - name: Upload Trivy report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-report
+        path: trivy-report.json
 
   # Security Tests (Parallel Group 1)
   integration-tests-security:
@@ -1527,7 +1572,7 @@ jobs:
 
   build-docker:
     name: Build & Push Docker Image
-    needs: [build, unit-tests, semgrep, integration-tests-security, integration-tests-authz-security, integration-tests-auth, integration-tests-search, integration-tests-deck-core, integration-tests-deck-security-ownership, integration-tests-deck-security-save, integration-tests-deck-security-frontend, integration-tests-game-logic-character-validation, integration-tests-game-logic-character-layout, integration-tests-game-logic-character-threat, integration-tests-game-logic-reserve, integration-tests-game-logic-power-teamwork, integration-tests-ui, integration-tests-user-management, integration-tests-collection, integration-tests-remaining]
+    needs: [build, unit-tests, semgrep, trivy, integration-tests-security, integration-tests-authz-security, integration-tests-auth, integration-tests-search, integration-tests-deck-core, integration-tests-deck-security-ownership, integration-tests-deck-security-save, integration-tests-deck-security-frontend, integration-tests-game-logic-character-validation, integration-tests-game-logic-character-layout, integration-tests-game-logic-character-threat, integration-tests-game-logic-reserve, integration-tests-game-logic-power-teamwork, integration-tests-ui, integration-tests-user-management, integration-tests-collection, integration-tests-remaining]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
