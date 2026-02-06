@@ -22,6 +22,7 @@ declare global {
             drawHand: () => void;
             displayDrawnCards: (cards: any[]) => void;
             getDrawnCards: () => any[];
+            refresh?: () => void;
         };
         deckEditorCards?: any[];
         availableCardsMap?: Map<string, any>;

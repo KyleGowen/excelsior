@@ -1,4 +1,5 @@
 module.exports = {
+  rootDir: '../../',
   preset: 'ts-jest',
   testEnvironment: 'jsdom', // Use jsdom for browser-like environment
   roots: ['<rootDir>/public', '<rootDir>/tests'],

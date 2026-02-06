@@ -1,10 +1,10 @@
 module.exports = {
+  rootDir: '../../',
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   testMatch: [
-    '**/tests/integration/reserve-character*.test.ts',
-    '**/tests/integration/guest-reserve-character-integration.test.ts'
+    '**/tests/integration/special-character-threat-display.test.ts'
   ],
   transform: {
     '^.+\\.ts$': 'ts-jest',
@@ -14,7 +14,7 @@ module.exports = {
     '!src/**/*.d.ts',
     '!src/index.ts',
   ],
-  coverageDirectory: 'coverage/integration-game-logic-reserve',
+  coverageDirectory: 'coverage/integration-game-logic-character-threat',
   coverageReporters: ['text', 'lcov', 'html'],
   setupFilesAfterEnv: ['<rootDir>/tests/setup-integration.ts'],
   globalTeardown: '<rootDir>/tests/teardown-integration.ts',
@@ -22,7 +22,8 @@ module.exports = {
   verbose: true,
   testEnvironmentOptions: {
     NODE_ENV: 'test',
-    PORT: '3004' // Use a different port for parallel execution
+    PORT: '3010' // Use a different port for parallel execution
   },
   maxWorkers: 1 // Still run tests within this suite sequentially
 };
+

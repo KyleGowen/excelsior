@@ -71,7 +71,7 @@ jobs:
       run: |
         echo "🔍 Verifying test setup..."
         echo "Checking Jest configuration..."
-        cat jest.unit.config.js
+        cat tests/config/jest.unit.config.js
         echo "Checking package.json test scripts..."
         npm run --silent
         echo "Checking TypeScript compilation..."
@@ -98,7 +98,7 @@ jobs:
         echo "Current NODE_OPTIONS: $NODE_OPTIONS"
         echo "Current JEST_WORKER_ID: $JEST_WORKER_ID"
         
-        npx jest --config jest.ci.config.js --verbose 2>&1 | tee test-output.log || {
+        npx jest --config tests/config/jest.ci.config.js --verbose 2>&1 | tee test-output.log || {
           echo "❌ CI-optimized execution failed, checking output..."
           cat test-output.log | tail -50
           echo "Trying with standard config..."
