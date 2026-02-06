@@ -203,9 +203,7 @@ describe('Mission Card Addition Integration Tests', () => {
       expect(deckCardsResult.rows[0].quantity).toBe(1);
     });
 
-    it('should return 404 when trying to add a non-existent mission card via API', async () => {
-      const { app } = await import('../../src/test-server');
-
+    it('should return 400 when trying to add a non-existent mission card via API', async () => {
       const response = await request(app)
         .post(`/api/decks/${testDeckId}/cards`)
         .set('Cookie', authCookie)
@@ -224,8 +222,6 @@ describe('Mission Card Addition Integration Tests', () => {
       // Get multiple mission cards from the database
       const missionsResult = await pool.query('SELECT id FROM missions LIMIT 3');
       expect(missionsResult.rows.length).toBeGreaterThanOrEqual(1);
-
-      const { app } = await import('../../src/test-server');
 
       // Add each mission card
       for (const mission of missionsResult.rows) {
@@ -255,8 +251,6 @@ describe('Mission Card Addition Integration Tests', () => {
       // Get a mission card from the database
       const missionResult = await pool.query('SELECT id FROM missions LIMIT 1');
       const missionCardId = missionResult.rows[0].id;
-
-      const { app } = await import('../../src/test-server');
 
       // Add the mission card with quantity 2
       const response = await request(app)
@@ -334,7 +328,6 @@ describe('Mission Card Addition Integration Tests', () => {
       expect(verifyResult.rows.length).toBe(1);
 
       // Add the mission card - this should NOT return 404
-      const { app } = await import('../../src/test-server');
       const response = await request(app)
         .post(`/api/decks/${testDeckId}/cards`)
         .set('Cookie', authCookie)
