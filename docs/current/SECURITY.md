@@ -378,6 +378,320 @@ if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isO
 
 ---
 
+### Phase 5: SOC 2 Compliance Automation ✅ COMPLETED
+
+**Status:** ✅ **COMPLETED** - February 2026
+
+**Objective:** Automate verification of technical controls that map to the SOC 2 Trust Service Criteria, ensuring continuous compliance as the codebase evolves. Every push and pull request is gated on these checks passing.
+
+---
+
+## SOC 2 Compliance Documentation
+
+### What Is SOC 2 and Why Automate It?
+
+SOC 2 (Service Organization Control Type 2) is an auditing framework developed by the AICPA that evaluates an organization's information systems against five **Trust Service Criteria (TSC)**:
+
+| Criteria | Description |
+|----------|-------------|
+| **Security (CC6)** | Protection against unauthorized access |
+| **Availability (CC7)** | System accessibility and monitoring |
+| **Processing Integrity (CC8)** | Accuracy and completeness of system processing |
+| **Confidentiality (CC6)** | Protection of confidential information |
+| **Privacy** | Collection, use, and disposal of personal information |
+
+While much of SOC 2 compliance is organizational (policies, procedures, employee training), a significant portion involves **technical controls** that can be verified programmatically. By automating these checks in CI, we:
+
+1. **Prevent regressions** -- a developer cannot accidentally remove bcrypt hashing or auth middleware without the pipeline catching it
+2. **Provide audit evidence** -- every pipeline run generates a compliance artifact that demonstrates controls are continuously enforced
+3. **Reduce audit burden** -- auditors can review the automated checks rather than manually inspecting the codebase each audit cycle
+
+### Where the Automation Lives
+
+The SOC 2 compliance automation consists of three components:
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| **Compliance check script** | `scripts/soc2-compliance-checks.sh` | Shell script that verifies 25 technical controls mapped to SOC 2 TSC |
+| **Secret detection** | `gitleaks/gitleaks-action@v2` (in CI) | Scans full git history for leaked passwords, API keys, tokens, and other secrets |
+| **CI pipeline job** | `.github/workflows/deploy.yml` → `soc2-compliance` job | Orchestrates both checks as a required deployment gate |
+
+### CI Pipeline Integration
+
+The `soc2-compliance` job runs in the GitHub Actions pipeline as follows:
+
+```
+build
+  ├── unit-tests
+  ├── semgrep (SAST - SQL injection patterns)
+  ├── trivy (SCA - dependency vulnerabilities)
+  ├── soc2-compliance  ← THIS JOB
+  │     ├── Step 1: gitleaks (secret detection across full git history)
+  │     └── Step 2: SOC 2 technical compliance checks (25 assertions)
+  └── integration-tests-* (18 parallel suites)
+       │
+       ▼
+  build-docker (requires ALL above to pass, including soc2-compliance)
+       │
+       ▼
+  deploy-to-ec2
+```
+
+**Key properties:**
+- Runs on every push to `main`/`master` and every pull request
+- Runs in parallel with Semgrep, Trivy, and integration tests (does not slow the pipeline)
+- Uses `fetch-depth: 0` to clone full git history (required for gitleaks to scan all commits)
+- Is a **required deployment gate** -- if it fails, the Docker image is not built and the deployment does not proceed
+
+#### CI Job Definition
+
+```yaml
+soc2-compliance:
+  name: SOC 2 Compliance Checks
+  runs-on: ubuntu-latest
+  needs: [build]
+  steps:
+  - name: Checkout code
+    uses: actions/checkout@v4
+    with:
+      fetch-depth: 0  # Full history for gitleaks
+
+  - name: Run gitleaks (secret detection)
+    uses: gitleaks/gitleaks-action@v2
+    continue-on-error: false
+    env:
+      GITLEAKS_LICENSE: ''
+
+  - name: Run SOC 2 technical compliance checks
+    run: bash scripts/soc2-compliance-checks.sh
+```
+
+### Step 1: Secret Detection (gitleaks)
+
+[gitleaks](https://github.com/gitleaks/gitleaks) is a free, open-source SAST tool that scans the **entire git history** for hardcoded secrets. It detects:
+
+- API keys and tokens (AWS, GitHub, Slack, Stripe, etc.)
+- Passwords and connection strings
+- Private keys (SSH, RSA, PGP)
+- Generic high-entropy strings that resemble secrets
+
+**Why full-history scanning matters:** A secret committed and then removed in a later commit is still in the git history. An attacker with read access to the repository can recover it. gitleaks catches these cases.
+
+**SOC 2 mapping:** CC6.6 (Confidentiality) and CC6.1 (Logical Access) -- ensures credentials are never stored in version control where they could be accessed by unauthorized parties.
+
+### Step 2: Technical Compliance Checks (25 Assertions)
+
+The script at `scripts/soc2-compliance-checks.sh` verifies 25 code-level controls grouped by SOC 2 Trust Service Criteria. Each check uses `grep` to assert the presence of specific security patterns in the codebase. The script exits with code 0 (pass) or 1 (fail).
+
+---
+
+#### CC6.1: Logical and Physical Access Controls (5 checks)
+
+These checks verify that the application enforces proper authentication and authorization at every level.
+
+| # | Check | What It Verifies | Source File(s) Inspected |
+|---|-------|-------------------|--------------------------|
+| 1 | Authentication middleware is defined | `createAuthMiddleware` function exists in `AuthenticationService` | `src/services/AuthenticationService.ts` |
+| 2 | Authentication middleware is wired into route handlers | `authenticateUser` is referenced in the main server file | `src/index.ts` |
+| 3 | Centralized authorization helpers present | At least 3 of 4 exported functions exist: `requireAuth`, `requireAdmin`, `blockGuestMutation`, `requireDeckOwner` | `src/middleware/authorizationHelpers.ts` |
+| 4 | Admin-only endpoints are role-gated | Endpoints `/api/users`, `/api/debug/clear-cache`, `/api/debug/clear-card-cache`, `/api/database/status` use `requireAdmin` or `ADMIN` role checks | `src/index.ts` |
+| 5 | Role-based access control model defined | `UserRole` type or `ADMIN`/`USER`/`GUEST` role constants exist | `src/types/` |
+
+**Why these matter:** SOC 2 CC6.1 requires that logical access to information assets is restricted to authorized individuals. These checks ensure that authentication is applied globally, authorization decisions are centralized (not scattered ad-hoc), admin endpoints are locked down, and a formal RBAC model defines available privilege levels.
+
+---
+
+#### CC6.6: Encryption and Key Management (6 checks)
+
+These checks verify that sensitive data is protected through proper encryption and secure credential handling.
+
+| # | Check | What It Verifies | Source File(s) Inspected |
+|---|-------|-------------------|--------------------------|
+| 6 | Session IDs use crypto-grade randomness | `crypto.randomBytes` is used for session token generation | `src/services/AuthenticationService.ts` |
+| 7 | Session cookie has httpOnly flag | `httpOnly: true` is set on the session cookie, preventing JavaScript access | `src/services/AuthenticationService.ts` |
+| 8 | Session cookie secure flag is environment-aware | `secure` flag references `NODE_ENV` or `process.env`, ensuring HTTPS-only in production | `src/services/AuthenticationService.ts` |
+| 9 | Session cookie has sameSite policy | `sameSite` attribute is set, preventing CSRF via cross-origin cookie sending | `src/services/AuthenticationService.ts` |
+| 10 | Passwords hashed with bcrypt | `bcrypt` library is imported and used in the source tree | `src/` (recursive) |
+| 11 | No hardcoded passwords in source code | Scans for `password = "..."` patterns excluding test files, comments, and known-safe patterns (e.g., `req.body.password`) | `src/**/*.ts` |
+
+**Why these matter:** CC6.6 requires that data in transit and at rest is encrypted, and that cryptographic keys/credentials are managed securely. Predictable session tokens, missing cookie flags, or plaintext passwords would all be audit findings.
+
+**Note on check 11:** This is a heuristic grep and may produce warnings (not failures) for patterns that look like hardcoded credentials but are actually safe (e.g., building CLI commands from environment variables). These warnings require manual review.
+
+---
+
+#### CC6.8: Software Security (5 checks)
+
+These checks verify that the application includes secure development practices: input validation, rate limiting, and access control enforcement.
+
+| # | Check | What It Verifies | Threshold | Source File(s) Inspected |
+|---|-------|-------------------|-----------|--------------------------|
+| 12 | Input validation present on endpoints | Count of `status(400)` responses (bad request) is at least 5 | >= 5 | `src/index.ts` |
+| 13 | Rate limiting is implemented | `checkRateLimit` or `rateLimit` function exists | Present | `src/index.ts` |
+| 14 | Guest user mutation blocking is enforced | `blockGuestMutation` or equivalent pattern exists | Present | `src/index.ts` |
+| 15 | Resource ownership enforced on write endpoints | Count of `requireDeckOwner`, `userOwnsDeck`, or `user_id === req.user.id` checks is at least 3 | >= 3 | `src/index.ts` |
+| 16 | No stack traces leaked in HTTP responses | No `res.json()`/`res.send()`/`res.status()` calls include `stack` | Absent | `src/index.ts` |
+
+**Why these matter:** CC6.8 requires that software is developed and maintained securely. Input validation prevents injection attacks, rate limiting mitigates brute-force and DoS, and ownership checks prevent horizontal privilege escalation. Leaking stack traces exposes internal implementation details to attackers.
+
+---
+
+#### CC7.1: Monitoring and Detection (3 checks)
+
+These checks verify that security-relevant events are logged and that system availability is monitored.
+
+| # | Check | What It Verifies | Threshold | Source File(s) Inspected |
+|---|-------|-------------------|-----------|--------------------------|
+| 17 | Security event logging present | Count of `SECURITY` log statements is at least 3 | >= 3 | `src/index.ts` |
+| 18 | Authentication failures are logged | Error messages for login/auth failures exist | Present | `src/services/AuthenticationService.ts` |
+| 19 | Health check endpoint exists | The route `'/health'` is defined | Present | `src/index.ts` |
+
+**Why these matter:** CC7.1 requires that the organization monitors system components and detects anomalies. Security event logs provide the audit trail that SOC 2 auditors review. The health check endpoint enables uptime monitoring and alerting.
+
+---
+
+#### CC8.1: Change Management (3 checks)
+
+These checks verify that changes to the system go through a controlled, automated process.
+
+| # | Check | What It Verifies | Source File(s) Inspected |
+|---|-------|-------------------|--------------------------|
+| 20 | CI/CD pipeline defined | `.github/workflows/deploy.yml` file exists | Filesystem |
+| 21 | Automated tests gate deployment | The `build-docker` job has `needs: [...unit-tests...]` | `.github/workflows/deploy.yml` |
+| 22 | Multiple security scanners in CI pipeline | At least 2 of: Semgrep, Trivy are referenced in the workflow | `.github/workflows/deploy.yml` |
+
+**Why these matter:** CC8.1 requires that changes are authorized, tested, and approved before deployment. These checks verify that the CI/CD pipeline exists, that code cannot be deployed without passing tests, and that multiple security scanning tools are in the pipeline.
+
+---
+
+#### CC9.1: Risk Mitigation (3 checks)
+
+These checks verify that session management and operational safety controls are in place.
+
+| # | Check | What It Verifies | Source File(s) Inspected |
+|---|-------|-------------------|--------------------------|
+| 23 | Session expiration is configured | `expiresAt`, `maxAge`, or `expir` patterns exist in session management | `src/services/AuthenticationService.ts` |
+| 24 | Session invalidation on logout | `destroySession` or `sessions.delete` exists | `src/services/AuthenticationService.ts` |
+| 25 | Read-only mode support | `readOnly`, `read.only`, or `readonly` patterns exist for operational safety | `src/index.ts` |
+
+**Why these matter:** CC9.1 requires that risks are identified and mitigated. Unbounded sessions enable session hijacking. Missing logout invalidation allows stolen session tokens to remain valid. Read-only mode provides an operational safety net during incidents.
+
+---
+
+### Running Locally
+
+To run the SOC 2 compliance checks on your local machine:
+
+```bash
+# From the project root
+bash scripts/soc2-compliance-checks.sh
+```
+
+**Expected output (all passing):**
+
+```
+━━━ CC6.1: Logical Access Controls ━━━
+  ✅ PASS: Authentication middleware is defined
+  ✅ PASS: Authentication middleware is wired into route handlers
+  ✅ PASS: Centralized authorization helpers present (4/4)
+  ✅ PASS: Admin-only endpoints are role-gated (4/4)
+  ✅ PASS: Role-based access control model defined (ADMIN/USER/GUEST)
+
+━━━ CC6.6: Encryption and Key Management ━━━
+  ✅ PASS: Session IDs use crypto-grade randomness (crypto.randomBytes)
+  ✅ PASS: Session cookie has httpOnly flag
+  ✅ PASS: Session cookie secure flag is environment-aware (HTTPS in production)
+  ✅ PASS: Session cookie has sameSite policy set
+  ✅ PASS: Passwords hashed with bcrypt
+  ✅ PASS: No hardcoded passwords detected in source code
+
+━━━ CC6.8: Software Security ━━━
+  ✅ PASS: Input validation present on endpoints (58 validation responses)
+  ✅ PASS: Rate limiting is implemented
+  ✅ PASS: Guest user mutation blocking is enforced
+  ✅ PASS: Resource ownership enforced on write endpoints (12 checks)
+  ✅ PASS: No stack traces leaked in HTTP responses
+
+━━━ CC7.1: Monitoring and Detection ━━━
+  ✅ PASS: Security event logging present (33 log statements)
+  ✅ PASS: Authentication failures are logged
+  ✅ PASS: Health check endpoint exists for availability monitoring
+
+━━━ CC8.1: Change Management ━━━
+  ✅ PASS: CI/CD pipeline defined (.github/workflows/deploy.yml)
+  ✅ PASS: Automated tests gate deployment
+  ✅ PASS: Multiple security scanners in CI pipeline (2 scanners)
+
+━━━ CC9.1: Risk Mitigation ━━━
+  ✅ PASS: Session expiration is configured
+  ✅ PASS: Session invalidation on logout is implemented
+  ✅ PASS: Read-only mode support exists for operational safety
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SOC 2 Compliance Check Summary
+  ✅ Passed: 25/25
+  ❌ Failed: 0/25
+  ⚠️  Warnings: 0/25
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ✅ All SOC 2 compliance checks passed
+```
+
+**Exit codes:**
+- `0` -- all checks passed (warnings are allowed)
+- `1` -- one or more checks failed
+
+### How to Extend the Checks
+
+To add a new compliance check:
+
+1. **Identify the SOC 2 criteria** it maps to (CC6.1, CC6.6, CC6.8, CC7.1, CC8.1, or CC9.1)
+2. **Add the check** to the appropriate section in `scripts/soc2-compliance-checks.sh`:
+
+```bash
+# Check: [Description of what you're checking]
+if grep -q 'pattern_to_look_for' src/path/to/file.ts 2>/dev/null; then
+  pass "Human-readable description of what passed"
+else
+  fail "Human-readable description of what's missing"
+fi
+```
+
+3. **Use `warn` instead of `fail`** for checks that flag things for manual review but shouldn't block deployment
+4. **Update this documentation** with the new check in the appropriate table
+5. **Run locally** to verify: `bash scripts/soc2-compliance-checks.sh`
+
+### Relationship to Other Security Scanning
+
+The SOC 2 compliance checks complement (but do not replace) the other security scanners in the pipeline:
+
+| Tool | Type | What It Catches | SOC 2 Relevance |
+|------|------|-----------------|-----------------|
+| **Semgrep** | SAST (Static Application Security Testing) | SQL injection patterns, unsafe code constructs | CC6.8 (Software Security) |
+| **Trivy** | SCA (Software Composition Analysis) | Known CVEs in npm dependencies | CC6.8, CC9.1 (Risk Mitigation) |
+| **gitleaks** | Secret Detection | Passwords, API keys, tokens committed to git history | CC6.1, CC6.6 (Access Control, Confidentiality) |
+| **SOC 2 compliance script** | Configuration/Control Verification | Missing auth middleware, insecure cookie flags, absent logging | CC6.1, CC6.6, CC6.8, CC7.1, CC8.1, CC9.1 |
+
+Together, these four tools provide layered coverage: Semgrep finds code-level vulnerabilities, Trivy finds dependency vulnerabilities, gitleaks finds leaked credentials, and the compliance script verifies that the application's security architecture remains intact.
+
+### Limitations
+
+These automated checks verify the **presence** of technical controls, not their **correctness** or **completeness**. Important caveats:
+
+1. **Pattern-based detection** -- The script uses `grep` to find expected patterns. It confirms that `bcrypt` is imported but does not verify that every password path uses it.
+2. **Not a substitute for a SOC 2 audit** -- A real SOC 2 Type II audit evaluates operating effectiveness over time, organizational policies, personnel controls, and physical security. These checks cover only the technical control layer.
+3. **Thresholds are heuristic** -- Values like "at least 5 input validation checks" or "at least 3 ownership checks" are reasonable baselines, not exhaustive coverage metrics.
+4. **No runtime testing** -- These are static checks. They do not start the application or make HTTP requests. Runtime security testing is handled by the integration test suites (especially `integration-tests-security` and `integration-tests-authz-security`).
+
+For a complete SOC 2 compliance posture, these automated checks should be combined with:
+- Organizational security policies and procedures
+- Employee security awareness training
+- Regular third-party penetration testing
+- Formal incident response procedures
+- Data retention and disposal policies
+
+---
+
 ## Current Security Status
 
 ### ✅ Implemented Security Measures
@@ -395,6 +709,7 @@ if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isO
 2. **Backend API Security Hardening (Phase 2)** ✅ COMPLETED  
 3. **Comprehensive Security Testing (Phase 3)** ✅ COMPLETED
 4. **Advanced Security Features & Monitoring (Phase 4)** ✅ COMPLETED
+5. **SOC 2 Compliance Automation (Phase 5)** ✅ COMPLETED
 
 ## Security Best Practices
 
@@ -451,7 +766,7 @@ if (currentDeckData && currentDeckData.metadata && !currentDeckData.metadata.isO
 - **Server-side security event logging**
 - **Real-time security alerting**
 - **Security metrics and dashboards**
-- **Automated security testing in CI/CD**
+- ✅ **Automated security testing in CI/CD** -- Implemented via SOC 2 compliance checks, Semgrep, Trivy, and gitleaks (see [SOC 2 Compliance Documentation](#soc-2-compliance-documentation))
 
 ## Contact Information
 
@@ -468,12 +783,13 @@ For security-related questions or to report security issues:
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
 | 1.0 | [Current Date] | Initial security documentation with Phase 1 completion | Security Team |
+| 2.0 | February 2026 | Added SOC 2 compliance automation documentation (Phase 5) | Security Team |
 
 ---
 
-**Last Updated:** December 2024  
-**Next Review:** January 2025  
-**Status:** Phase 1 Complete, Phase 2 Planned
+**Last Updated:** February 2026  
+**Next Review:** May 2026  
+**Status:** All Phases Complete (1-5), SOC 2 compliance checks automated in CI
 
 ---
 
@@ -505,8 +821,9 @@ For security-related questions or to report security issues:
 | Phase 2 Backend Security Tests | 38 | ✅ Passing |
 | Phase 3 Comprehensive Security Tests | 50 | ✅ Passing |
 | Phase 4 Advanced Security Tests | 12 | ✅ Passing |
-| **Total Security Tests** | **187** | ✅ **All Passing** |
-| **Total Unit Tests** | **1,626** | ✅ **All Passing** |
+| Phase 5 SOC 2 Compliance Checks | 25 | ✅ Passing |
+| **Total Security Tests** | **212** | ✅ **All Passing** |
+| **Total Unit Tests** | **4,079** | ✅ **All Passing** |
 
 ### Security Messages
 
