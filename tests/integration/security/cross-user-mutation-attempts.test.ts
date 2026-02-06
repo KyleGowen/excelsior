@@ -66,6 +66,8 @@ describe('Cross-User Mutation Attempts Integration Tests', () => {
 
     expect((await request(app).put(`/api/decks/${deckId}/ui-preferences`).set('Cookie', cookieB).send({ viewMode: 'tile' })).status).toBe(403);
 
+    expect((await request(app).delete(`/api/decks/${deckId}/cards`).set('Cookie', cookieB).send({ cardType: 'character', cardId: testCharacterId, quantity: 1 })).status).toBe(403);
+
     expect((await request(app).delete(`/api/decks/${deckId}`).set('Cookie', cookieB)).status).toBe(403);
   });
 });

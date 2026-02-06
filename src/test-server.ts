@@ -9,9 +9,9 @@ import { DeckValidationService } from './services/deckValidationService';
 import { DeckBackgroundService } from './services/deckBackgroundService';
 import { CollectionsRepository } from './database/collectionsRepository';
 import { CollectionService } from './services/collectionService';
+import { requireAdmin, blockGuestMutation, requireDeckOwner } from './middleware/authorizationHelpers';
 import { Character } from './types';
 import path from 'path';
-import { Response } from 'express';
 
 export const app = express();
 const PORT = process.env.PORT || 3000;
@@ -38,14 +38,7 @@ const deckBackgroundService = new DeckBackgroundService();
 const collectionsRepository = new CollectionsRepository((dataSource as any).pool);
 const collectionService = new CollectionService(collectionsRepository);
 
-// Helper function to check if user is ADMIN
-function requireAdmin(req: any, res: Response): boolean {
-  if (req.user?.role !== 'ADMIN') {
-    res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
-    return false;
-  }
-  return true;
-}
+// requireAdmin is now imported from middleware/authorizationHelpers
 
 // Middleware
 app.use(express.json());
@@ -330,9 +323,7 @@ app.get('/api/auth/me', authService.handleSessionValidation.bind(authService));
 // User management routes
 app.get('/api/users', authenticateUser, async (req: any, res) => {
   try {
-    if (req.user?.role !== 'ADMIN') {
-      return res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
-    }
+    if (!requireAdmin(req, res)) return;
     const users = await userRepository.getAllUsers();
     res.json({ success: true, data: users });
   } catch (error) {
@@ -343,9 +334,7 @@ app.get('/api/users', authenticateUser, async (req: any, res) => {
 // Debug endpoints (ADMIN only)
 app.get('/api/debug/clear-cache', authenticateUser, async (req: any, res) => {
   try {
-    if (req.user?.role !== 'ADMIN') {
-      return res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
-    }
+    if (!requireAdmin(req, res)) return;
     (deckRepository as any).clearCache?.();
     res.json({ success: true, message: 'Deck cache cleared' });
   } catch (error) {
@@ -355,9 +344,7 @@ app.get('/api/debug/clear-cache', authenticateUser, async (req: any, res) => {
 
 app.get('/api/debug/clear-card-cache', authenticateUser, async (req: any, res) => {
   try {
-    if (req.user?.role !== 'ADMIN') {
-      return res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
-    }
+    if (!requireAdmin(req, res)) return;
     (cardRepository as any).clearCaches?.();
     res.json({ success: true, message: 'Card repository cache cleared' });
   } catch (error) {
@@ -367,11 +354,8 @@ app.get('/api/debug/clear-card-cache', authenticateUser, async (req: any, res) =
 
 app.post('/api/users', authenticateUser, async (req: any, res) => {
   try {
-    // Check if the current user is an ADMIN
+    if (!requireAdmin(req, res)) return;
     const currentUser = req.user;
-    if (currentUser.role !== 'ADMIN') {
-      return res.status(403).json({ success: false, error: 'Only ADMIN users can create new users' });
-    }
 
     const { username, password } = req.body;
 
@@ -573,9 +557,7 @@ app.post('/api/decks', authenticateUser, async (req: any, res) => {
     // Deck creation endpoint
     
     // Check if user is guest - guests cannot create decks
-    if (req.user.role === 'GUEST') {
-      return res.status(403).json({ success: false, error: 'Guests may not create decks' });
-    }
+    if (blockGuestMutation(req, res, 'create decks')) return;
     
     const { name, description, characterIds, characters } = req.body;
     const userId = req.user.id; // Use authenticated user's ID
@@ -658,13 +640,9 @@ app.put('/api/decks/:id', optionalAuth, async (req: any, res) => {
            // Allow unauthenticated access for testing purposes
            if (req.user) {
              // Special check for GUEST users - they cannot modify any decks, even their own
-             if (req.user.role === 'GUEST') {
-               return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
-             }
+             if (blockGuestMutation(req, res, 'modify decks')) return;
              // Check ownership for all users (including admins)
-             if (existingDeck.user_id !== req.user.id) {
-               return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
-             }
+             if (!requireDeckOwner(existingDeck.user_id, req.user.id, res)) return;
            }
     
            // If reserve_character provided, ensure it's one of the deck's character cards
@@ -733,9 +711,7 @@ app.put('/api/decks/:id', optionalAuth, async (req: any, res) => {
 app.delete('/api/decks/:id', authenticateUser, async (req: any, res) => {
   try {
     // Check if user is guest - guests cannot delete decks
-    if (req.user.role === 'GUEST') {
-      return res.status(403).json({ success: false, error: 'Guests may not delete decks' });
-    }
+    if (blockGuestMutation(req, res, 'delete decks')) return;
     
     // Check if deck exists
     const deck = await deckRepository.getDeckById(req.params.id);
@@ -744,9 +720,7 @@ app.delete('/api/decks/:id', authenticateUser, async (req: any, res) => {
     }
     
     // Check if user owns this deck
-    if (deck.user_id !== req.user.id) {
-      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
-    }
+    if (!requireDeckOwner(deck.user_id, req.user.id, res)) return;
     
     const success = await deckRepository.deleteDeck(req.params.id);
     if (!success) {
@@ -773,18 +747,14 @@ app.get('/api/decks/:id/cards', async (req, res) => {
 app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
     // Check if user is guest - guests cannot modify decks
-    if (req.user.role === 'GUEST') {
-      return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
-    }
+    if (blockGuestMutation(req, res, 'modify decks')) return;
     
     // Check if deck exists and if user owns this deck
     const deck = await deckRepository.getDeckById(req.params.id);
     if (!deck) {
       return res.status(404).json({ success: false, error: 'Deck not found.' });
     }
-    if (deck.user_id !== req.user.id) {
-      return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
-    }
+    if (!requireDeckOwner(deck.user_id, req.user.id, res)) return;
     
     const { cardType, cardId, quantity, selectedAlternateImage } = req.body;
     
@@ -1070,9 +1040,7 @@ app.post('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
 // Bulk replace all cards in a deck (used for save operations)
 app.put('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
-    if (req.user.role === 'GUEST') {
-      return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
-    }
+    if (blockGuestMutation(req, res, 'modify decks')) return;
 
     const { cards } = req.body;
     if (!Array.isArray(cards)) {
@@ -1099,15 +1067,14 @@ app.put('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
 app.delete('/api/decks/:id/cards', authenticateUser, async (req: any, res) => {
   try {
     // Check if user is guest - guests cannot modify decks
-    if (req.user.role === 'GUEST') {
-      return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
-    }
+    if (blockGuestMutation(req, res, 'modify decks')) return;
     
     // Check if user owns this deck
     const deck = await deckRepository.getDeckById(req.params.id);
-    if (!deck || deck.user_id !== req.user.id) {
+    if (!deck) {
       return res.status(403).json({ success: false, error: 'Access denied. You do not own this deck.' });
     }
+    if (!requireDeckOwner(deck.user_id, req.user.id, res)) return;
     
     const { cardType, cardId, quantity } = req.body;
     const success = await deckRepository.removeCardFromDeck(req.params.id, cardType, cardId, quantity);
@@ -1148,10 +1115,7 @@ app.get('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res)
 app.put('/api/decks/:id/ui-preferences', authenticateUser, async (req: any, res) => {
   try {
     // SECURITY: Check if user is guest - guests cannot modify decks
-    if (req.user.role === 'GUEST') {
-      console.log('🔒 SECURITY: Blocking UI preferences save - guest user attempted to modify deck');
-      return res.status(403).json({ success: false, error: 'Guests may not modify decks' });
-    }
+    if (blockGuestMutation(req, res, 'modify decks')) return;
     
     const { id } = req.params;
     const preferences = req.body;
@@ -1517,9 +1481,7 @@ app.get('/test', async (req, res) => {
 // Database status endpoint (ADMIN only)
 app.get('/api/database/status', authenticateUser, async (req: any, res) => {
   try {
-    if (req.user?.role !== 'ADMIN') {
-      return res.status(403).json({ success: false, error: 'Only ADMIN users can access this endpoint' });
-    }
+    if (!requireAdmin(req, res)) return;
 
     const isValid = await databaseInit.validateDatabase();
     const isUpToDate = await databaseInit.checkDatabaseStatus();
