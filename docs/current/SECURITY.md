@@ -668,11 +668,15 @@ The SOC 2 compliance checks complement (but do not replace) the other security s
 | Tool | Type | What It Catches | SOC 2 Relevance |
 |------|------|-----------------|-----------------|
 | **Semgrep** | SAST (Static Application Security Testing) | SQL injection patterns, unsafe code constructs | CC6.8 (Software Security) |
-| **Trivy** | SCA (Software Composition Analysis) | Known CVEs in npm dependencies | CC6.8, CC9.1 (Risk Mitigation) |
+| **Trivy** | SCA (Software Composition Analysis) | Known CVEs in npm dependencies (all severities, zero-tolerance policy) | CC6.8, CC9.1 (Risk Mitigation) |
 | **gitleaks** | Secret Detection | Passwords, API keys, tokens committed to git history | CC6.1, CC6.6 (Access Control, Confidentiality) |
 | **SOC 2 compliance script** | Configuration/Control Verification | Missing auth middleware, insecure cookie flags, absent logging | CC6.1, CC6.6, CC6.8, CC7.1, CC8.1, CC9.1 |
 
 Together, these four tools provide layered coverage: Semgrep finds code-level vulnerabilities, Trivy finds dependency vulnerabilities, gitleaks finds leaked credentials, and the compliance script verifies that the application's security architecture remains intact.
+
+For in-depth documentation on each scanner, see:
+- **Semgrep:** [`docs/sql-security-scan.md`](../sql-security-scan.md) -- SQL injection scan scope, findings, triage, and suppression rationale
+- **Trivy:** [`docs/trivy-dependency-scanning.md`](../trivy-dependency-scanning.md) -- What Trivy is, what it scans, configuration options, how to resolve failures, and relationship to `npm audit`. Configured with a **zero-tolerance policy**: all severity levels (CRITICAL, HIGH, MEDIUM, LOW, UNKNOWN) block deployment if a fix is available.
 
 ### Limitations
 

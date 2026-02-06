@@ -44,12 +44,22 @@
 - Clean up any temporary debugging variables or test code
 - Ensure console output is clean and professional for production use
 
+## Dependency Vulnerability Audit (Daily)
+- **Before the FIRST `git push` of each calendar day, run `npm audit`**
+- If `npm audit` reports any vulnerabilities with available fixes, run `npm audit fix` before pushing
+- After fixing, re-run `npm audit` to confirm 0 vulnerabilities remain
+- If `npm audit fix` cannot resolve an issue, notify the user and explain what remains
+- This mirrors our CI pipeline's Trivy scanner, which enforces a zero-tolerance policy on all severity levels (CRITICAL, HIGH, MEDIUM, LOW, UNKNOWN) with available fixes
+- **Only required once per calendar day** -- after the first push of the day passes the audit, subsequent pushes that day do not need to re-audit unless `package.json` or `package-lock.json` changed
+- **ALWAYS re-audit if `package.json` or `package-lock.json` was modified**, regardless of whether the daily audit already ran
+
 ## Git Workflow
 1. Make code changes
 2. Run `npm run test:unit` to verify all tests pass
 3. If tests fail, fix issues and re-run tests
 4. Only commit when all tests are passing
-5. Use descriptive commit messages
+5. Before pushing (first push of the day): run `npm audit` and fix any vulnerabilities
+6. Use descriptive commit messages
 
 ## Project-Specific Guidelines
 - This is a TypeScript/Node.js project with Jest testing

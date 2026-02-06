@@ -198,7 +198,7 @@ jobs:
       with:
         scan-type: 'fs'
         scan-ref: '.'
-        severity: 'CRITICAL,HIGH'
+        severity: 'CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN'
         exit-code: '1'
         ignore-unfixed: true
         scanners: 'vuln'
@@ -209,7 +209,7 @@ jobs:
       with:
         scan-type: 'fs'
         scan-ref: '.'
-        severity: 'CRITICAL,HIGH'
+        severity: 'CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN'
         format: 'json'
         output: 'trivy-report.json'
         ignore-unfixed: true
