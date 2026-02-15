@@ -87,8 +87,7 @@ This document provides a comprehensive overview of the Excelsior Deckbuilder pro
 ```
 /src/
 ├── 📄 index.ts                     # Main server entry point
-├── 📄 test-server.ts               # Test server configuration
-└── 📄 index.ts.backup              # Backup of original index.ts
+└── 📄 test-server.ts               # Test server configuration
 ```
 
 ### **Configuration (`/src/config/`)**

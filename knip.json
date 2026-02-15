@@ -1,0 +1,24 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": ["src/index.ts", "src/test-server.ts"],
+  "project": ["src/**/*.ts", "tests/**/*.ts"],
+  "ignore": [
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "scripts/**",
+    "public/**",
+    "src/public/**",
+    "src/index.ts"
+  ],
+  "ignoreDependencies": [
+    "jest-environment-jsdom",
+    "jest-localstorage-mock",
+    "@babel/preset-env",
+    "@types/bcrypt",
+    "bcrypt",
+    "cors",
+    "helmet",
+    "morgan",
+    "pg"
+  ]
+}

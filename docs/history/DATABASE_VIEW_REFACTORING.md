@@ -4,6 +4,8 @@
 
 This document details the comprehensive 6-step refactoring of the Database View component in the OverPower Deckbuilder application. The refactoring was designed to improve maintainability, organization, and ease of future development while maintaining 100% backward compatibility and visual consistency.
 
+**Note (Unused Code Cleanup)**: The modular database view components (`database-view.js`, `database-view-core.js`, `database-view-tabs.js`, `database-view-search.js`, `database-view-display.js`, `filter-utilities.js`, `filter-manager.js`, `data-loading-core.js`) were never integrated into the main `index.html`. The main app uses inline implementations instead. These orphaned files were removed during the unused code cleanup. The template `database-view-complete.html` and `data-loading.js` remain in use.
+
 ## Refactoring Goals
 
 - **Maintainability**: Break down monolithic code into well-organized, reusable components

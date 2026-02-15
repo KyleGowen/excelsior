@@ -14,9 +14,6 @@ import { requireAdmin, blockGuestMutation, requireDeckOwner } from './middleware
 import { Character } from './types';
 import path from 'path';
 import { execSync } from 'child_process';
-// Phase 4 Security Imports (commented out for testing)
-// import SecurityService from './services/SecurityService';
-// import securityMiddleware from './middleware/securityMiddleware';
 
 export const app = express();
 const PORT = process.env.PORT || 8085;
@@ -433,14 +430,6 @@ function getGitInfo() {
 // Middleware
 app.use(express.json());
 
-// Phase 4 Security Middleware (commented out for testing)
-// app.use(securityMiddleware.securityHeaders);
-// app.use(securityMiddleware.inputSanitization);
-// app.use(securityMiddleware.sessionSecurity);
-// app.use(securityMiddleware.enhancedRateLimit);
-// app.use(securityMiddleware.securityMonitoring);
-// app.use(securityMiddleware.contentSecurityPolicy);
-
 // Cookie parser middleware
 app.use((req: any, res: any, next: any) => {
   const cookieHeader = req.headers.cookie;
@@ -750,7 +739,7 @@ app.post('/api/users/change-password', authenticateUser, async (req: any, res) =
 app.use('/api', createDeckRoutes({ deckRepository, authenticateUser }));
 
 // Deck management API routes
-app.post('/api/decks', authenticateUser, /* securityMiddleware.csrfProtection, securityMiddleware.securityAudit('DECK_CREATION'), */ async (req: any, res) => {
+app.post('/api/decks', authenticateUser, async (req: any, res) => {
   try {
     // SECURITY: Rate limiting for deck creation
     if (checkRateLimit(req, res, 'deck creation')) {
@@ -1887,52 +1876,6 @@ app.use(express.static('public', {
 }));
 app.use('/src/resources', express.static('src/resources'));
 
-// Phase 4 Security Dashboard endpoint (commented out for testing)
-// app.get('/api/security/stats', authenticateUser, async (req: any, res) => {
-//   try {
-//     // Only allow admin users to access security stats
-//     if (req.user?.role !== 'ADMIN') {
-//       return res.status(403).json({
-//         success: false,
-//         error: 'Access denied. Admin privileges required.'
-//       });
-//     }
-
-//     const securityService = SecurityService.getInstance();
-//     const stats = securityService.getSecurityStats();
-    
-//     res.json({
-//       success: true,
-//       data: stats
-//     });
-//   } catch (error) {
-//     console.error('Error fetching security stats:', error);
-//     res.status(500).json({
-//       success: false,
-//       error: 'Failed to fetch security statistics'
-//     });
-//   }
-// });
-
-// CSRF Token endpoint (commented out for testing)
-// app.get('/api/security/csrf-token', authenticateUser, async (req: any, res) => {
-//   try {
-//     const securityService = SecurityService.getInstance();
-//     const token = securityService.generateCSRFToken(req.user.id, req.sessionID);
-    
-//     res.json({
-//       success: true,
-//       csrfToken: token
-//     });
-//   } catch (error) {
-//     console.error('Error generating CSRF token:', error);
-//     res.status(500).json({
-//       success: false,
-//       error: 'Failed to generate CSRF token'
-//     });
-//   }
-// });
-
 // Comprehensive health check endpoint
 app.get('/health', async (req, res) => {
   const startTime = Date.now();
@@ -2140,9 +2083,6 @@ app.get('/api/database/status', authenticateUser, async (req: any, res) => {
     });
   }
 });
-
-// Phase 4 Security Error Handler (commented out for testing)
-// app.use(securityMiddleware.securityErrorHandler);
 
 // Server startup is now handled in initializeServer() function
 

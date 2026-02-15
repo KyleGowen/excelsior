@@ -11,14 +11,14 @@
 ## Coverage by Feature Area
 
 ### 🔐 Security & Authentication (Excellent Coverage)
-**Location**: `src/services/AuthenticationService.ts`, `src/services/SecurityService.ts`, `src/middleware/securityMiddleware.ts`
+**Location**: `src/services/AuthenticationService.ts`, `src/services/FrontendAuthService.ts`
 
 - **AuthenticationService**: 90.21% statements, 91.3% branches, 100% functions
-- **SecurityService**: 92.43% statements, 87.87% branches, 93.93% functions
-- **Security Middleware**: **100%** statements, 96.29% branches, **100%** functions
 - **FrontendAuthService**: 87.3% statements, 85.1% branches, 100% functions
 
 **Status**: ✅ **Excellent** - Security-critical code is well-tested
+
+**Note**: SecurityService and securityMiddleware were removed (Option A - unused commented-out code).
 
 ---
 

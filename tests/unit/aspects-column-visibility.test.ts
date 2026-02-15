@@ -102,31 +102,15 @@ describe('Aspects Column Visibility', () => {
     });
 
     describe('JavaScript Functions - Toggle Functions Removal', () => {
-        let databaseViewContent: string;
         let deckEditorSimpleContent: string;
         let filterFunctionsContent: string;
 
         beforeAll(() => {
-            const databaseViewPath = path.join(process.cwd(), 'public', 'js', 'database-view.js');
             const deckEditorSimplePath = path.join(process.cwd(), 'public', 'js', 'deck-editor-simple.js');
             const filterFunctionsPath = path.join(process.cwd(), 'public', 'js', 'filter-functions.js');
             
-            databaseViewContent = fs.readFileSync(databaseViewPath, 'utf8');
             deckEditorSimpleContent = fs.readFileSync(deckEditorSimplePath, 'utf8');
             filterFunctionsContent = fs.readFileSync(filterFunctionsPath, 'utf8');
-        });
-
-        it('should not contain toggleFortificationsColumn function in database-view.js', () => {
-            expect(databaseViewContent).not.toContain('function toggleFortificationsColumn()');
-        });
-
-        it('should not contain toggleOnePerDeckColumn function in database-view.js', () => {
-            expect(databaseViewContent).not.toContain('function toggleOnePerDeckColumn()');
-        });
-
-        it('should not contain global registrations for toggle functions in database-view.js', () => {
-            expect(databaseViewContent).not.toContain('window.toggleFortificationsColumn = toggleFortificationsColumn');
-            expect(databaseViewContent).not.toContain('window.toggleOnePerDeckColumn = toggleOnePerDeckColumn');
         });
 
         it('should not contain toggleOnePerDeckColumn function in deck-editor-simple.js', () => {

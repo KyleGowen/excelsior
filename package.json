@@ -61,7 +61,9 @@
     "cleanup:test-data": "node scripts/cleanup-test-data.js",
     "migrate:data": "ts-node src/scripts/migrateCardData.ts",
     "generate:sql-migrations": "ts-node src/scripts/generateSqlDataMigrations.ts",
-    "start:full": "./scripts/start-server.sh"
+    "start:full": "./scripts/start-server.sh",
+    "find:unused": "knip",
+    "find:unused:ci": "knip --production"
   },
   "keywords": [
     "overpower",
@@ -100,6 +102,7 @@
     "ts-jest": "^29.4.4",
     "ts-node": "^10.9.0",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "knip": "^5.83.0"
   }
 }

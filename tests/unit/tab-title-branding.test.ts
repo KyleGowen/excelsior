@@ -10,8 +10,7 @@ describe('Tab Title Branding Tests', () => {
   const htmlFiles = [
     'public/index.html',
     'public/deck-builder.html', 
-    'public/database-view.html',
-    'src/public/index.html'
+    'public/database-view.html'
   ];
 
   describe('HTML Page Titles', () => {
@@ -79,8 +78,8 @@ describe('Tab Title Branding Tests', () => {
   });
 
   describe('Header Text Content', () => {
-    it('should have "Excelsior Deckbuilder" in main header text', () => {
-      const filePath = path.join(process.cwd(), 'src/public/index.html');
+    it('should have "Excelsior Deckbuilder" in main page title', () => {
+      const filePath = path.join(process.cwd(), 'public/index.html');
       
       // Check if file exists
       expect(fs.existsSync(filePath)).toBe(true);
@@ -88,9 +87,9 @@ describe('Tab Title Branding Tests', () => {
       // Read file content
       const content = fs.readFileSync(filePath, 'utf8');
       
-      // Check for header text
-      expect(content).toContain('🏰 Excelsior Deckbuilder');
-      expect(content).not.toContain('🏰 Overpower Deckbuilder');
+      // Check for Excelsior branding in title
+      expect(content).toContain('Excelsior Deckbuilder');
+      expect(content).not.toContain('Overpower Deckbuilder');
     });
   });
 
