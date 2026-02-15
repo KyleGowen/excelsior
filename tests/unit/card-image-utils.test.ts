@@ -16,7 +16,8 @@ import path from 'path';
 declare global {
     interface Window {
         mapImagePathToActualFile?: (imagePath: string) => string;
-        getCardImagePath?: (card: any, cardType: string) => string;
+        getCardImagePath?: (card: any, cardType: string, options?: { useThumbnail?: boolean }) => string;
+        toThumbnailPath?: (fullPath: string) => string;
         mapDatabaseIdToDeckCardId?: (databaseId: string, cardType: string) => string;
         mapCardIdToDatabaseId?: (cardId: string, cardType: string) => string;
     }
@@ -51,6 +52,30 @@ describe('Card Image Utilities', () => {
         it('should export mapCardIdToDatabaseId to window', () => {
             expect(typeof window.mapCardIdToDatabaseId).toBe('function');
         });
+
+        it('should export toThumbnailPath to window', () => {
+            expect(typeof window.toThumbnailPath).toBe('function');
+        });
+    });
+
+    describe('toThumbnailPath', () => {
+        it('should convert character path to thumbnail path', () => {
+            const fullPath = '/src/resources/cards/images/characters/hero.webp';
+            const result = window.toThumbnailPath!(fullPath);
+            expect(result).toBe('/src/resources/cards/images/characters/thumb/hero.webp');
+        });
+
+        it('should convert alternate character path to thumbnail path with webp extension', () => {
+            const fullPath = '/src/resources/cards/images/characters/alternate/bar.png';
+            const result = window.toThumbnailPath!(fullPath);
+            expect(result).toBe('/src/resources/cards/images/characters/thumb/alternate/bar.webp');
+        });
+
+        it('should return path unchanged for non-character paths', () => {
+            const fullPath = '/src/resources/cards/images/specials/foo.webp';
+            const result = window.toThumbnailPath!(fullPath);
+            expect(result).toBe(fullPath);
+        });
     });
 
     describe('mapImagePathToActualFile', () => {
@@ -83,6 +108,25 @@ describe('Card Image Utilities', () => {
         it('should return a path for mission cards', () => {
             const card = { id: '1', name: 'Quest', image: 'quest.png' };
             const result = window.getCardImagePath!(card, 'mission');
+            expect(result).toBeDefined();
+        });
+
+        it('should return thumbnail path for character when useThumbnail is true', () => {
+            const card = { id: '1', name: 'Hero', image: 'characters/hero.webp' };
+            const result = window.getCardImagePath!(card, 'character', { useThumbnail: true });
+            expect(result).toContain('/thumb/');
+            expect(result).toContain('hero.webp');
+        });
+
+        it('should return full path for character when useThumbnail is false', () => {
+            const card = { id: '1', name: 'Hero', image: 'characters/hero.webp' };
+            const result = window.getCardImagePath!(card, 'character', { useThumbnail: false });
+            expect(result).not.toContain('/thumb/');
+        });
+
+        it('should accept undefined options (backward compatibility)', () => {
+            const card = { id: '1', name: 'Hero', image: 'hero.webp' };
+            const result = window.getCardImagePath!(card, 'character');
             expect(result).toBeDefined();
         });
     });

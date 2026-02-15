@@ -1121,9 +1121,10 @@ function renderDeckCardsCardView() {
                         instanceAvailableCard = availableCard; // Fallback to original
                     }
                     
-                    // Get instance-specific image path
-                    const instanceImagePath = getCardImagePath(instanceAvailableCard, card.type);
-                    
+                    // Get instance-specific image path (thumbnail for character display, full-res for modal)
+                    const instanceImagePath = getCardImagePath(instanceAvailableCard, card.type, card.type === 'character' ? { useThumbnail: true } : {});
+                    const instanceFullResPath = getCardImagePath(instanceAvailableCard, card.type);
+
                     // Create instance-specific Change Art button
                     const instanceChangeArtButton = changeArtButton.replace(
                         `showAlternateArtSelectionForExistingCard('${card.cardId}', ${index})`,
@@ -1136,9 +1137,9 @@ function renderDeckCardsCardView() {
                              data-card-id="${card.cardId}"
                              data-type="${card.type}"
                              data-instance="${i + 1}"
-                             onmouseenter="showCardHoverModal('${instanceImagePath}', '${(instanceAvailableCard.name || instanceAvailableCard.card_name || 'Card').replace(/'/g, "\\'")}')"
+                             onmouseenter="showCardHoverModal('${instanceFullResPath.replace(/'/g, "\\'")}', '${(instanceAvailableCard.name || instanceAvailableCard.card_name || 'Card').replace(/'/g, "\\'")}')"
                              onmouseleave="hideCardHoverModal()">
-                            <img src="${instanceImagePath}" alt="${instanceAvailableCard.name || instanceAvailableCard.card_name || 'Card'}" class="card-view-image">
+                            <img src="${instanceImagePath}" data-full-res="${instanceFullResPath}" alt="${instanceAvailableCard.name || instanceAvailableCard.card_name || 'Card'}" class="card-view-image">
                             <div class="card-view-actions">
                                 ${instanceChangeArtButton}
                                 ${quantityButtons}
@@ -1957,7 +1958,8 @@ async function displayDeckCardsForEditing() {
                     const advancedUniverseClass = isAdvancedUniverse ? 'advanced-universe-card' : '';
                     const trainingClass = isTraining ? 'training-card' : '';
                     
-                    const bgImageData = (isCharacter || isPower || isLocation || isMission || isEvent || isAspect || isTeamwork || isAllyUniverse || isBasicUniverse || isAdvancedUniverse || isTraining) ? `data-bg-image="${getCardImagePath(availableCard, card.type)}"` : '';
+                    const bgImagePath = (isCharacter || isPower || isLocation || isMission || isEvent || isAspect || isTeamwork || isAllyUniverse || isBasicUniverse || isAdvancedUniverse || isTraining) ? getCardImagePath(availableCard, card.type, isCharacter ? { useThumbnail: true } : {}) : '';
+                    const bgImageData = bgImagePath ? `data-bg-image="${bgImagePath}"` : '';
                     
                 // Format card display name (handle both underscore and hyphen formats)
                 let cardDisplayNameForPreview;

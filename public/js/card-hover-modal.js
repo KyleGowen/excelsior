@@ -613,14 +613,32 @@
         const stats = document.getElementById('cardHoverStats');
         
         if (modal && image && caption) {
+            // Normalize path (ensure leading slash for relative paths)
+            const fullResPath = (imagePath && !imagePath.startsWith('/') && !imagePath.startsWith('http')) ? '/' + imagePath : imagePath;
+            const thumbnailPath = (typeof window.toThumbnailPath === 'function') ? window.toThumbnailPath(fullResPath) : fullResPath;
+
+            // Progressive hover: show thumbnail first for instant display, then swap to full-res when loaded
+            window._hoverModalRequestId = (window._hoverModalRequestId || 0) + 1;
+            const thisRequestId = window._hoverModalRequestId;
+            image.src = thumbnailPath;
+            caption.textContent = cardName || '';
+
+            if (thumbnailPath !== fullResPath) {
+                const fullResImg = new Image();
+                fullResImg.onload = function() {
+                    if (window._hoverModalRequestId === thisRequestId) {
+                        image.src = fullResPath;
+                    }
+                };
+                fullResImg.src = fullResPath;
+            }
+
             // Set card type data attribute for CSS styling
             if (cardType) {
                 modal.setAttribute('data-card-type', cardType);
             } else {
                 modal.removeAttribute('data-card-type');
             }
-            image.src = imagePath;
-            caption.textContent = '';
             
             // Add error handler to see if image fails to load
             image.onerror = function() {

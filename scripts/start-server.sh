@@ -47,6 +47,10 @@ echo "✅ Database is accessible"
 echo "🔨 Building TypeScript project..."
 npm run build
 
+# Generate card image thumbnails (skips if up to date)
+echo "🖼️  Generating card thumbnails..."
+npm run generate:thumbnails
+
 # Start the server
 echo "🚀 Starting server with automatic migrations..."
 npm start

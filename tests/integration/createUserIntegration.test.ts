@@ -107,7 +107,7 @@ describe('Create User Integration Tests', () => {
 
                 expect(response.status).toBe(403);
                 expect(response.body.success).toBe(false);
-                expect(response.body.error).toBe('Only ADMIN users can create new users');
+                expect(response.body.error).toBe('Only ADMIN users can access this endpoint');
             });
 
             it('should reject unauthenticated requests', async () => {

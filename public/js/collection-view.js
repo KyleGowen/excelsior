@@ -67,32 +67,29 @@ function mapImagePathToActualFile(imagePath) {
 
 /**
  * Get card image path - uses image_path from collection card, constructing full path if needed
+ * options: { useThumbnail: boolean } - when true, return thumbnail path for character images
  */
-function getCardImagePath(cardData, cardType) {
-    console.log('🟣 [Collection] getCardImagePath CALLED:', {
-        hasCardData: !!cardData,
-        image_path: cardData?.image_path,
-        image_path_type: typeof cardData?.image_path,
-        cardType,
-        fullCardData: cardData
-    });
-    
+function getCardImagePath(cardData, cardType, options) {
+    const useThumbnail = options && options.useThumbnail === true;
+    const toThumb = typeof window.toThumbnailPath === 'function' ? window.toThumbnailPath : function(p) { return p; };
+    function maybeThumbnail(path) {
+        if (useThumbnail && cardType === 'character' && path && path.startsWith('/src/resources/cards/images/characters/') && !path.includes('/thumb/')) {
+            return toThumb(path);
+        }
+        return path;
+    }
+
     if (!cardData || !cardData.image_path) {
-        console.warn('🟣 [Collection] getCardImagePath: No cardData or image_path', { cardData, cardType });
         return '/src/resources/cards/images/placeholder.webp';
     }
-    
+
     const imagePath = cardData.image_path.trim();
-    console.log('🟣 [Collection] getCardImagePath: trimmed imagePath:', imagePath);
-    
+
     // If it's already a full path, use it directly
     if (imagePath.startsWith('/src/resources/cards/images/')) {
-        console.log('🟣 [Collection] getCardImagePath: Returning full path directly:', imagePath);
-        return imagePath;
+        return maybeThumbnail(imagePath);
     }
-    
-    console.log('🟣 [Collection] getCardImagePath: Path does not start with /src/resources, processing...');
-    
+
     // If it's just a filename (like "placeholder_aspect.webp" or "angry_mob__industrial_age_.webp")
     // construct the full path based on card type
     if (!imagePath.includes('/')) {
@@ -100,7 +97,7 @@ function getCardImagePath(cardData, cardType) {
         let constructedPath;
         switch (cardType) {
             case 'character':
-                constructedPath = `/src/resources/cards/images/characters/${imagePath}`;
+                constructedPath = maybeThumbnail(`/src/resources/cards/images/characters/${imagePath}`);
                 break;
             case 'special':
                 constructedPath = `/src/resources/cards/images/specials/${imagePath}`;
@@ -138,24 +135,20 @@ function getCardImagePath(cardData, cardType) {
             default:
                 constructedPath = '/src/resources/cards/images/placeholder.webp';
         }
-        console.log('🟣 [Collection] Constructed path from filename:', { original: imagePath, cardType, constructed: constructedPath });
         return constructedPath;
     }
-    
+
     // If it has a partial path (like "characters/alternate/zorro.png"), construct full path
     if (imagePath.includes('/') && !imagePath.startsWith('/')) {
-        const constructedPath = `/src/resources/cards/images/${imagePath}`;
-        console.log('🟣 [Collection] Constructed path from partial:', { original: imagePath, constructed: constructedPath });
-        return constructedPath;
+        return maybeThumbnail(`/src/resources/cards/images/${imagePath}`);
     }
-    
+
     // Fallback: ensure it starts with / to make it absolute
     if (imagePath && !imagePath.startsWith('/')) {
-        console.warn('🟣 [Collection] Image path does not start with /, using placeholder:', imagePath);
         return '/src/resources/cards/images/placeholder.webp';
     }
-    
-    return imagePath || '/src/resources/cards/images/placeholder.webp';
+
+    return maybeThumbnail(imagePath) || '/src/resources/cards/images/placeholder.webp';
 }
 
 /**

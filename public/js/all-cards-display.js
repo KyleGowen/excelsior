@@ -225,12 +225,12 @@ function getCardName(card) {
 
 /**
  * Get card image path based on card type
- * Uses the existing getCardImagePathForDisplay function if available
+ * options: { useThumbnail: boolean } - when true, return thumbnail for character images
  */
-function getCardImagePathForAllCards(card, cardType) {
+function getCardImagePathForAllCards(card, cardType, options) {
     // Use existing function if available
     if (typeof getCardImagePathForDisplay === 'function') {
-        return getCardImagePathForDisplay(card, cardType);
+        return getCardImagePathForDisplay(card, cardType, options);
     }
     
     // Fallback implementation
@@ -273,7 +273,8 @@ function renderCardCell(card) {
         cardName = getCardName(card);
     }
     const cardType = card.cardType || 'character';
-    const imagePath = getCardImagePathForAllCards(card, cardType);
+    const imagePath = getCardImagePathForAllCards(card, cardType, { useThumbnail: true });
+    const fullResPath = getCardImagePathForAllCards(card, cardType);
     const escapedName = cardName.replace(/'/g, "\\'");
     
     // Check if user is ADMIN
@@ -315,11 +316,13 @@ function renderCardCell(card) {
     return `
         <div class="all-cards-cell">
             <div class="card-image-wrapper">
-                <img src="${imagePath}" 
-                     alt="${escapedName}" 
+                <img src="${imagePath}"
+                     data-full-res="${fullResPath}"
+                     alt="${escapedName}"
+                     loading="lazy"
                      onload="${imageOnLoad}"
                      onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iMTAwIiB5PSIxNTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pgo8L3N2Zz4='; this.style.cursor='default';"
-                     onmouseenter="showCardHoverModal('${imagePath}', '${escapedName}')"
+                     onmouseenter="showCardHoverModal('${fullResPath.replace(/'/g, "\\'")}', '${escapedName}')"
                      onmouseleave="hideCardHoverModal()"
                      onclick="openModal(this)">
             </div>

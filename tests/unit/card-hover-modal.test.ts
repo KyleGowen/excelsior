@@ -156,14 +156,14 @@ describe('Card Hover Modal Module - Comprehensive Tests', () => {
             expect(mockImage.src).toContain(imagePath);
         });
 
-        it('should clear caption text', () => {
+        it('should display card name in caption', () => {
             mockCaption.textContent = 'Previous text';
             const mockEvent = createMockMouseEvent(100, 100);
             (window as any).event = mockEvent;
             
             window.showCardHoverModal!('test.webp', 'Test');
 
-            expect(mockCaption.textContent).toBe('');
+            expect(mockCaption.textContent).toBe('Test');
         });
 
         it('should display modal', () => {

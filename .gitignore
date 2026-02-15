@@ -146,6 +146,9 @@ jspm_packages/
 ehthumbs.db
 Thumbs.db
 
+# Generated card image thumbnails (created by npm run generate:thumbnails; generated in CI)
+src/resources/cards/images/characters/thumb/
+
 # Backup files
 *_backup_*/
 BACKUP_*/

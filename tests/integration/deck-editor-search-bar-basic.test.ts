@@ -103,9 +103,9 @@ describe('Deck Editor Search Bar Basic Integration', () => {
         .set('Cookie', authCookie)
         .expect(200);
 
-      // Check for search-related JavaScript
+      // Check for search-related JavaScript (handleDeckEditorSearch lives in deck-editor-search-inline.js)
       expect(response.text).toContain('deckEditorSearchInput');
-      expect(response.text).toContain('handleDeckEditorSearch');
+      expect(response.text).toContain('deck-editor-search-inline.js');
     });
 
     it('should include search results container', async () => {

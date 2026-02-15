@@ -40,8 +40,31 @@ function mapImagePathToActualFile(imagePath) {
     return filename;
 }
 
+// Convert full-res path to thumbnail path (character images only).
+// e.g. /src/resources/cards/images/characters/foo.webp → .../characters/thumb/foo.webp
+// e.g. .../characters/alternate/bar.png → .../characters/thumb/alternate/bar.webp
+function toThumbnailPath(fullPath) {
+    if (!fullPath || typeof fullPath !== 'string') return fullPath;
+    const base = '/src/resources/cards/images/characters/';
+    if (!fullPath.startsWith(base)) return fullPath;
+    const afterChars = fullPath.slice(base.length);
+    const lastSlash = afterChars.lastIndexOf('/');
+    const dir = lastSlash >= 0 ? afterChars.slice(0, lastSlash + 1) : '';
+    const filename = lastSlash >= 0 ? afterChars.slice(lastSlash + 1) : afterChars;
+    const baseName = filename.replace(/\.[^.]+$/, '');
+    return base + 'thumb/' + dir + baseName + '.webp';
+}
+
 // Helper function to get card image path
-function getCardImagePath(card, cardType) {
+// options: { useThumbnail: boolean } - when true, return thumbnail path for character images
+function getCardImagePath(card, cardType, options) {
+    const useThumbnail = options && options.useThumbnail === true;
+    function maybeThumbnail(path) {
+        if (useThumbnail && cardType === 'character' && path && path.startsWith('/src/resources/cards/images/characters/') && !path.includes('/thumb/')) {
+            return toThumbnailPath(path);
+        }
+        return path;
+    }
     try {
         // After migration, alternate cards are separate cards, so we just use the card's image_path or image
         // Check for card.image_path first (for collection cards)
@@ -50,14 +73,14 @@ function getCardImagePath(card, cardType) {
             
             // If it's already a full path, use it directly
             if (imagePath.startsWith('/src/resources/cards/images/')) {
-                return imagePath;
+                return maybeThumbnail(imagePath);
             }
             
             // If it's just a filename, construct the full path based on card type
             if (!imagePath.includes('/')) {
                 switch (cardType) {
                     case 'character':
-                        return `/src/resources/cards/images/characters/${imagePath}`;
+                        return maybeThumbnail(`/src/resources/cards/images/characters/${imagePath}`);
                     case 'special':
                         return `/src/resources/cards/images/specials/${imagePath}`;
                     case 'power':
@@ -87,10 +110,10 @@ function getCardImagePath(card, cardType) {
             
             // If it has a partial path, construct full path
             if (imagePath.includes('/') && !imagePath.startsWith('/')) {
-                return `/src/resources/cards/images/${imagePath}`;
+                return maybeThumbnail(`/src/resources/cards/images/${imagePath}`);
             }
             
-            return imagePath;
+            return maybeThumbnail(imagePath);
         }
         
         // Use card.image field (from database image_path column)
@@ -100,7 +123,7 @@ function getCardImagePath(card, cardType) {
             // Construct full path based on card type
             switch (cardType) {
                 case 'character':
-                    return `/src/resources/cards/images/characters/${actualImagePath}`;
+                    return maybeThumbnail(`/src/resources/cards/images/characters/${actualImagePath}`);
                 case 'special':
                     return `/src/resources/cards/images/specials/${actualImagePath}`;
                 case 'power':
@@ -136,7 +159,7 @@ function getCardImagePath(card, cardType) {
             const characterName = card.name || card.card_name || '';
             if (characterName) {
                 const snakeCaseName = characterName.toLowerCase().replace(/[^a-z0-9]/g, '_');
-                return `/src/resources/cards/images/characters/${snakeCaseName}.webp`;
+                return maybeThumbnail(`/src/resources/cards/images/characters/${snakeCaseName}.webp`);
             }
         }
         
@@ -153,4 +176,5 @@ function getCardImagePath(card, cardType) {
 window.mapDatabaseIdToDeckCardId = mapDatabaseIdToDeckCardId;
 window.mapCardIdToDatabaseId = mapCardIdToDatabaseId;
 window.mapImagePathToActualFile = mapImagePathToActualFile;
+window.toThumbnailPath = toThumbnailPath;
 window.getCardImagePath = getCardImagePath;

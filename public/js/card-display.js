@@ -82,21 +82,35 @@ function groupCardsByVariant(cards, nameField = 'name', universeField = 'univers
 
 /**
  * Get the image path for a card, handling both image_path and image fields
+ * options: { useThumbnail: boolean } - when true, return thumbnail for character images
  */
-function getCardImagePathForDisplay(card, cardType = 'character') {
+function getCardImagePathForDisplay(card, cardType = 'character', options) {
+    const useThumbnail = options && options.useThumbnail === true;
+    const toThumb = typeof window.toThumbnailPath === 'function' ? window.toThumbnailPath : function(p) { return p; };
+    function maybeThumb(path) {
+        if (useThumbnail && cardType === 'character' && path && path.startsWith('/src/resources/cards/images/characters/') && !path.includes('/thumb/')) {
+            return toThumb(path);
+        }
+        return path;
+    }
     const imagePath = card.image_path || card.image || '';
     if (!imagePath) return '';
-    
+
+    // Use global getCardImagePath when available (handles all cases including thumbnail)
+    if (typeof window.getCardImagePath === 'function') {
+        return window.getCardImagePath({ ...card, image_path: card.image_path || card.image }, cardType, options);
+    }
+
     // If it's already a full path, return it
     if (imagePath.startsWith('/src/resources/cards/images/')) {
-        return imagePath;
+        return maybeThumb(imagePath);
     }
-    
+
     // Construct full path based on card type
     const basePath = '/src/resources/cards/images/';
     switch (cardType) {
         case 'character':
-            return `${basePath}characters/${mapImagePathToActualFile(imagePath)}`;
+            return maybeThumb(`${basePath}characters/${mapImagePathToActualFile(imagePath)}`);
         case 'special':
             return `${basePath}specials/${mapImagePathToActualFile(imagePath)}`;
         case 'power':
@@ -161,10 +175,11 @@ function displayCharacters(characters) {
         if (representative.threat_level >= 20) threatClass = 'threat-high';
         else if (representative.threat_level >= 18) threatClass = 'threat-medium';
         
-        // Prepare image data for navigation
+        // Prepare image data for navigation (thumbnail for display, fullRes for modal)
         const imageData = group.map(card => ({
             id: card.id,
-            imagePath: getCardImagePathForDisplay(card, 'character'),
+            imagePath: getCardImagePathForDisplay(card, 'character', { useThumbnail: true }),
+            fullResPath: getCardImagePathForDisplay(card, 'character'),
             name: card.name
         }));
         
@@ -181,6 +196,7 @@ function displayCharacters(characters) {
         // Current image (starts with original art - index 0)
         const currentImage = imageData[0];
         const currentImagePath = currentImage.imagePath;
+        const currentFullResPath = currentImage.fullResPath || currentImagePath;
         const currentImageName = currentImage.name;
         
         const row = document.createElement('tr');
@@ -189,11 +205,12 @@ function displayCharacters(characters) {
                 <div class="card-image-container">
                     ${navArrows}
                     <img id="${groupId}-img"
-                         src="${currentImagePath}" 
-                         alt="${currentImageName}" 
+                         src="${currentImagePath}"
+                         data-full-res="${currentFullResPath}"
+                         alt="${currentImageName}"
                          style="width: auto; max-width: 316px; height: auto; border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer;"
                          onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iMTIwIiB2aWV3Qm94PSIwIDAgODAgMTIwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iMTIwIiBmaWxsPSIjMzMzIi8+Cjx0ZXh0IHg9IjQwIiB5PSI2MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Tm8gSW1hZ2U8L3RleHQ+Cjwvc3ZnPg=='; this.style.cursor='default'; this.onclick=null;"
-                         onmouseenter="showCardHoverModal('${currentImagePath}', '${currentImageName.replace(/'/g, "\\'")}')"
+                         onmouseenter="showCardHoverModal('${currentFullResPath.replace(/'/g, "\\'")}', '${currentImageName.replace(/'/g, "\\'")}')"
                          onmouseleave="hideCardHoverModal()"
                          onclick="openModal(this)">
                 </div>
@@ -374,9 +391,11 @@ function navigateCardImage(groupId, direction) {
     
     img.src = newImagePath;
     img.alt = newImage.name;
-    
-    // Update hover modal
-    img.setAttribute('onmouseenter', `showCardHoverModal('${newImagePath}', '${newImage.name.replace(/'/g, "\\'")}')`);
+    const fullResPath = newImage.fullResPath || newImagePath;
+    img.setAttribute('data-full-res', fullResPath);
+
+    // Update hover modal (pass full-res for progressive loading)
+    img.setAttribute('onmouseenter', `showCardHoverModal('${fullResPath.replace(/'/g, "\\'")}', '${newImage.name.replace(/'/g, "\\'")}')`);
     
     // Update current index
     container.setAttribute('data-current-index', currentIndex.toString());
@@ -579,10 +598,11 @@ function displaySpecialCards(specialCards) {
         // Use the first card (original art) as the representative
         const representative = group[0];
         
-        // Prepare image data for navigation
+        // Prepare image data for navigation (specials don't have thumbnails - imagePath is full res)
         const imageData = group.map(card => ({
             id: card.id,
             imagePath: getCardImagePathForDisplay(card, 'special'),
+            fullResPath: getCardImagePathForDisplay(card, 'special'),
             name: card.name
         }));
         
@@ -607,8 +627,9 @@ function displaySpecialCards(specialCards) {
                 <div class="card-image-container">
                     ${navArrows}
                     <img id="${groupId}-img"
-                         src="${currentImagePath}" 
-                         alt="${currentImageName}" 
+                         src="${currentImagePath}"
+                         data-full-res="${currentImagePath}"
+                         alt="${currentImageName}"
                          style="width: 120px; height: auto; max-height: 180px; object-fit: contain; border-radius: 5px; cursor: pointer;"
                          onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiLz4KPHRleHQgeD0iNjAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD4KPC9zdmc+'; this.style.cursor='default'; this.onclick=null;"
                          onmouseenter="showCardHoverModal('${currentImagePath}', '${currentImageName.replace(/'/g, "\\'")}')"

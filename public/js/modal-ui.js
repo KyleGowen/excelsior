@@ -4,10 +4,11 @@
  */
 
 /**
- * Open image modal
+ * Open image modal - uses data-full-res if available for full-resolution display
  */
 function openModal(imgElement) {
-    document.getElementById('modalImage').src = imgElement.src;
+    const fullResPath = imgElement.dataset && imgElement.dataset.fullRes ? imgElement.dataset.fullRes : imgElement.src;
+    document.getElementById('modalImage').src = fullResPath;
     document.getElementById('modalCaption').textContent = imgElement.alt;
     document.getElementById('imageModal').style.display = 'block';
 }

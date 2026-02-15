@@ -1547,7 +1547,18 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0  # Fetch all history to ensure we have the latest commit
-      
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Generate card image thumbnails
+      run: |
+        npm ci
+        npm run generate:thumbnails
+
     - name: Verify Git Information
       run: |
         echo "🔍 VERIFYING GIT INFORMATION:"

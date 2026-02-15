@@ -20,6 +20,16 @@ From the repo root:
 npm install
 ```
 
+### Generate card image thumbnails (local dev)
+
+Character card images use thumbnails for faster loading. Generate them once (or after adding new character images):
+
+```bash
+npm run generate:thumbnails
+```
+
+The script skips any thumbnail that already exists and is newer than the source image. In CI, thumbnails are generated automatically.
+
 ### Run the server
 
 #### Option A (recommended): start everything (Postgres + build + server)

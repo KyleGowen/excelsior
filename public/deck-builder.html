@@ -4482,9 +4482,10 @@
             loadCharacters();
         }
 
-        // Modal functionality
+        // Modal functionality - uses data-full-res if available for full-resolution display
         function openModal(imgElement) {
-            document.getElementById('modalImage').src = imgElement.src;
+            const fullResPath = imgElement.dataset && imgElement.dataset.fullRes ? imgElement.dataset.fullRes : imgElement.src;
+            document.getElementById('modalImage').src = fullResPath;
             document.getElementById('modalCaption').textContent = imgElement.alt;
             document.getElementById('imageModal').style.display = 'block';
         }
@@ -9264,15 +9265,30 @@
             }
         }
         
-        // Show card hover modal
+        // Show card hover modal - progressive: thumbnail first, then full-res when loaded
         function showCardHoverModal(imagePath, cardName) {
             const modal = document.getElementById('cardHoverModal');
             const image = document.getElementById('cardHoverImage');
             const caption = document.getElementById('cardHoverCaption');
             
             if (modal && image && caption) {
-                image.src = `/${imagePath}`;
-                caption.textContent = cardName;
+                const fullResPath = (imagePath && !imagePath.startsWith('/') && !imagePath.startsWith('http')) ? '/' + imagePath : imagePath;
+                const thumbnailPath = (typeof window.toThumbnailPath === 'function') ? window.toThumbnailPath(fullResPath) : fullResPath;
+
+                window._hoverModalRequestId = (window._hoverModalRequestId || 0) + 1;
+                const thisRequestId = window._hoverModalRequestId;
+                image.src = thumbnailPath;
+                caption.textContent = cardName || '';
+
+                if (thumbnailPath !== fullResPath) {
+                    const fullResImg = new Image();
+                    fullResImg.onload = function() {
+                        if (window._hoverModalRequestId === thisRequestId) {
+                            image.src = fullResPath;
+                        }
+                    };
+                    fullResImg.src = fullResPath;
+                }
                 
                 // Function to position modal based on mouse position
                 function positionModal(event) {
