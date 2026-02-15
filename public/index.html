@@ -2640,6 +2640,7 @@
                         let characterTileCount = null;
                         let specialCardTileCount = null;
                         let powerCardTileCount = null;
+                        let locationTileCount = null;
                         
                         if (data.success && data.data.length > 0) {
                             // Populate the global map for deck editor use
@@ -3488,25 +3489,62 @@
                             powerCardTileCount = totalUniquePowerCards;
                             
                         } else if (category.type === 'location') {
-                            // Special handling for locations with threat level and validation
+                            // Group locations by name (same as characters) - single entry per location, art modal for alternates
+                            const groups = new Map();
+                            data.data.forEach(card => {
+                                const name = (card.name || '').trim();
+                                if (!name) return;
+                                const key = name;
+                                if (!groups.has(key)) {
+                                    groups.set(key, []);
+                                }
+                                groups.get(key).push(card);
+                            });
+                            
+                            // Sort each group: original art first, then alternates
+                            groups.forEach((group) => {
+                                group.sort((a, b) => {
+                                    const aImage = a.image_path || a.image || '';
+                                    const bImage = b.image_path || b.image || '';
+                                    const aIsAlternate = aImage.includes('/alternate/');
+                                    const bIsAlternate = bImage.includes('/alternate/');
+                                    if (aIsAlternate && !bIsAlternate) return 1;
+                                    if (!aIsAlternate && bIsAlternate) return -1;
+                                    return 0;
+                                });
+                            });
+                            
+                            locationTileCount = groups.size;
+                            
                             const currentLocationCount = window.deckEditorCards
                                 .filter(card => card.type === 'location')
                                 .reduce((total, card) => total + card.quantity, 0);
-                            
                             const isLocationLimitReached = currentLocationCount >= 1;
                             
-                            cardsHtml = data.data.map(card => {
-                                const stats = [
-                                    { label: 'TL:', value: card.threat_level || 0, color: '#808080' } // Gray - Threat Level (same as character TL)
-                                ];
+                            cardsHtml = '';
+                            groups.forEach((group) => {
+                                if (group.length === 0) return;
+                                const representative = group[0];
+                                const name = (representative.name || '').trim();
                                 
+                                const allCards = group.map(card => ({
+                                    id: card.id,
+                                    imagePath: getCardImagePath(card, category.type),
+                                    name: card.name
+                                }));
+                                const allCardsJson = JSON.stringify(allCards).replace(/"/g, '&quot;');
+                                const displayCard = allCards[0];
+                                
+                                const stats = [
+                                    { label: 'TL:', value: representative.threat_level || 0, color: '#808080' }
+                                ];
                                 const statsHtml = stats.map(stat => 
                                     `<span class="location-stat"><span class="stat-label">${stat.label}</span><span class="stat-value" style="color: ${stat.color};">${stat.value}</span></span>`
                                 ).join(' ');
                                 
-                                // Locations are inherently One Per Deck (max 1 per deck)
+                                // Check if ANY alternate art of this location is already in deck
                                 const isLocationInDeck = window.deckEditorCards.some(deckCard => 
-                                    deckCard.type === 'location' && deckCard.cardId === card.id
+                                    deckCard.type === 'location' && group.some(gc => gc.id === deckCard.cardId)
                                 );
                                 
                                 const disabledClass = (isLocationLimitReached || isLocationInDeck) ? 'disabled' : '';
@@ -3517,24 +3555,27 @@
                                     disabledTitle = 'One Per Deck - already in deck';
                                 }
                                 
-                                return `
+                                const locationIds = group.map(gc => gc.id).join(',');
+                                cardsHtml += `
                                     <div class="card-item location-card ${disabledClass}" 
                                          draggable="${!(isLocationLimitReached || isLocationInDeck)}" 
                                          data-type="${category.type}" 
-                                         data-id="${card.id}"
-                                         onmouseenter="showCardHoverModal('${getCardImagePath(card, category.type)}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
+                                         data-id="${displayCard.id}"
+                                         data-location-ids="${locationIds}"
+                                         data-all-cards="${allCardsJson}"
+                                         onmouseenter="showCardHoverModal('${displayCard.imagePath}', '${name.replace(/'/g, "\\'")}')"
                                          onmouseleave="hideCardHoverModal()"
-                                         onclick="handleCardClick(event, '${category.type}', '${card.id}', '${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}')"
-                                         data-name="${(card[category.nameField] || card.name || '').replace(/'/g, "\\'")}"
+                                         onclick="handleCardClick(event, '${category.type}', '${displayCard.id}', '${name.replace(/'/g, "\\'")}')"
+                                         data-name="${name.replace(/'/g, "\\'")}"
                                          title="${disabledTitle}">
                                         <div class="card-item-content">
-                                            <div class="location-name">${card[category.nameField]}</div>
+                                            <div class="location-name">${name}</div>
                                             <div class="location-stats">${statsHtml}</div>
                                         </div>
-                                        <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${card.id}', '${card[category.nameField]}')" title="Add to deck (max 1 location)">+</div>
+                                        <div class="card-item-plus" onclick="handlePlusButtonClick(event, '${category.type}', '${displayCard.id}', '${name}', '${allCardsJson}')" title="Add to deck (max 1 location)">+</div>
                                     </div>
                                 `;
-                            }).join('');
+                            });
                         } else {
                             // Regular handling for other card types
                             cardsHtml = data.data.map(card => `
@@ -3748,6 +3789,27 @@
                                                     <input type="checkbox" id="eventsMissionFilter" onchange="toggleEventsMissionFilter()">
                                                     <span class="toggle-label">Hide Unusables</span>
                                                 </label>
+                                            </div>
+                                            <div class="category-header-controls">
+                                                <span class="collapse-icon">${collapseIcon}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-category-content ${collapsedClass}" 
+                                             ondragover="handleAvailableCardDragOver(event)" 
+                                             ondragleave="handleAvailableCardDragLeave(event)"
+                                             ondrop="handleAvailableCardDrop(event)">
+                                            ${cardsHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (category.type === 'location') {
+                                // Locations - use grouped tile count (one per location name, alternates open art modal)
+                                const displayCount = locationTileCount !== null ? locationTileCount : data.data.length;
+                                categoriesHtml += `
+                                    <div class="card-category">
+                                        <div class="card-category-header ${collapsedClass}" onclick="toggleCategory(this)">
+                                            <div class="category-header-content">
+                                                <span>${category.name} (${displayCount})</span>
                                             </div>
                                             <div class="category-header-controls">
                                                 <span class="collapse-icon">${collapseIcon}</span>

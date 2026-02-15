@@ -825,6 +825,12 @@ The dimming system applies to ALL card types that have `one_per_deck=TRUE`:
 - **Selector**: `.card-item[data-type="mission"][data-id]`
 - **Logic**: Dims when the specific mission card is already in deck
 
+#### Location Cards
+- **Selector**: `.card-item.location-card[data-type="location"][data-id]`
+- **Logic**: Dims when location limit (1) is reached OR when this location (any alternate art) is already in deck
+- **Data Attributes**: `data-location-ids` (comma-separated IDs for all alternate arts), `data-all-cards` (JSON for art modal)
+- **Alternate Art UX**: Locations with multiple art variants display as a single entry; clicking + or the card opens the alternate art selection modal (same pattern as Characters)
+
 ### Visual State Management
 #### Adding Cards
 1. Card is added to `window.deckEditorCards` array

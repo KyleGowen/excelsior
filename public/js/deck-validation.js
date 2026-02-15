@@ -312,9 +312,10 @@ function updateLocationLimitStatus() {
         try {
             const cardId = card.dataset.id;
             const cardName = card.querySelector('.location-name')?.textContent?.trim() || 'Unknown';
-            
+            // Check all location IDs (includes alternate art variants - same location, different card IDs)
+            const allLocationIds = (card.dataset.locationIds || cardId).split(',');
             const isExistingLocation = window.deckEditorCards.some(deckCard => 
-                deckCard.type === 'location' && deckCard.cardId === cardId
+                deckCard.type === 'location' && allLocationIds.includes(deckCard.cardId)
             );
         
             // Disable if we have 1 location OR if this location is already in the deck
