@@ -191,7 +191,7 @@ jobs:
 
   # Integration Tests - Matrix (consolidated like unit-tests)
   integration-tests:
-    name: Integration Tests - ${{ matrix.category }}
+    name: ${{ matrix.category }}
     runs-on: ubuntu-latest
     needs: [build, unit-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
