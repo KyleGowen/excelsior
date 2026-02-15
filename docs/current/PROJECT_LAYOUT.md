@@ -161,8 +161,6 @@ This document provides a comprehensive overview of the Excelsior Deckbuilder pro
 ├── 📄 components/                  # Frontend components
 ├── 📄 database-view.html           # Database view page
 ├── 📄 deck-builder.html            # Deck builder page
-├── 📄 deck-editor.html             # Deck editor page
-├── 📄 deckbuilder.html             # Main deckbuilder page
 ├── 📄 index.html                   # Main index page
 ├── 📄 js/                          # JavaScript files
 ├── 📄 resources/                   # Static resources

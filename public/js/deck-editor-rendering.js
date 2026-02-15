@@ -1046,6 +1046,19 @@ function renderDeckCardsCardView() {
                             }
                         });
                         hasAlternateArts = uniqueImagePaths.size > 1;
+                    } else if (card.type === 'location') {
+                        // For locations, group by name - alternates are separate rows with same name
+                        // Use Set to count unique location IDs (map stores same card under multiple keys)
+                        const name = (availableCard.name || '').trim();
+                        const uniqueLocationIds = new Set();
+                        window.availableCardsMap.forEach((c, id) => {
+                            const iterCardType = c.cardType || c.type || '';
+                            if ((iterCardType === 'location' || id.startsWith('location_')) && 
+                                (c.name || '').trim() === name) {
+                                uniqueLocationIds.add(c.id || id);
+                            }
+                        });
+                        hasAlternateArts = uniqueLocationIds.size > 1;
                     }
                 }
                 
@@ -2031,6 +2044,19 @@ async function displayDeckCardsForEditing() {
                             }
                         });
                         hasAlternateArts = uniqueImagePaths.size > 1;
+                    } else if (card.type === 'location') {
+                        // For locations, group by name - alternates are separate rows with same name
+                        // Use Set to count unique location IDs (map stores same card under multiple keys)
+                        const name = (availableCard.name || '').trim();
+                        const uniqueLocationIds = new Set();
+                        window.availableCardsMap.forEach((c, id) => {
+                            const iterCardType = c.cardType || c.type || '';
+                            if ((iterCardType === 'location' || id.startsWith('location_')) && 
+                                (c.name || '').trim() === name) {
+                                uniqueLocationIds.add(c.id || id);
+                            }
+                        });
+                        hasAlternateArts = uniqueLocationIds.size > 1;
                     }
                 }
                 

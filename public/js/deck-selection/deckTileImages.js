@@ -35,13 +35,14 @@
         if (card.defaultImage) {
             // Some cards store a prefixed path (e.g., "characters/foo.webp" or "locations/foo.webp")
             // while others store only the filename (e.g., "spartan_training_ground.webp").
+            // For locations, image_path may include subdirs like "alternate/221_b_baker_st.png".
             const defaultImage = String(card.defaultImage);
+            if (card.type === 'location') {
+                return `/src/resources/cards/images/locations/${defaultImage}`;
+            }
             if (defaultImage.includes('/')) {
                 const path = `/src/resources/cards/images/${defaultImage}`;
                 return maybeThumbnailForCharacter(path, card);
-            }
-            if (card.type === 'location') {
-                return `/src/resources/cards/images/locations/${defaultImage}`;
             }
             if (card.type === 'character') {
                 const path = `/src/resources/cards/images/characters/${defaultImage}`;

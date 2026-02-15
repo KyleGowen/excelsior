@@ -35,9 +35,8 @@ function mapImagePathToActualFile(imagePath) {
         }
     }
     
-    // Fallback: if no prefix matches, return the filename part (after the last slash)
-    const filename = imagePath.split('/').pop();
-    return filename;
+    // Fallback: if no prefix matches, preserve the path as-is (may contain subdirs like alternate/)
+    return imagePath;
 }
 
 // Convert full-res path to thumbnail path (character images only).

@@ -89,6 +89,16 @@ describe('Card Image Utilities', () => {
             const result = window.mapImagePathToActualFile!('');
             expect(result).toBeDefined();
         });
+
+        it('should preserve alternate/ subpath for location images', () => {
+            const result = window.mapImagePathToActualFile!('alternate/221_b_baker_st.png');
+            expect(result).toBe('alternate/221_b_baker_st.png');
+        });
+
+        it('should strip characters/ prefix when present', () => {
+            const result = window.mapImagePathToActualFile!('characters/hero.webp');
+            expect(result).toBe('hero.webp');
+        });
     });
 
     describe('getCardImagePath', () => {
@@ -128,6 +138,18 @@ describe('Card Image Utilities', () => {
             const card = { id: '1', name: 'Hero', image: 'hero.webp' };
             const result = window.getCardImagePath!(card, 'character');
             expect(result).toBeDefined();
+        });
+
+        it('should return correct path for location with alternate subfolder', () => {
+            const card = { id: '1', name: '221-B Baker St.', image: 'alternate/221_b_baker_st.png' };
+            const result = window.getCardImagePath!(card, 'location');
+            expect(result).toBe('/src/resources/cards/images/locations/alternate/221_b_baker_st.png');
+        });
+
+        it('should return correct path for location with default image', () => {
+            const card = { id: '1', name: '221-B Baker St.', image: '221_b_baker_st.webp' };
+            const result = window.getCardImagePath!(card, 'location');
+            expect(result).toBe('/src/resources/cards/images/locations/221_b_baker_st.webp');
         });
     });
 

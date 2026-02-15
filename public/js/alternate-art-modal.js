@@ -260,6 +260,20 @@ window.showAlternateArtSelectionForExistingCard = function showAlternateArtSelec
                 });
             }
         });
+    } else if (cardType === 'location') {
+        // For locations, group by name - each alternate is a separate row with same name
+        const name = (availableCard.name || '').trim();
+        window.availableCardsMap.forEach((card, id) => {
+            const iterCardType = card.cardType || card.type || '';
+            if ((iterCardType === 'location' || id.startsWith('location_')) && 
+                (card.name || '').trim() === name) {
+                allAlternateArts.push({
+                    id: card.id || id,
+                    imagePath: getCardImagePath(card, 'location'),
+                    name: (card.name || '').trim()
+                });
+            }
+        });
     }
     
     // Deduplicate by image path - only show unique images
@@ -364,20 +378,25 @@ window.showAlternateArtSelectionForExistingCard = function showAlternateArtSelec
                 return;
             }
             
-            // Get the instance index that was stored when opening the modal
-            const instanceIndex = targetCard.currentInstanceIndex !== undefined ? targetCard.currentInstanceIndex : 0;
-            
-            // Initialize selectedAlternateCardIds as an array if it doesn't exist
-            if (!targetCard.selectedAlternateCardIds) {
-                targetCard.selectedAlternateCardIds = [];
-            }
-            
-            // Store the selected alternate card ID for this specific instance
-            targetCard.selectedAlternateCardIds[instanceIndex] = card.id;
-            
-            // Also keep selectedAlternateCardId for backward compatibility (for quantity = 1)
-            if (targetCard.quantity === 1) {
-                targetCard.selectedAlternateCardId = card.id;
+            // For locations, cardId directly identifies the selected variant (one per deck)
+            if (cardType === 'location') {
+                targetCard.cardId = card.id;
+            } else {
+                // Get the instance index that was stored when opening the modal
+                const instanceIndex = targetCard.currentInstanceIndex !== undefined ? targetCard.currentInstanceIndex : 0;
+                
+                // Initialize selectedAlternateCardIds as an array if it doesn't exist
+                if (!targetCard.selectedAlternateCardIds) {
+                    targetCard.selectedAlternateCardIds = [];
+                }
+                
+                // Store the selected alternate card ID for this specific instance
+                targetCard.selectedAlternateCardIds[instanceIndex] = card.id;
+                
+                // Also keep selectedAlternateCardId for backward compatibility (for quantity = 1)
+                if (targetCard.quantity === 1) {
+                    targetCard.selectedAlternateCardId = card.id;
+                }
             }
             
             // Re-render deck cards based on current view

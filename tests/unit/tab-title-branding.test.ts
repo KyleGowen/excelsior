@@ -11,8 +11,6 @@ describe('Tab Title Branding Tests', () => {
     'public/index.html',
     'public/deck-builder.html', 
     'public/database-view.html',
-    'src/public/deck-editor.html',
-    'src/public/deckbuilder.html',
     'src/public/index.html'
   ];
 
