@@ -120,6 +120,41 @@ describe('deck selection modules (public/js/deck-selection/*)', () => {
     expect(dangerButton.getAttribute('onclick')).toBe(null);
   });
 
+  test('displayDecks: character image paths use thumbnails for faster load', async () => {
+    const decks = [
+      {
+        metadata: {
+          id: 'deck-thumb',
+          name: 'Thumbnail Test Deck',
+          is_limited: false,
+          is_valid: true,
+          threat: 12,
+          cardCount: 55,
+          created: '2026-01-20T00:00:00.000Z',
+          lastModified: '2026-01-22T00:00:00.000Z',
+          background_image_path: null,
+        },
+        cards: [
+          { type: 'character', name: 'Tarzan', defaultImage: 'characters/tarzan.webp' },
+          { type: 'character', name: 'Jane', defaultImage: 'characters/alternate/jane_porter.webp' },
+          { type: 'location', name: 'Danger Room', defaultImage: 'locations/danger_room.webp' },
+          { type: 'mission', name: 'Save The World', defaultImage: 'missions/save_the_world.webp' },
+        ],
+      },
+    ];
+
+    await (window as any).DeckSelection.displayDecks(decks);
+
+    const deckListHtml = document.getElementById('deck-list')?.innerHTML ?? '';
+    // Character paths should use thumbnails (faster production load)
+    expect(deckListHtml).toContain('/thumb/');
+    expect(deckListHtml).toContain('characters/thumb/tarzan.webp');
+    expect(deckListHtml).toContain('characters/thumb/alternate/jane_porter.webp');
+    // Location and mission stay full-res (no thumbnail)
+    expect(deckListHtml).toContain('locations/danger_room.webp');
+    expect(deckListHtml).toContain('missions/save_the_world.webp');
+  });
+
   test('menu behavior: toggle open/close + outside click + escape', async () => {
     const decks = [
       {
