@@ -18,6 +18,8 @@
     "test:integration:game-logic-character-layout": "jest --config tests/config/jest.integration.game-logic-character-layout.config.js",
     "test:integration:game-logic-character-threat": "jest --config tests/config/jest.integration.game-logic-character-threat.config.js",
     "test:integration:game-logic-reserve": "jest --config tests/config/jest.integration.game-logic-reserve.config.js",
+    "test:integration:reserve-core": "jest --config tests/config/jest.integration.reserve-core.config.js",
+    "test:integration:reserve-threat": "jest --config tests/config/jest.integration.reserve-threat.config.js",
     "test:integration:game-logic-power-teamwork": "jest --config tests/config/jest.integration.game-logic-power-teamwork.config.js",
     "test:integration:game-logic-character-validation:watch": "jest --config tests/config/jest.integration.game-logic-character-validation.config.js --watch",
     "test:integration:game-logic-character-layout:watch": "jest --config tests/config/jest.integration.game-logic-character-layout.config.js --watch",

@@ -204,25 +204,45 @@ jobs:
             script: test:integration
             args: "tests/integration/deck-ownership-security*.test.ts tests/integration/deck-save-security*.test.ts tests/integration/role-based-restrictions.test.ts"
             timeout: 15
-          - category: AuthZ Security
-            slug: authz-security
+          - category: AuthZ Security - Session & Debug
+            slug: authz-session-debug
             script: test:integration
-            args: "tests/integration/security/*.test.ts"
+            args: "tests/integration/security/session-impersonation-security.test.ts tests/integration/security/debug-endpoints-access.test.ts"
+            timeout: 15
+          - category: AuthZ Security - Cross User
+            slug: authz-cross-user
+            script: test:integration
+            args: "tests/integration/security/cross-user-mutation-attempts.test.ts"
             timeout: 15
           - category: Authentication
             slug: auth
             script: test:integration
-            args: "tests/integration/bcrypt-authentication.test.ts tests/integration/guest-*.test.ts tests/integration/authentication*.test.ts tests/integration/auth-*.test.ts"
+            args: "tests/integration/bcrypt-authentication.test.ts tests/integration/authentication*.test.ts tests/integration/auth-*.test.ts"
             timeout: 15
-          - category: Search & Filtering
+          - category: Guest
+            slug: guest
+            script: test:integration
+            args: "tests/integration/guest-deck-editing.test.ts tests/integration/guest-read-only-layout-integration.test.ts tests/integration/guest-add-to-deck-buttons.test.ts tests/integration/guest-deck-deletion.test.ts tests/integration/guestLogin.test.ts tests/integration/autoGuestLogin.test.ts"
+            timeout: 15
+          - category: Search
             slug: search
             script: test:integration
-            args: "tests/integration/*search*.test.ts tests/integration/*filtering*.test.ts tests/integration/stat-type-filtering-integration.test.ts tests/integration/ally-search-integration.test.ts"
+            args: "tests/integration/deck-editor-search-bar-basic.test.ts tests/integration/deck-editor-search-visible-results.test.ts tests/integration/deck-editor-search-results-visible.test.ts tests/integration/search-functionality-integration.test.ts tests/integration/ally-search-integration.test.ts"
             timeout: 15
-          - category: Deck Core
-            slug: deck-core
+          - category: Filtering
+            slug: filtering
             script: test:integration
-            args: "tests/integration/deckBuilding.test.ts tests/integration/deckManagement.test.ts tests/integration/deck-navigation-flow.test.ts tests/integration/deck-editor-search-new-deck.test.ts tests/integration/deckClickability.test.ts tests/integration/deckEditabilityBrowser.test.ts tests/integration/deckEditabilityHTML.test.ts tests/integration/deckTitleDescriptionEditability.test.ts tests/integration/deck-validation-unusable-cards.test.ts tests/integration/limitedDeckIntegration.test.ts tests/integration/limitedDeckSaveAndLoad.test.ts tests/integration/limitedDeckSimpleIntegration.test.ts"
+            args: "tests/integration/stat-type-filtering-integration.test.ts tests/integration/stat-type-filtering-time-traveler.test.ts tests/integration/stat-type-filtering-john-carter.test.ts tests/integration/power-card-filtering-time-traveler.test.ts tests/integration/power-card-filtering-john-carter.test.ts"
+            timeout: 15
+          - category: Deck Building & Management
+            slug: deck-building
+            script: test:integration
+            args: "tests/integration/deckBuilding.test.ts tests/integration/deckManagement.test.ts tests/integration/deck-navigation-flow.test.ts tests/integration/deck-editor-search-new-deck.test.ts tests/integration/deckClickability.test.ts tests/integration/limitedDeckIntegration.test.ts tests/integration/limitedDeckSaveAndLoad.test.ts tests/integration/limitedDeckSimpleIntegration.test.ts"
+            timeout: 15
+          - category: Deck Editing & Validation
+            slug: deck-editing
+            script: test:integration
+            args: "tests/integration/deckEditabilityBrowser.test.ts tests/integration/deckEditabilityHTML.test.ts tests/integration/deckTitleDescriptionEditability.test.ts tests/integration/deck-validation-unusable-cards.test.ts"
             timeout: 15
           - category: Deck Security Ownership
             slug: deck-security-ownership
@@ -254,9 +274,14 @@ jobs:
             script: test:integration:game-logic-character-threat
             args: ""
             timeout: 10
-          - category: Game Logic Reserve Characters
-            slug: game-logic-reserve
-            script: test:integration:game-logic-reserve
+          - category: Reserve Core
+            slug: reserve-core
+            script: test:integration:reserve-core
+            args: ""
+            timeout: 10
+          - category: Reserve Threat
+            slug: reserve-threat
+            script: test:integration:reserve-threat
             args: ""
             timeout: 10
           - category: Game Logic Power & Teamwork
@@ -274,10 +299,15 @@ jobs:
             script: test:integration
             args: "tests/integration/create*.test.ts tests/integration/user*.test.ts tests/integration/cross*.test.ts tests/integration/change*.test.ts tests/integration/username*.test.ts"
             timeout: 15
-          - category: Collection
-            slug: collection
+          - category: Collection Workflow
+            slug: collection-workflow
             script: test:integration
-            args: "tests/integration/collection/*.test.ts"
+            args: "tests/integration/collection/collection-workflow.test.ts tests/integration/collection/collection-api-endpoints.test.ts tests/integration/collection/collection-database-persistence.test.ts"
+            timeout: 15
+          - category: Collection Security
+            slug: collection-security
+            script: test:integration
+            args: "tests/integration/collection/collection-cross-user-isolation.test.ts tests/integration/collection/collection-sql-injection-hardening.test.ts tests/integration/collection/collection-admin-access.test.ts tests/integration/collection/collection-error-handling.test.ts"
             timeout: 15
           - category: Remaining
             slug: remaining
