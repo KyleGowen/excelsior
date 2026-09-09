@@ -152,19 +152,19 @@ The AWS credentials need the following permissions:
 The deployment automatically sets these environment variables on the EC2 instance:
 
 ```bash
-DATABASE_URL=postgresql://postgres:TempPassword123!@op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require
+DATABASE_URL=<loaded from /op-deckbuilder/dev/database/url>
 DB_HOST=op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com
 DB_PORT=5432
 DB_NAME=overpower
 DB_USER=postgres
-DB_PASSWORD=TempPassword123!
+DB_PASSWORD=<loaded from /op-deckbuilder/dev/database/password>
 DB_USERNAME=postgres
 NODE_ENV=production
 PORT=3000
 NODE_TLS_REJECT_UNAUTHORIZED=0
 FLYWAY_URL=jdbc:postgresql://op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require
 FLYWAY_USER=postgres
-FLYWAY_PASSWORD=TempPassword123!
+FLYWAY_PASSWORD=<loaded from /op-deckbuilder/dev/database/password>
 ```
 
 ## Deployment Process
@@ -210,7 +210,7 @@ You can also trigger deployments manually:
 - Check Docker image build logs
 
 #### Container Issues
-- Check container logs: `docker logs overpower-deckbuilder`
+- Check container logs: `docker logs overpower-app`
 - Verify environment variables are set correctly
 - Check database connectivity
 - Review application startup logs
@@ -222,9 +222,9 @@ If a deployment fails or causes issues:
 1. **Quick Rollback:**
    ```bash
    # SSH into EC2 instance and restart with previous image
-   docker stop overpower-deckbuilder
-   docker rm overpower-deckbuilder
-   docker run -d --name overpower-deckbuilder --restart unless-stopped -p 3000:3000 --env-file /opt/app/.env [previous-image-tag]
+   docker stop overpower-app
+   docker rm overpower-app
+   docker run -d --name overpower-app --restart unless-stopped -p 3000:3000 --env-file /opt/app/.env [previous-image-tag]
    ```
 
 2. **Revert Code:**

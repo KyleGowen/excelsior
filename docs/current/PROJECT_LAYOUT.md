@@ -261,12 +261,10 @@ Integration-test Express app; reuses `registerRoutes` from `src/routes/` with te
 ├── 📄 connect-to-production-db.sh  # Production database connection
 ├── 📄 deploy-fix.sh                # Quick fix deployment script
 ├── 📄 deploy-to-production.sh      # Full production deployment
-├── 📄 fix-flyway-migrations.js     # Flyway migration fixer
 ├── 📄 fix-guest-password.sql       # Guest password fix SQL
 ├── 📄 fix-guest-user.js            # Guest user fix script
 ├── 📄 fix-production-auth.js       # Production authentication fix
 ├── 📄 fix-production-database.sql  # Production database fix SQL
-├── 📄 fix-production-now.js        # Immediate production fix
 ├── 📄 fix-production-users.sql     # Production users fix SQL
 ├── 📄 setup-github-secrets.md      # GitHub secrets setup guide
 ├── 📄 setup-test-data.ts           # Test data setup script

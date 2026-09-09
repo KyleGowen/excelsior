@@ -32,7 +32,7 @@ GitHub (main branch push)
 - ECR pull: up to 8 min (`timeout 480`); container startup + health gate: ~5 min; nginx switch: ~15 s
 - GitHub Actions polls 240 × 5 s = 1200 s max
 
-**Production migrations** (`run-migrations` job): Flyway runs **inside the deploy Docker image** on EC2 (`docker run --entrypoint flyway … migrate`), not via host `npm`/`flyway` (those binaries are not on the EC2 host). The job **waits for SSM Success** before deploy proceeds. ECR pull + Flyway validate during `migrate` can take **10+ minutes** on a cold pull — the workflow must pass `--max-attempts 240 --delay 5` to `aws ssm wait command-executed` (default CLI waiter is only ~100 s and will false-fail while the SSM command is still running).
+**Production migrations** (`run-migrations` job): EC2 loads all runtime values from SSM, pulls the exact-SHA Docker image once, and runs one authoritative Flyway `migrate`. Flyway validates before applying changes; a lightweight `psql` query then proves the exact expected schema version. The job runs in parallel with the S3 asset sync, and deploy waits for both.
 
 **Docker image build:**
 - Multi-stage: `node:20-alpine` build stage → slim runtime stage with Flyway + `dumb-init`
@@ -109,7 +109,7 @@ aws ssm send-command --instance-ids i-0dee560af076c0f9d --document-name "AWS-Run
 - **Port**: `5432`
 - **Database**: `overpower`
 - **Username**: `postgres`
-- **Password**: `TempPassword123!` (stored in SSM Parameter Store)
+- **Password**: SecureString `/op-deckbuilder/dev/database/password` (value never committed)
 - **SSL**: Required (`sslmode=require`)
 
 ### Connecting from your laptop (TablePlus, DBeaver, local `psql`)
@@ -283,19 +283,19 @@ If PostgreSQL TLS errors through the tunnel, try once with `sslmode=prefer` to d
 The application requires the following environment variables:
 
 ```bash
-DATABASE_URL=postgresql://postgres:TempPassword123!@op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require
+DATABASE_URL=<loaded from /op-deckbuilder/dev/database/url>
 DB_HOST=op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com
 DB_PORT=5432
 DB_NAME=overpower
 DB_USER=postgres
-DB_PASSWORD=TempPassword123!
+DB_PASSWORD=<loaded from /op-deckbuilder/dev/database/password>
 DB_USERNAME=postgres
 NODE_ENV=production
 PORT=3000
 NODE_TLS_REJECT_UNAUTHORIZED=0
 FLYWAY_URL=jdbc:postgresql://op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require
 FLYWAY_USER=postgres
-FLYWAY_PASSWORD=TempPassword123!
+FLYWAY_PASSWORD=<loaded from /op-deckbuilder/dev/database/password>
 ```
 
 ### Firebase Configuration (Google Sign-In)
@@ -326,7 +326,13 @@ The app registers `**/api/v1`** at startup and resolves JWT config immediately. 
 | **Type**   | `SecureString`                       |
 
 
-**How it reaches the container:** the **Run Production Migrations** job in `[.github/workflows/deploy.yml](../../.github/workflows/deploy.yml)` runs `[.github/scripts/append-jwt-env.json](../../.github/scripts/append-jwt-env.json)` on the EC2 instance via SSM. The file must use **one** `commands[]` string (same pattern as `append-firebase-env.json`): SSM `**AWS-RunShellScript` runs each array element in its own shell**, so splitting fetch / check / `printf` across multiple entries would drop the variable and break deploy. The blue-green deploy step starts the new container with `**--env-file /opt/app/.env`**. `**scripts/deploy-to-production.sh`** appends the same variable the same way for manual deploys.
+**How it reaches the container:** the **Run Production Migrations** job in
+[`.github/workflows/deploy.yml`](../../.github/workflows/deploy.yml) sends
+[`.github/scripts/prepare-production.sh`](../../.github/scripts/prepare-production.sh)
+to EC2 through SSM. The helper reads JWT, database, CDN, and optional Firebase
+parameters on the instance, atomically replaces `/opt/app/.env` with mode 0600,
+then pulls the exact image and runs Flyway once. Secret values are never printed.
+The blue-green deploy starts the new container with `--env-file /opt/app/.env`.
 
 **Create or rotate** (from a machine with IAM permission to write the parameter; use a long random value):
 
@@ -370,7 +376,9 @@ If you rebuild or revive AWS resources (new account, wiped Parameter Store, gree
 
 - `**/op-deckbuilder/dev/app/jwt_secret`** — **SecureString**, required for `**NODE_ENV=production`** and `**/api/v1`** (see previous subsection).
 
-**GitHub Actions** additionally writes many DB and Flyway lines into `**/opt/app/.env`** inline during **Create environment file on EC2** (see deploy workflow); that path is separate from SSM but depends on RDS still matching those values.
+**GitHub Actions** does not contain database credentials. The production helper
+builds `/opt/app/.env` entirely from these SSM parameters and refuses to continue
+when a required value is missing.
 
 After SSM and Terraform are aligned, push to `**main`** (or run `**./scripts/deploy-to-production.sh`**) and confirm `**/health`**.
 
@@ -454,19 +462,19 @@ Never commit Terraform plan files; they can contain sensitive variable values (e
 ### Check Application Status
 
 ```bash
-aws ssm send-command --instance-ids i-0dee560af076c0f9d --document-name AWS-RunShellScript --parameters 'commands=["docker ps","docker logs overpower-deckbuilder --tail 20"]'
+aws ssm send-command --instance-ids i-0dee560af076c0f9d --document-name AWS-RunShellScript --parameters 'commands=["docker ps","docker logs overpower-app --tail 20"]'
 ```
 
 ### View Application Logs
 
 ```bash
-aws ssm send-command --instance-ids i-0dee560af076c0f9d --document-name AWS-RunShellScript --parameters 'commands=["docker logs overpower-deckbuilder -f"]'
+aws ssm send-command --instance-ids i-0dee560af076c0f9d --document-name AWS-RunShellScript --parameters 'commands=["docker logs overpower-app -f"]'
 ```
 
 ### Restart Application
 
 ```bash
-aws ssm send-command --instance-ids i-0dee560af076c0f9d --document-name AWS-RunShellScript --parameters 'commands=["docker restart overpower-deckbuilder"]'
+aws ssm send-command --instance-ids i-0dee560af076c0f9d --document-name AWS-RunShellScript --parameters 'commands=["docker restart overpower-app"]'
 ```
 
 ## Application URLs
@@ -501,10 +509,10 @@ aws ssm send-command --instance-ids i-0dee560af076c0f9d --document-name AWS-RunS
 docker ps -a
 
 # View detailed logs
-docker logs overpower-deckbuilder --tail 50
+docker logs overpower-app --tail 50
 
-# Check environment variables
-cat /opt/app/.env
+# Check required environment keys without exposing values
+for key in DATABASE_URL CDN_BASE_URL JWT_SECRET; do grep -q "^${key}=" /opt/app/.env || echo "missing ${key}"; done
 
 # Test database connection
 psql -h op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com -U postgres -d overpower
@@ -566,4 +574,3 @@ For deployment issues:
 - Database migrations run automatically on each deployment
 - The application loads card data from the `src/resources` directory
 - All API endpoints are available at the root URL
-

@@ -54,39 +54,21 @@ fi
 
 echo "📋 Instance ID: ${INSTANCE_ID}"
 
-echo "🔧 Creating environment file on EC2..."
-aws ssm send-command \
+echo "🔧 Loading production secrets from SSM and applying migrations..."
+EXPECTED_MIGRATION=$(find migrations -maxdepth 1 -type f -name 'V*__*.sql' -exec basename {} \; \
+    | sed -E 's/^V([^_]+)__.*/\1/' \
+    | sort -V \
+    | tail -1)
+SCRIPT_B64=$(base64 < .github/scripts/prepare-production.sh | tr -d '\n')
+REMOTE_COMMAND="echo '$SCRIPT_B64' | base64 -d > /tmp/prepare-production.sh && chmod 700 /tmp/prepare-production.sh && ECR_IMAGE='${ECR_URI}:latest' EXPECTED_MIGRATION='$EXPECTED_MIGRATION' AWS_REGION='$AWS_REGION' bash /tmp/prepare-production.sh"
+PARAMETERS=$(jq -n --arg command "$REMOTE_COMMAND" '{commands: [$command]}')
+PREPARE_COMMAND_ID=$(aws ssm send-command \
     --instance-ids "${INSTANCE_ID}" \
     --document-name "AWS-RunShellScript" \
-    --parameters 'commands=[
-        "mkdir -p /opt/app",
-        "rm -f /opt/app/.env",
-        "echo DATABASE_URL=postgresql://postgres:TempPassword123!@op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require > /opt/app/.env",
-        "echo DB_HOST=op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com >> /opt/app/.env",
-        "echo DB_PORT=5432 >> /opt/app/.env",
-        "echo DB_NAME=overpower >> /opt/app/.env",
-        "echo DB_USER=postgres >> /opt/app/.env",
-        "echo DB_PASSWORD=TempPassword123! >> /opt/app/.env",
-        "echo DB_USERNAME=postgres >> /opt/app/.env",
-        "echo NODE_ENV=production >> /opt/app/.env",
-        "echo PORT=3000 >> /opt/app/.env",
-        "echo NODE_TLS_REJECT_UNAUTHORIZED=0 >> /opt/app/.env",
-        "echo FLYWAY_URL=jdbc:postgresql://op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require >> /opt/app/.env",
-        "echo FLYWAY_USER=postgres >> /opt/app/.env",
-        "echo FLYWAY_PASSWORD=TempPassword123! >> /opt/app/.env",
-        "bash -c 'v=$(aws ssm get-parameter --name /op-deckbuilder/dev/app/jwt_secret --with-decryption --region us-west-2 --query Parameter.Value --output text 2>/dev/null); if [ -z \"$v\" ]; then echo \"ERROR: Create SSM /op-deckbuilder/dev/app/jwt_secret (SecureString)\"; exit 1; fi; printf \"%s\\n\" \"JWT_SECRET=$v\" >> /opt/app/.env'",
-        "bash -c 'v=$(aws ssm get-parameter --name /op-deckbuilder/dev/firebase/api_key --region us-west-2 --query Parameter.Value --output text 2>/dev/null); [ -n \"$v\" ] && echo FIREBASE_API_KEY=\"$v\" >> /opt/app/.env'",
-        "bash -c 'v=$(aws ssm get-parameter --name /op-deckbuilder/dev/firebase/auth_domain --region us-west-2 --query Parameter.Value --output text 2>/dev/null); [ -n \"$v\" ] && echo FIREBASE_AUTH_DOMAIN=\"$v\" >> /opt/app/.env'",
-        "bash -c 'v=$(aws ssm get-parameter --name /op-deckbuilder/dev/firebase/project_id --region us-west-2 --query Parameter.Value --output text 2>/dev/null); [ -n \"$v\" ] && echo FIREBASE_PROJECT_ID=\"$v\" >> /opt/app/.env'",
-        "bash -c 'v=$(aws ssm get-parameter --name /op-deckbuilder/dev/firebase/app_id --region us-west-2 --query Parameter.Value --output text 2>/dev/null); [ -n \"$v\" ] && echo FIREBASE_APP_ID=\"$v\" >> /opt/app/.env'",
-        "bash -c 'v=$(aws ssm get-parameter --name /op-deckbuilder/dev/firebase/service_account_json --with-decryption --region us-west-2 --query Parameter.Value --output text 2>/dev/null | jq -c . 2>/dev/null); [ -n \"$v\" ] && printf \"FIREBASE_SERVICE_ACCOUNT_JSON=%s\\n\" \"$v\" >> /opt/app/.env'",
-        "cat /opt/app/.env",
-        "cat /opt/app/.env"
-    ]' \
-    --output text --query 'Command.CommandId'
-
-echo "⏳ Waiting for environment file creation..."
-sleep 10
+    --timeout-seconds 1200 \
+    --parameters "$PARAMETERS" \
+    --output text --query 'Command.CommandId')
+bash .github/scripts/wait-ssm-command.sh "$PREPARE_COMMAND_ID" "$INSTANCE_ID" 240 "Prepare production and migrate"
 
 echo "🐳 Deploying container to EC2..."
 aws ssm send-command \

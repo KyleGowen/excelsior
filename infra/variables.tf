@@ -44,10 +44,15 @@ variable "rds_username" {
 }
 
 variable "rds_password" {
-  description = "RDS master password"
+  description = "RDS master password (supply through TF_VAR_rds_password; never commit it)"
   type        = string
-  default     = "TempPassword123!"
   sensitive   = true
+  nullable    = false
+
+  validation {
+    condition     = length(var.rds_password) >= 32
+    error_message = "rds_password must be at least 32 characters."
+  }
 }
 
 variable "db_port" {

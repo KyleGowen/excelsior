@@ -2,17 +2,14 @@
 
 ## Status
 
-Phase 1 is the first step of moving all runtime secrets onto SSM Parameter
-Store. Today, most parameters live in SSM already and are appended to
-`/opt/app/.env` on EC2 during the deploy workflow. Two gaps remain and will
-close in follow-up PRs after a stable period of green SSM reads:
+Runtime secrets live in SSM Parameter Store. The deployment workflow sends
+[`prepare-production.sh`](../../.github/scripts/prepare-production.sh) to EC2;
+the script reads the parameters through the instance role and writes a
+mode-`0600` `/opt/app/.env` without returning secret values to GitHub or SSM
+command output.
 
-1. The database URL, username, and password are still baked into
-   [`.github/workflows/deploy.yml`](../../.github/workflows/deploy.yml) as
-   literal strings (`TempPassword123!` etc.). These must move to SSM.
-2. The final `/opt/app/.env` file on EC2 will go away in a future phase —
-   the container will fetch directly from SSM at boot via the IAM policy
-   already attached in [`infra/ec2.tf`](../../infra/ec2.tf).
+The remaining future phase is to remove `/opt/app/.env` entirely and have the
+container fetch secrets directly from SSM at boot.
 
 ## Parameter naming
 
@@ -22,6 +19,8 @@ Every parameter lives under `/${project_name}/${environment}/...` where
 | Parameter                                                   | Type          | Consumed by                                                                 |
 |-------------------------------------------------------------|---------------|-----------------------------------------------------------------------------|
 | `/op-deckbuilder/dev/database/url`                          | `SecureString`| App `DATABASE_URL`                                                          |
+| `/op-deckbuilder/dev/database/username`                     | `SecureString`| App/Flyway database user                                                    |
+| `/op-deckbuilder/dev/database/password`                     | `SecureString`| App/Flyway database password                                                |
 | `/op-deckbuilder/dev/app/environment`                       | `String`      | App `NODE_ENV`                                                              |
 | `/op-deckbuilder/dev/app/cdn_base_url`                      | `String`      | App `CDN_BASE_URL` → [`/js/app-config.js`](../../src/routes/auth.routes.ts) |
 | `/op-deckbuilder/dev/app/jwt_secret`                        | `SecureString`| v1 JWT signing (`V1JwtTokenService`)                                         |
@@ -35,8 +34,8 @@ Every parameter lives under `/${project_name}/${environment}/...` where
 `ssm:GetParameter` / `GetParameters` on `/op-deckbuilder/dev/*`.
 
 During deploy, [`.github/workflows/deploy.yml`](../../.github/workflows/deploy.yml)
-runs `aws ssm get-parameter` for each value and appends it to
-`/opt/app/.env`. The app reads `.env` via `dotenv/config` in
+runs the production preparation script on EC2. EC2 reads every value from SSM
+and atomically replaces `/opt/app/.env`. The app reads `.env` via `dotenv/config` in
 [`src/index.ts`](../../src/index.ts).
 
 After the follow-up migration, the app will call `SSM:GetParameters` itself
@@ -69,10 +68,9 @@ at boot and skip the `.env` file entirely.
 - **Deploy step broken:** the feature flag for each secret is the env var
   that consumes it. E.g. if the new `ALLOWED_ORIGINS` param is malformed,
   temporarily `DISABLE_CORS=1` until the param is fixed.
-- **Plaintext removal from workflow breaks deploy:** `git revert` the
-  workflow commit. `TempPassword123!` is already in git history (pre-Phase-1)
-  so nothing new is exposed by a rollback; rotate the RDS password
-  immediately after the final plaintext removal.
+- **Environment preparation breaks deploy:** fix or revert the preparation
+  script. Never restore a plaintext credential from Git history; restore the
+  previous SSM SecureString version instead.
 
 ## Validation
 
@@ -84,14 +82,13 @@ at boot and skip the `.env` file entirely.
 
   Expect every row from the table above.
 
-- The deploy workflow's `Verify CDN_BASE_URL in .env on EC2` and
-  `Verify JWT_SECRET in .env on EC2` steps already guard the append. Mirror
-  that pattern when you move DB credentials.
+- The preparation script fails closed when any required database, CDN, or JWT
+  parameter is absent and verifies the exact Flyway schema version before deploy.
 
 ## Data safety
 
-Appending to `.env` is idempotent (`rm -f /opt/app/.env` at the start of the
-deploy). No database side effects.
+Environment replacement is atomic: the script writes a mode-`0600` temporary
+file and renames it only after all required SSM reads succeed.
 
 ## See also
 

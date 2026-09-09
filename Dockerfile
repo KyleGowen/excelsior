@@ -14,13 +14,15 @@ ARG BUILD_TIMESTAMP=0
 FROM node:20-alpine AS build
 WORKDIR /app
 
+# Copy stable, large resources before commit-specific build artifacts so their
+# layer remains reusable across application-only releases.
+COPY src/resources ./src/resources
+COPY migrations ./migrations
+COPY business-operations/metrics/aws-costs.csv ./business-operations/metrics/aws-costs.csv
 COPY dist ./dist
 # v2 React SPA build output (produced by `npm --prefix frontend run build` in CI
 # before `docker build`).
 COPY frontend/dist ./frontend/dist
-COPY src/resources ./src/resources
-COPY migrations ./migrations
-COPY business-operations/metrics/aws-costs.csv ./business-operations/metrics/aws-costs.csv
 
 
 # 2) Runtime stage - minimal Node + Flyway + Postgres client
@@ -53,13 +55,14 @@ RUN curl -fsSL https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/${
 # Copy only what we need at runtime
 COPY package*.json ./
 RUN npm ci --omit=dev
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/frontend/dist ./frontend/dist
+# Keep the large, stable resource layer ahead of volatile application output.
 COPY --from=build /app/src/resources ./src/resources
 COPY --from=build /app/migrations ./migrations
 COPY --from=build /app/business-operations/metrics/aws-costs.csv ./business-operations/metrics/aws-costs.csv
 # Optional: copy flyway.conf if present (won't fail if missing)
 COPY flyway.conf /app/flyway.conf
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/frontend/dist ./frontend/dist
 
 # Apply commit-specific metadata only after the reusable runtime layers.
 ARG GIT_COMMIT=unknown

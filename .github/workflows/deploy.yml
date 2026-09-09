@@ -7,6 +7,12 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+# The production jobs mutate shared EC2 state. Serialize main deployments from
+# the start of the workflow so an older run cannot race a newer run's .env.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   AWS_REGION: us-west-2
   ECR_REPOSITORY: overpower-deckbuilder
@@ -782,9 +788,13 @@ jobs:
 
   run-migrations:
     name: Run Production Migrations
-    needs: [build-docker, sync-images]
+    # Database preparation is independent of the S3 asset sync. Deploy waits
+    # for both jobs, so these can safely consume the same wall-clock window.
+    needs: [build-docker]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    outputs:
+      expected-migration: ${{ steps.expected-migration.outputs.version }}
     
     steps:
     - name: Checkout code
@@ -792,9 +802,23 @@ jobs:
       with:
         fetch-depth: 1
         sparse-checkout: |
-          /*
-          !/src/resources/cards/images/
+          .github/scripts
+          migrations
         sparse-checkout-cone-mode: false
+
+    - name: Determine expected migration version
+      id: expected-migration
+      run: |
+        VERSION=$(find migrations -maxdepth 1 -type f -name 'V*__*.sql' -exec basename {} \; \
+          | sed -E 's/^V([^_]+)__.*/\1/' \
+          | sort -V \
+          | tail -1)
+        if [ -z "$VERSION" ]; then
+          echo "::error::Could not determine the expected Flyway migration version."
+          exit 1
+        fi
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        echo "Expected production migration: $VERSION"
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -803,147 +827,47 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
         
-    - name: Create environment file on EC2
-      run: |
-        COMMAND_ID=$(aws ssm send-command \
-          --instance-ids ${{ env.EC2_INSTANCE_ID }} \
-          --document-name "AWS-RunShellScript" \
-          --parameters 'commands=[
-            "mkdir -p /opt/app",
-            "rm -f /opt/app/.env",
-            "echo DATABASE_URL=postgresql://postgres:TempPassword123!@op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require > /opt/app/.env",
-            "echo DB_HOST=op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com >> /opt/app/.env",
-            "echo DB_PORT=5432 >> /opt/app/.env",
-            "echo DB_NAME=overpower >> /opt/app/.env",
-            "echo DB_USER=postgres >> /opt/app/.env",
-            "echo DB_PASSWORD=TempPassword123! >> /opt/app/.env",
-            "echo DB_USERNAME=postgres >> /opt/app/.env",
-            "echo NODE_ENV=production >> /opt/app/.env",
-            "echo PORT=3000 >> /opt/app/.env",
-            "echo NODE_TLS_REJECT_UNAUTHORIZED=0 >> /opt/app/.env",
-            "echo FLYWAY_URL=jdbc:postgresql://op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require >> /opt/app/.env",
-            "echo FLYWAY_USER=postgres >> /opt/app/.env",
-            "echo FLYWAY_PASSWORD=TempPassword123! >> /opt/app/.env"
-          ]' \
-          --output text --query 'Command.CommandId')
-        echo "Waiting for .env creation (command $COMMAND_ID)..."
-        bash .github/scripts/wait-ssm-command.sh "$COMMAND_ID" ${{ env.EC2_INSTANCE_ID }} 36 "Create .env on EC2"
-
-    - name: Append Firebase config to .env
-      run: |
-        COMMAND_ID=$(aws ssm send-command \
-          --instance-ids ${{ env.EC2_INSTANCE_ID }} \
-          --document-name "AWS-RunShellScript" \
-          --parameters file://.github/scripts/append-firebase-env.json \
-          --output text --query 'Command.CommandId')
-        echo "Waiting for Firebase config append (command $COMMAND_ID)..."
-        bash .github/scripts/wait-ssm-command.sh "$COMMAND_ID" ${{ env.EC2_INSTANCE_ID }} 36 "Append Firebase config"
-
-    - name: Append CDN_BASE_URL to .env
-      run: |
-        CDN_BASE_URL=$(aws ssm get-parameter \
-          --name /op-deckbuilder/dev/app/cdn_base_url \
-          --region us-west-2 \
-          --query Parameter.Value \
-          --output text)
-        if [ -z "$CDN_BASE_URL" ]; then
-          echo "ERROR: CDN_BASE_URL SSM parameter is empty — aborting deployment"
-          exit 1
-        fi
-        echo "CDN_BASE_URL fetched: $CDN_BASE_URL"
-        COMMAND_ID=$(aws ssm send-command \
-          --instance-ids ${{ env.EC2_INSTANCE_ID }} \
-          --document-name "AWS-RunShellScript" \
-          --parameters "commands=[\"echo 'CDN_BASE_URL=${CDN_BASE_URL}' >> /opt/app/.env\"]" \
-          --output text --query 'Command.CommandId')
-        echo "Waiting for SSM command $COMMAND_ID to complete..."
-        bash .github/scripts/wait-ssm-command.sh "$COMMAND_ID" ${{ env.EC2_INSTANCE_ID }} 36 "Append CDN_BASE_URL"
-
-    - name: Append JWT_SECRET to .env (SSM, for /api/v1)
-      run: |
-        COMMAND_ID=$(aws ssm send-command \
-          --instance-ids ${{ env.EC2_INSTANCE_ID }} \
-          --document-name "AWS-RunShellScript" \
-          --parameters file://.github/scripts/append-jwt-env.json \
-          --output text --query 'Command.CommandId')
-        echo "Waiting for JWT .env append (command $COMMAND_ID)..."
-        bash .github/scripts/wait-ssm-command.sh "$COMMAND_ID" ${{ env.EC2_INSTANCE_ID }} 36 "Append JWT_SECRET" || {
-          echo "::error::Failed to append JWT_SECRET from SSM. Create /op-deckbuilder/dev/app/jwt_secret (SecureString) in us-west-2."
-          exit 1
-        }
-
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
-
-    - name: Run Production Database Migrations
+    - name: Prepare EC2 and run production migrations
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
+        EXPECTED_MIGRATION: ${{ steps.expected-migration.outputs.version }}
       run: |
-        ECR_URI="$ECR_REGISTRY/${{ env.ECR_REPOSITORY }}"
-        FLYWAY_JDBC="jdbc:postgresql://op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require"
-        echo "Running production Flyway migrate via Docker ($ECR_URI:$IMAGE_TAG)..."
+        AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+        ECR_IMAGE="$AWS_ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG"
+        SCRIPT_B64=$(base64 < .github/scripts/prepare-production.sh | tr -d '\n')
+        REMOTE_COMMAND="echo '$SCRIPT_B64' | base64 -d > /tmp/prepare-production.sh && chmod 700 /tmp/prepare-production.sh && ECR_IMAGE='$ECR_IMAGE' EXPECTED_MIGRATION='$EXPECTED_MIGRATION' AWS_REGION='${{ env.AWS_REGION }}' bash /tmp/prepare-production.sh"
+        PARAMETERS=$(jq -n --arg command "$REMOTE_COMMAND" '{commands: [$command]}')
+
         CMD_ID=$(aws ssm send-command \
           --instance-ids ${{ env.EC2_INSTANCE_ID }} \
           --document-name "AWS-RunShellScript" \
           --timeout-seconds 1200 \
-          --parameters "commands=[
-            \"set -e\",
-            \"echo '=== Production database migrations (Docker Flyway) ==='\",
-            \"aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_URI\",
-            \"timeout 480 docker pull $ECR_URI:$IMAGE_TAG\",
-            \"docker run --rm --entrypoint /usr/local/bin/flyway $ECR_URI:$IMAGE_TAG -url=$FLYWAY_JDBC -user=postgres -password=TempPassword123! -locations=filesystem:/app/migrations repair\",
-            \"docker run --rm --entrypoint /usr/local/bin/flyway $ECR_URI:$IMAGE_TAG -url=$FLYWAY_JDBC -user=postgres -password=TempPassword123! -locations=filesystem:/app/migrations migrate\",
-            \"echo 'Production database migrations completed successfully'\"
-          ]" \
+          --parameters "$PARAMETERS" \
           --output text --query 'Command.CommandId')
-        echo "SSM migration command ID: $CMD_ID"
-        echo "Polling migration status (max 1200s; docker pull + Flyway can exceed the default 100s CLI waiter)..."
-        bash .github/scripts/wait-ssm-command.sh "$CMD_ID" ${{ env.EC2_INSTANCE_ID }} 240 "Production database migrations" || {
-          echo "::error::Production database migrations failed on EC2."
-          exit 1
-        }
-        INV=$(aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id ${{ env.EC2_INSTANCE_ID }})
-        echo "$INV" | jq -r '.StandardOutputContent'
 
-    - name: Verify Migration Results
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        ECR_URI="$ECR_REGISTRY/${{ env.ECR_REPOSITORY }}"
-        FLYWAY_JDBC="jdbc:postgresql://op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require"
-        echo "Verifying Flyway schema via Docker ($ECR_URI:$IMAGE_TAG)..."
-        CMD_ID=$(aws ssm send-command \
-          --instance-ids ${{ env.EC2_INSTANCE_ID }} \
-          --document-name "AWS-RunShellScript" \
-          --timeout-seconds 600 \
-          --parameters "commands=[
-            \"set -e\",
-            \"echo '=== Verify migration status (Docker Flyway) ==='\",
-            \"docker run --rm --entrypoint /usr/local/bin/flyway $ECR_URI:$IMAGE_TAG -url=$FLYWAY_JDBC -user=postgres -password=TempPassword123! -locations=filesystem:/app/migrations info\",
-            \"docker run --rm --entrypoint /usr/local/bin/flyway $ECR_URI:$IMAGE_TAG -url=$FLYWAY_JDBC -user=postgres -password=TempPassword123! -locations=filesystem:/app/migrations validate\",
-            \"echo 'Database validation successful'\"
-          ]" \
-          --output text --query 'Command.CommandId')
-        echo "SSM verify command ID: $CMD_ID"
-        echo "Polling verify status (max 1200s)..."
-        bash .github/scripts/wait-ssm-command.sh "$CMD_ID" ${{ env.EC2_INSTANCE_ID }} 240 "Verify migration results" || {
-          echo "::error::Production database validation failed on EC2."
+        if [ -z "$CMD_ID" ]; then
+          echo "::error::SSM did not return a production preparation command ID."
+          exit 1
+        fi
+
+        bash .github/scripts/wait-ssm-command.sh "$CMD_ID" ${{ env.EC2_INSTANCE_ID }} 240 "Prepare production and migrate" || {
+          aws ssm get-command-invocation \
+            --command-id "$CMD_ID" \
+            --instance-id ${{ env.EC2_INSTANCE_ID }} \
+            --query 'StandardErrorContent' --output text || true
           exit 1
         }
-        INV=$(aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id ${{ env.EC2_INSTANCE_ID }})
-        echo "$INV" | jq -r '.StandardOutputContent'
+
+        aws ssm get-command-invocation \
+          --command-id "$CMD_ID" \
+          --instance-id ${{ env.EC2_INSTANCE_ID }} \
+          --query 'StandardOutputContent' --output text
 
   deploy:
     name: Deploy to Production
-    needs: [run-migrations]
+    needs: [run-migrations, sync-images]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-    concurrency:
-      group: production-deploy-${{ github.ref }}
-      cancel-in-progress: false
     
     steps:
     - name: Checkout code
@@ -961,46 +885,27 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
         
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
-
-    - name: Verify CDN_BASE_URL in .env on EC2
+    - name: Verify production environment on EC2
       run: |
         CMD_ID=$(aws ssm send-command \
           --instance-ids ${{ env.EC2_INSTANCE_ID }} \
           --document-name "AWS-RunShellScript" \
           --parameters 'commands=[
-            "if ! grep -q \"^CDN_BASE_URL=\" /opt/app/.env 2>/dev/null; then echo \"ERROR: /opt/app/.env missing CDN_BASE_URL (run-migrations must append it)\"; exit 1; fi",
-            "echo \"CDN_BASE_URL is set in /opt/app/.env\""
+            "for key in DATABASE_URL CDN_BASE_URL JWT_SECRET; do grep -q \"^${key}=\" /opt/app/.env || { echo \"ERROR: /opt/app/.env missing ${key}\"; exit 1; }; done",
+            "echo \"Required production environment keys are present (values withheld)\""
           ]' \
           --output text --query 'Command.CommandId')
-        bash .github/scripts/wait-ssm-command.sh "$CMD_ID" ${{ env.EC2_INSTANCE_ID }} 36 "Verify CDN_BASE_URL in .env" || {
-          echo "::error::CDN_BASE_URL not found in /opt/app/.env. Deck selection images will not load from CDN."
-          exit 1
-        }
-
-    - name: Verify JWT_SECRET in .env on EC2
-      run: |
-        CMD_ID=$(aws ssm send-command \
-          --instance-ids ${{ env.EC2_INSTANCE_ID }} \
-          --document-name "AWS-RunShellScript" \
-          --parameters 'commands=[
-            "if ! grep -q \"^JWT_SECRET=\" /opt/app/.env 2>/dev/null; then echo \"ERROR: /opt/app/.env missing JWT_SECRET (run-migrations must append from SSM)\"; exit 1; fi",
-            "echo \"JWT_SECRET is set in /opt/app/.env (value not shown)\""
-          ]' \
-          --output text --query 'Command.CommandId')
-        bash .github/scripts/wait-ssm-command.sh "$CMD_ID" ${{ env.EC2_INSTANCE_ID }} 36 "Verify JWT_SECRET in .env" || {
-          echo "::error::JWT_SECRET not found in /opt/app/.env. API v1 will not start in production."
+        bash .github/scripts/wait-ssm-command.sh "$CMD_ID" ${{ env.EC2_INSTANCE_ID }} 36 "Verify production environment" || {
+          echo "::error::The production environment is incomplete."
           exit 1
         }
 
     - name: Blue-Green Deploy
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        ECR_URI="$ECR_REGISTRY/${{ env.ECR_REPOSITORY }}"
+        AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+        ECR_URI="$AWS_ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}"
         EXPECTED_COMMIT="$IMAGE_TAG"
         echo "Sending blue-green deploy command (fire-and-forget)..."
         echo "ECR URI: $ECR_URI"
@@ -1018,14 +923,8 @@ jobs:
             \"CURRENT_PORT=\$(cat /opt/app/active_port 2>/dev/null || echo '3000')\",
             \"if [ \\\"\$CURRENT_PORT\\\" = \\\"3000\\\" ]; then NEW_PORT=3001; else NEW_PORT=3000; fi\",
             \"echo \\\"Switching: port \$CURRENT_PORT -> \$NEW_PORT\\\"\",
-            \"echo '--- Step 1: Pull new image ---'\",
-            \"aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_URI\",
-            \"timeout 480 docker pull $ECR_URI:$IMAGE_TAG\",
-            \"echo 'Image pulled.'\",
-            \"docker image inspect $ECR_URI:$IMAGE_TAG --format '{{index .RepoDigests 0}}' || true\",
-            \"echo '--- Step 1b: Apply DB migrations before new app boot (SKIP_MIGRATIONS on app) ---'\",
-            \"docker run --rm --env-file /opt/app/.env --entrypoint /usr/local/bin/flyway $ECR_URI:$IMAGE_TAG -url=jdbc:postgresql://op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require -user=postgres -password=TempPassword123! -locations=filesystem:/app/migrations repair\",
-            \"docker run --rm --env-file /opt/app/.env --entrypoint /usr/local/bin/flyway $ECR_URI:$IMAGE_TAG -url=jdbc:postgresql://op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com:5432/overpower?sslmode=require -user=postgres -password=TempPassword123! -locations=filesystem:/app/migrations migrate\",
+            \"echo '--- Step 1: Verify the pre-pulled exact image ---'\",
+            \"docker image inspect $ECR_URI:$IMAGE_TAG --format '{{index .RepoDigests 0}}'\",
             \"echo '--- Step 2: Start new container on idle port ---'\",
             \"docker stop overpower-app-new || true\",
             \"docker rm overpower-app-new || true\",
@@ -1099,6 +998,7 @@ jobs:
             \"NEW_COMMIT=\$(cat /tmp/new_health.json | jq -r '.git.commit // \\\"\\\"' 2>/dev/null || echo '')\",
             \"echo \\\"New container health commit: \${NEW_COMMIT:-unknown}\\\"\",
             \"echo \\\"Expected commit: $IMAGE_TAG\\\"\",
+            \"if [ \\\"\$NEW_COMMIT\\\" != \\\"$IMAGE_TAG\\\" ]; then echo 'New container commit mismatch - rolling back'; docker stop overpower-app-new || true; docker rm overpower-app-new || true; exit 1; fi\",
             \"echo '--- Step 4: Switch nginx traffic ---'\",
             \"sed -i \\\"s/localhost:\$CURRENT_PORT/localhost:\$NEW_PORT/g\\\" /etc/nginx/conf.d/excelsior.cards.conf\",
             \"nginx -t\",
@@ -1109,7 +1009,7 @@ jobs:
             \"docker rm overpower-app || true\",
             \"docker rename overpower-app-new overpower-app\",
             \"echo \$NEW_PORT > /opt/app/active_port\",
-            \"docker image prune -af || true\",
+            \"docker image prune -af --filter 'until=168h' || true\",
             \"echo \\\"Active port: \$(cat /opt/app/active_port)\\\"\",
             \"docker ps\",
             \"echo '=== Blue-Green Deploy Complete ==='\"
@@ -1157,15 +1057,13 @@ jobs:
         echo "Deploy polling complete."
 
     - name: Verify Deployment
+      env:
+        EXPECTED_MIGRATION: ${{ needs.run-migrations.outputs.expected-migration }}
       run: |
         echo "Verifying deployment via production health endpoint..."
         EXPECTED_COMMIT="${{ github.sha }}"
         echo "Expected commit: $EXPECTED_COMMIT"
-        echo "Expected image tag: $EXPECTED_COMMIT"
-
-        # Allow time for nginx/cache to serve the new container after SSM reports Success
-        echo "Waiting 25s for traffic to switch to new container..."
-        sleep 25
+        echo "Expected migration: $EXPECTED_MIGRATION"
 
         SUCCESS=0
         DEPLOYED_COMMIT=""
@@ -1175,20 +1073,30 @@ jobs:
           CACHE_BUSTER=$(date +%s%N)
           # Apex is behind CloudFront (HTTP → 301 to HTTPS); use HTTPS for JSON health
           HEALTH_URL="https://excelsior.cards/health?cb=$CACHE_BUSTER"
-          HEALTH=$(curl -s --max-time 15 -H "Cache-Control: no-cache" -H "Pragma: no-cache" "$HEALTH_URL" 2>/dev/null || echo "")
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 -H "Cache-Control: no-cache" -H "Pragma: no-cache" "$HEALTH_URL" 2>/dev/null || echo "000")
+          if HEALTH=$(curl -fsS --max-time 15 -H "Cache-Control: no-cache, no-store" -H "Pragma: no-cache" "$HEALTH_URL" 2>/dev/null); then
+            HTTP_STATUS=200
+          else
+            HEALTH=""
+            HTTP_STATUS=000
+          fi
           DEPLOYED_COMMIT=$(echo "$HEALTH" | jq -r '.git.commit // ""' 2>/dev/null || echo "")
+          APP_STATUS=$(echo "$HEALTH" | jq -r '.status // ""' 2>/dev/null || echo "")
+          DB_STATUS=$(echo "$HEALTH" | jq -r '.database.status // ""' 2>/dev/null || echo "")
+          DEPLOYED_MIGRATION=$(echo "$HEALTH" | jq -r '.database.migrations.latest.version // ""' 2>/dev/null || echo "")
           LAST_HEALTH="$HEALTH"
 
-          echo "[$i/20] HTTP: $HTTP_STATUS | deployed: ${DEPLOYED_COMMIT:-none} | expected: $EXPECTED_COMMIT"
+          echo "[$i/20] HTTP: $HTTP_STATUS | app: ${APP_STATUS:-none} | db: ${DB_STATUS:-none} | deployed: ${DEPLOYED_COMMIT:-none} | migration: ${DEPLOYED_MIGRATION:-none}"
 
-          if [ "$DEPLOYED_COMMIT" = "$EXPECTED_COMMIT" ]; then
-            echo "Deployment verified: commit $DEPLOYED_COMMIT is live on production"
+          if [ "$DEPLOYED_COMMIT" = "$EXPECTED_COMMIT" ] && \
+             [ "$APP_STATUS" = "OK" ] && \
+             [ "$DB_STATUS" = "OK" ] && \
+             [ "$DEPLOYED_MIGRATION" = "$EXPECTED_MIGRATION" ]; then
+            echo "Deployment verified: commit $DEPLOYED_COMMIT, database OK, migration $DEPLOYED_MIGRATION"
             SUCCESS=1
             break
           fi
 
-          sleep 10
+          sleep 5
         done
 
         if [ $SUCCESS -ne 1 ]; then
