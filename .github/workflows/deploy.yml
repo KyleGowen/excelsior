@@ -680,7 +680,7 @@ jobs:
 
         echo "Verifying compiled deck-card replacement logic..."
         docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-          grep -q "replaceAllCardsInDeck" /app/dist/routes/deck-api.routes.js
+          grep -q "replaceAllCardsInDeck" /app/dist/api/services/deckCardsService.js
 
         echo "Verifying exact commit metadata..."
         ACTUAL_COMMIT=$(docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
