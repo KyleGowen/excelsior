@@ -192,14 +192,19 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0
+        # Push and PR events provide a bounded commit range to Gitleaks, but a
+        # manual dispatch has no range and otherwise scans the entire 1,800+
+        # commit history. Keep two commits for dispatches so the same release
+        # change is scanned without turning a deployment retry into a history
+        # audit. Scheduled/deep history scans belong in a separate workflow.
+        fetch-depth: ${{ github.event_name == 'workflow_dispatch' && 2 || 0 }}
         sparse-checkout: |
           /*
           !/src/resources/cards/images/
         sparse-checkout-cone-mode: false
 
     - name: Run gitleaks (secret detection)
-      uses: gitleaks/gitleaks-action@v2
+      uses: gitleaks/gitleaks-action@v3
       continue-on-error: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
