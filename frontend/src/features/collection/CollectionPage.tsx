@@ -181,7 +181,7 @@ export default function CollectionPage() {
               <IconSearch className="col__search-icon" />
               <input
                 type="search"
-                placeholder="Search name, character, card text, or foil..."
+                placeholder="Search name, character, mission set, card text, or foil..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 aria-label="Search collection"

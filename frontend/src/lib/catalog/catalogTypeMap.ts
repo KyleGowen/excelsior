@@ -416,8 +416,9 @@ export function cardAbilityText(card: Partial<CatalogCard> | null | undefined): 
   );
 }
 
-/** Fields scanned by the database view top search bar (name, character, text, abilities). */
+/** Fields scanned by catalog search bars (name, character, mission set, text, abilities). */
 const DBV_SEARCH_TEXT_FIELDS: (keyof CatalogCard)[] = [
+  'mission_set',
   'special_abilities',
   'special_ability',
   'card_effect',
@@ -434,7 +435,7 @@ function cardSearchTextFields(card: Partial<CatalogCard>): string[] {
   return DBV_SEARCH_TEXT_FIELDS.map((key) => String(card[key] ?? '').trim()).filter(Boolean);
 }
 
-/** Lowercase haystack for DBV text search across name, character, and card text/abilities. */
+/** Lowercase haystack for catalog search across name, character, mission set, and card text/abilities. */
 export function cardSearchHaystack(card: Partial<CatalogCard> | null | undefined): string {
   if (!card) return '';
   return [

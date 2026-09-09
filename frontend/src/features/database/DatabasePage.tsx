@@ -356,7 +356,7 @@ export default function DatabasePage() {
               <IconSearch className="db__search-icon" />
               <input
                 type="search"
-                placeholder="Search name, character, or card text..."
+                placeholder="Search name, character, mission set, or card text..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 aria-label="Search cards"

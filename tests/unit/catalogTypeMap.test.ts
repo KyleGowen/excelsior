@@ -43,6 +43,23 @@ describe('cardMatchesSearchQuery foil keyword', () => {
     expect(cardMatchesSearchQuery(baseCard, 'tarzan')).toBe(true);
     expect(cardMatchesSearchQuery(foilCard, 'tarzan')).toBe(true);
   });
+
+  it('matches mission and event cards by mission-set name', () => {
+    const mission: CatalogCard = {
+      id: 'mission-1',
+      name: 'Professor Angell\'s Investigation',
+      mission_set: 'The Call of Cthulhu',
+    };
+    const event: CatalogCard = {
+      id: 'event-1',
+      name: 'Stars Align',
+      mission_set: 'The Call of Cthulhu',
+    };
+
+    expect(cardMatchesSearchQuery(mission, 'cthul')).toBe(true);
+    expect(cardMatchesSearchQuery(event, 'CALL OF CTHULHU')).toBe(true);
+    expect(cardMatchesSearchQuery(mission, 'king of the jungle')).toBe(false);
+  });
 });
 
 describe('compareCatalogCards power-cards', () => {

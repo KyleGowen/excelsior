@@ -3,7 +3,7 @@
 Browse, search, filter, and sort the full modern OverPower catalog.
 
 ## Controls
-- **Search** by card name, character name, or card text including inherent abilities
+- **Search** by card name, character name, mission-set name, or card text including inherent abilities
   (debounced, header bar; `cardMatchesSearchQuery` in `catalogTypeMap`).
 - **Type tabs**: Characters, Special Cards, Power Cards, Locations, Missions, Events,
   Aspects, and the Universe types (Advanced/Teamwork/Ally/Training/Basic) — vocab via

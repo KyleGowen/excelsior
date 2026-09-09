@@ -21,6 +21,8 @@ On desktop viewports wider than 1200px, the Add Cards drawer uses a contextual p
 
 ## Filters
 
+- Search matches card name, linked character, mission-set name, and card text. Mission-set
+  matches apply consistently in All, Missions, and Events results.
 - Filters are dynamic to the active Add Cards tab and should hide impossible options.
 - The Add Cards tab row includes an Add Cards-only `Any-Char` tab immediately after `Special`. It reuses the `special-cards` catalog/deck type, but filters results to specials whose linked character is exactly `Any Character`. The `Special` tab excludes those true Any Character specials and shows character-specific specials.
 - Do not show MP for Training cards when no MP Training cards exist.

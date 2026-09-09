@@ -216,6 +216,9 @@ account-sheet row (`.account-sheet__toggle`) with `justify-content: space-betwee
   row: accent left border + `--color-accent-soft` background. DBV All opens detail slideout on
   row click only (deck/collection actions in panel). Pagination uses 48 rows per page on All
   (24 on image grids). Search + set filter apply; DBV hides `DbvFilterRail` on All.
+- **Catalog search copy and scope:** Database, Collection, and deck-editor Add Cards placeholders
+  advertise mission-set search. Their shared search matches card name, linked character,
+  mission-set name, and card text; Collection also advertises the `foil` keyword.
 - **Database per-type grids with All Sets selected** ignore set/collector number: linked
   character/location or mission-set alphabetic order applies to named categories, while Power
   and Universe value cards use OverPower type order then ascending value. Selecting a specific

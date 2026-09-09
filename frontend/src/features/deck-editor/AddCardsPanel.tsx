@@ -80,7 +80,7 @@ const STACK_CATALOG_TYPES = ['characters', 'special-cards', 'advanced-universe']
 /** Catalog slugs needed for hide-unusable deck context when tab-scoped data is incomplete. */
 const DECK_USABILITY_CONTEXT_TYPES = ['characters', 'missions', 'locations', 'battlegrounds'] as const;
 
-const ADD_CARDS_SEARCH_PLACEHOLDER = 'Search name, character, or card text...';
+const ADD_CARDS_SEARCH_PLACEHOLDER = 'Search name, character, mission set, or card text...';
 const STACKS_SEARCH_PLACEHOLDER = 'Search character names...';
 const ADD_CARDS_SEARCH_ARIA_LABEL = 'Search cards to add';
 const STACKS_SEARCH_ARIA_LABEL = 'Search character names';
