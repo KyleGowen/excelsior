@@ -9,6 +9,10 @@ const filterRail = fs.readFileSync(
   path.join(__dirname, '../../../frontend/src/features/database/components/DbvFilterRail.tsx'),
   'utf8',
 );
+const catalogFilterRail = fs.readFileSync(
+  path.join(__dirname, '../../../frontend/src/features/database/components/CatalogFilterRail.tsx'),
+  'utf8',
+);
 const filterRailStyles = fs.readFileSync(
   path.join(__dirname, '../../../frontend/src/features/database/components/DbvFilterRail.css'),
   'utf8',
@@ -19,8 +23,11 @@ describe('Database mobile filter pane contract', () => {
     expect(databasePage).toContain('const [filterRailCollapsed, setFilterRailCollapsed] = useState(false)');
     expect(databasePage).toContain('const [mobileFilterPaneExpanded, setMobileFilterPaneExpanded] = useState(false)');
     expect(databasePage).toContain('collapsed={isMobile ? !mobileFilterPaneExpanded : filterRailCollapsed}');
-    expect(filterRail).toContain('const showBody = isMobile || !collapsed');
-    expect(filterRail).toContain("aria-label={collapsed ? 'Expand filters' : 'Collapse filters'}");
+    expect(filterRail).toContain('<CatalogFilterRail');
+    expect(catalogFilterRail).toContain('const showBody = isMobile || !collapsed');
+    expect(catalogFilterRail).toContain(
+      "aria-label={collapsed ? 'Expand filters' : 'Collapse filters'}",
+    );
   });
 
   it('keeps collapsed mobile controls scrollable and expands them over the results', () => {
@@ -38,6 +45,6 @@ describe('Database mobile filter pane contract', () => {
       /\.dbv-filter-rail:not\(\.is-collapsed\) \.dbv-filter-rail__scroll\s*\{[\s\S]*?gap:\s*0/,
     );
     expect(filterRailStyles).toContain('z-index: var(--z-sticky)');
-    expect(filterRail).toContain("if (event.key === 'Escape') onCollapsedChange(true)");
+    expect(catalogFilterRail).toContain("if (event.key === 'Escape') onCollapsedChange(true)");
   });
 });

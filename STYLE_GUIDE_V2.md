@@ -440,7 +440,7 @@ On desktop viewports **above 1200px**, Add Cards expands the right `SlideOutPane
 | Team stat icons (`.add-cards__team-stat-list .stat-icon-badge--md`) | Large readable generated `StatIconBadge` values; 38×38px in the context pane for Energy, Combat, Brute Force, Intelligence, and Threat Value. Grid-changing inherent abilities display their effective team value, such as Michonne Combat 8 with Rick Grimes and Alexandria present |
 | Team threat heading (`.add-cards__team-threat`) | Replaces the old `4/4` count with `Threat: {total}`. Uses shared `TOURNAMENT_LEGAL_THREAT_LIMIT` (`76`); over-cap totals render only the total number in `--color-danger`, followed by `/ 76` |
 | Location and Battleground row (`.add-cards__team-row--location`) | One structural row shows the selected Location and Battleground names joined with `&`; Location Threat Value remains right-aligned with character TV icons. Empty state reads `No Location or Battleground Set` |
-| Compact filters (`.add-cards__filters`, `.add-cards__dynamic-filters`) | Set + Hide Unusables plus type-specific DBV-style controls; no top rule in the wide context pane; `4px` top buffer above the Set row keeps the filters visually attached to the Location row without crowding its divider; filter text/icons/controls are scaled about 10% larger than the compact baseline; controls wrap within their intrinsic context-pane row without horizontal scrolling; numeric stat filters use a compact 3-column grid so character stats fit in 2 rows, with `Clear` occupying the empty sixth cell when active; Location Threat Value uses a subtly larger single-filter treatment; Type and Function icon groups stack as rows with a fixed 76px label column so first icons align vertically; no active-filter summary chips in this compact pane |
+| Compact filters (`.add-cards__filters`, `.add-cards__dynamic-filters`) | Set + Hide Unusables plus type-specific DBV-style controls; no top rule in the wide context pane; `4px` top buffer above the Set row keeps the filters visually attached to the Location row without crowding its divider; filter text/icons/controls are scaled about 10% larger than the compact baseline; controls wrap within their intrinsic context-pane row without horizontal scrolling; numeric stat filters use a compact 3-column grid so character stats fit in 2 rows, with `Clear` occupying the empty sixth cell when active; Location Threat Value uses a subtly larger single-filter treatment; Type and Function icon groups stack as rows with a fixed 76px label column so first icons align vertically; no active-filter summary chips in this compact pane. Mobile uses the shared `CatalogFilterRail` shell: the collapsed row scrolls horizontally, and its 44px chevron opens the same wrapping overlay behavior as Database. |
 | Hover preview (`.add-cards__hover-preview`) | Bottom 65%; image-only `CardImage` preview; hidden overflow so the full-card image scales to fit the pane without detail text or buttons |
 | Placeholder (`.add-cards__hover-placeholder`) | Centered muted text, `--font-size-sm`, top border separator |
 | Slide-out header/footer (`.add-cards-slideout .slideout__header`, `.add-cards-slideout .slideout__footer`) | Add Cards uses compact chrome to preserve vertical working space: header padding `var(--space-2) var(--space-5)` and footer padding `var(--space-3) var(--space-5)` |
@@ -481,7 +481,10 @@ Architecture, data flow, and serving are documented in
 ## Database Filter Rail
 
 Always-visible per-type filter rail on DBV (`/data`), inserted between `.db__types` and
-`.db__grid`. See [`DbvFilterRail.css`](frontend/src/features/database/components/DbvFilterRail.css).
+`.db__grid`. Its responsive outer shell is shared with deck-editor Add Cards through
+[`CatalogFilterRail`](frontend/src/features/database/components/CatalogFilterRail.tsx); Database-only
+filter composition remains in `DbvFilterRail`. See
+[`DbvFilterRail.css`](frontend/src/features/database/components/DbvFilterRail.css).
 
 | Element | Tokens / values |
 |---|---|
@@ -500,10 +503,10 @@ Always-visible per-type filter rail on DBV (`/data`), inserted between `.db__typ
 | Collapsed rail (`.dbv-filter-rail.is-collapsed`) | Desktop is transparent with a left chevron and `1px` rule. Mobile keeps the complete one-row rail visible and horizontally scrollable, with a chevron-down indicating that more space is available. |
 | Expanded mobile pane (`.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-filter-rail__body`) | Drops below the rail over the card results, uses `--color-bg-panel`, `--color-border-strong`, and `--shadow-panel`, wraps every available filter group, sizes sections to their content so one-row panes stay compact, and caps height with contained vertical scrolling. |
 
-**Layout:** The collapsed mobile row scrolls horizontally; expanding it turns the same controls
-into a wrapping overlay pane so all available filters can be reached without horizontal hunting.
-Mobile icon/stat tap targets are **44px** under `.layout-mobile`. Trailing chips + Clear sit at
-the rail end.
+**Layout:** On Database and Add Cards, the collapsed mobile row scrolls horizontally; expanding it
+turns the same controls into a wrapping overlay pane so all available filters can be reached without
+horizontal hunting. Mobile icon/stat tap targets are **44px** under `.layout-mobile`. Database
+trailing chips + Clear sit at the rail end; Add Cards places Set + Hide Unusables there.
 
 ## Database Saved Views
 

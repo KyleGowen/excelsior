@@ -26,4 +26,4 @@ export const COLLECTION_SWIPE_BLOCK_SELECTOR =
 
 /** Add Cards slide-out — block header, type tabs, search, filters, pagination, and footer. */
 export const ADD_CARDS_SWIPE_BLOCK_SELECTOR =
-  '.add-cards__types, .add-cards__search, .add-cards__filters, .add-cards__pagination, .add-cards__qty, .add-cards__add, .slideout__header, .slideout__footer, input, textarea, select';
+  '.add-cards__types, .add-cards__search, .add-cards__filters, .add-cards__filter-rail, .add-cards__pagination, .add-cards__qty, .add-cards__add, .slideout__header, .slideout__footer, input, textarea, select';

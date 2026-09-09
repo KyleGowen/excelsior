@@ -30,6 +30,9 @@ On desktop viewports wider than 1200px, the Add Cards drawer uses a contextual p
 - Character numeric filters should fit in two rows in the context pane. Do not allow them to overlap the preview image or require horizontal scrolling.
 - Special card filters should place Type on row 1 and Function on row 2, left-aligned with stable label/control columns. The same filters apply on `Special` and `Any-Char`.
 - Use selected control states plus a nearby Clear action. Do not add active filter pills that restate the visible selections.
+- On mobile, use the shared catalog filter rail used by Database: the collapsed row stays contained
+  and horizontally scrollable, and the chevron opens a wrapping overlay with the same controls.
+  Set and Hide Unusables live in the rail's trailing section.
 - Filter state should persist while the user remains in the same deck-editor session: closing/reopening Add Cards and switching tabs should restore search, active tab, set, hide-unusable, page/quantity state, and type-specific dynamic filters. Resetting on deck-editor exit or deck change is acceptable.
 
 ## Hover Preview
@@ -41,12 +44,13 @@ On desktop viewports wider than 1200px, the Add Cards drawer uses a contextual p
 
 ## Verification
 
-For Add Cards UI changes, verify with browser screenshots at a laptop-sized desktop viewport and a wider desktop viewport.
+For Add Cards UI changes, verify with browser screenshots at mobile, laptop-sized desktop, and wider desktop viewports.
 
 Check:
 
 - Stat icons are readable.
 - Filters wrap inside the context pane without overlap or horizontal scroll.
+- Mobile collapsed filters stay within the drawer, and the expanded pane wraps all controls.
 - Section dividers have breathing room around character rows and filters.
 - Vertical cards use the available preview area well.
 - Close/reopen and tab switching preserve filters and quantity/page state within the deck edit session.
