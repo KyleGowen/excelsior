@@ -113,5 +113,6 @@ export const api = {
     apiRequest<T>(path, signal ? { method: 'GET', signal } : { method: 'GET' }),
   post: <T>(path: string, body?: unknown) => apiRequest<T>(path, { method: 'POST', body }),
   put: <T>(path: string, body?: unknown) => apiRequest<T>(path, { method: 'PUT', body }),
+  patch: <T>(path: string, body?: unknown) => apiRequest<T>(path, { method: 'PATCH', body }),
   del: <T>(path: string, body?: unknown) => apiRequest<T>(path, { method: 'DELETE', body }),
 };

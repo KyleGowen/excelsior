@@ -40,6 +40,15 @@ to [`docs/openapi.yaml`](../openapi.yaml)) in the same PR.**
 | `SESSION_REQUIRED`            | 401  | Guest deck APIs need a session cookie.                                   | Allow cookies or call `/api/auth/...` first.                                         |
 | `VALIDATION_ERROR`            | 400  | Body/params/query failed validation (zod).                               | Fix the field listed in `errors[].field` and retry.                                  |
 | `RATE_LIMITED`                | 429  | Too many requests per window.                                            | Honor `X-RateLimit-Reset`; retry after.                                              |
+| `SAVED_DATABASE_VIEW_FORBIDDEN` | 403 | Saved Views eligibility policy denied this account.                    | Use an eligible account; the temporary policy allows ADMIN only.                    |
+| `SAVED_DATABASE_VIEW_INVALID_NAME` | 400 | Name is empty, whitespace-only, oversized, or not a string.          | Supply a trimmed display name of 1–80 characters.                                   |
+| `SAVED_DATABASE_VIEW_INVALID_STATE` | 400 | Persisted state is incomplete or has an invalid tab/filter value.     | Supply the complete documented schemaVersion 1 state.                               |
+| `SAVED_DATABASE_VIEW_UNSUPPORTED_SCHEMA_VERSION` | 400 | `schemaVersion` is not supported.                         | Send `schemaVersion: 1`.                                                            |
+| `SAVED_DATABASE_VIEW_INVALID_ID` | 400 | A path or bulk-list ID is not a UUID, or the bulk list is out of bounds. | Supply one to 50 valid UUIDs.                                                     |
+| `SAVED_DATABASE_VIEW_INVALID_METADATA` | 400 | Metadata update has no allowed fields or includes unknown fields.   | Supply `name` and/or `isPinned` only.                                                |
+| `SAVED_DATABASE_VIEW_NOT_FOUND` | 404 | ID does not exist or is not owned by the caller.                       | Verify the ID from the caller's list response.                                      |
+| `SAVED_DATABASE_VIEW_LIMIT_REACHED` | 409 | The caller already owns 50 saved views.                              | Delete a saved view before creating another.                                        |
+| `SAVED_DATABASE_VIEW_ERROR`   | 500  | Saved Views persistence failed unexpectedly.                             | Retry; report `requestId` if persistent.                                            |
 | `FEEDBACK_DELIVERY_ERROR`     | 500  | In-app feedback could not be delivered through SES.                      | Retry; use email or Discord if the failure continues.                               |
 | `CATALOG_ERROR`               | 500  | Upstream catalog query failed.                                           | Retry; report `requestId` if persistent.                                             |
 | `DBV_SUPPORT_ERROR`           | 500  | DBV support lookup failed.                                               | Retry; report `requestId` if persistent.                                             |

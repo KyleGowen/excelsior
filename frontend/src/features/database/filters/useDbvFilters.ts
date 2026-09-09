@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CatalogType } from '../../../lib/api/types';
 import { getDbvFilterConfig } from './dbvFilterConfig';
 import {
@@ -16,6 +16,13 @@ type DbvFilterStateUpdater = DbvFilterState | ((prev: DbvFilterState) => DbvFilt
 
 interface UseDbvFiltersOptions {
   persistByCatalogType?: boolean;
+}
+
+export function shouldSkipDbvFilterReset(
+  catalogType: CatalogType,
+  hydratedCatalogType: CatalogType | null,
+): boolean {
+  return hydratedCatalogType === catalogType;
 }
 
 function numericChipId(c: NumericConstraint): string {
@@ -72,6 +79,7 @@ export function useDbvFilters(catalogType: CatalogType, options: UseDbvFiltersOp
   const persistByCatalogType = options.persistByCatalogType === true;
   const [singleState, setSingleState] = useState<DbvFilterState>(EMPTY_DBV_FILTER_STATE);
   const [stateByType, setStateByType] = useState<Partial<Record<CatalogType, DbvFilterState>>>({});
+  const hydratedCatalogTypeRef = useRef<CatalogType | null>(null);
   const state = persistByCatalogType
     ? stateByType[catalogType] ?? EMPTY_DBV_FILTER_STATE
     : singleState;
@@ -94,7 +102,28 @@ export function useDbvFilters(catalogType: CatalogType, options: UseDbvFiltersOp
   );
 
   useEffect(() => {
-    if (!persistByCatalogType) setSingleState(EMPTY_DBV_FILTER_STATE);
+    if (persistByCatalogType) return;
+    if (shouldSkipDbvFilterReset(catalogType, hydratedCatalogTypeRef.current)) {
+      hydratedCatalogTypeRef.current = null;
+      return;
+    }
+    hydratedCatalogTypeRef.current = null;
+    setSingleState(EMPTY_DBV_FILTER_STATE);
+  }, [catalogType, persistByCatalogType]);
+
+  const hydrateState = useCallback((nextState: DbvFilterState, targetCatalogType: CatalogType) => {
+    const cloned = {
+      numeric: nextState.numeric.map((constraint) => ({ ...constraint })),
+      powerTypes: [...nextState.powerTypes],
+      functionIcons: [...nextState.functionIcons],
+      missionSet: nextState.missionSet,
+    };
+    if (persistByCatalogType) {
+      setStateByType((prev) => ({ ...prev, [targetCatalogType]: cloned }));
+      return;
+    }
+    hydratedCatalogTypeRef.current = targetCatalogType === catalogType ? null : targetCatalogType;
+    setSingleState(cloned);
   }, [catalogType, persistByCatalogType]);
 
   const activeCount = useMemo(() => countActiveFilters(state), [state]);
@@ -182,6 +211,7 @@ export function useDbvFilters(catalogType: CatalogType, options: UseDbvFiltersOp
     upsertNumericConstraint,
     removeNumericConstraint,
     getNumericConstraint,
+    hydrateState,
   };
 }
 

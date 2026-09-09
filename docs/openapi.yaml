@@ -45,6 +45,8 @@ tags:
     description: User deck CRUD. Accepts session cookie OR Bearer JWT.
   - name: Collections
     description: User card collections. Accepts session cookie OR Bearer JWT.
+  - name: Saved Database Views
+    description: Current-user-owned Card Database state shortcuts; temporarily ADMIN-eligible only.
   - name: Guest Decks
     description: Session-scoped in-memory decks for GUEST users.
   - name: Feedback
@@ -160,6 +162,79 @@ components:
         submitted:
           type: boolean
           enum: [true]
+    SavedDatabaseViewStateV1:
+      type: object
+      additionalProperties: false
+      required: [schemaVersion, tab, search, setFilter, filters, hasFoilFilter, hideAltsFilter]
+      properties:
+        schemaVersion: { type: integer, enum: [1] }
+        tab:
+          type: string
+          enum: [all, characters, special-cards, power-cards, locations, battlegrounds, missions, events, aspects, advanced-universe, teamwork, ally-universe, training, basic-universe]
+        search: { type: string, maxLength: 200 }
+        setFilter: { type: string, maxLength: 32 }
+        filters:
+          type: object
+          additionalProperties: false
+          required: [numeric, powerTypes, functionIcons, missionSet]
+          properties:
+            numeric:
+              type: array
+              maxItems: 8
+              items:
+                type: object
+                additionalProperties: false
+                required: [field, op, value]
+                properties:
+                  field: { type: string, maxLength: 40 }
+                  op: { type: string, enum: [eq, gte, lte] }
+                  value: { type: integer }
+            powerTypes:
+              type: array
+              maxItems: 6
+              items: { type: string, enum: [Energy, Combat, Brute Force, Intelligence, Multi-Power, Any-Power] }
+            functionIcons:
+              type: array
+              maxItems: 5
+              items: { type: string, enum: [icon_offensive_swords, icon_defensive_shield, icon_remainder_of_battle, icon_remainder_of_game, icon_astral_plane] }
+            missionSet: { type: string, maxLength: 120 }
+        hasFoilFilter: { type: boolean }
+        hideAltsFilter: { type: boolean }
+    SavedDatabaseView:
+      type: object
+      required: [id, name, viewState, isPinned, createdAt, updatedAt]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, minLength: 1, maxLength: 80 }
+        viewState: { $ref: '#/components/schemas/SavedDatabaseViewStateV1' }
+        isPinned: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    SavedDatabaseViewList:
+      type: object
+      required: [views, count, max]
+      properties:
+        views:
+          type: array
+          maxItems: 50
+          items: { $ref: '#/components/schemas/SavedDatabaseView' }
+        count: { type: integer, minimum: 0, maximum: 50 }
+        max: { type: integer, enum: [50] }
+    SavedDatabaseViewMutation:
+      type: object
+      required: [view, count, max]
+      properties:
+        view: { $ref: '#/components/schemas/SavedDatabaseView' }
+        count: { type: integer, minimum: 0, maximum: 50 }
+        max: { type: integer, enum: [50] }
+    SavedDatabaseViewDeleteResult:
+      type: object
+      required: [deletedCount, notFoundCount, count, max]
+      properties:
+        deletedCount: { type: integer, minimum: 0, maximum: 50 }
+        notFoundCount: { type: integer, minimum: 0, maximum: 50 }
+        count: { type: integer, minimum: 0, maximum: 50 }
+        max: { type: integer, enum: [50] }
     CatalogErrataItem:
       type: object
       required: [id, source_section, entry_title, entry_text, source_url]
@@ -868,6 +943,110 @@ paths:
       tags: [Collections]
       summary: Remove all copies of a card.
       responses: { '200': { description: OK } }
+  /api/v1/saved-database-views:
+    get:
+      tags: [Saved Database Views]
+      summary: List the current user's saved database views.
+      responses:
+        '200':
+          description: Pinned-first deterministic list and quota.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - type: object
+                    properties: { data: { $ref: '#/components/schemas/SavedDatabaseViewList' } }
+        '401': { description: Unauthenticated }
+        '403': { description: Saved Views eligibility denied }
+    post:
+      tags: [Saved Database Views]
+      summary: Save the current database state as a new unpinned view.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [name, viewState]
+              properties:
+                name: { type: string, minLength: 1, maxLength: 80 }
+                viewState: { $ref: '#/components/schemas/SavedDatabaseViewStateV1' }
+      responses:
+        '201':
+          description: Created.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - type: object
+                    properties: { data: { $ref: '#/components/schemas/SavedDatabaseViewMutation' } }
+        '400': { description: Invalid name or state }
+        '403': { description: Saved Views eligibility denied }
+        '409': { description: 50-view limit reached }
+  /api/v1/saved-database-views/bulk-delete:
+    post:
+      tags: [Saved Database Views]
+      summary: Atomically delete selected current-user-owned views.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [ids]
+              properties:
+                ids:
+                  type: array
+                  minItems: 1
+                  maxItems: 50
+                  items: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Deleted and non-enumerating not-found counts.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - type: object
+                    properties: { data: { $ref: '#/components/schemas/SavedDatabaseViewDeleteResult' } }
+        '400': { description: Invalid ID list }
+        '403': { description: Saved Views eligibility denied }
+  /api/v1/saved-database-views/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string, format: uuid }
+    patch:
+      tags: [Saved Database Views]
+      summary: Rename and/or pin a current-user-owned view.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                name: { type: string, minLength: 1, maxLength: 80 }
+                isPinned: { type: boolean }
+      responses:
+        '200': { description: Updated metadata and quota }
+        '400': { description: Invalid metadata }
+        '403': { description: Saved Views eligibility denied }
+        '404': { description: Not found or not owned }
+    delete:
+      tags: [Saved Database Views]
+      summary: Delete one current-user-owned view.
+      responses:
+        '200': { description: Deleted and current quota }
+        '403': { description: Saved Views eligibility denied }
+        '404': { description: Not found or not owned }
   /api/v1/decks/validate:
     post:
       tags: [Decks]

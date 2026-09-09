@@ -11,6 +11,7 @@ export interface CheckboxProps {
   className?: string;
   labelPosition?: 'start' | 'end';
   'aria-label'?: string;
+  hideLabel?: boolean;
 }
 
 export function Checkbox({
@@ -22,6 +23,7 @@ export function Checkbox({
   className,
   labelPosition = 'start',
   'aria-label': ariaLabel,
+  hideLabel = false,
 }: CheckboxProps) {
   const labelClass = [
     'checkbox',
@@ -50,7 +52,7 @@ export function Checkbox({
     </>
   );
 
-  const labelText = <span className="checkbox__label">{label}</span>;
+  const labelText = <span className={hideLabel ? 'sr-only' : 'checkbox__label'}>{label}</span>;
 
   return (
     <label className={labelClass}>

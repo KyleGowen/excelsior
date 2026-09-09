@@ -36,6 +36,9 @@ import { AwsCostLedgerRepository } from '../repository/AwsCostLedgerRepository';
 import { UserAccountService } from '../api/services/userAccountService';
 import { CommunityService } from '../api/services/communityService';
 import { FeedbackService } from '../api/services/feedbackService';
+import { PostgreSQLSavedDatabaseViewRepository } from '../database/savedDatabaseViewRepository';
+import { SavedDatabaseViewService } from '../api/services/savedDatabaseViewService';
+import { AdminSavedDatabaseViewAccessPolicy } from '../api/services/savedDatabaseViewAccessPolicy';
 import { GUEST_USER_ID } from '../constants/guestUser';
 import { TOURNAMENT_DECKS_USER_ID } from '../constants/tournamentDecksUser';
 import { registerApiV1Routes } from '../api/http/registerApiV1Routes';
@@ -119,6 +122,9 @@ const communityService = new CommunityService(deckRepository, userRepository, [
   GUEST_USER_ID,
   TOURNAMENT_DECKS_USER_ID
 ]);
+const savedDatabaseViewRepository = new PostgreSQLSavedDatabaseViewRepository(dataSource.getPool());
+const savedDatabaseViewService = new SavedDatabaseViewService(savedDatabaseViewRepository);
+const savedDatabaseViewAccessPolicy = new AdminSavedDatabaseViewAccessPolicy();
 
 // Test auth: session cookie or x-test-user-id header; otherwise 401 (so routes that require auth still get 401 when unauthenticated)
 const authenticateUser = authService.createAuthMiddleware();
@@ -246,7 +252,9 @@ registerApiV1Routes(app, {
   bizOpsDashboardService,
   userAccountService,
   communityService,
-  feedbackService
+  feedbackService,
+  savedDatabaseViewService,
+  savedDatabaseViewAccessPolicy
 });
 
 registerLegacyDeckReadCompatRoutes(app, {

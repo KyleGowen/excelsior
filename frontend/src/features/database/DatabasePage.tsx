@@ -41,12 +41,22 @@ import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
 import { stepCyclicalIndex } from '../../lib/layout/cyclicalIndex';
 import { DBV_SWIPE_BLOCK_SELECTOR, useHorizontalSwipe } from '../../lib/layout/useHorizontalSwipe';
 import { useCardDetailHistory } from '../../lib/layout/useCardDetailHistory';
-import { IconSearch, IconPlus, IconLock, IconDatabase } from '../../components/icons';
+import { IconSearch, IconPlus, IconLock, IconDatabase, IconBookmark } from '../../components/icons';
 import { clearProgressiveImageSession } from '../../lib/images/progressiveImageLoad';
 import type { CatalogCard, CatalogType, CollectionCardType } from '../../lib/api/types';
 import { DbvFilterRail } from './components/DbvFilterRail';
 import { cardMatchesDbvFilters } from './filters/dbvFilterPredicates';
 import { useDbvFilters } from './filters/useDbvFilters';
+import { fetchSavedDatabaseViews, type SavedDatabaseView } from '../../lib/api/savedDatabaseViews';
+import {
+  SAVED_DATABASE_VIEWS_QUERY_KEY,
+  SavedDatabaseViewsPanel,
+  type SavedViewCreateRequest,
+} from './components/SavedDatabaseViewsPanel';
+import {
+  captureSavedDatabaseViewState,
+  normalizeSavedDatabaseViewState,
+} from './savedDatabaseViewState';
 import './DatabasePage.css';
 
 const PAGE_SIZE_GRID = 24;
@@ -63,6 +73,7 @@ function useDebounced<T>(value: T, delay = 250): T {
 
 export default function DatabasePage() {
   const { isMobile } = useLayoutMode();
+  const { isAdmin } = useAuth();
   const queryClient = useQueryClient();
   const dbRef = useRef<HTMLDivElement>(null);
   const typeTabsRef = useRef<HTMLDivElement>(null);
@@ -75,6 +86,11 @@ export default function DatabasePage() {
   const [filterRailCollapsed, setFilterRailCollapsed] = useState(false);
   const [hasFoilFilter, setHasFoilFilter] = useState(false);
   const [hideAltsFilter, setHideAltsFilter] = useState(true);
+  const [savedViewsOpen, setSavedViewsOpen] = useState(false);
+  const [savedViewCreateRequest, setSavedViewCreateRequest] = useState<SavedViewCreateRequest | null>(null);
+  const [activeSavedViewId, setActiveSavedViewId] = useState<string | null>(null);
+  const [recallNotice, setRecallNotice] = useState<string | null>(null);
+  const savedViewRequestIdRef = useRef(0);
 
   const { close: closeCardDetail } = useCardDetailHistory(Boolean(selected), () => setSelected(null));
 
@@ -86,6 +102,13 @@ export default function DatabasePage() {
 
   const debouncedSearch = useDebounced(search);
   const dbvFilters = useDbvFilters(isAllTab ? 'characters' : tab);
+
+  const savedViewsQuery = useQuery({
+    queryKey: SAVED_DATABASE_VIEWS_QUERY_KEY,
+    queryFn: fetchSavedDatabaseViews,
+    enabled: isAdmin,
+    staleTime: 60 * 1000,
+  });
 
   const catalogQuery = useQuery({
     queryKey: ['catalog', tab],
@@ -262,6 +285,66 @@ export default function DatabasePage() {
     setSelectedCatalogType(catalogType);
   };
 
+  const currentSavedViewState = useMemo(() => captureSavedDatabaseViewState({
+    tab,
+    search,
+    setFilter,
+    filters: dbvFilters.state,
+    hasFoilFilter,
+    hideAltsFilter,
+  }), [tab, search, setFilter, dbvFilters.state, hasFoilFilter, hideAltsFilter]);
+
+  const startSavedViewDraft = () => {
+    if (!savedViewsQuery.data || savedViewsQuery.data.count >= savedViewsQuery.data.max) return;
+    savedViewRequestIdRef.current += 1;
+    setSavedViewCreateRequest({ id: savedViewRequestIdRef.current, viewState: currentSavedViewState });
+    setSavedViewsOpen(true);
+  };
+
+  const recallSavedView = async (view: SavedDatabaseView) => {
+    const rawState = view.viewState;
+    const sets = setsQuery.data ?? await queryClient.ensureQueryData({
+      queryKey: ['sets'],
+      queryFn: () => fetchSets(),
+      staleTime: 60 * 60 * 1000,
+    }) ?? [];
+    let targetCards: CatalogCard[] = [];
+    if (rawState.tab === 'missions' || rawState.tab === 'events') {
+      const targetType = rawState.tab;
+      targetCards = await queryClient.ensureQueryData({
+        queryKey: ['catalog', targetType],
+        queryFn: () => fetchCatalog(targetType),
+        staleTime: 30 * 60 * 1000,
+      });
+    }
+    const normalized = normalizeSavedDatabaseViewState(
+      rawState,
+      sets.map((set) => set.code),
+      targetCards,
+    );
+    if (!normalized) throw new Error('This saved view uses an unsupported state format.');
+    const targetCatalogType = normalized.state.tab === 'all' ? 'characters' : normalized.state.tab;
+    dbvFilters.hydrateState(normalized.state.filters, targetCatalogType);
+    setTab(normalized.state.tab);
+    setSearch(normalized.state.search);
+    setSetFilter(normalized.state.setFilter);
+    setHasFoilFilter(normalized.state.hasFoilFilter);
+    setHideAltsFilter(normalized.state.hideAltsFilter);
+    setPage(1);
+    if (selected) closeCardDetail(); else setSelected(null);
+    if (normalized.state.tab !== 'all') setSelectedCatalogType(normalized.state.tab);
+    setActiveSavedViewId(view.id);
+    setRecallNotice(normalized.notices.length > 0
+      ? `Recalled “${view.name}”. ${normalized.notices.join(' ')}`
+      : `Recalled “${view.name}”.`);
+    if (isMobile) setSavedViewsOpen(false);
+  };
+
+  const savedViewsAtLimit = Boolean(
+    savedViewsQuery.data && savedViewsQuery.data.count >= savedViewsQuery.data.max,
+  );
+  const savedViewsTooltipId = 'saved-views-limit-tooltip';
+
   return (
     <div className="db" ref={dbRef}>
       <div className="db__inner">
@@ -292,8 +375,42 @@ export default function DatabasePage() {
                 ))}
               </select>
             </div>
+            {isAdmin ? (
+              <div className="db__saved-controls">
+                <span
+                  className={`db__save-view-wrap${savedViewsAtLimit ? ' is-disabled' : ''}`}
+                  tabIndex={savedViewsAtLimit ? 0 : undefined}
+                  aria-describedby={savedViewsAtLimit ? savedViewsTooltipId : undefined}
+                >
+                  <button
+                    type="button"
+                    className="db__saved-view-btn"
+                    onClick={startSavedViewDraft}
+                    disabled={savedViewsAtLimit || savedViewsQuery.isLoading || savedViewsQuery.isError}
+                  >
+                    <IconBookmark /> Save this view
+                  </button>
+                  {savedViewsAtLimit ? (
+                    <span id={savedViewsTooltipId} className="db__save-view-tooltip" role="tooltip">
+                      This account has reached the {savedViewsQuery.data?.max} saved-view limit.
+                    </span>
+                  ) : null}
+                </span>
+                <button
+                  type="button"
+                  className="db__saved-view-btn"
+                  aria-expanded={savedViewsOpen}
+                  aria-controls="saved-database-views-panel"
+                  onClick={() => setSavedViewsOpen((open) => !open)}
+                >
+                  <IconDatabase /> Saved views ({savedViewsQuery.data?.count ?? 0})
+                </button>
+              </div>
+            ) : null}
           </div>
         </header>
+
+        {recallNotice ? <div className="db__recall-notice" role="status">{recallNotice}</div> : null}
 
         <div className="db__types" ref={typeTabsRef} role="tablist" aria-label="Card types">
           <button
@@ -374,6 +491,20 @@ export default function DatabasePage() {
           </>
         )}
       </div>
+
+      {isAdmin ? (
+        <SavedDatabaseViewsPanel
+          open={savedViewsOpen}
+          isMobile={isMobile}
+          onClose={() => setSavedViewsOpen(false)}
+          data={savedViewsQuery.data}
+          isLoading={savedViewsQuery.isLoading}
+          loadError={savedViewsQuery.isError}
+          createRequest={savedViewCreateRequest}
+          activeViewId={activeSavedViewId}
+          onRecall={recallSavedView}
+        />
+      ) : null}
 
       <CardDetailPanel
         card={selected}

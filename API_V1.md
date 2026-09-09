@@ -37,6 +37,7 @@ Versioned JSON API for Excelsior. **Legacy** routes remain documented in [API_DO
 | `POST /api/v1/feedback` | ✓ | — | Any authenticated role; 5 submissions/minute |
 | `/api/v1/guest/decks*` | ✓ (GUEST only) | ✗ | GUEST role required; wrong role→403 |
 | `/api/v1/collections/me*` | ✓ | ✗ | USER/ADMIN; GUEST→401 (no collection) |
+| `/api/v1/saved-database-views*` | ✓ | ✓ | Current-user-owned records; temporarily ADMIN-only via centralized eligibility policy |
 | `/api/v1/admin/*` | ✓ | — | ADMIN role required; other roles→403 |
 
 Bearer support on decks/catalog can be disabled server-side via `DISABLE_BEARER_DECKS_COLLECTIONS=1`. For a complete guide including token lifetimes, cookie names, and the GUEST session flow, see [docs/current/FRONTEND_AUTH_AND_SESSION.md](docs/current/FRONTEND_AUTH_AND_SESSION.md).
@@ -66,10 +67,12 @@ All v1 JSON responses use:
 | Code | Use                           |
 | ---- | ----------------------------- |
 | 200  | Success                       |
+| 201  | Resource created              |
 | 202  | Accepted for delivery          |
 | 400  | Validation / bad request      |
 | 401  | Missing or invalid auth       |
 | 403  | Authenticated but not allowed |
+| 409  | Resource limit/conflict       |
 | 429  | Rate limited                  |
 | 500  | Server error                  |
 
@@ -92,12 +95,13 @@ All v1 JSON responses use:
 12. [Community, favorites, and public profiles](#community-favorites-and-public-profiles)
 13. [Guest decks (session memory)](#guest-decks-session-memory)
 14. [Collections (current user)](#collections-current-user)
-15. [Admin](#admin)
-16. [Image URL contract](#image-url-contract)
-17. [Caching & conditional GET](#caching--conditional-get)
-18. [Error catalog](#error-catalog)
-19. [Changelog](#changelog)
-20. [Deprecation policy](#deprecation-policy)
+15. [Saved database views](#saved-database-views)
+16. [Admin](#admin)
+17. [Image URL contract](#image-url-contract)
+18. [Caching & conditional GET](#caching--conditional-get)
+19. [Error catalog](#error-catalog)
+20. [Changelog](#changelog)
+21. [Deprecation policy](#deprecation-policy)
 
 ---
 
@@ -1237,6 +1241,86 @@ must not reuse an older response after a card mutation or share one between sess
 **Response 400 / 404 / 500:** `**VALIDATION_ERROR`**, `**COLLECTION_CARD_NOT_IN_COLLECTION`**, `**COLLECTION_CARD_DELETE_ERROR**`.
 
 **Implementation (cards):** `[CollectionService](src/services/collectionService.ts)` · HTTP `[collections.http.ts](src/api/http/collections.http.ts)` · row type `[CollectionCardRowV1Dto](src/api/dto/v1/CollectionCardRowV1Dto.ts)`
+
+---
+
+## Saved database views
+
+Personal shortcuts for restoring Card Database tabs and filters. Records are always scoped to the authenticated user's ID; no request accepts a `userId`. During the temporary launch phase, the centralized Saved Views access policy allows only the `ADMIN` role. This role check is an eligibility boundary, not an administrator-manages-users-data contract. All responses use `Cache-Control: private, max-age=0, must-revalidate` and `Vary: Cookie`.
+
+The server enforces a maximum of **50** records per user. Names are trimmed, non-empty display labels of at most **80** characters; duplicate names are valid. Create serializes on the owning user row before counting, so concurrent requests cannot exceed the quota.
+
+### Persisted V1 state
+
+`viewState` is a strict, versioned object. Unknown fields, unsupported tabs/operators, tab-incompatible filter fields, and unsupported schema versions are rejected.
+
+```json
+{
+  "schemaVersion": 1,
+  "tab": "characters",
+  "search": "invincible",
+  "setFilter": "SKY",
+  "filters": {
+    "numeric": [{ "field": "energy", "op": "gte", "value": 5 }],
+    "powerTypes": [],
+    "functionIcons": [],
+    "missionSet": ""
+  },
+  "hasFoilFilter": true,
+  "hideAltsFilter": false
+}
+```
+
+`tab` accepts `all` and every Card Database catalog tab. Numeric operators are `eq`, `gte`, and `lte`. The state deliberately excludes pagination, selected-card/detail state, filter-rail presentation state, and Saved Views panel presentation state.
+
+### `GET /api/v1/saved-database-views`
+
+Lists only the caller's records. Pinned records sort first; each section sorts by `createdAt DESC`, then ID descending.
+
+**Response 200** (`data`):
+
+```json
+{
+  "views": [{
+    "id": "uuid",
+    "name": "Skybound characters",
+    "viewState": { "schemaVersion": 1, "tab": "characters", "search": "", "setFilter": "SKY", "filters": { "numeric": [], "powerTypes": [], "functionIcons": [], "missionSet": "" }, "hasFoilFilter": false, "hideAltsFilter": true },
+    "isPinned": true,
+    "createdAt": "2026-09-09T12:00:00.000Z",
+    "updatedAt": "2026-09-09T12:00:00.000Z"
+  }],
+  "count": 1,
+  "max": 50
+}
+```
+
+### `POST /api/v1/saved-database-views`
+
+**Body:** `{ "name": "...", "viewState": { ...complete V1 state... } }`.
+
+**Response 201:** `{ "view": <created record>, "count": <current count>, "max": 50 }`. New records are unpinned.
+
+### `PATCH /api/v1/saved-database-views/:id`
+
+**Body:** one or both of `{ "name": "...", "isPinned": true }`. No state-update field is accepted. Metadata changes preserve `createdAt` and advance `updatedAt`.
+
+**Response 200:** `{ "view": <updated record>, "count", "max" }`.
+
+### `DELETE /api/v1/saved-database-views/:id`
+
+Deletes one caller-owned record.
+
+**Response 200:** `{ "deletedCount": 1, "notFoundCount": 0, "count", "max" }`.
+
+### `POST /api/v1/saved-database-views/bulk-delete`
+
+**Body:** `{ "ids": ["uuid", "uuid"] }`, one to 50 IDs. IDs are de-duplicated. The atomic delete remains caller-scoped and returns counts without identifying another user's records.
+
+**Response 200:** `{ "deletedCount", "notFoundCount", "count", "max" }`.
+
+**Shared errors:** 401 `UNAUTHORIZED`; 403 `SAVED_DATABASE_VIEW_FORBIDDEN`; 400 `SAVED_DATABASE_VIEW_INVALID_NAME`, `SAVED_DATABASE_VIEW_INVALID_STATE`, `SAVED_DATABASE_VIEW_UNSUPPORTED_SCHEMA_VERSION`, `SAVED_DATABASE_VIEW_INVALID_ID`, or `SAVED_DATABASE_VIEW_INVALID_METADATA`; 404 `SAVED_DATABASE_VIEW_NOT_FOUND`; 409 `SAVED_DATABASE_VIEW_LIMIT_REACHED`; 500 `SAVED_DATABASE_VIEW_ERROR`.
+
+**Implementation:** HTTP [`saved-database-views.http.ts`](src/api/http/saved-database-views.http.ts) · service [`savedDatabaseViewService.ts`](src/api/services/savedDatabaseViewService.ts) · DTO [`SavedDatabaseViewDto.ts`](src/api/dto/v1/SavedDatabaseViewDto.ts)
 
 ---
 

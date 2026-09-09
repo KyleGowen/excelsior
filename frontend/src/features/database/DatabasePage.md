@@ -53,6 +53,18 @@ Browse, search, filter, and sort the full modern OverPower catalog.
   - **All** tab is intentionally unchanged: set → foil tier → set_number → name
     (`compareAllCatalogCards`). Collection sorting is also unaffected.
 
+## Saved Views
+
+- Temporarily rendered only for authenticated `ADMIN` users. The API independently applies the same rule through the replaceable Saved Views access policy; `USER` and `GUEST` retain the complete Card Database without Saved Views calls or restricted card information.
+- **Save this view** captures the active tab (including All), raw search text, Set, the complete advanced filter state, Has Foil, and Hide Alts in schema version 1. It deliberately excludes page, selected card/detail, filter-rail collapse, and sidebar state.
+- Naming is inline at the top of the unpinned list, never modal. Names are trimmed, may repeat, and are limited to 80 characters. Enter/check confirms, Escape/cancel removes the local draft, and failed saves preserve the typed name.
+- Recalling restores the snapshot, starts on page 1, closes Card Detail, leaves the desktop sidebar open, and closes the mobile drawer. An unavailable set, mission set, or config-driven filter is cleared to its neutral value with a non-destructive status notice.
+- The highlighted recalled row is informational only. Later filter edits do not update it, and **Save this view** always creates another row.
+- Pinned and unpinned sections sort independently by creation time newest-first, with ID as the stable tie-breaker. Rename and pin update metadata only.
+- Manage mode provides accessible checkboxes, select-all/clear, count, cancel, and confirmed bulk deletion. Single delete is also confirmed.
+- At the server-provided 50-record limit, Save is disabled with a focus/hover tooltip. Successful deletion immediately reopens capacity; `SAVED_DATABASE_VIEW_LIMIT_REACHED` remains authoritative for stale tabs and races.
+- Desktop uses a 340px docked, non-modal right sidebar that reduces the catalog width. Mobile uses the existing 900px `useLayoutMode` boundary for a full-width modal drawer with backdrop/Escape close, focus containment/restoration, safe-area padding, scrolling, and bottom-nav clearance.
+
 ## All tab
 - Merges all 12 catalog slugs (`useAllCatalogCards`); foil dedup per slug like per-type tabs.
 - Renders `CatalogAllList` (spread grid rows: `#`, name, type/set badges; 48 per page). Row

@@ -203,6 +203,24 @@ export const IconStar = (p: IconProps) => (
   </Svg>
 );
 
+export const IconBookmark = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-4-6 4V4Z" />
+  </Svg>
+);
+
+export const IconMoreHorizontal = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="5" cy="12" r="1" fill="currentColor" stroke="none" />
+    <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
+    <circle cx="19" cy="12" r="1" fill="currentColor" stroke="none" />
+  </Svg>
+);
+
+export const IconPin = (p: IconProps) => (
+  <Svg {...p}><path d="m12 17-5 5" /><path d="m5 12 7 7" /><path d="m14 4 6 6-4 1-5 5-3-3 5-5Z" /></Svg>
+);
+
 /** Heart icon. Pass `filled` to render a solid heart (favorited state). */
 export const IconHeart = ({ filled, ...p }: IconProps & { filled?: boolean }) => (
   <Svg {...p} fill={filled ? 'currentColor' : 'none'}>

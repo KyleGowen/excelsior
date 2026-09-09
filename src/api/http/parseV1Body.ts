@@ -1,5 +1,5 @@
 import type { Response } from 'express';
-import type { ZodTypeAny, infer as ZodInfer } from 'zod';
+import type { ZodIssue, ZodTypeAny, infer as ZodInfer } from 'zod';
 import { sendV1Json, type V1ErrorBody } from './v1Envelope';
 
 /**
@@ -18,10 +18,15 @@ export interface ParsedBody<T> {
   value: T;
 }
 
+export interface ParseV1BodyOptions {
+  issueCode?: string | ((issue: ZodIssue) => string);
+}
+
 export function parseV1Body<S extends ZodTypeAny>(
   schema: S,
   body: unknown,
-  res: Response
+  res: Response,
+  options: ParseV1BodyOptions = {}
 ): ParsedBody<ZodInfer<S>> | null {
   if (process.env.DISABLE_ZOD_V1 === '1') {
     console.warn('DISABLE_ZOD_V1=1: skipping zod body validation');
@@ -31,7 +36,10 @@ export function parseV1Body<S extends ZodTypeAny>(
   const result = schema.safeParse(body);
   if (!result.success) {
     const errors: V1ErrorBody[] = result.error.issues.map((issue) => {
-      const err: V1ErrorBody = { code: 'VALIDATION_ERROR', message: issue.message };
+      const code = typeof options.issueCode === 'function'
+        ? options.issueCode(issue)
+        : options.issueCode ?? 'VALIDATION_ERROR';
+      const err: V1ErrorBody = { code, message: issue.message };
       if (issue.path.length > 0) {
         err.field = String(issue.path.join('.'));
       }

@@ -5,6 +5,10 @@ One line per change. Newest first. Keep this in sync with
 
 ## Unreleased — Phase 3 (scale + docs)
 
+- Added current-user-owned Saved Database Views under `/api/v1/saved-database-views`:
+  strict versioned state, list/create/rename/pin/delete/bulk-delete, private
+  cache headers, non-enumerating ownership failures, and a transactionally enforced
+  50-view cap. Eligibility is temporarily ADMIN-only behind a replaceable centralized policy.
 - Expanded the User Analytics Pacific-hour distribution with an all-known-history
   total and per-hour counts alongside the rolling 24-hour values. The paired radar
   series use the same aggregate, identifier-free telemetry table; the historical

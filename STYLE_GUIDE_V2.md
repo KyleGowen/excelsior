@@ -24,6 +24,7 @@ guide describes the dark, neon, card-game-companion theme derived from the mocks
 12. [Database Filter Rail](#database-filter-rail)
 13. [Home Recent Updates](#home-recent-updates)
 14. [Home — Regionals stats rail](#home--regionals-stats-rail)
+15. [Database Saved Views](#database-saved-views)
 
 ---
 
@@ -492,6 +493,24 @@ Always-visible per-type filter rail on DBV (`/data`), inserted between `.db__typ
 
 **Layout:** Controls scroll horizontally on narrow viewports; mobile icon/stat tap targets
 are **44px** under `.layout-mobile`. Trailing chips + Clear sit at the rail end.
+
+## Database Saved Views
+
+Saved Views adds a quiet navy workflow surface to `/data` without restricting any catalog information.
+
+| Element | Visual and behavior contract |
+|---|---|
+| Header actions (`.db__saved-controls`) | Accent-outline **Save this view** and **Saved views (N)** controls beside search/Set; wrap as a clean full-width row on mobile, never horizontal-overflow the header |
+| Desktop panel (`.saved-views__panel--desktop`) | 340px docked right sidebar, `--color-bg-panel`, accent left border, no scrim, no modal semantics/focus trap; reflows the flexible database grid |
+| Mobile drawer (`.saved-views__panel--mobile`) | Full viewport width at `useLayoutMode` mobile, `--color-bg-scrim` backdrop, `--z-modal`, Escape/backdrop close, contained/restored focus, vertical scroll, safe-area top/bottom padding, and fixed-bottom-nav clearance |
+| Section hierarchy | Optional muted uppercase **Pinned** heading first, then **Views**; both sort newest-created first. Rows are full-width `--color-bg-surface` with restrained hover and an accent-soft active-recall state |
+| Inline draft/rename (`.saved-views__row--editor`) | Row-level input on `--color-bg-input`, accent border, compact check/cancel buttons, inline danger validation; draft sits at the top of the unpinned list |
+| Row actions | Quiet database icon, ellipsized name, and 36px desktop/44px mobile three-dot menu for Rename, Pin/Unpin, and confirmed Delete |
+| Bulk management | Explicit Manage mode with accessible checkboxes, select-all/clear, selected count, Cancel, and danger-colored **Delete selected** confirmation |
+| Quota disabled | Save uses `--color-text-dim`/`--color-border`, `cursor: not-allowed`, plus a separate focusable wrapper exposing a custom hover/focus tooltip; never rely only on `title` |
+| Empty state | Bookmark icon and concise workflow guidance; no marketing, pricing, card art, or implication that database information is restricted |
+
+Motion uses `--dur-med`/`--ease-out` for mobile entry and is removed under `prefers-reduced-motion`. Desktop is static because it is part of the page layout rather than an overlay.
 
 ## Home Recent Updates
 

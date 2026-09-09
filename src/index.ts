@@ -35,6 +35,9 @@ import { UserAccountService } from './api/services/userAccountService';
 import { CommunityService } from './api/services/communityService';
 import { FeedbackService } from './api/services/feedbackService';
 import { SesFeedbackEmailSender } from './api/services/sesFeedbackEmailSender';
+import { PostgreSQLSavedDatabaseViewRepository } from './database/savedDatabaseViewRepository';
+import { SavedDatabaseViewService } from './api/services/savedDatabaseViewService';
+import { AdminSavedDatabaseViewAccessPolicy } from './api/services/savedDatabaseViewAccessPolicy';
 import { GUEST_USER_ID } from './constants/guestUser';
 import { TOURNAMENT_DECKS_USER_ID } from './constants/tournamentDecksUser';
 import { requireAdmin, blockGuestMutation, requireDeckOwner } from './middleware/authorizationHelpers';
@@ -138,6 +141,9 @@ const adminService = new AdminService({
 
 const userAccountService = new UserAccountService(userRepository);
 const feedbackService = new FeedbackService(new SesFeedbackEmailSender());
+const savedDatabaseViewRepository = new PostgreSQLSavedDatabaseViewRepository(dataSource.getPool());
+const savedDatabaseViewService = new SavedDatabaseViewService(savedDatabaseViewRepository);
+const savedDatabaseViewAccessPolicy = new AdminSavedDatabaseViewAccessPolicy();
 
 // Community feed excludes internal/curated accounts (guest + tournament).
 const communityService = new CommunityService(deckRepository, userRepository, [
@@ -324,6 +330,8 @@ registerApiV1Routes(app, {
   userAccountService,
   communityService,
   feedbackService,
+  savedDatabaseViewService,
+  savedDatabaseViewAccessPolicy,
   pool: dataSource.getPool()
 });
 

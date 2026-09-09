@@ -70,8 +70,9 @@ Any change to a **published HTTP contract** must update the right doc(s) in the 
 5. `decks.http.ts` — user decks: list (`GET /decks`, `DeckListService`); community pool (`GET /decks/community`, `community_decks` user, `updated_at` desc); tournament pool (`GET /decks/tournament`, `tournament_decks` user, `updated_at` desc); aggregate stats (`GET /decks/stats`, `DeckStatsService`); create/validate (`DeckWriteService`); single deck read/update/delete and `/decks/:id/full` (`DeckDetailService`, `UpdateDeckRequestBody`); deck cards (`GET`/`POST`/`PUT`/`DELETE /decks/:id/cards`, `DeckCardsService`, `DeckCardsPostBody` / `DeckCardsPutBody`); UI preferences (`/decks/:id/ui-preferences`, `DeckUIPreferencesService`). Session auth (same `authenticateUser` as other DB deck routes). Register `/decks/community` and `/decks/tournament` **before** `/decks/:id`.
 6. `guest-decks.http.ts` — **`/guest/decks...`** (`GuestDeckService`, GUEST + `sessionId` cookie).
 7. `collections.http.ts` — **`/collections/me...`** (`CollectionService`, session auth).
-8. `admin.http.ts` — **`/admin/users`**, **`/admin/user-analytics`**, **`/admin/biz-ops-dashboard`**, **`/admin/debug/*`**, **`/admin/database/status`** (`AdminService` / `AdminBizOpsDashboardService`, session + **ADMIN**).
-9. `users.http.ts` — **`/users/change-email`**, **`/users/change-password`** (`UserAccountService`, session + USER/ADMIN).
+8. `saved-database-views.http.ts` — personal **`/saved-database-views...`** CRUD and bulk delete (`SavedDatabaseViewService`, session-or-Bearer auth, centralized temporary ADMIN eligibility policy). This is intentionally outside `/admin` because records are always current-user-owned; the policy is replaceable by the Supporter entitlement service.
+9. `admin.http.ts` — **`/admin/users`**, **`/admin/user-analytics`**, **`/admin/biz-ops-dashboard`**, **`/admin/debug/*`**, **`/admin/database/status`** (`AdminService` / `AdminBizOpsDashboardService`, session + **ADMIN**).
+10. `users.http.ts` — **`/users/change-email`**, **`/users/change-password`** (`UserAccountService`, session + USER/ADMIN).
 
 Register via **`registerApiV1Routes`** in `registerApiV1Routes.ts`.
 
