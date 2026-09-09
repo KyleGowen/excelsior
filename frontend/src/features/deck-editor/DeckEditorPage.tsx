@@ -1127,7 +1127,7 @@ export default function DeckEditorPage() {
 
               <div className="deck-editor__meta">
                 <span className="deck-editor__chip">{totalCards} cards</span>
-                <LegalityErrorsPopover errors={legalityErrors} inline={isMobile}>
+                <LegalityErrorsPopover errors={legalityErrors} pressAndHold={isMobile}>
                   {isOwner ? (
                     <button
                       type="button"

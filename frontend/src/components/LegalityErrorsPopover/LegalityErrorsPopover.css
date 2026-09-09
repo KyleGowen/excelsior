@@ -24,12 +24,40 @@
   transition: opacity 0.12s ease, visibility 0.12s ease;
 }
 
-.legality-errors-popover:hover .legality-errors-popover__panel,
-.legality-errors-popover:focus-within .legality-errors-popover__panel,
-.legality-errors-popover--open .legality-errors-popover__panel {
+.legality-errors-popover:not(.legality-errors-popover--press-and-hold):hover .legality-errors-popover__panel,
+.legality-errors-popover:not(.legality-errors-popover--press-and-hold):focus-within .legality-errors-popover__panel,
+.legality-errors-popover--open .legality-errors-popover__panel,
+.legality-errors-popover__panel--open {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+}
+
+.legality-errors-popover__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.legality-errors-popover__close {
+  flex-shrink: 0;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  color: var(--color-accent-bright);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.legality-errors-popover__close:hover,
+.legality-errors-popover__close:focus-visible {
+  background: var(--color-accent-soft);
 }
 
 .legality-errors-popover__list {
@@ -50,23 +78,12 @@
   margin-bottom: 0;
 }
 
-/* Mobile: always-visible list under the badge (hover tooltips are unreliable). */
-.legality-errors-popover--inline {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-1);
-}
-
-.legality-errors-popover--inline .legality-errors-popover__panel {
-  display: none;
-}
-
-.legality-errors-popover__inline-panel {
-  width: 100%;
-  max-width: min(100%, 520px);
-}
-
-.legality-errors-popover--inline .legality-errors-popover__list {
-  padding-left: 1rem;
+/* Mobile: the portaled panel is measured from and anchored below the trigger pill. */
+.legality-errors-popover__panel--press-and-hold {
+  position: fixed;
+  inset: auto;
+  min-width: 0;
+  max-width: none;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
 }

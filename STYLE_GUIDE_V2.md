@@ -270,6 +270,11 @@ OverPower stat colors (also exposed as `.stat-energy` etc. utility classes):
   `<button>` (`.deck-editor__legality-toggle`, `cursor: pointer`). Clicking a Legal/Not-Legal chip
   toggles the deck to the yellow **Limited** chip (skips legality validation); clicking Limited
   reverts. Non-owners/read-only see a static chip. All other surfaces remain display-only.
+- **Legality errors**: desktop keeps the hover/focus popover. Mobile keeps the header collapsed;
+  pressing and holding **Not Legal** for 500ms opens a scrollable, half-viewport-height panel
+  anchored directly below the chip and constrained to the visible screen. The panel dismisses by
+  tapping outside, **Close**, or Escape, and the
+  completed long press never activates the owner's Limited toggle.
 - **Rarity** dots/labels use the `--color-rarity-*` ramp.
 - Quantity badges (`x2`) overlay the top-right of a card tile in an accent pill.
 

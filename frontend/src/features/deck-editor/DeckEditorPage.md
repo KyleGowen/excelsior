@@ -106,6 +106,10 @@ Limited renders yellow `--color-warning`). For the **owner in the deck editor**,
 to **Limited**, and clicking the Limited chip reverts to the computed legality. Non-owners and read-only visitors
 see a static `<span>`. Marking Limited **skips legality validation** — the variant becomes `limited` so the
 [`LegalityErrorsPopover`](../../components/LegalityErrorsPopover/LegalityErrorsPopover.tsx) errors are suppressed.
+On mobile, validation errors stay collapsed so they do not expand the header; press and hold the
+**Not Legal** chip for 500ms to open the bounded error panel directly below the chip. A completed
+hold suppresses the chip's click so owners do not accidentally toggle the deck to Limited. Desktop
+retains hover/focus behavior.
 The toggle persists immediately via `updateDeckMeta({ is_limited })` (independent of the Save button) and invalidates
 the `['decks']` queries so tile chips on every surface (`DeckTile`) reflect Limited via the same shared function.
 
