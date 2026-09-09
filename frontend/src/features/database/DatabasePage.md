@@ -23,12 +23,14 @@ Browse, search, filter, and sort the full modern OverPower catalog.
 - **Filter rail** (`DbvFilterRail`) visible on per-type tabs only (hidden on **All**).
   Per-tab controls (numeric stat op/value rows, power-type icon strips, function icons,
   mission-set select) are config-driven via `filters/dbvFilterConfig.ts`. Advanced filters
-  reset on tab change; search, set, **Has Foil**, **Hide Alts**, and collapse persist. Active constraints
+  reset on tab change; search, set, **Has Foil**, **Hide Alts**, and rail state persist. Active constraints
   show as removable chips at the rail end with a **Clear** action (Clear does not reset Has
   Foil). Numeric inputs preserve the user's typed value instead of snapping to the configured
   min/max range while editing; the range remains available to native number controls. Optional
-  **collapse** via left chevron (default expanded; collapsed state is a thin
-  rule with left-aligned chevron-down; collapse preference persists across tab switches).
+  **collapse** via left chevron. Desktop defaults expanded; its collapsed state is a thin
+  rule with a left-aligned chevron-down. Mobile defaults to a one-row, horizontally scrollable
+  collapsed rail with a chevron-down; expanding it opens a wrapping filter pane over the card
+  results, with Escape and the chevron both closing it. Rail state persists across tab switches.
 - **Has Foil** toggle (`.dbv-filter-rail__foil-toggle`, trailing end of filter rail): when
   checked, only exact printings with a foil variant per `foil_card_map` remain (base rows with a
   same-collector-number `F` counterpart or foil-only promos). Foil status never carries across

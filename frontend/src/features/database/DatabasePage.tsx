@@ -84,6 +84,7 @@ export default function DatabasePage() {
   const [selected, setSelected] = useState<CatalogCard | null>(null);
   const [selectedCatalogType, setSelectedCatalogType] = useState<CatalogType>('characters');
   const [filterRailCollapsed, setFilterRailCollapsed] = useState(false);
+  const [mobileFilterPaneExpanded, setMobileFilterPaneExpanded] = useState(false);
   const [hasFoilFilter, setHasFoilFilter] = useState(false);
   const [hideAltsFilter, setHideAltsFilter] = useState(true);
   const [savedViewsOpen, setSavedViewsOpen] = useState(false);
@@ -448,8 +449,14 @@ export default function DatabasePage() {
             catalogType={tab}
             filters={dbvFilters}
             allCards={perTypeCards}
-            collapsed={filterRailCollapsed}
-            onCollapsedChange={setFilterRailCollapsed}
+            collapsed={isMobile ? !mobileFilterPaneExpanded : filterRailCollapsed}
+            onCollapsedChange={(collapsed) => {
+              if (isMobile) {
+                setMobileFilterPaneExpanded(!collapsed);
+                return;
+              }
+              setFilterRailCollapsed(collapsed);
+            }}
             hasFoilFilter={hasFoilFilter}
             onHasFoilFilterChange={setHasFoilFilter}
             hideAltsFilter={hideAltsFilter}

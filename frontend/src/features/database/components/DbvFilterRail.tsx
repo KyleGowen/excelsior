@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useId, useMemo } from 'react';
 import { IconChevronDown } from '../../../components/icons';
 import { Checkbox } from '../../../components/Checkbox';
 import type { CatalogCard, CatalogType } from '../../../lib/api/types';
+import { useLayoutMode } from '../../../lib/layout/LayoutModeProvider';
 import { collectMissionSetOptions } from '../filters/dbvFilterPredicates';
 import { getDbvFilterConfig } from '../filters/dbvFilterConfig';
 import type { FilterChip } from '../filters/dbvFilterTypes';
@@ -71,13 +72,26 @@ export function DbvFilterRail({
   hideAltsFilter,
   onHideAltsFilterChange,
 }: DbvFilterRailProps) {
+  const { isMobile } = useLayoutMode();
+  const bodyId = useId();
   const config = getDbvFilterConfig(catalogType);
   const hasFilterGroups = config.groups.length > 0;
+  const showBody = isMobile || !collapsed;
+  const showDesktopCollapsedRule = !isMobile && collapsed;
 
   const missionSetOptions = useMemo(
     () => (config.groups.includes('missionSet') ? collectMissionSetOptions(allCards) : []),
     [allCards, config.groups],
   );
+
+  useEffect(() => {
+    if (!isMobile || collapsed) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onCollapsedChange(true);
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [collapsed, isMobile, onCollapsedChange]);
 
   if (!hasFilterGroups) return null;
 
@@ -88,8 +102,9 @@ export function DbvFilterRail({
     >
       <button
         type="button"
-        className={`dbv-filter-rail__toggle${collapsed ? ' dbv-filter-rail__toggle--collapsed-row' : ''}`}
+        className={`dbv-filter-rail__toggle${showDesktopCollapsedRule ? ' dbv-filter-rail__toggle--collapsed-row' : ''}`}
         aria-expanded={!collapsed}
+        aria-controls={showBody ? bodyId : undefined}
         aria-label={collapsed ? 'Expand filters' : 'Collapse filters'}
         onClick={() => onCollapsedChange(!collapsed)}
       >
@@ -99,56 +114,58 @@ export function DbvFilterRail({
             aria-hidden
           />
         </span>
-        {collapsed ? <span className="dbv-filter-rail__toggle-line" aria-hidden="true" /> : null}
+        {showDesktopCollapsedRule ? (
+          <span className="dbv-filter-rail__toggle-line" aria-hidden="true" />
+        ) : null}
       </button>
 
-      {!collapsed ? (
-        <div className="dbv-filter-rail__body">
+      {showBody ? (
+        <div id={bodyId} className="dbv-filter-rail__body">
           <div className="dbv-filter-rail__scroll">
             <div className="dbv-filter-rail__controls">
-            {config.groups.includes('numeric') && config.numericFields ? (
-              <DbvNumericStatInline fields={config.numericFields} filters={filters} />
-            ) : null}
+              {config.groups.includes('numeric') && config.numericFields ? (
+                <DbvNumericStatInline fields={config.numericFields} filters={filters} />
+              ) : null}
 
-            {config.groups.includes('powerTypes') && config.powerTypeKeys ? (
-              <div className="dbv-filter-rail__group">
-                <span className="dbv-filter-rail__label">Power types</span>
-                <DbvPowerTypeStrip powerTypeKeys={config.powerTypeKeys} filters={filters} />
-              </div>
-            ) : null}
+              {config.groups.includes('powerTypes') && config.powerTypeKeys ? (
+                <div className="dbv-filter-rail__group">
+                  <span className="dbv-filter-rail__label">Power types</span>
+                  <DbvPowerTypeStrip powerTypeKeys={config.powerTypeKeys} filters={filters} />
+                </div>
+              ) : null}
 
-            {config.groups.includes('functionIcons') ? (
-              <div className="dbv-filter-rail__group">
-                <span className="dbv-filter-rail__label">Function</span>
-                <DbvFunctionIconStrip filters={filters} />
-              </div>
-            ) : null}
+              {config.groups.includes('functionIcons') ? (
+                <div className="dbv-filter-rail__group">
+                  <span className="dbv-filter-rail__label">Function</span>
+                  <DbvFunctionIconStrip filters={filters} />
+                </div>
+              ) : null}
 
-            {config.groups.includes('missionSet') ? (
-              <DbvMissionSetSelect options={missionSetOptions} filters={filters} />
-            ) : null}
-          </div>
+              {config.groups.includes('missionSet') ? (
+                <DbvMissionSetSelect options={missionSetOptions} filters={filters} />
+              ) : null}
+            </div>
 
-          <div className="dbv-filter-rail__trailing">
-            <FilterChips chips={filters.chips} onRemove={filters.removeChip} />
-            {filters.activeCount > 0 ? (
-              <button type="button" className="dbv-filter-rail__clear" onClick={filters.clearAll}>
-                Clear
-              </button>
-            ) : null}
-            <Checkbox
-              className="dbv-filter-rail__foil-toggle"
-              label="Has Foil"
-              checked={hasFoilFilter}
-              onChange={onHasFoilFilterChange}
-            />
-            <Checkbox
-              className="dbv-filter-rail__hide-alts-toggle"
-              label="Hide Alts"
-              checked={hideAltsFilter}
-              onChange={onHideAltsFilterChange}
-            />
-          </div>
+            <div className="dbv-filter-rail__trailing">
+              <FilterChips chips={filters.chips} onRemove={filters.removeChip} />
+              {filters.activeCount > 0 ? (
+                <button type="button" className="dbv-filter-rail__clear" onClick={filters.clearAll}>
+                  Clear
+                </button>
+              ) : null}
+              <Checkbox
+                className="dbv-filter-rail__foil-toggle"
+                label="Has Foil"
+                checked={hasFoilFilter}
+                onChange={onHasFoilFilterChange}
+              />
+              <Checkbox
+                className="dbv-filter-rail__hide-alts-toggle"
+                label="Hide Alts"
+                checked={hideAltsFilter}
+                onChange={onHideAltsFilterChange}
+              />
+            </div>
           </div>
         </div>
       ) : null}

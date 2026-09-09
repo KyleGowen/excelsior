@@ -387,17 +387,27 @@
 }
 
 .layout-mobile .dbv-filter-rail {
+  position: relative;
   flex-wrap: nowrap;
   overflow: hidden;
 }
 
-.layout-mobile .dbv-filter-rail__body {
+.layout-mobile .dbv-filter-rail.is-collapsed {
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  gap: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+}
+
+.layout-mobile .dbv-filter-rail.is-collapsed .dbv-filter-rail__body {
   flex: 1;
   min-width: 0;
   overflow: hidden;
 }
 
-.layout-mobile .dbv-filter-rail__scroll {
+.layout-mobile .dbv-filter-rail.is-collapsed .dbv-filter-rail__scroll {
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -406,18 +416,94 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.layout-mobile .dbv-filter-rail__controls {
+.layout-mobile .dbv-filter-rail.is-collapsed .dbv-filter-rail__controls {
   flex: 0 0 auto;
   overflow-x: visible;
   padding-bottom: 0;
 }
 
-.layout-mobile .dbv-filter-rail__trailing {
+.layout-mobile .dbv-filter-rail.is-collapsed .dbv-filter-rail__trailing {
   margin-left: 0;
   width: auto;
   flex-shrink: 0;
 }
 
-.layout-mobile .dbv-filter-rail__chips {
+.layout-mobile .dbv-filter-rail.is-collapsed .dbv-filter-rail__chips {
   max-width: none;
+}
+
+/* Expanded mobile filters drop over the card results instead of growing the page. */
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) {
+  overflow: visible;
+  z-index: var(--z-sticky);
+}
+
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-filter-rail__body {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  left: 0;
+  display: block;
+  max-height: min(58dvh, 32rem);
+  padding: var(--space-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-panel);
+  box-shadow: var(--shadow-panel);
+}
+
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-filter-rail__scroll,
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-filter-rail__controls {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-4);
+  overflow: visible;
+}
+
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-filter-rail__controls {
+  flex: 0 0 auto;
+}
+
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-filter-rail__scroll {
+  gap: 0;
+}
+
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-filter-rail__group {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-stat-inline,
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-power-strip,
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-func-strip,
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-filter-rail__trailing,
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-filter-rail__chips {
+  flex-wrap: wrap;
+}
+
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-filter-rail__trailing {
+  flex: 0 0 auto;
+  width: 100%;
+  margin-top: var(--space-2);
+  margin-left: 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-filter-rail__chips {
+  flex: 1 1 100%;
+  max-width: 100%;
+  overflow: visible;
+}
+
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-mission-set {
+  align-items: stretch;
+}
+
+.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-mission-set__select {
+  width: 100%;
+  min-height: 44px;
 }

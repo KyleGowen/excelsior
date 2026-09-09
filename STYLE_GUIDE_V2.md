@@ -489,10 +489,13 @@ Always-visible per-type filter rail on DBV (`/data`), inserted between `.db__typ
 | Hide Alts (`.dbv-filter-rail__hide-alts-toggle`) | Shared `Checkbox` component beside Has Foil; checked by default; keeps the canonical main printing for each logical card and restores all printings when unchecked |
 | Stat op/value (`.dbv-stat-cell__op`, `.dbv-stat-cell__value`) | `width: calc(2.75rem * 1.15)`, `min-height: calc(1.5rem * 1.15)`, `font-size: calc(var(--font-size-xs) * 1.15)`; mobile `min-height: calc(36px * 1.15)`; numeric values do not auto-snap to configured min/max while the user types |
 | Collapse toggle (`.dbv-filter-rail__toggle`) | Left-edge chevron; `28×28px` desktop, `44×44px` mobile; `--color-text-muted`, hover `--color-bg-hover` |
-| Collapsed rail (`.dbv-filter-rail.is-collapsed`) | Transparent, no border; keeps `--space-3` horizontal padding so the chevron stays aligned with expanded; chevron locked left in `.dbv-filter-rail__toggle-icon-wrap` (28px); `1px` rule (`.dbv-filter-rail__toggle-line`) extends right |
+| Collapsed rail (`.dbv-filter-rail.is-collapsed`) | Desktop is transparent with a left chevron and `1px` rule. Mobile keeps the complete one-row rail visible and horizontally scrollable, with a chevron-down indicating that more space is available. |
+| Expanded mobile pane (`.layout-mobile .dbv-filter-rail:not(.is-collapsed) .dbv-filter-rail__body`) | Drops below the rail over the card results, uses `--color-bg-panel`, `--color-border-strong`, and `--shadow-panel`, wraps every available filter group, sizes sections to their content so one-row panes stay compact, and caps height with contained vertical scrolling. |
 
-**Layout:** Controls scroll horizontally on narrow viewports; mobile icon/stat tap targets
-are **44px** under `.layout-mobile`. Trailing chips + Clear sit at the rail end.
+**Layout:** The collapsed mobile row scrolls horizontally; expanding it turns the same controls
+into a wrapping overlay pane so all available filters can be reached without horizontal hunting.
+Mobile icon/stat tap targets are **44px** under `.layout-mobile`. Trailing chips + Clear sit at
+the rail end.
 
 ## Database Saved Views
 
