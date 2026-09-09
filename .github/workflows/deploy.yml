@@ -278,7 +278,10 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 1
-        sparse-checkout: frontend
+        # The SPA shares the tournament threat cap with the backend.
+        sparse-checkout: |
+          frontend
+          src/constants
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
