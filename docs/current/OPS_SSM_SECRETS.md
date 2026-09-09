@@ -18,7 +18,7 @@ Every parameter lives under `/${project_name}/${environment}/...` where
 
 | Parameter                                                   | Type          | Consumed by                                                                 |
 |-------------------------------------------------------------|---------------|-----------------------------------------------------------------------------|
-| `/op-deckbuilder/dev/database/url`                          | `SecureString`| App `DATABASE_URL`                                                          |
+| `/op-deckbuilder/dev/database/url`                          | `SecureString`| TLS-required aggregate URL for bootstrap and compatibility paths            |
 | `/op-deckbuilder/dev/database/username`                     | `SecureString`| App/Flyway database user                                                    |
 | `/op-deckbuilder/dev/database/password`                     | `SecureString`| App/Flyway database password                                                |
 | `/op-deckbuilder/dev/app/environment`                       | `String`      | App `NODE_ENV`                                                              |
@@ -54,9 +54,9 @@ at boot and skip the `.env` file entirely.
      --overwrite
    ```
 
-2. If the deploy workflow needs to bake it into `.env`, add a new step to
-   [`.github/workflows/deploy.yml`](../../.github/workflows/deploy.yml)
-   modeled after the existing `Append CDN_BASE_URL to .env` step.
+2. If the deploy workflow needs to place it in `.env`, add it to
+   [`.github/scripts/prepare-production.sh`](../../.github/scripts/prepare-production.sh)
+   and keep the value out of command output.
 3. If the app reads it directly via `SSM:GetParameter`, no workflow change
    is needed — but verify the IAM policy in `infra/ec2.tf` covers the new
    key (it does because the policy grants `*` under the project prefix).
@@ -64,7 +64,8 @@ at boot and skip the `.env` file entirely.
 ## Rollback
 
 - **Bad parameter value:** `aws ssm put-parameter --overwrite` with the
-  previous value, then redeploy or `docker restart overpower-app`.
+  previous value, then redeploy so Docker recreates the container with the
+  restored environment.
 - **Deploy step broken:** the feature flag for each secret is the env var
   that consumes it. E.g. if the new `ALLOWED_ORIGINS` param is malformed,
   temporarily `DISABLE_CORS=1` until the param is fixed.

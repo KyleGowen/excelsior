@@ -283,7 +283,7 @@ If PostgreSQL TLS errors through the tunnel, try once with `sslmode=prefer` to d
 The application requires the following environment variables:
 
 ```bash
-DATABASE_URL=<loaded from /op-deckbuilder/dev/database/url>
+DATABASE_URL=<constructed from SSM database fields with sslmode=require>
 DB_HOST=op-deckbuilder-postgres.cdaeyc0ik7bu.us-west-2.rds.amazonaws.com
 DB_PORT=5432
 DB_NAME=overpower

@@ -37,18 +37,24 @@ DB_PORT="$(get_parameter database/port)"
 DB_NAME="$(get_parameter database/name)"
 DB_USER="$(get_parameter database/username true)"
 DB_PASSWORD="$(get_parameter database/password true)"
-DATABASE_URL="$(get_parameter database/url true)"
 CDN_BASE_URL="$(get_parameter app/cdn_base_url)"
 JWT_SECRET="$(get_parameter app/jwt_secret true)"
 
 for required_value in \
   "$DB_HOST" "$DB_PORT" "$DB_NAME" "$DB_USER" "$DB_PASSWORD" \
-  "$DATABASE_URL" "$CDN_BASE_URL" "$JWT_SECRET"; do
+  "$CDN_BASE_URL" "$JWT_SECRET"; do
   if [[ -z "$required_value" || "$required_value" == "None" ]]; then
     echo "A required production SSM parameter is missing or empty." >&2
     exit 1
   fi
 done
+
+# Build the application URL from the same canonical fields used by Flyway.
+# URI-encode credentials and require TLS so a stale aggregate URL parameter
+# cannot silently remove transport security.
+DB_USER_URI="$(jq -rn --arg value "$DB_USER" '$value|@uri')"
+DB_PASSWORD_URI="$(jq -rn --arg value "$DB_PASSWORD" '$value|@uri')"
+DATABASE_URL="postgresql://${DB_USER_URI}:${DB_PASSWORD_URI}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=require"
 
 FIREBASE_API_KEY="$(get_optional_parameter firebase/api_key)"
 FIREBASE_AUTH_DOMAIN="$(get_optional_parameter firebase/auth_domain)"
