@@ -74,7 +74,8 @@ trap 'rm -f "$TEMP_ENV_FILE"' EXIT
   printf 'NODE_ENV=production\n'
   printf 'PORT=3000\n'
   printf 'NODE_TLS_REJECT_UNAUTHORIZED=0\n'
-  printf 'FLYWAY_URL=jdbc:%s\n' "$DATABASE_URL"
+  printf 'FLYWAY_URL=jdbc:postgresql://%s:%s/%s?sslmode=require\n' \
+    "$DB_HOST" "$DB_PORT" "$DB_NAME"
   printf 'FLYWAY_USER=%s\n' "$DB_USER"
   printf 'FLYWAY_PASSWORD=%s\n' "$DB_PASSWORD"
   printf 'CDN_BASE_URL=%s\n' "$CDN_BASE_URL"
