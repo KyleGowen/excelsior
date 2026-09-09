@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CatalogType } from '../../../lib/api/types';
+import { shouldSkipDbvFilterReset } from '../savedDatabaseViewState';
 import { getDbvFilterConfig } from './dbvFilterConfig';
 import {
   EMPTY_DBV_FILTER_STATE,
@@ -16,13 +17,6 @@ type DbvFilterStateUpdater = DbvFilterState | ((prev: DbvFilterState) => DbvFilt
 
 interface UseDbvFiltersOptions {
   persistByCatalogType?: boolean;
-}
-
-export function shouldSkipDbvFilterReset(
-  catalogType: CatalogType,
-  hydratedCatalogType: CatalogType | null,
-): boolean {
-  return hydratedCatalogType === catalogType;
 }
 
 function numericChipId(c: NumericConstraint): string {

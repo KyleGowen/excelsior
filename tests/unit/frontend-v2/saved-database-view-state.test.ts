@@ -1,8 +1,8 @@
 import {
   captureSavedDatabaseViewState,
   normalizeSavedDatabaseViewState,
+  shouldSkipDbvFilterReset,
 } from '../../../frontend/src/features/database/savedDatabaseViewState';
-import { shouldSkipDbvFilterReset } from '../../../frontend/src/features/database/filters/useDbvFilters';
 
 describe('Saved database view client state', () => {
   const current = {

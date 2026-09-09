@@ -25,6 +25,13 @@ export interface NormalizedSavedDatabaseViewState {
   notices: string[];
 }
 
+export function shouldSkipDbvFilterReset(
+  catalogType: CatalogType,
+  hydratedCatalogType: CatalogType | null,
+): boolean {
+  return hydratedCatalogType === catalogType;
+}
+
 export function captureSavedDatabaseViewState(
   current: CurrentDatabaseViewState,
 ): SavedDatabaseViewStateV1 {
