@@ -268,6 +268,47 @@ jobs:
         name: trivy-report
         path: trivy-report.json
 
+  frontend-build:
+    name: Build v2 Frontend
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+
+    steps:
+    - name: Checkout frontend code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        sparse-checkout: frontend
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      run: npm --prefix frontend ci
+
+    - name: Build v2 frontend (React SPA)
+      run: |
+        echo "🏗️ Building v2 React SPA (frontend/) for production cutover..."
+        npm --prefix frontend run build
+        if test -f frontend/dist/index.html; then
+          echo "✅ frontend/dist/index.html built"
+        else
+          echo "❌ frontend/dist/index.html missing after build — aborting (would not cut over to v2)"
+          exit 1
+        fi
+
+    - name: Upload frontend artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-dist
+        path: frontend/dist/
+        # Match the backend artifact so failed deploy jobs can be re-run.
+        retention-days: 14
+
   # Checkout can occasionally be slow on some runners; sparse-checkout skips images to reduce fetch size.
   # Integration Tests - Matrix (consolidated like unit-tests)
   integration-tests:
@@ -488,7 +529,7 @@ jobs:
 
   build-docker:
     name: Build & Push Docker Image
-    needs: [build, unit-tests, knip, semgrep, trivy, soc2-compliance, integration-tests]
+    needs: [build, frontend-build, unit-tests, knip, semgrep, trivy, soc2-compliance, integration-tests]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     
@@ -496,7 +537,15 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # Fetch all history to ensure we have the latest commit
+        # Two commits preserve the HEAD~1 changed-file verification without
+        # downloading the repository's multi-gigabyte history.
+        fetch-depth: 2
+        # Card images are synced to S3 by sync-images and are already excluded
+        # from the Docker context by .dockerignore.
+        sparse-checkout: |
+          /*
+          !/src/resources/cards/images/
+        sparse-checkout-cone-mode: false
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -519,23 +568,11 @@ jobs:
       if: steps.download-dist-docker.outcome == 'failure'
       run: npm run build
 
-    - name: Generate card image thumbnails
-      run: npm run generate:thumbnails
-
-    - name: Build v2 frontend (React SPA)
-      # Produces frontend/dist/ in the build context so the Dockerfile can COPY it
-      # into the image. This is the production cutover: Express serves v2 when
-      # frontend/dist/index.html exists (src/routes/spaIndexPath.ts isSpaBuilt()).
-      run: |
-        echo "🏗️ Building v2 React SPA (frontend/) for production cutover..."
-        npm --prefix frontend ci
-        npm --prefix frontend run build
-        if test -f frontend/dist/index.html; then
-          echo "✅ frontend/dist/index.html built"
-        else
-          echo "❌ frontend/dist/index.html missing after build — aborting (would not cut over to v2)"
-          exit 1
-        fi
+    - name: Download frontend artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: frontend-dist
+        path: frontend/dist/
 
     - name: Verify Git Information
       run: |
@@ -547,13 +584,12 @@ jobs:
         echo "Commit author: $(git log -1 --pretty=format:'%an <%ae>')"
         echo "Commit date: $(git log -1 --pretty=format:'%ad')"
         echo "Files changed in this commit:"
-        git diff --name-only HEAD~1 HEAD || echo "No previous commit to compare"
-        echo "🔍 Checking if key files are present in the current commit:"
-        if grep -q "replaceAllCardsInDeck" src/database/PostgreSQLDeckRepository.ts; then
-          echo "✅ Card duplication bug fix found in current commit"
-        else
-          echo "❌ Card duplication bug fix NOT found in current commit"
+        git diff --name-only HEAD~1 HEAD
+        if [ "$(git rev-parse HEAD)" != "${{ github.sha }}" ]; then
+          echo "❌ Checked-out commit does not match expected ${{ github.sha }}"
+          exit 1
         fi
+        echo "✅ Checked-out commit matches ${{ github.sha }}"
         echo "=== END GIT VERIFICATION ==="
       
     - name: Configure AWS credentials
@@ -617,14 +653,6 @@ jobs:
         echo "📋 Verifying build contents..."
         echo "📋 Verifying v2 SPA is baked into the image..."
         docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ls -la /app/frontend/dist/index.html
-        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG grep -c "replaceAllCardsInDeck" /app/src/database/PostgreSQLDeckRepository.ts || echo "0"
-        
-        echo "🔍 Verifying git information in container..."
-        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG sh -c 'echo "Git commit: $GIT_COMMIT"; echo "Git short: $GIT_SHORT_COMMIT"; echo "Git branch: $GIT_BRANCH"; echo "Build timestamp: $BUILD_TIMESTAMP"'
-        
-        echo "🔍 Verifying API routes exist..."
-        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG grep -c "PUT.*decks.*cards" /app/dist/index.js || echo "0"
-        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG grep -c "replaceAllCardsInDeck" /app/dist/index.js || echo "0"
         
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
@@ -643,13 +671,26 @@ jobs:
           echo "❌ v2 SPA index.html MISSING"
           exit 1
         fi
-        
-        echo "Checking for card duplication bug fix..."
-        if docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG grep -q "replaceAllCardsInDeck" /app/src/database/PostgreSQLDeckRepository.ts; then
-          echo "✅ Card duplication bug fix found in deployment"
-        else
-          echo "❌ Card duplication bug fix NOT found in deployment - deployment may be using old code"
+
+        echo "Verifying compiled backend entrypoint..."
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG test -f /app/dist/index.js
+
+        echo "Verifying compiled deck-card replacement logic..."
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+          grep -q "replaceAllCardsInDeck" /app/dist/routes/deck-api.routes.js
+
+        echo "Verifying exact commit metadata..."
+        ACTUAL_COMMIT=$(docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+          sh -c 'printf %s "$GIT_COMMIT"')
+        if [ "$ACTUAL_COMMIT" != "${{ github.sha }}" ]; then
+          echo "❌ Image commit $ACTUAL_COMMIT does not match expected ${{ github.sha }}"
+          exit 1
         fi
+        echo "✅ Image contains the expected commit $ACTUAL_COMMIT"
+
+        echo "Verifying build timestamp metadata..."
+        docker run --rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+          grep -Eq '^Build timestamp: [0-9]+$' /tmp/build_info.txt
 
     - name: Push Docker Image to ECR
       env:
