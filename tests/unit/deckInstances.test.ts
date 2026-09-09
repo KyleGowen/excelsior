@@ -25,6 +25,16 @@ describe('deckInstances', () => {
       expect(result).toHaveLength(1);
       expect(result[0].instanceId).toBeTruthy();
     });
+
+    it('marks only one physical copy pre-placed when an aggregated row has duplicates', () => {
+      const input: DeckCardEntry[] = [
+        { type: 'training', cardId: 'training-1', quantity: 2, exclude_from_draw: true },
+      ];
+
+      const result = expandDeckToInstances(input);
+
+      expect(result.map((card) => card.exclude_from_draw)).toEqual([true, false]);
+    });
   });
 
   describe('aggregateInstancesForSave', () => {
@@ -49,6 +59,25 @@ describe('deckInstances', () => {
       const result = aggregateInstancesForSave(input);
       expect(result).toHaveLength(1);
       expect(result[0].exclude_from_draw).toBe(true);
+    });
+
+    it('round-trips one pre-placed and one normal copy without spreading the flag', () => {
+      const instances: DeckCardEntry[] = [
+        { type: 'training', cardId: 'training-1', quantity: 1, instanceId: 'draw' },
+        {
+          type: 'training',
+          cardId: 'training-1',
+          quantity: 1,
+          instanceId: 'pre-placed',
+          exclude_from_draw: true,
+        },
+      ];
+
+      const reloaded = expandDeckToInstances(aggregateInstancesForSave(instances));
+
+      expect(reloaded).toHaveLength(2);
+      expect(reloaded.filter((card) => card.exclude_from_draw === true)).toHaveLength(1);
+      expect(reloaded.filter((card) => card.exclude_from_draw !== true)).toHaveLength(1);
     });
   });
 

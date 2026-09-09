@@ -293,11 +293,12 @@ export async function replaceAllCardsInDeck(
 
     const cardCountResult = await client.query<{ card_count: number }>(
       `
-        SELECT COALESCE(SUM(quantity), 0)::int AS card_count
+        SELECT COALESCE(SUM(
+          GREATEST(quantity - CASE WHEN exclude_from_draw IS TRUE THEN 1 ELSE 0 END, 0)
+        ), 0)::int AS card_count
         FROM deck_cards
         WHERE deck_id = $1
           AND card_type NOT IN ('character', 'location', 'battleground', 'mission')
-          AND exclude_from_draw IS DISTINCT FROM TRUE
       `,
       [deckId]
     );

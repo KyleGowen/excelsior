@@ -14,7 +14,10 @@ export class DeckSizeRule implements DeckValidationRule {
         const nonDrawPileTypes = new Set(['character', 'mission', 'location', 'battleground']);
         const totalCards = ctx.cards
             .filter(card => !nonDrawPileTypes.has(card.type))
-            .reduce((sum, card) => sum + card.quantity, 0);
+            .reduce(
+                (sum, card) => sum + Math.max(0, card.quantity - (card.exclude_from_draw === true ? 1 : 0)),
+                0
+            );
         if (totalCards < requiredSize) {
             return [
                 {

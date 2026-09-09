@@ -783,7 +783,7 @@ The create request also accepts `is_private` (boolean): `true` makes the deck **
 
 **Auth:** Valid **session cookie** or Bearer JWT. Unauthenticated → **401** v1 envelope.
 
-**Request model:** `[src/api/http/models/decks/ValidateDeckRequestBody.ts](src/api/http/models/decks/ValidateDeckRequestBody.ts)` — `{ "cards": [ ... ] }` (array required; card shapes match legacy `**POST /api/decks/validate`**). Each card accepts an optional `**exclude_from_draw`** boolean (pre-placed cards); the pre-placed Basic Universe / Training limit + uniqueness rules read it. Omitted/false means the card is treated as a normal draw-pile card.
+**Request model:** `[src/api/http/models/decks/ValidateDeckRequestBody.ts](src/api/http/models/decks/ValidateDeckRequestBody.ts)` — `{ "cards": [ ... ] }` (array required; card shapes match legacy `**POST /api/decks/validate`**). Each card accepts an optional `**exclude_from_draw`** boolean (pre-placed cards); the pre-placed Basic Universe / Training limit + uniqueness rules read it. Omitted/false means the card is treated as a normal draw-pile card. Because saved cards are grouped by card identity, true marks exactly one physical copy in a row even when `quantity` is greater than 1.
 
 **Response 200:** v1 envelope; `**data`** is `{ "valid": true, "message": "Deck is valid" }` (`[DeckValidateV1SuccessDto](src/api/dto/v1/DeckValidateV1SuccessDto.ts)`).
 
@@ -858,7 +858,7 @@ The create request also accepts `is_private` (boolean): `true` makes the deck **
 
 Metadata fields: `id`, `name`, `description`, `created` (ISO string), `lastModified` (ISO string), `cardCount`, `threat`, `is_valid` (server-owned — recomputed/persisted on every card mutation, create, import, and sample-deck copy; read-only for clients), `is_private` (boolean — deck listing; `true` = unlisted from Community, public profiles, and favorites, while still link-readable; `false` = public; defaults `true`), `userId`, `uiPreferences` (object or null — see [ui-preferences](#get-apiv1decksidui-preferences)), `isOwner`, `is_limited`, `reserve_character` (UUID or null), `display_mission_card_id` (UUID or null), `background_image_path`.
 
-Card entry fields: `id` (deck-card row id), `type` (card category), `cardId` (catalog card id), `quantity`, optional `displayOrder` (stable zero-based deck-editor/preview order), and `exclude_from_draw`.
+Card entry fields: `id` (deck-card row id), `type` (card category), `cardId` (catalog card id), `quantity`, optional `displayOrder` (stable zero-based deck-editor/preview order), and `exclude_from_draw` (true means one physical copy in the grouped row is pre-placed).
 
 **Caching:** `Cache-Control: no-store`. Deck contents and calculated counts are mutable and publicly readable, so clients and edge caches must fetch the persisted state for every read.
 

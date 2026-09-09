@@ -26,7 +26,7 @@
 | **Persistence** | None — in-memory only; resets on close or page refresh |
 | **Availability** | All visitors (signed-out read-only decks included) when the deck has **≥8 playable** cards |
 | **KO interaction** | Drawn cards dim when Simulate KO makes them unusable (no re-randomize on KO toggle) |
-| **Pre-placed / `exclude_from_draw`** | Rows count toward the 8-card enable threshold but are **omitted** from the draw pile |
+| **Pre-placed / `exclude_from_draw`** | Full row quantity counts toward the 8-card enable threshold; one physical copy from a flagged aggregate row is **omitted** from the draw pile |
 | **HTTP API** | None — client-only |
 
 ---
@@ -73,7 +73,7 @@ Implemented in [`drawHand.ts`](../../frontend/src/lib/decks/drawHand.ts).
 
 **Playable types**: power, special, event, aspect, advanced-universe, teamwork, ally-universe, training, basic-universe (and legacy underscore variants in deck rows).
 
-**Pile construction**: one pile slot per physical copy (`quantity` expanded); skips `exclude_from_draw === true`.
+**Pile construction**: one pile slot per physical copy (`quantity` expanded); a grouped row with `exclude_from_draw === true` omits exactly one slot because the pre-placed-card rules allow only one marked copy of each card.
 
 **Draw algorithm**:
 1. Pick up to **8** unique random pile indices.

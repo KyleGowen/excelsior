@@ -56,10 +56,16 @@ describe('PrePlacedBasicUniverseRule', () => {
     it('flags a duplicate pre-placed Basic Universe cardId (uniqueness)', () => {
         const cards: DeckCard[] = [
             armory(),
-            prePlacedBU('bu1', 2)
+            prePlacedBU('bu1'),
+            prePlacedBU('bu1')
         ];
         const errors = rule.validate(makeCtx(cards));
         expect(errors.map(e => e.rule)).toContain('pre_placed_basic_universe_unique');
+    });
+
+    it('treats a grouped duplicate row as one pre-placed copy', () => {
+        const cards: DeckCard[] = [armory(), prePlacedBU('bu1', 2)];
+        expect(rule.validate(makeCtx(cards))).toEqual([]);
     });
 
     it('returns no errors when Dracula\'s Armory is absent', () => {
@@ -83,7 +89,8 @@ describe('PrePlacedBasicUniverseRule', () => {
     it('applies the same cap and uniqueness rules with The Sanctuary', () => {
         const cards: DeckCard[] = [
             { id: 'loc', type: 'location', cardId: 'the_sanctuary', quantity: 1 },
-            prePlacedBU('bu1', 2),
+            prePlacedBU('bu1'),
+            prePlacedBU('bu1'),
             prePlacedBU('bu2'),
             prePlacedBU('bu3')
         ];

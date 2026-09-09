@@ -16,9 +16,12 @@ function countCardsInDeck(cards: readonly CardCountInput[]): number {
   return cards
     .filter((card) => {
       const type = card.type ?? card.cardType;
-      return !NON_DECK_CARD_TYPES.has(type ?? '') && card.exclude_from_draw !== true;
+      return !NON_DECK_CARD_TYPES.has(type ?? '');
     })
-    .reduce((sum, card) => sum + (card.quantity ?? 1), 0);
+    .reduce(
+      (sum, card) => sum + Math.max(0, (card.quantity ?? 1) - (card.exclude_from_draw === true ? 1 : 0)),
+      0,
+    );
 }
 
 export type GuestDeckPersistencePort = {

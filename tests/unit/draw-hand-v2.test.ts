@@ -48,14 +48,14 @@ describe('drawHand (v2)', () => {
       expect(canDrawHand(cards)).toBe(true);
     });
 
-    it('excludes pre-placed cards from the deck-size count', () => {
+    it('excludes one pre-placed copy from an aggregated row', () => {
       const cards = [
         power('p1', { quantity: 2 }),
         power('pre-placed', { quantity: 3, exclude_from_draw: true }),
         entry('location', 'l1'),
       ];
 
-      expect(countCardsInDeck(cards)).toBe(2);
+      expect(countCardsInDeck(cards)).toBe(4);
     });
   });
 
@@ -81,6 +81,11 @@ describe('drawHand (v2)', () => {
     it('expands quantity into separate pile slots', () => {
       const cards = [power('p1', { quantity: 3 })];
       expect(buildDrawPile(cards)).toHaveLength(3);
+    });
+
+    it('omits only the pre-placed copy from an aggregated duplicate row', () => {
+      const cards = [power('p1', { quantity: 3, exclude_from_draw: true })];
+      expect(buildDrawPile(cards)).toHaveLength(2);
     });
   });
 

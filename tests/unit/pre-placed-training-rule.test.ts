@@ -56,10 +56,16 @@ describe('PrePlacedTrainingRule', () => {
     it('flags a duplicate pre-placed Training cardId (uniqueness)', () => {
         const cards: DeckCard[] = [
             ground(),
-            prePlacedTraining('tr1', 2)
+            prePlacedTraining('tr1'),
+            prePlacedTraining('tr1')
         ];
         const errors = rule.validate(makeCtx(cards));
         expect(errors.map(e => e.rule)).toContain('pre_placed_training_unique');
+    });
+
+    it('treats a grouped duplicate row as one pre-placed copy', () => {
+        const cards: DeckCard[] = [ground(), prePlacedTraining('tr1', 2)];
+        expect(rule.validate(makeCtx(cards))).toEqual([]);
     });
 
     it('returns no errors when Spartan Training Ground is absent', () => {
@@ -83,7 +89,8 @@ describe('PrePlacedTrainingRule', () => {
     it('applies the same cap and uniqueness rules with Teen Team Headquarters', () => {
         const cards: DeckCard[] = [
             { id: 'loc', type: 'location', cardId: 'teen_team_headquarters', quantity: 1 },
-            prePlacedTraining('tr1', 2),
+            prePlacedTraining('tr1'),
+            prePlacedTraining('tr1'),
             prePlacedTraining('tr2'),
             prePlacedTraining('tr3')
         ];

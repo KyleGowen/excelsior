@@ -44,6 +44,26 @@ describe('GuestDeckService', () => {
     );
   });
 
+  it('excludes only one copy when a grouped guest card is pre-placed', () => {
+    const service = new GuestDeckService({
+      guestDeckPersistence: persistence,
+      deckRepository: { getDecksByUserId: jest.fn() },
+      validateCardAddition: jest.fn(),
+      checkIfCardIsOnePerDeck: jest.fn(),
+      checkIfCardIsCataclysm: jest.fn(),
+    });
+    const created = service.createDeck('session-1', { name: 'Guest duplicate', description: '' });
+    if (!created.ok) throw new Error(created.message);
+
+    const result = service.replaceCards('session-1', created.data.id, [
+      { cardType: 'training', cardId: 'training-1', quantity: 2, exclude_from_draw: true },
+    ]);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error(result.message);
+    expect(result.data.metadata.cardCount).toBe(1);
+  });
+
   it('preserves character display order in guest session decks', () => {
     const service = new GuestDeckService({
       guestDeckPersistence: persistence,

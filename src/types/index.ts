@@ -292,7 +292,8 @@ export interface DeckCard {
   cardId: string; // The ID from the original card table (now includes alternate cards as separate rows)
   quantity: number; // How many copies of this card
   displayOrder?: number; // Stable deck-editor / preview order (zero-based)
-  exclude_from_draw?: boolean; // Whether this card is excluded from Draw Hand (for Training cards with Spartan Training Ground)
+  /** Whether one physical copy in this aggregated row is pre-placed and excluded from Draw Hand. */
+  exclude_from_draw?: boolean;
   defaultImage?: string; // Preview image path populated when building deck list metadata
   name?: string; // Card name populated when building deck list metadata
   is_foil?: boolean; // TRUE for foil card rows; used by deck tile preview for foil-shimmer

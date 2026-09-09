@@ -50,6 +50,25 @@ describe('DeckSizeRule', () => {
         expect(rule.validate(makeCtx(cards))).toEqual([]);
     });
 
+    it('subtracts one physical copy from a grouped pre-placed row', () => {
+        const cards: DeckCard[] = [
+            { id: 't1', type: 'training', cardId: 'training1', quantity: 2, exclude_from_draw: true },
+            { id: 'p1', type: 'power', cardId: 'power1', quantity: 50 }
+        ];
+
+        expect(rule.validate(makeCtx(cards))).toEqual([]);
+    });
+
+    it('reports the draw-pile count after subtracting a grouped pre-placed copy', () => {
+        const cards: DeckCard[] = [
+            { id: 't1', type: 'training', cardId: 'training1', quantity: 2, exclude_from_draw: true }
+        ];
+
+        const errors = rule.validate(makeCtx(cards));
+        expect(errors).toHaveLength(1);
+        expect(errors[0].message).toBe('Deck must have at least 51 cards in draw pile (1/51)');
+    });
+
     it('requires 56 draw-pile cards when events are present', () => {
         const cards: DeckCard[] = [
             { id: 'm1', type: 'mission', cardId: 'mission1', quantity: 7 },

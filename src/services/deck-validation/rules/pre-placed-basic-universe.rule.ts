@@ -27,7 +27,10 @@ export class PrePlacedBasicUniverseRule implements DeckValidationRule {
 
         const errors: ValidationError[] = [];
 
-        const total = prePlaced.reduce((sum, c) => sum + (c.quantity || 1), 0);
+        // Persisted deck rows aggregate duplicate physical copies. A true flag
+        // represents one pre-placed copy in that cardId group, not the whole
+        // row quantity.
+        const total = prePlaced.length;
         if (total > MAX_PRE_PLACED) {
             errors.push({
                 rule: 'pre_placed_basic_universe_limit',
@@ -37,7 +40,7 @@ export class PrePlacedBasicUniverseRule implements DeckValidationRule {
 
         const countById = new Map<string, number>();
         for (const c of prePlaced) {
-            countById.set(c.cardId, (countById.get(c.cardId) || 0) + (c.quantity || 1));
+            countById.set(c.cardId, (countById.get(c.cardId) || 0) + 1);
         }
         const hasDuplicate = Array.from(countById.values()).some((n) => n > 1);
         if (hasDuplicate) {

@@ -113,6 +113,10 @@
     "zod": "^4.3.6"
   },
   "overrides": {
+    "@istanbuljs/load-nyc-config": {
+      "js-yaml": "^3.15.2"
+    },
+    "js-yaml": "^4.3.2",
     "qs": "^6.16.0",
     "teeny-request": "^10.1.2",
     "uuid": "^14.0.0"
@@ -135,7 +139,7 @@
     "jest-environment-jsdom": "^30.2.0",
     "jest-mock-extended": "^4.0.0",
     "knip": "^5.83.0",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.4",
     "supertest": "^7.1.4",
     "ts-jest": "^29.4.4",
     "ts-node": "^10.9.0",

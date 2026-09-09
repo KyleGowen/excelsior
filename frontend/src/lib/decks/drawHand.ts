@@ -17,6 +17,10 @@ function cardQuantity(card: DeckCardEntry): number {
   return Math.max(1, card.quantity ?? 1);
 }
 
+function drawPileQuantity(card: DeckCardEntry): number {
+  return Math.max(0, cardQuantity(card) - (card.exclude_from_draw === true ? 1 : 0));
+}
+
 /** Count playable cards for button enable (includes exclude_from_draw rows). */
 export function countPlayableCards(cards: DeckCardEntry[]): number {
   return cards
@@ -31,8 +35,8 @@ export function countPlayableCards(cards: DeckCardEntry[]): number {
  */
 export function countCardsInDeck(cards: DeckCardEntry[]): number {
   return cards
-    .filter((card) => isPlayableType(card.type) && card.exclude_from_draw !== true)
-    .reduce((sum, card) => sum + cardQuantity(card), 0);
+    .filter((card) => isPlayableType(card.type))
+    .reduce((sum, card) => sum + drawPileQuantity(card), 0);
 }
 
 export function canDrawHand(cards: DeckCardEntry[]): boolean {
@@ -44,8 +48,7 @@ export function buildDrawPile(cards: DeckCardEntry[]): DeckCardEntry[] {
   const drawPile: DeckCardEntry[] = [];
   for (const card of cards) {
     if (!isPlayableType(card.type)) continue;
-    if (card.exclude_from_draw === true) continue;
-    const qty = cardQuantity(card);
+    const qty = drawPileQuantity(card);
     for (let i = 0; i < qty; i++) {
       drawPile.push(card);
     }

@@ -138,6 +138,7 @@ export interface DeckCardEntry {
   displayOrder?: number;
   /** Client-only deck-editor tile id (one tile per instance; not sent to API). */
   instanceId?: string;
+  /** True when one physical copy in this aggregated row is pre-placed. */
   exclude_from_draw?: boolean;
   name?: string;
   defaultImage?: string;
