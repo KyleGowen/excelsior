@@ -570,6 +570,14 @@ News/announcement tiles on `/home` (rail) and `/home/updates` (full list). Share
 **Home rail:** shows 3 newest tiles; View All appears when total count exceeds 3.
 **Updates page:** 10 tiles per page via shared `Pagination`; no global nav entry.
 
+## Home Deck Rails
+
+Below Recent Updates and the Niagara Regional preview, deck rails appear in this order:
+**Community Decks**, **Tournament Winning Decks**, then **Preconstructed Decks**. All use the
+shared compact `DeckTile` rail sizing. The Preconstructed rail flattens official decks in
+newest-first release-set order, excludes featured upgrades, suppresses owner/date/legality
+metadata, and links View All to `/community#preconstructed`.
+
 ## Home — Regionals stats rail (Preview Data Tiles)
 
 The newest tournament is featured on `/home` as a horizontal **rail** containing the event placard

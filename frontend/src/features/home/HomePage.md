@@ -39,10 +39,17 @@ Landing page after login. Sections, top to bottom:
 5. **Tournament Winning Decks** rail — horizontally scrolling `DeckTile`s backed by
    `GET /api/v1/decks/tournament` (the `tournament_decks` account's decks only; see
    [`TOURNAMENT_DECKS.md`](./TOURNAMENT_DECKS.md)).
+6. **Preconstructed Decks** rail — the official decks from
+   `GET /api/v1/community/preconstructed-decks`, flattened in the endpoint's newest-first
+   release-set order (Skybound before Edgar Rice Burroughs and the World Legends). Featured
+   upgrade recommendations are intentionally excluded. **View All** →
+   `/community#preconstructed`. Tiles omit owner, updated date, and Limited badges, matching
+   the official preconstructed tiles on Community.
 
 ## Data
 - TanStack Query for recent updates (`useRecentUpdates`), community feed (`fetchCommunityFeed`,
-  key `['decks', 'community-feed', '']`), and tournament decks (`fetchTournamentDecks`).
+  key `['decks', 'community-feed', '']`), tournament decks (`fetchTournamentDecks`), and
+  preconstructed groups (`fetchPreconstructedDecks`, key `['decks', 'preconstructed']`).
 - Regional stats: static JSON registry + `useAllCatalogCards()` for card slideout resolution.
 - Deck tiles use `compact` variant in the rail.
 

@@ -3,13 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../app/AuthProvider';
 import { fetchTournamentDecks } from '../../lib/api/decks';
-import { fetchCommunityFeed } from '../../lib/api/favorites';
+import { fetchCommunityFeed, fetchPreconstructedDecks } from '../../lib/api/favorites';
 import { fetchCatalog } from '../../lib/api/catalog';
 import { buildMissionSetByCardId, deckMissionSetName } from '../../lib/decks/missionSetLabel';
 import {
   buildDeckPreviewCatalogImages,
   enrichDeckListPreviewImages,
 } from '../../lib/decks/deckPreviewImages';
+import { flattenOfficialPreconstructedDecks } from './preconstructedRail';
 import { assetUrl } from '../../lib/images/cardImages';
 import { DeckTile } from '../../components/DeckTile';
 import { LoadingState } from '../../components/LoadingState';
@@ -27,6 +28,7 @@ import {
   IconSparkles,
   IconChevronRight,
   IconDecks,
+  IconCards,
 } from '../../components/icons';
 import type { DeckListItem } from '../../lib/api/types';
 import './HomePage.css';
@@ -53,6 +55,7 @@ const HOME_COMMUNITY_RAIL_LIMIT = 12;
 const HOME_RECENT_UPDATES_LIMIT = 3;
 
 const HOME_COMMUNITY_FEED_KEY = ['decks', 'community-feed', ''] as const;
+const HOME_PRECONSTRUCTED_DECKS_KEY = ['decks', 'preconstructed'] as const;
 
 export default function HomePage() {
   const { user, tournamentDecksUserId } = useAuth();
@@ -73,6 +76,17 @@ export default function HomePage() {
 
   const tournamentDecks = (tournamentQuery.data ?? []).filter(
     (deck) => !tournamentDecksUserId || deck.metadata.userId === tournamentDecksUserId,
+  );
+
+  const preconstructedQuery = useQuery({
+    queryKey: HOME_PRECONSTRUCTED_DECKS_KEY,
+    queryFn: () => fetchPreconstructedDecks(),
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const preconstructedDecks = useMemo(
+    () => flattenOfficialPreconstructedDecks(preconstructedQuery.data ?? []),
+    [preconstructedQuery.data],
   );
 
   const missionsQuery = useQuery({
@@ -115,6 +129,11 @@ export default function HomePage() {
   const enrichedTournamentDecks = useMemo(
     () => enrichDeckListPreviewImages(tournamentDecks, previewCatalogImages),
     [tournamentDecks, previewCatalogImages],
+  );
+
+  const enrichedPreconstructedDecks = useMemo(
+    () => enrichDeckListPreviewImages(preconstructedDecks, previewCatalogImages),
+    [preconstructedDecks, previewCatalogImages],
   );
 
   const missionSetByCardId = useMemo(
@@ -181,7 +200,7 @@ export default function HomePage() {
 
         <DeckRail
           icon={<IconTrophy />}
-          title="Tournament Winners"
+          title="Tournament Winning Decks"
           viewAllTo="/community#tournament"
           loading={tournamentQuery.isLoading}
           error={tournamentQuery.isError}
@@ -189,6 +208,20 @@ export default function HomePage() {
           emptyMessage="Tournament-winning decks will appear here as they are added."
           missionSetByCardId={missionSetByCardId}
           onOpen={openDeck}
+        />
+
+        <DeckRail
+          icon={<IconCards />}
+          title="Preconstructed Decks"
+          viewAllTo="/community#preconstructed"
+          loading={preconstructedQuery.isLoading}
+          error={preconstructedQuery.isError}
+          decks={enrichedPreconstructedDecks}
+          emptyMessage="Preconstructed decks will appear here as sets are added."
+          missionSetByCardId={missionSetByCardId}
+          onOpen={openDeck}
+          showUpdated={false}
+          showLegality={false}
         />
 
       </div>
@@ -207,6 +240,8 @@ interface DeckRailProps {
   missionSetByCardId: Map<string, string>;
   onOpen: (deck: DeckListItem) => void;
   onOwnerClick?: (deck: DeckListItem) => void;
+  showUpdated?: boolean;
+  showLegality?: boolean;
 }
 
 function DeckRail({
@@ -220,6 +255,8 @@ function DeckRail({
   missionSetByCardId,
   onOpen,
   onOwnerClick,
+  showUpdated,
+  showLegality,
 }: DeckRailProps) {
   return (
     <section className="home__section">
@@ -248,6 +285,8 @@ function DeckRail({
                 ownerName={onOwnerClick ? (deck.metadata.ownerDisplayName ?? null) : undefined}
                 onOwnerClick={onOwnerClick ? () => onOwnerClick(deck) : undefined}
                 onOpen={() => onOpen(deck)}
+                showUpdated={showUpdated}
+                showLegality={showLegality}
               />
             </div>
           ))}
