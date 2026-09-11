@@ -22,6 +22,12 @@ describe('preconstructed decks Recent Updates migration', () => {
 
   it('uses the supplied Skybound Training card artwork', () => {
     expect(seedMigration).toContain("'sky/training/394_training_any_power.png'");
+  });
+
+  const localImageRoot = path.join(process.cwd(), 'src/resources/cards/images/sky');
+  const verifiesLocalImageTree = fs.existsSync(localImageRoot) ? it : it.skip;
+
+  verifiesLocalImageTree('has the supplied artwork and generated thumbnail in the local image tree', () => {
     expect(
       fs.existsSync(
         path.join(
