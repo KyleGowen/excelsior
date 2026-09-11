@@ -7,6 +7,8 @@ Landing page after login. Sections, top to bottom:
    `GET /api/v1/recent-updates` (`useRecentUpdates`; rows in `recent_updates` table).
    Shows the **3 newest** tiles (`HOME_RECENT_UPDATES_LIMIT`). When more than 3 exist,
    a **View All** link in the section header navigates to [`/home/updates`](./HomeUpdatesPage.md).
+   The preconstructed-decks announcement uses a tightly cropped Skybound Training Any Power artwork
+   thumbnail and credits Andrew Taylor for the featured Skybound precon upgrade recommendations.
    The Skybound alternate-art reveal is a distinct `new_cards` announcement using collector
    `#420` Omni-Man and directs users to turn off **Hide Alts** in Skybound Characters.
    The Niagara Regional announcement uses the default Sherlock Holmes character card thumbnail.

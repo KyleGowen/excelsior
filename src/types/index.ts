@@ -44,6 +44,15 @@ export interface Deck {
   cards?: DeckCard[];
 }
 
+/** Deck-list row plus release metadata for the official preconstructed-deck catalog. */
+export interface PreconstructedDeckRecord {
+  deck: Deck;
+  setCode: string;
+  setLabel: string;
+  releaseOrder: number;
+  deckOrder: number;
+}
+
 // Character table (from overpower-erb-characters.md)
 export interface Character {
   id: string;

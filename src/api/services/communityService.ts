@@ -1,6 +1,7 @@
-import type { Deck, User } from '../../types';
+import type { Deck, PreconstructedDeckRecord, User } from '../../types';
 import { transformDeckListItem } from '../deckTransform';
 import { resolveUserDisplayName } from '../../utils/resolveUserDisplayName';
+import type { PreconstructedDeckGroupV1DataDto } from '../dto/v1/PreconstructedDeckGroupV1DataDto';
 
 /** Deck reads/writes needed by the community + favorites + public-profile features. */
 export interface CommunityDeckRepository {
@@ -11,6 +12,8 @@ export interface CommunityDeckRepository {
     excludeUserIds?: string[];
   }): Promise<Deck[]>;
   getPublicDecksByUserId(userId: string): Promise<Deck[]>;
+  getPublicDecksByIds(ids: string[]): Promise<Deck[]>;
+  getPreconstructedDecks(): Promise<PreconstructedDeckRecord[]>;
   getFavoriteDecksForUser(userId: string): Promise<Deck[]>;
   getDeckById(id: string): Promise<Deck | undefined>;
   addDeckFavorite(userId: string, deckId: string): Promise<boolean>;
@@ -40,6 +43,26 @@ function ok<T>(status: number, data: T): Ok<T> {
 }
 
 export type FavoriteToggleResult = Ok<{ deckId: string; isFavorited: boolean }> | Fail;
+
+const SKYBOUND_FEATURED_UPGRADE_PRODUCTION_DECK_IDS = [
+  '63a92f20-1e50-47ab-b7e6-84574370b666',
+  'b955e265-bff1-4869-8e15-a4b72c280213',
+  '32734448-f027-4898-b682-c925c2c2ff49',
+  '7434ab13-993c-46e0-8bd1-79a12a8dfe4b',
+] as const;
+
+const SKYBOUND_FEATURED_UPGRADE_DEVELOPMENT_DECK_IDS = [
+  '89f33651-e5c5-4c99-8c8b-80696009e8be',
+  '2e96e432-9e90-4060-965b-ec7b1dda31ec',
+  '821bb838-d28c-4a58-956a-d9cf01c8f581',
+  'acb4df16-2d69-44da-a6ab-caed5db1b88d',
+] as const;
+
+function getSkyboundFeaturedUpgradeDeckIds(): readonly string[] {
+  return process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test'
+    ? SKYBOUND_FEATURED_UPGRADE_PRODUCTION_DECK_IDS
+    : SKYBOUND_FEATURED_UPGRADE_DEVELOPMENT_DECK_IDS;
+}
 
 /**
  * Community decks, favorites, and read-only public profiles. Enriches deck list
@@ -105,6 +128,53 @@ export class CommunityService {
   ): Promise<EnrichedDeckListItem[]> {
     const decks = await this.deckRepository.getPublicDecksByUserId(targetUserId);
     return this.enrich(decks, viewerUserId);
+  }
+
+  /** Official preconstructed decks grouped by release set, newest release first. */
+  async getPreconstructedDeckGroups(
+    viewerUserId: string | null
+  ): Promise<PreconstructedDeckGroupV1DataDto[]> {
+    const featuredUpgradeDeckIds = getSkyboundFeaturedUpgradeDeckIds();
+    const [records, featuredUpgradeDecks] = await Promise.all([
+      this.deckRepository.getPreconstructedDecks(),
+      this.deckRepository.getPublicDecksByIds([...featuredUpgradeDeckIds]),
+    ]);
+    const sorted = [...records].sort(
+      (a, b) => b.releaseOrder - a.releaseOrder || a.deckOrder - b.deckOrder
+    );
+    const enriched = await this.enrich(
+      [...sorted.map((record) => record.deck), ...featuredUpgradeDecks],
+      viewerUserId
+    );
+    const enrichedById = new Map(enriched.map((deck) => [deck.metadata.id, deck]));
+    const groups = new Map<string, PreconstructedDeckGroupV1DataDto>();
+
+    for (const record of sorted) {
+      let group = groups.get(record.setCode);
+      if (!group) {
+        group = {
+          setCode: record.setCode,
+          setName: record.setLabel,
+          decks: [],
+          featuredUpgradeRecommendations: [],
+        };
+        groups.set(record.setCode, group);
+      }
+      const deck = enrichedById.get(record.deck.id);
+      if (deck) group.decks.push(deck);
+    }
+
+    const skyboundGroup = groups.get('SKY');
+    if (skyboundGroup) {
+      skyboundGroup.featuredUpgradeRecommendations = featuredUpgradeDeckIds.flatMap(
+        (deckId) => {
+          const deck = enrichedById.get(deckId);
+          return deck ? [deck] : [];
+        }
+      );
+    }
+
+    return Array.from(groups.values());
   }
 
   /** The viewer's own favorited decks. */

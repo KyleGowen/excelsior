@@ -109,7 +109,15 @@ class MockDeckRepository {
     return [];
   }
 
+  async getPublicDecksByIds(): Promise<any[]> {
+    return [];
+  }
+
   async getPublicLegalDecksByUserId(): Promise<any[]> {
+    return [];
+  }
+
+  async getPreconstructedDecks(): Promise<any[]> {
     return [];
   }
 

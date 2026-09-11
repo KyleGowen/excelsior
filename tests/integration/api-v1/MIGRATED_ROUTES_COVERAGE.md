@@ -25,6 +25,7 @@ Each row lists at least one integration test that exercises the route (happy pat
 | GET | `/api/v1/dbv/sets` | `dbv-support-v1.test.ts` |
 | GET | `/api/v1/dbv/deck-backgrounds` | `deck-background-api.test.ts` |
 | GET | `/api/v1/recent-updates` | `recent-updates-v1.test.ts` |
+| GET | `/api/v1/community/preconstructed-decks` | `preconstructed-decks-v1.test.ts` |
 | GET | `/api/v1/decks` | `decks-list-v1.test.ts`, `security/v1-decks-list-and-authz.test.ts` |
 | GET | `/api/v1/decks/stats` | `decks-v1-stats.test.ts` |
 | POST | `/api/v1/decks/validate` | `decks-v1-create-validate.test.ts` |

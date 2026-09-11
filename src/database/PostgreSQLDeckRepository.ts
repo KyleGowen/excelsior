@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { Deck, UIPreferences, DeckCard } from '../types';
+import { Deck, UIPreferences, DeckCard, PreconstructedDeckRecord } from '../types';
 import { DeckRepository } from '../repository/DeckRepository';
 import {
   createDeckRepositoryContext,
@@ -67,11 +67,19 @@ export class PostgreSQLDeckRepository implements DeckRepository {
     return deckCrud.getPublicDecksByUserId(this.getContext(), userId);
   }
 
+  async getPublicDecksByIds(ids: string[]): Promise<Deck[]> {
+    return deckCrud.getPublicDecksByIds(this.getContext(), ids);
+  }
+
   async getPublicLegalDecksByUserId(
     userId: string,
     orderBy?: deckCrud.DeckListOrderBy
   ): Promise<Deck[]> {
     return deckCrud.getPublicLegalDecksByUserId(this.getContext(), userId, orderBy);
+  }
+
+  async getPreconstructedDecks(): Promise<PreconstructedDeckRecord[]> {
+    return deckCrud.getPreconstructedDecks(this.getContext());
   }
 
   async getCommunityFeedDecks(opts?: {

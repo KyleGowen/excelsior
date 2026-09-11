@@ -47,6 +47,10 @@ interface DeckTileProps {
   ownerName?: string | null;
   /** Click handler for the owner name (navigate to public profile). */
   onOwnerClick?: () => void;
+  /** Hide the updated timestamp in curated tile contexts such as preconstructed decks. */
+  showUpdated?: boolean;
+  /** Hide Limited/Not Legal badges in contexts where the format is implied. */
+  showLegality?: boolean;
 }
 
 function firstCardOfType(deck: DeckListItem, type: DeckCardEntry['type']): DeckCardEntry | undefined {
@@ -74,6 +78,8 @@ export function DeckTile({
   favoriteBusy,
   ownerName,
   onOwnerClick,
+  showUpdated = true,
+  showLegality = true,
 }: DeckTileProps) {
   const meta = deck.metadata;
   const artSlides = useMemo(() => deckArtSlides(deck), [deck]);
@@ -190,7 +196,7 @@ export function DeckTile({
 
   const mission = firstCardOfType(deck, 'mission');
   const missionChipLabel = missionSetName?.trim() || mission?.name?.trim() || null;
-  const updatedLabel = meta.lastModified
+  const updatedLabel = showUpdated && meta.lastModified
     ? new Date(meta.lastModified).toLocaleDateString(undefined, {
         month: 'short',
         day: 'numeric',
@@ -290,13 +296,15 @@ export function DeckTile({
               <span className="deck-tile__chip-text">{missionChipLabel}</span>
             </span>
           ) : null}
-          <span
-            className={`deck-tile__legality deck-tile__legality--meta badge ${legalityBadgeClass(
-              legalityBadge.variant,
-            )}`}
-          >
-            {legalityBadge.label}
-          </span>
+          {showLegality ? (
+            <span
+              className={`deck-tile__legality deck-tile__legality--meta badge ${legalityBadgeClass(
+                legalityBadge.variant,
+              )}`}
+            >
+              {legalityBadge.label}
+            </span>
+          ) : null}
           <span className="deck-tile__metric deck-tile__metric--end">
             <StatIconBadge
               type="threat_level"
@@ -329,9 +337,9 @@ export function DeckTile({
           </div>
         ) : null}
 
-        {ownerName || updatedLabel || legalityBadge ? (
+        {ownerName || updatedLabel || showLegality ? (
           <div className="deck-tile__footer">
-            {/* legalityBadge is always present (legal/limited/not-legal). */}
+            {/* Owner/date/legality are independently optional by tile context. */}
             {ownerName ? (
               onOwnerClick ? (
                 <button
@@ -355,13 +363,15 @@ export function DeckTile({
               {updatedLabel ? (
                 <span className="deck-tile__updated">Updated {updatedLabel}</span>
               ) : null}
-              <span
-                className={`deck-tile__legality deck-tile__legality--footer badge ${legalityBadgeClass(
-                  legalityBadge.variant,
-                )}`}
-              >
-                {legalityBadge.label}
-              </span>
+              {showLegality ? (
+                <span
+                  className={`deck-tile__legality deck-tile__legality--footer badge ${legalityBadgeClass(
+                    legalityBadge.variant,
+                  )}`}
+                >
+                  {legalityBadge.label}
+                </span>
+              ) : null}
             </div>
           </div>
         ) : null}

@@ -16,13 +16,16 @@ export function RecentUpdateTile({ item, isOpen, onToggle }: RecentUpdateTilePro
   const isSkyboundLaunch = item.id === 'a1000001-0000-4000-8000-000000000007';
   const isSkyboundAltArtReveal = item.id === 'a1000001-0000-4000-8000-000000000009';
   const isErrataFeature = item.id === 'a1000001-0000-4000-8000-000000000010';
+  const isPreconstructedDecksUpdate = item.id === 'a1000001-0000-4000-8000-000000000011';
   const thumbnailClassName = isSkyboundLaunch
     ? 'home__news-thumb-image--skybound-launch'
     : isSkyboundAltArtReveal
       ? 'home__news-thumb-image--skybound-alt-art'
       : isErrataFeature
         ? 'home__news-thumb-image--errata-feature'
-        : undefined;
+        : isPreconstructedDecksUpdate
+          ? 'home__news-thumb-image--preconstructed-decks'
+          : undefined;
 
   return (
     <button

@@ -66,6 +66,11 @@
   transform: translate(-6%, -3%) scale(1.5);
   transform-origin: 58% 24%;
 }
+.home__news-thumb img.home__news-thumb-image--preconstructed-decks {
+  object-position: center 22%;
+  transform: translateY(-6%) scale(1.73);
+  transform-origin: center 22%;
+}
 .home__news-thumb-icon {
   color: var(--color-accent-dim);
   font-size: 1.5rem;

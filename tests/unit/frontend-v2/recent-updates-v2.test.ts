@@ -26,4 +26,12 @@ describe('Recent Updates thumbnail framing', () => {
       /\.home__news-thumb img\.home__news-thumb-image--errata-feature\s*\{[\s\S]*?object-position: 58% 24%;[\s\S]*?transform: translate\(-6%, -3%\) scale\(1\.5\);[\s\S]*?transform-origin: 58% 24%;[\s\S]*?\}/,
     );
   });
+
+  it('zooms the preconstructed-decks artwork past the blue Training frame', () => {
+    expect(tileSource).toContain("item.id === 'a1000001-0000-4000-8000-000000000011'");
+    expect(tileSource).toContain("'home__news-thumb-image--preconstructed-decks'");
+    expect(styles).toMatch(
+      /\.home__news-thumb img\.home__news-thumb-image--preconstructed-decks\s*\{[\s\S]*?object-position: center 22%;[\s\S]*?transform: translateY\(-6%\) scale\(1\.73\);[\s\S]*?transform-origin: center 22%;[\s\S]*?\}/,
+    );
+  });
 });

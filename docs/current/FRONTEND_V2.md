@@ -142,6 +142,21 @@ additional decks via `npm run import:tournament-deck` or the
 [`frontend/src/features/home/TOURNAMENT_DECKS.md`](../../frontend/src/features/home/TOURNAMENT_DECKS.md)
 and `src/constants/tournamentDecksUser.ts`.
 
+## Preconstructed decks
+
+The Community page's `#preconstructed` tab is backed by
+`GET /api/v1/community/preconstructed-decks`. The response groups the official public Limited
+decks by release set in newest-first order and preserves source-workbook order within each set.
+Set headings use the canonical friendly set name rather than the stable abbreviated set code.
+Skybound includes a nested **Featured Precon Upgrade Recommendations** row immediately below its
+official decks, without a set divider. Its heading is two type-scale steps below the set heading;
+the four linked public decks retain the same tile layout and favorite behavior, and show regular deck
+metadata (selected mission set, owner name, updated date, and legality). Production uses the canonical
+shared deck UUIDs, while local development uses browser-created stand-ins with matching names and
+character lineups. Official preconstructed tiles support viewer favorites while intentionally hiding
+the utility-account owner, updated timestamp, and Limited badge. Seed migrations register each deck in
+`preconstructed_decks` so the page is not coupled to mutable card or deck IDs.
+
 ## Admin dashboards
 
 - `/admin/user-analytics` and `/admin/biz-ops` are both wrapped in `AdminRoute` and linked only from the ADMIN profile menu.

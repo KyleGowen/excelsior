@@ -2,13 +2,19 @@
 
 
 
-Public deck discovery page. **Tabbed layout** (Moxfield-style): three pill tabs select one
+Public deck discovery page. **Tabbed layout** (Moxfield-style): four pill tabs select one
 
 collection at a time; only the active tab's deck grid is shown.
 
 
 
-1. **Community Decks** (`#community`) — `GET /api/v1/community/decks` (20 most-recent
+1. **Your Favorites** (`#favorites`) — logged-in users only; current user's favorites
+
+   (`fetchFavoriteDecks`); hearts are filled and click-to-unfavorite (optimistically removes
+
+   the tile).
+
+2. **Community Decks** (`#community`) — `GET /api/v1/community/decks` (20 most-recent
 
    public/legal/non-limited). The **search bar** (`.community__search`, placeholder "Search
 
@@ -18,13 +24,29 @@ collection at a time; only the active tab's deck grid is shown.
 
    deck titles, owner usernames, characters (slots 1–4 + reserve), and location.
 
-2. **Your Favorites** (`#favorites`) — logged-in users only; current user's favorites
+3. **Preconstructed** (`#preconstructed`) — official starter/preconstructed decks from
 
-   (`fetchFavoriteDecks`); hearts are filled and click-to-unfavorite (optimistically removes
+   `GET /api/v1/community/preconstructed-decks`, grouped into release-set rows newest first.
 
-   the tile).
+   The initial rows are Skybound, then Edgar Rice Burroughs and the World Legends. Set labels use
+   the catalog's friendly set name in large teal type aligned to the deck-row edge with a half-line
+   buffer below it, and subsequent rows have a
 
-3. **Tournament Winning Decks** (`#tournament`) — `tournament_decks` account
+   horizontal separator. Its four-tile grid is 85% of the content width and centered. Tiles retain
+
+   favorite hearts but omit owner, updated date, and Limited.
+
+   Skybound has a second four-tile row titled **Featured Precon Upgrade Recommendations** directly
+
+   below the official decks. It remains inside the Skybound section with no divider, uses a heading
+
+   two type-scale steps smaller than the set label, preserves its curated order, and retains the
+
+   same favorite interaction. Unlike the official preconstructed row, featured recommendations use
+
+   regular deck metadata: selected mission set, owner name, updated date, and legality.
+
+4. **Tournament Winning Decks** (`#tournament`) — `tournament_decks` account
 
    (`fetchTournamentDecks`).
 
@@ -57,6 +79,10 @@ deck owner and for guests.
   from the favorites query cache (`favoriteIds`) and the tournament toggle mutates that
 
   cache — keeping hearts correct after a reload.
+
+- **Preconstructed** items carry viewer-specific `isFavorited` from their dedicated endpoint;
+
+  toggling patches the matching item inside its release-set group.
 
 
 

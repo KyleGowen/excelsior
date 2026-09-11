@@ -25,6 +25,9 @@ export interface CommunityDeckGridProps {
   favoriteFilled?: boolean;
   onOpen: (deck: DeckListItem) => void;
   onOwnerClick: (deck: DeckListItem) => void;
+  showOwner?: boolean;
+  showUpdated?: boolean;
+  showLegality?: boolean;
   className?: string;
 }
 
@@ -42,6 +45,9 @@ export function CommunityDeckGrid({
   favoriteFilled,
   onOpen,
   onOwnerClick,
+  showOwner = true,
+  showUpdated = true,
+  showLegality = true,
   className = 'community__grid',
 }: CommunityDeckGridProps) {
   const charStatsById = useMemo(() => buildCharStatsById(characters), [characters]);
@@ -67,8 +73,10 @@ export function CommunityDeckGrid({
             variant="full"
             maxStats={deckMaxStats(deck, charStatsById)}
             missionSetName={deckMissionSetName(deck, missionSetByCardId)}
-            ownerName={deck.metadata.ownerDisplayName ?? null}
-            onOwnerClick={() => onOwnerClick(deck)}
+            ownerName={showOwner ? (deck.metadata.ownerDisplayName ?? null) : null}
+            onOwnerClick={showOwner ? () => onOwnerClick(deck) : undefined}
+            showUpdated={showUpdated}
+            showLegality={showLegality}
             onOpen={() => onOpen(deck)}
             onToggleFavorite={showFavorite ? () => onToggleFavorite!(deck) : undefined}
             isFavorited={favoriteFilled ?? Boolean(deck.metadata.isFavorited)}

@@ -33,6 +33,7 @@ function stubCommunityService(over: Partial<CommunityService> = {}): CommunitySe
   return {
     getFavorites: jest.fn().mockResolvedValue([]),
     getCommunityDecks: jest.fn().mockResolvedValue([]),
+    getPreconstructedDeckGroups: jest.fn().mockResolvedValue([]),
     getPublicDecksForUser: jest.fn().mockResolvedValue([]),
     addFavorite: jest.fn(),
     removeFavorite: jest.fn(),
@@ -65,6 +66,53 @@ describe('community.http cache headers', () => {
     expect(res.headers['cache-control']).toBe('private, max-age=0, must-revalidate');
     expect(res.headers.vary).toBe('Cookie');
     expect(communityService.getCommunityDecks).toHaveBeenCalledWith('user-1', undefined);
+  });
+
+  it('GET /community/preconstructed-decks returns grouped decks with private cache headers', async () => {
+    const groups = [{
+      setCode: 'SKY',
+      setName: 'Skybound',
+      decks: [],
+      featuredUpgradeRecommendations: [],
+    }];
+    const communityService = stubCommunityService({
+      getPreconstructedDeckGroups: jest.fn().mockResolvedValue(groups),
+    });
+    const deps: CommunityV1HttpDeps = {
+      communityService,
+      authenticateUser: passAuth,
+      optionalAuth: passAuth,
+    };
+
+    const res = await request(buildApp(deps))
+      .get('/community/preconstructed-decks')
+      .expect(200);
+
+    expect(res.body.data).toEqual(groups);
+    expect(res.headers['cache-control']).toBe('private, max-age=0, must-revalidate');
+    expect(res.headers.vary).toBe('Cookie');
+    expect(communityService.getPreconstructedDeckGroups).toHaveBeenCalledWith('user-1');
+  });
+
+  it('GET /community/preconstructed-decks maps service failures to the v1 error', async () => {
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    const communityService = stubCommunityService({
+      getPreconstructedDeckGroups: jest.fn().mockRejectedValue(new Error('database unavailable')),
+    });
+    const deps: CommunityV1HttpDeps = {
+      communityService,
+      authenticateUser: passAuth,
+      optionalAuth: optionalNoUser,
+    };
+
+    const res = await request(buildApp(deps))
+      .get('/community/preconstructed-decks')
+      .expect(500);
+
+    expect(res.body.errors).toEqual([
+      { code: 'PRECONSTRUCTED_DECKS_ERROR', message: 'Failed to load preconstructed decks' },
+    ]);
+    errorSpy.mockRestore();
   });
 
   it('GET /users/:userId/public-decks sets private Cache-Control and Vary: Cookie', async () => {

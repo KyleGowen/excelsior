@@ -115,6 +115,12 @@ Track migration from legacy Express routes (`API_DOCUMENTATION.md`) to the encap
 | GET /api/decks/:id/ui-preferences   | GET /api/v1/decks/:id/ui-preferences       | [x]      | `DeckUIPreferencesService` + `decks.http.ts` | [x]       | [x]    | [x]       |
 | PUT /api/decks/:id/ui-preferences   | PUT /api/v1/decks/:id/ui-preferences       | [x]      | `DeckUIPreferencesService` + `decks.http.ts` | [x]       | [x]    | [x]       |
 
+### P2g — Official preconstructed decks
+
+| Legacy path | v1 path | Migrated | API module | HTTP unit | ≥1 int | API_V1.md |
+| ----------- | ------- | -------- | ---------- | --------- | ------ | --------- |
+| — | GET /api/v1/community/preconstructed-decks | [x] | `CommunityService` + `community.http.ts` | [x] | [x] | [x] |
+
 
 ---
 

@@ -53,6 +53,7 @@ to [`docs/openapi.yaml`](../openapi.yaml)) in the same PR.**
 | `CATALOG_ERROR`               | 500  | Upstream catalog query failed.                                           | Retry; report `requestId` if persistent.                                             |
 | `DBV_SUPPORT_ERROR`           | 500  | DBV support lookup failed.                                               | Retry; report `requestId` if persistent.                                             |
 | `DECK_LIST_ERROR`             | 500  | Listing decks failed.                                                    | Retry.                                                                                |
+| `PRECONSTRUCTED_DECKS_ERROR` | 500  | Listing official preconstructed decks failed.                            | Retry; report `requestId` if persistent.                                             |
 | `DECK_STATS_ERROR`            | 500  | Aggregating deck stats failed.                                           | Retry.                                                                                |
 | `DECK_VALIDATION_FAILED`      | 400  | Deck failed legality rules.                                              | Fix deck per the message.                                                            |
 | `DECK_VALIDATE_ERROR`         | 500  | Deck validator threw.                                                    | Retry.                                                                                |

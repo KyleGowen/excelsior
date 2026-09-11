@@ -90,6 +90,21 @@ export function registerCommunityV1HttpRoutes(router: Router, deps: CommunityV1H
     }
   });
 
+  // Official preconstructed decks, grouped newest release set first. Guest-viewable.
+  router.get('/community/preconstructed-decks', deps.optionalAuth, async (req, res) => {
+    try {
+      const viewerId = req.user?.id ?? null;
+      const data = await deps.communityService.getPreconstructedDeckGroups(viewerId);
+      setPrivateUserCacheHeaders(res);
+      sendV1Success(res, data);
+    } catch (error) {
+      console.error('v1 GET /community/preconstructed-decks error:', error);
+      sendV1Json(res, 500, null, [
+        { code: 'PRECONSTRUCTED_DECKS_ERROR', message: 'Failed to load preconstructed decks' }
+      ]);
+    }
+  });
+
   // Read-only public profile: a user's public decks. Guest-viewable.
   router.get('/users/:userId/public-decks', deps.optionalAuth, async (req, res) => {
     try {

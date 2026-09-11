@@ -5,6 +5,12 @@ One line per change. Newest first. Keep this in sync with
 
 ## Unreleased — Phase 3 (scale + docs)
 
+- Added `GET /api/v1/community/preconstructed-decks` and the Community page's
+  Preconstructed tab. Two deterministic migrations seed the four Skybound and four ERB
+  starter decks as public Limited decks using set-number/non-foil printing resolution; the
+  grouped response uses canonical friendly set names, preserves release and workbook order, and
+  supports viewer favorites. The Skybound group also includes an ordered featured precon-upgrade
+  recommendation row sourced from four stable public deck UUIDs.
 - Added current-user-owned Saved Database Views under `/api/v1/saved-database-views`:
   strict versioned state, list/create/rename/pin/delete/bulk-delete, private
   cache headers, non-enumerating ownership failures, and a transactionally enforced

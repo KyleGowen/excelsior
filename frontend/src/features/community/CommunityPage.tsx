@@ -8,7 +8,11 @@ import { useAuth } from '../../app/AuthProvider';
 
 import { fetchTournamentDecks } from '../../lib/api/decks';
 
-import { fetchCommunityFeed, fetchFavoriteDecks } from '../../lib/api/favorites';
+import {
+  fetchCommunityFeed,
+  fetchFavoriteDecks,
+  fetchPreconstructedDecks,
+} from '../../lib/api/favorites';
 
 import { useFavoriteToggle } from '../../lib/decks/useFavoriteToggle';
 import { favoritesQueryKey } from '../../lib/decks/favoritesQueryKey';
@@ -26,9 +30,9 @@ import { LoadingState } from '../../components/LoadingState';
 
 import { EmptyState } from '../../components/EmptyState';
 
-import { IconUsers, IconTrophy, IconHeart, IconSearch } from '../../components/icons';
+import { IconUsers, IconTrophy, IconHeart, IconSearch, IconCards } from '../../components/icons';
 
-import type { DeckListItem } from '../../lib/api/types';
+import type { DeckListItem, PreconstructedDeckGroup } from '../../lib/api/types';
 
 import './CommunityPage.css';
 
@@ -36,13 +40,20 @@ import './CommunityPage.css';
 
 const COMMUNITY_FEED_KEY = (search: string) => ['decks', 'community-feed', search] as const;
 
-
-
-type CommunityTab = 'tournament' | 'community' | 'favorites';
+const PRECONSTRUCTED_DECKS_KEY = ['decks', 'preconstructed'] as const;
 
 
 
-const COMMUNITY_TAB_ORDER: CommunityTab[] = ['community', 'favorites', 'tournament'];
+type CommunityTab = 'tournament' | 'community' | 'favorites' | 'preconstructed';
+
+
+
+const COMMUNITY_TAB_ORDER: CommunityTab[] = [
+  'favorites',
+  'community',
+  'preconstructed',
+  'tournament',
+];
 
 
 
@@ -53,6 +64,8 @@ const COMMUNITY_TAB_LABELS: Record<CommunityTab, string> = {
   community: 'Community Decks',
 
   favorites: 'Your Favorites',
+
+  preconstructed: 'Preconstructed',
 
 };
 
@@ -65,6 +78,8 @@ const HASH_TO_TAB: Record<string, CommunityTab> = {
   community: 'community',
 
   favorites: 'favorites',
+
+  preconstructed: 'preconstructed',
 
 };
 
@@ -233,6 +248,18 @@ export default function CommunityPage() {
 
   });
 
+  const preconstructedQuery = useQuery({
+
+    queryKey: PRECONSTRUCTED_DECKS_KEY,
+
+    queryFn: () => fetchPreconstructedDecks(),
+
+    enabled: activeTab === 'preconstructed',
+
+    staleTime: 10 * 60 * 1000,
+
+  });
+
 
 
   const charactersQuery = useQuery({
@@ -277,7 +304,7 @@ export default function CommunityPage() {
 
 
 
-  const favoriteToggle = useFavoriteToggle();
+  const favoriteToggle = useFavoriteToggle([PRECONSTRUCTED_DECKS_KEY]);
 
 
 
@@ -334,6 +361,44 @@ export default function CommunityPage() {
     );
 
     favoriteToggle.mutate({ deckId: deck.metadata.id, next: false });
+
+  };
+
+  const togglePreconstructedFavorite = (deck: DeckListItem) => {
+
+    const next = !deck.metadata.isFavorited;
+
+    queryClient.setQueryData<PreconstructedDeckGroup[]>(PRECONSTRUCTED_DECKS_KEY, (prev) =>
+
+      (prev ?? []).map((group) => ({
+
+        ...group,
+
+        decks: group.decks.map((item) =>
+
+          item.metadata.id === deck.metadata.id
+
+            ? { ...item, metadata: { ...item.metadata, isFavorited: next } }
+
+            : item,
+
+        ),
+
+        featuredUpgradeRecommendations: group.featuredUpgradeRecommendations.map((item) =>
+
+          item.metadata.id === deck.metadata.id
+
+            ? { ...item, metadata: { ...item.metadata, isFavorited: next } }
+
+            : item,
+
+        ),
+
+      })),
+
+    );
+
+    favoriteToggle.mutate({ deckId: deck.metadata.id, next });
 
   };
 
@@ -622,6 +687,84 @@ export default function CommunityPage() {
                 favoriteFilled
 
               />
+
+            )
+
+          ) : null}
+
+          {activeTab === 'preconstructed' ? (
+
+            preconstructedQuery.isLoading ? (
+
+              <LoadingState label="Loading preconstructed decks..." />
+
+            ) : preconstructedQuery.isError ? (
+
+              <EmptyState variant="error" title="Couldn't load decks" message="Please try again." icon={<IconCards />} />
+
+            ) : (preconstructedQuery.data ?? []).length === 0 ? (
+
+              <EmptyState title="Nothing here yet" message="Preconstructed decks will appear here as sets are added." icon={<IconCards />} />
+
+            ) : (
+
+              <div className="community__preconstructed">
+
+                {(preconstructedQuery.data ?? []).map((group) => (
+
+                  <section className="community__preconstructed-set" key={group.setCode}>
+
+                    <h2 className="community__preconstructed-label">{group.setName}</h2>
+
+                    <CommunityDeckGrid
+
+                      decks={group.decks}
+
+                      {...gridProps}
+
+                      className="community__preconstructed-grid"
+
+                      onToggleFavorite={togglePreconstructedFavorite}
+
+                      showOwner={false}
+
+                      showUpdated={false}
+
+                      showLegality={false}
+
+                    />
+
+                    {group.featuredUpgradeRecommendations.length > 0 ? (
+
+                      <div className="community__preconstructed-subsection">
+
+                        <h3 className="community__preconstructed-subsection-label">
+
+                          Featured Precon Upgrade Recommendations
+
+                        </h3>
+
+                        <CommunityDeckGrid
+
+                          decks={group.featuredUpgradeRecommendations}
+
+                          {...gridProps}
+
+                          className="community__preconstructed-grid"
+
+                          onToggleFavorite={togglePreconstructedFavorite}
+
+                        />
+
+                      </div>
+
+                    ) : null}
+
+                  </section>
+
+                ))}
+
+              </div>
 
             )
 

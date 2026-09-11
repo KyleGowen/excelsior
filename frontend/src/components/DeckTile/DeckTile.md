@@ -39,6 +39,8 @@ Used on Home (Community Decks rail, `compact`) and Deck Selection (`full`).
 | `favoriteBusy` | `boolean` | `false` | Disables the heart during an optimistic mutation. |
 | `ownerName` | `string \| null` | – | Owner display name in the footer row (community/profile contexts). |
 | `onOwnerClick` | `() => void` | – | Click handler for the owner name (→ read-only public profile). |
+| `showUpdated` | `boolean` | `true` | Set false for curated contexts that intentionally omit the updated timestamp. |
+| `showLegality` | `boolean` | `true` | Set false for curated contexts that intentionally omit the legality badge. |
 
 ## Community controls (favorite heart, visibility chip, owner name)
 
@@ -64,7 +66,7 @@ When `maxStats` is provided, four `StatIconBadge` components (`md`) show charact
 
 ## Footer
 
-`.deck-tile__footer`: **owner name** lower-left when `ownerName` is set (`.deck-tile__owner` / `.deck-tile__owner--link`); **Updated** date and optional legality badge grouped in `.deck-tile__footer-end` (lower-right). My-decks tiles without an owner show only the updated date (right-aligned). Legal decks show date only.
+`.deck-tile__footer`: **owner name** lower-left when `ownerName` is set (`.deck-tile__owner` / `.deck-tile__owner--link`); **Updated** date and optional legality badge grouped in `.deck-tile__footer-end` (lower-right). My-decks tiles without an owner show only the updated date (right-aligned). Legal decks show date only. Preconstructed tiles suppress the entire footer by passing no owner and setting `showUpdated` / `showLegality` false.
 
 ## Mobile density (`.layout-mobile`)
 
@@ -82,7 +84,7 @@ Same rules apply to Home rail `compact` tiles harmlessly (rails are horizontal s
 
 ## Legality badge
 
-Via the shared `deckLegalityBadge()` ([`deckTileLegality.ts`](./deckTileLegality.ts)) — the single source of truth used by tiles, Home/Community rails, and the deck editor. Precedence: **Limited** (if `is_limited`) > **Not Legal** (if `!is_valid`) > **Legal**. The chip is **always shown** (legality is explicit everywhere). Color classes come from `legalityBadgeClass()`: `badge-legal` (green), `badge-limited` (amber), `badge-not-legal` (red).
+Via the shared `deckLegalityBadge()` ([`deckTileLegality.ts`](./deckTileLegality.ts)) — the single source of truth used by tiles, Home/Community rails, and the deck editor. Precedence: **Limited** (if `is_limited`) > **Not Legal** (if `!is_valid`) > **Legal**. The chip is shown by default; the official Preconstructed grid intentionally suppresses it because every starter is Limited. Color classes come from `legalityBadgeClass()`: `badge-legal` (green), `badge-limited` (amber), `badge-not-legal` (red).
 
 `is_valid` is **server-owned**: the backend recomputes and persists `decks.is_valid` on every mutation (card add/replace/delete, create, import, new-user sample copy) so tile and editor badges agree for the same deck.
 

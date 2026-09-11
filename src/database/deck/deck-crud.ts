@@ -1,4 +1,4 @@
-import { Deck, DeckCard } from '../../types';
+import { Deck, DeckCard, PreconstructedDeckRecord } from '../../types';
 import { invalidateUserDeckListCache, type DeckRepositoryContext } from './context';
 
 /** Deck row from SELECT * FROM decks */
@@ -32,6 +32,13 @@ interface DeckListRow extends DeckRow {
   mission_1_id?: string;
   mission_1_name?: string;
   mission_1_default_image?: string;
+}
+
+interface PreconstructedDeckListRow extends DeckListRow {
+  preconstructed_set_code: string;
+  preconstructed_set_label: string;
+  preconstructed_release_order: number;
+  preconstructed_deck_order: number;
 }
 
 /** First mission preview in deck list (from LATERAL subquery aliases). */
@@ -548,6 +555,7 @@ ${BATTLEGROUND_FALLBACK_JOIN}
  * number we control. Used by community / favorites / public-profile reads.
  */
 function buildDeckListSelectSql(opts: {
+  extraSelect?: string;
   extraJoins?: string;
   where: string;
   orderBy: string;
@@ -565,6 +573,7 @@ function buildDeckListSelectSql(opts: {
           dm1.mission_id as mission_1_id,
           dm1.mission_name as mission_1_name,
           dm1.mission_image_path as mission_1_default_image
+          ${opts.extraSelect ? `,\n          ${opts.extraSelect}` : ''}
         FROM decks d
 ${joinFragment}
         LEFT JOIN locations l ON d.location_id = l.id
@@ -613,6 +622,26 @@ export async function getPublicDecksByUserId(
   }
 }
 
+/** Public deck-list items selected by stable UUID, preserving the caller's order. */
+export async function getPublicDecksByIds(
+  ctx: DeckRepositoryContext,
+  ids: string[]
+): Promise<Deck[]> {
+  if (ids.length === 0) return [];
+
+  const client = await ctx.pool.connect();
+  try {
+    const sql = buildDeckListSelectSql({
+      where: 'd.is_private = false AND d.id = ANY($1::uuid[])',
+      orderBy: 'array_position($1::uuid[], d.id)',
+    });
+    const result = await client.query(sql, [ids]);
+    return (result.rows as DeckListRow[]).map(mapDeckRowToListDeck);
+  } finally {
+    client.release();
+  }
+}
+
 /** Public + legal decks owned by a curated account (tournament/community rails). */
 export async function getPublicLegalDecksByUserId(
   ctx: DeckRepositoryContext,
@@ -628,6 +657,35 @@ export async function getPublicLegalDecksByUserId(
     // SQL fragments are fixed; $1 is the only user input.
     const result = await client.query(sql, [userId]); // nosemgrep: pg-sql-template-interpolation
     return (result.rows as DeckListRow[]).map(mapDeckRowToListDeck);
+  } finally {
+    client.release();
+  }
+}
+
+/** Official preconstructed decks, grouped newest set first and workbook order within a set. */
+export async function getPreconstructedDecks(
+  ctx: DeckRepositoryContext
+): Promise<PreconstructedDeckRecord[]> {
+  const client = await ctx.pool.connect();
+  try {
+    const sql = buildDeckListSelectSql({
+      extraSelect: `pd.set_code AS preconstructed_set_code,
+          precon_set.name AS preconstructed_set_label,
+          pd.release_order AS preconstructed_release_order,
+          pd.deck_order AS preconstructed_deck_order`,
+      extraJoins: `JOIN preconstructed_decks pd ON pd.deck_id = d.id
+        JOIN sets precon_set ON precon_set.code = pd.set_code`,
+      where: 'd.is_private = false',
+      orderBy: 'pd.release_order DESC, pd.deck_order ASC',
+    });
+    const result = await client.query(sql); // nosemgrep: pg-sql-template-interpolation
+    return (result.rows as PreconstructedDeckListRow[]).map((row) => ({
+      deck: mapDeckRowToListDeck(row),
+      setCode: row.preconstructed_set_code,
+      setLabel: row.preconstructed_set_label,
+      releaseOrder: Number(row.preconstructed_release_order),
+      deckOrder: Number(row.preconstructed_deck_order),
+    }));
   } finally {
     client.release();
   }

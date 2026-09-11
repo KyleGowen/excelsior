@@ -43,6 +43,8 @@ tags:
     description: Sets, deck backgrounds, and other DBV lookup data.
   - name: Decks
     description: User deck CRUD. Accepts session cookie OR Bearer JWT.
+  - name: Community
+    description: Public deck discovery, official preconstructed decks, and viewer favorite state.
   - name: Collections
     description: User card collections. Accepts session cookie OR Bearer JWT.
   - name: Saved Database Views
@@ -395,6 +397,26 @@ components:
     Deck:
       type: object
       additionalProperties: true
+    PreconstructedDeckGroup:
+      type: object
+      required: [setCode, setName, decks, featuredUpgradeRecommendations]
+      properties:
+        setCode:
+          type: string
+          description: Stable release-set code.
+        setName:
+          type: string
+          description: Friendly display name from the canonical sets catalog.
+        decks:
+          type: array
+          description: Public Limited decks in source-workbook order.
+          items:
+            $ref: '#/components/schemas/Deck'
+        featuredUpgradeRecommendations:
+          type: array
+          description: Curated public upgrade decks for a nested row in this release set, in display order.
+          items:
+            $ref: '#/components/schemas/Deck'
     Card:
       type: object
       additionalProperties: true
@@ -816,6 +838,28 @@ paths:
       tags: [Decks]
       summary: Create a deck.
       responses: { '200': { description: OK }, '400': { description: Validation error } }
+  /api/v1/community/preconstructed-decks:
+    get:
+      tags: [Community]
+      summary: List official preconstructed decks grouped by release set, newest first.
+      description: Guest-viewable; a valid session or Bearer token populates viewer-specific favorite state.
+      security: []
+      responses:
+        '200':
+          description: Preconstructed deck groups.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/PreconstructedDeckGroup'
+        '500':
+          description: PRECONSTRUCTED_DECKS_ERROR.
   /api/v1/decks/stats:
     get:
       tags: [Decks]

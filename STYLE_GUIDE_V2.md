@@ -240,6 +240,20 @@ account-sheet row (`.account-sheet__toggle`) with `justify-content: space-betwee
 - **Community search** uses the standard search input and matches deck titles, owner usernames,
   character names, and location names with the same query. Its accent focus ring surrounds the
   outer search pill, keeping the icon and text aligned in one control.
+- **Community Preconstructed tab:** official decks are grouped by release set, newest set first.
+  Each set uses a teal uppercase `--font-size-xl` label aligned to the deck-row edge, with a half-line
+  buffer below it, and a centered four-tile desktop row
+  at 85% of the available content width; subsequent sets begin after a thin standard border and
+  extra vertical space. Mobile keeps the same order, centered 85% width, and divider with a
+  two-column tile grid. Official preconstructed tiles retain the favorite heart and normal deck art,
+  stats, card count, and threat, but omit owner, updated date, and the shared Limited badge.
+  Skybound's nested featured-upgrade row uses the same grid with no divider from the official row;
+  its muted `--font-size-md` heading establishes the H2-level hierarchy beneath the teal set label.
+  Featured recommendations use regular deck metadata, including the selected mission set, owner,
+  updated date, and legality badge. On desktop, the updated date is geometrically centered in the tile
+  independently of the owner and legality badge. On mobile, featured tiles preserve the mission-set
+  chip in the summary bar and place legality beside the owner in the footer; the date follows the
+  standard mobile tile behavior and remains hidden.
 - **Foil laminate (per screen):** The prismatic `FoilCard` overlay is controlled by `showFoilEffect`
   on `CardImage` / `CardTile` / `CardDetailPanel` (default `true`). Base cards that merely have a
   foil variant show a silver ✦ badge (`.card-tile__foil-badge`) instead of the laminate.

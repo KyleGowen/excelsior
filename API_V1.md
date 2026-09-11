@@ -1026,7 +1026,7 @@ Read-only community feed, deck favorites, and public user profiles. These power 
 - `ownerDisplayName` (string or `null`) — the resolved public name of the deck owner (`resolveUserDisplayName`).
 - `isFavorited` (boolean) — whether the **current viewer** has favorited this deck (always `false` for guests).
 
-**Caching:** `GET /api/v1/community/decks`, `GET /api/v1/users/:userId/public-decks`, and `GET /api/v1/decks/favorites` emit `Cache-Control: private, max-age=0, must-revalidate` and `Vary: Cookie` so CloudFront does not serve stale per-viewer favorite state after toggles. See [`docs/current/CLOUDFRONT_CDN.md`](docs/current/CLOUDFRONT_CDN.md).
+**Caching:** `GET /api/v1/community/decks`, `GET /api/v1/community/preconstructed-decks`, `GET /api/v1/users/:userId/public-decks`, and `GET /api/v1/decks/favorites` emit `Cache-Control: private, max-age=0, must-revalidate` and `Vary: Cookie` so CloudFront does not serve stale per-viewer favorite state after toggles. See [`docs/current/CLOUDFRONT_CDN.md`](docs/current/CLOUDFRONT_CDN.md).
 
 **Visibility rule:** only decks with `is_private = false` are ever returned by the community feed, search, public profiles, and favorites. Curated internal accounts (`community_decks` `…0002`, `tournament_decks` `…0003`) are **excluded** from the community feed/search (they have their own `GET /api/v1/decks/community` and `GET /api/v1/decks/tournament` rails). Those curated rails return only **`is_private = false` AND `is_valid = true`** decks (Limited allowed when legal).
 
@@ -1041,6 +1041,31 @@ Read-only community feed, deck favorites, and public user profiles. These power 
 **Response 200:** v1 envelope; `**data`** = array of enriched deck list items.
 
 **Implementation:** `[CommunityService.getCommunityDecks](src/api/services/communityService.ts)` · HTTP `[community.http.ts](src/api/http/community.http.ts)`
+
+---
+
+### `GET /api/v1/community/preconstructed-decks`
+
+Official starter/preconstructed decks registered by release set. These decks are public and
+Limited, remain directly linkable/shareable, and are omitted from the ordinary community feed.
+
+**Auth:** Optional session cookie or Bearer. Authenticated viewers get `isFavorited` populated;
+guests are allowed and always see `isFavorited: false`.
+
+**Response 200:** v1 envelope; `**data**` = an array of
+`{ "setCode": "SKY", "setName": "Skybound", "decks": [...] }` groups, newest release set first.
+`setName` is the friendly name from the canonical sets catalog (for example,
+`Edgar Rice Burroughs and the World Legends` rather than `ERB`). Each `decks` array preserves the
+workbook-defined deck order and contains enriched deck list items. Each group also includes
+`featuredUpgradeRecommendations`; Skybound contains the four curated upgrade decks in configured
+display order, while sets without an upgrade row return an empty array. These items use the same
+enriched deck shape and viewer-specific favorite state. Production resolves the supplied canonical
+deck UUIDs; local development resolves browser-created stand-ins containing the same deck names and
+character lineups.
+
+**Response 500:** `PRECONSTRUCTED_DECKS_ERROR`.
+
+**Implementation:** `[CommunityService.getPreconstructedDeckGroups](src/api/services/communityService.ts)` · HTTP `[community.http.ts](src/api/http/community.http.ts)`
 
 ---
 
@@ -1444,6 +1469,7 @@ Clears card repository caches.
 | POST   | /api/v1/decks/:id/favorite              | community.http.ts   |
 | DELETE | /api/v1/decks/:id/favorite              | community.http.ts   |
 | GET    | /api/v1/community/decks                 | community.http.ts   |
+| GET    | /api/v1/community/preconstructed-decks | community.http.ts   |
 | GET    | /api/v1/users/:userId/public-decks      | community.http.ts   |
 | GET    | /api/v1/decks                           | decks.http.ts       |
 | GET    | /api/v1/decks/stats                     | decks.http.ts       |

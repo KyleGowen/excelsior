@@ -177,6 +177,14 @@ export interface DeckDetail {
 /** Deck list tiles include a small preview-card array (characters etc.). */
 export type DeckListItem = DeckDetail;
 
+/** One release-set row in the official preconstructed-deck catalog. */
+export interface PreconstructedDeckGroup {
+  setCode: string;
+  setName: string;
+  decks: DeckListItem[];
+  featuredUpgradeRecommendations: DeckListItem[];
+}
+
 export interface CollectionCard {
   id: string;
   collection_id: string;
