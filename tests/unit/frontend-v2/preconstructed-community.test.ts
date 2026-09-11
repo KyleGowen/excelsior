@@ -13,6 +13,14 @@ const communityDeckGrid = fs.readFileSync(
   path.join(__dirname, '../../../frontend/src/features/community/CommunityDeckGrid.tsx'),
   'utf8',
 );
+const deckSelectionPage = fs.readFileSync(
+  path.join(__dirname, '../../../frontend/src/features/deck-selection/DeckSelectionPage.tsx'),
+  'utf8',
+);
+const deckSelectionStyles = fs.readFileSync(
+  path.join(__dirname, '../../../frontend/src/features/deck-selection/DeckSelectionPage.css'),
+  'utf8',
+);
 const favoritesApi = fs.readFileSync(
   path.join(__dirname, '../../../frontend/src/lib/api/favorites.ts'),
   'utf8',
@@ -92,5 +100,28 @@ describe('Community preconstructed deck UI contract', () => {
     expect(deckTile).toContain('showLegality = true');
     expect(deckTile).toContain('const updatedLabel = showUpdated && meta.lastModified');
     expect(deckTile).toContain('{showLegality ? (');
+  });
+
+  it('includes the complete preconstructed collection in the mobile Decks tabs', () => {
+    expect(deckSelectionPage).toMatch(
+      /const DECK_SELECTION_TAB_ORDER: DeckTab\[\] = \[\s*'mine',\s*'favorites',\s*'community',\s*'preconstructed',\s*'tournament',\s*\]/,
+    );
+    expect(deckSelectionPage).toContain("preconstructed: 'Preconstructed'");
+    expect(deckSelectionPage).toContain('queryFn: () => fetchPreconstructedDecks()');
+    expect(deckSelectionPage).toContain('preconstructedGroups.map((group) => (');
+    expect(deckSelectionPage).toContain('decks={group.featuredUpgradeRecommendations}');
+    expect(deckSelectionPage).toContain('onToggleFavorite={togglePreconstructedFavorite}');
+    expect(deckSelectionPage.match(/showOwner=\{false\}/g)).toHaveLength(1);
+    expect(deckSelectionPage.match(/showUpdated=\{false\}/g)).toHaveLength(1);
+    expect(deckSelectionPage.match(/showLegality=\{false\}/g)).toHaveLength(1);
+    expect(deckSelectionStyles).toMatch(
+      /\.dsel__preconstructed-grid\s*\{[\s\S]*?width:\s*85%[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/,
+    );
+    expect(deckSelectionStyles).toMatch(
+      /\.dsel__preconstructed-set \+ \.dsel__preconstructed-set\s*\{[\s\S]*?border-top:/,
+    );
+    expect(deckSelectionStyles).toMatch(
+      /\.layout-mobile \.dsel__preconstructed-subsection \.deck-tile__legality--footer\s*\{[\s\S]*?display:\s*inline-flex/,
+    );
   });
 });

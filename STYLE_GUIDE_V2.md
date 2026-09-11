@@ -345,6 +345,11 @@ Each screen has a companion doc in its feature folder:
 - Deck Selection — [`frontend/src/features/deck-selection/DeckSelectionPage.md`](frontend/src/features/deck-selection/DeckSelectionPage.md)
 - Deck Editor (DEV) — [`frontend/src/features/deck-editor/DeckEditorPage.md`](frontend/src/features/deck-editor/DeckEditorPage.md)
 
+On mobile, Deck Selection exposes the discovery collections as a horizontally scrollable tab strip
+ordered **My Decks, Favorites, Community, Preconstructed, Tournament**. The Preconstructed tab uses
+the same teal set headings, centered 85%-width two-column deck rows, set separators, simplified
+official tiles, and full-metadata featured upgrade row as the Community page.
+
 ### Deck Editor — Desktop header compaction
 DTV topbar (`.deck-editor__topbar`) uses a 3-column grid on wide viewports: leading (name + meta) | stats panel | actions. When the main column is narrow (`@container deck-editor-main (max-width: 1700px)`, desktop only), it switches to a **two-row** layout in [`DeckEditorPage.css`](frontend/src/features/deck-editor/DeckEditorPage.css):
 

@@ -55,7 +55,7 @@
   flex-wrap: wrap;
 }
 
-/* ---- Mobile tabs (My Decks / Favorites / Community / Tournament) ---- */
+/* ---- Mobile tabs (My Decks / Favorites / Community / Preconstructed / Tournament) ---- */
 .dsel__tabs {
   display: flex;
   gap: var(--space-2);
@@ -168,6 +168,61 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--space-5);
+}
+
+/* ---- Mobile Preconstructed tab (same hierarchy as Community) ---- */
+.dsel__preconstructed {
+  display: flex;
+  flex-direction: column;
+}
+.dsel__preconstructed-set {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.dsel__preconstructed-set + .dsel__preconstructed-set {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+.dsel__preconstructed-label {
+  box-sizing: border-box;
+  width: 85%;
+  margin-inline: auto;
+  margin-bottom: 0.5em;
+  color: var(--color-accent);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.dsel__preconstructed-grid {
+  display: grid;
+  width: 85%;
+  margin-inline: auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.dsel__preconstructed-subsection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+.dsel__preconstructed-subsection-label {
+  width: 85%;
+  margin-inline: auto;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+}
+.dsel__preconstructed-subsection .deck-tile__footer {
+  position: relative;
+}
+.dsel__preconstructed-subsection .deck-tile__updated {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .dsel__form {
@@ -320,4 +375,16 @@
 .layout-mobile .dsel__grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3);
+}
+.layout-mobile .dsel__preconstructed-subsection .deck-tile__chip {
+  display: inline-flex;
+}
+.layout-mobile .dsel__preconstructed-subsection .deck-tile__legality--meta {
+  display: none;
+}
+.layout-mobile .dsel__preconstructed-subsection .deck-tile__footer {
+  display: flex;
+}
+.layout-mobile .dsel__preconstructed-subsection .deck-tile__legality--footer {
+  display: inline-flex;
 }

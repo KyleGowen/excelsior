@@ -3,7 +3,12 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../app/AuthProvider';
 import { fetchDecksForUser, createDeck, deleteDeck, fetchTournamentDecks } from '../../lib/api/decks';
-import { fetchPublicDecksForUser, fetchFavoriteDecks, fetchCommunityFeed } from '../../lib/api/favorites';
+import {
+  fetchPublicDecksForUser,
+  fetchFavoriteDecks,
+  fetchCommunityFeed,
+  fetchPreconstructedDecks,
+} from '../../lib/api/favorites';
 import { useFavoriteToggle } from '../../lib/decks/useFavoriteToggle';
 import { favoritesQueryKey } from '../../lib/decks/favoritesQueryKey';
 import { fetchCatalog } from '../../lib/api/catalog';
@@ -36,23 +41,32 @@ import {
   IconHeart,
   IconUsers,
   IconTrophy,
+  IconCards,
   IconSearch,
 } from '../../components/icons';
-import type { DeckListItem } from '../../lib/api/types';
+import type { DeckListItem, PreconstructedDeckGroup } from '../../lib/api/types';
 import { ExportDeckPanel } from '../deck-editor/ExportDeckPanel';
 import { ImportDeckPanel } from './ImportDeckPanel';
 import { useDeckExportInput, createStubDeckExportInput } from './useDeckExportInput';
 import './DeckSelectionPage.css';
 
-type DeckTab = 'mine' | 'favorites' | 'community' | 'tournament';
-const DECK_SELECTION_TAB_ORDER: DeckTab[] = ['mine', 'favorites', 'community', 'tournament'];
+type DeckTab = 'mine' | 'favorites' | 'community' | 'preconstructed' | 'tournament';
+const DECK_SELECTION_TAB_ORDER: DeckTab[] = [
+  'mine',
+  'favorites',
+  'community',
+  'preconstructed',
+  'tournament',
+];
 const DECK_TAB_LABELS: Record<DeckTab, string> = {
   mine: 'My Decks',
   favorites: 'Favorites',
   community: 'Community',
+  preconstructed: 'Preconstructed',
   tournament: 'Tournament',
 };
 const COMMUNITY_FEED_KEY = (search: string) => ['decks', 'community-feed', search] as const;
+const PRECONSTRUCTED_DECKS_KEY = ['decks', 'preconstructed'] as const;
 const TOURNAMENT_KEY = ['decks', 'tournament'] as const;
 
 export default function DeckSelectionPage() {
@@ -92,7 +106,7 @@ export default function DeckSelectionPage() {
   });
   const decksQuery = isReadOnlyProfile ? profileDecksQuery : myDecksQuery;
 
-  const favoriteToggle = useFavoriteToggle([[...publicDecksKey]]);
+  const favoriteToggle = useFavoriteToggle([[...publicDecksKey], PRECONSTRUCTED_DECKS_KEY]);
 
   // Optimistically flip the heart on the public-profile list before the refetch lands.
   const handleToggleFavorite = (deck: DeckListItem) => {
@@ -132,7 +146,7 @@ export default function DeckSelectionPage() {
     staleTime: 30 * 60 * 1000,
   });
 
-  // ---- Mobile-only tabs (My Decks / Favorites / Community / Tournament) ----
+  // ---- Mobile-only tabs (My Decks / Favorites / Community / Preconstructed / Tournament) ----
   const { isMobile } = useLayoutMode();
   const [activeTab, setActiveTab] = useState<DeckTab>('mine');
   // Desktop always shows My Decks here; the desktop Community page lives at /community.
@@ -185,6 +199,12 @@ export default function DeckSelectionPage() {
     queryKey: TOURNAMENT_KEY,
     queryFn: () => fetchTournamentDecks(),
     enabled: showTabs && tab === 'tournament',
+    staleTime: 10 * 60 * 1000,
+  });
+  const preconstructedQuery = useQuery({
+    queryKey: PRECONSTRUCTED_DECKS_KEY,
+    queryFn: () => fetchPreconstructedDecks(),
+    enabled: showTabs && tab === 'preconstructed',
     staleTime: 10 * 60 * 1000,
   });
 
@@ -279,6 +299,25 @@ export default function DeckSelectionPage() {
       (prev ?? []).filter((d) => d.metadata.id !== deck.metadata.id),
     );
     favoriteToggle.mutate({ deckId: deck.metadata.id, next: false });
+  };
+  const togglePreconstructedFavorite = (deck: DeckListItem) => {
+    const next = !deck.metadata.isFavorited;
+    queryClient.setQueryData<PreconstructedDeckGroup[]>(PRECONSTRUCTED_DECKS_KEY, (prev) =>
+      (prev ?? []).map((group) => ({
+        ...group,
+        decks: group.decks.map((item) =>
+          item.metadata.id === deck.metadata.id
+            ? { ...item, metadata: { ...item.metadata, isFavorited: next } }
+            : item,
+        ),
+        featuredUpgradeRecommendations: group.featuredUpgradeRecommendations.map((item) =>
+          item.metadata.id === deck.metadata.id
+            ? { ...item, metadata: { ...item.metadata, isFavorited: next } }
+            : item,
+        ),
+      })),
+    );
+    favoriteToggle.mutate({ deckId: deck.metadata.id, next });
   };
 
   const handleCreate = async (e: FormEvent) => {
@@ -381,12 +420,15 @@ export default function DeckSelectionPage() {
       <><IconHeart filled /> Favorites</>
     ) : tab === 'community' ? (
       <><IconUsers /> Community</>
+    ) : tab === 'preconstructed' ? (
+      <><IconCards /> Preconstructed</>
     ) : (
       <><IconTrophy /> Tournament</>
     );
 
   const communityDecks = communityFeedQuery.data ?? [];
   const favoriteDecks = favoritesQuery.data ?? [];
+  const preconstructedGroups = preconstructedQuery.data ?? [];
   const tournamentDecks = tournamentQuery.data ?? [];
 
   return (
@@ -552,6 +594,60 @@ export default function DeckSelectionPage() {
               onOpen={openReadonly}
               onOwnerClick={openProfile}
             />
+          )
+        ) : tab === 'preconstructed' ? (
+          preconstructedQuery.isLoading ? (
+            <LoadingState label="Loading preconstructed decks..." />
+          ) : preconstructedQuery.isError ? (
+            <EmptyState variant="error" title="Couldn't load decks" message="Please try again." icon={<IconCards />} />
+          ) : preconstructedGroups.length === 0 ? (
+            <EmptyState title="Nothing here yet" message="Preconstructed decks will appear here as sets are added." icon={<IconCards />} />
+          ) : (
+            <div className="dsel__preconstructed">
+              {preconstructedGroups.map((group) => (
+                <section className="dsel__preconstructed-set" key={group.setCode}>
+                  <h2 className="dsel__preconstructed-label">{group.setName}</h2>
+                  <CommunityDeckGrid
+                    className="dsel__preconstructed-grid"
+                    decks={group.decks}
+                    characters={charactersQuery.data}
+                    locations={locationsQuery.data}
+                    battlegrounds={battlegroundsQuery.data}
+                    missions={missionsQuery.data}
+                    viewerId={viewerId}
+                    canFavorite={canFavorite}
+                    favoriteBusy={favoriteToggle.isPending}
+                    onToggleFavorite={togglePreconstructedFavorite}
+                    onOpen={openReadonly}
+                    onOwnerClick={openProfile}
+                    showOwner={false}
+                    showUpdated={false}
+                    showLegality={false}
+                  />
+                  {group.featuredUpgradeRecommendations.length > 0 ? (
+                    <div className="dsel__preconstructed-subsection">
+                      <h3 className="dsel__preconstructed-subsection-label">
+                        Featured Precon Upgrade Recommendations
+                      </h3>
+                      <CommunityDeckGrid
+                        className="dsel__preconstructed-grid"
+                        decks={group.featuredUpgradeRecommendations}
+                        characters={charactersQuery.data}
+                        locations={locationsQuery.data}
+                        battlegrounds={battlegroundsQuery.data}
+                        missions={missionsQuery.data}
+                        viewerId={viewerId}
+                        canFavorite={canFavorite}
+                        favoriteBusy={favoriteToggle.isPending}
+                        onToggleFavorite={togglePreconstructedFavorite}
+                        onOpen={openReadonly}
+                        onOwnerClick={openProfile}
+                      />
+                    </div>
+                  ) : null}
+                </section>
+              ))}
+            </div>
           )
         ) : tournamentQuery.isLoading ? (
           <LoadingState label="Loading decks..." />

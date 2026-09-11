@@ -13,13 +13,15 @@ per-deck actions. Titled "My Decks" (or "Guest Decks").
   view, even though their direct deck URL remains readable.
 
 ## Mobile tabs (owner mode only)
-On `.layout-mobile`, four swipeable pill tabs — **My Decks / Favorites / Community /
-Tournament** (`DECK_SELECTION_TAB_ORDER`) — built with `useHorizontalSwipe` +
+On `.layout-mobile`, five swipeable pill tabs — **My Decks / Favorites / Community /
+Preconstructed / Tournament** (`DECK_SELECTION_TAB_ORDER`) — built with `useHorizontalSwipe` +
 `stepCyclicalIndex` and `DECK_SELECTION_SWIPE_BLOCK_SELECTOR` (from
 `frontend/src/lib/layout/useHorizontalSwipe.ts`). The bottom nav is **unchanged** (no new
-buttons). Per-tab rules match desktop: My Decks editable; Favorites/Community/Tournament
-read-only with favorite hearts; the Community tab search matches deck titles, usernames,
-characters, and locations.
+buttons). Per-tab rules match desktop: My Decks editable; Favorites/Community/Preconstructed/
+Tournament read-only with favorite hearts; the Community tab search matches deck titles,
+usernames, characters, and locations. Preconstructed mirrors the Community page's newest-first
+set groups: official tiles hide owner/date/legality, while featured upgrade recommendations show
+regular deck metadata.
 
 ## Capabilities
 - **New Deck**: opens a `SlideOutPanel` form (name + optional description + private/public visibility) → `createDeck` →
