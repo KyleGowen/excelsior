@@ -1,15 +1,31 @@
 import request from 'supertest';
+import { Pool } from 'pg';
 import { app } from '../setup-integration';
 
 // Helper function to cleanup test users created by signup (decks cascade delete)
 const cleanupTestUser = async (userId: string) => {
-    const { Pool } = require('pg');
     const pool = new Pool({
         connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower'
     });
 
     try {
         await pool.query('DELETE FROM users WHERE id = $1', [userId]);
+    } finally {
+        await pool.end();
+    }
+};
+
+const countSignupStarterCopies = async (userId: string): Promise<number> => {
+    const pool = new Pool({
+        connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower'
+    });
+
+    try {
+        const result = await pool.query(
+            'SELECT COUNT(*)::int AS count FROM decks WHERE user_id = $1 AND is_signup_starter_copy = TRUE',
+            [userId]
+        );
+        return result.rows[0].count;
     } finally {
         await pool.end();
     }
@@ -164,6 +180,7 @@ describe('User Signup Integration Tests', () => {
             });
             expect(sampleDeck).toBeTruthy();
             expect(sampleDeck.metadata.name).toMatch(/^Sample: /);
+            await expect(countSignupStarterCopies(userId!)).resolves.toBe(1);
         } finally {
             if (userId) await cleanupTestUser(userId);
         }

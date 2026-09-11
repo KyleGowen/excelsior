@@ -426,7 +426,11 @@ export class PostgreSQLUserRepository implements UserRepository {
           `SELECT
              COUNT(*)::int AS total_decks,
              COUNT(*) FILTER (WHERE decks.is_valid = TRUE)::int AS legal_decks,
-             COUNT(*) FILTER (WHERE decks.is_limited = TRUE)::int AS limited_decks
+             COUNT(*) FILTER (WHERE decks.is_limited = TRUE)::int AS limited_decks,
+             COUNT(*) FILTER (WHERE decks.is_signup_starter_copy = FALSE)::int AS non_starter_decks,
+             COUNT(*) FILTER (
+               WHERE decks.is_signup_starter_copy = FALSE AND decks.is_valid = TRUE
+             )::int AS non_starter_legal_decks
            FROM decks
            INNER JOIN users ON users.id = decks.user_id
            WHERE users.role = 'USER'
@@ -510,7 +514,9 @@ export class PostgreSQLUserRepository implements UserRepository {
         deckStatistics: {
           totalDecks: deckStatistics.total_decks ?? 0,
           legalDecks: deckStatistics.legal_decks ?? 0,
-          limitedDecks: deckStatistics.limited_decks ?? 0
+          limitedDecks: deckStatistics.limited_decks ?? 0,
+          nonStarterDecks: deckStatistics.non_starter_decks ?? 0,
+          nonStarterLegalDecks: deckStatistics.non_starter_legal_decks ?? 0
         },
         collectionStatistics: {
           usersWithNonZeroCollections: Number(collectionStatistics.users_with_non_zero_collections ?? 0),

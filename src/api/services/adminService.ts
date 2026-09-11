@@ -157,8 +157,11 @@ export class AdminService {
         legalPercentage: percentage(counts.deckStatistics.legalDecks, counts.deckStatistics.totalDecks),
         limitedDecks: counts.deckStatistics.limitedDecks,
         limitedPercentage: percentage(counts.deckStatistics.limitedDecks, counts.deckStatistics.totalDecks),
-        averageDecksPerUser: average(counts.deckStatistics.totalDecks, counts.standardUserAccounts),
-        averageLegalDecksPerUser: average(counts.deckStatistics.legalDecks, counts.standardUserAccounts)
+        averageDecksPerUser: average(counts.deckStatistics.nonStarterDecks, counts.standardUserAccounts),
+        averageLegalDecksPerUser: average(
+          counts.deckStatistics.nonStarterLegalDecks,
+          counts.standardUserAccounts
+        )
       },
       collectionStatistics: {
         usersWithNonZeroCollections: counts.collectionStatistics.usersWithNonZeroCollections,

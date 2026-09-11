@@ -116,6 +116,7 @@ describe('NewUserSampleDeckService', () => {
       'A sample deck'
     );
     expect(mockDeckRepository.updateDeck).toHaveBeenCalledWith('new-deck-id', {
+      is_signup_starter_copy: true,
       ui_preferences: fullDeck.ui_preferences,
       is_limited: fullDeck.is_limited,
       reserve_character: fullDeck.reserve_character,

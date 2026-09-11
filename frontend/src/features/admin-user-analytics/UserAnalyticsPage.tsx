@@ -358,14 +358,14 @@ export default function UserAnalyticsPage() {
               <strong>{formatDecimal(analytics.deckStatistics.averageDecksPerUser)}</strong>
               <div>
                 <h4>Average decks per user</h4>
-                <p>Includes legal and non-legal decks</p>
+                <p>Includes legal and non-legal decks; excludes signup starter copies</p>
               </div>
             </article>
             <article className="user-analytics-average-card">
               <strong>{formatDecimal(analytics.deckStatistics.averageLegalDecksPerUser)}</strong>
               <div>
                 <h4>Average legal decks per user</h4>
-                <p>Excludes every non-legal deck</p>
+                <p>Excludes non-legal decks and signup starter copies</p>
               </div>
             </article>
           </div>

@@ -66,15 +66,13 @@ export class NewUserSampleDeckService {
       );
       const newDeckId = newDeck.id;
 
-      const deckUpdates: Partial<typeof fullDeck> = {};
+      const deckUpdates: Partial<typeof fullDeck> = { is_signup_starter_copy: true };
       if (fullDeck.ui_preferences !== undefined) deckUpdates.ui_preferences = fullDeck.ui_preferences;
       if (fullDeck.is_limited !== undefined) deckUpdates.is_limited = fullDeck.is_limited;
       if (fullDeck.reserve_character !== undefined) deckUpdates.reserve_character = fullDeck.reserve_character;
       if (fullDeck.display_mission_card_id !== undefined) deckUpdates.display_mission_card_id = fullDeck.display_mission_card_id;
       if (fullDeck.background_image_path !== undefined) deckUpdates.background_image_path = fullDeck.background_image_path;
-      if (Object.keys(deckUpdates).length > 0) {
-        await this.deckRepository.updateDeck(newDeckId, deckUpdates);
-      }
+      await this.deckRepository.updateDeck(newDeckId, deckUpdates);
 
       const sourceCards = await this.deckRepository.getDeckCards(sourceDeckId);
       const cardsForReplace = sourceCards.map((card) => {

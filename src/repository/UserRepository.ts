@@ -28,6 +28,8 @@ export interface UserAnalyticsCounts {
     totalDecks: number;
     legalDecks: number;
     limitedDecks: number;
+    nonStarterDecks: number;
+    nonStarterLegalDecks: number;
   };
   collectionStatistics: {
     usersWithNonZeroCollections: number;

@@ -48,7 +48,9 @@ describe('AdminService user analytics', () => {
       deckStatistics: {
         totalDecks: 247,
         legalDecks: 184,
-        limitedDecks: 32
+        limitedDecks: 32,
+        nonStarterDecks: 157,
+        nonStarterLegalDecks: 126
       },
       collectionStatistics: {
         usersWithNonZeroCollections: 38,
@@ -90,8 +92,8 @@ describe('AdminService user analytics', () => {
         legalPercentage: 74.5,
         limitedDecks: 32,
         limitedPercentage: 13,
-        averageDecksPerUser: 2.7,
-        averageLegalDecksPerUser: 2
+        averageDecksPerUser: 1.7,
+        averageLegalDecksPerUser: 1.4
       },
       collectionStatistics: {
         usersWithNonZeroCollections: 38,
@@ -162,7 +164,9 @@ describe('AdminService user analytics', () => {
       deckStatistics: {
         totalDecks: 0,
         legalDecks: 0,
-        limitedDecks: 0
+        limitedDecks: 0,
+        nonStarterDecks: 0,
+        nonStarterLegalDecks: 0
       },
       collectionStatistics: {
         usersWithNonZeroCollections: 0,

@@ -5,6 +5,8 @@ One line per change. Newest first. Keep this in sync with
 
 ## Unreleased — Phase 3 (scale + docs)
 
+- User Analytics deck averages now exclude the sample starter-deck copy automatically
+  assigned during signup; total, legal, and Limited deck inventory counts remain unchanged.
 - Added `GET /api/v1/community/preconstructed-decks` and the Community page's
   Preconstructed tab. Two deterministic migrations seed the four Skybound and four ERB
   starter decks as public Limited decks using set-number/non-foil printing resolution; the

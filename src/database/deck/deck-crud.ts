@@ -910,6 +910,10 @@ export async function updateDeck(
       setClause.push(`is_private = $${paramCount++}`);
       values.push(updates.is_private);
     }
+    if (updates.is_signup_starter_copy !== undefined) {
+      setClause.push(`is_signup_starter_copy = $${paramCount++}`);
+      values.push(updates.is_signup_starter_copy);
+    }
     if (updates.reserve_character !== undefined) {
       setClause.push(`reserve_character = $${paramCount++}`);
       values.push(updates.reserve_character);

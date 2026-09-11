@@ -1276,8 +1276,8 @@ paths:
                           legalPercentage: { type: number, format: float }
                           limitedDecks: { type: integer }
                           limitedPercentage: { type: number, format: float }
-                          averageDecksPerUser: { type: number, format: float }
-                          averageLegalDecksPerUser: { type: number, format: float }
+                          averageDecksPerUser: { type: number, format: float, description: Average non-starter decks per standard user; excludes signup starter copies. }
+                          averageLegalDecksPerUser: { type: number, format: float, description: Average legal non-starter decks per standard user; excludes signup starter copies. }
                       collectionStatistics:
                         type: object
                         required: [usersWithNonZeroCollections, adoptionPercentage, averageCardsPerUser, averageCardsPerCollector]

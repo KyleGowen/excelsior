@@ -1386,14 +1386,14 @@ Returns aggregate-only account, feature-usage, login-time, deck, and collection 
 - aggregate `loginRecency` buckets
 - `siteSectionUsage`: cumulative classified request counts and percentage share for Home, Database, Decks, and Collection, derived from `endpoint_hit_counts`
 - `loginTimeDistribution`: 24 Pacific-hour buckets with rolling-24-hour and all-known-history successful session-start counts, both aggregate totals, IANA timezone, and the rolling window start
-- `deckStatistics`: total, legal, and Limited deck counts; legal/Limited percentages; average decks per standard user with all decks and with legal decks only
+- `deckStatistics`: total, legal, and Limited deck counts; legal/Limited percentages; average non-starter decks per standard user with all user-created decks and with legal user-created decks only
 - `collectionStatistics`: users with a positive owned-card quantity, collection adoption percentage, average owned-card quantity per standard user, and average owned-card quantity per active collector
 
 The acquisition period begins on the first day of the previous calendar month. Recent and inactive account counts use rolling 24-hour and 30-day windows relative to `generatedAt`; inactive accounts include accounts with no recorded login. Login-time telemetry stores no user identifiers, counts successful standard-user session starts (including signup), and groups UTC hourly counters with `America/Los_Angeles` so daylight-saving transitions are handled correctly. Each hour returns `count` for the rolling 24-hour window and `allTimeCount` across the complete aggregate counter history as of `generatedAt`; `totalLogins` and `allTimeTotalLogins` are the corresponding totals. Migrations V341 and V342 seed one known most-recent-login event per standard account from before live counters began; subsequent successful sessions are counted individually. The historical series therefore includes every known latest login, but cannot reconstruct additional earlier sign-ins from before telemetry existed.
 
 `siteSectionUsage` is API request share, not time spent, page views, or unique users. Home includes recent-updates traffic; Database includes catalog and set traffic; Decks includes deck, community, public-deck, and deck-background traffic; Collection includes collection traffic. Shared endpoints may support more than one screen, and auth/admin/feedback/account traffic is not classified.
 
-Deck legality reads the server-authoritative `decks.is_valid` value. Collection averages sum card quantities rather than unique collection-card rows; the per-user average includes users with no collection cards.
+Deck legality reads the server-authoritative `decks.is_valid` value. Deck totals and percentages include every saved deck, while both per-user deck averages exclude the sample deck automatically copied during signup. Collection averages sum card quantities rather than unique collection-card rows; the per-user average includes users with no collection cards.
 
 **Response 500:** `**ADMIN_USER_ANALYTICS_ERROR`**.
 

@@ -34,6 +34,8 @@ export interface Deck {
   is_valid?: boolean;
   /** Deck visibility. TRUE = private (owner only), FALSE = public. Independent of is_limited/is_valid. */
   is_private?: boolean;
+  /** Internal provenance flag for the sample deck automatically copied during signup. */
+  is_signup_starter_copy?: boolean;
   card_count?: number;
   threat?: number;
   reserve_character?: string; // UUID of the character card that serves as the reserve character
