@@ -5,11 +5,15 @@ Browse, search, filter, and sort the full modern OverPower catalog.
 ## Controls
 - **Search** by card name, character name, mission-set name, or card text including inherent abilities
   (debounced, header bar; `cardMatchesSearchQuery` in `catalogTypeMap`).
-- **Type tabs**: Characters, Special Cards, Power Cards, Locations, Missions, Events,
+- **Type tabs**: Characters, Special Cards, Any Character, Power Cards, Locations, Missions, Events,
   Aspects, and the Universe types (Advanced/Teamwork/Ally/Training/Basic) — vocab via
   `catalogTypeMap`. **All** is the first tab (default selection remains Characters): text list across every type (no images).
+  **Any Character** is a Database-only virtual tab backed by the Special Cards catalog. It contains
+  every special linked to `Any Character`, including ERB, Skybound, and promo printings; those cards
+  are excluded from **Special Cards**, which contains only character-specific specials. Rules text
+  that merely mentions Any Character does not change a card's tab.
 - **Mobile swipe** (`.layout-mobile` only): swipe left/right on card grid, All list, or
-  empty content cycles type tabs cyclically in `DBV_TAB_ORDER` (All → Characters → … → Basic → All).
+  empty content cycles type tabs cyclically in `DBV_TAB_ORDER` (All → Characters → Special Cards → Any Character → … → Basic → All).
   Same gesture model as deck editor card view (`useHorizontalSwipe`, 50px threshold). Swipe left
   = next tab; swipe right = previous tab. Disabled while `CardDetailPanel` is open. Gestures
   starting on `.db__types`, `.db__header`, `.dbv-filter-rail`, `.pagination`, or form controls
@@ -68,7 +72,8 @@ Browse, search, filter, and sort the full modern OverPower catalog.
 - Desktop uses a 340px docked, non-modal right sidebar that reduces the catalog width. Mobile uses the existing 900px `useLayoutMode` boundary for a full-width modal drawer with backdrop/Escape close, focus containment/restoration, safe-area padding, scrolling, and bottom-nav clearance.
 
 ## All tab
-- Merges all 12 catalog slugs (`useAllCatalogCards`); foil dedup per slug like per-type tabs.
+- Merges all catalog slugs (`useAllCatalogCards`); foil dedup per slug like per-type tabs. The
+  Database-only Any Character split does not duplicate or remove cards from this cross-type list.
 - Renders `CatalogAllList` (spread grid rows: `#`, name, type/set badges; 48 per page). Row
   click opens `CardDetailPanel` with the card's real catalog type. No inline deck/collection
   buttons on rows.

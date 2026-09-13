@@ -10,6 +10,7 @@ const SAVED_DATABASE_VIEW_TABS = [
   'all',
   'characters',
   'special-cards',
+  'any-character-specials',
   'power-cards',
   'locations',
   'battlegrounds',
@@ -88,6 +89,7 @@ const SAVED_DATABASE_VIEW_FILTER_CONTRACT: Record<SavedDatabaseViewTab, FilterCo
     }
   },
   'special-cards': { powerTypes: SAVED_DATABASE_VIEW_POWER_TYPES, functionIcons: true },
+  'any-character-specials': { powerTypes: SAVED_DATABASE_VIEW_POWER_TYPES, functionIcons: true },
   'power-cards': {
     numeric: {
       Energy: { min: 1, max: 8 },

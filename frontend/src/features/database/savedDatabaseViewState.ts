@@ -1,4 +1,8 @@
-import { DBV_TAB_ORDER, type DbvTabSelection } from '../../lib/catalog/catalogTypeMap';
+import {
+  DBV_TAB_ORDER,
+  dbvCatalogTypeForTab,
+  type DbvTabSelection,
+} from '../../lib/catalog/catalogTypeMap';
 import type { CatalogCard, CatalogType } from '../../lib/api/types';
 import type { SavedDatabaseViewStateV1 } from '../../lib/api/savedDatabaseViews';
 import { collectMissionSetOptions } from './filters/dbvFilterPredicates';
@@ -78,7 +82,7 @@ export function normalizeSavedDatabaseViewState(
     || typeof raw.hideAltsFilter !== 'boolean' || !isRecord(raw.filters)) return null;
 
   const notices: string[] = [];
-  const catalogType: CatalogType = tab === 'all' ? 'characters' : tab;
+  const catalogType: CatalogType = dbvCatalogTypeForTab(tab) ?? 'characters';
   const config = tab === 'all' ? { groups: [] } : getDbvFilterConfig(catalogType);
   const filterRaw = raw.filters;
   if (!Array.isArray(filterRaw.numeric) || !Array.isArray(filterRaw.powerTypes)

@@ -11,14 +11,16 @@ import {
 } from '../../lib/catalog/foilCatalog';
 import { fetchUserDecks, addCardToDeck } from '../../lib/api/decks';
 import {
-  CATALOG_TYPES,
+  DATABASE_TYPE_TABS,
   DBV_TAB_ORDER,
+  cardMatchesDbvTab,
   cardMatchesSearchQuery,
   compareDbvAllSetsCatalogCards,
   compareDbvCatalogCards,
   isLandscapeCatalogType,
   metaForDeckType,
   CATALOG_TYPE_BY_SLUG,
+  dbvCatalogTypeForTab,
   type DbvTabSelection,
 } from '../../lib/catalog/catalogTypeMap';
 import { compareAllCatalogCards } from '../../lib/catalog/allCatalogSort';
@@ -97,12 +99,13 @@ export default function DatabasePage() {
 
   const isAllTab = tab === 'all';
   const pageSize = isAllTab ? PAGE_SIZE_ALL : PAGE_SIZE_GRID;
-  const activeCatalogType = isAllTab ? selectedCatalogType : tab;
+  const tabCatalogType = dbvCatalogTypeForTab(tab);
+  const activeCatalogType = isAllTab ? selectedCatalogType : tabCatalogType!;
   /** Pin catalog/deck type to the selected card so tab switches cannot miscategorize adds. */
   const detailCatalogType = selected ? selectedCatalogType : activeCatalogType;
 
   const debouncedSearch = useDebounced(search);
-  const dbvFilters = useDbvFilters(isAllTab ? 'characters' : tab);
+  const dbvFilters = useDbvFilters(tabCatalogType ?? 'characters');
 
   const savedViewsQuery = useQuery({
     queryKey: SAVED_DATABASE_VIEWS_QUERY_KEY,
@@ -112,8 +115,8 @@ export default function DatabasePage() {
   });
 
   const catalogQuery = useQuery({
-    queryKey: ['catalog', tab],
-    queryFn: () => fetchCatalog(tab as CatalogType),
+    queryKey: ['catalog', tabCatalogType],
+    queryFn: () => fetchCatalog(tabCatalogType!),
     enabled: !isAllTab,
     staleTime: 30 * 60 * 1000,
   });
@@ -190,8 +193,9 @@ export default function DatabasePage() {
   const gridPrintingSelection = useMemo(() => {
     if (isAllTab) return [];
     const q = debouncedSearch.trim().toLowerCase();
-    const catalogType = tab;
+    const catalogType = tabCatalogType!;
     const searchAndSetMatches = perTypeCards.filter((c) => {
+      if (!cardMatchesDbvTab(c, tab)) return false;
       if (q && !cardMatchesSearchQuery(c, q)) return false;
       if (setFilter && String(c.set ?? '') !== setFilter) return false;
       return true;
@@ -203,11 +207,11 @@ export default function DatabasePage() {
       cards: searchAndSetMatches,
       variantIdsByRepresentative: new Map(searchAndSetMatches.map((card) => [card.id, [card.id]])),
     };
-  }, [perTypeCards, debouncedSearch, setFilter, tab, hideAltsFilter, isAllTab]);
+  }, [perTypeCards, debouncedSearch, setFilter, tab, tabCatalogType, hideAltsFilter, isAllTab]);
 
   const gridFiltered = useMemo(() => {
     if (isAllTab || Array.isArray(gridPrintingSelection)) return [];
-    const catalogType = tab;
+    const catalogType = tabCatalogType!;
     const result = gridPrintingSelection.cards.filter((c) => {
       if (!cardMatchesDbvFilters(c, catalogType, dbvFilters.state)) return false;
       if (!matchesHasFoilFilter(c, foilLookup.baseToFoil, hasFoilFilter)) return false;
@@ -219,7 +223,7 @@ export default function DatabasePage() {
         : compareDbvAllSetsCatalogCards(a, b, catalogType),
     );
     return result;
-  }, [gridPrintingSelection, setFilter, tab, dbvFilters.state, hasFoilFilter, foilLookup.baseToFoil, isAllTab]);
+  }, [gridPrintingSelection, setFilter, tabCatalogType, dbvFilters.state, hasFoilFilter, foilLookup.baseToFoil, isAllTab]);
 
   const allTabFiltered = useMemo(() => {
     const q = debouncedSearch.trim().toLowerCase();
@@ -246,7 +250,7 @@ export default function DatabasePage() {
       const next = DBV_TAB_ORDER[stepCyclicalIndex(idx >= 0 ? idx : 0, DBV_TAB_ORDER.length, delta)];
       setTab(next);
       if (!selected && next !== 'all') {
-        setSelectedCatalogType(next);
+        setSelectedCatalogType(dbvCatalogTypeForTab(next)!);
       }
     },
     [tab, selected],
@@ -324,7 +328,7 @@ export default function DatabasePage() {
       targetCards,
     );
     if (!normalized) throw new Error('This saved view uses an unsupported state format.');
-    const targetCatalogType = normalized.state.tab === 'all' ? 'characters' : normalized.state.tab;
+    const targetCatalogType = dbvCatalogTypeForTab(normalized.state.tab) ?? 'characters';
     dbvFilters.hydrateState(normalized.state.filters, targetCatalogType);
     setTab(normalized.state.tab);
     setSearch(normalized.state.search);
@@ -333,7 +337,7 @@ export default function DatabasePage() {
     setHideAltsFilter(normalized.state.hideAltsFilter);
     setPage(1);
     if (selected) closeCardDetail(); else setSelected(null);
-    if (normalized.state.tab !== 'all') setSelectedCatalogType(normalized.state.tab);
+    if (normalized.state.tab !== 'all') setSelectedCatalogType(targetCatalogType);
     setActiveSavedViewId(view.id);
     setRecallNotice(normalized.notices.length > 0
       ? `Recalled “${view.name}”. ${normalized.notices.join(' ')}`
@@ -424,18 +428,18 @@ export default function DatabasePage() {
           >
             All
           </button>
-          {CATALOG_TYPES.map((meta) => (
+          {DATABASE_TYPE_TABS.map((meta) => (
             <button
-              key={meta.type}
+              key={meta.tab}
               type="button"
               role="tab"
-              aria-selected={tab === meta.type}
-              className={`db__type ${tab === meta.type ? 'is-active' : ''}`}
-              data-db-tab={meta.type}
+              aria-selected={tab === meta.tab}
+              className={`db__type ${tab === meta.tab ? 'is-active' : ''}`}
+              data-db-tab={meta.tab}
               onClick={() => {
-                setTab(meta.type);
+                setTab(meta.tab);
                 if (!selected) {
-                  setSelectedCatalogType(meta.type);
+                  setSelectedCatalogType(dbvCatalogTypeForTab(meta.tab)!);
                 }
               }}
             >
@@ -446,7 +450,7 @@ export default function DatabasePage() {
 
         {!isError && !isAllTab ? (
           <DbvFilterRail
-            catalogType={tab}
+            catalogType={activeCatalogType}
             filters={dbvFilters}
             allCards={perTypeCards}
             collapsed={isMobile ? !mobileFilterPaneExpanded : filterRailCollapsed}
@@ -482,15 +486,15 @@ export default function DatabasePage() {
           </>
         ) : (
           <>
-            <div className={`db__grid ${isLandscapeCatalogType(tab) ? 'db__grid--landscape' : 'db__grid--portrait'}`}>
+            <div className={`db__grid ${isLandscapeCatalogType(activeCatalogType) ? 'db__grid--landscape' : 'db__grid--portrait'}`}>
               {pageGridCards.map((card) => (
                 <CardTile
                   key={card.id}
                   card={card}
-                  catalogType={tab}
+                  catalogType={activeCatalogType}
                   hasFoilVersion={cardHasFoilVersion(card, foilLookup.baseToFoil)}
                   showFoilEffect={false}
-                  onClick={() => selectCard(card, tab)}
+                  onClick={() => selectCard(card, activeCatalogType)}
                 />
               ))}
             </div>

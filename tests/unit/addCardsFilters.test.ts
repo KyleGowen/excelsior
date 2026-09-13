@@ -8,9 +8,9 @@ import {
 import {
   filterAndSortTypeCardsWithOptions,
   filterCharacterStacksWithOptions,
-  isAnyCharacterSpecialCard,
   type AddCardsFilterOptions,
 } from '../../frontend/src/features/deck-editor/addCardsFilters';
+import { isAnyCharacterSpecialCard } from '../../frontend/src/lib/catalog/catalogTypeMap';
 
 describe('addCardsFilters hide unusables', () => {
   const spiderMan: CatalogCard = {

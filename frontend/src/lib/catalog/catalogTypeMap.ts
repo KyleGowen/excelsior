@@ -14,18 +14,21 @@ import type {
 import { compareSetThenSetNumber, parseSetNumber } from './catalogSetSort';
 import { isFoilCard } from './foilCatalog';
 
-export const ADD_CARDS_ANY_CHARACTER_SPECIALS_TAB = 'any-character-specials' as const;
+export const ANY_CHARACTER_SPECIALS_TAB = 'any-character-specials' as const;
+export const ADD_CARDS_ANY_CHARACTER_SPECIALS_TAB = ANY_CHARACTER_SPECIALS_TAB;
 
-export type AddCardsVirtualTab = typeof ADD_CARDS_ANY_CHARACTER_SPECIALS_TAB;
+export type AnyCharacterSpecialsTab = typeof ANY_CHARACTER_SPECIALS_TAB;
+export type AddCardsVirtualTab = AnyCharacterSpecialsTab;
 
 /** Per-type catalog tab, All list, character Stacks tab, or Add Cards-only virtual tab. */
 export type CatalogTabSelection = CatalogType | 'all' | 'stacks' | AddCardsVirtualTab;
 
 /**
- * Card Database / Collection tab selection: per-type tab or the All list.
- * These views never expose the Add Cards "Stacks" tab, so they exclude `'stacks'`.
+ * Card Database selection: per-type tab, the All list, or a Database virtual tab.
+ * Database never exposes the Add Cards "Stacks" tab.
  */
-export type DbvTabSelection = CatalogType | 'all';
+export type DbvTabSelection = CatalogType | 'all' | AnyCharacterSpecialsTab;
+export type CollectionTabSelection = CatalogType | 'all';
 
 export interface CatalogTypeMeta {
   type: CatalogType;
@@ -54,10 +57,33 @@ export const CATALOG_TYPES: CatalogTypeMeta[] = [
   { type: 'basic-universe', label: 'Universe: Basic', shortLabel: 'Basic', compactLabel: 'Bas', deckType: 'basic-universe', collectionType: 'basic_universe' },
 ];
 
-/** Card Database type tab order (All first, then CATALOG_TYPES) for UI and mobile swipe cycling. */
+export interface DatabaseTabMeta {
+  tab: Exclude<DbvTabSelection, 'all'>;
+  label: string;
+  shortLabel: string;
+}
+
+export const DATABASE_TYPE_TABS: readonly DatabaseTabMeta[] = [
+  { tab: 'characters', label: 'Characters', shortLabel: 'Characters' },
+  { tab: 'special-cards', label: 'Special Cards', shortLabel: 'Special' },
+  { tab: ANY_CHARACTER_SPECIALS_TAB, label: 'Any Character', shortLabel: 'Any Char' },
+  ...CATALOG_TYPES.slice(2).map((meta) => ({
+    tab: meta.type,
+    label: meta.label,
+    shortLabel: meta.shortLabel,
+  })),
+];
+
+/** Card Database tab order (All first) for UI and mobile swipe cycling. */
 export const DBV_TAB_ORDER: readonly DbvTabSelection[] = [
   'all',
-  ...CATALOG_TYPES.map((m) => m.type),
+  ...DATABASE_TYPE_TABS.map((meta) => meta.tab),
+];
+
+/** Collection retains catalog-backed tabs only; Database virtual tabs do not leak into it. */
+export const COLLECTION_TAB_ORDER: readonly CollectionTabSelection[] = [
+  'all',
+  ...CATALOG_TYPES.map((meta) => meta.type),
 ];
 
 export interface AddCardsTabMeta {
@@ -82,6 +108,12 @@ export const ADD_CARDS_TAB_ORDER: readonly CatalogTabSelection[] = ADD_CARDS_TYP
 export function addCardsCatalogTypeForTab(tab: CatalogTabSelection): CatalogType | null {
   if (tab === 'all' || tab === 'stacks') return null;
   if (tab === ADD_CARDS_ANY_CHARACTER_SPECIALS_TAB) return 'special-cards';
+  return tab;
+}
+
+export function dbvCatalogTypeForTab(tab: DbvTabSelection): CatalogType | null {
+  if (tab === 'all') return null;
+  if (tab === ANY_CHARACTER_SPECIALS_TAB) return 'special-cards';
   return tab;
 }
 
@@ -159,6 +191,17 @@ export function cardLinkedDisplayName(
 
 export function isAnyCharacterName(value: string): boolean {
   return value.trim().toLowerCase() === 'any character';
+}
+
+export function isAnyCharacterSpecialCard(card: Partial<CatalogCard>): boolean {
+  return isAnyCharacterName(cardCharacterName(card));
+}
+
+/** Split Database special tabs without matching incidental rules-text mentions. */
+export function cardMatchesDbvTab(card: CatalogCard, tab: DbvTabSelection): boolean {
+  if (tab === ANY_CHARACTER_SPECIALS_TAB) return isAnyCharacterSpecialCard(card);
+  if (tab === 'special-cards') return !isAnyCharacterSpecialCard(card);
+  return true;
 }
 
 export function compareCharacterNames(a: string, b: string): number {

@@ -40,7 +40,7 @@ describe('saved database view state contract', () => {
 
   it('accepts every supported tab with neutral filters', () => {
     const tabs = [
-      'all', 'characters', 'special-cards', 'power-cards', 'locations', 'battlegrounds',
+      'all', 'characters', 'special-cards', 'any-character-specials', 'power-cards', 'locations', 'battlegrounds',
       'missions', 'events', 'aspects', 'advanced-universe', 'teamwork', 'ally-universe',
       'training', 'basic-universe',
     ];

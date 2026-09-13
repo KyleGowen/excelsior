@@ -1,10 +1,9 @@
 import type { CatalogCard, CatalogType } from '../../lib/api/types';
 import {
-  cardCharacterName,
   cardMatchesSearchQuery,
   compareCatalogCards,
   CATALOG_TYPES,
-  isAnyCharacterName,
+  isAnyCharacterSpecialCard,
   type CatalogTypeMeta,
 } from '../../lib/catalog/catalogTypeMap';
 import { compareSetThenSetNumber } from '../../lib/catalog/catalogSetSort';
@@ -32,10 +31,6 @@ export interface AddCardsFilterOptions {
 export function matchesSetFilter(card: CatalogCard, setFilter: string): boolean {
   if (!setFilter) return true;
   return String(card.set ?? '') === setFilter;
-}
-
-export function isAnyCharacterSpecialCard(card: CatalogCard): boolean {
-  return isAnyCharacterName(cardCharacterName(card));
 }
 
 export function isCharacterSpecificSpecialCard(card: CatalogCard): boolean {

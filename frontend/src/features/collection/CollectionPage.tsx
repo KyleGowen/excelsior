@@ -5,12 +5,12 @@ import { useCollection } from '../../lib/collection/useCollection';
 import {
   CATALOG_TYPES,
   CATALOG_TYPE_BY_SLUG,
-  DBV_TAB_ORDER,
+  COLLECTION_TAB_ORDER,
   cardDisplayName,
   cardLinkedDisplayName,
   cardMatchesSearchQuery,
   isLandscapeCatalogType,
-  type DbvTabSelection,
+  type CollectionTabSelection,
 } from '../../lib/catalog/catalogTypeMap';
 import { compareCollectionCatalogCards } from '../../lib/catalog/allCatalogSort';
 import { useAllCatalogCards } from '../../lib/catalog/useAllCatalogCards';
@@ -50,7 +50,7 @@ export default function CollectionPage() {
   const colRef = useRef<HTMLDivElement>(null);
   const typeTabsRef = useRef<HTMLDivElement>(null);
   const collection = useCollection();
-  const [tab, setTab] = useState<DbvTabSelection>(COLLECTION_DEFAULT_TAB);
+  const [tab, setTab] = useState<CollectionTabSelection>(COLLECTION_DEFAULT_TAB);
   const [search, setSearch] = useState('');
   const [setFilter, setSetFilter] = useState('');
   const [ownedOnly, setOwnedOnly] = useState(false);
@@ -117,8 +117,10 @@ export default function CollectionPage() {
 
   const goToRelativeTab = useCallback(
     (delta: 1 | -1) => {
-      const idx = DBV_TAB_ORDER.indexOf(tab);
-      const next = DBV_TAB_ORDER[stepCyclicalIndex(idx >= 0 ? idx : 0, DBV_TAB_ORDER.length, delta)];
+      const idx = COLLECTION_TAB_ORDER.indexOf(tab);
+      const next = COLLECTION_TAB_ORDER[
+        stepCyclicalIndex(idx >= 0 ? idx : 0, COLLECTION_TAB_ORDER.length, delta)
+      ];
       setTab(next);
       if (!selected && next !== 'all') {
         setSelectedCatalogType(next);

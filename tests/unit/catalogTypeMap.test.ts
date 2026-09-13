@@ -3,9 +3,13 @@ import {
   ADD_CARDS_ANY_CHARACTER_SPECIALS_TAB,
   ADD_CARDS_TAB_ORDER,
   ADD_CARDS_TYPE_TABS,
+  ANY_CHARACTER_SPECIALS_TAB,
+  DATABASE_TYPE_TABS,
   addCardsCatalogTypeForTab,
+  cardMatchesDbvTab,
   cardMatchesSearchQuery,
   compareCatalogCards,
+  dbvCatalogTypeForTab,
   parseSearchTokens,
 } from '../../frontend/src/lib/catalog/catalogTypeMap';
 
@@ -120,5 +124,40 @@ describe('Add Cards tab metadata', () => {
     expect(addCardsCatalogTypeForTab('special-cards')).toBe('special-cards');
     expect(addCardsCatalogTypeForTab('all')).toBeNull();
     expect(addCardsCatalogTypeForTab('stacks')).toBeNull();
+  });
+});
+
+describe('Database Any Character tab', () => {
+  it('places Any Character immediately after Special Cards and reuses its catalog', () => {
+    const specialIndex = DATABASE_TYPE_TABS.findIndex((meta) => meta.tab === 'special-cards');
+
+    expect(DATABASE_TYPE_TABS[specialIndex + 1]).toEqual({
+      tab: ANY_CHARACTER_SPECIALS_TAB,
+      label: 'Any Character',
+      shortLabel: 'Any Char',
+    });
+    expect(dbvCatalogTypeForTab(ANY_CHARACTER_SPECIALS_TAB)).toBe('special-cards');
+  });
+
+  it('moves linked Any Character specials from Special Cards regardless of set', () => {
+    const cards: CatalogCard[] = [
+      { id: 'erb', name: 'ERB Any Character', character: 'Any Character', set: 'ERB' },
+      { id: 'sky', name: 'Skybound Any Character', character: 'Any Character', set: 'SKY' },
+      { id: 'erbp', name: 'ERB Promo', character: 'Any Character', set: 'ERBP' },
+      { id: 'skyp', name: 'Skybound Promo', character: 'Any Character', set: 'SKYP' },
+      { id: 'promo', name: 'Other Promo', character_name: 'any character', set: 'PROMO' },
+      {
+        id: 'specific',
+        name: 'Specific Character',
+        character: 'Mr. Hyde',
+        set: 'ERB',
+        card_text: 'Opponent may not use Any Character Special cards.',
+      },
+    ];
+
+    expect(cards.filter((card) => cardMatchesDbvTab(card, ANY_CHARACTER_SPECIALS_TAB)).map((card) => card.id))
+      .toEqual(['erb', 'sky', 'erbp', 'skyp', 'promo']);
+    expect(cards.filter((card) => cardMatchesDbvTab(card, 'special-cards')).map((card) => card.id))
+      .toEqual(['specific']);
   });
 });
