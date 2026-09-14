@@ -101,6 +101,9 @@ describe('ERB LRG art manifest', () => {
     expect(migration).toContain("image_path = 'specials/read_the_bones.webp'");
     expect(migration).toContain("image_path = 'specials/alternate/preternatural_healing.jpg'");
     expect(migration).toContain("image_path = 'specials/alternate/the_gemini.webp'");
+    expect(migration).toContain(
+      "('characters/alternate/RobinHood-Alt.png', TRUE, 'erb/characters/517_robin_hood.png')",
+    );
   });
 
   const verifiesLocalImageTree = fs.existsSync(imageRoot) ? it : it.skip;

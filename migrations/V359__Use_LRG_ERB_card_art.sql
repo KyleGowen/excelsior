@@ -162,6 +162,7 @@ VALUES
   ('characters/alternate/ra.webp', FALSE, 'erb/characters/516_ra.png'),
   ('characters/alternate/ra.webp', TRUE, 'erb/characters/516_ra.png'),
   ('characters/alternate/RobinHood-Alt.png', FALSE, 'erb/characters/517_robin_hood.png'),
+  ('characters/alternate/RobinHood-Alt.png', TRUE, 'erb/characters/517_robin_hood.png'),
   ('characters/alternate/RobinHood-PrizePack_Alt.png', TRUE, 'erb/characters/517_robin_hood.png'),
   ('characters/alternate/SheriffofNottingham-Alt.png', FALSE, 'erb/characters/518_sheriff_of_nottingham.png'),
   ('characters/alternate/SheriffofNottingham-Alt.png', TRUE, 'erb/characters/518_sheriff_of_nottingham.png'),
