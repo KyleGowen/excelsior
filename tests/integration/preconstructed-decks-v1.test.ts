@@ -175,7 +175,7 @@ describe('GET /api/v1/community/preconstructed-decks', () => {
       WHERE pd.set_code = 'ERB' AND characters.set_number = '244'
     `);
     expect(threeMusketeers.rows).toEqual([
-      { image_path: 'characters/three_musketeers.webp' },
+      { image_path: 'erb/characters/244_the_three_musketeers.png' },
     ]);
   });
 

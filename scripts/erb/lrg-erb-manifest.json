@@ -1,0 +1,4879 @@
+{
+  "set": {
+    "code": "ERB",
+    "name": "ERB World Legends"
+  },
+  "source": {
+    "provider": "LRG",
+    "folder_url": "https://drive.google.com/drive/folders/1HcYTsVGQ9pIvPWnnOUGgW2G-TbCBS4SB",
+    "listed_png_files": 570,
+    "selected_fronts": 534,
+    "missing_collector_numbers": [
+      "205"
+    ],
+    "ignored_mission_backs": 28,
+    "ignored_copy_duplicates": 7
+  },
+  "counts": {
+    "base_card_assets": 534,
+    "canonical_database_rows": 709,
+    "base_rows": 534,
+    "canonical_foil_rows_reusing_base_art": 175,
+    "optional_local_foil_rows": 1,
+    "by_table_base": {
+      "advanced_universe_cards": 3,
+      "ally_universe_cards": 8,
+      "aspects": 5,
+      "basic_universe_cards": 12,
+      "characters": 97,
+      "events": 20,
+      "locations": 8,
+      "missions": 28,
+      "power_cards": 39,
+      "special_cards": 270,
+      "teamwork_cards": 38,
+      "training_cards": 6
+    }
+  },
+  "exceptions": [
+    {
+      "collector_number": "205",
+      "name": "Read the Bones",
+      "handling": "Source missing; retain existing specials/read_the_bones.webp image."
+    },
+    {
+      "collector_number": "494F",
+      "name": "Dracula",
+      "handling": "Update this legacy local-only foil row when present; canonical migration history contains the base 494 row only."
+    },
+    {
+      "collector_number": "504",
+      "name": "King Arthur",
+      "handling": "Correct legacy alternate-art rows from 118/118F to 504/504F and Ultra Rare before applying LRG art."
+    },
+    {
+      "collector_number": "526",
+      "name": "The Three Musketeers",
+      "handling": "Correct legacy alternate-art rows from 244/244F to 526/526F and Rare before applying LRG art."
+    },
+    {
+      "collector_number": "461",
+      "name": "Preternatural Healing",
+      "handling": "Update the canonical row only; retain the existing legacy alternate-art row."
+    },
+    {
+      "collector_number": "463",
+      "name": "The Gemini",
+      "handling": "Update the canonical row only; retain the existing legacy alternate-art row."
+    }
+  ],
+  "assets": [
+    {
+      "collector_number": "001",
+      "name": "Angry Mob (Middle Ages)",
+      "table": "characters",
+      "source_file": "001_OP01_CMN_CHARACTER_ANGRY MOB MIDDLE AGES_EN_trimmed.png",
+      "source_size_bytes": 1654878,
+      "target_path": "erb/characters/001_angry_mob_middle_ages.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "002",
+      "name": "Don't Let it Get Away!",
+      "table": "special_cards",
+      "source_file": "002_OP01_CMN_SPECIALS_DONT LET IT GET AWAY_EN_trimmed.png",
+      "source_size_bytes": 1250346,
+      "target_path": "erb/specials/002_don_t_let_it_get_away.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "003",
+      "name": "Mob Mentality",
+      "table": "special_cards",
+      "source_file": "003_OP01_CMN_SPECIALS_MOB MENTALITY_EN_trimmed.png",
+      "source_size_bytes": 1312815,
+      "target_path": "erb/specials/003_mob_mentality.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "004",
+      "name": "Strength in Numbers",
+      "table": "special_cards",
+      "source_file": "004_OP01_CMN_SPECIALS_STRENGTH IN NUMBERS_EN_trimmed.png",
+      "source_size_bytes": 1321005,
+      "target_path": "erb/specials/004_strength_in_numbers.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "005",
+      "name": "Swarm Them!",
+      "table": "special_cards",
+      "source_file": "005_OP01_CMN_SPECIALS_SWARM THEM_EN_trimmed.png",
+      "source_size_bytes": 1194337,
+      "target_path": "erb/specials/005_swarm_them.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "006",
+      "name": "Pitchforks and Torches",
+      "table": "special_cards",
+      "source_file": "006_OP01_CMN_SPECIALS_PITCHFORKS AND TORCHES_EN_trimmed.png",
+      "source_size_bytes": 1306683,
+      "target_path": "erb/specials/006_pitchforks_and_torches.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "007",
+      "name": "Regent of the Crown",
+      "table": "special_cards",
+      "source_file": "007_OP01_UNC_SPECIALS_REGENT OF THE CROWN_EN_trimmed.png",
+      "source_size_bytes": 1261882,
+      "target_path": "erb/specials/007_regent_of_the_crown.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "008",
+      "name": "Angry Mob (Industrial Age)",
+      "table": "characters",
+      "source_file": "008_OP01_CMN_CHARACTER_ANGRY MOB INDUSTRIAL AGE_EN_trimmed.png",
+      "source_size_bytes": 1180007,
+      "target_path": "erb/characters/008_angry_mob_industrial_age.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "009",
+      "name": "Disrupting Supply Lines",
+      "table": "special_cards",
+      "source_file": "009_OP01_UNC_SPECIALS_DISRUPT SUPPLY LINES_EN_trimmed.png",
+      "source_size_bytes": 1063850,
+      "target_path": "erb/specials/009_disrupting_supply_lines.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "010",
+      "name": "Union Power",
+      "table": "special_cards",
+      "source_file": "010_OP01_CMN_SPECIALS_UNION POWER_EN_trimmed.png",
+      "source_size_bytes": 912789,
+      "target_path": "erb/specials/010_union_power.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "011",
+      "name": "Angry Mob (Modern Age)",
+      "table": "characters",
+      "source_file": "011_OP01_CMN_CHARACTER_ANGRY MOB MODERN AGE_EN_trimmed.png",
+      "source_size_bytes": 1459541,
+      "target_path": "erb/characters/011_angry_mob_modern_age.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "012",
+      "name": "Online Cyber Attack",
+      "table": "special_cards",
+      "source_file": "012_OP01_CMN_SPECIALS_ONLINE CYBER ATTACK_EN_trimmed.png",
+      "source_size_bytes": 1285541,
+      "target_path": "erb/specials/012_online_cyber_attack.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "013",
+      "name": "Ransom Your Secrets",
+      "table": "special_cards",
+      "source_file": "013_OP01_UNC_SPECIALS_RANSOM YOUR SECRETS_EN_trimmed.png",
+      "source_size_bytes": 1024143,
+      "target_path": "erb/specials/013_ransom_your_secrets.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "014",
+      "name": "Anubis",
+      "table": "characters",
+      "source_file": "014_OP01_CMN_CHARACTER_ANUBIS_EN_trimmed.png",
+      "source_size_bytes": 1237737,
+      "target_path": "erb/characters/014_anubis.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "015",
+      "name": "Book of the Dead",
+      "table": "special_cards",
+      "source_file": "015_OP01_UNC_SPECIALS_BOOK OF THE DEAD_EN_trimmed.png",
+      "source_size_bytes": 1184906,
+      "target_path": "erb/specials/015_book_of_the_dead.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "016",
+      "name": "Lord of the Sacred Land",
+      "table": "special_cards",
+      "source_file": "016_OP01_CMN_SPECIALS_LORD OF THE SACRED LAND_EN_trimmed.png",
+      "source_size_bytes": 1255323,
+      "target_path": "erb/specials/016_lord_of_the_sacred_land.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "017",
+      "name": "Shepherd of the Damned",
+      "table": "special_cards",
+      "source_file": "017_OP01_CMN_SPECIALS_SHEPHERD OF THE DAMNED_EN_trimmed.png",
+      "source_size_bytes": 1329434,
+      "target_path": "erb/specials/017_shepherd_of_the_damned.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "018",
+      "name": "Siphon Strike",
+      "table": "special_cards",
+      "source_file": "018_OP01_CMN_SPECIALS_SYPHON STRIKE_EN_trimmed.png",
+      "source_size_bytes": 1351579,
+      "target_path": "erb/specials/018_siphon_strike.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "019",
+      "name": "Weighing of the Heart",
+      "table": "special_cards",
+      "source_file": "019 _OP01_CMN_SPECIALS_WEIGHING OFTHE HEART_EN_trimmed.png",
+      "source_size_bytes": 1211431,
+      "target_path": "erb/specials/019_weighing_of_the_heart.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "020",
+      "name": "Wither",
+      "table": "special_cards",
+      "source_file": "020_OP01_CMN_SPECIALS_WITHER_EN_trimmed.png",
+      "source_size_bytes": 1374633,
+      "target_path": "erb/specials/020_wither.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "021",
+      "name": "Billy the Kid",
+      "table": "characters",
+      "source_file": "021_OP01_CMN_CHARACTER_BILLY THE KID_EN_trimmed.png",
+      "source_size_bytes": 1036513,
+      "target_path": "erb/characters/021_billy_the_kid.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "022",
+      "name": "Head for Mexico",
+      "table": "special_cards",
+      "source_file": "022_OP01_CMN_SPECIALS_HEAD TO MEXICO_EN_trimmed.png",
+      "source_size_bytes": 937513,
+      "target_path": "erb/specials/022_head_for_mexico.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "023",
+      "name": "I'll Make You Famous",
+      "table": "special_cards",
+      "source_file": "023_OP01_CMN_SPECIALS_ILL MAKE YOU FAMOUS_EN_trimmed.png",
+      "source_size_bytes": 1006075,
+      "target_path": "erb/specials/023_i_ll_make_you_famous.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "024",
+      "name": "Pals",
+      "table": "special_cards",
+      "source_file": "024_OP01_CMN_SPECIALS_PALS_EN_trimmed.png",
+      "source_size_bytes": 936310,
+      "target_path": "erb/specials/024_pals.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "025",
+      "name": "Quick Draw",
+      "table": "special_cards",
+      "source_file": "025_OP01_CMN_SPECIALS_QUICK DRAW_EN_trimmed.png",
+      "source_size_bytes": 826283,
+      "target_path": "erb/specials/025_quick_draw.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "026",
+      "name": "Reap the Whirlwind",
+      "table": "special_cards",
+      "source_file": "026_OP01_CMN_SPECIALS_REAP THE WHIRLWIND_EN_trimmed.png",
+      "source_size_bytes": 745099,
+      "target_path": "erb/specials/026_reap_the_whirlwind.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "027",
+      "name": "Regulators",
+      "table": "special_cards",
+      "source_file": "027_OP01_UNC_SPECIALS_REGULATORS_EN_trimmed.png",
+      "source_size_bytes": 1107788,
+      "target_path": "erb/specials/027_regulators.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "028",
+      "name": "Captain Nemo",
+      "table": "characters",
+      "source_file": "028_OP01_CMN_CHARACTER_CAPTAIN NEMO_EN_trimmed.png",
+      "source_size_bytes": 1280652,
+      "target_path": "erb/characters/028_captain_nemo.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "029",
+      "name": "Ethnologist",
+      "table": "special_cards",
+      "source_file": "029_OP01_CMN_SPECIALS_ETHNOLOGIST_EN_trimmed.png",
+      "source_size_bytes": 1173573,
+      "target_path": "erb/specials/029_ethnologist.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "030",
+      "name": "Never Set Foot on Dry Land",
+      "table": "special_cards",
+      "source_file": "030_OP01_UNC_SPECIALS_NEVER SET FOOT ON DRY LAND_EN_trimmed.png",
+      "source_size_bytes": 1085145,
+      "target_path": "erb/specials/030_never_set_foot_on_dry_land.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "031",
+      "name": "Silent Running",
+      "table": "special_cards",
+      "source_file": "031_OP01_CMN_SPECIALS_RUNNING SILENTLY_EN_trimmed.png",
+      "source_size_bytes": 1081506,
+      "target_path": "erb/specials/031_silent_running.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "032",
+      "name": "Ruthless Plunderer",
+      "table": "special_cards",
+      "source_file": "032_OP01_CMN_SPECIALS_RUTHLESS PLUNDERER_EN_trimmed.png",
+      "source_size_bytes": 1249091,
+      "target_path": "erb/specials/032_ruthless_plunderer.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "033",
+      "name": "The Nautilus",
+      "table": "special_cards",
+      "source_file": "033_OP01_CMN_SPECIALS_THE NAUTILUS_EN_trimmed.png",
+      "source_size_bytes": 1001694,
+      "target_path": "erb/specials/033_the_nautilus.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "034",
+      "name": "Weapons of Wrath and Hatred",
+      "table": "special_cards",
+      "source_file": "034_OP01_CMN_SPECIALS_WEAPONS OF WRATH AND HATRED_EN_trimmed.png",
+      "source_size_bytes": 1123597,
+      "target_path": "erb/specials/034_weapons_of_wrath_and_hatred.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "035",
+      "name": "Carson of Venus",
+      "table": "characters",
+      "source_file": "035_OP01_CMN_CHARACTER_CARSON OF VENUS_EN copy_trimmed.png",
+      "source_size_bytes": 1097527,
+      "target_path": "erb/characters/035_carson_of_venus.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "036",
+      "name": "Janjong Duare Mintep",
+      "table": "special_cards",
+      "source_file": "036_OP01_CMN_SPECIALS_JANJONG DUARE MINTEP_EN copy_trimmed.png",
+      "source_size_bytes": 1170968,
+      "target_path": "erb/specials/036_janjong_duare_mintep.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "037",
+      "name": "On the Razor's Edge",
+      "table": "special_cards",
+      "source_file": "037_OP01_CMN_SPECIALS_ON A RAZORS EDGE_EN copy_trimmed.png",
+      "source_size_bytes": 1402122,
+      "target_path": "erb/specials/037_on_the_razor_s_edge.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "038",
+      "name": "Telepathic Resistance",
+      "table": "special_cards",
+      "source_file": "038_OP01_CMN_SPECIALS_TELEPATHIC RESISTANCE_EN_trimmed.png",
+      "source_size_bytes": 1237960,
+      "target_path": "erb/specials/038_telepathic_resistance.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "039",
+      "name": "Sometimes Piracy is the Best Option",
+      "table": "special_cards",
+      "source_file": "039_OP01_CMN_SPECIALS_SOMETIMES PIRACY IS THE BEST OPTION_EN copy_trimmed.png",
+      "source_size_bytes": 1461566,
+      "target_path": "erb/specials/039_sometimes_piracy_is_the_best_option.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "040",
+      "name": "T-Ray Gun",
+      "table": "special_cards",
+      "source_file": "040_OP01_CMN_SPECIALS_TRAY GUNS_EN_32 copy_trimmed.png",
+      "source_size_bytes": 1476776,
+      "target_path": "erb/specials/040_t_ray_gun.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "041",
+      "name": "Telepathic Training",
+      "table": "special_cards",
+      "source_file": "041_OP01_UNC_SPECIALS_TELEPATHIC TRAINING_EN copy_trimmed.png",
+      "source_size_bytes": 1183720,
+      "target_path": "erb/specials/041_telepathic_training.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "042",
+      "name": "Count of Monte Cristo",
+      "table": "characters",
+      "source_file": "042_OP01_CMN_CHARACTER_COUNT OF MONTE CRISTO_EN_trimmed.png",
+      "source_size_bytes": 1183451,
+      "target_path": "erb/characters/042_count_of_monte_cristo.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "043",
+      "name": "Friend to Foe",
+      "table": "special_cards",
+      "source_file": "043_OP01_CMN_SPECIALS_FRIEND OR FOE_EN_trimmed.png",
+      "source_size_bytes": 888577,
+      "target_path": "erb/specials/043_friend_to_foe.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "044",
+      "name": "Jacopo",
+      "table": "special_cards",
+      "source_file": "044_OP01_CMN_SPECIALS_JACOPO_EN_trimmed.png",
+      "source_size_bytes": 994823,
+      "target_path": "erb/specials/044_jacopo.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "045",
+      "name": "Network of Thieves",
+      "table": "special_cards",
+      "source_file": "045_OP01_CMN_SPECIALS_NETWORK OF THEIVES_EN_trimmed.png",
+      "source_size_bytes": 1091552,
+      "target_path": "erb/specials/045_network_of_thieves.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "046",
+      "name": "Surprise Swordsman",
+      "table": "special_cards",
+      "source_file": "046_OP01_CMN_SPECIALS_SUPRISE SWORDSMAN_EN_trimmed.png",
+      "source_size_bytes": 1076299,
+      "target_path": "erb/specials/046_surprise_swordsman.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "047",
+      "name": "Unlimited Resources",
+      "table": "special_cards",
+      "source_file": "047_OP01_CMN_SPECIALS_UNLIMITED RESOURCES_EN_trimmed.png",
+      "source_size_bytes": 1335532,
+      "target_path": "erb/specials/047_unlimited_resources.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "048",
+      "name": "Cthulhu",
+      "table": "characters",
+      "source_file": "048_OP01_CMN_CHARACTER_CTHULHU_EN_trimmed.png",
+      "source_size_bytes": 1653693,
+      "target_path": "erb/characters/048_cthulhu.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "049",
+      "name": "Ancient One",
+      "table": "special_cards",
+      "source_file": "049_OP01_CMN_SPECIALS_ANCIENT ONE_EN_trimmed.png",
+      "source_size_bytes": 1108269,
+      "target_path": "erb/specials/049_ancient_one.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "050",
+      "name": "Devoted Follower",
+      "table": "special_cards",
+      "source_file": "050_OP01_CMN_SPECIALS_DEVOTED FOLLOWER_EN_trimmed.png",
+      "source_size_bytes": 1128944,
+      "target_path": "erb/specials/050_devoted_follower.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "051",
+      "name": "Distracting Intervention",
+      "table": "special_cards",
+      "source_file": "051_OP01_CMN_SPECIALS_DISTRACTING INTERVENTION_EN_trimmed.png",
+      "source_size_bytes": 1128712,
+      "target_path": "erb/specials/051_distracting_intervention.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "052",
+      "name": "Network of Fanatics",
+      "table": "special_cards",
+      "source_file": "052_OP01_CMN_SPECIALS_NETWORK OF FANATICS_EN_trimmed.png",
+      "source_size_bytes": 749810,
+      "target_path": "erb/specials/052_network_of_fanatics.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "053",
+      "name": "The Call of Cthulhu",
+      "table": "special_cards",
+      "source_file": "053_OP01_CMN_SPECIALS_CALL OF CTHULHU_EN_trimmed.png",
+      "source_size_bytes": 1251238,
+      "target_path": "erb/specials/053_the_call_of_cthulhu.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "054",
+      "name": "The Sleeper Awakens",
+      "table": "special_cards",
+      "source_file": "054_OP01_UNC_SPECIALS_THE SLEEPER AWAKENS_EN_trimmed.png",
+      "source_size_bytes": 1117303,
+      "target_path": "erb/specials/054_the_sleeper_awakens.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "055",
+      "name": "Dejah Thoris",
+      "table": "characters",
+      "source_file": "055_OP01_CMN_CHARACTER_DEJAH THORIS_EN_trimmed.png",
+      "source_size_bytes": 1328074,
+      "target_path": "erb/characters/055_dejah_thoris.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "056",
+      "name": "Warrior of Helium",
+      "table": "special_cards",
+      "source_file": "056_OP01_CMN_SPECIALS_WARRIOR OF HELIUM_EN_trimmed.png",
+      "source_size_bytes": 1405964,
+      "target_path": "erb/specials/056_warrior_of_helium.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "057",
+      "name": "Diplomat to All Martians",
+      "table": "special_cards",
+      "source_file": "057_OP01_CMN_SPECIALS_DIPLOMAT TO ALL MARTIANS_EN_trimmed.png",
+      "source_size_bytes": 1063936,
+      "target_path": "erb/specials/057_diplomat_to_all_martians.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "058",
+      "name": "Fortune of Helium",
+      "table": "special_cards",
+      "source_file": "058_OP01_UNC_SPECIALS_FORTUNE OF HELIUM_EN_trimmed.png",
+      "source_size_bytes": 1268520,
+      "target_path": "erb/specials/058_fortune_of_helium.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "059",
+      "name": "Head of Martian Science",
+      "table": "special_cards",
+      "source_file": "059_OP01_CMN_SPECIALS_HEAD OF MARTIAN SCIENCE_EN_trimmed.png",
+      "source_size_bytes": 1091174,
+      "target_path": "erb/specials/059_head_of_martian_science.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "060",
+      "name": "Protector of Barsoom",
+      "table": "special_cards",
+      "source_file": "060_OP01_CMN_SPECIALS_PROTECTOR OF BARSOOM_EN_trimmed.png",
+      "source_size_bytes": 1223144,
+      "target_path": "erb/specials/060_protector_of_barsoom.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "061",
+      "name": "Champions of Barsoom",
+      "table": "special_cards",
+      "source_file": "061_OP01_CMN_SPECIALS_CHAMPIONS OF BARSOOM_EN_trimmed.png",
+      "source_size_bytes": 1297765,
+      "target_path": "erb/specials/061_champions_of_barsoom.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "062",
+      "name": "Dr. Watson",
+      "table": "characters",
+      "source_file": "062_OP01_CMN_CHARACTER_DR WATSON_EN_trimmed.png",
+      "source_size_bytes": 1380660,
+      "target_path": "erb/characters/062_dr_watson.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "063",
+      "name": "All Chips on the Table",
+      "table": "special_cards",
+      "source_file": "063_OP01_CMN_SPECIALS_ALL CHIPS ON THE TABLE_EN_trimmed.png",
+      "source_size_bytes": 968934,
+      "target_path": "erb/specials/063_all_chips_on_the_table.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "064",
+      "name": "Blackheath Rugby Star",
+      "table": "special_cards",
+      "source_file": "064_OP01_CMN_SPECIALS_BLACKHEATH RUGBY STAR_EN_trimmed.png",
+      "source_size_bytes": 1258564,
+      "target_path": "erb/specials/064_blackheath_rugby_star.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "065",
+      "name": "British Army Surgeon",
+      "table": "special_cards",
+      "source_file": "065_OP01_CMN_SPECIALS_BRITISH ARMY SURGEON_EN_trimmed.png",
+      "source_size_bytes": 1091609,
+      "target_path": "erb/specials/065_british_army_surgeon.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "066",
+      "name": "English Gentleman",
+      "table": "special_cards",
+      "source_file": "066_OP01_UNC_SPECIALS_ENGLISH GENTLEMAN_EN_trimmed.png",
+      "source_size_bytes": 1152053,
+      "target_path": "erb/specials/066_english_gentleman.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "067",
+      "name": "Not a Bad Detective",
+      "table": "special_cards",
+      "source_file": "067_OP01_CMN_SPECIALS_NOT A BAD DETECTIVE_EN_trimmed.png",
+      "source_size_bytes": 1060632,
+      "target_path": "erb/specials/067_not_a_bad_detective.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "068",
+      "name": "Always There for a Friend",
+      "table": "special_cards",
+      "source_file": "068_OP01_CMN_SPECIALS_ALWAYS THERE FOR A FRIEND_EN_trimmed.png",
+      "source_size_bytes": 1313920,
+      "target_path": "erb/specials/068_always_there_for_a_friend.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "069",
+      "name": "Dracula",
+      "table": "characters",
+      "source_file": "069_OP01_CMN_CHARACTER_DRACULA_EN_trimmed.png",
+      "source_size_bytes": 1646739,
+      "target_path": "erb/characters/069_dracula.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "070",
+      "name": "Crimson Restoration",
+      "table": "special_cards",
+      "source_file": "070_OP01_CMN_SPECIALS_CRIMSON RESTORATION_EN_trimmed.png",
+      "source_size_bytes": 1014919,
+      "target_path": "erb/specials/070_crimson_restoration.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "071",
+      "name": "Veil of Deceit",
+      "table": "special_cards",
+      "source_file": "071_OP01_CMN_SPECIALS_VEIL OF DECIEPT_EN_trimmed.png",
+      "source_size_bytes": 1188609,
+      "target_path": "erb/specials/071_veil_of_deceit.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "072",
+      "name": "Lord of the Vampires",
+      "table": "special_cards",
+      "source_file": "072_OP01_CMN_SPECIALS_LORD OF THE VAMPIRES_EN_trimmed.png",
+      "source_size_bytes": 1520578,
+      "target_path": "erb/specials/072_lord_of_the_vampires.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "073",
+      "name": "Paralyzing Gaze",
+      "table": "special_cards",
+      "source_file": "073_OP01_UNC_SPECIALS_PARALYZING GAZE_EN_trimmed.png",
+      "source_size_bytes": 856794,
+      "target_path": "erb/specials/073_paralyzing_gaze.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "074",
+      "name": "To the Last Man",
+      "table": "special_cards",
+      "source_file": "074_OP01_CMN_SPECIALS_TO THE LAST MAN_EN_trimmed.png",
+      "source_size_bytes": 1732862,
+      "target_path": "erb/specials/074_to_the_last_man.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "075",
+      "name": "Undead Flesh",
+      "table": "special_cards",
+      "source_file": "075_OP01_CMN_SPECIALS_UNDEAD FLESH_EN_trimmed.png",
+      "source_size_bytes": 1737056,
+      "target_path": "erb/specials/075_undead_flesh.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "076",
+      "name": "Headless Horseman",
+      "table": "characters",
+      "source_file": "076_OP01_CMN_CHARACTER_HEADLESS HORSEMAN_EN_trimmed.png",
+      "source_size_bytes": 1236496,
+      "target_path": "erb/characters/076_headless_horseman.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "077",
+      "name": "Decapitate",
+      "table": "special_cards",
+      "source_file": "077_OP01_CMN_SPECIALS_DECAPITATE_EN_trimmed.png",
+      "source_size_bytes": 1130060,
+      "target_path": "erb/specials/077_decapitate.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "078",
+      "name": "Human Spine Whip",
+      "table": "special_cards",
+      "source_file": "078_OP01_CMN_SPECIALS_HUMAN SPINE WHIP_EN_trimmed.png",
+      "source_size_bytes": 1393460,
+      "target_path": "erb/specials/078_human_spine_whip.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "079",
+      "name": "Mark of the Headless",
+      "table": "special_cards",
+      "source_file": "079_OP01_CMN_SPECIALS_MARK OF THE HEADLESS_EN_trimmed.png",
+      "source_size_bytes": 1002041,
+      "target_path": "erb/specials/079_mark_of_the_headless.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "080",
+      "name": "Pumpkin Head",
+      "table": "special_cards",
+      "source_file": "080_OP01_CMN_SPECIALS_PUMPKIN HEAD_EN_trimmed.png",
+      "source_size_bytes": 1183809,
+      "target_path": "erb/specials/080_pumpkin_head.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "081",
+      "name": "Relentless Hessian",
+      "table": "special_cards",
+      "source_file": "081_OP01_CMN_SPECIALS_RELENTLESS HESSIAN_EN_trimmed.png",
+      "source_size_bytes": 1092531,
+      "target_path": "erb/specials/081_relentless_hessian.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "082",
+      "name": "Visage of Terror",
+      "table": "special_cards",
+      "source_file": "082_OP01_UNC_SPECIALS_VISSAGE OF TERROR_EN_trimmed.png",
+      "source_size_bytes": 1048237,
+      "target_path": "erb/specials/082_visage_of_terror.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "083",
+      "name": "Hercules",
+      "table": "characters",
+      "source_file": "083_OP01_CMN_CHARACTER_HERCULES_EN_trimmed.png",
+      "source_size_bytes": 1271231,
+      "target_path": "erb/characters/083_hercules.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "084",
+      "name": "Sowing Chaos",
+      "table": "special_cards",
+      "source_file": "084_OP01_CMN_SPECIALS_SOWING CHAOS_EN_trimmed.png",
+      "source_size_bytes": 1117098,
+      "target_path": "erb/specials/084_sowing_chaos.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "085",
+      "name": "Great Club",
+      "table": "special_cards",
+      "source_file": "085_OP01_CMN_SPECIALS_GREAT CLUB_EN_trimmed.png",
+      "source_size_bytes": 883308,
+      "target_path": "erb/specials/085_great_club.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "086",
+      "name": "Lion Skin Cloak",
+      "table": "special_cards",
+      "source_file": "086_OP01_CMN_SPECIALS_LION SKIN CLOAK_EN_trimmed.png",
+      "source_size_bytes": 1126259,
+      "target_path": "erb/specials/086_lion_skin_cloak.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "087",
+      "name": "Godly Prowess",
+      "table": "special_cards",
+      "source_file": "087_OP01_UNC_SPECIALS_GODLY PROWESS_EN_trimmed.png",
+      "source_size_bytes": 1079667,
+      "target_path": "erb/specials/087_godly_prowess.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "088",
+      "name": "Protector of Mankind",
+      "table": "special_cards",
+      "source_file": "088_OP01_CMN_SPECIALS_PROTECTOR OF MANKIND_EN_trimmed.png",
+      "source_size_bytes": 1241063,
+      "target_path": "erb/specials/088_protector_of_mankind.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "089",
+      "name": "Slaying the Hydra",
+      "table": "special_cards",
+      "source_file": "089_OP01_CMN_SPECIALS_SLAYING THE HYDRA_EN_trimmed.png",
+      "source_size_bytes": 1234783,
+      "target_path": "erb/specials/089_slaying_the_hydra.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "090",
+      "name": "Invisible Man",
+      "table": "characters",
+      "source_file": "090_OP01_CMN_CHARACTER_INVISIBLE MAN_EN_trimmed.png",
+      "source_size_bytes": 1233794,
+      "target_path": "erb/characters/090_invisible_man.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "091",
+      "name": "Didn't See It Coming",
+      "table": "special_cards",
+      "source_file": "091_OP01_UNC_SPECIALS_DIDNT SEE IT COMING_EN_trimmed.png",
+      "source_size_bytes": 993573,
+      "target_path": "erb/specials/091_didn_t_see_it_coming.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "092",
+      "name": "Hidden Sociopath",
+      "table": "special_cards",
+      "source_file": "092_OP01_CMN_SPECIALS_HIDDEN SOCIOPATH_EN_trimmed.png",
+      "source_size_bytes": 964942,
+      "target_path": "erb/specials/092_hidden_sociopath.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "093",
+      "name": "I'm In Your House",
+      "table": "special_cards",
+      "source_file": "093_OP01_CMN_SPECIALS_IM IN YOUR HOUSE_EN_trimmed.png",
+      "source_size_bytes": 992009,
+      "target_path": "erb/specials/093_i_m_in_your_house.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "094",
+      "name": "I've Murdered Before",
+      "table": "special_cards",
+      "source_file": "094_OP01_CMN_SPECIALS_IVE MURDERD BEFORE_EN_trimmed.png",
+      "source_size_bytes": 1041942,
+      "target_path": "erb/specials/094_i_ve_murdered_before.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "095",
+      "name": "One at a Time",
+      "table": "special_cards",
+      "source_file": "095_OP01_CMN_SPECIALS_ONE AT A TIME_EN_trimmed.png",
+      "source_size_bytes": 1068862,
+      "target_path": "erb/specials/095_one_at_a_time.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "096",
+      "name": "Run and Hide",
+      "table": "special_cards",
+      "source_file": "096_OP01_CMN_SPECIALS_RUN AND HIDE_EN_trimmed.png",
+      "source_size_bytes": 994872,
+      "target_path": "erb/specials/096_run_and_hide.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "097",
+      "name": "Jane Porter",
+      "table": "characters",
+      "source_file": "097_OP01_CMN_CHARACTER_JANE PORTER_EN_trimmed.png",
+      "source_size_bytes": 1571626,
+      "target_path": "erb/characters/097_jane_porter.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "098",
+      "name": "Archimedes Q. Porter",
+      "table": "special_cards",
+      "source_file": "098_OP01_CMN_SPECIALS_ARCHIMEDES Q PORTER_EN_trimmed.png",
+      "source_size_bytes": 1190918,
+      "target_path": "erb/specials/098_archimedes_q_porter.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "099",
+      "name": "Ethnoarchaeology",
+      "table": "special_cards",
+      "source_file": "099_OP01_UNC_SPECIALS_ETHNOARCHIOLOGY_EN_trimmed.png",
+      "source_size_bytes": 1177420,
+      "target_path": "erb/specials/099_ethnoarchaeology.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "100",
+      "name": "Tenacious Pursuit",
+      "table": "special_cards",
+      "source_file": "100_OP01_CMN_SPECIALS_TENACIOUS PERSUIT_EN_trimmed.png",
+      "source_size_bytes": 1223293,
+      "target_path": "erb/specials/100_tenacious_pursuit.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "101",
+      "name": "Lady of the Jungle",
+      "table": "special_cards",
+      "source_file": "101_OP01_CMN_SPECIALS_LADY OF THE JUNGLE_EN_trimmed.png",
+      "source_size_bytes": 1239163,
+      "target_path": "erb/specials/101_lady_of_the_jungle.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "102",
+      "name": "Not Without My Friends",
+      "table": "special_cards",
+      "source_file": "102_OP01_CMN_SPECIALS_NOT WITHOUT MY FRIENDS_EN_trimmed.png",
+      "source_size_bytes": 1121614,
+      "target_path": "erb/specials/102_not_without_my_friends.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "103",
+      "name": "Not a Damsel in Distress",
+      "table": "special_cards",
+      "source_file": "103_OP01_CMN_SPECIALS_NOT A DAMSEL IN DISTRESS_EN_trimmed.png",
+      "source_size_bytes": 1189846,
+      "target_path": "erb/specials/103_not_a_damsel_in_distress.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "104",
+      "name": "Joan of Arc",
+      "table": "characters",
+      "source_file": "104_OP01_CMN_CHARACTER_JOAN OF ARC_EN_trimmed.png",
+      "source_size_bytes": 1037437,
+      "target_path": "erb/characters/104_joan_of_arc.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "105",
+      "name": "Angelic Visions",
+      "table": "special_cards",
+      "source_file": "105_OP01_CMN_SPECIALS_ANGELIC VISIONS_EN_trimmed.png",
+      "source_size_bytes": 774802,
+      "target_path": "erb/specials/105_angelic_visions.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "106",
+      "name": "Burned at the Stake",
+      "table": "special_cards",
+      "source_file": "106_OP01_CMN_SPECIALS_BURNED AT THE STAKE_EN_trimmed.png",
+      "source_size_bytes": 657340,
+      "target_path": "erb/specials/106_burned_at_the_stake.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "107",
+      "name": "Early Feminist Leader",
+      "table": "special_cards",
+      "source_file": "107_OP01_UNC_SPECIALS_EARLY FEMINIST LEADER_EN_trimmed.png",
+      "source_size_bytes": 860453,
+      "target_path": "erb/specials/107_early_feminist_leader.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "108",
+      "name": "Inspirational Leadership",
+      "table": "special_cards",
+      "source_file": "108_OP01_CMN_SPECIALS_INSPIRATIONAL LEADERSHIP_EN_trimmed.png",
+      "source_size_bytes": 923332,
+      "target_path": "erb/specials/108_inspirational_leadership.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "109",
+      "name": "Patron Saint of France",
+      "table": "special_cards",
+      "source_file": "109_OP01_CMN_SPECIALS_PATRON SAINT OF FRANCE_EN_trimmed.png",
+      "source_size_bytes": 855559,
+      "target_path": "erb/specials/109_patron_saint_of_france.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "110",
+      "name": "Protection of Saint Michael",
+      "table": "special_cards",
+      "source_file": "110_OP01_CMN_SPECIALS_PROTECTION OF SAINT MICHAEL_EN_trimmed.png",
+      "source_size_bytes": 1008733,
+      "target_path": "erb/specials/110_protection_of_saint_michael.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "111",
+      "name": "John Carter of Mars",
+      "table": "characters",
+      "source_file": "111_OP01_CMN_CHARACTER_JOHN CARTER OF MARS_EN_trimmed.png",
+      "source_size_bytes": 1196031,
+      "target_path": "erb/characters/111_john_carter_of_mars.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "112",
+      "name": "Dotar Sojat",
+      "table": "special_cards",
+      "source_file": "112_OP01_CMN_SPECIALS_DOTAR SOJAT_EN_trimmed.png",
+      "source_size_bytes": 1272703,
+      "target_path": "erb/specials/112_dotar_sojat.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "113",
+      "name": "Immortality",
+      "table": "special_cards",
+      "source_file": "113_OP01_UNC_SPECIALS_IMMORTALITY_EN_trimmed.png",
+      "source_size_bytes": 1504697,
+      "target_path": "erb/specials/113_immortality.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "114",
+      "name": "Leap into the Fray",
+      "table": "special_cards",
+      "source_file": "114_OP01_CMN_SPECIALS_LEAP INTO THE FRAY_EN_trimmed.png",
+      "source_size_bytes": 1234979,
+      "target_path": "erb/specials/114_leap_into_the_fray.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "115",
+      "name": "Lower Gravity",
+      "table": "special_cards",
+      "source_file": "115_OP01_CMN_SPECIALS_LOWER GRAVITY_EN_trimmed.png",
+      "source_size_bytes": 1418130,
+      "target_path": "erb/specials/115_lower_gravity.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "116",
+      "name": "Superhuman Endurance",
+      "table": "special_cards",
+      "source_file": "116_OP01_CMN_SPECIALS_SUPERHUMAN ENDURANCE_EN_trimmed.png",
+      "source_size_bytes": 1432522,
+      "target_path": "erb/specials/116_superhuman_endurance.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "117",
+      "name": "Virginia Fighting Man",
+      "table": "special_cards",
+      "source_file": "117_OP01_CMN_SPECIALS_VIRGINIA FIGHTING MAN_EN_trimmed.png",
+      "source_size_bytes": 1318367,
+      "target_path": "erb/specials/117_virginia_fighting_man.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "118",
+      "name": "King Arthur",
+      "table": "characters",
+      "source_file": "118_OP01_CMN_CHARACTER_KING ARTHUR_EN_trimmed.png",
+      "source_size_bytes": 1536612,
+      "target_path": "erb/characters/118_king_arthur.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "119",
+      "name": "Excalibur",
+      "table": "special_cards",
+      "source_file": "119_OP01_CMN_SPECIALS_EXCALIBUR_EN_trimmed.png",
+      "source_size_bytes": 1185346,
+      "target_path": "erb/specials/119_excalibur.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "120",
+      "name": "King of Camelot",
+      "table": "special_cards",
+      "source_file": "120_OP01_CMN_SPECIALS_KING OF CAMELOT_EN_trimmed.png",
+      "source_size_bytes": 855037,
+      "target_path": "erb/specials/120_king_of_camelot.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "121",
+      "name": "Knights of the Round Table",
+      "table": "special_cards",
+      "source_file": "121_OP01_CMN_SPECIALS_KNIGHTS OF THE ROUND TABLE_EN_trimmed.png",
+      "source_size_bytes": 969368,
+      "target_path": "erb/specials/121_knights_of_the_round_table.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "122",
+      "name": "Legendary Partnership",
+      "table": "special_cards",
+      "source_file": "122_OP01_UNC_SPECIALS_LEGENDARY PARTNERSHIP_EN_trimmed.png",
+      "source_size_bytes": 1292843,
+      "target_path": "erb/specials/122_legendary_partnership.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "123",
+      "name": "Heavy is the Head",
+      "table": "special_cards",
+      "source_file": "123_OP01_CMN_SPECIALS_HEAVY IS THE HEAD_EN_trimmed.png",
+      "source_size_bytes": 1311066,
+      "target_path": "erb/specials/123_heavy_is_the_head.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "124",
+      "name": "Lead From the Front",
+      "table": "special_cards",
+      "source_file": "124_OP01_CMN_SPECIALS_LEAD FROM THE FRONT_EN_trimmed.png",
+      "source_size_bytes": 1057716,
+      "target_path": "erb/specials/124_lead_from_the_front.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "125",
+      "name": "Korak",
+      "table": "characters",
+      "source_file": "125_OP01_CMN_CHARACTER_KORAK_EN_trimmed.png",
+      "source_size_bytes": 1376480,
+      "target_path": "erb/characters/125_korak.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "126",
+      "name": "John Clayton III",
+      "table": "special_cards",
+      "source_file": "126_OP01_CMN_SPECIALS_JOHN CLAYTON lll_EN_trimmed.png",
+      "source_size_bytes": 1260708,
+      "target_path": "erb/specials/126_john_clayton_iii.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "127",
+      "name": "Jungle Survival",
+      "table": "special_cards",
+      "source_file": "127_OP01_CMN_SPECIALS_JUNGLE SURVIVAL_EN_108_trimmed.png",
+      "source_size_bytes": 1281171,
+      "target_path": "erb/specials/127_jungle_survival.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "128",
+      "name": "Like Father, Like Son",
+      "table": "special_cards",
+      "source_file": "128_OP01_UNC_SPECIALS_LIKE FATHER LIKE SON_EN_trimmed.png",
+      "source_size_bytes": 1123806,
+      "target_path": "erb/specials/128_like_father_like_son.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "129",
+      "name": "Meriem and Jackie Clayton",
+      "table": "special_cards",
+      "source_file": "129_OP01_CMN_SPECIALS_MERIEM AND JACKIE CLAYTON_EN_trimmed.png",
+      "source_size_bytes": 1291419,
+      "target_path": "erb/specials/129_meriem_and_jackie_clayton.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "130",
+      "name": "Son of the Jungle",
+      "table": "special_cards",
+      "source_file": "130_OP01_CMN_SPECIALS_SON OF THE JUNGLE_EN_trimmed.png",
+      "source_size_bytes": 1009111,
+      "target_path": "erb/specials/130_son_of_the_jungle.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "131",
+      "name": "To the Death",
+      "table": "special_cards",
+      "source_file": "131_OP01_CMN_SPECIALS_TO THE DEATH_EN_trimmed.png",
+      "source_size_bytes": 1176604,
+      "target_path": "erb/specials/131_to_the_death.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "132",
+      "name": "Lancelot",
+      "table": "characters",
+      "source_file": "132_OP01_CMN_CHARACTER_LANCELOT_EN_trimmed.png",
+      "source_size_bytes": 1079360,
+      "target_path": "erb/characters/132_lancelot.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "133",
+      "name": "Chivalrous Protector",
+      "table": "special_cards",
+      "source_file": "133_OP01_CMN_SPECIALS_CHIVALROUS PROTECTOR_EN_trimmed.png",
+      "source_size_bytes": 983877,
+      "target_path": "erb/specials/133_chivalrous_protector.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "134",
+      "name": "For Guinevere's Love",
+      "table": "special_cards",
+      "source_file": "134_OP01_CMN_SPECIALS_FOR QUINEVERE_S LOVE_EN_trimmed.png",
+      "source_size_bytes": 1437512,
+      "target_path": "erb/specials/134_for_guinevere_s_love.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "135",
+      "name": "For the Queen!",
+      "table": "special_cards",
+      "source_file": "135_OP01_CMN_SPECIALS_FOR THE QUEEN_EN_trimmed.png",
+      "source_size_bytes": 989368,
+      "target_path": "erb/specials/135_for_the_queen.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "136",
+      "name": "Knight of the Round Table",
+      "table": "special_cards",
+      "source_file": "136_OP01_CMN_SPECIALS_KNIGHT OF THE ROUND TABLE_EN_trimmed.png",
+      "source_size_bytes": 1117827,
+      "target_path": "erb/specials/136_knight_of_the_round_table.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "137",
+      "name": "Sword and Shield",
+      "table": "special_cards",
+      "source_file": "137_OP01_CMN_SPECIALS_SWORD AND SHIELD_EN_trimmed.png",
+      "source_size_bytes": 962783,
+      "target_path": "erb/specials/137_sword_and_shield.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "138",
+      "name": "True Strike",
+      "table": "special_cards",
+      "source_file": "138_OP01_UNC_SPECIALS_TRUE STRIKE_EN_trimmed.png",
+      "source_size_bytes": 1002342,
+      "target_path": "erb/specials/138_true_strike.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "139",
+      "name": "Leonidas",
+      "table": "characters",
+      "source_file": "139_OP01_CMN_CHARACTER_LEONIDIS_EN_trimmed.png",
+      "source_size_bytes": 1506600,
+      "target_path": "erb/characters/139_leonidas.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "140",
+      "name": "300",
+      "table": "special_cards",
+      "source_file": "140_OP01_CMN_SPECIALS_300_EN_trimmed.png",
+      "source_size_bytes": 1063440,
+      "target_path": "erb/specials/140_300.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "141",
+      "name": "Baptized in Combat",
+      "table": "special_cards",
+      "source_file": "141_OP01_CMN_SPECIALS_BAPTIZED IN COMBAT_EN_trimmed.png",
+      "source_size_bytes": 1278773,
+      "target_path": "erb/specials/141_baptized_in_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "142",
+      "name": "For Sparta",
+      "table": "special_cards",
+      "source_file": "142_OP01_CMN_SPECIALS_FOR SPARTA_EN_trimmed.png",
+      "source_size_bytes": 1278419,
+      "target_path": "erb/specials/142_for_sparta.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "143",
+      "name": "Give Them Nothing",
+      "table": "special_cards",
+      "source_file": "143_OP01_CMN_SPECIALS_GIVE THEM NOTHING_EN_trimmed.png",
+      "source_size_bytes": 1262226,
+      "target_path": "erb/specials/143_give_them_nothing.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "144",
+      "name": "Greatest Soldiers in History",
+      "table": "special_cards",
+      "source_file": "144_OP01_UNC_SPECIALS_GREATEST SOLDIERS IN HISTORY_EN_trimmed.png",
+      "source_size_bytes": 1050463,
+      "target_path": "erb/specials/144_greatest_soldiers_in_history.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "145",
+      "name": "Shield Phalanx",
+      "table": "special_cards",
+      "source_file": "145_OP01_CMN_SPECIALS_SHIELD PHALANX_EN_trimmed.png",
+      "source_size_bytes": 1236591,
+      "target_path": "erb/specials/145_shield_phalanx.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "146",
+      "name": "Merlin",
+      "table": "characters",
+      "source_file": "146_OP01_CMN_CHARACTER_MERLIN_EN_trimmed.png",
+      "source_size_bytes": 1335585,
+      "target_path": "erb/characters/146_merlin.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "147",
+      "name": "Archimedes",
+      "table": "special_cards",
+      "source_file": "147_OP01_CMN_SPECIALS_ARCHIMEDES_EN_trimmed.png",
+      "source_size_bytes": 982425,
+      "target_path": "erb/specials/147_archimedes.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "148",
+      "name": "Ascendant Mage",
+      "table": "special_cards",
+      "source_file": "148_OP01_CMN_SPECIALS_ASCENDANT MAGE_EN_trimmed.png",
+      "source_size_bytes": 903294,
+      "target_path": "erb/specials/148_ascendant_mage.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "149",
+      "name": "For Camelot!",
+      "table": "special_cards",
+      "source_file": "149_OP01_CMN_SPECIALS_FOR CAMELOT_EN_trimmed.png",
+      "source_size_bytes": 1149753,
+      "target_path": "erb/specials/149_for_camelot.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "150",
+      "name": "Foretell the Future",
+      "table": "special_cards",
+      "source_file": "150_OP01_CMN_SPECIALS_FORTELL THE FUTURE_EN_trimmed.png",
+      "source_size_bytes": 1173039,
+      "target_path": "erb/specials/150_foretell_the_future.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "151",
+      "name": "Transmogrification",
+      "table": "special_cards",
+      "source_file": "151_OP01_UNC_SPECIALS_SHAPESHIFT_EN_trimmed.png",
+      "source_size_bytes": 1380527,
+      "target_path": "erb/specials/151_transmogrification.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "152",
+      "name": "Summon the Elements",
+      "table": "special_cards",
+      "source_file": "152_OP01_CMN_SPECIALS_SUMMON THE ELEMENTS_EN_trimmed.png",
+      "source_size_bytes": 1239398,
+      "target_path": "erb/specials/152_summon_the_elements.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "153",
+      "name": "Mina Harker",
+      "table": "characters",
+      "source_file": "153_OP01_CMN_CHARACTER_MINA HARKER_EN_trimmed.png",
+      "source_size_bytes": 1398083,
+      "target_path": "erb/characters/153_mina_harker.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "154",
+      "name": "Dracula's Telepathic Connection",
+      "table": "special_cards",
+      "source_file": "154_OP01_CMN_SPECIALS_DRACLUAS TELEPATHIC CONNECTION_EN_trimmed.png",
+      "source_size_bytes": 1066356,
+      "target_path": "erb/specials/154_dracula_s_telepathic_connection.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "155",
+      "name": "Jonathan Harker, Solicitor",
+      "table": "special_cards",
+      "source_file": "155_OP01_CMN_SPECIALS_JOHN HARKER SOLICITOR_EN_trimmed.png",
+      "source_size_bytes": 1238244,
+      "target_path": "erb/specials/155_jonathan_harker_solicitor.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "156",
+      "name": "Nocturnal Hunter",
+      "table": "special_cards",
+      "source_file": "156_OP01_CMN_SPECIALS_NOCTURNAL HUNTER_EN_trimmed.png",
+      "source_size_bytes": 971983,
+      "target_path": "erb/specials/156_nocturnal_hunter.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "157",
+      "name": "The Hunger",
+      "table": "special_cards",
+      "source_file": "157_OP01_UNC_SPECIALS_THE HUNGER_EN_trimmed.png",
+      "source_size_bytes": 1214019,
+      "target_path": "erb/specials/157_the_hunger.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "158",
+      "name": "Tracking Movements",
+      "table": "special_cards",
+      "source_file": "158_OP01_CMN_SPECIALS_TRACKING MOVEMENT_EN_trimmed.png",
+      "source_size_bytes": 1237309,
+      "target_path": "erb/specials/158_tracking_movements.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "159",
+      "name": "Vampiric Celerity",
+      "table": "special_cards",
+      "source_file": "159_OP01_CMN_SPECIALS_VAMPIRIC CELERITY_EN_trimmed.png",
+      "source_size_bytes": 1427269,
+      "target_path": "erb/specials/159_vampiric_celerity.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "160",
+      "name": "Morgan le Fay",
+      "table": "characters",
+      "source_file": "160_OP01_CMN_CHARACTER_MORGAN LE FAY_EN_trimmed.png",
+      "source_size_bytes": 1596258,
+      "target_path": "erb/characters/160_morgan_le_fay.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "161",
+      "name": "Apprentice of Merlin",
+      "table": "special_cards",
+      "source_file": "161_OP01_CMN_SPECIALS_APPRENTICE OF MERLIN_EN_trimmed.png",
+      "source_size_bytes": 1120723,
+      "target_path": "erb/specials/161_apprentice_of_merlin.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "162",
+      "name": "Avalon's Warmth",
+      "table": "special_cards",
+      "source_file": "162_OP01_UNC_SPECIALS_AVALONS WARMTH_EN_trimmed.png",
+      "source_size_bytes": 1352188,
+      "target_path": "erb/specials/162_avalon_s_warmth.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "163",
+      "name": "Duality",
+      "table": "special_cards",
+      "source_file": "163_OP01_CMN_SPECIALS_DUALITY_EN_trimmed.png",
+      "source_size_bytes": 1441316,
+      "target_path": "erb/specials/163_duality.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "164",
+      "name": "Enchantress' Guile",
+      "table": "special_cards",
+      "source_file": "164_OP01_CMN_SPECIALS_ENCHANTRESS_ GUILE_EN_trimmed.png",
+      "source_size_bytes": 1228422,
+      "target_path": "erb/specials/164_enchantress_guile.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "165",
+      "name": "Shapeshifter's Guise",
+      "table": "special_cards",
+      "source_file": "165_OP01_CMN_SPECIALS_SHAPESHIFTERS GUISE_EN_trimmed.png",
+      "source_size_bytes": 1302586,
+      "target_path": "erb/specials/165_shapeshifter_s_guise.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "166",
+      "name": "Teleportation Circle",
+      "table": "special_cards",
+      "source_file": "166_OP01_CMN_SPECIALS_TELEPORTATION CIRCLE_EN_trimmed.png",
+      "source_size_bytes": 1172110,
+      "target_path": "erb/specials/166_teleportation_circle.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "167",
+      "name": "Mr. Hyde",
+      "table": "characters",
+      "source_file": "167_OP01_CMN_CHARACTER_MR HYDE_EN_trimmed.png",
+      "source_size_bytes": 1563416,
+      "target_path": "erb/characters/167_mr_hyde.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "168",
+      "name": "Overdose",
+      "table": "special_cards",
+      "source_file": "168_OP01_CMN_SPECIALS_OVERDOSE_EN_trimmed.png",
+      "source_size_bytes": 1110035,
+      "target_path": "erb/specials/168_overdose.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "169",
+      "name": "Sadistic Tendencies",
+      "table": "special_cards",
+      "source_file": "169_OP01_CMN_SPECIALS_SADISTIC TENDENCIES_EN_trimmed.png",
+      "source_size_bytes": 1110971,
+      "target_path": "erb/specials/169_sadistic_tendencies.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "170",
+      "name": "Set Loose",
+      "table": "special_cards",
+      "source_file": "170_OP01_UNC_SPECIALS_SET LOOSE_EN_trimmed.png",
+      "source_size_bytes": 1086681,
+      "target_path": "erb/specials/170_set_loose.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "171",
+      "name": "The Serum",
+      "table": "special_cards",
+      "source_file": "171_OP01_CMN_SPECIALS_THE SERUM_EN_trimmed.png",
+      "source_size_bytes": 984493,
+      "target_path": "erb/specials/171_the_serum.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "172",
+      "name": "Trample",
+      "table": "special_cards",
+      "source_file": "172_OP01_CMN_SPECIALS_TRAMPLE_EN_trimmed.png",
+      "source_size_bytes": 1160425,
+      "target_path": "erb/specials/172_trample.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "173",
+      "name": "Victorian Sophisticant",
+      "table": "special_cards",
+      "source_file": "173_OP01_CMN_SPECIALS_VICTORIAN SOPHISTICANT_EN_trimmed.png",
+      "source_size_bytes": 840137,
+      "target_path": "erb/specials/173_victorian_sophisticant.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "174",
+      "name": "Poseidon",
+      "table": "characters",
+      "source_file": "174_OP01_CMN_CHARACTER_POSEIDON_EN_trimmed.png",
+      "source_size_bytes": 1607781,
+      "target_path": "erb/characters/174_poseidon.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "175",
+      "name": "Reclaim the Waters",
+      "table": "special_cards",
+      "source_file": "175_OP01_CMN_SPECIALS_RECLAIM THE WATER_EN_trimmed.png",
+      "source_size_bytes": 1161925,
+      "target_path": "erb/specials/175_reclaim_the_waters.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "176",
+      "name": "Form of Water",
+      "table": "special_cards",
+      "source_file": "176_OP01_CMN_SPECIALS_FORM OF WATER_EN_trimmed.png",
+      "source_size_bytes": 1215379,
+      "target_path": "erb/specials/176_form_of_water.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "177",
+      "name": "Poseidon's Might",
+      "table": "special_cards",
+      "source_file": "177_OP01_CMN_SPECIALS_POSEIDONS MIGHT_EN_trimmed.png",
+      "source_size_bytes": 1156839,
+      "target_path": "erb/specials/177_poseidon_s_might.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "178",
+      "name": "Rising Tides",
+      "table": "special_cards",
+      "source_file": "178_OP01_CMN_SPECIALS_RISING TIDES_EN_trimmed.png",
+      "source_size_bytes": 1281518,
+      "target_path": "erb/specials/178_rising_tides.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "179",
+      "name": "Trident",
+      "table": "special_cards",
+      "source_file": "179_OP01_CMN_SPECIALS_TRIDENT_EN_trimmed.png",
+      "source_size_bytes": 1215177,
+      "target_path": "erb/specials/179_trident.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "180",
+      "name": "Tsunami",
+      "table": "special_cards",
+      "source_file": "180_OP01_UNC_SPECIALS_TSUNAMI_EN_trimmed.png",
+      "source_size_bytes": 1103035,
+      "target_path": "erb/specials/180_tsunami.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "181",
+      "name": "Professor Moriarty",
+      "table": "characters",
+      "source_file": "181_OP01_CMN_CHARACTER_PROFFESSOR MORIARTY_EN_trimmed.png",
+      "source_size_bytes": 904946,
+      "target_path": "erb/characters/181_professor_moriarty.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "182",
+      "name": "Complex Criminal Scheme",
+      "table": "special_cards",
+      "source_file": "182_OP01_CMN_SPECIALS_COMPLEX CRIMINAL SCHEME_EN_trimmed.png",
+      "source_size_bytes": 916431,
+      "target_path": "erb/specials/182_complex_criminal_scheme.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "183",
+      "name": "Criminal Mastermind",
+      "table": "special_cards",
+      "source_file": "183_OP01_UNC_SPECIALS_CRIMINAL MASTERMIND_EN_trimmed.png",
+      "source_size_bytes": 963147,
+      "target_path": "erb/specials/183_criminal_mastermind.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "184",
+      "name": "Future Plans",
+      "table": "special_cards",
+      "source_file": "184_OP01_CMN_SPECIALS_FUTURE PLANS_EN_trimmed.png",
+      "source_size_bytes": 934981,
+      "target_path": "erb/specials/184_future_plans.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "185",
+      "name": "Mathematical Genius",
+      "table": "special_cards",
+      "source_file": "185_OP01_CMN_SPECIALS_MATHMATICAL GENIUS_EN_trimmed.png",
+      "source_size_bytes": 787295,
+      "target_path": "erb/specials/185_mathematical_genius.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "186",
+      "name": "Napoleon of Crime",
+      "table": "special_cards",
+      "source_file": "186_OP01_CMN_SPECIALS_NAPOLEON OF CRIME_EN_trimmed.png",
+      "source_size_bytes": 832481,
+      "target_path": "erb/specials/186_napoleon_of_crime.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "187",
+      "name": "Tactical Fighter",
+      "table": "special_cards",
+      "source_file": "187_OP01_CMN_SPECIALS_TACTICAL FIGHTER_EN_trimmed.png",
+      "source_size_bytes": 1115201,
+      "target_path": "erb/specials/187_tactical_fighter.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "188",
+      "name": "Ra",
+      "table": "characters",
+      "source_file": "188_OP01_CMN_CHARACTER_RA_EN_trimmed.png",
+      "source_size_bytes": 1385126,
+      "target_path": "erb/characters/188_ra.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "189",
+      "name": "Cult of Menevis Bull",
+      "table": "special_cards",
+      "source_file": "189_OP01_CMN_SPECIALS_CLUT OF MNEVIS BULL_EN_trimmed.png",
+      "source_size_bytes": 1274483,
+      "target_path": "erb/specials/189_cult_of_menevis_bull.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "190",
+      "name": "Eye of Sekhmet",
+      "table": "special_cards",
+      "source_file": "190_OP01_UNC_SPECIALS_EYE OF SEKHMET_EN_trimmed.png",
+      "source_size_bytes": 1360351,
+      "target_path": "erb/specials/190_eye_of_sekhmet.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "191",
+      "name": "Healing Waters of the Nile",
+      "table": "special_cards",
+      "source_file": "191_OP01_CMN_SPECIALS_HEALING WATERS OF THE NILE_EN_trimmed.png",
+      "source_size_bytes": 1588650,
+      "target_path": "erb/specials/191_healing_waters_of_the_nile.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "192",
+      "name": "Shards of the Staff",
+      "table": "advanced_universe_cards",
+      "source_file": "192_OP01_CMN_SPECIALS_SHARDS OF THE STAFF_EN_trimmed.png",
+      "source_size_bytes": 1189197,
+      "target_path": "erb/advanced-universe/192_shards_of_the_staff.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "193",
+      "name": "Staff Fragments",
+      "table": "advanced_universe_cards",
+      "source_file": "193_OP01_CMN_SPECIALS_STAFF FRAGMENTS_EN_trimmed.png",
+      "source_size_bytes": 1241191,
+      "target_path": "erb/advanced-universe/193_staff_fragments.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "194",
+      "name": "Staff Head",
+      "table": "advanced_universe_cards",
+      "source_file": "194_OP01_CMN_SPECIALS_STAFF HEAD_EN_trimmed.png",
+      "source_size_bytes": 1067452,
+      "target_path": "erb/advanced-universe/194_staff_head.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "195",
+      "name": "Robin Hood",
+      "table": "characters",
+      "source_file": "195_OP01_CMN_CHARACTER_ROBIN HOOD_EN_trimmed.png",
+      "source_size_bytes": 1369190,
+      "target_path": "erb/characters/195_robin_hood.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "196",
+      "name": "Band of Merry Men",
+      "table": "special_cards",
+      "source_file": "196_OP01_CMN_SPECIALS_BAND OF MERRY MEN_EN_trimmed.png",
+      "source_size_bytes": 1173386,
+      "target_path": "erb/specials/196_band_of_merry_men.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "197",
+      "name": "Defender of the People",
+      "table": "special_cards",
+      "source_file": "197_OP01_CMN_SPECIALS_DEFENDER OF THE PEOPLE_EN_trimmed.png",
+      "source_size_bytes": 1113638,
+      "target_path": "erb/specials/197_defender_of_the_people.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "198",
+      "name": "Hero of Nottingham",
+      "table": "special_cards",
+      "source_file": "198_OP01_CMN_SPECIALS_HERO OF NOTTINGHAM_EN_trimmed.png",
+      "source_size_bytes": 1111773,
+      "target_path": "erb/specials/198_hero_of_nottingham.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "199",
+      "name": "Master Archer",
+      "table": "special_cards",
+      "source_file": "199_OP01_CMN_SPECIALS_MASTER ARCHER_EN_trimmed.png",
+      "source_size_bytes": 1031381,
+      "target_path": "erb/specials/199_master_archer.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "200",
+      "name": "Master Thief",
+      "table": "special_cards",
+      "source_file": "200_OP01_UNC_SPECIALS_MASTER THEIF_EN_trimmed.png",
+      "source_size_bytes": 932090,
+      "target_path": "erb/specials/200_master_thief.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "201",
+      "name": "Steal From the Rich",
+      "table": "special_cards",
+      "source_file": "201_OP01_CMN_SPECIALS_STEAL FROM THE RICH_EN_trimmed.png",
+      "source_size_bytes": 836251,
+      "target_path": "erb/specials/201_steal_from_the_rich.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "202",
+      "name": "Sheriff of Nottingham",
+      "table": "characters",
+      "source_file": "202_OP01_CMN_CHARACTER_SHERIFF OF NOTTINGHAM_EN_trimmed.png",
+      "source_size_bytes": 1287501,
+      "target_path": "erb/characters/202_sheriff_of_nottingham.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "203",
+      "name": "Flaming Arrows",
+      "table": "special_cards",
+      "source_file": "203_OP01_CMN_SPECIALS_FLAMING ARROWS_EN_trimmed.png",
+      "source_size_bytes": 1487375,
+      "target_path": "erb/specials/203_flaming_arrows.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "204",
+      "name": "I Command an Army",
+      "table": "special_cards",
+      "source_file": "204_OP01_CMN_SPECIALS_I COMMAND AN ARMY_EN_trimmed.png",
+      "source_size_bytes": 1063949,
+      "target_path": "erb/specials/204_i_command_an_army.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "206",
+      "name": "Rule by Fear",
+      "table": "special_cards",
+      "source_file": "206_OP01_CMN_SPECIALS_RULE BY FEAR_EN_trimmed.png",
+      "source_size_bytes": 1077996,
+      "target_path": "erb/specials/206_rule_by_fear.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "207",
+      "name": "Squeeze the Commoners",
+      "table": "special_cards",
+      "source_file": "207_OP01_UNC_SPECIALS_SQUEEZE THE COMMONERS_EN_trimmed.png",
+      "source_size_bytes": 1122207,
+      "target_path": "erb/specials/207_squeeze_the_commoners.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "208",
+      "name": "Taxes",
+      "table": "special_cards",
+      "source_file": "208_OP01_CMN_SPECIALS_TAXES_EN_trimmed.png",
+      "source_size_bytes": 1147222,
+      "target_path": "erb/specials/208_taxes.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "209",
+      "name": "Sherlock Holmes",
+      "table": "characters",
+      "source_file": "209_OP01_CMN_CHARACTER_SHERLOCK HOLMES_EN_trimmed.png",
+      "source_size_bytes": 1061721,
+      "target_path": "erb/characters/209_sherlock_holmes.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "210",
+      "name": "Battle of Wits",
+      "table": "special_cards",
+      "source_file": "210_OP01_CMN_SPECIALS_BATTLE OF WITS_EN_trimmed.png",
+      "source_size_bytes": 858138,
+      "target_path": "erb/specials/210_battle_of_wits.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "211",
+      "name": "Brilliant Deduction",
+      "table": "special_cards",
+      "source_file": "211_OP01_CMN_SPECIALS_BRILLIANT DEDUCTION_EN_trimmed.png",
+      "source_size_bytes": 851969,
+      "target_path": "erb/specials/211_brilliant_deduction.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "212",
+      "name": "Irene Adler",
+      "table": "special_cards",
+      "source_file": "212_OP01_CMN_SPECIALS_IRENE ADLER_EN_trimmed.png",
+      "source_size_bytes": 1002830,
+      "target_path": "erb/specials/212_irene_adler.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "213",
+      "name": "Logical Reasoning",
+      "table": "special_cards",
+      "source_file": "213_OP01_CMN_SPECIALS_LOGICAL REASONING_EN_trimmed.png",
+      "source_size_bytes": 948780,
+      "target_path": "erb/specials/213_logical_reasoning.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "214",
+      "name": "Probability Evaluation",
+      "table": "special_cards",
+      "source_file": "214_OP01_UNC_SPECIALS_PROBABILITY EVALUATION_EN_trimmed.png",
+      "source_size_bytes": 1006363,
+      "target_path": "erb/specials/214_probability_evaluation.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "215",
+      "name": "Unpredictable Mind",
+      "table": "special_cards",
+      "source_file": "215_OP01_CMN_SPECIALS_UNPREDICTABLE MIND_EN_trimmed.png",
+      "source_size_bytes": 907583,
+      "target_path": "erb/specials/215_unpredictable_mind.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "216",
+      "name": "Sun Wukong",
+      "table": "characters",
+      "source_file": "216_OP01_CMN_CHARACTER_SUN WUKONG_EN_trimmed.png",
+      "source_size_bytes": 1422440,
+      "target_path": "erb/characters/216_sun_wukong.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "217",
+      "name": "Cloud Surfing",
+      "table": "special_cards",
+      "source_file": "217_OP01_CMN_SPECIALS_CLOUD SURFING_EN_trimmed.png",
+      "source_size_bytes": 1318545,
+      "target_path": "erb/specials/217_cloud_surfing.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "218",
+      "name": "Godly Strength",
+      "table": "special_cards",
+      "source_file": "218_OP01_CMN_SPECIALS_GODLY STRENGTH_EN_trimmed.png",
+      "source_size_bytes": 1384877,
+      "target_path": "erb/specials/218_godly_strength.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "219",
+      "name": "Grasp of the Five Elements",
+      "table": "special_cards",
+      "source_file": "219_OP01_UNC_SPECIALS_GRASP OF THE FIVE ELEMENTS_EN_trimmed.png",
+      "source_size_bytes": 1469078,
+      "target_path": "erb/specials/219_grasp_of_the_five_elements.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "220",
+      "name": "Staff of the Monkey King",
+      "table": "special_cards",
+      "source_file": "220_OP01_CMN_SPECIALS_STAFF OF THE MONKEY KING_EN_trimmed.png",
+      "source_size_bytes": 1562681,
+      "target_path": "erb/specials/220_staff_of_the_monkey_king.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "221",
+      "name": "Stone Skin",
+      "table": "special_cards",
+      "source_file": "221_OP01_CMN_SPECIALS_STONE SKIN_EN_trimmed.png",
+      "source_size_bytes": 1482193,
+      "target_path": "erb/specials/221_stone_skin.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "222",
+      "name": "Transformation Trickery",
+      "table": "special_cards",
+      "source_file": "222_OP01_CMN_SPECIALS_TRANSFORMATION TRICKERY_EN_trimmed.png",
+      "source_size_bytes": 1315960,
+      "target_path": "erb/specials/222_transformation_trickery.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "223",
+      "name": "Tars Tarkas",
+      "table": "characters",
+      "source_file": "223_OP01_CMN_CHARACTER_TARS TARKAS_EN_trimmed.png",
+      "source_size_bytes": 1354577,
+      "target_path": "erb/characters/223_tars_tarkas.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "224",
+      "name": "Avenging My Love",
+      "table": "special_cards",
+      "source_file": "224_OP01_UNC_SPECIALS_AVENGING MY LOVE_EN_trimmed.png",
+      "source_size_bytes": 1196403,
+      "target_path": "erb/specials/224_avenging_my_love.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "225",
+      "name": "Barsoomian Warrior & Statesman",
+      "table": "special_cards",
+      "source_file": "225_OP01_CMN_SPECIALS_BARSOOM WARRIOR AND STATESMAN_EN_trimmed.png",
+      "source_size_bytes": 1149981,
+      "target_path": "erb/specials/225_barsoomian_warrior_and_statesman.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "226",
+      "name": "Four-Armed Warrior",
+      "table": "special_cards",
+      "source_file": "226_OP01_CMN_SPECIALS_FOUR ARMED WARRIOR_EN_trimmed.png",
+      "source_size_bytes": 1301129,
+      "target_path": "erb/specials/226_four_armed_warrior.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "227",
+      "name": "Jeddak of Thark",
+      "table": "special_cards",
+      "source_file": "227_OP01_CMN_SPECIALS_JEDDAK OF THARK_EN_trimmed.png",
+      "source_size_bytes": 1563679,
+      "target_path": "erb/specials/227_jeddak_of_thark.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "228",
+      "name": "Protector of the Incubator",
+      "table": "special_cards",
+      "source_file": "228_OP01_CMN_SPECIALS_PROTECTOR OF THE INCUBATOR_EN_trimmed.png",
+      "source_size_bytes": 1229505,
+      "target_path": "erb/specials/228_protector_of_the_incubator.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "229",
+      "name": "Sola",
+      "table": "special_cards",
+      "source_file": "229_OP01_CMN_SPECIALS_SOLA_EN_trimmed.png",
+      "source_size_bytes": 1388097,
+      "target_path": "erb/specials/229_sola.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "230",
+      "name": "Tarzan",
+      "table": "characters",
+      "source_file": "230_OP01_CMN_CHARACTER_TARZAN_EN_trimmed.png",
+      "source_size_bytes": 1135030,
+      "target_path": "erb/characters/230_tarzan.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "231",
+      "name": "Emotional Senses",
+      "table": "special_cards",
+      "source_file": "231_OP01_CMN_SPECIALS_EMOTIONAL SENSES_EN_trimmed.png",
+      "source_size_bytes": 1363097,
+      "target_path": "erb/specials/231_emotional_senses.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "232",
+      "name": "Jungle Tactics",
+      "table": "special_cards",
+      "source_file": "232_OP01_CMN_SPECIALS_JUNGLE TACTICS_EN_trimmed.png",
+      "source_size_bytes": 1367087,
+      "target_path": "erb/specials/232_jungle_tactics.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "233",
+      "name": "Lord of the Jungle",
+      "table": "special_cards",
+      "source_file": "233_OP01_UNC_SPECIALS_LORD OF THE JUNGLE_EN_trimmed.png",
+      "source_size_bytes": 1452729,
+      "target_path": "erb/specials/233_lord_of_the_jungle.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "234",
+      "name": "My Feet are Like Hands",
+      "table": "special_cards",
+      "source_file": "234_OP01_CMN_SPECIALS_MY FEET ARE LIKE HANDS_EN_trimmed.png",
+      "source_size_bytes": 1331072,
+      "target_path": "erb/specials/234_my_feet_are_like_hands.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "235",
+      "name": "Raised by Mangani Apes",
+      "table": "special_cards",
+      "source_file": "235_OP01_CMN_SPECIALS_RAISED BY MANGANI APES_EN_trimmed.png",
+      "source_size_bytes": 1550190,
+      "target_path": "erb/specials/235_raised_by_mangani_apes.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "236",
+      "name": "Deceptive Maneuver",
+      "table": "special_cards",
+      "source_file": "236_OP01_CMN_SPECIALS_DECEPTIVE MANUVER_EN_trimmed.png",
+      "source_size_bytes": 1372433,
+      "target_path": "erb/specials/236_deceptive_maneuver.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "237",
+      "name": "The Mummy",
+      "table": "characters",
+      "source_file": "237_OP01_CMN_CHARACTER_THE MUMMY_EN_trimmed.png",
+      "source_size_bytes": 1523468,
+      "target_path": "erb/characters/237_the_mummy.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "238",
+      "name": "Ancient Wisdom",
+      "table": "special_cards",
+      "source_file": "238_OP01_CMN_SPECIALS_ANCIENT WISDOM_EN_trimmed.png",
+      "source_size_bytes": 1257657,
+      "target_path": "erb/specials/238_ancient_wisdom.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "239",
+      "name": "Fury of the Desert",
+      "table": "special_cards",
+      "source_file": "239_OP01_CMN_SPECIALS_FURY OF THE DESERT_EN_trimmed.png",
+      "source_size_bytes": 1524607,
+      "target_path": "erb/specials/239_fury_of_the_desert.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "240",
+      "name": "Pharaoh of the Fourth Dynasty",
+      "table": "special_cards",
+      "source_file": "240_OP01_UNC_SPECIALS_PHARAOH OF THE FOURTH DYNASTY_EN_trimmed.png",
+      "source_size_bytes": 980689,
+      "target_path": "erb/specials/240_pharaoh_of_the_fourth_dynasty.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "241",
+      "name": "Reinvigorated by Fresh Organs",
+      "table": "special_cards",
+      "source_file": "241_OP01_CMN_SPECIALS_REINVIGORATED BY FRESH ORGANS_EN_trimmed.png",
+      "source_size_bytes": 1256274,
+      "target_path": "erb/specials/241_reinvigorated_by_fresh_organs.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "242",
+      "name": "Relentless Pursuit",
+      "table": "special_cards",
+      "source_file": "242_OP01_CMN_SPECIALS_RELENTLESS PURSUIT_EN_trimmed.png",
+      "source_size_bytes": 930889,
+      "target_path": "erb/specials/242_relentless_pursuit.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "243",
+      "name": "The Eternal Journey",
+      "table": "special_cards",
+      "source_file": "243_OP01_CMN_SPECIALS_THE ETERNAL JOUNEY_EN_trimmed.png",
+      "source_size_bytes": 969714,
+      "target_path": "erb/specials/243_the_eternal_journey.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "244",
+      "name": "The Three Musketeers",
+      "table": "characters",
+      "source_file": "244_OP01_CMN_CHARACTER_THREE MUSKETEERS_EN_trimmed.png",
+      "source_size_bytes": 1393374,
+      "target_path": "erb/characters/244_the_three_musketeers.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "245",
+      "name": "All For One",
+      "table": "special_cards",
+      "source_file": "245_OP01_UNC_SPECIALS_ALL FOR ONE_EN_trimmed.png",
+      "source_size_bytes": 1279972,
+      "target_path": "erb/specials/245_all_for_one.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "246",
+      "name": "Aramis",
+      "table": "special_cards",
+      "source_file": "246_OP01_CMN_SPECIALS_ARAMIS_EN_trimmed.png",
+      "source_size_bytes": 584987,
+      "target_path": "erb/specials/246_aramis.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "247",
+      "name": "Athos",
+      "table": "special_cards",
+      "source_file": "247_OP01_CMN_SPECIALS_ATHOS_EN_trimmed.png",
+      "source_size_bytes": 659408,
+      "target_path": "erb/specials/247_athos.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "248",
+      "name": "D'Artagnan",
+      "table": "special_cards",
+      "source_file": "248_OP01_CMN_SPECIALS_DARTAGNAN_EN_trimmed.png",
+      "source_size_bytes": 952788,
+      "target_path": "erb/specials/248_d_artagnan.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "249",
+      "name": "Porthos",
+      "table": "special_cards",
+      "source_file": "249_OP01_CMN_SPECIALS_PORTHOS_EN_trimmed.png",
+      "source_size_bytes": 848825,
+      "target_path": "erb/specials/249_porthos.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "250",
+      "name": "Valiant Charge",
+      "table": "special_cards",
+      "source_file": "250_OP01_CMN_SPECIALS_VALIENT CHARGE_EN_trimmed.png",
+      "source_size_bytes": 1074868,
+      "target_path": "erb/specials/250_valiant_charge.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "251",
+      "name": "Time Traveler",
+      "table": "characters",
+      "source_file": "251_OP01_CMN_CHARACTER_TIME TRAVELER_EN_trimmed.png",
+      "source_size_bytes": 1401984,
+      "target_path": "erb/characters/251_time_traveler.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "252",
+      "name": "From a Mile Away",
+      "table": "special_cards",
+      "source_file": "252_OP01_CMN_SPECIALS_FROM A MILE AWAY_EN_trimmed.png",
+      "source_size_bytes": 1258732,
+      "target_path": "erb/specials/252_from_a_mile_away.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "253",
+      "name": "Futuristic Phaser",
+      "table": "special_cards",
+      "source_file": "253_OP01_CMN_SPECIALS_FUTURISTIC PHASER_EN_trimmed.png",
+      "source_size_bytes": 1281587,
+      "target_path": "erb/specials/253_futuristic_phaser.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "254",
+      "name": "I'll Already Be Gone",
+      "table": "special_cards",
+      "source_file": "254_OP01_CMN_SPECIALS_I_LL ALREADY BE GONE_EN_trimmed.png",
+      "source_size_bytes": 1378567,
+      "target_path": "erb/specials/254_i_ll_already_be_gone.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "255",
+      "name": "Knowledge of Tomorrow",
+      "table": "special_cards",
+      "source_file": "255_OP01_UNC_SPECIALS_KNOWLEDGE OF TOMORROW_EN_trimmed.png",
+      "source_size_bytes": 1184732,
+      "target_path": "erb/specials/255_knowledge_of_tomorrow.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "256",
+      "name": "Harbinger's Warning",
+      "table": "special_cards",
+      "source_file": "256_OP01_CMN_SPECIALS_HARBINGERS WARNING_EN_trimmed.png",
+      "source_size_bytes": 1218869,
+      "target_path": "erb/specials/256_harbinger_s_warning.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "257",
+      "name": "The Tomorrow Doctor",
+      "table": "special_cards",
+      "source_file": "257_OP01_CMN_SPECIALS_THE TOMORROW DOCTOR_EN_trimmed.png",
+      "source_size_bytes": 1372598,
+      "target_path": "erb/specials/257_the_tomorrow_doctor.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "258",
+      "name": "Van Helsing",
+      "table": "characters",
+      "source_file": "258_OP01_CMN_CHARACTER_VAN HELSING_EN_trimmed.png",
+      "source_size_bytes": 1200350,
+      "target_path": "erb/characters/258_van_helsing.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "259",
+      "name": "Doctor, Professor, Lawyer, Scientist",
+      "table": "special_cards",
+      "source_file": "259_OP01_CMN_SPECIALS_DOCTOR PROFESOR_EN_trimmed.png",
+      "source_size_bytes": 1191281,
+      "target_path": "erb/specials/259_doctor_professor_lawyer_scientist.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "260",
+      "name": "Monster Hunting Expert",
+      "table": "special_cards",
+      "source_file": "260_OP01_UNC_SPECIALS_MONSTER HUNTING EXPERT_EN_trimmed.png",
+      "source_size_bytes": 1197717,
+      "target_path": "erb/specials/260_monster_hunting_expert.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "261",
+      "name": "Crossbow Expert",
+      "table": "special_cards",
+      "source_file": "261_OP01_CMN_SPECIALS_CROSSBOW EXPERT_EN_trimmed.png",
+      "source_size_bytes": 1263698,
+      "target_path": "erb/specials/261_crossbow_expert.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "262",
+      "name": "Right Tools for the Job",
+      "table": "special_cards",
+      "source_file": "262_OP01_CMN_SPECIALS_RIGHT TOOL FOR THE JOB_EN_trimmed.png",
+      "source_size_bytes": 1315901,
+      "target_path": "erb/specials/262_right_tools_for_the_job.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "263",
+      "name": "Sacred Wafers from Amsterdam",
+      "table": "special_cards",
+      "source_file": "263_OP01_CMN_SPECIALS_SACRED WAFERS OF AMSTERDAM_EN_trimmed.png",
+      "source_size_bytes": 1267453,
+      "target_path": "erb/specials/263_sacred_wafers_from_amsterdam.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "264",
+      "name": "World-Renowned Doctor",
+      "table": "special_cards",
+      "source_file": "264_OP01_CMN_SPECIALS_WORLD RENOWNED DOCTOR_EN_trimmed.png",
+      "source_size_bytes": 1193674,
+      "target_path": "erb/specials/264_world_renowned_doctor.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "265",
+      "name": "Victory Harben",
+      "table": "characters",
+      "source_file": "265_OP01_CMN_CHARACTER_VICTORY HARBEN_EN_trimmed.png",
+      "source_size_bytes": 954318,
+      "target_path": "erb/characters/265_victory_harben.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "266",
+      "name": "Abner Perry's Lab Assistant",
+      "table": "special_cards",
+      "source_file": "266_OP01_CMN_SPECIALS_ABNER PERRYS LAB ASSISTANT_EN_trimmed.png",
+      "source_size_bytes": 793498,
+      "target_path": "erb/specials/266_abner_perry_s_lab_assistant.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "267",
+      "name": "Archery, Knives & Jiu-jitsu",
+      "table": "special_cards",
+      "source_file": "267_OP01_CMN_SPECIALS_KNIVES ARCHERY AND JIU JITSU_EN.pdf_trimmed.png",
+      "source_size_bytes": 1194769,
+      "target_path": "erb/specials/267_archery_knives_and_jiu_jitsu.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "268",
+      "name": "Chamston-Hedding Estate",
+      "table": "special_cards",
+      "source_file": "268_OP01_CMN_SPECIALS_CHANNING-HEDDING ESTATE_EN_trimmed.png",
+      "source_size_bytes": 888588,
+      "target_path": "erb/specials/268_chamston_hedding_estate.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "269",
+      "name": "Department of Theoretical Physics",
+      "table": "special_cards",
+      "source_file": "269_OP01_CMN_SPECIALS_DEPARTMENT OF THEORETICAL PHYSICS_EN_trimmed.png",
+      "source_size_bytes": 1051597,
+      "target_path": "erb/specials/269_department_of_theoretical_physics.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "270",
+      "name": "Fires of Halos",
+      "table": "special_cards",
+      "source_file": "270_OP01_UNC_SPECIALS_FIRES OF HALOS_EN_trimmed.png",
+      "source_size_bytes": 1120836,
+      "target_path": "erb/specials/270_fires_of_halos.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "271",
+      "name": "Practical Physics",
+      "table": "special_cards",
+      "source_file": "271_OP01_CMN_SPECIALS_PRACTICAL PHYSICS_EN_trimmed.png",
+      "source_size_bytes": 1385934,
+      "target_path": "erb/specials/271_practical_physics.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "272",
+      "name": "Wicked Witch",
+      "table": "characters",
+      "source_file": "272_OP01_CMN_CHARACTER_WICKED WITCH_EN_trimmed.png",
+      "source_size_bytes": 1560716,
+      "target_path": "erb/characters/272_wicked_witch.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "273",
+      "name": "Aquaphobic",
+      "table": "special_cards",
+      "source_file": "273_OP01_CMN_SPECIALS_AQUAPHOBIC_EN_trimmed.png",
+      "source_size_bytes": 1290049,
+      "target_path": "erb/specials/273_aquaphobic.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "274",
+      "name": "Feared by All Witches",
+      "table": "special_cards",
+      "source_file": "274_OP01_CMN_SPECIALS_FEARD BY ALL WITCHES_EN_trimmed.png",
+      "source_size_bytes": 1057499,
+      "target_path": "erb/specials/274_feared_by_all_witches.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "275",
+      "name": "I Will Have Those Silver Shoes!",
+      "table": "special_cards",
+      "source_file": "275_OP01_CMN_SPECIALS_I WILL HAVE THOSE SILVER SHOES_EN_trimmed.png",
+      "source_size_bytes": 994402,
+      "target_path": "erb/specials/275_i_will_have_those_silver_shoes.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "276",
+      "name": "One Eye",
+      "table": "special_cards",
+      "source_file": "276_OP01_UNC_SPECIALS_ONE EYE_EN_trimmed.png",
+      "source_size_bytes": 1364579,
+      "target_path": "erb/specials/276_one_eye.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "277",
+      "name": "Harness the Wind",
+      "table": "special_cards",
+      "source_file": "277_OP01_CMN_SPECIALS_HARNESS THE WIND_EN_trimmed.png",
+      "source_size_bytes": 1190534,
+      "target_path": "erb/specials/277_harness_the_wind.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "278",
+      "name": "Wolves, Crows, & Black Bees",
+      "table": "special_cards",
+      "source_file": "278_OP01_CMN_SPECIALS_WOLVES CROWS BLACK BIRDS_EN_237_trimmed.png",
+      "source_size_bytes": 1148849,
+      "target_path": "erb/specials/278_wolves_crows_and_black_bees.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "279",
+      "name": "Zeus",
+      "table": "characters",
+      "source_file": "279_OP01_CMN_CHARACTER_ZEUS_EN_trimmed.png",
+      "source_size_bytes": 1328137,
+      "target_path": "erb/characters/279_zeus.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "280",
+      "name": "A Jealous God",
+      "table": "special_cards",
+      "source_file": "280_OP01_CMN_SPECIALS_A JEALOUS GOD_EN_trimmed.png",
+      "source_size_bytes": 1071305,
+      "target_path": "erb/specials/280_a_jealous_god.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "281",
+      "name": "Banishment",
+      "table": "special_cards",
+      "source_file": "281_OP01_CMN_SPECIALS_BANISHMENT_EN_trimmed.png",
+      "source_size_bytes": 1311669,
+      "target_path": "erb/specials/281_banishment.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "282",
+      "name": "Hera",
+      "table": "special_cards",
+      "source_file": "282_OP01_CMN_SPECIALS_HERA_EN_trimmed.png",
+      "source_size_bytes": 1189329,
+      "target_path": "erb/specials/282_hera.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "283",
+      "name": "Law and Order",
+      "table": "special_cards",
+      "source_file": "283_OP01_CMN_SPECIALS_LAW AND ORDER_EN_trimmed.png",
+      "source_size_bytes": 1243016,
+      "target_path": "erb/specials/283_law_and_order.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "284",
+      "name": "Thunderbolt",
+      "table": "special_cards",
+      "source_file": "284_OP01_CMN_SPECIALS_THUNDERBOLT_EN_trimmed.png",
+      "source_size_bytes": 1362425,
+      "target_path": "erb/specials/284_thunderbolt.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "285",
+      "name": "Zorro",
+      "table": "characters",
+      "source_file": "285_OP01_CMN_CHARACTER_ZORRO_EN_trimmed.png",
+      "source_size_bytes": 1224179,
+      "target_path": "erb/characters/285_zorro.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "286",
+      "name": "3 Quick Strokes",
+      "table": "special_cards",
+      "source_file": "286_OP01_UNC_SPECIALS_3 QUICK STROKES_EN_trimmed.png",
+      "source_size_bytes": 981357,
+      "target_path": "erb/specials/286_3_quick_strokes.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "287",
+      "name": "Elite Swordsmanship",
+      "table": "special_cards",
+      "source_file": "287_OP01_CMN_SPECIALS_ELITE SWORDSMANSHIP_EN.pdf_trimmed.png",
+      "source_size_bytes": 1138000,
+      "target_path": "erb/specials/287_elite_swordsmanship.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "288",
+      "name": "Master of Escape",
+      "table": "special_cards",
+      "source_file": "288_OP01_CMN_SPECIALS_MASTER OF ESCAPE_EN_trimmed.png",
+      "source_size_bytes": 1167811,
+      "target_path": "erb/specials/288_master_of_escape.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "289",
+      "name": "Ancestral Rapier",
+      "table": "special_cards",
+      "source_file": "289_OP01_CMN_SPECIALS_ANCESTIAL RAPIER_EN_trimmed.png",
+      "source_size_bytes": 992489,
+      "target_path": "erb/specials/289_ancestral_rapier.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "290",
+      "name": "Riches of Don Diego de la Vega",
+      "table": "special_cards",
+      "source_file": "290_OP01_CMN_SPECIALS_RICHES OF DON DIEGO DE LA VEGA_EN_trimmed.png",
+      "source_size_bytes": 1049043,
+      "target_path": "erb/specials/290_riches_of_don_diego_de_la_vega.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "291",
+      "name": "Riposte",
+      "table": "special_cards",
+      "source_file": "291_OP01_CMN_SPECIALS_REPOSTE_EN_trimmed.png",
+      "source_size_bytes": 975764,
+      "target_path": "erb/specials/291_riposte.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "292",
+      "name": "8 - Energy",
+      "table": "power_cards",
+      "source_file": "292_OP01_CMN_POWER CARD_8 ENERGY_EN_trimmed.png",
+      "source_size_bytes": 1509584,
+      "target_path": "erb/power/292_8_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "293",
+      "name": "7 - Energy",
+      "table": "power_cards",
+      "source_file": "293_OP01_CMN_POWER CARD_7 ENERGY_EN_trimmed.png",
+      "source_size_bytes": 1687996,
+      "target_path": "erb/power/293_7_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "294",
+      "name": "6 - Energy",
+      "table": "power_cards",
+      "source_file": "294_OP01_CMN_POWER CARD_6 ENERGY_EN_trimmed.png",
+      "source_size_bytes": 1419150,
+      "target_path": "erb/power/294_6_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "295",
+      "name": "5 - Energy",
+      "table": "power_cards",
+      "source_file": "295_OP01_CMN_POWER CARD_5 ENERGY_EN_trimmed.png",
+      "source_size_bytes": 1715488,
+      "target_path": "erb/power/295_5_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "296",
+      "name": "4 - Energy",
+      "table": "power_cards",
+      "source_file": "296_OP01_CMN_POWER CARD_4 ENERGY_EN_trimmed.png",
+      "source_size_bytes": 1429063,
+      "target_path": "erb/power/296_4_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "297",
+      "name": "3 - Energy",
+      "table": "power_cards",
+      "source_file": "297_OP01_CMN_POWER CARD_3 ENERGY_EN_trimmed.png",
+      "source_size_bytes": 1190036,
+      "target_path": "erb/power/297_3_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "298",
+      "name": "2 - Energy",
+      "table": "power_cards",
+      "source_file": "298_OP01_CMN_POWER CARD_2 ENERGY_EN_trimmed.png",
+      "source_size_bytes": 1461965,
+      "target_path": "erb/power/298_2_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "299",
+      "name": "1 - Energy",
+      "table": "power_cards",
+      "source_file": "299_OP01_CMN_POWER CARD_1 ENERGY_EN_trimmed.png",
+      "source_size_bytes": 944988,
+      "target_path": "erb/power/299_1_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "300",
+      "name": "8 - Combat",
+      "table": "power_cards",
+      "source_file": "300_OP01_CMN_POWER CARD_8 COMBAT_EN_trimmed.png",
+      "source_size_bytes": 1345791,
+      "target_path": "erb/power/300_8_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "301",
+      "name": "7 - Combat",
+      "table": "power_cards",
+      "source_file": "301_OP01_CMN_POWER CARD_7 COMBAT_EN_trimmed.png",
+      "source_size_bytes": 1412316,
+      "target_path": "erb/power/301_7_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "302",
+      "name": "6 - Combat",
+      "table": "power_cards",
+      "source_file": "302_OP01_CMN_POWER CARD_6 COMBAT_EN_trimmed.png",
+      "source_size_bytes": 1507077,
+      "target_path": "erb/power/302_6_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "303",
+      "name": "5 - Combat",
+      "table": "power_cards",
+      "source_file": "303_OP01_CMN_POWER CARD_5 COMBAT_EN_trimmed.png",
+      "source_size_bytes": 1371407,
+      "target_path": "erb/power/303_5_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "304",
+      "name": "4 - Combat",
+      "table": "power_cards",
+      "source_file": "304_OP01_CMN_POWER CARD_4 COMBAT_EN_trimmed.png",
+      "source_size_bytes": 921919,
+      "target_path": "erb/power/304_4_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "305",
+      "name": "3 - Combat",
+      "table": "power_cards",
+      "source_file": "305_OP01_CMN_POWER CARD_3 COMBAT_EN_trimmed.png",
+      "source_size_bytes": 1490160,
+      "target_path": "erb/power/305_3_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "306",
+      "name": "2 - Combat",
+      "table": "power_cards",
+      "source_file": "306_OP01_CMN_POWER CARD_2 COMBAT_EN_trimmed.png",
+      "source_size_bytes": 978873,
+      "target_path": "erb/power/306_2_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "307",
+      "name": "1 - Combat",
+      "table": "power_cards",
+      "source_file": "307_OP01_CMN_POWER CARD_1 COMBAT_EN copy_trimmed.png",
+      "source_size_bytes": 1711685,
+      "target_path": "erb/power/307_1_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "308",
+      "name": "8 - Brute Force",
+      "table": "power_cards",
+      "source_file": "308_OP01_CMN_POWER CARD_8 BRUTE FORCE_EN_trimmed.png",
+      "source_size_bytes": 1377514,
+      "target_path": "erb/power/308_8_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "309",
+      "name": "7 - Brute Force",
+      "table": "power_cards",
+      "source_file": "309_OP01_CMN_POWER CARD_7 BRUTE FORCE_EN_trimmed.png",
+      "source_size_bytes": 1475732,
+      "target_path": "erb/power/309_7_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "310",
+      "name": "6 - Brute Force",
+      "table": "power_cards",
+      "source_file": "310_OP01_CMN_POWER CARD_6 BRUTE FORCE_EN_trimmed.png",
+      "source_size_bytes": 1669412,
+      "target_path": "erb/power/310_6_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "311",
+      "name": "5 - Brute Force",
+      "table": "power_cards",
+      "source_file": "311_OP01_CMN_POWER CARD_5 BRUTE FORCE_EN_trimmed.png",
+      "source_size_bytes": 1379304,
+      "target_path": "erb/power/311_5_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "312",
+      "name": "4 - Brute Force",
+      "table": "power_cards",
+      "source_file": "312_OP01_CMN_POWER CARD_4 BRUTE FORCE_EN_trimmed.png",
+      "source_size_bytes": 1366632,
+      "target_path": "erb/power/312_4_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "313",
+      "name": "3 - Brute Force",
+      "table": "power_cards",
+      "source_file": "313_OP01_CMN_POWER CARD_3 BRUTE FORCE_EN_trimmed.png",
+      "source_size_bytes": 1809076,
+      "target_path": "erb/power/313_3_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "314",
+      "name": "2 - Brute Force",
+      "table": "power_cards",
+      "source_file": "314_OP01_CMN_POWER CARD_2 BRUTE FORCE_EN_trimmed.png",
+      "source_size_bytes": 1636819,
+      "target_path": "erb/power/314_2_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "315",
+      "name": "1 - Brute Force",
+      "table": "power_cards",
+      "source_file": "315_OP01_CMN_POWER CARD_1 BRUTE FORCE_EN_trimmed.png",
+      "source_size_bytes": 1435220,
+      "target_path": "erb/power/315_1_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "316",
+      "name": "8 - Intelligence",
+      "table": "power_cards",
+      "source_file": "316_OP01_CMN_POWER CARD_8 INTELLIGENCE_EN_trimmed.png",
+      "source_size_bytes": 1552195,
+      "target_path": "erb/power/316_8_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "317",
+      "name": "7 - Intelligence",
+      "table": "power_cards",
+      "source_file": "317_OP01_CMN_POWER CARD_7 INTELLIGENCE_EN_trimmed.png",
+      "source_size_bytes": 1385649,
+      "target_path": "erb/power/317_7_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "318",
+      "name": "6 - Intelligence",
+      "table": "power_cards",
+      "source_file": "318_OP01_CMN_POWER CARD_6 INTELLIGENCE_EN_trimmed.png",
+      "source_size_bytes": 914199,
+      "target_path": "erb/power/318_6_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "319",
+      "name": "5 - Intelligence",
+      "table": "power_cards",
+      "source_file": "319_OP01_CMN_POWER CARD_5 INTELLIGENCE_EN_trimmed.png",
+      "source_size_bytes": 895257,
+      "target_path": "erb/power/319_5_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "320",
+      "name": "4 - Intelligence",
+      "table": "power_cards",
+      "source_file": "320_OP01_CMN_POWER CARD_4 INTELLIGENCE_EN_trimmed.png",
+      "source_size_bytes": 1790801,
+      "target_path": "erb/power/320_4_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "321",
+      "name": "3 - Intelligence",
+      "table": "power_cards",
+      "source_file": "321_OP01_CMN_POWER CARD_3 INTELLIGENCE_EN copy_trimmed.png",
+      "source_size_bytes": 1693045,
+      "target_path": "erb/power/321_3_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "322",
+      "name": "2 - Intelligence",
+      "table": "power_cards",
+      "source_file": "322_OP01_CMN_POWER CARD_2 INTELLIGENCE_EN copy_trimmed.png",
+      "source_size_bytes": 1617526,
+      "target_path": "erb/power/322_2_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "323",
+      "name": "1 - Intelligence",
+      "table": "power_cards",
+      "source_file": "323_OP01_CMN_POWER CARD_1 INTELLIGENCE_EN_trimmed.png",
+      "source_size_bytes": 1158185,
+      "target_path": "erb/power/323_1_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "324",
+      "name": "Allan Quatermain",
+      "table": "ally_universe_cards",
+      "source_file": "324_OP01_CMN_ALLY UNIVERSE_5 3 E_EN_trimmed.png",
+      "source_size_bytes": 1550575,
+      "target_path": "erb/ally/324_allan_quatermain.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "325",
+      "name": "Hera",
+      "table": "ally_universe_cards",
+      "source_file": "325_OP01_CMN_ALLY UNIVERSE_7 2 E_EN_trimmed.png",
+      "source_size_bytes": 1694121,
+      "target_path": "erb/ally/325_hera.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "326",
+      "name": "Hucklebuck",
+      "table": "ally_universe_cards",
+      "source_file": "326_OP01_CMN_ALLY UNIVERSE_5 3 C_EN_trimmed.png",
+      "source_size_bytes": 1185196,
+      "target_path": "erb/ally/326_hucklebuck.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "327",
+      "name": "Sir Galahad",
+      "table": "ally_universe_cards",
+      "source_file": "327_OP01_CMN_ALLY UNIVERSE_7 2 C_EN_trimmed.png",
+      "source_size_bytes": 1159504,
+      "target_path": "erb/ally/327_sir_galahad.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "328",
+      "name": "Little John",
+      "table": "ally_universe_cards",
+      "source_file": "328_OP01_CMN_ALLY UNIVERSE_5 3 BF_EN_trimmed.png",
+      "source_size_bytes": 1546944,
+      "target_path": "erb/ally/328_little_john.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "329",
+      "name": "Guy of Gisborne",
+      "table": "ally_universe_cards",
+      "source_file": "329_OP01_CMN_ALLY UNIVERSE_7 2 BF_EN_trimmed.png",
+      "source_size_bytes": 1393895,
+      "target_path": "erb/ally/329_guy_of_gisborne.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "330",
+      "name": "Professor Porter",
+      "table": "ally_universe_cards",
+      "source_file": "330_OP01_CMN_ALLY UNIVERSE_5 3 I_EN_trimmed.png",
+      "source_size_bytes": 1362755,
+      "target_path": "erb/ally/330_professor_porter.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "331",
+      "name": "Queen Guinevere",
+      "table": "ally_universe_cards",
+      "source_file": "331_OP01_CMN_ALLY UNIVERSE_7 2 I_EN_trimmed.png",
+      "source_size_bytes": 1518063,
+      "target_path": "erb/ally/331_queen_guinevere.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "332",
+      "name": "Ray Gun",
+      "table": "basic_universe_cards",
+      "source_file": "332_OP01_CMN_BASIC UNIVERSE_RAY GUNS 6_2E_EN_trimmed.png",
+      "source_size_bytes": 1552961,
+      "target_path": "erb/basic-universe/332_ray_gun.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "333",
+      "name": "Merlin's Wand",
+      "table": "basic_universe_cards",
+      "source_file": "333_OP01_CMN_BASIC UNIVERSE_MAGIC WAND 6_3E_EN_trimmed.png",
+      "source_size_bytes": 1442071,
+      "target_path": "erb/basic-universe/333_merlin_s_wand.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "334",
+      "name": "Lightning Bolt",
+      "table": "basic_universe_cards",
+      "source_file": "334_OP01_CMN_BASIC UNIVERSE_LIGHTNING BOLT 7_3E_EN_trimmed.png",
+      "source_size_bytes": 1231677,
+      "target_path": "erb/basic-universe/334_lightning_bolt.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "335",
+      "name": "Flintlock",
+      "table": "basic_universe_cards",
+      "source_file": "335_OP01_CMN_BASIC UNIVERSE_FLINKLOCK 6_2C_EN_trimmed.png",
+      "source_size_bytes": 1386851,
+      "target_path": "erb/basic-universe/335_flintlock.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "336",
+      "name": "Rapier",
+      "table": "basic_universe_cards",
+      "source_file": "336_OP01_CMN_BASIC UNIVERSE_RAPIER 6_3C_EN_trimmed.png",
+      "source_size_bytes": 1395588,
+      "target_path": "erb/basic-universe/336_rapier.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "337",
+      "name": "Longbow",
+      "table": "basic_universe_cards",
+      "source_file": "337_OP01_CMN_BASIC UNIVERSE_LONG BOW 7_3C_EN_trimmed.png",
+      "source_size_bytes": 1531463,
+      "target_path": "erb/basic-universe/337_longbow.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "338",
+      "name": "Hyde's Serum",
+      "table": "basic_universe_cards",
+      "source_file": "338_OP01_CMN_BASIC UNIVERSE_HYDE SERUM 6_2BF_EN_trimmed.png",
+      "source_size_bytes": 1114002,
+      "target_path": "erb/basic-universe/338_hyde_s_serum.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "339",
+      "name": "Trident",
+      "table": "basic_universe_cards",
+      "source_file": "339_OP01_CMN_BASIC UNIVERSE_TRIDENT 6_3BF_EN.pdf_trimmed.png",
+      "source_size_bytes": 1285438,
+      "target_path": "erb/basic-universe/339_trident.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "340",
+      "name": "Tribuchet",
+      "table": "basic_universe_cards",
+      "source_file": "340_OP01_CMN_BASIC UNIVERSE_TREBUCHET 7_3BF_EN_trimmed.png",
+      "source_size_bytes": 1309222,
+      "target_path": "erb/basic-universe/340_tribuchet.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "341",
+      "name": "Secret Identity",
+      "table": "basic_universe_cards",
+      "source_file": "341_OP01_CMN_BASIC UNIVERSE_SECRET IDENTITY 6_2I_EN_trimmed.png",
+      "source_size_bytes": 770851,
+      "target_path": "erb/basic-universe/341_secret_identity.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "342",
+      "name": "Advanced Technology",
+      "table": "basic_universe_cards",
+      "source_file": "342_OP01_CMN_BASIC UNIVERSE_ADVANCED TECH 6_3I_EN_trimmed.png",
+      "source_size_bytes": 1260720,
+      "target_path": "erb/basic-universe/342_advanced_technology.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "343",
+      "name": "Magic Spell",
+      "table": "basic_universe_cards",
+      "source_file": "343_OP01_CMN_BASIC UNIVERSE_MAGIC SPELL 7_3I_EN_trimmed.png",
+      "source_size_bytes": 828546,
+      "target_path": "erb/basic-universe/343_magic_spell.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "344",
+      "name": "Training (Merlin)",
+      "table": "training_cards",
+      "source_file": "344_OP01_CMN_TRAINING UNIVERSE_4 E C_EN copy_trimmed.png",
+      "source_size_bytes": 1368580,
+      "target_path": "erb/training/344_training_merlin.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "345",
+      "name": "Training (Joan of Arc)",
+      "table": "training_cards",
+      "source_file": "345_OP01_CMN_TRAINING UNIVERSE_4 E BF_EN_trimmed.png",
+      "source_size_bytes": 1410955,
+      "target_path": "erb/training/345_training_joan_of_arc.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "346",
+      "name": "Training (Cultists)",
+      "table": "training_cards",
+      "source_file": "346_OP01_CMN_TRAINING UNIVERSE_4 E I_EN_trimmed.png",
+      "source_size_bytes": 1340348,
+      "target_path": "erb/training/346_training_cultists.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "347",
+      "name": "Training (Robin Hood)",
+      "table": "training_cards",
+      "source_file": "347_OP01_CMN_TRAINING UNIVERSE_4 C BF_EN_trimmed.png",
+      "source_size_bytes": 1234083,
+      "target_path": "erb/training/347_training_robin_hood.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "348",
+      "name": "Training (Leonidas)",
+      "table": "training_cards",
+      "source_file": "348_OP01_CMN_TRAINING UNIVERSE_4 C I_EN_trimmed.png",
+      "source_size_bytes": 1096634,
+      "target_path": "erb/training/348_training_leonidas.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "349",
+      "name": "Training (Lancelot)",
+      "table": "training_cards",
+      "source_file": "349_OP01_CMN_TRAINING UNIVERSE_4 BF I_EN_trimmed.png",
+      "source_size_bytes": 1030801,
+      "target_path": "erb/training/349_training_lancelot.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "350",
+      "name": "The Dreams of Men",
+      "table": "missions",
+      "source_file": "350_FRONT_OP01_CMN_MISSIONS_THE DREAMS OF MEN_EN_trimmed.png",
+      "source_size_bytes": 1971936,
+      "target_path": "erb/missions/350_the_dreams_of_men.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "351",
+      "name": "Professor Angell's Investigation",
+      "table": "missions",
+      "source_file": "351_FRONT_OP01_CMN_MISSIONS_PROFESSOR ANGELLS INVESTIGATINO_EN_trimmed.png",
+      "source_size_bytes": 1816709,
+      "target_path": "erb/missions/351_professor_angell_s_investigation.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "352",
+      "name": "New Orleans, 1908",
+      "table": "missions",
+      "source_file": "352_FRONT_OP01_CMN_MISSIONS_NEW ORLEANS 1908_EN_trimmed.png",
+      "source_size_bytes": 1921807,
+      "target_path": "erb/missions/352_new_orleans_1908.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "353",
+      "name": "Worshipping the Great Old One",
+      "table": "missions",
+      "source_file": "353_FRONT_OP01_CMN_MISSIONS_GREAT OLD ONES_EN_trimmed.png",
+      "source_size_bytes": 1913109,
+      "target_path": "erb/missions/353_worshipping_the_great_old_one.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "354",
+      "name": "The Alert",
+      "table": "missions",
+      "source_file": "354_FRONT_OP01_CMN_MISSIONS_THE ALERT_EN_trimmed.png",
+      "source_size_bytes": 1976045,
+      "target_path": "erb/missions/354_the_alert.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "355",
+      "name": "Johansen's Widow",
+      "table": "missions",
+      "source_file": "355_FRONT_OP01_CMN_MISSIONS_JOHANSENS WIDOW_EN_trimmed.png",
+      "source_size_bytes": 1864857,
+      "target_path": "erb/missions/355_johansen_s_widow.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "356",
+      "name": "Gone Too Far",
+      "table": "missions",
+      "source_file": "356_FRONT_OP01_CMN_MISSIONS_GONE TOO FAR_EN_trimmed.png",
+      "source_size_bytes": 1987231,
+      "target_path": "erb/missions/356_gone_too_far.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "357",
+      "name": "Desperate Gamble",
+      "table": "events",
+      "source_file": "357_OP01_CMN_EVENT_DESPERATE GAMBLE_EN_trimmed.png",
+      "source_size_bytes": 1012938,
+      "target_path": "erb/events/357_desperate_gamble.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "358",
+      "name": "The Cost of Knowledge is Sanity",
+      "table": "events",
+      "source_file": "358_OP01_CMN_EVENT_COST OF KNOWLEDGE_EN_trimmed.png",
+      "source_size_bytes": 958306,
+      "target_path": "erb/events/358_the_cost_of_knowledge_is_sanity.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "359",
+      "name": "Stars Align",
+      "table": "events",
+      "source_file": "359_OP01_CMN_EVENT_STARS ALIGN_EN_trimmed.png",
+      "source_size_bytes": 1088699,
+      "target_path": "erb/events/359_stars_align.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "360",
+      "name": "Who Can You Trust",
+      "table": "events",
+      "source_file": "360_OP01_COMMON_EVENT_WHO CAN YOU TRUST_EN_trimmed.png",
+      "source_size_bytes": 1291723,
+      "target_path": "erb/events/360_who_can_you_trust.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "361",
+      "name": "Healed by a Dark Power",
+      "table": "events",
+      "source_file": "361_OP01_COMMON_EVENT_HEALED BY A DARK POWER_EN copy_trimmed.png",
+      "source_size_bytes": 1154479,
+      "target_path": "erb/events/361_healed_by_a_dark_power.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "362",
+      "name": "Tarzan of the Apes",
+      "table": "missions",
+      "source_file": "362_FRONT_OP01_CMN_MISSIONS_TARZAN OF THE APES_EN_trimmed.png",
+      "source_size_bytes": 1744749,
+      "target_path": "erb/missions/362_tarzan_of_the_apes.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "363",
+      "name": "Beasts of Tarzan",
+      "table": "missions",
+      "source_file": "363_FRONT_OP01_CMN_MISSIONS_BEASTS OF TARZAN_EN_trimmed.png",
+      "source_size_bytes": 1646534,
+      "target_path": "erb/missions/363_beasts_of_tarzan.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "364",
+      "name": "Tarzan and the Golden Lion",
+      "table": "missions",
+      "source_file": "364_FRONT_OP01_CMN_MISSIONS_THE GOLDEN LION_EN_trimmed.png",
+      "source_size_bytes": 1582050,
+      "target_path": "erb/missions/364_tarzan_and_the_golden_lion.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "365",
+      "name": "Tarzan at the Earth's Core",
+      "table": "missions",
+      "source_file": "365_FRONT_OP01_CMN_MISSIONS_TARZAN AT THE EARTHS CORE_EN_trimmed.png",
+      "source_size_bytes": 1684486,
+      "target_path": "erb/missions/365_tarzan_at_the_earth_s_core.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "366",
+      "name": "Tarzan and the City of Gold",
+      "table": "missions",
+      "source_file": "366_FRONT_OP01_CMN_MISSIONS_TARZAN AND THE CITY OF GOLD_EN_trimmed.png",
+      "source_size_bytes": 1595223,
+      "target_path": "erb/missions/366_tarzan_and_the_city_of_gold.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "367",
+      "name": "Tarzan's Quest",
+      "table": "missions",
+      "source_file": "367_FRONT_OP01_CMN_MISSIONS_TARZANS QUEST_EN_trimmed.png",
+      "source_size_bytes": 1599523,
+      "target_path": "erb/missions/367_tarzan_s_quest.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "368",
+      "name": "Tarzan and the Castaways",
+      "table": "missions",
+      "source_file": "368_FRONT_OP01_CMN_MISSIONS_TARZAN AND THE CASTAWAYS_EN_trimmed.png",
+      "source_size_bytes": 1715884,
+      "target_path": "erb/missions/368_tarzan_and_the_castaways.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "369",
+      "name": "The Lost City of Opar",
+      "table": "events",
+      "source_file": "369_OP01_CMN_EVENT_THE LOST CITY OF OPAR_EN_trimmed.png",
+      "source_size_bytes": 1274248,
+      "target_path": "erb/events/369_the_lost_city_of_opar.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "370",
+      "name": "Tarzan the Terrible",
+      "table": "events",
+      "source_file": "370_OP01_CMN_EVENT_TARZAN THE TERRIBLE_EN_trimmed.png",
+      "source_size_bytes": 1299683,
+      "target_path": "erb/events/370_tarzan_the_terrible.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "371",
+      "name": "The Power of Gonfal",
+      "table": "events",
+      "source_file": "371_OP01_CMN_EVENT_THE POWER OF GONFAL_EN_trimmed.png",
+      "source_size_bytes": 1339467,
+      "target_path": "erb/events/371_the_power_of_gonfal.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "372",
+      "name": "Jane",
+      "table": "events",
+      "source_file": "372_OP01_COMMON_EVENT_JANE_EN_trimmed.png",
+      "source_size_bytes": 1275030,
+      "target_path": "erb/events/372_jane.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "373",
+      "name": "A Captive no More",
+      "table": "events",
+      "source_file": "373_OP01_COMMON_EVENT_A CAPTIVE NO MORE_EN_trimmed.png",
+      "source_size_bytes": 1376046,
+      "target_path": "erb/events/373_a_captive_no_more.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "374",
+      "name": "The Face of Death",
+      "table": "missions",
+      "source_file": "374_FRONT_OP01_CMN_MISSIONS_FACE OF DEATH_EN_trimmed.png",
+      "source_size_bytes": 1259224,
+      "target_path": "erb/missions/374_the_face_of_death.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "375",
+      "name": "The Battle of Kings",
+      "table": "missions",
+      "source_file": "375_FRONT_OP01_CMN_MISSIONS_BATTLE OF KINGS_EN_trimmed.png",
+      "source_size_bytes": 1546309,
+      "target_path": "erb/missions/375_the_battle_of_kings.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "376",
+      "name": "A Fighting Man of Mars",
+      "table": "missions",
+      "source_file": "376_FRONT_OP01_CMN_MISSIONS_FIGHTING MAN OF MARS_EN_trimmed.png",
+      "source_size_bytes": 1338424,
+      "target_path": "erb/missions/376_a_fighting_man_of_mars.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "377",
+      "name": "Swords of Mars",
+      "table": "missions",
+      "source_file": "377_FRONT_OP01_CMN_MISSIONS_SWORDS OF MARS_EN_trimmed.png",
+      "source_size_bytes": 1541593,
+      "target_path": "erb/missions/377_swords_of_mars.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "378",
+      "name": "The Invisible Men",
+      "table": "missions",
+      "source_file": "378_FRONT_OP01_CMN_MISSIONS_THE INVISIBLE MEN_EN_trimmed.png",
+      "source_size_bytes": 1336809,
+      "target_path": "erb/missions/378_the_invisible_men.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "379",
+      "name": "The Loyalty of Woola",
+      "table": "missions",
+      "source_file": "379_FRONT_OP01_CMN_MISSIONS_LOYALTY OF WOOLA_EN_trimmed.png",
+      "source_size_bytes": 1136602,
+      "target_path": "erb/missions/379_the_loyalty_of_woola.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "380",
+      "name": "Under the Moons of Mars",
+      "table": "missions",
+      "source_file": "380_FRONT_OP01_CMN_MISSIONS_UNDER THE MOONS OF MARS_EN_trimmed.png",
+      "source_size_bytes": 1476681,
+      "target_path": "erb/missions/380_under_the_moons_of_mars.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "381",
+      "name": "The Giant Man of Mars",
+      "table": "events",
+      "source_file": "381_OP01_CMN_EVENT_GIANT MAN OF MARS_EN_trimmed.png",
+      "source_size_bytes": 1319988,
+      "target_path": "erb/events/381_the_giant_man_of_mars.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "382",
+      "name": "The Battle with Zad",
+      "table": "events",
+      "source_file": "382_OP01_CMN_EVENT_THE BATTLE WITH ZOD_EN_trimmed.png",
+      "source_size_bytes": 1304914,
+      "target_path": "erb/events/382_the_battle_with_zad.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "383",
+      "name": "Eyes in the Dark",
+      "table": "events",
+      "source_file": "383_OP01_CMN_EVENT_EYES IN THE DARK_EN_trimmed.png",
+      "source_size_bytes": 965002,
+      "target_path": "erb/events/383_eyes_in_the_dark.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "384",
+      "name": "A Venomous Threat",
+      "table": "events",
+      "source_file": "384_OP01_COMMON_EVENT_A VENOMOUS THREAT_EN_trimmed.png",
+      "source_size_bytes": 1437378,
+      "target_path": "erb/events/384_a_venomous_threat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "385",
+      "name": "The Chamber of Reptiles",
+      "table": "events",
+      "source_file": "385_OP01_COMMON_EVENT_THE CHAMBERS OF REPTILES_EN_trimmed.png",
+      "source_size_bytes": 1378150,
+      "target_path": "erb/events/385_the_chamber_of_reptiles.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "386",
+      "name": "The Gods Return",
+      "table": "missions",
+      "source_file": "386_FRONT_OP01_CMN_MISSIONS_THE GODS RETURN_EN_trimmed.png",
+      "source_size_bytes": 1091628,
+      "target_path": "erb/missions/386_the_gods_return.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "387",
+      "name": "Divine Retribution",
+      "table": "missions",
+      "source_file": "387_FRONT_OP01_CMN_MISSIONS_DIVINE RETRIBUTION_EN_trimmed.png",
+      "source_size_bytes": 1073169,
+      "target_path": "erb/missions/387_divine_retribution.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "388",
+      "name": "Traveler's Warning",
+      "table": "missions",
+      "source_file": "388_FRONT_OP01_CMN_MISSIONS_TRAVLERS WARNING_EN_trimmed.png",
+      "source_size_bytes": 965858,
+      "target_path": "erb/missions/388_traveler_s_warning.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "389",
+      "name": "Warriors from Across Time",
+      "table": "missions",
+      "source_file": "389_FRONT_OP01_CMN_MISSIONS_WARRIORS ACROSS TIME_EN_trimmed.png",
+      "source_size_bytes": 945003,
+      "target_path": "erb/missions/389_warriors_from_across_time.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "390",
+      "name": "Tide Begins to Turn",
+      "table": "missions",
+      "source_file": "390_FRONT_OP01_CMN_MISSIONS_THE TIDE BEGINS TO TURN_EN_trimmed.png",
+      "source_size_bytes": 1072586,
+      "target_path": "erb/missions/390_tide_begins_to_turn.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "391",
+      "name": "Supernatural Allies",
+      "table": "missions",
+      "source_file": "391_FRONT_OP01_CMN_MISSIONS_SUPERNATURAL ALLIES_EN_trimmed.png",
+      "source_size_bytes": 836759,
+      "target_path": "erb/missions/391_supernatural_allies.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "392",
+      "name": "Battle at Olympus",
+      "table": "missions",
+      "source_file": "392_FRONT_OP01_CMN_MISSIONS_BATTLE AT OLYMPUS_EN_trimmed.png",
+      "source_size_bytes": 1037648,
+      "target_path": "erb/missions/392_battle_at_olympus.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "393",
+      "name": "Rally Our Allies",
+      "table": "events",
+      "source_file": "393_OP01_CMN_EVENT_RALLY OUR ALLIES_EN_trimmed.png",
+      "source_size_bytes": 1027043,
+      "target_path": "erb/events/393_rally_our_allies.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "394",
+      "name": "Second Chances",
+      "table": "events",
+      "source_file": "394_OP01_CMN_EVENT_SECOND CHANCES_EN_trimmed.png",
+      "source_size_bytes": 947281,
+      "target_path": "erb/events/394_second_chances.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "395",
+      "name": "Heroes We Need",
+      "table": "events",
+      "source_file": "395_OP01_CMN_EVENT_HEROES WE NEED_EN_trimmed.png",
+      "source_size_bytes": 1106013,
+      "target_path": "erb/events/395_heroes_we_need.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "396",
+      "name": "Ready for War",
+      "table": "events",
+      "source_file": "396_OP01_COMMON_EVENT_READY FOR WAR_EN_trimmed.png",
+      "source_size_bytes": 1420981,
+      "target_path": "erb/events/396_ready_for_war.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "397",
+      "name": "Getting Our Hands Dirty",
+      "table": "events",
+      "source_file": "397_OP01_COMMON_EVENT_GETTING OUR HANDS DIRTY_EN_trimmed.png",
+      "source_size_bytes": 1318734,
+      "target_path": "erb/events/397_getting_our_hands_dirty.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "398",
+      "name": "6 Energy",
+      "table": "teamwork_cards",
+      "source_file": "398_OP01_UNC_TEAMWORK UNIVERSE_6E BF I_EN_trimmed.png",
+      "source_size_bytes": 1181620,
+      "target_path": "erb/teamwork/398_6_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "399",
+      "name": "6 Energy",
+      "table": "teamwork_cards",
+      "source_file": "399_OP01_UNC_TEAMWORK UNIVERSE_6E C BF_EN_trimmed.png",
+      "source_size_bytes": 1301672,
+      "target_path": "erb/teamwork/399_6_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "400",
+      "name": "6 Energy",
+      "table": "teamwork_cards",
+      "source_file": "400_OP01_UNC_TEAMWORK UNIVERSE_6E C I_EN_trimmed.png",
+      "source_size_bytes": 921536,
+      "target_path": "erb/teamwork/400_6_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "401",
+      "name": "7 Energy",
+      "table": "teamwork_cards",
+      "source_file": "401_OP01_UNC_TEAMWORK UNIVERSE_7E C I_EN_trimmed.png",
+      "source_size_bytes": 938214,
+      "target_path": "erb/teamwork/401_7_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "402",
+      "name": "7 Energy",
+      "table": "teamwork_cards",
+      "source_file": "402_OP01_UNC_TEAMWORK UNIVERSE_7E C BF_EN_trimmed.png",
+      "source_size_bytes": 1187766,
+      "target_path": "erb/teamwork/402_7_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "403",
+      "name": "7 Energy",
+      "table": "teamwork_cards",
+      "source_file": "403_OP01_UNC_TEAMWORK UNIVERSE_7E BF I_EN_trimmed.png",
+      "source_size_bytes": 1381606,
+      "target_path": "erb/teamwork/403_7_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "404",
+      "name": "8 Energy",
+      "table": "teamwork_cards",
+      "source_file": "404_OP01_UNC_TEAMWORK UNIVERSE_8E C BF_EN_trimmed.png",
+      "source_size_bytes": 1163510,
+      "target_path": "erb/teamwork/404_8_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "405",
+      "name": "8 Energy",
+      "table": "teamwork_cards",
+      "source_file": "405_OP01_UNC_TEAMWORK UNIVERSE_8E C I_EN_trimmed.png",
+      "source_size_bytes": 1175956,
+      "target_path": "erb/teamwork/405_8_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "406",
+      "name": "8 Energy",
+      "table": "teamwork_cards",
+      "source_file": "406_OP01_UNC_TEAMWORK UNIVERSE_8E C I_EN_trimmed.png",
+      "source_size_bytes": 1230432,
+      "target_path": "erb/teamwork/406_8_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "407",
+      "name": "6 Combat",
+      "table": "teamwork_cards",
+      "source_file": "407_OP01_UNC_TEAMWORK UNIVERSE_6C E BF_EN_trimmed.png",
+      "source_size_bytes": 1183446,
+      "target_path": "erb/teamwork/407_6_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "408",
+      "name": "6 Combat",
+      "table": "teamwork_cards",
+      "source_file": "408_OP01_UNC_TEAMWORK UNIVERSE_6C BF I_EN_trimmed.png",
+      "source_size_bytes": 944965,
+      "target_path": "erb/teamwork/408_6_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "409",
+      "name": "6 Combat",
+      "table": "teamwork_cards",
+      "source_file": "409_OP01_UNC_TEAMWOK UNIVERSE_6C E I_EN_trimmed.png",
+      "source_size_bytes": 1261335,
+      "target_path": "erb/teamwork/409_6_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "410",
+      "name": "7 Combat",
+      "table": "teamwork_cards",
+      "source_file": "410_OP01_UNC_TEAMWORK UNIVERSE_7C B I_EN_trimmed.png",
+      "source_size_bytes": 790828,
+      "target_path": "erb/teamwork/410_7_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "411",
+      "name": "7 Combat",
+      "table": "teamwork_cards",
+      "source_file": "411_OP01_UNC_TEAMWORK UNIVERSE_7C E I_EN_trimmed.png",
+      "source_size_bytes": 1118710,
+      "target_path": "erb/teamwork/411_7_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "412",
+      "name": "7 Combat",
+      "table": "teamwork_cards",
+      "source_file": "412_OP01_UNC_TEAMWORK UNIVERSE_7C E BF_EN_trimmed.png",
+      "source_size_bytes": 1128432,
+      "target_path": "erb/teamwork/412_7_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "413",
+      "name": "8 Combat",
+      "table": "teamwork_cards",
+      "source_file": "413_OP01_UNC_TEAMWORK UNIVERSE_8C E I_EN._trimmed.png",
+      "source_size_bytes": 1261181,
+      "target_path": "erb/teamwork/413_8_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "414",
+      "name": "8 Combat",
+      "table": "teamwork_cards",
+      "source_file": "414_OP01_UNC_TEAMWORK UNIVERSE_8C BF I_EN_trimmed.png",
+      "source_size_bytes": 959260,
+      "target_path": "erb/teamwork/414_8_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "415",
+      "name": "8 Combat",
+      "table": "teamwork_cards",
+      "source_file": "415_OP01_UNC_TEAMWORK UNIVERSE_8C E BF_EN_trimmed.png",
+      "source_size_bytes": 1190607,
+      "target_path": "erb/teamwork/415_8_combat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "416",
+      "name": "6 Brute Force",
+      "table": "teamwork_cards",
+      "source_file": "416_OP01_UNC_TEAMWORK UNIVERSE_6BF E  C_EN_trimmed.png",
+      "source_size_bytes": 1102772,
+      "target_path": "erb/teamwork/416_6_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "417",
+      "name": "6 Brute Force",
+      "table": "teamwork_cards",
+      "source_file": "417_OP01_UNC_TEAMWORK UNIVERSE_6BF E  I_EN_trimmed.png",
+      "source_size_bytes": 1095886,
+      "target_path": "erb/teamwork/417_6_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "418",
+      "name": "6 Brute Force",
+      "table": "teamwork_cards",
+      "source_file": "418_OP01_UNC_TEAMWORK UNIVERSE_6BF C I_EN_trimmed.png",
+      "source_size_bytes": 1142265,
+      "target_path": "erb/teamwork/418_6_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "419",
+      "name": "7 Brute Force",
+      "table": "teamwork_cards",
+      "source_file": "419_OP01_UNC_TEAMWORK UNIVERSE_7BF E  I_EN_trimmed.png",
+      "source_size_bytes": 1179969,
+      "target_path": "erb/teamwork/419_7_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "420",
+      "name": "7 Brute Force",
+      "table": "teamwork_cards",
+      "source_file": "420_OP01_UNC_TEAMWORK UNIVERSE_7BF E C_EN_trimmed.png",
+      "source_size_bytes": 1320411,
+      "target_path": "erb/teamwork/420_7_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "421",
+      "name": "7 Brute Force",
+      "table": "teamwork_cards",
+      "source_file": "421_OP01_UNC_TEAMWORK UNIVERSE_7BF C  I_EN_trimmed.png",
+      "source_size_bytes": 917636,
+      "target_path": "erb/teamwork/421_7_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "422",
+      "name": "8 Brute Force",
+      "table": "teamwork_cards",
+      "source_file": "422_OP01_UNC_TEAMWORK UNIVERSE_8BF C  I_EN_trimmed.png",
+      "source_size_bytes": 854761,
+      "target_path": "erb/teamwork/422_8_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "423",
+      "name": "8 Brute Force",
+      "table": "teamwork_cards",
+      "source_file": "423_OP01_UNC_TEAMWORK UNIVERSE_8BF E  I_EN_trimmed.png",
+      "source_size_bytes": 1044060,
+      "target_path": "erb/teamwork/423_8_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "424",
+      "name": "8 Brute Force",
+      "table": "teamwork_cards",
+      "source_file": "424_OP01_UNC_TEAMWORK UNIVERSE_8BF E C_EN_trimmed.png",
+      "source_size_bytes": 1167108,
+      "target_path": "erb/teamwork/424_8_brute_force.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "425",
+      "name": "6 Intelligence",
+      "table": "teamwork_cards",
+      "source_file": "425_OP01_UNC_TEAMWORK UNIVERSE_6I C  BF_EN_trimmed.png",
+      "source_size_bytes": 1087779,
+      "target_path": "erb/teamwork/425_6_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "426",
+      "name": "6 Intelligence",
+      "table": "teamwork_cards",
+      "source_file": "426_OP01_UNC_TEAMWORK UNIVERSE_6I E  BF_EN_trimmed.png",
+      "source_size_bytes": 1239997,
+      "target_path": "erb/teamwork/426_6_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "427",
+      "name": "6 Intelligence",
+      "table": "teamwork_cards",
+      "source_file": "427_OP01_UNC_TEAMWORK UNIVERSE_6I E C_EN_trimmed.png",
+      "source_size_bytes": 1063503,
+      "target_path": "erb/teamwork/427_6_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "428",
+      "name": "7 Intelligence",
+      "table": "teamwork_cards",
+      "source_file": "428_OP01_UNC_TEAMWORK UNIVERSE_7I C BF_EN_trimmed.png",
+      "source_size_bytes": 1072032,
+      "target_path": "erb/teamwork/428_7_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "429",
+      "name": "7 Intelligence",
+      "table": "teamwork_cards",
+      "source_file": "429_OP01_UNC_TEAMWORK UNIVERSE_7I E BF_EN_trimmed.png",
+      "source_size_bytes": 1151899,
+      "target_path": "erb/teamwork/429_7_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "430",
+      "name": "7 Intelligence",
+      "table": "teamwork_cards",
+      "source_file": "430_OP01_UNC_TEAMWORK UNIVERSE_7I E C_EN_trimmed.png",
+      "source_size_bytes": 1207806,
+      "target_path": "erb/teamwork/430_7_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "431",
+      "name": "8 Intelligence",
+      "table": "teamwork_cards",
+      "source_file": "431_OP01_UNC_TEAMWORK UNIVERSE_8I C BF_EN.pdf_trimmed.png",
+      "source_size_bytes": 1081261,
+      "target_path": "erb/teamwork/431_8_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "432",
+      "name": "8 Intelligence",
+      "table": "teamwork_cards",
+      "source_file": "432_OP01_UNC_TEAMWORK UNIVERSE_8I E C_EN_trimmed.png",
+      "source_size_bytes": 1162685,
+      "target_path": "erb/teamwork/432_8_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "433",
+      "name": "8 Intelligence",
+      "table": "teamwork_cards",
+      "source_file": "433_OP01_UNC_TEAMWORK UNIVERSE_8I E BF_EN_trimmed.png",
+      "source_size_bytes": 1132342,
+      "target_path": "erb/teamwork/433_8_intelligence.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "434",
+      "name": "Amaru: Dragon Legend",
+      "table": "aspects",
+      "source_file": "434_OP01_UNC_ASPECT_AMARU_EN_trimmed.png",
+      "source_size_bytes": 1092468,
+      "target_path": "erb/aspects/434_amaru_dragon_legend.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "435",
+      "name": "Mallku",
+      "table": "aspects",
+      "source_file": "435_OP01_UNC_ASPEC_MALLKU_EN_trimmed.png",
+      "source_size_bytes": 1067086,
+      "target_path": "erb/aspects/435_mallku.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "436",
+      "name": "Supay",
+      "table": "aspects",
+      "source_file": "436_OP01_UNC_ASPECT_SUPAY_EN_trimmed.png",
+      "source_size_bytes": 950113,
+      "target_path": "erb/aspects/436_supay.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "437",
+      "name": "Cheshire Cat",
+      "table": "aspects",
+      "source_file": "437_OP01_UNC_ASPECT_CHESHIRE CAT_EN_trimmed.png",
+      "source_size_bytes": 1058862,
+      "target_path": "erb/aspects/437_cheshire_cat.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "438",
+      "name": "Isis",
+      "table": "aspects",
+      "source_file": "438_OP01_UNC_ASPECT_ISIS_EN_trimmed.png",
+      "source_size_bytes": 1091550,
+      "target_path": "erb/aspects/438_isis.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "439",
+      "name": "Heimdell",
+      "table": "special_cards",
+      "source_file": "439_OP01_UNC_SPECIALS_HEIMDALL_EN_trimmed.png",
+      "source_size_bytes": 1011217,
+      "target_path": "erb/specials/439_heimdell.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "440",
+      "name": "Lady of the Lake",
+      "table": "special_cards",
+      "source_file": "440_OP01_CMN_SPECIALS_LADY OF THE LAKE_EN_trimmed.png",
+      "source_size_bytes": 1082618,
+      "target_path": "erb/specials/440_lady_of_the_lake.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "441",
+      "name": "Robin Hood: Master Thief",
+      "table": "special_cards",
+      "source_file": "441_OP01_CMN_SPECIALS_ROBIN HOOD MASTER THIEF_EN_trimmed.png",
+      "source_size_bytes": 1224911,
+      "target_path": "erb/specials/441_robin_hood_master_thief.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "442",
+      "name": "Tunupa: Mountain God",
+      "table": "special_cards",
+      "source_file": "442_OP01_UNC_SPECIALS_TUNUPA_EN_trimmed.png",
+      "source_size_bytes": 986245,
+      "target_path": "erb/specials/442_tunupa_mountain_god.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "443",
+      "name": "Fairy Protection",
+      "table": "special_cards",
+      "source_file": "443_OP01_UNC_SPECIALS_FAIRY PROTECTION_EN_trimmed.png",
+      "source_size_bytes": 1014228,
+      "target_path": "erb/specials/443_fairy_protection.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "444",
+      "name": "Loki",
+      "table": "special_cards",
+      "source_file": "444_OP01_UNC_SPECIALS_LOKI_EN_trimmed.png",
+      "source_size_bytes": 1082451,
+      "target_path": "erb/specials/444_loki.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "445",
+      "name": "Wrath of Ra",
+      "table": "special_cards",
+      "source_file": "445_OP01_CMN_SPECIALS_WRATH OF RA_EN_trimmed.png",
+      "source_size_bytes": 1067661,
+      "target_path": "erb/specials/445_wrath_of_ra.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "446",
+      "name": "Valkyrie Skeggjold",
+      "table": "special_cards",
+      "source_file": "446_OP01_CMN_SPECIALS_VALKYRIE SKEGGOLD_EN_trimmed.png",
+      "source_size_bytes": 1041091,
+      "target_path": "erb/specials/446_valkyrie_skeggjold.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "447",
+      "name": "Oni and Succubus",
+      "table": "special_cards",
+      "source_file": "447_OP01_CMN_SPECIALS_ONI AND SUCCUBUS_EN_trimmed.png",
+      "source_size_bytes": 1133282,
+      "target_path": "erb/specials/447_oni_and_succubus.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "448",
+      "name": "Bodhisattva: Enlightened One",
+      "table": "special_cards",
+      "source_file": "448_OP01_CMN_SPECIALS_BODHISATTAVA_EN_trimmed.png",
+      "source_size_bytes": 975428,
+      "target_path": "erb/specials/448_bodhisattva_enlightened_one.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "449",
+      "name": "Mystical Energy",
+      "table": "special_cards",
+      "source_file": "449_OP01_CMN_SPECIALS_MYSTICAL ENERGY_EN_trimmed.png",
+      "source_size_bytes": 1216393,
+      "target_path": "erb/specials/449_mystical_energy.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "450",
+      "name": "Charge into Battle!",
+      "table": "special_cards",
+      "source_file": "450_OP01_CMN_SPECIALS_CHARGE INTO BATTLE_EN_trimmed.png",
+      "source_size_bytes": 1137099,
+      "target_path": "erb/specials/450_charge_into_battle.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "451",
+      "name": "Subjugate the Meek",
+      "table": "special_cards",
+      "source_file": "451_OP01_CMN_SPECIALS_SUBJUGATE THE MEEK_EN_trimmed.png",
+      "source_size_bytes": 1127067,
+      "target_path": "erb/specials/451_subjugate_the_meek.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "452",
+      "name": "Draconic Leadership",
+      "table": "special_cards",
+      "source_file": "452_OP01_CMN_SPECIALS_DRACONIC LEADERSHIP_EN_trimmed.png",
+      "source_size_bytes": 1062160,
+      "target_path": "erb/specials/452_draconic_leadership.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "453",
+      "name": "Lilith's Swarm",
+      "table": "special_cards",
+      "source_file": "453_OP01_CMN_SPECIALS_LILITHS SWARM_EN_trimmed.png",
+      "source_size_bytes": 998115,
+      "target_path": "erb/specials/453_lilith_s_swarm.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "454",
+      "name": "Disorient Opponent",
+      "table": "special_cards",
+      "source_file": "454_OP01_UNC_SPECIALS_DISORIENT OPPONENT_EN_trimmed.png",
+      "source_size_bytes": 993434,
+      "target_path": "erb/specials/454_disorient_opponent.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "455",
+      "name": "Freya: Goddess of Protection",
+      "table": "special_cards",
+      "source_file": "455_OP01_UNC_SPECIALS_FREYA_EN_trimmed.png",
+      "source_size_bytes": 992775,
+      "target_path": "erb/specials/455_freya_goddess_of_protection.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "456",
+      "name": "Grim Reaper",
+      "table": "special_cards",
+      "source_file": "456_OP01_CMN_SPECIALS_GRIM REAPER_EN_trimmed.png",
+      "source_size_bytes": 1077264,
+      "target_path": "erb/specials/456_grim_reaper.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "457",
+      "name": "Gunnr: Battle Valkyrie",
+      "table": "special_cards",
+      "source_file": "457_OP01_UNC_SPECIALS_GUNNR_EN_trimmed.png",
+      "source_size_bytes": 1049537,
+      "target_path": "erb/specials/457_gunnr_battle_valkyrie.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "458",
+      "name": "Hades: Lord of the Underworld",
+      "table": "special_cards",
+      "source_file": "458_OP01_CMN_SPECIALS_HADES_EN_trimmed.png",
+      "source_size_bytes": 911765,
+      "target_path": "erb/specials/458_hades_lord_of_the_underworld.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "459",
+      "name": "Legendary Escape",
+      "table": "special_cards",
+      "source_file": "459_OP01_UNC_SPECIALS_LEGENDARY ESCAPE_EN_trimmed.png",
+      "source_size_bytes": 1035679,
+      "target_path": "erb/specials/459_legendary_escape.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "460",
+      "name": "Merlin's Magic",
+      "table": "special_cards",
+      "source_file": "460_OP01_UNC_SPECIALS_MERLINS MAGIC_EN_trimmed.png",
+      "source_size_bytes": 1032376,
+      "target_path": "erb/specials/460_merlin_s_magic.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "461",
+      "name": "Preternatural Healing",
+      "table": "special_cards",
+      "source_file": "461_OP01_UNC_SPECIALS_PRETERNATURAL HEALING_EN_trimmed.png",
+      "source_size_bytes": 1277249,
+      "target_path": "erb/specials/461_preternatural_healing.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "462",
+      "name": "Princess and the Pea",
+      "table": "special_cards",
+      "source_file": "462_OP01_CMN_SPECIALS_PRINCESS AND THE PEA_EN_trimmed.png",
+      "source_size_bytes": 968403,
+      "target_path": "erb/specials/462_princess_and_the_pea.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "463",
+      "name": "The Gemini",
+      "table": "special_cards",
+      "source_file": "463_OP01_UNC_SPECIALS_THE GEMNI_EN_trimmed.png",
+      "source_size_bytes": 1280499,
+      "target_path": "erb/specials/463_the_gemini.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "464",
+      "name": "Valkyrie Hildr: Select the Slain",
+      "table": "special_cards",
+      "source_file": "464_OP01_UNC_SPECIALS_VALKYRIE HILDER_EN_trimmed.png",
+      "source_size_bytes": 1002529,
+      "target_path": "erb/specials/464_valkyrie_hildr_select_the_slain.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "465",
+      "name": "Dracula's Armory",
+      "table": "locations",
+      "source_file": "465_OP01_CMN_HOMEBASE_DRACULAS ARMORY_EN_trimmed.png",
+      "source_size_bytes": 957770,
+      "target_path": "erb/locations/465_dracula_s_armory.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "466",
+      "name": "Spartan Training Ground",
+      "table": "locations",
+      "source_file": "466_OP01_CMN_HOMEBASE_SPARTAN TRAINING GROUND_EN_trimmed.png",
+      "source_size_bytes": 1193584,
+      "target_path": "erb/locations/466_spartan_training_ground.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "467",
+      "name": "The Round Table",
+      "table": "locations",
+      "source_file": "467_OP01_UNC_HOMEBASE_THE ROUND TABLE_EN_trimmed.png",
+      "source_size_bytes": 1116346,
+      "target_path": "erb/locations/467_the_round_table.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "468",
+      "name": "Barsoom",
+      "table": "locations",
+      "source_file": "468_OP01_UNC_HOMEBASE_BARSOOM_EN_trimmed.png",
+      "source_size_bytes": 1232818,
+      "target_path": "erb/locations/468_barsoom.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "469",
+      "name": "Asclepieion",
+      "table": "locations",
+      "source_file": "469_OP01_UNC_HOMEBASE_ASCLEIPEION_EN_trimmed.png",
+      "source_size_bytes": 1370031,
+      "target_path": "erb/locations/469_asclepieion.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "470",
+      "name": "221-B Baker St.",
+      "table": "locations",
+      "source_file": "470_OP01_UNC_HOMEBASE_221B BAKER ST_EN_trimmed.png",
+      "source_size_bytes": 961824,
+      "target_path": "erb/locations/470_221_b_baker_st.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "471",
+      "name": "Event Horizon: The Future",
+      "table": "locations",
+      "source_file": "471_OP01_UNC_HOMEBASE_EVENT HORIZON_EN_trimmed.png",
+      "source_size_bytes": 1228810,
+      "target_path": "erb/locations/471_event_horizon_the_future.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "472",
+      "name": "The Land That Time Forgot",
+      "table": "locations",
+      "source_file": "472_OP01_UNC_HOMEBASE_THE LAND THAT TIME FORGOT_EN_trimmed.png",
+      "source_size_bytes": 1419745,
+      "target_path": "erb/locations/472_the_land_that_time_forgot.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "473",
+      "name": "5 - Any-Power",
+      "table": "power_cards",
+      "source_file": "473_OP01_UNC_POWER CARD_5 ANY-POWER_EN_trimmed.png",
+      "source_size_bytes": 912159,
+      "target_path": "erb/power/473_5_any_power.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "474",
+      "name": "6 - Any-Power",
+      "table": "power_cards",
+      "source_file": "474_OP01_UNC_POWER CARD_6 ANYPOWER_EN_trimmed.png",
+      "source_size_bytes": 1049675,
+      "target_path": "erb/power/474_6_any_power.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "475",
+      "name": "7 - Any-Power",
+      "table": "power_cards",
+      "source_file": "475_OP01_UNC_POWER CARD_7 ANYPOWER_EN_trimmed.png",
+      "source_size_bytes": 1143510,
+      "target_path": "erb/power/475_7_any_power.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "476",
+      "name": "8 - Any-Power",
+      "table": "power_cards",
+      "source_file": "476_OP01_UNC_POWER CARD_8 ANYPOWER_EN_trimmed.png",
+      "source_size_bytes": 959522,
+      "target_path": "erb/power/476_8_any_power.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "477",
+      "name": "3 - Multi Power",
+      "table": "power_cards",
+      "source_file": "477_OP01_UNC_MULTIPOWER CARD_3 MULTIPOWER_EN_trimmed.png",
+      "source_size_bytes": 1628253,
+      "target_path": "erb/power/477_3_multi_power.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "478",
+      "name": "4 - Multi Power",
+      "table": "power_cards",
+      "source_file": "478_OP01_UNC_MULTIPOWER CARD_4 MULTIPOWER_EN_trimmed.png",
+      "source_size_bytes": 1778187,
+      "target_path": "erb/power/478_4_multi_power.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "479",
+      "name": "5 - Multi Power",
+      "table": "power_cards",
+      "source_file": "479_OP01_CMN_MULTIPOWER CARD_5 MULTIPOWER_EN_trimmed.png",
+      "source_size_bytes": 1719328,
+      "target_path": "erb/power/479_5_multi_power.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "480",
+      "name": "6 Any-Power",
+      "table": "teamwork_cards",
+      "source_file": "480_OP01_UNC_TEAMWORK UNIVERSE_6 ANYPOWER_EN_trimmed.png",
+      "source_size_bytes": 1165495,
+      "target_path": "erb/teamwork/480_6_any_power.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "481",
+      "name": "7 Any-Power",
+      "table": "teamwork_cards",
+      "source_file": "481_OP01_UNC_TEAMWORK UNIVERSE_7 ANYPOWER_EN_trimmed.png",
+      "source_size_bytes": 1197731,
+      "target_path": "erb/teamwork/481_7_any_power.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "482",
+      "name": "Angry Mob (Middle Ages)",
+      "table": "characters",
+      "source_file": "482_OP01_RARE_CHARACTER_ANGRY MOB MIDDLE AGES_EN_trimmed.png",
+      "source_size_bytes": 1502791,
+      "target_path": "erb/characters/482_angry_mob_middle_ages.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "483",
+      "name": "Angry Mob (Industrial Age)",
+      "table": "characters",
+      "source_file": "483_OP01_RARE_CHARACTER_ANGRY MOB INDUSTRIAL AGE_EN_trimmed.png",
+      "source_size_bytes": 1077911,
+      "target_path": "erb/characters/483_angry_mob_industrial_age.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "484",
+      "name": "Angry Mob (Modern Age)",
+      "table": "characters",
+      "source_file": "484_OP01_ULTR_CHARACTER_ANGRY MOB MODERN AGE_EN_trimmed.png",
+      "source_size_bytes": 1384339,
+      "target_path": "erb/characters/484_angry_mob_modern_age.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "485",
+      "name": "Anubis",
+      "table": "characters",
+      "source_file": "485_OP01_RARE_CHARACTER_ANUBIS_EN_trimmed.png",
+      "source_size_bytes": 1591241,
+      "target_path": "erb/characters/485_anubis.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "486",
+      "name": "Billy the Kid",
+      "table": "characters",
+      "source_file": "486_OP01_RARE_CHARACTER_BILLY THE KID_EN_trimmed.png",
+      "source_size_bytes": 1483676,
+      "target_path": "erb/characters/486_billy_the_kid.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "487",
+      "name": "Carson of Venus",
+      "table": "characters",
+      "source_file": "487_OP01_RARE_CHARACTER_CARSON OF VENUS_EN_trimmed.png",
+      "source_size_bytes": 1243879,
+      "target_path": "erb/characters/487_carson_of_venus.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "488",
+      "name": "Count of Monte Cristo",
+      "table": "characters",
+      "source_file": "488_OP01_RARE_CHARACTER_COUNT OF MONTE CRISTO_EN_trimmed.png",
+      "source_size_bytes": 1609797,
+      "target_path": "erb/characters/488_count_of_monte_cristo.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "489",
+      "name": "Cthulhu",
+      "table": "characters",
+      "source_file": "489_OP01_ULTR_CHARACTER_CTHULHU_EN_trimmed.png",
+      "source_size_bytes": 2115595,
+      "target_path": "erb/characters/489_cthulhu.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "490",
+      "name": "Cthulhu",
+      "table": "characters",
+      "source_file": "490_OP01_RARE_CHARACTER_CTHULHU_EN_trimmed.png",
+      "source_size_bytes": 1324402,
+      "target_path": "erb/characters/490_cthulhu.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "491",
+      "name": "Dejah Thoris",
+      "table": "characters",
+      "source_file": "491_OP01_ULTR_CHARACTER_DEJAH THROIS_EN_trimmed.png",
+      "source_size_bytes": 1041385,
+      "target_path": "erb/characters/491_dejah_thoris.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "492",
+      "name": "Dejah Thoris",
+      "table": "characters",
+      "source_file": "492_OP01_RARE_CHARACTER_DEJAH THORIS_EN_trimmed.png",
+      "source_size_bytes": 1708342,
+      "target_path": "erb/characters/492_dejah_thoris.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "493",
+      "name": "Dr. Watson",
+      "table": "characters",
+      "source_file": "493_OP01_ULTR_CHARACTER_DR WATSON_EN_trimmed.png",
+      "source_size_bytes": 1151505,
+      "target_path": "erb/characters/493_dr_watson.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "494",
+      "name": "Dracula",
+      "table": "characters",
+      "source_file": "494_OP01_RARE_CHARACTER_DRACULA_EN_trimmed.png",
+      "source_size_bytes": 1343220,
+      "target_path": "erb/characters/494_dracula.png",
+      "database_rows": 1,
+      "optional_local_rows": 1
+    },
+    {
+      "collector_number": "495",
+      "name": "Headless Horseman",
+      "table": "characters",
+      "source_file": "495_OP01_ULTR_CHARACTER_HEADLESS HORSEMAN_EN_trimmed.png",
+      "source_size_bytes": 1653500,
+      "target_path": "erb/characters/495_headless_horseman.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "496",
+      "name": "Hercules",
+      "table": "characters",
+      "source_file": "496_OP01_RARE_CHARACTER_HERCULES_EN_trimmed.png",
+      "source_size_bytes": 1256522,
+      "target_path": "erb/characters/496_hercules.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "497",
+      "name": "Hercules",
+      "table": "characters",
+      "source_file": "497_OP01_RARE_CHARACTER_HERCULES_EN_trimmed.png",
+      "source_size_bytes": 1309939,
+      "target_path": "erb/characters/497_hercules.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "498",
+      "name": "Invisible Man",
+      "table": "characters",
+      "source_file": "498_OP01_RARE_CHARACTER_INVISIBLE MAN_EN_trimmed.png",
+      "source_size_bytes": 1430104,
+      "target_path": "erb/characters/498_invisible_man.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "499",
+      "name": "Jane Porter",
+      "table": "characters",
+      "source_file": "499_OP01_RARE_CHARACTER_JANE PORTER_EN_trimmed.png",
+      "source_size_bytes": 1370213,
+      "target_path": "erb/characters/499_jane_porter.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "500",
+      "name": "Jane Porter",
+      "table": "characters",
+      "source_file": "500_OP01_ULTR_CHARACTER_JANE PORTER_EN_trimmed.png",
+      "source_size_bytes": 1434688,
+      "target_path": "erb/characters/500_jane_porter.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "501",
+      "name": "Joan of Arc",
+      "table": "characters",
+      "source_file": "501_OP01_RARE_CHARACTER_JOAN OF ARC_EN_trimmed.png",
+      "source_size_bytes": 1617442,
+      "target_path": "erb/characters/501_joan_of_arc.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "502",
+      "name": "John Carter of Mars",
+      "table": "characters",
+      "source_file": "502_OP01_RARE_CHARACTER_JOHN CARTER_EN_trimmed.png",
+      "source_size_bytes": 1145181,
+      "target_path": "erb/characters/502_john_carter_of_mars.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "503",
+      "name": "King Arthur",
+      "table": "characters",
+      "source_file": "503_OP01_RARE_CHARACTER_KING ARTHUR_EN_trimmed.png",
+      "source_size_bytes": 1263224,
+      "target_path": "erb/characters/503_king_arthur.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "504",
+      "name": "King Arthur",
+      "table": "characters",
+      "source_file": "504_OP01_ULTR_CHARACTER_KING ARTHUR_EN_trimmed.png",
+      "source_size_bytes": 1318313,
+      "target_path": "erb/characters/504_king_arthur.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "505",
+      "name": "Korak",
+      "table": "characters",
+      "source_file": "505_OP01_RARE_CHARACTER_KORAK_EN_trimmed.png",
+      "source_size_bytes": 1214333,
+      "target_path": "erb/characters/505_korak.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "506",
+      "name": "Korak",
+      "table": "characters",
+      "source_file": "506_OP01_RARE_CHARACTER_KORAK_EN_trimmed.png",
+      "source_size_bytes": 1358568,
+      "target_path": "erb/characters/506_korak.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "507",
+      "name": "Lancelot",
+      "table": "characters",
+      "source_file": "507_OP01_ULTRA_CHARACTER_LANCELOT_EN_trimmed.png",
+      "source_size_bytes": 1378996,
+      "target_path": "erb/characters/507_lancelot.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "508",
+      "name": "Leonidas",
+      "table": "characters",
+      "source_file": "508_OP01_RARE_CHARACTER_LEONIDAS_EN_trimmed.png",
+      "source_size_bytes": 1422794,
+      "target_path": "erb/characters/508_leonidas.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "509",
+      "name": "Mina Harker",
+      "table": "characters",
+      "source_file": "509_OP01_RARE_CHARACTER_MINA HARKER_EN_trimmed.png",
+      "source_size_bytes": 1641765,
+      "target_path": "erb/characters/509_mina_harker.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "510",
+      "name": "Mina Harker",
+      "table": "characters",
+      "source_file": "510_OP01_ULTR_CHARACTER_MINA HARKAR_EN_trimmed.png",
+      "source_size_bytes": 1295427,
+      "target_path": "erb/characters/510_mina_harker.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "511",
+      "name": "Morgan le Fay",
+      "table": "characters",
+      "source_file": "511_OP01_RARE_CHARACTER_MORGAN LE FAY_EN_trimmed.png",
+      "source_size_bytes": 1341263,
+      "target_path": "erb/characters/511_morgan_le_fay.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "512",
+      "name": "Morgan le Fay",
+      "table": "characters",
+      "source_file": "512_OP01_RARE_CHARACTER_MORGAN LE FAY_EN_trimmed.png",
+      "source_size_bytes": 1515650,
+      "target_path": "erb/characters/512_morgan_le_fay.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "513",
+      "name": "Mr. Hyde",
+      "table": "characters",
+      "source_file": "513_OP01_ULTR_CHARACTER_MR HYDE_EN_trimmed.png",
+      "source_size_bytes": 1418222,
+      "target_path": "erb/characters/513_mr_hyde.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "514",
+      "name": "Poseidon",
+      "table": "characters",
+      "source_file": "514_OP01_ULTR_CHARACTER_POSEIDON_EN_trimmed.png",
+      "source_size_bytes": 1840709,
+      "target_path": "erb/characters/514_poseidon.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "515",
+      "name": "Professor Moriarty",
+      "table": "characters",
+      "source_file": "515_OP01_RARE_CHARACTER_PROFESSOR MORIARTY_EN_trimmed.png",
+      "source_size_bytes": 964617,
+      "target_path": "erb/characters/515_professor_moriarty.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "516",
+      "name": "Ra",
+      "table": "characters",
+      "source_file": "516_OP01_ULTRA_CHARACTER_RA_EN_trimmed.png",
+      "source_size_bytes": 1786310,
+      "target_path": "erb/characters/516_ra.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "517",
+      "name": "Robin Hood",
+      "table": "characters",
+      "source_file": "517_OP01_RARE_CHARACTER_ROBIN HOOD_EN_trimmed.png",
+      "source_size_bytes": 1767940,
+      "target_path": "erb/characters/517_robin_hood.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "518",
+      "name": "Sheriff of Nottingham",
+      "table": "characters",
+      "source_file": "518_OP01_RARE_CHARACTER_SHERIFF OF NOTTINGHAM_EN_trimmed.png",
+      "source_size_bytes": 1245066,
+      "target_path": "erb/characters/518_sheriff_of_nottingham.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "519",
+      "name": "Sherlock Holmes",
+      "table": "characters",
+      "source_file": "519_OP01_RARE_CHARACTER_SHERLOCK HOLMES_EN_trimmed.png",
+      "source_size_bytes": 883340,
+      "target_path": "erb/characters/519_sherlock_holmes.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "520",
+      "name": "Sun Wukong",
+      "table": "characters",
+      "source_file": "520_OP01_ULTRA_CHARACTER_SUN WUKONG_EN_trimmed.png",
+      "source_size_bytes": 1530748,
+      "target_path": "erb/characters/520_sun_wukong.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "521",
+      "name": "Tars Tarkas",
+      "table": "characters",
+      "source_file": "521_OP01_RARE_CHARACTER_TARS TARKAS_EN_trimmed.png",
+      "source_size_bytes": 1350506,
+      "target_path": "erb/characters/521_tars_tarkas.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "522",
+      "name": "Tarzan",
+      "table": "characters",
+      "source_file": "522_OP01_RARE_CHARACTER_TARZAN_EN_trimmed.png",
+      "source_size_bytes": 1272966,
+      "target_path": "erb/characters/522_tarzan.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "523",
+      "name": "Merlin",
+      "table": "characters",
+      "source_file": "523_OP01_RARE_CHARACTER_MERLIN_EN_trimmed.png",
+      "source_size_bytes": 1387811,
+      "target_path": "erb/characters/523_merlin.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "524",
+      "name": "Tarzan",
+      "table": "characters",
+      "source_file": "524_OP01_RARE_CHARACTER_TARZAN_EN_trimmed.png",
+      "source_size_bytes": 1189776,
+      "target_path": "erb/characters/524_tarzan.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "525",
+      "name": "The Mummy",
+      "table": "characters",
+      "source_file": "525_OP01_RARE_CHARACTER_THE MUMMY_EN_trimmed.png",
+      "source_size_bytes": 1627594,
+      "target_path": "erb/characters/525_the_mummy.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "526",
+      "name": "The Three Musketeers",
+      "table": "characters",
+      "source_file": "526_OP01_RARE_CHARACTER_THREE MUSKETEERS_EN_trimmed.png",
+      "source_size_bytes": 1175303,
+      "target_path": "erb/characters/526_the_three_musketeers.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "527",
+      "name": "Time Traveler",
+      "table": "characters",
+      "source_file": "527_OP01_RARE_CHARACTER_TIME TRAVELER_EN_trimmed.png",
+      "source_size_bytes": 1815513,
+      "target_path": "erb/characters/527_time_traveler.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "528",
+      "name": "Time Traveler",
+      "table": "characters",
+      "source_file": "528_OP01__RARE_CHARACTER_TIME TRAVELER_EN_trimmed.png",
+      "source_size_bytes": 1096741,
+      "target_path": "erb/characters/528_time_traveler.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "529",
+      "name": "Van Helsing",
+      "table": "characters",
+      "source_file": "529_OP01_RARE_CHARACTER_VAN HELSING_EN_trimmed.png",
+      "source_size_bytes": 1334899,
+      "target_path": "erb/characters/529_van_helsing.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "530",
+      "name": "Victory Harben",
+      "table": "characters",
+      "source_file": "530_OP01_RARE_CHARACTER_VICTORY HARBEN_EN_trimmed.png",
+      "source_size_bytes": 1431250,
+      "target_path": "erb/characters/530_victory_harben.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "531",
+      "name": "Victory Harben",
+      "table": "characters",
+      "source_file": "531_OP01_RARE_CHARACTER_VICTORY HARBEN_EN_trimmed.png",
+      "source_size_bytes": 1559793,
+      "target_path": "erb/characters/531_victory_harben.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "532",
+      "name": "Wicked Witch",
+      "table": "characters",
+      "source_file": "532_OP01_RARE_CHARACTER_WICKED WITCH_EN_trimmed.png",
+      "source_size_bytes": 1685432,
+      "target_path": "erb/characters/532_wicked_witch.png",
+      "database_rows": 1
+    },
+    {
+      "collector_number": "533",
+      "name": "Zeus",
+      "table": "characters",
+      "source_file": "533_OP01_ULTRA_CHARACTER_ZEUS_EN_trimmed.png",
+      "source_size_bytes": 1885064,
+      "target_path": "erb/characters/533_zeus.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "534",
+      "name": "Zorro",
+      "table": "characters",
+      "source_file": "534_OP01_ULTR_CHARACTER_ZORRO_EN_trimmed.png",
+      "source_size_bytes": 1122728,
+      "target_path": "erb/characters/534_zorro.png",
+      "database_rows": 2
+    },
+    {
+      "collector_number": "535",
+      "name": "Zorro",
+      "table": "characters",
+      "source_file": "535_OP01_RARE_CHARACTER_ZORRO_EN_trimmed.png",
+      "source_size_bytes": 1369601,
+      "target_path": "erb/characters/535_zorro.png",
+      "database_rows": 2
+    }
+  ]
+}

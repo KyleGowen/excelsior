@@ -1,0 +1,11 @@
+# ERB World Legends LRG Art
+
+This directory contains the reviewed public card fronts supplied by LRG. The source-to-target
+mapping and exceptions are recorded in `scripts/erb/lrg-erb-manifest.json`.
+
+- Keep source images organized by card type and named `<collector>_<slug>.png`.
+- Do not place mission backs or Drive `copy` duplicates in the public tree.
+- Collector 205 is absent from the source and continues to use its legacy image outside `erb/`.
+- Foil rows reuse the matching base image; do not add synthetic foil files.
+- Never edit `thumb/` directly. Regenerate it with `npm run generate:thumbnails`.
+- Preserve the set-scoped `erb/` prefix to avoid overwriting long-lived CDN objects.

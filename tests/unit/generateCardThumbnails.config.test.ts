@@ -137,4 +137,28 @@ describe('generateCardThumbnails THUMB_CONFIGS', () => {
       expect(sky.get(subdir)).toBe(PRESET_PORTRAIT);
     }
   });
+
+  it('covers every ERB set-scoped image directory with the correct orientation', () => {
+    const erb = new Map(
+      PROMO_ART_SUBDIRS.filter((entry) => entry.subdir.startsWith('erb/'))
+        .map((entry) => [entry.subdir, entry.preset]),
+    );
+
+    expect(erb.get('erb/characters')).toBe(PRESET_CHARACTER);
+    expect(erb.get('erb/locations')).toBe(PRESET_LOCATION);
+    expect(erb.get('erb/events')).toBe(PRESET_LOCATION);
+    for (const subdir of [
+      'erb/specials',
+      'erb/power',
+      'erb/missions',
+      'erb/aspects',
+      'erb/advanced-universe',
+      'erb/teamwork',
+      'erb/ally',
+      'erb/training',
+      'erb/basic-universe',
+    ]) {
+      expect(erb.get(subdir)).toBe(PRESET_PORTRAIT);
+    }
+  });
 });

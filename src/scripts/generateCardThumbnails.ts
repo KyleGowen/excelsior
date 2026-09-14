@@ -103,6 +103,18 @@ export const PROMO_ART_SUBDIRS: { subdir: string; preset: ThumbResizeConfig }[] 
   { subdir: 'sky/training', preset: PRESET_PORTRAIT },
   { subdir: 'sky/basic-universe', preset: PRESET_PORTRAIT },
   { subdir: 'sky/card-back', preset: PRESET_PORTRAIT },
+  { subdir: 'erb/characters', preset: PRESET_CHARACTER },
+  { subdir: 'erb/locations', preset: PRESET_LOCATION },
+  { subdir: 'erb/events', preset: PRESET_LOCATION },
+  { subdir: 'erb/specials', preset: PRESET_PORTRAIT },
+  { subdir: 'erb/power', preset: PRESET_PORTRAIT },
+  { subdir: 'erb/missions', preset: PRESET_PORTRAIT },
+  { subdir: 'erb/aspects', preset: PRESET_PORTRAIT },
+  { subdir: 'erb/advanced-universe', preset: PRESET_PORTRAIT },
+  { subdir: 'erb/teamwork', preset: PRESET_PORTRAIT },
+  { subdir: 'erb/ally', preset: PRESET_PORTRAIT },
+  { subdir: 'erb/training', preset: PRESET_PORTRAIT },
+  { subdir: 'erb/basic-universe', preset: PRESET_PORTRAIT },
 ];
 
 /** @deprecated Prefer PROMO_ART_SUBDIRS; kept for existing imports/tests. */

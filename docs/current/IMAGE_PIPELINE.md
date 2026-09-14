@@ -45,6 +45,11 @@ src/resources/cards/images/
 │   ├── advanced-universe/, teamwork/, ally/, training/, basic-universe/
 │   ├── card-back/                  ← retained Skybound card-back source
 │   └── thumb/                      ← generated; mirrors all folders above
+├── erb/                            ← ERB World Legends LRG replacement art
+│   ├── characters/, locations/, events/
+│   ├── specials/, power/, missions/, aspects/
+│   ├── advanced-universe/, teamwork/, ally/, training/, basic-universe/
+│   └── thumb/                      ← generated; mirrors all folders above
 └── tfacp/                          ← The Few and the Cursed - Promos
     ├── ally/                       ← portrait ally promos (e.g. White Demon Of Mazandaran)
     ├── missions/                   ← portrait mission promos (e.g. Chronicles of TFAC)
@@ -55,7 +60,7 @@ src/resources/cards/images/
         └── power/
 ```
 
-The same generator also fills `thumb/` under every **card-art** top-level folder (excluding `backgrounds/`). **Set-scoped folders** (`sky/`, `skyp/`, `tfacp/`) are handled via `PROMO_ART_SUBDIRS` in `generateCardThumbnails.ts`: e.g. `sky/characters/` and `skyp/characters/` → character preset; `sky/locations/` → location preset; other Skybound types and the existing promo portrait folders → portrait preset; `sky/events/` → event preset. Generated paths insert `thumb/` after the set folder, such as `sky/thumb/characters/001_invincible.webp`. Nested source folders are preserved. The `thumb/` directories are auto-generated. Never edit files inside `thumb/` directly — they will be overwritten on the next run.
+The same generator also fills `thumb/` under every **card-art** top-level folder (excluding `backgrounds/`). **Set-scoped folders** (`sky/`, `erb/`, `skyp/`, `tfacp/`) are handled via `PROMO_ART_SUBDIRS` in `generateCardThumbnails.ts`: e.g. `sky/characters/`, `erb/characters/`, and `skyp/characters/` → character preset; `sky/locations/` and `erb/locations/` → location preset; all portrait types → portrait preset; `sky/events/` and `erb/events/` → event preset. Generated paths insert `thumb/` after the set folder, such as `erb/thumb/characters/001_angry_mob_middle_ages.webp`. Nested source folders are preserved. The `thumb/` directories are auto-generated. Never edit files inside `thumb/` directly — they will be overwritten on the next run.
 
 ---
 
@@ -94,6 +99,7 @@ After changing fit or padding behavior without changing dimensions, regenerate t
    - `src/resources/cards/images/missions/` for missions
    - `src/resources/cards/images/skyp/characters/` or `skyp/power/` for Skybound promo art (DB `image_path` uses the same `skyp/...` prefix)
    - `src/resources/cards/images/sky/<type>/` for the full Skybound set (DB `image_path` uses the same `sky/...` prefix)
+   - `src/resources/cards/images/erb/<type>/` for ERB World Legends LRG replacement art (DB `image_path` uses the same `erb/...` prefix)
    - `src/resources/cards/images/tfacp/power/` for TFCP promo power art (DB `image_path` uses `tfacp/power/...`)
    - `src/resources/cards/images/tfacp/ally/` for TFCP promo ally art (DB `image_path` uses `tfacp/ally/...`)
    - `src/resources/cards/images/tfacp/missions/` for TFCP promo mission art (DB `image_path` uses `tfacp/missions/...`)
@@ -110,6 +116,12 @@ their original non-foil sources under `sky/characters/`; collector 450 publishes
 reverse faces. The source filename's `F` marker is authoritative even when the workbook's
 collector-number cell omits it; the complete source-derived character map has 53 foils, including
 alternate Angstrom Levy `#430F`. Collectors `#448` and `#450` have no foil source file.
+
+ERB replacement art is audited in `scripts/erb/lrg-erb-manifest.json`. The LRG folder supplies
+534 usable card fronts: collectors `001`–`535` except `205`. Collector `205` (`Read the Bones`)
+therefore keeps its pre-existing image. Mission backs and obvious Drive copy duplicates are not
+published. Foil database rows reuse the matching LRG front and retain the existing application
+sheen. The import uses new `erb/...` paths so existing long-lived CDN objects are not overwritten.
 
 ---
 

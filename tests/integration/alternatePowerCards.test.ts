@@ -60,7 +60,7 @@ describe('Alternate Power Cards Integration Tests', () => {
 
       expect(map.rows.length).toBe(1);
       expect(map.rows[0].base_set).toBe('ERB');
-      expect(map.rows[0].base_image_path).toBe('power-cards/7_combat.webp');
+      expect(map.rows[0].base_image_path).toBe('erb/power/301_7_combat.png');
 
       console.log('✅ 7 - Combat TFCP: non-foil 7_combat_2.png, foil-only 7_combat.png → ERB base');
     });

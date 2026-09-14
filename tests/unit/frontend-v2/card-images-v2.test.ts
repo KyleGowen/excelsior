@@ -79,6 +79,17 @@ describe('location progressive load paths', () => {
       '/src/resources/cards/images/sky/thumb/locations/348_global_defense_agency.webp',
     );
   });
+
+  it('resolves set-scoped ERB location thumbnails', () => {
+    const raw = 'erb/locations/465_dracula_s_armory.png';
+    expect(canProgressiveLoad(raw, 'locations')).toBe(true);
+    expect(resolveImageUrl(raw, 'locations')).toBe(
+      '/src/resources/cards/images/erb/locations/465_dracula_s_armory.png',
+    );
+    expect(resolveThumbUrl(raw, 'locations')).toBe(
+      '/src/resources/cards/images/erb/thumb/locations/465_dracula_s_armory.webp',
+    );
+  });
 });
 
 describe('Skybound alternate art', () => {
