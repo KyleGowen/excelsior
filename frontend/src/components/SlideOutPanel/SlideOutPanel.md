@@ -14,13 +14,16 @@ deck, deck actions, add cards, mobile account sheet).
 | `position` | `'fixed' \| 'absolute'` | `'fixed'` | Viewport-fixed (default) or positioned within a `position: relative` ancestor (Draw Hand on `.deck-editor__content`). |
 | `width` | `number` | `380` | Width for the right variant (full-width on mobile). |
 | `ariaLabel` | `string` | – | Accessible label when there's no visible title. |
+| `closeOnEscape` | `boolean` | `true` | Set to `false` while a child overlay owns Escape dismissal. |
 
 ## Accessibility
 - `role="dialog"`, `aria-modal="true"`; focus moves into the panel on open and returns to
   the trigger on close.
 - Focus management runs only when `open` changes (not when `onClose` identity changes), so
   typing in form fields inside an open panel does not steal focus.
-- Closes on `Escape` and backdrop click.
+- Closes on `Escape` (when `closeOnEscape` is enabled) and backdrop click.
+- A parent slide-out that remains mounted beneath a child overlay must temporarily set
+  `closeOnEscape={false}` so one keypress dismisses only the topmost layer.
 
 ## Notes
 - Sits above content via the drawer z-index with a scrim.

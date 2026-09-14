@@ -18,6 +18,7 @@ import {
 import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
 import { useDrawHandScale } from './useDrawHandScale';
 import { deckEditorCardImageLoadingProps } from './deckEditorCardImage';
+import type { DrawHandAnalysis } from '../../lib/decks/drawHandAnalysis';
 import './DrawHandPanel.css';
 
 function resolveDrawHandImagePath(
@@ -41,6 +42,8 @@ export interface DrawHandPanelProps {
   drawnCards: DeckCardEntry[];
   cardIndex: DeckCardIndex;
   koCtx: KoDimmingContext;
+  analysis?: DrawHandAnalysis | null;
+  closeOnEscape?: boolean;
   onRedraw: () => void;
   onClose: () => void;
   onReorder: (fromIndex: number, toIndex: number) => void;
@@ -52,6 +55,8 @@ export function DrawHandPanel({
   drawnCards,
   cardIndex,
   koCtx,
+  analysis,
+  closeOnEscape = true,
   onRedraw,
   onClose,
   onReorder,
@@ -130,13 +135,46 @@ export function DrawHandPanel({
       side="top"
       position={isMobile ? 'fixed' : 'absolute'}
       className="draw-hand-slideout"
-      title="Drawn hand"
-      ariaLabel="Drawn hand"
-      footer={
-        <button type="button" className="btn btn-ghost draw-hand__redraw" onClick={onRedraw}>
-          Draw again
-        </button>
+      closeOnEscape={closeOnEscape}
+      title={
+        <div className="draw-hand__header">
+          <span className="draw-hand__header-title">Drawn Hand</span>
+          {analysis ? (
+            <div
+              className="draw-hand__analysis"
+              role="status"
+              aria-label="Hand analysis"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <div className="draw-hand__analysis-heading">
+                <span className="draw-hand__analysis-title">Hand analysis</span>
+                <span className="draw-hand__analysis-caption">After duplicate rules</span>
+              </div>
+              <dl className="draw-hand__metrics">
+                <div
+                  className="draw-hand__metric draw-hand__metric--venture"
+                  title="Informational sum of printed numerical values after duplicate rules"
+                >
+                  <dt>Venture total</dt>
+                  <dd>{analysis.ventureTotal}</dd>
+                </div>
+                <div
+                  className={`draw-hand__metric draw-hand__metric--duplicates${analysis.duplicateCount > 0 ? ' has-duplicates' : ''}`}
+                  title="Copies that normal discard rules would not let you keep"
+                >
+                  <dt>Duplicates</dt>
+                  <dd>{analysis.duplicateCount}</dd>
+                </div>
+              </dl>
+            </div>
+          ) : null}
+          <button type="button" className="btn btn-ghost draw-hand__redraw" onClick={onRedraw}>
+            Draw again
+          </button>
+        </div>
       }
+      ariaLabel="Drawn Hand"
     >
       {drawnCards.length === 0 ? (
         <p className="draw-hand__empty">No cards to display.</p>
@@ -159,6 +197,7 @@ export function DrawHandPanel({
               const canOpenDetail = Boolean(catalogCard && catalogType && entry.instanceId && onCardClick);
               const isDragging = draggedIndex === index;
               const isDragTarget = dragOverIndex === index && draggedIndex !== index;
+              const isDuplicate = Boolean(analysis?.duplicateCardIndexes.has(index));
               const entryIsFoil = Boolean(entry.is_foil || (catalogCard && isFoilCard(catalogCard)));
               const foilSeed = buildFoilSeed(entry.cardId, entry.instanceId);
 
@@ -173,7 +212,7 @@ export function DrawHandPanel({
                   onDrop={handleDrop(index)}
                 >
                   <div
-                    className={`deck-editor__card draw-hand__card${koDimmed ? ' deck-editor__card--ko-dimmed' : ''}`}
+                    className={`deck-editor__card draw-hand__card${koDimmed ? ' deck-editor__card--ko-dimmed' : ''}${isDuplicate ? ' draw-hand__card--duplicate' : ''}`}
                   >
                     <div className="deck-editor__card-media">
                       <button
@@ -185,8 +224,8 @@ export function DrawHandPanel({
                             onCardClick(catalogCard, catalogType, entry.instanceId);
                           }
                         }}
-                        aria-label={cardName}
-                        title={cardName}
+                        aria-label={`${cardName}${isDuplicate ? ', duplicate' : ''}`}
+                        title={`${cardName}${isDuplicate ? ' — Duplicate' : ''}`}
                       >
                         {isEvent ? (
                           <span className="draw-hand__event-rotate">

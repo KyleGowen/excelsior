@@ -80,6 +80,10 @@ import {
 } from '../../lib/decks/simulateKo';
 import { canDrawHand, countCardsInDeck, drawRandomHand, sortDrawnHandCards } from '../../lib/decks/drawHand';
 import {
+  analyzeDrawnHand,
+  canAccessDrawHandAnalysis,
+} from '../../lib/decks/drawHandAnalysis';
+import {
   computePrePlacedFlags,
   isPrePlaced,
   isPrePlacedEligible,
@@ -263,7 +267,7 @@ export default function DeckEditorPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, isGuest } = useAuth();
+  const { user, isGuest, isSupporter } = useAuth();
   const { isMobile } = useLayoutMode();
   const returnTo = getDeckEditorReturnTo(location.state);
   const backAriaLabel = getDeckEditorBackAriaLabel(returnTo);
@@ -491,6 +495,13 @@ export default function DeckEditorPage() {
   );
 
   const canDraw = useMemo(() => canDrawHand(cards), [cards]);
+  const drawHandAnalysis = useMemo(
+    () =>
+      canAccessDrawHandAnalysis(user?.role, isSupporter)
+        ? analyzeDrawnHand(drawnCards, cards, cardIndex)
+        : null,
+    [user?.role, isSupporter, drawnCards, cards, cardIndex],
+  );
 
   useEffect(() => {
     if (!canDraw && drawHandOpen) {
@@ -1567,13 +1578,15 @@ export default function DeckEditorPage() {
           <Suspense fallback={<LoadingState label="Loading..." />}>
             <DrawHandPanel
               open={drawHandOpen}
-            drawnCards={drawnCards}
-            cardIndex={cardIndex}
-            koCtx={drawHandKoCtx}
-            onRedraw={handleDrawHandRedraw}
-            onClose={closeDrawHand}
-            onReorder={handleDrawHandReorder}
-            onCardClick={selectDeckCard}
+              drawnCards={drawnCards}
+              cardIndex={cardIndex}
+              koCtx={drawHandKoCtx}
+              analysis={drawHandAnalysis}
+              closeOnEscape={!selected}
+              onRedraw={handleDrawHandRedraw}
+              onClose={closeDrawHand}
+              onReorder={handleDrawHandReorder}
+              onCardClick={selectDeckCard}
             />
           </Suspense>
         </div>

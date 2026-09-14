@@ -17,6 +17,8 @@ interface SlideOutPanelProps {
   className?: string;
   /** Accessible label when no visible title. */
   ariaLabel?: string;
+  /** Whether this panel should respond to Escape. Disable when a child overlay owns dismissal. */
+  closeOnEscape?: boolean;
 }
 
 /**
@@ -35,17 +37,20 @@ export function SlideOutPanel({
   width = 380,
   className = '',
   ariaLabel,
+  closeOnEscape = true,
 }: SlideOutPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
+  const closeOnEscapeRef = useRef(closeOnEscape);
+  closeOnEscapeRef.current = closeOnEscape;
 
   useEffect(() => {
     if (!open) return;
     previouslyFocused.current = document.activeElement as HTMLElement | null;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onCloseRef.current();
+      if (e.key === 'Escape' && closeOnEscapeRef.current) onCloseRef.current();
     };
     document.addEventListener('keydown', onKey);
     // Move focus into the panel.

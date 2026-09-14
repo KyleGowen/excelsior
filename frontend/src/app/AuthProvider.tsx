@@ -31,6 +31,7 @@ interface AuthContextValue {
   isLoading: boolean;
   isGuest: boolean;
   isAdmin: boolean;
+  isSupporter: boolean;
   communityDecksUserId: string | null;
   tournamentDecksUserId: string | null;
   login: (username: string, password: string) => Promise<AppUser | null>;
@@ -161,6 +162,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading: userQuery.isLoading || configQuery.isLoading,
       isGuest: user?.role === 'GUEST',
       isAdmin: user?.role === 'ADMIN',
+      isSupporter: user?.isSupporter === true,
       communityDecksUserId: configQuery.data?.communityDecksUserId ?? null,
       tournamentDecksUserId: configQuery.data?.tournamentDecksUserId ?? null,
       login,

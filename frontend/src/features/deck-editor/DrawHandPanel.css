@@ -4,8 +4,122 @@
   overflow-y: auto;
 }
 
-.draw-hand-slideout .slideout__footer {
+.draw-hand-slideout .slideout__title {
+  flex: 1;
+}
+
+.draw-hand-slideout .slideout__header {
+  position: relative;
+}
+
+.draw-hand-slideout .slideout__close {
+  font-size: 1.0625rem;
+}
+
+.draw-hand__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  min-width: 0;
+}
+
+.draw-hand__header-title {
+  flex-shrink: 0;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.draw-hand__analysis {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-shrink: 0;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  width: max-content;
+  max-width: 100%;
+  min-height: 50px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, rgba(0, 200, 232, 0.055), transparent 58%),
+    color-mix(in srgb, var(--color-bg-elevated) 72%, var(--color-bg-panel));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+.draw-hand__analysis-heading {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
+  gap: 2px;
+  min-width: 136px;
+  padding: var(--space-2) var(--space-3);
+  border-left: 2px solid var(--color-accent-dim);
+  border-right: 1px solid var(--color-border);
+}
+
+.draw-hand__analysis-title {
+  color: var(--color-text);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+  line-height: var(--line-tight);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.draw-hand__analysis-caption {
+  color: var(--color-text-dim);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-tight);
+  white-space: nowrap;
+}
+
+.draw-hand__metrics {
+  display: flex;
+  margin: 0;
+}
+
+.draw-hand__metric {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 112px;
+  padding: var(--space-2) var(--space-3);
+}
+
+.draw-hand__metric + .draw-hand__metric {
+  border-left: 1px solid var(--color-border);
+}
+
+.draw-hand__metric dt {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-tight);
+  white-space: nowrap;
+}
+
+.draw-hand__metric dd {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-family: var(--font-stat-value);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-tight);
+}
+
+.draw-hand__metric--venture dd {
+  color: var(--color-accent-bright);
+}
+
+.draw-hand__metric--duplicates.has-duplicates dd {
+  color: var(--color-danger);
 }
 
 .draw-hand__empty {
@@ -31,13 +145,13 @@
 }
 
 .draw-hand__row-inner {
+  flex: 0 0 auto;
   display: flex;
   flex-wrap: nowrap;
   align-items: flex-start;
   justify-content: center;
   gap: var(--space-4);
   width: max-content;
-  max-width: 100%;
   transform-origin: top center;
 }
 
@@ -58,6 +172,13 @@
 
 .draw-hand__card {
   width: 100%;
+}
+
+.draw-hand__card--duplicate {
+  border-color: color-mix(in srgb, var(--color-danger) 72%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-danger) 48%, transparent),
+    0 0 20px 2px color-mix(in srgb, var(--color-danger) 34%, transparent);
 }
 
 .draw-hand__card .deck-editor__card-img {
@@ -94,9 +215,12 @@
   object-position: center center;
 }
 
-/* Footer Draw again — accent-outline ghost pill (matches .deck-editor__actions .btn-ghost.is-active) */
+/* Header Draw again — accent-outline ghost pill (matches .deck-editor__actions .btn-ghost.is-active) */
 .draw-hand__redraw {
+  flex-shrink: 0;
   width: auto;
+  margin-left: auto;
+  margin-right: var(--space-2);
   padding: 5px 12px;
   font-size: calc(var(--font-size-xs) * 1.2);
   font-weight: var(--font-weight-semibold);
@@ -134,6 +258,13 @@
   .draw-hand__slot--dragging .draw-hand__card {
     box-shadow: none;
   }
+
+  .draw-hand__slot:hover .draw-hand__card--duplicate {
+    border-color: var(--color-danger);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--color-danger) 58%, transparent),
+      0 0 24px 3px color-mix(in srgb, var(--color-danger) 40%, transparent);
+  }
 }
 
 /* Mobile: full-viewport two-column grid */
@@ -157,8 +288,93 @@
   padding: var(--space-3);
 }
 
-.layout-mobile .draw-hand-slideout .slideout__footer {
-  padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+.layout-mobile .draw-hand__card--duplicate {
+  border-color: color-mix(in srgb, var(--color-danger) 58%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-danger) 39%, transparent),
+    0 0 20px 2px color-mix(in srgb, var(--color-danger) 28%, transparent);
+}
+
+.layout-mobile .draw-hand-slideout .slideout__header {
+  align-items: flex-start;
+}
+
+.layout-mobile .draw-hand__header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+}
+
+.layout-mobile .draw-hand__header-title {
+  align-self: center;
+}
+
+.layout-mobile .draw-hand__redraw {
+  grid-column: 2;
+  grid-row: 1;
+  margin-left: 0;
+}
+
+.layout-mobile .draw-hand__analysis {
+  position: static;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  transform: none;
+  width: 100%;
+  min-height: 54px;
+}
+
+.layout-mobile .draw-hand-slideout .slideout__header:has(.draw-hand__analysis) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.layout-mobile .draw-hand-slideout .slideout__header:has(.draw-hand__analysis) .slideout__title,
+.layout-mobile .draw-hand-slideout .slideout__header:has(.draw-hand__analysis) .draw-hand__header {
+  display: contents;
+}
+
+.layout-mobile .draw-hand-slideout .slideout__header:has(.draw-hand__analysis) .draw-hand__analysis {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+.layout-mobile .draw-hand-slideout .slideout__header:has(.draw-hand__analysis) .draw-hand__header-title {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.layout-mobile .draw-hand-slideout .slideout__header:has(.draw-hand__analysis) .draw-hand__redraw {
+  grid-column: 2;
+  grid-row: 2;
+  margin-right: 0;
+}
+
+.layout-mobile .draw-hand-slideout .slideout__header:has(.draw-hand__analysis) .slideout__close {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.layout-mobile .draw-hand__analysis-heading {
+  min-width: 112px;
+  padding: var(--space-2) var(--space-3);
+}
+
+.layout-mobile .draw-hand__metrics {
+  flex: 1;
+  min-width: 0;
+}
+
+.layout-mobile .draw-hand__metric {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+}
+
+.layout-mobile .draw-hand__metric dd {
+  font-size: var(--font-size-lg);
 }
 
 .layout-mobile .draw-hand__row {

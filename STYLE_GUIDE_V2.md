@@ -395,12 +395,16 @@ Top slide-out overlay ([`DrawHandPanel.css`](frontend/src/features/deck-editor/D
 | Trigger active (`.deck-editor__actions .btn-ghost.is-active`) | `--color-accent-bright` text, `--color-border-accent` border, `rgba(0, 200, 232, 0.08)` background |
 | Panel (`.draw-hand-slideout`) | `SlideOutPanel` `side="top"`; `max-height: 70vh` desktop, `55vh` mobile |
 | Card slot width | `--deck-editor-portrait-col`: **210px** desktop, **165px** mobile (`DeckEditorPage.css`) |
+| Desktop row scaling | Intrinsic `max-content` rail with `flex: 0 0 auto`; `useDrawHandScale` uniformly transforms it from the top center so every edge card remains visible |
 | Portrait card art | Same progressive thumb → full-res as deck grid (`deckEditorCardImage.ts`; events excepted — rotated landscape in `.draw-hand__event-rotate`) |
 | Row gap | `var(--space-4)` between slots |
 | Event rotation | `.draw-hand__event-rotate` — landscape art `rotate(-90deg)` in portrait slot |
 | Missing art label (`.draw-hand__missing-art`) | `--font-size-xs`, `--color-text-muted`, ellipsis |
-| Redraw (`.draw-hand__redraw`) | Centered footer; `min-width: 140px` |
+| Redraw (`.draw-hand__redraw`) | Compact accent-outline action in the header rail; keeps an extra `--space-2` gap before the close control |
+| Close (`.draw-hand-slideout .slideout__close`) | Standard 34px hit target with the X glyph reduced 15% to `1.0625rem` |
 | KO-dimmed drawn card | Same `.deck-editor__card--ko-dimmed` art filter as main grid |
+| ADMIN / Supporter metrics (`.draw-hand__analysis`) | Compact summary surface centered against the full desktop panel in the same universal header rail as **Drawn Hand**, **Draw again**, and close. A restrained accent edge and “After duplicate rules” caption establish context; the two metrics share one container and matching hierarchy. Venture uses Excelsior teal `--color-accent-bright`, while only a nonzero Duplicates value uses `--color-danger`. On mobile, the module spans the full padded header width on row one; **Drawn Hand**, **Draw again**, and close share row two |
+| Duplicate group (`.draw-hand__card--duplicate`) | Restrained `--color-danger` border/ring/glow on every card in an over-limit group; mobile reduces each layer’s color intensity by roughly 20% to compensate for the larger cards; no duplicate styling is rendered outside the ADMIN / Supporter entitlement gate |
 
 ### Deck Editor — Card detail Printings (owners)
 Shown in [`CardDetailPanel`](frontend/src/components/CardDetailPanel/CardDetailPanel.tsx) when a deck tile has **more than one** catalog printing. Section sits **above Details** (after Ability/stats).
