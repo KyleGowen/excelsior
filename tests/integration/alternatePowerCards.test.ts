@@ -93,15 +93,15 @@ describe('Alternate Power Cards Integration Tests', () => {
       console.log('✅ 7 - Brute Force TFCP promo image:', result.rows[0]?.image_path);
     });
 
-    it('should have TFCP promo image for 7 - Intelligence', async () => {
+    it('should keep only the unreleased TFCP 7 - Intelligence printing face down', async () => {
       const result = await pool.query(
         "SELECT id, name, image_path, set FROM power_cards WHERE name = $1 AND set = 'TFCP'",
         ['7 - Intelligence']
       );
 
       expect(result.rows.map((card: { image_path: string }) => card.image_path).sort()).toEqual([
+        'sky/card-back/overpowerback.png',
         'tfacp/power/7_intelligence.png',
-        'tfacp/power/7_intelligence_naol.png',
       ]);
 
       console.log('✅ 7 - Intelligence TFCP promo image:', result.rows[0]?.image_path);

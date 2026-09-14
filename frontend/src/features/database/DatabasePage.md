@@ -82,6 +82,11 @@ Browse, search, filter, and sort the full modern OverPower catalog.
 - Fetches the **full** array for the selected type (`GET /api/v1/catalog/:slug`) — the
   catalog endpoints don't paginate, so filtering, sorting, and pagination are **client
   side** (`Pagination` component).
+- Opening card details refreshes that card type's catalog and rehydrates the selected
+  printing by ID. This keeps printing art current after a catalog migration even when the
+  database grid still has a previously cached response. **Apply** also fetches the current
+  printing row before selecting it so a quick click cannot race the refresh and reuse stale art.
+  Both detail reads bypass the endpoint's public browser cache; ordinary grid reads remain cached.
 - Grid uses `CardTile` with `catalogType` for orientation: Characters/Locations/Events are
   landscape (4 per row desktop); other types are portrait (6 per row desktop). Mobile uses
   one card per row for all types. Images use `contain` (no crop).

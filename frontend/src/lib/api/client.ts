@@ -35,6 +35,7 @@ interface RequestOptions {
   /** When true, return the raw parsed JSON without unwrapping `.data`. */
   raw?: boolean;
   signal?: AbortSignal;
+  cache?: RequestCache;
 }
 
 function extractErrorMessage(payload: unknown, fallback: string): { message: string; code?: string } {
@@ -58,7 +59,7 @@ function extractErrorMessage(payload: unknown, fallback: string): { message: str
 }
 
 export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, raw = false, signal } = options;
+  const { method = 'GET', body, raw = false, signal, cache } = options;
 
   const headers: Record<string, string> = {};
   let bodyInit: BodyInit | undefined;
@@ -71,6 +72,7 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
   const init: RequestInit = { method, headers, credentials: 'include' };
   if (bodyInit !== undefined) init.body = bodyInit;
   if (signal) init.signal = signal;
+  if (cache) init.cache = cache;
 
   let response: Response;
   try {
@@ -111,6 +113,10 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 export const api = {
   get: <T>(path: string, signal?: AbortSignal) =>
     apiRequest<T>(path, signal ? { method: 'GET', signal } : { method: 'GET' }),
+  getFresh: <T>(path: string, signal?: AbortSignal) =>
+    apiRequest<T>(path, signal
+      ? { method: 'GET', signal, cache: 'no-store' }
+      : { method: 'GET', cache: 'no-store' }),
   post: <T>(path: string, body?: unknown) => apiRequest<T>(path, { method: 'POST', body }),
   put: <T>(path: string, body?: unknown) => apiRequest<T>(path, { method: 'PUT', body }),
   patch: <T>(path: string, body?: unknown) => apiRequest<T>(path, { method: 'PATCH', body }),

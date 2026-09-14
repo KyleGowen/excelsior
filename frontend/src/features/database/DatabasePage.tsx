@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../app/AuthProvider';
-import { fetchCatalog, fetchFoilCardMap, fetchSets } from '../../lib/api/catalog';
+import { fetchCatalog, fetchCatalogFresh, fetchFoilCardMap, fetchSets } from '../../lib/api/catalog';
 import {
   buildFoilCardMapLookup,
   cardHasFoilVersion,
@@ -146,12 +146,18 @@ export default function DatabasePage() {
 
   const detailTypeCatalogQuery = useQuery({
     queryKey: ['catalog', detailCatalogType],
-    queryFn: () => fetchCatalog(detailCatalogType),
-    enabled: Boolean(selected) && detailCatalogCached === undefined,
-    staleTime: 30 * 60 * 1000,
+    queryFn: () => fetchCatalogFresh(detailCatalogType),
+    enabled: Boolean(selected),
+    staleTime: 0,
   });
 
   const detailTypeCatalogCards = detailCatalogCached ?? detailTypeCatalogQuery.data ?? [];
+
+  useEffect(() => {
+    if (!selected || !detailTypeCatalogQuery.data) return;
+    const freshSelected = detailTypeCatalogQuery.data.find((card) => card.id === selected.id);
+    if (freshSelected && freshSelected !== selected) setSelected(freshSelected);
+  }, [detailTypeCatalogQuery.data, selected]);
 
   const detailPrintingCards = useMemo(() => {
     if (!selected) return undefined;
@@ -177,12 +183,21 @@ export default function DatabasePage() {
   }, [selected, detailPrintingCards, setNameLookup]);
 
   const viewPrintingInDetail = useCallback(
-    (printingId: string) => {
-      const printing = detailPrintingCards?.find((c) => c.id === printingId)
-        ?? detailTypeCatalogCards.find((c) => c.id === printingId);
+    async (printingId: string) => {
+      let currentCatalog = detailTypeCatalogCards;
+      try {
+        currentCatalog = await queryClient.fetchQuery({
+          queryKey: ['catalog', detailCatalogType],
+          queryFn: () => fetchCatalogFresh(detailCatalogType),
+          staleTime: 0,
+        });
+      } catch {
+        currentCatalog = detailTypeCatalogCards;
+      }
+      const printing = currentCatalog.find((c) => c.id === printingId);
       if (printing) setSelected(printing);
     },
-    [detailPrintingCards, detailTypeCatalogCards],
+    [detailCatalogType, detailTypeCatalogCards, queryClient],
   );
 
   const perTypeCards = useMemo(
