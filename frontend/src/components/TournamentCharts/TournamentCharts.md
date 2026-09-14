@@ -49,6 +49,8 @@ Axis labels use `#a8b8d8`, truncated with ellipsis (no wrap).
 
 **`TournamentPieChart`:** pass `fillContainer`, `showLegend={false}` on rails. Portion labels (small text + colored leader lines) render on slices by default when the legend is hidden; tooltips show full names on hover/click.
 
+Bar and pie tooltips disable Recharts position animation. On first hover, the tooltip must appear at the active segment instead of transitioning from the chart origin; subsequent pointer tracking remains immediate.
+
 ## Example (new tournament rail)
 
 ```tsx

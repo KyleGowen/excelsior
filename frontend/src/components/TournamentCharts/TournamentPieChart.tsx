@@ -207,6 +207,7 @@ export function TournamentPieChart({
             ))}
           </Pie>
           <Tooltip
+            isAnimationActive={false}
             content={({ active, payload }) => {
               if (!active || !payload?.[0]) return null;
               const row = payload[0].payload as PieDatum;

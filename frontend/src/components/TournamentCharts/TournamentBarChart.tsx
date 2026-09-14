@@ -100,6 +100,7 @@ export function TournamentBarChart({
             tickLine={false}
           />
           <Tooltip
+            isAnimationActive={false}
             cursor={{ fill: 'rgba(0, 200, 232, 0.08)' }}
             content={({ active, payload }) => {
               if (!active || !payload?.[0]) return null;
