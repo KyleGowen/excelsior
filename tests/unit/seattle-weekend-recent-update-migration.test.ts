@@ -19,8 +19,14 @@ describe('Seattle Weekend Recent Updates migration', () => {
     );
   });
 
-  it('uses the Advanced Alien Arsenal artwork and its catalog thumbnail exists', () => {
+  it('uses the Advanced Alien Arsenal artwork', () => {
     expect(migration).toContain("'sky/specials/053_advanced_alien_arsenal.png'");
+  });
+
+  const localImageRoot = path.join(process.cwd(), 'src/resources/cards/images/sky');
+  const verifiesLocalImageTree = fs.existsSync(localImageRoot) ? it : it.skip;
+
+  verifiesLocalImageTree('has the supplied artwork and generated thumbnail in the local image tree', () => {
     expect(
       fs.existsSync(
         path.join(
