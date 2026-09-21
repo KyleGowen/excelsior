@@ -14,6 +14,8 @@ Landing page after login. Sections, top to bottom:
    a **View All** link in the section header navigates to [`/home/updates`](./HomeUpdatesPage.md).
    The preconstructed-decks announcement uses a tightly cropped Skybound Training Any Power artwork
    thumbnail and credits Andrew Taylor for the featured Skybound precon upgrade recommendations.
+   The Seattle Weekend announcement is an **Update** using Advanced Alien Arsenal collector `#053`
+   and links the Skybound release week to the combined Regional + NAOL tournament breakdown.
    The Skybound alternate-art reveal is a distinct `new_cards` announcement using collector
    `#420` Omni-Man and directs users to turn off **Hide Alts** in Skybound Characters.
    The Niagara Regional announcement uses the default Sherlock Holmes character card thumbnail.

@@ -34,4 +34,12 @@ describe('Recent Updates thumbnail framing', () => {
       /\.home__news-thumb img\.home__news-thumb-image--preconstructed-decks\s*\{[\s\S]*?object-position: center 22%;[\s\S]*?transform: translateY\(-6%\) scale\(1\.73\);[\s\S]*?transform-origin: center 22%;[\s\S]*?\}/,
     );
   });
+
+  it('centers the Seattle Weekend thumbnail on the Advanced Alien Arsenal action', () => {
+    expect(tileSource).toContain("item.id === 'a1000001-0000-4000-8000-000000000012'");
+    expect(tileSource).toContain("'home__news-thumb-image--seattle-weekend'");
+    expect(styles).toMatch(
+      /\.home__news-thumb img\.home__news-thumb-image--seattle-weekend\s*\{[\s\S]*?object-position: 55% 25%;[\s\S]*?transform: translate\(25px, 35px\) scale\(2\.5017671188125\);[\s\S]*?transform-origin: 55% 25%;[\s\S]*?\}/,
+    );
+  });
 });

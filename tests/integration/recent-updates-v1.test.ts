@@ -31,6 +31,17 @@ describe('GET /api/v1/recent-updates', () => {
     expect(titles).toContain('Skybound is here!');
     expect(titles).toContain('Skybound alternate art revealed!');
     expect(titles).toContain('Official errata, right on the card');
+    expect(titles).toContain('The Seattle Weekend Breakdown');
+
+    const seattleWeekendRow = res.body.data.find(
+      (r: { title: string }) => r.title === 'The Seattle Weekend Breakdown',
+    );
+    expect(seattleWeekendRow).toMatchObject({
+      type: 'update',
+      cardImageUrl: 'sky/specials/053_advanced_alien_arsenal.png',
+      description:
+        "Skybound is here, and Seattle's doubleheader is in the books! What decks did players come up with in the week from release? Come take a look!",
+    });
 
     const errataFeatureRow = res.body.data.find(
       (r: { title: string }) => r.title === 'Official errata, right on the card',

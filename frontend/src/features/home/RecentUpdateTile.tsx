@@ -17,6 +17,7 @@ export function RecentUpdateTile({ item, isOpen, onToggle }: RecentUpdateTilePro
   const isSkyboundAltArtReveal = item.id === 'a1000001-0000-4000-8000-000000000009';
   const isErrataFeature = item.id === 'a1000001-0000-4000-8000-000000000010';
   const isPreconstructedDecksUpdate = item.id === 'a1000001-0000-4000-8000-000000000011';
+  const isSeattleWeekendUpdate = item.id === 'a1000001-0000-4000-8000-000000000012';
   const thumbnailClassName = isSkyboundLaunch
     ? 'home__news-thumb-image--skybound-launch'
     : isSkyboundAltArtReveal
@@ -25,7 +26,9 @@ export function RecentUpdateTile({ item, isOpen, onToggle }: RecentUpdateTilePro
         ? 'home__news-thumb-image--errata-feature'
         : isPreconstructedDecksUpdate
           ? 'home__news-thumb-image--preconstructed-decks'
-          : undefined;
+          : isSeattleWeekendUpdate
+            ? 'home__news-thumb-image--seattle-weekend'
+            : undefined;
 
   return (
     <button

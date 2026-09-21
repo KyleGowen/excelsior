@@ -71,6 +71,11 @@
   transform: translateY(-6%) scale(1.73);
   transform-origin: center 22%;
 }
+.home__news-thumb img.home__news-thumb-image--seattle-weekend {
+  object-position: 55% 25%;
+  transform: translate(25px, 35px) scale(2.5017671188125);
+  transform-origin: 55% 25%;
+}
 .home__news-thumb-icon {
   color: var(--color-accent-dim);
   font-size: 1.5rem;
