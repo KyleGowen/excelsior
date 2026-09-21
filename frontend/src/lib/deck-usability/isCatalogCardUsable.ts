@@ -2,6 +2,7 @@ import type { CatalogCard, CatalogType } from '../api/types';
 import { catalogTypeSupportsHideUnusables } from './catalogTypesWithUsability';
 import {
   GLOBAL_DEFENSE_AGENCY_BATTLEGROUND_NAME,
+  hasAlphaIntelligencePowerCardAllowance,
   isGdaAnyCharacterSpecial,
   isMultiPowerPowerCardType,
   normalizeAngryMobVariant,
@@ -65,7 +66,15 @@ function isPowerCardUsable(card: CatalogCard, ctx: DeckUsabilityContext): boolea
   if (isMultiPowerPowerCardType(powerType)) return true;
 
   return ctx.characterStats.some(
-    (char) => statForPowerTypeWithSpecialCases(char, powerType, ctx.characterNames) >= value,
+    (char) => (
+      statForPowerTypeWithSpecialCases(char, powerType, ctx.characterNames) >= value
+      || hasAlphaIntelligencePowerCardAllowance(
+        char.name,
+        ctx.characterNames,
+        powerType,
+        value,
+      )
+    ),
   );
 }
 

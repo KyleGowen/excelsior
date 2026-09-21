@@ -1,7 +1,12 @@
 import type { DeckValidationRule } from '../deck-validation-rule';
 import type { ValidationError } from '../validation-error';
 import type { DeckValidationContext } from '../deck-validation-context';
-import { deckCardMapKey, isMultiPowerPowerCardType, statForPowerType } from '../deck-validation-utils';
+import {
+    deckCardMapKey,
+    hasAlphaIntelligencePowerCardAllowance,
+    isMultiPowerPowerCardType,
+    statForPowerType
+} from '../deck-validation-utils';
 import { deckValidationMessages } from '../deck-validation-messages';
 
 export class UnusablePowerRule implements DeckValidationRule {
@@ -24,7 +29,15 @@ export class UnusablePowerRule implements DeckValidationRule {
                 }
                 const canUse = ctx.characterStats.some(char => {
                     const characterStat = statForPowerType(char, powerType);
-                    return characterStat >= value;
+                    return (
+                        characterStat >= value ||
+                        hasAlphaIntelligencePowerCardAllowance(
+                            char.name,
+                            ctx.characterNames,
+                            powerType,
+                            value
+                        )
+                    );
                 });
 
                 if (!canUse) {

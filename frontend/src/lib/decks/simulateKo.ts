@@ -3,6 +3,7 @@ import { specialCardMatchesCharacter } from '../catalog/characterStacks';
 import type { CharacterStatRow } from '../deck-usability/types';
 import {
   effectiveCharacterStats,
+  hasAlphaIntelligencePowerCardAllowance,
   specialLinkedCharacterName,
   statForPowerType,
   trainingTypeAtOrBelowCap,
@@ -328,6 +329,17 @@ function dimPowerCard(cardData: CatalogCard, ctx: KoDimmingContext): boolean {
   if (!powerType || powerValue <= 0) return false;
 
   const canUse = ctx.activeCharacters.some((char) => {
+    if (
+      hasAlphaIntelligencePowerCardAllowance(
+        char.name,
+        ctx.startingCharacterNames,
+        powerType,
+        powerValue,
+      )
+    ) {
+      return true;
+    }
+
     const eff = effectiveStatsForPowerTraining(char, ctx.startingCharacterNames);
     let characterStat = 0;
 

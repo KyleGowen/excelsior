@@ -104,6 +104,21 @@ function teamHasCharacterNamed(characterNames: string[], expectedName: string): 
   return characterNames.some((name) => baseCharacterName(name) === normalizedExpected);
 }
 
+/** Alpha may use only level 6 and 7 Intelligence Power cards when Walkers: Herd started on her team. */
+export function hasAlphaIntelligencePowerCardAllowance(
+  characterName: string,
+  startingCharacterNames: string[],
+  powerType: string,
+  value: number,
+): boolean {
+  return (
+    baseCharacterName(characterName) === 'alpha and the whisperers'
+    && teamHasCharacterNamed(startingCharacterNames, 'Walkers: Herd')
+    && powerType === 'Intelligence'
+    && (value === 6 || value === 7)
+  );
+}
+
 function effectiveStartingTeamGridStats(
   char: CharacterStatRow,
   startingCharacterNames: string[],
