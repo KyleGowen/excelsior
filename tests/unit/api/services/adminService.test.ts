@@ -79,7 +79,7 @@ describe('AdminService user analytics', () => {
 
     expect(result).toMatchObject({
       generatedAt: '2026-08-24T12:00:00.000Z',
-      acquisitionPeriodStart: '2026-07-01T00:00:00.000Z',
+      acquisitionPeriodStart: '2026-07-25T12:00:00.000Z',
       standardUserAccounts: 90,
       newStandardAccounts: 40,
       loggedInLast24Hours: 7,
@@ -138,7 +138,7 @@ describe('AdminService user analytics', () => {
 
     const repositoryCall = (deps.userRepository.getUserAnalytics as jest.Mock)
       .mock.calls[0][0] as UserAnalyticsQuery;
-    expect(repositoryCall.acquisitionStart.toISOString()).toBe('2026-07-01T00:00:00.000Z');
+    expect(repositoryCall.acquisitionStart.toISOString()).toBe('2026-07-25T12:00:00.000Z');
     expect(repositoryCall.signupChartStart.toISOString()).toBe('2025-09-01T00:00:00.000Z');
     expect(repositoryCall.signupChartEnd.toISOString()).toBe('2026-09-01T00:00:00.000Z');
     expect(repositoryCall.excludedUsernames).toEqual(['community_decks', 'tournament_decks']);

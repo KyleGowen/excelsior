@@ -1199,9 +1199,9 @@ paths:
                     required: [generatedAt, acquisitionPeriodStart, standardUserAccounts, newStandardAccounts, loggedInLast24Hours, loggedInLast30Days, inactiveOver30Days, googleAuthUsers, recordedLoginUsers, signupMonths, loginRecency, siteSectionUsage, loginTimeDistribution, deckStatistics, collectionStatistics]
                     properties:
                       generatedAt: { type: string, format: date-time }
-                      acquisitionPeriodStart: { type: string, format: date-time }
+                      acquisitionPeriodStart: { type: string, format: date-time, description: Exact start of the rolling 30-day acquisition window ending at generatedAt. }
                       standardUserAccounts: { type: integer }
-                      newStandardAccounts: { type: integer }
+                      newStandardAccounts: { type: integer, description: Standard accounts created during the rolling 30-day acquisition window. }
                       loggedInLast24Hours: { type: integer, description: Unique standard accounts whose latest successful sign-in is within the rolling 24-hour window. }
                       loggedInLast30Days:
                         type: object

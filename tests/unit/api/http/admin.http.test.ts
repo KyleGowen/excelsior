@@ -78,7 +78,7 @@ function stubAdminService(over: Partial<AdminService> = {}): AdminService {
   return {
     getUserAnalytics: jest.fn().mockResolvedValue({
       generatedAt: '2026-08-24T12:00:00.000Z',
-      acquisitionPeriodStart: '2026-07-01T00:00:00.000Z',
+      acquisitionPeriodStart: '2026-07-25T12:00:00.000Z',
       standardUserAccounts: 90,
       newStandardAccounts: 40,
       loggedInLast24Hours: 7,

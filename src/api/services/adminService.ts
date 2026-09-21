@@ -76,7 +76,7 @@ export class AdminService {
   async getUserAnalytics(): Promise<AdminUserAnalyticsDto> {
     const asOf = this.deps.now?.() ?? new Date();
     const currentMonthStart = new Date(Date.UTC(asOf.getUTCFullYear(), asOf.getUTCMonth(), 1));
-    const acquisitionStart = new Date(Date.UTC(asOf.getUTCFullYear(), asOf.getUTCMonth() - 1, 1));
+    const acquisitionStart = new Date(asOf.getTime() - (30 * 24 * 60 * 60 * 1000));
     const signupChartStart = new Date(Date.UTC(asOf.getUTCFullYear(), asOf.getUTCMonth() - 11, 1));
     const signupChartEnd = new Date(Date.UTC(asOf.getUTCFullYear(), asOf.getUTCMonth() + 1, 1));
     const counts = await this.deps.userRepository.getUserAnalytics({
