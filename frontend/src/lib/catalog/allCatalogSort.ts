@@ -2,6 +2,7 @@ import type { CatalogCard } from '../api/types';
 import { cardDisplayName } from './catalogTypeMap';
 import { parseSetNumber, setCodeForCard } from './catalogSetSort';
 import { isFoilCard } from './foilCatalog';
+import { compareAlphabetically } from '../sort/alphabetical';
 
 /** Checklist sort for All-tab lists: set code, non-foil before foil, set_number, then name. */
 export function compareAllCatalogCards(a: CatalogCard, b: CatalogCard): number {
@@ -18,7 +19,7 @@ export function compareAllCatalogCards(a: CatalogCard, b: CatalogCard): number {
   if (numA !== null && numB === null) return -1;
   if (numA === null && numB !== null) return 1;
 
-  return cardDisplayName(a).localeCompare(cardDisplayName(b), undefined, { sensitivity: 'base' });
+  return compareAlphabetically(cardDisplayName(a), cardDisplayName(b));
 }
 
 export function sortAllCatalogCards(cards: CatalogCard[]): CatalogCard[] {
@@ -44,7 +45,7 @@ export function compareCollectionCatalogCards(a: CatalogCard, b: CatalogCard): n
   if (numA === null && numB !== null) return 1;
 
   if (numA === null && numB === null) {
-    return cardDisplayName(a).localeCompare(cardDisplayName(b), undefined, { sensitivity: 'base' });
+    return compareAlphabetically(cardDisplayName(a), cardDisplayName(b));
   }
 
   return 0;

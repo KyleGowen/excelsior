@@ -1,4 +1,5 @@
 import type { CatalogCard, CatalogType } from '../../../lib/api/types';
+import { compareAlphabetically } from '../../../lib/sort/alphabetical';
 import type { CompareOp, DbvFilterState, FunctionIconField } from './dbvFilterTypes';
 
 function matchesNumericCompare(actual: unknown, op: CompareOp, expected: number): boolean {
@@ -150,5 +151,5 @@ export function collectMissionSetOptions(cards: CatalogCard[]): string[] {
     const ms = String(card.mission_set ?? '').trim();
     if (ms) sets.add(ms);
   }
-  return [...sets].sort((a, b) => a.localeCompare(b));
+  return [...sets].sort(compareAlphabetically);
 }

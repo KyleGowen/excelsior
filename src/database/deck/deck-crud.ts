@@ -526,6 +526,7 @@ ${BATTLEGROUND_FALLBACK_JOIN}
               ELSE 1
             END,
             m.set_number_int ASC NULLS LAST,
+            regexp_replace(BTRIM(m.name), '^The[[:space:]]+', '', 'i') ASC,
             m.name ASC,
             dc.card_id ASC
           LIMIT 1
@@ -593,6 +594,7 @@ ${BATTLEGROUND_FALLBACK_JOIN}
               ELSE 1
             END,
             m.set_number_int ASC NULLS LAST,
+            regexp_replace(BTRIM(m.name), '^The[[:space:]]+', '', 'i') ASC,
             m.name ASC,
             dc.card_id ASC
           LIMIT 1

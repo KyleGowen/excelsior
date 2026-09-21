@@ -7,6 +7,7 @@ import {
   metaForDeckType,
 } from '../catalog/catalogTypeMap';
 import type { CatalogCard, CatalogType, DeckCardEntry } from '../api/types';
+import { compareAlphabetically } from '../sort/alphabetical';
 
 export type DeckCardIndex = Map<string, CatalogCard>;
 
@@ -84,9 +85,7 @@ export function compareDeckSpecialEntries(
   const cardB = resolveDeckCatalogCard(b, cardIndex);
   const charCmp = compareCharacterNames(cardCharacterName(cardA), cardCharacterName(cardB));
   if (charCmp !== 0) return charCmp;
-  return cardDisplayName(cardA).localeCompare(cardDisplayName(cardB), undefined, {
-    sensitivity: 'base',
-  });
+  return compareAlphabetically(cardDisplayName(cardA), cardDisplayName(cardB));
 }
 
 /** Deck editor special section: character name then special card name (Any Character last). */

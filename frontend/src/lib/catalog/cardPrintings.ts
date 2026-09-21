@@ -2,6 +2,7 @@ import type { CatalogCard, CatalogType } from '../api/types';
 import type { FoilCardMapLookup } from './foilCatalog';
 import { isFoilCard } from './foilCatalog';
 import { variantGroupKey } from './defaultCatalogCards';
+import { compareAlphabetically } from '../sort/alphabetical';
 
 /** Sort key for checklist # (209, 519, 519F, 035F). Missing # sorts last within set. */
 function setNumberSortTuple(setNumRaw: string | null | undefined): [number, number, string] {
@@ -37,7 +38,7 @@ function comparePrintings(
 ): number {
   const setA = setNameFor(a.set as string | undefined);
   const setB = setNameFor(b.set as string | undefined);
-  const setCmp = setA.localeCompare(setB, undefined, { sensitivity: 'base' });
+  const setCmp = compareAlphabetically(setA, setB);
   if (setCmp !== 0) return setCmp;
 
   const [numA, foilA, rawA] = setNumberSortTuple(a.set_number as string | null | undefined);

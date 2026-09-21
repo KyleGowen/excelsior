@@ -6,6 +6,7 @@ import {
   type DeckCardIndex,
 } from './deckCardCatalog';
 import { deckEditorSectionIndex } from './deckEditorSectionOrder';
+import { compareAlphabetically } from '../sort/alphabetical';
 
 const NON_PLAYABLE_TYPES = new Set(['character', 'location', 'battleground', 'mission']);
 
@@ -134,7 +135,7 @@ function compareDrawnHandEntries(
   } else {
     const nameA = cardDisplayName(resolveDeckCatalogCard(a, cardIndex));
     const nameB = cardDisplayName(resolveDeckCatalogCard(b, cardIndex));
-    const nameCmp = nameA.localeCompare(nameB, undefined, { sensitivity: 'base' });
+    const nameCmp = compareAlphabetically(nameA, nameB);
     if (nameCmp !== 0) return nameCmp;
   }
 

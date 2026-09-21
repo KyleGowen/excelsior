@@ -19,7 +19,10 @@ export async function getAspectById(
 export async function getAllAspects(ctx: CardRepositoryContext): Promise<Aspect[]> {
   const client = await ctx.pool.connect();
   try {
-    const result = await client.query('SELECT * FROM aspects ORDER BY set, name');
+    const result = await client.query(`
+      SELECT * FROM aspects
+      ORDER BY set, regexp_replace(BTRIM(name), '^The[[:space:]]+', '', 'i'), name
+    `);
     return result.rows.map((row) => mapAspectRowWithSet(row));
   } finally {
     client.release();

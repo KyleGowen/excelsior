@@ -25,6 +25,7 @@ import {
   buildDeckEditorNavigateState,
   buildDeckSelectionReturnPath,
 } from '../../lib/navigation/deckEditorReturn';
+import { compareAlphabetically } from '../../lib/sort/alphabetical';
 import { DeckTile, type DeckStatLine } from '../../components/DeckTile';
 import { CommunityDeckGrid } from '../community/CommunityDeckGrid';
 import { LoadingState } from '../../components/LoadingState';
@@ -260,7 +261,9 @@ export default function DeckSelectionPage() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     const list = q ? decks.filter((d) => d.metadata.name.toLowerCase().includes(q)) : decks;
-    const sorted = [...list].sort((a, b) => a.metadata.name.localeCompare(b.metadata.name));
+    const sorted = [...list].sort((a, b) =>
+      compareAlphabetically(a.metadata.name, b.metadata.name),
+    );
     return enrichDeckListPreviewImages(sorted, previewCatalogImages);
   }, [decks, search, previewCatalogImages]);
 

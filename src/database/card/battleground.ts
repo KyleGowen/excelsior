@@ -23,7 +23,10 @@ export async function getAllBattlegrounds(ctx: CardRepositoryContext): Promise<B
   }
   const client = await ctx.pool.connect();
   try {
-    const result = await client.query('SELECT * FROM battlegrounds ORDER BY name');
+    const result = await client.query(`
+      SELECT * FROM battlegrounds
+      ORDER BY regexp_replace(BTRIM(name), '^The[[:space:]]+', '', 'i'), name
+    `);
     const battlegrounds = result.rows.map(mapBattlegroundRow);
     ctx.cache.battlegrounds = battlegrounds;
     ctx.cache.cacheTime = now;

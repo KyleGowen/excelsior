@@ -47,6 +47,20 @@ describe('missionSets', () => {
       expect(sets[1].missions.map((m) => m.id)).toEqual(['m2', 'm1']);
     });
 
+    it('ignores a leading The when ordering mission-set names', () => {
+      const sets = buildMissionSets([
+        card('m1', 'First', { mission_set: 'Lethal Intentions', set_number: '1' }),
+        card('m2', 'Second', { mission_set: 'The Call of Cthulhu', set_number: '1' }),
+        card('m3', 'Third', { mission_set: 'Battleworld', set_number: '1' }),
+      ]);
+
+      expect(sets.map((s) => s.missionSetName)).toEqual([
+        'Battleworld',
+        'The Call of Cthulhu',
+        'Lethal Intentions',
+      ]);
+    });
+
     it('places empty mission_set in Unknown Mission Set', () => {
       const sets = buildMissionSets([card('m1', 'Orphan', { mission_set: '' })]);
       expect(sets).toHaveLength(1);

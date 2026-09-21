@@ -7,6 +7,7 @@ import {
   compareCharacterNames,
 } from './catalogTypeMap';
 import { isAlternateArtCard } from './defaultCatalogCards';
+import { compareAlphabetically } from '../sort/alphabetical';
 
 export const ADD_CARDS_STACKS_PAGE_SIZE = 6;
 
@@ -72,7 +73,7 @@ function pickPreferredCharacterRepresentative(group: CatalogCard[]): CatalogCard
     const aIsAlternate = isAlternateArtCard(a);
     const bIsAlternate = isAlternateArtCard(b);
     if (aIsAlternate !== bIsAlternate) return aIsAlternate ? 1 : -1;
-    return cardDisplayName(a).localeCompare(cardDisplayName(b), undefined, { sensitivity: 'base' });
+    return compareAlphabetically(cardDisplayName(a), cardDisplayName(b));
   })[0];
 }
 
@@ -102,9 +103,7 @@ export function buildCharacterStacks(input: {
     const matchedUa = input.advancedUniverse
       .filter((c) => advancedUniverseMatchesCharacter(c, characterName))
       .slice()
-      .sort((a, b) =>
-        cardDisplayName(a).localeCompare(cardDisplayName(b), undefined, { sensitivity: 'base' }),
-      );
+      .sort((a, b) => compareAlphabetically(cardDisplayName(a), cardDisplayName(b)));
 
     stacks.push({
       characterName,

@@ -19,9 +19,14 @@ export async function getSpecialCardById(
 export async function getAllSpecialCards(ctx: CardRepositoryContext): Promise<SpecialCard[]> {
   const client = await ctx.pool.connect();
   try {
-    const result = await client.query(
-      'SELECT * FROM special_cards ORDER BY character_name, name'
-    );
+    const result = await client.query(`
+      SELECT * FROM special_cards
+      ORDER BY
+        regexp_replace(BTRIM(character_name), '^The[[:space:]]+', '', 'i'),
+        character_name,
+        regexp_replace(BTRIM(name), '^The[[:space:]]+', '', 'i'),
+        name
+    `);
     return result.rows.map((row) => mapSpecialCardRow(row));
   } finally {
     client.release();

@@ -23,7 +23,10 @@ export async function getAllLocations(ctx: CardRepositoryContext): Promise<Locat
   }
   const client = await ctx.pool.connect();
   try {
-    const result = await client.query('SELECT * FROM locations ORDER BY name');
+    const result = await client.query(`
+      SELECT * FROM locations
+      ORDER BY regexp_replace(BTRIM(name), '^The[[:space:]]+', '', 'i'), name
+    `);
     const locations = result.rows.map((row) => mapLocationRowWithSet(row));
     ctx.cache.locations = locations;
     ctx.cache.cacheTime = now;

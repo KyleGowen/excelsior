@@ -42,7 +42,8 @@ export async function getAllAdvancedUniverse(
   const client = await ctx.pool.connect();
   try {
     const result = await client.query(
-      'SELECT * FROM advanced_universe_cards ORDER BY set, name'
+      `SELECT * FROM advanced_universe_cards
+       ORDER BY set, regexp_replace(BTRIM(name), '^The[[:space:]]+', '', 'i'), name`
     );
     return result.rows.map((row) => mapAdvancedUniverseRowWithSet(row));
   } finally {
@@ -71,7 +72,8 @@ export async function getAllTeamwork(ctx: CardRepositoryContext): Promise<Teamwo
   const client = await ctx.pool.connect();
   try {
     const result = await client.query(
-      'SELECT * FROM teamwork_cards ORDER BY set, name'
+      `SELECT * FROM teamwork_cards
+       ORDER BY set, regexp_replace(BTRIM(name), '^The[[:space:]]+', '', 'i'), name`
     );
     return result.rows.map((row) => mapTeamworkRowWithSet(row));
   } finally {
@@ -102,7 +104,8 @@ export async function getAllAllyUniverse(
   const client = await ctx.pool.connect();
   try {
     const result = await client.query(
-      'SELECT * FROM ally_universe_cards ORDER BY set, name'
+      `SELECT * FROM ally_universe_cards
+       ORDER BY set, regexp_replace(BTRIM(name), '^The[[:space:]]+', '', 'i'), name`
     );
     return result.rows.map((row) => mapAllyUniverseRowWithSet(row));
   } finally {
@@ -133,7 +136,8 @@ export async function getAllTraining(
   const client = await ctx.pool.connect();
   try {
     const result = await client.query(
-      'SELECT * FROM training_cards ORDER BY set, name'
+      `SELECT * FROM training_cards
+       ORDER BY set, regexp_replace(BTRIM(name), '^The[[:space:]]+', '', 'i'), name`
     );
     return result.rows.map((row) => mapTrainingRowWithSet(row));
   } finally {
@@ -164,7 +168,8 @@ export async function getAllBasicUniverse(
   const client = await ctx.pool.connect();
   try {
     const result = await client.query(
-      'SELECT * FROM basic_universe_cards ORDER BY set, name'
+      `SELECT * FROM basic_universe_cards
+       ORDER BY set, regexp_replace(BTRIM(name), '^The[[:space:]]+', '', 'i'), name`
     );
     return result.rows.map((row) => mapBasicUniverseRowWithSet(row));
   } finally {

@@ -19,6 +19,28 @@ describe('compareDbvCatalogCards', () => {
 
       expect(sorted.map((c) => c.id)).toEqual(['c1', 'c2', 'c3', 'c4']);
     });
+
+    it('sorts leading-The character names by the following word', () => {
+      const unsorted = [
+        card({ id: 'mauler', name: 'Mauler Twins', set: 'SKY', set_number: '58' }),
+        card({ id: 'immortal', name: 'The Immortal', set: 'ERB', set_number: '20' }),
+        card({ id: 'lancelot', name: 'Lancelot', set: 'ERB', set_number: '18' }),
+        card({ id: 'flaxans', name: 'The Flaxans', set: 'SKY', set_number: '50' }),
+        card({ id: 'glenn', name: 'Glenn', set: 'SKY', set_number: '15' }),
+      ];
+
+      const sorted = [...unsorted].sort((a, b) =>
+        compareDbvCatalogCards(a, b, 'characters'),
+      );
+
+      expect(sorted.map((c) => c.name)).toEqual([
+        'The Flaxans',
+        'Glenn',
+        'The Immortal',
+        'Lancelot',
+        'Mauler Twins',
+      ]);
+    });
   });
 
   describe('special-cards', () => {

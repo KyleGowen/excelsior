@@ -24,7 +24,10 @@ export async function getMissionById(
 export async function getAllMissions(ctx: CardRepositoryContext): Promise<Mission[]> {
   const client = await ctx.pool.connect();
   try {
-    const result = await client.query('SELECT * FROM missions ORDER BY set, name');
+    const result = await client.query(`
+      SELECT * FROM missions
+      ORDER BY set, regexp_replace(BTRIM(name), '^The[[:space:]]+', '', 'i'), name
+    `);
     return result.rows.map((row) => mapMissionRowWithSet(row));
   } finally {
     client.release();
@@ -48,7 +51,10 @@ export async function getEventById(
 export async function getAllEvents(ctx: CardRepositoryContext): Promise<Event[]> {
   const client = await ctx.pool.connect();
   try {
-    const result = await client.query('SELECT * FROM events ORDER BY set, name');
+    const result = await client.query(`
+      SELECT * FROM events
+      ORDER BY set, regexp_replace(BTRIM(name), '^The[[:space:]]+', '', 'i'), name
+    `);
     return result.rows.map((row) => mapEventRowWithSet(row));
   } finally {
     client.release();

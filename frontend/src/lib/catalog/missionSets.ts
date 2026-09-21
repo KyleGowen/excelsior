@@ -1,6 +1,7 @@
 import type { CatalogCard } from '../api/types';
 import { cardDisplayName, cardMatchesSearchQuery } from './catalogTypeMap';
 import type { StackCardEntry } from './characterStacks';
+import { compareAlphabetically } from '../sort/alphabetical';
 
 export const ADD_CARDS_MISSION_SETS_PAGE_SIZE = 4;
 
@@ -25,7 +26,7 @@ function parseSetNumber(card: CatalogCard): number {
 export function compareMissionsWithinSet(a: CatalogCard, b: CatalogCard): number {
   const numCmp = parseSetNumber(a) - parseSetNumber(b);
   if (numCmp !== 0) return numCmp;
-  return cardDisplayName(a).localeCompare(cardDisplayName(b), undefined, { sensitivity: 'base' });
+  return compareAlphabetically(cardDisplayName(a), cardDisplayName(b));
 }
 
 export function buildMissionSets(cards: CatalogCard[]): MissionSet[] {
@@ -44,9 +45,7 @@ export function buildMissionSets(cards: CatalogCard[]): MissionSet[] {
     sets.push({ missionSetName, missions });
   }
 
-  sets.sort((a, b) =>
-    a.missionSetName.localeCompare(b.missionSetName, undefined, { sensitivity: 'base' }),
-  );
+  sets.sort((a, b) => compareAlphabetically(a.missionSetName, b.missionSetName));
   return sets;
 }
 

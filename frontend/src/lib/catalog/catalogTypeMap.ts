@@ -13,6 +13,7 @@ import type {
 } from '../api/types';
 import { compareSetThenSetNumber, parseSetNumber } from './catalogSetSort';
 import { isFoilCard } from './foilCatalog';
+import { compareAlphabetically } from '../sort/alphabetical';
 
 export const ANY_CHARACTER_SPECIALS_TAB = 'any-character-specials' as const;
 export const ADD_CARDS_ANY_CHARACTER_SPECIALS_TAB = ANY_CHARACTER_SPECIALS_TAB;
@@ -208,7 +209,7 @@ export function compareCharacterNames(a: string, b: string): number {
   const aIsAny = isAnyCharacterName(a);
   const bIsAny = isAnyCharacterName(b);
   if (aIsAny !== bIsAny) return aIsAny ? 1 : -1;
-  return a.localeCompare(b, undefined, { sensitivity: 'base' });
+  return compareAlphabetically(a, b);
 }
 
 /** OverPower power type order (Energy → Combat → BF → Int → Multi → Any). */
@@ -241,7 +242,7 @@ function comparePowerCatalogCardTiebreakers(a: CatalogCard, b: CatalogCard): num
   const valueB = Number(b.value ?? 0);
   if (valueA !== valueB) return valueA - valueB;
 
-  return cardDisplayName(a).localeCompare(cardDisplayName(b), undefined, { sensitivity: 'base' });
+  return compareAlphabetically(cardDisplayName(a), cardDisplayName(b));
 }
 
 function compareAlphabetic(a: unknown, b: unknown): number {
@@ -249,7 +250,7 @@ function compareAlphabetic(a: unknown, b: unknown): number {
   const bText = String(b ?? '').trim();
   if (!aText && bText) return 1;
   if (aText && !bText) return -1;
-  return aText.localeCompare(bText, undefined, { sensitivity: 'base' });
+  return compareAlphabetically(aText, bText);
 }
 
 function firstNumericValue(value: unknown): number {
@@ -370,7 +371,7 @@ export function compareDeckPowerCatalogCards(a: CatalogCard, b: CatalogCard): nu
     powerTypeSortIndex(String(a.power_type ?? '')) - powerTypeSortIndex(String(b.power_type ?? ''));
   if (typeCmp !== 0) return typeCmp;
 
-  return cardDisplayName(a).localeCompare(cardDisplayName(b), undefined, { sensitivity: 'base' });
+  return compareAlphabetically(cardDisplayName(a), cardDisplayName(b));
 }
 
 /**
@@ -395,7 +396,7 @@ export function compareDbvCatalogCards(a: CatalogCard, b: CatalogCard, type: Cat
     if (charCmp !== 0) return charCmp;
   }
 
-  return cardDisplayName(a).localeCompare(cardDisplayName(b), undefined, { sensitivity: 'base' });
+  return compareAlphabetically(cardDisplayName(a), cardDisplayName(b));
 }
 
 /** Default catalog sort for deck-editor add-cards (not DBV grid). */
@@ -407,14 +408,14 @@ export function compareCatalogCards(a: CatalogCard, b: CatalogCard, type: Catalo
     const charCmp = compareCharacterNames(cardCharacterName(a), cardCharacterName(b));
     if (charCmp !== 0) return charCmp;
 
-    return cardDisplayName(a).localeCompare(cardDisplayName(b), undefined, { sensitivity: 'base' });
+    return compareAlphabetically(cardDisplayName(a), cardDisplayName(b));
   }
 
   if (type === 'power-cards') {
     return comparePowerCatalogCards(a, b);
   }
 
-  return cardDisplayName(a).localeCompare(cardDisplayName(b), undefined, { sensitivity: 'base' });
+  return compareAlphabetically(cardDisplayName(a), cardDisplayName(b));
 }
 
 export interface StatLine {

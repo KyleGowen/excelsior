@@ -23,7 +23,10 @@ export async function getAllCharacters(ctx: CardRepositoryContext): Promise<Char
   }
   const client = await ctx.pool.connect();
   try {
-    const result = await client.query('SELECT * FROM characters ORDER BY name');
+    const result = await client.query(`
+      SELECT * FROM characters
+      ORDER BY regexp_replace(BTRIM(name), '^The[[:space:]]+', '', 'i'), name
+    `);
     const characters = result.rows.map((row) => mapCharacterRow(row));
     ctx.cache.characters = characters;
     ctx.cache.cacheTime = now;

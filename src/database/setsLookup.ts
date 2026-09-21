@@ -6,9 +6,10 @@ import type { PoolClient } from 'pg';
 export async function listAllSets(pool: { connect: () => Promise<PoolClient> }): Promise<{ code: string; name: string }[]> {
   const client = await pool.connect();
   try {
-    const result = await client.query<{ code: string; name: string }>(
-      'SELECT code, name FROM sets ORDER BY name ASC'
-    );
+    const result = await client.query<{ code: string; name: string }>(`
+      SELECT code, name FROM sets
+      ORDER BY regexp_replace(BTRIM(name), '^The[[:space:]]+', '', 'i'), name
+    `);
     return result.rows;
   } finally {
     client.release();

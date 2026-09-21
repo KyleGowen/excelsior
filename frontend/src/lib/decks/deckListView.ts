@@ -10,6 +10,7 @@ import {
   resolveDeckCatalogCard,
   type DeckCardIndex,
 } from './deckCardCatalog';
+import { compareAlphabetically } from '../sort/alphabetical';
 
 const PRIMARY_ICON_TYPES = ['Energy', 'Combat', 'Brute Force', 'Intelligence'] as const;
 const ANY_CHARACTER = 'Any Character';
@@ -145,7 +146,7 @@ export function formatDeckListRowLabel(
 }
 
 function compareListRowLabels(a: DeckListRow, b: DeckListRow): number {
-  return a.label.localeCompare(b.label, undefined, { sensitivity: 'base' });
+  return compareAlphabetically(a.label, b.label);
 }
 
 /** Merge instance rows sharing type + cardId into aggregated list rows. */
