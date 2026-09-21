@@ -1,9 +1,9 @@
 import { IconChevronRight } from '../icons';
 import type { TournamentPodiumDeckEntry } from '../../lib/tournaments/tournamentPodiumDecks';
-import type { TournamentPodiumPlacement } from '../../lib/tournaments/types';
+import type { TournamentDeckPlacement } from '../../lib/tournaments/types';
 import './TournamentCharts.css';
 
-const PODIUM_ITEM_CLASS: Record<TournamentPodiumPlacement, string> = {
+const PODIUM_ITEM_CLASS: Partial<Record<TournamentDeckPlacement, string>> = {
   '1st': 'tournament-podium-tile__item--1st',
   '2nd': 'tournament-podium-tile__item--2nd',
   '3rd': 'tournament-podium-tile__item--3rd',
@@ -19,7 +19,7 @@ export function TournamentPodiumDeckRows({ entries, onOpenDeck }: TournamentPodi
     <ul className="tournament-podium-tile__list">
       {entries.map(({ placement, playerName, deckId, userId }) => {
         const clickable = Boolean(deckId && userId);
-        const itemClass = PODIUM_ITEM_CLASS[placement];
+        const itemClass = PODIUM_ITEM_CLASS[placement] ?? 'tournament-podium-tile__item--other';
 
         return (
           <li key={placement} className={`tournament-podium-tile__item ${itemClass}`.trim()}>

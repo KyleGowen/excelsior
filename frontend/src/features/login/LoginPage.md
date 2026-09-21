@@ -27,10 +27,10 @@ with the enlarged Excelsior wordmark (`Logo height={210}`). Right: the auth card
   browser viewports it starts below the browser chrome and scrolls instead of clipping the logo.
 
 ## Copy
-- **Brand sub (DTV only):** "Excelsior is a modern OverPower deckbuilding hub and card database.
-  Browse tournament-winning lists, study community builds, and craft Venture-ready decks from the
-  full modern card pool." (`.login__brand-sub`, below the tagline and above Build / Collect /
-  Database callouts.)
+- **Brand sub (DTV only):** "Excelsior is an independently developed and operated OverPower
+  database and deck builder, built for the Modern OverPower community.  Browse tournament-winning
+  lists, study community builds, and craft Venture-ready decks using the full modern card pool."
+  (`.login__brand-sub`, below the tagline and above Build / Collect / Database callouts.)
 - **Login subheading:** "Log in to access your decks, collections, and card database."
 - **Support footer:** email `kyle@excelsior.cards`; Discord handle `@GirlsGoneKyle` links to
   `https://discord.com/users/414971289267339274` (opens profile / Message in Discord).

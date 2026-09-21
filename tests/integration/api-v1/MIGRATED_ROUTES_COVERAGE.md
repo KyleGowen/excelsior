@@ -58,9 +58,14 @@ Each row lists at least one integration test that exercises the route (happy pat
 | GET | `/api/v1/admin/biz-ops-dashboard` | `security/debug-endpoints-access.test.ts` |
 | GET | `/api/v1/admin/user-analytics` | `security/debug-endpoints-access.test.ts` |
 | POST | `/api/v1/admin/users` | `createUserIntegration.test.ts`, `security/debug-endpoints-access.test.ts` |
+| PATCH | `/api/v1/admin/users/:userId/supporter` | `supporter-entitlements-v1.test.ts` |
 | GET | `/api/v1/admin/debug/clear-cache` | `security/debug-endpoints-access.test.ts` |
 | GET | `/api/v1/admin/debug/clear-card-cache` | `security/debug-endpoints-access.test.ts` |
 | GET | `/api/v1/admin/database/status` | `security/debug-endpoints-access.test.ts` |
 | POST | `/api/v1/feedback` | `api-v1/v1-feedback.integration.test.ts` |
+| GET | `/api/v1/supporter/status` | `supporter-billing-v1.test.ts` |
+| POST | `/api/v1/supporter/checkout` | `supporter-billing-v1.test.ts` |
+| POST | `/api/v1/supporter/portal` | `supporter-billing-v1.test.ts` |
+| POST | `/api/v1/supporter/webhook` | `supporter-billing-v1.test.ts` |
 
 Registration entrypoint: `src/api/http/registerApiV1Routes.ts`.

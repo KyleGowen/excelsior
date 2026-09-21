@@ -5,6 +5,7 @@ import './TournamentCharts.css';
 
 interface TournamentHighlightTileProps {
   label: string;
+  eventSubtitle?: string;
   detail?: string;
   cardName: string;
   card: CatalogCard | null;
@@ -15,6 +16,7 @@ interface TournamentHighlightTileProps {
 
 export function TournamentHighlightTile({
   label,
+  eventSubtitle,
   detail,
   cardName,
   card,
@@ -30,6 +32,7 @@ export function TournamentHighlightTile({
       layout="chart"
       title={label}
       titleCaps
+      eventSubtitle={eventSubtitle}
       detail={detail}
       subtitle={cardName}
       className="stats-chart-tile tournament-highlight-tile"
@@ -48,6 +51,7 @@ export function TournamentHighlightTile({
             catalogType={catalogType}
             useThumbnail
             loading="eager"
+            showFlipControl={false}
           />
         </button>
       ) : (

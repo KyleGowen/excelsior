@@ -17,5 +17,6 @@ export interface LoginSuccessDataDto {
     id: string;
     username: string;
     role: UserRole;
+    isSupporter: boolean;
   };
 }

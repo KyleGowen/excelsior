@@ -1,4 +1,4 @@
 interface:
   display_name: "Ingest AWS Cost Reports"
-  short_description: "Track Excelsior AWS cost report rows"
-  default_prompt: "Use $ingest-aws-cost-reports to process new Excelsior AWS cost report emails."
+  short_description: "Reconcile Excelsior AWS cost data"
+  default_prompt: "Use $ingest-aws-cost-reports to reconcile weekly reports, finalized invoices, and current Cost Explorer data."

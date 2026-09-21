@@ -8,8 +8,10 @@ import {
   StatsChartTile,
   TournamentBarChart,
   TournamentCharacterListTile,
+  TournamentPlacardCarouselTile,
   TournamentPieChart,
   TournamentSummaryTile,
+  type TournamentPlacardSlide,
 } from '../../components/TournamentCharts';
 
 const HOME_CHART_LIMIT = 5;
@@ -27,7 +29,10 @@ export interface BuildColumbusTilesOptions {
   resolveCard: (entry: CountEntry) => CatalogCard | null;
   renderSpotlight: (spot: SpotlightEntry | null, key: string) => ReactNode;
   podiumEntries?: TournamentPodiumDeckEntry[];
+  summarySlides?: TournamentPlacardSlide[];
   onOpenPodiumDeck?: (deckId: string, userId: string) => void;
+  eventSubtitle?: string;
+  showWinnerWithPodium?: boolean;
 }
 
 function resolveVariant(
@@ -52,22 +57,35 @@ export function buildColumbusTileById(
     resolveCard,
     renderSpotlight,
     podiumEntries,
+    summarySlides,
     onOpenPodiumDeck,
+    eventSubtitle,
+    showWinnerWithPodium,
   } = options;
 
   const variant = resolveVariant(expanded, tileVariant);
   const limit = expanded ? undefined : HOME_CHART_LIMIT;
   const barMaxRows = expanded ? 12 : RAIL_BAR_MAX_ROWS;
   const chartCompact = variant === 'rail';
-
   switch (id) {
     case 'meta':
+      if (summarySlides && summarySlides.length > 1) {
+        return (
+          <TournamentPlacardCarouselTile
+            slides={summarySlides}
+            variant={variant}
+            onOpenPodiumDeck={onOpenPodiumDeck}
+            showWinnerWithPodium={showWinnerWithPodium}
+          />
+        );
+      }
       return (
         <TournamentSummaryTile
           meta={stats.meta}
           variant={variant}
           podiumEntries={podiumEntries}
           onOpenPodiumDeck={onOpenPodiumDeck}
+          showWinnerWithPodium={showWinnerWithPodium}
         />
       );
 
@@ -76,6 +94,7 @@ export function buildColumbusTileById(
         <StatsChartTile
           variant={variant}
           title="Character Appearances"
+          eventSubtitle={eventSubtitle}
           subtitle="Front line + reserve"
           footnote={charFootnote}
         >
@@ -94,7 +113,12 @@ export function buildColumbusTileById(
 
     case 'top8Characters':
       return (
-        <StatsChartTile variant={variant} title="Top 8 Characters" subtitle="Finishing decks 1st–8th">
+        <StatsChartTile
+          variant={variant}
+          title="Top 8 Characters"
+          eventSubtitle={eventSubtitle}
+          subtitle="Finishing decks 1st–8th"
+        >
           <TournamentBarChart
             data={stats.top8CharacterAppearances}
             limit={limit}
@@ -119,6 +143,7 @@ export function buildColumbusTileById(
         <TournamentCharacterListTile
           variant={variant}
           title="New Winning Characters"
+          eventSubtitle={eventSubtitle}
           entries={stats.newWinningCharacters}
           onEntryClick={openEntry}
           resolveCard={resolveCard}
@@ -131,6 +156,7 @@ export function buildColumbusTileById(
         <TournamentCharacterListTile
           variant={variant}
           title="New Top 8 Characters"
+          eventSubtitle={eventSubtitle}
           entries={stats.newTop8Characters}
           onEntryClick={openEntry}
           resolveCard={resolveCard}
@@ -140,7 +166,7 @@ export function buildColumbusTileById(
 
     case 'topReservists':
       return (
-        <StatsChartTile variant={variant} title="Top Reservists">
+        <StatsChartTile variant={variant} title="Top Reservists" eventSubtitle={eventSubtitle}>
           <TournamentBarChart
             data={stats.topReserves}
             limit={limit}
@@ -156,7 +182,7 @@ export function buildColumbusTileById(
 
     case 'topHomebases':
       return (
-        <StatsChartTile variant={variant} title="Top Homebases">
+        <StatsChartTile variant={variant} title="Top Homebases" eventSubtitle={eventSubtitle}>
           <TournamentBarChart
             data={stats.topHomebases}
             limit={expanded ? undefined : 5}
@@ -171,22 +197,56 @@ export function buildColumbusTileById(
         </StatsChartTile>
       );
 
+    case 'topBattlegrounds': {
+      const data = stats.topBattlegrounds.map((entry) => ({
+        ...entry,
+        catalogType: 'characters' as const,
+      }));
+      return (
+        <StatsChartTile
+          variant={variant}
+          title="Battlegrounds"
+          eventSubtitle={eventSubtitle}
+          subtitle={stats.battlegroundCoverageLabel ?? 'Includes unreported decks'}
+        >
+          <TournamentPieChart
+            data={data}
+            compact={chartCompact}
+            fillContainer
+            showLegend={expanded}
+            tileVariant={variant}
+            isClickable={() => false}
+          />
+        </StatsChartTile>
+      );
+    }
+
     case 'topCataclysms':
       return (
         <StatsChartTile
           variant={variant}
           title="Top Cataclysms"
+          eventSubtitle={eventSubtitle}
           subtitle={`${stats.cataclysmReportedCount} of ${stats.meta.playerCount} decks reported`}
         >
-          <TournamentPieChart
-            data={stats.topCataclysms}
-            compact={chartCompact}
-            fillContainer
-            showLegend={expanded}
-            tileVariant={variant}
-            onSegmentClick={openEntry}
-            isClickable={isClickable}
-          />
+          {stats.topCataclysms.length > 0 ? (
+            <TournamentPieChart
+              data={stats.topCataclysms}
+              compact={chartCompact}
+              fillContainer
+              showLegend={expanded}
+              tileVariant={variant}
+              onSegmentClick={openEntry}
+              isClickable={isClickable}
+            />
+          ) : (
+            <div className="tournament-chart-empty" role="status">
+              <strong className="tournament-chart-empty__title">No cataclysms reported</strong>
+              <span className="tournament-chart-empty__detail">
+                This event’s source lists every selection as unreported.
+              </span>
+            </div>
+          )}
         </StatsChartTile>
       );
 

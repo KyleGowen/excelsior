@@ -31,6 +31,8 @@ COLLECTION_HANDLES = {
     "dc-overpower": "dc",
     "batman-superman": "dc",
     "dc-batman-superman": "dc",
+    "iq": "iq",
+    "iq-overpower": "iq",
 }
 USER_AGENT = "Mozilla/5.0 (compatible; Codex OrangeKingPrice/1.0)"
 

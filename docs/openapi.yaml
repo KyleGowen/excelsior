@@ -53,6 +53,8 @@ tags:
     description: Session-scoped in-memory decks for GUEST users.
   - name: Feedback
     description: Authenticated in-app bug reports and feature/change requests.
+  - name: Supporter
+    description: Canonical Supporter status, hosted Checkout/portal handoff, and signed Stripe callbacks.
   - name: Config
     description: Public app configuration (CDN base, etc.). No auth required.
   - name: Admin
@@ -137,6 +139,7 @@ components:
           type: string
     User:
       type: object
+      required: [id, username, role, isSupporter]
       properties:
         id:
           type: string
@@ -145,6 +148,9 @@ components:
         role:
           type: string
           enum: [ADMIN, USER, GUEST]
+        isSupporter:
+          type: boolean
+          description: Effective Supporter access from any active entitlement source.
     FeedbackRequest:
       type: object
       additionalProperties: false
@@ -164,6 +170,47 @@ components:
         submitted:
           type: boolean
           enum: [true]
+    SupporterCheckoutRequest:
+      type: object
+      additionalProperties: false
+      required: [monthlyContributionUsd]
+      properties:
+        monthlyContributionUsd:
+          type: integer
+          minimum: 3
+          maximum: 999999
+          description: Whole-dollar monthly contribution; server maps it directly to quantity on the configured $1/month Price.
+    SupporterPaidStatus:
+      type: object
+      required: [state, monthlyContributionUsd, currentPeriodEnd, nextRenewalAt, recoveryGraceExpiresAt]
+      properties:
+        state:
+          type: string
+          enum: [PENDING, ACTIVE, SCHEDULED_CANCELLATION, RECOVERY, INACTIVE, MANUAL_REVIEW]
+        monthlyContributionUsd: { type: integer, minimum: 3, maximum: 999999 }
+        currentPeriodEnd: { type: string, format: date-time, nullable: true }
+        nextRenewalAt: { type: string, format: date-time, nullable: true }
+        recoveryGraceExpiresAt: { type: string, format: date-time, nullable: true }
+    SupporterStatus:
+      type: object
+      required: [isSupporter, sources, complimentaryExpiresAt, billingAvailable, minimumMonthlyContributionUsd, maximumMonthlyContributionUsd, presetMonthlyContributionUsd, paid]
+      properties:
+        isSupporter: { type: boolean }
+        sources:
+          type: array
+          items: { type: string, enum: [COMPLIMENTARY, STRIPE] }
+        complimentaryExpiresAt: { type: string, format: date-time, nullable: true }
+        billingAvailable: { type: boolean }
+        minimumMonthlyContributionUsd: { type: integer, enum: [3] }
+        maximumMonthlyContributionUsd: { type: integer, minimum: 3, maximum: 999999 }
+        presetMonthlyContributionUsd:
+          type: array
+          items: { type: integer }
+          example: [3, 5, 10]
+        paid:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/SupporterPaidStatus'
     SavedDatabaseViewStateV1:
       type: object
       additionalProperties: false
@@ -506,7 +553,7 @@ paths:
       summary: Current user.
       responses:
         '200':
-          description: User envelope.
+          description: User envelope, including effective `isSupporter` entitlement status.
         '401':
           description: Not authenticated.
   /api/v1/users/change-email:
@@ -1158,6 +1205,69 @@ paths:
       tags: [Guest Decks]
       summary: Add a card to a guest deck.
       responses: { '200': { description: OK } }
+  /api/v1/supporter/status:
+    get:
+      tags: [Supporter]
+      summary: Read the public offer and canonical current-user Supporter status.
+      description: Authentication is optional. Anonymous callers receive no account-specific paid or complimentary state.
+      security:
+        - bearerAuth: []
+        - {}
+      responses:
+        '200':
+          description: Canonical Supporter status and contribution limits.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/SupporterStatus' }
+  /api/v1/supporter/checkout:
+    post:
+      tags: [Supporter]
+      summary: Create a hosted recurring Supporter Checkout Session.
+      description: Persistent USER only. The server owns Customer, Product, Price, currency, metadata, and return URLs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SupporterCheckoutRequest' }
+      responses:
+        '201': { description: Fresh Stripe-hosted HTTPS Checkout URL and safe expiry. }
+        '400': { description: Invalid whole-dollar amount or expanded body. }
+        '401': { description: Sign-in required. }
+        '403': { description: GUEST/ADMIN account forbidden. }
+        '409': { description: Paid membership or checkout attempt already exists. }
+        '502': { description: Stripe Session creation failed safely. }
+        '503': { description: Billing disabled or misconfigured. }
+  /api/v1/supporter/portal:
+    post:
+      tags: [Supporter]
+      summary: Create a fresh hosted customer-portal Session.
+      description: Persistent USER only. Body must be empty; Customer and portal configuration are server owned.
+      responses:
+        '201': { description: Fresh Stripe-hosted HTTPS portal URL. }
+        '400': { description: Request body must be empty. }
+        '401': { description: Sign-in required. }
+        '403': { description: GUEST/ADMIN account forbidden. }
+        '404': { description: No paid mapping to manage. }
+        '502': { description: Stripe portal Session creation failed safely. }
+        '503': { description: Billing disabled or misconfigured. }
+  /api/v1/supporter/webhook:
+    post:
+      tags: [Supporter]
+      summary: Receive a signed Stripe Supporter billing event.
+      description: Verifies the Stripe signature over the exact raw body, deduplicates durably, and reconciles canonical provider state. No browser auth.
+      security: []
+      parameters:
+        - in: header
+          name: stripe-signature
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Event received, including already-processed duplicates. }
+        '400': { description: Signature or raw request invalid. }
+        '503': { description: Billing disabled. }
   /api/v1/config/app:
     get:
       tags: [Config]
@@ -1181,6 +1291,34 @@ paths:
       tags: [Admin]
       summary: Create a user.
       responses: { '201': { description: Created }, '403': { description: Not ADMIN } }
+  /api/v1/admin/users/{userId}/supporter:
+    patch:
+      tags: [Admin]
+      summary: Grant or revoke a complimentary Supporter entitlement.
+      description: ADMIN-only. Complimentary and Stripe sources remain independent. Every change requires a reason and creates an immutable audit record.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action, reason]
+              properties:
+                action: { type: string, enum: [grant, revoke] }
+                duration: { type: string, enum: [30_DAYS, 90_DAYS, 1_YEAR, CUSTOM, PERMANENT] }
+                customExpiresAt: { type: string, format: date-time }
+                reason: { type: string, minLength: 3, maxLength: 500 }
+      responses:
+        '200': { description: Updated user and effective Supporter status. }
+        '400': { description: Validation, role, or expiry error. }
+        '403': { description: Not ADMIN (ADMIN_REQUIRED). }
+        '404': { description: Target user not found (SUPPORTER_USER_NOT_FOUND). }
+        '500': { description: Entitlement update failed (SUPPORTER_ENTITLEMENT_UPDATE_ERROR). }
   /api/v1/admin/user-analytics:
     get:
       tags: [Admin]

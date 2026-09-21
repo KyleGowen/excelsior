@@ -1,6 +1,6 @@
 // Use the built-in AWS SDK that's available in Node.js 16.x runtime
 const AWS = require('aws-sdk');
-const { stripResigningHeaders } = require('./email_forwarder_headers');
+const { selectForwardReplyTo, stripResigningHeaders } = require('./email_forwarder_headers');
 
 // Configure AWS SDK
 AWS.config.update({ region: process.env.AWS_REGION || 'us-west-2' });
@@ -36,6 +36,7 @@ exports.handler = async (event) => {
                 let inHeaders = true;
                 let originalFrom = '';
                 let originalTo = '';
+                let originalReplyTo = '';
                 
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i];
@@ -48,7 +49,7 @@ exports.handler = async (event) => {
                             modifiedEmail += `X-Forwarded-For: ${process.env.FROM_EMAIL}\n`;
                             modifiedEmail += `X-Original-From: ${originalFrom}\n`;
                             modifiedEmail += `X-Original-To: ${originalTo}\n`;
-                            modifiedEmail += `Reply-To: ${originalFrom}\n`;
+                            modifiedEmail += `Reply-To: ${selectForwardReplyTo(originalReplyTo, originalFrom)}\n`;
                             modifiedEmail += line + '\n';
                         } else if (line.toLowerCase().startsWith('from:')) {
                             originalFrom = line.substring(5).trim();
@@ -69,7 +70,8 @@ exports.handler = async (event) => {
                             // Change Return-Path header to use verified Gmail address
                             modifiedEmail += `Return-Path: <${process.env.FORWARD_TO_EMAIL}>\n`;
                         } else if (line.toLowerCase().startsWith('reply-to:')) {
-                            // Skip the original Reply-To header since we'll add our own
+                            // Preserve the original reply target when forwarding.
+                            originalReplyTo = line.substring(9).trim();
                         } else {
                             // Keep other headers as-is
                             modifiedEmail += line + '\n';

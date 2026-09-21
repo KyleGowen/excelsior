@@ -28,6 +28,13 @@ Every parameter lives under `/${project_name}/${environment}/...` where
 | `/op-deckbuilder/dev/firebase/service_account_json`         | `SecureString`| Firebase Admin SDK bootstrap                                                |
 | `/op-deckbuilder/dev/app/allowed_origins` *(new)*           | `String`      | CORS allowlist ([`API_V1_CORS.md`](API_V1_CORS.md))                         |
 
+Supporter billing values are defined by [`SUPPORTER_BILLING.md`](SUPPORTER_BILLING.md) but are
+**not configured by this implementation**. Before a separately authorized launch, add environment-specific
+Product/Price/portal IDs as `String` values and `STRIPE_SECRET_KEY` plus
+`STRIPE_SUPPORTER_WEBHOOK_SECRET` as `SecureString` values under the same environment prefix. Prefer a
+least-privilege restricted Stripe key. Do not guess live IDs, copy sandbox IDs into live configuration,
+or print secret values during deployment.
+
 ## How the app reads them
 
 [`infra/ec2.tf`](../../infra/ec2.tf) grants the EC2 instance profile

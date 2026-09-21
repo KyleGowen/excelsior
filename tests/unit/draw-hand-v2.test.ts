@@ -416,7 +416,7 @@ describe('drawHand (v2)', () => {
       expect([...result.duplicateCardIndexes]).toEqual([0, 1, 2]);
     });
 
-    it('reads numerical contributions from attack and Universe catalog fields', () => {
+    it('reads attack values while excluding Basic and Training Universe bonuses', () => {
       const teamwork = { id: 'tw', name: 'Teamwork', acts_as: '6 Attack' } as CatalogCard;
       const ally = { id: 'ally', card_name: 'Ally', attack_value: 3 } as CatalogCard;
       const training = { id: 'training', card_name: 'Training', bonus: '+4' } as CatalogCard;
@@ -430,8 +430,63 @@ describe('drawHand (v2)', () => {
 
       expect(drawHandVentureValue(entry('teamwork', 'tw'), index)).toBe(6);
       expect(drawHandVentureValue(entry('ally-universe', 'ally'), index)).toBe(3);
-      expect(drawHandVentureValue(entry('training', 'training'), index)).toBe(4);
-      expect(drawHandVentureValue(entry('basic-universe', 'basic'), index)).toBe(3);
+      expect(drawHandVentureValue(entry('training', 'training'), index)).toBe(0);
+      expect(drawHandVentureValue(entry('basic-universe', 'basic'), index)).toBe(0);
+
+      expect(analyzeDrawnHand(
+        [
+          entry('teamwork', 'tw'),
+          entry('ally-universe', 'ally'),
+          entry('training', 'training'),
+          entry('basic-universe', 'basic'),
+        ],
+        [],
+        index,
+      ).ventureTotal).toBe(9);
+    });
+
+    it('returns 17 for the reported hand instead of adding its +4 Training and +2 Basic bonuses', () => {
+      const specials = [
+        {
+          id: 'pitchforks-and-torches',
+          name: 'Pitchforks and Torches',
+          value: 7,
+        },
+        {
+          id: 'online-cyber-attack',
+          name: 'Online Cyber Attack',
+          value: 7,
+        },
+      ] as CatalogCard[];
+      const ally = {
+        id: 'ally-attack-3',
+        card_name: 'Ally attack',
+        attack_value: 3,
+      } as CatalogCard;
+      const training = {
+        id: 'training-plus-4',
+        card_name: 'Training +4',
+        bonus: '+4',
+      } as CatalogCard;
+      const basic = {
+        id: 'basic-plus-2',
+        card_name: 'Basic +2',
+        bonus: '+2',
+      } as CatalogCard;
+      const index = buildAnalysisIndex({
+        specials,
+        allies: [ally],
+        training: [training],
+        basic: [basic],
+      });
+      const hand = [
+        ...specials.map((card) => entry('special', card.id)),
+        entry('ally-universe', ally.id),
+        entry('training', training.id),
+        entry('basic-universe', basic.id),
+      ];
+
+      expect(analyzeDrawnHand(hand, hand, index).ventureTotal).toBe(17);
     });
   });
 });

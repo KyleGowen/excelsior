@@ -1,5 +1,5 @@
 // @ts-expect-error The Lambda helper is deployed as CommonJS JavaScript.
-import { stripResigningHeaders } from '../../../infra/email_forwarder_headers';
+import { selectForwardReplyTo, stripResigningHeaders } from '../../../infra/email_forwarder_headers';
 
 describe('stripResigningHeaders', () => {
   it('removes every DKIM header and its folded continuation lines', () => {
@@ -31,5 +31,15 @@ describe('stripResigningHeaders', () => {
     const rawEmail = 'From: sender@example.com\nSubject: Hello\n\nBody';
 
     expect(stripResigningHeaders(rawEmail)).toBe(rawEmail);
+  });
+});
+
+describe('selectForwardReplyTo', () => {
+  it('preserves a sender-provided reply-to address', () => {
+    expect(selectForwardReplyTo(' player@example.com ', 'kyle@excelsior.cards')).toBe('player@example.com');
+  });
+
+  it('falls back to the original from address', () => {
+    expect(selectForwardReplyTo('', ' Sender <sender@example.com> ')).toBe('Sender <sender@example.com>');
   });
 });

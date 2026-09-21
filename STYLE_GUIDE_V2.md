@@ -25,6 +25,7 @@ guide describes the dark, neon, card-game-companion theme derived from the mocks
 13. [Home Recent Updates](#home-recent-updates)
 14. [Home — Regionals stats rail](#home--regionals-stats-rail)
 15. [Database Saved Views](#database-saved-views)
+16. [Supporter Invitation](#supporter-invitation)
 
 ---
 
@@ -121,6 +122,10 @@ Defined in [`frontend/src/styles/global.css`](frontend/src/styles/global.css).
 - Login authentication failures use the existing danger panel. Recoverable Google popup
   failures add one underlined inline action, **Continue with Google in this window**, which
   keeps the recovery path inside the alert instead of adding another persistent auth button.
+- The desktop login brand introduction describes Excelsior as an independently developed and
+  operated OverPower database and deck builder for the Modern OverPower community; it does not
+  name the developer or describe the project as independently owned.  Paragraph copy preserves
+  Kyle's two-spaces-after-a-period preference in rendered HTML.
 - Inputs/selects/textareas use `--color-bg-input`, `--color-border`, `--radius-md`, and a
   cyan focus ring (`--color-border-accent`).
 
@@ -168,6 +173,59 @@ account-sheet row (`.account-sheet__toggle`) with `justify-content: space-betwee
   full auth stack stays centered when it fits, but short browser viewports anchor it below the
   visible top instead of clipping the logo.
 - Nav, dropdowns, and tooltips sit at `--z-nav: 9999` so they always clear page content.
+
+### Supporter Invitation
+
+- A calm invitation strip appears directly below the Home hero and at the top of the Card
+  Database content. It uses a glowing heart, the ongoing-development message, `$3+` customer-choice
+  summary, equal-benefits reassurance, and a filled **Become a Supporter** action.
+- The Database strip alone can collapse into the standard left-chevron-and-rule treatment.
+  Its state uses browser-session storage: navigation and reload preserve it in the current tab,
+  while a new browser session starts expanded. The Home strip remains permanently expanded.
+- The invitation renders only after canonical status resolves. Production requires new checkout to
+  be enabled; local development keeps the invitation visible for UI preview without Stripe secrets.
+  It is shown to guests and persistent non-Supporters, hidden for Supporters and admins. Paid
+  Supporters access **Manage monthly support** from Profile; complimentary-only users see
+  **Supporter status**.
+- Supporter status never appears as a separate top-navigation pill. Desktop and mobile both
+  keep support actions inside the Profile menu/sheet.
+- Home, Database, desktop Profile, and mobile Profile navigate directly to the full `/supporter`
+  page; there is no Supporter drawer or intermediary. The page's support card renders the
+  server-backed `SupporterFlow` inline. Its acquisition state is deliberately price-led and concise:
+  a large **$3/month** minimum, one line explaining customer-chosen whole-dollar support, the amount
+  controls, and the relevant action or availability state—without repeating the mission copy or
+  feature descriptions beside and below it. Desktop shows four amount choices in one row; mobile uses
+  two columns and a non-overflowing inline custom-dollar field. The same inline flow renders acquisition, confirmation, paid, cancellation,
+  recovery, complimentary, overlapping-source, and billing-unavailable states.
+
+### Supporter Feature Page
+
+- `/supporter` is the public, shareable home for Supporter details. It is intentionally absent from
+  primary navigation: non-Supporters reach it through the Home or Database invitation link,
+  and its feature rows deep-link to the matching page preview.
+- Signed-in visitors retain the standard app shell. Signed-out visitors receive a compact public
+  header with the Excelsior emblem and Log in action so the page can be shared before account creation.
+- The page leads with a personal, multi-paragraph account of Kyle building the independently developed
+  community tool, its nights-and-weekends development, and the service costs that support offsets; `$3+` customer-chosen
+  monthly support with equal benefits at every amount. The hero begins directly with the
+  **Excelsior Supporter** label and omits both the redundant exploration pill and in-page scroll
+  buttons. Customer-chosen amount, Stripe checkout, confirmation, and membership-management states
+  live directly in the hero support card.
+- A three-tab feature navigator spans the full content width: Saved Database Views and Enhanced Draw
+  Hand swap real local Supporter captures, while **More personal tools ahead** opens a dedicated
+  informational panel. Like the page's other sections, **Supporter features** appears as the small
+  label above the large **Thank you for your support.** headline. The open-book promise that game
+  knowledge and data will never be gated sits in a compact gap between that introduction and the feature tabs. The selected item uses the
+  standard accent-soft surface and inset top accent edge. Each supplied wide capture spans the top of its
+  feature panel, with the description stacked beneath it rather than compressed into a side-by-side
+  column. The future-tools panel directs users with ideas to **Help & Feedback** in the profile menu
+  and its **Request a feature or change** action. The capture may be opened in a wide modal for inspection. `/supporter#saved-views` and
+  `/supporter#draw-hand` select the relevant preview directly.
+- The Stripe Climate note is an untiled line inside the monthly-support card beneath its horizontal divider, using a leaf icon sized 25% larger than its accompanying copy for clearer visual presence. Saved Database Views and Enhanced Draw Hand each cycle through three real feature captures every three seconds in a fixed sequence, waiting for all captures in the active feature to decode and using an overlapping opacity crossfade so Chrome never repaints an empty image plane; pause the cycle while its full-size preview is open or the document is hidden, and keep the first capture static when reduced motion is requested. Screenshot-specific framing corrections may be applied narrowly; the Venture 35 Draw Hand capture is raised by 1px to align with its two companion frames. The page omits separate impact, FAQ, and closing call-to-action sections so the feature preview is the final page section.
+- Desktop uses a restrained marketing-page maximum width with a split hero and left-side feature
+  navigator. The final feature panel retains an extra small step of bottom breathing room before the page edge.
+  Mobile stacks the hero, turns the feature choices into horizontal snap cards, preserves the extra
+  bottom padding, and presents preview dialogs as bottom sheets above the shared bottom navigation.
 
 ### Branding & favicon
 - **In-app logo:** [`Logo`](frontend/src/components/Logo/Logo.tsx) `variant="emblem"` uses
@@ -403,7 +461,7 @@ Top slide-out overlay ([`DrawHandPanel.css`](frontend/src/features/deck-editor/D
 | Redraw (`.draw-hand__redraw`) | Compact accent-outline action in the header rail; keeps an extra `--space-2` gap before the close control |
 | Close (`.draw-hand-slideout .slideout__close`) | Standard 34px hit target with the X glyph reduced 15% to `1.0625rem` |
 | KO-dimmed drawn card | Same `.deck-editor__card--ko-dimmed` art filter as main grid |
-| ADMIN / Supporter metrics (`.draw-hand__analysis`) | Compact summary surface centered against the full desktop panel in the same universal header rail as **Drawn Hand**, **Draw again**, and close. A restrained accent edge and “After duplicate rules” caption establish context; the two metrics share one container and matching hierarchy. Venture uses Excelsior teal `--color-accent-bright`, while only a nonzero Duplicates value uses `--color-danger`. On mobile, the module spans the full padded header width on row one; **Drawn Hand**, **Draw again**, and close share row two |
+| ADMIN / Supporter metrics (`.draw-hand__analysis`) | Compact summary surface centered against the full desktop panel in the same universal header rail as **Drawn Hand**, **Draw again**, and close. A restrained accent edge and “After duplicate rules” caption establish context; the two metrics share one container and matching hierarchy. Venture is the rules-based potential numerical total after duplicate discards: Basic and Training Universe bonuses are excluded. Venture uses Excelsior teal `--color-accent-bright`, while only a nonzero Duplicates value uses `--color-danger`. On mobile, the module spans the full padded header width on row one; **Drawn Hand**, **Draw again**, and close share row two |
 | Duplicate group (`.draw-hand__card--duplicate`) | Restrained `--color-danger` border/ring/glow on every card in an over-limit group; mobile reduces each layer’s color intensity by roughly 20% to compensate for the larger cards; no duplicate styling is rendered outside the ADMIN / Supporter entitlement gate |
 
 ### Deck Editor — Card detail Printings (owners)
@@ -535,6 +593,9 @@ trailing chips + Clear sit at the rail end; Add Cards places Set + Hide Unusable
 
 Saved Views adds a quiet navy workflow surface to `/data` without restricting any catalog information.
 
+- Saved Views controls render for admins and users with an active Supporter entitlement.  Other
+  users retain the complete database, search, filters, details, and deck-building workflow.
+
 | Element | Visual and behavior contract |
 |---|---|
 | Header actions (`.db__saved-controls`) | Accent-outline **Save this view** and **Saved views (N)** controls beside search/Set; wrap as a clean full-width row on mobile, never horizontal-overflow the header |
@@ -576,7 +637,7 @@ News/announcement tiles on `/home` (rail) and `/home/updates` (full list). Share
 
 ## Home Deck Rails
 
-Below Recent Updates and the Niagara Regional preview, deck rails appear in this order:
+Below Recent Updates and the Seattle Weekend preview, deck rails appear in this order:
 **Community Decks**, **Tournament Winning Decks**, then **Preconstructed Decks**. All use the
 shared compact `DeckTile` rail sizing. The Preconstructed rail flattens official decks in
 newest-first release-set order, excludes featured upgrades, suppresses owner/date/legality
@@ -584,10 +645,18 @@ metadata, and links View All to `/community#preconstructed`.
 
 ## Home — Regionals stats rail (Preview Data Tiles)
 
-The newest tournament is featured on `/home` as a horizontal **rail** containing the event placard
-plus all nine statistical infographic tiles from the full dashboard. **View All** opens
-`/home/regionals?event=...`, a reusable **12-column dashboard** with a Tournament selector. The selector
-is newest-first and keeps prior events available; the legacy Columbus URL redirects to its selected view.
+The newest tournament post is featured on `/home` as one horizontal **rail**. The Seattle Weekend
+post presents one combined set of statistical tiles covering the Regional and NAOL. Its upper-left
+placard uses a compact Regional / NAOL switch so the two event identities, winner summaries, and
+submitted deck links stay distinct. The source JSON remains separate. NAOL battleground and
+cataclysm fields are excluded from aggregation because those source fields were not reliably reported;
+the combined Battlegrounds caption explicitly limits its coverage to the 32 Regional decks, while
+Cataclysms reports its reliable selection count against all 68 weekend decks.
+**View All** opens `/home/regionals?event=s1-seattle-weekend`, a reusable **12-column Tournament
+Data dashboard** with a post selector. **Event recap** contains the combined collage plus separate
+Regional and NAOL deck-list tabs. **Season 1 totals** is a peer page tab containing the ongoing
+sortable season tally instead of appending that large table to every event recap. Legacy Seattle
+event URLs resolve to the combined post.
 Shell uses **shadcn/ui `Card`** via [`DashboardTile`](frontend/src/components/dashboard/DashboardTile.tsx) with **`.deck-tile` outer parity** (`--color-bg-panel`, `1px solid var(--color-border)`, `--radius-lg`, no default shadow). See
 [`SHADCN_UI.md`](docs/current/SHADCN_UI.md), [`DashboardGrid.md`](frontend/src/components/dashboard/DashboardGrid.md),
 and [`TournamentCharts.md`](frontend/src/components/TournamentCharts/TournamentCharts.md).
@@ -600,44 +669,55 @@ Components: [`TournamentStatsRail.tsx`](frontend/src/features/home/TournamentSta
 | Surface | Layout | Tile shell |
 |---|---|---|
 | Home rail | `DashboardRail` — `clamp(230px, 25%, 280px)` columns (deck-tile parity) | `DashboardTile` variant **`rail`**: art `aspect-ratio: 380/280`; body `min-height: 4.875rem` |
-| View All dashboard | Shared regional dashboard — **12 columns** desktop with column stacks (`flex-col`) so tiles pack vertically without shared row-track dead space; current layout implementation remains in [`columbusDashboardLayout.ts`](frontend/src/lib/tournaments/columbusDashboardLayout.ts) | Variants `sm`–`wide`: fluid art `min-height` (280–480px); charts scale `maxRows` / pie radius |
+| View All dashboard | Shared regional dashboard — **12-column measured masonry** on desktop; dense placement fills the earliest compatible opening while preserving every tile's configured width and intrinsic height. The event placard is the only fixed position: upper left. Layout configuration remains in [`columbusDashboardLayout.ts`](frontend/src/lib/tournaments/columbusDashboardLayout.ts) | Variants `sm`–`wide`: fluid art `min-height` (280–480px); charts scale `maxRows` / pie radius |
 
-### Desktop grid map (View All — 12×12 wireframe reference)
+### Desktop masonry map (View All — 12-column reference)
 
-Rendered via **three column stacks** in one band (left 2-col, center 6-col, right 4-col). Tiles pack vertically within each column without shared row-track dead space. Logical wireframe positions:
+`ColumbusDashboardGrid` measures each rendered tile and assigns it the required number of small grid rows. `grid-auto-flow: dense` then places every tile in the earliest opening that can hold its configured width. This minimizes empty space without stretching, shrinking, cropping, or otherwise changing the tiles themselves. Hidden or unsupported tiles close up automatically for that event.
 
-| Tile ID | Label | Cols | Rows | Variant |
-|---|---|---|---|---|
-| `meta` | Event metadata (includes podium deck links on View All) | 1–2 | 1–4 | `sm` |
-| `highestTop8Rate` | Highest Top 8 spotlight | 1–2 | 5–7 | `sm` |
-| `characterAppearances` | Character Appearances | 3–8 | 1–6 | `wide` |
-| `mostPlaysWithoutTop8` | Most Plays w/o Top 8 | 9–10 | 1–3 | `sm` |
-| `newWinningCharacters` | New Winning Characters | 11–12 | 1–3 | `sm` |
-| `top8Characters` | Top 8 Characters | 9–12 | 4–8 | `tall` |
-| `topHomebases` | Top Homebases | 1–3 | 7–10 | `md` |
-| `topReservists` | Top Reservists | 4–8 | 7–10 | `md` |
-| `topCataclysms` | Top Cataclysms | 9–12 | 9–12 | `md` |
-| `newTop8Characters` | New Top 8 Characters | 1–3 | 11–12 | `sm` |
+The event metadata tile is always anchored at column 1, row 1. All other tiles are deliberately free to move as their content and the available source categories change. Their widths and presentation variants remain stable:
 
-Rows 11–12 cols 4–8 remain empty (no deck-size tile). Vertical gap between stacked tiles: **`gap-y-3`** (`12px` / `var(--space-3)`) on `.columbus-dashboard__column` (desktop and mobile); `gap-x-4` preserved between horizontal columns.
+| Tile ID | Label | Width | Variant |
+|---|---|---|---|
+| `meta` | Event metadata (includes reported deck links on View All) | 3 columns | `sm` |
+| `characterAppearances` | Character Appearances | 5 columns | `wide` |
+| `top8Characters` | Top 8 Characters | 4 columns | `tall` |
+| `highestTop8Rate` | Highest Top 8 spotlight | 3 columns | `sm` |
+| `topReservists` | Top Reservists | 5 columns | `md` |
+| `topCataclysms` | Top Cataclysms | 4 columns | `md` |
+| `topHomebases` | Top Homebases | 3 columns | `md` |
+| `newTop8Characters` | New Top 8 Characters | 3 columns | `sm` |
+| `topBattlegrounds` | Battlegrounds, including Unreported | 3 columns | `md` |
+| `mostPlaysWithoutTop8` | Most Plays w/o Top 8 | 2 columns | `sm` |
+| `newWinningCharacters` | New Winning Characters | 2 columns | `sm` |
+
+Desktop gaps remain **`gap-y-3`** (`12px` / `var(--space-3)`) and **`gap-x-4`** (`16px` / `var(--space-4)`). Tile order is a packing preference, not a fixed visual position; arrange new event collages to produce the most even distribution after the upper-left placard constraint.
+
+Chart tiles must present missing source coverage explicitly. A supported event with no cataclysm
+selection uses the centered `.tournament-chart-empty` state instead of rendering an empty Recharts
+surface. In the combined Seattle presentation, NAOL battleground and cataclysm values are excluded;
+the Battlegrounds tile says **Regional only · 32 of 68 decks**, and Top Cataclysms says how many of
+the 68 weekend decks supplied a reliable selection.
 
 ### Mobile View All tile order (`layout-mobile`, `/home/regionals`)
 
-On mobile, `ColumbusDashboardGrid` uses `COLUMBUS_MOBILE_BANDS` — a single full-width column (no `pairFirstRow` side-by-side spotlights). Stacked tiles use **`gap-y-3`** (`12px` / `var(--space-3)`) on `.columbus-dashboard__column` so each tile is separated by a small buffer (same as desktop column stacks). Order:
+On mobile, `ColumbusDashboardGrid` uses `COLUMBUS_MOBILE_BANDS` — a single full-width column. Stacked tiles use **`gap-y-3`** (`12px` / `var(--space-3)`) so each tile is separated by a small buffer. Order:
 
-1. `meta` — event placard with **podium deck link rows** in the placard footer (1st / 2nd / 3rd); badges `.tournament-podium-tile__badge`; 44px+ tap targets; navigates to `/users/{tournamentDecksUserId}/decks/{id}?readonly=true`. **Winner Name** section is omitted on View All (1st row replaces it).
+1. `meta` — event placard with date, players, winner, and **reported deck link rows** in the placard footer (normally podium placements; Seattle also includes 6th/8th where supplied); badges `.tournament-podium-tile__badge`; 44px+ tap targets; navigates to `/users/{tournamentDecksUserId}/decks/{id}?readonly=true`.
 2. `top8Characters`
 3. `topHomebases`
-4. `characterAppearances` (wide splash)
-5. `topReservists`
-6. `topCataclysms`
-7. `highestTop8Rate`
-8. `mostPlaysWithoutTop8`
-9. `newWinningCharacters`
-10. `newTop8Characters`
+4. `topBattlegrounds`
+5. `characterAppearances` (wide splash)
+6. `topReservists`
+7. `topCataclysms`
+8. `highestTop8Rate`
+9. `mostPlaysWithoutTop8`
+10. `newWinningCharacters`
+11. `newTop8Characters`
 
-Desktop band layout is unchanged. The Home horizontal stats rail uses the complete dashboard tile order.
-It shows **Winner Name** in the meta placard (no deck links, no tournament deck fetch).
+The Home horizontal stats rail uses the complete dashboard tile order. Seattle renders that order
+once for the combined weekend totals. Its metadata placard switches between Regional and NAOL and
+shows each event's **Winner Name**; Home does not fetch or display the submitted deck links.
 
 **Placard footer classes:** `.preview-text-tile__footer` wraps `.tournament-podium-tile__list` inside `.tournament-placard-tile` on View All (desktop + mobile). `.preview-text-tile__content`, footer, and list all use **`width: 100%`** so percentage row widths resolve against the full placard (DashboardTile text layout uses `items-start`, which otherwise shrink-wraps the list). Podium rows use a **stair-step width** (left-aligned via `align-items: flex-start`): `--podium-row-width-1st` **calc(100% - var(--space-1))**, `--podium-row-width-2nd` **75%**, `--podium-row-width-3rd` **60%**; row buttons fill each item (`width: 100%`).
 
@@ -645,6 +725,14 @@ It shows **Winner Name** in the meta placard (no deck links, no tournament deck 
 IDs, and the tournament label used for title-prefix fallback. Columbus retains its three stable IDs from
 [`V309__Seed_columbus_podium_decks.sql`](migrations/V309__Seed_columbus_podium_decks.sql). Niagara has
 stable links for 1st and 2nd place; its 3rd-place row remains visible and disabled until that deck is supplied.
+Seattle resolves the submitted Regional decks at 1st, 2nd, and 6th and the NAOL decks at 1st, 2nd,
+and 8th through the same title-prefix convention.
+
+Below the event dashboard, a bordered deck-list surface keeps the Regional and NAOL fields in separate
+sub-tabs. Each list is shown in placement order, and submitted deck links remain attached to the correct
+event. The peer **Season 1 totals** page tab shows appearances, combined game record and win rate, Top 8/Top 3
+conversions, and event wins; a compact selector sorts by appearances, game win rate, or character name.
+Table headers remain sticky inside a bounded vertical scroll region, including on mobile.
 
 **Tile chrome (match `DeckTile`):** `.dashboard-tile` — `background: var(--color-bg-panel)`; `border: 1px solid var(--color-border)`; `border-radius: var(--radius-lg)`; `box-shadow: none`. Art zone `.stats-chart-tile__art` uses `--color-bg-elevated` with **no** art/body divider. Body inherits panel background (same as `.deck-tile__body`).
 
@@ -654,7 +742,7 @@ stable links for 1st and 2nd place; its 3rd-place row remains visible and disabl
 
 | Type | Component | Art zone | Body caption |
 |---|---|---|---|
-| Event metadata | `TournamentPlacardTile` / `PreviewTextTile` | Title hierarchy: H1 name, H2 season, then Location / Date / Players; **Winner Name** on Home rail only; View All adds podium link rows in `.preview-text-tile__footer` | Fluid `clamp()` type; unified content (no art/body split) |
+| Event metadata | `TournamentPlacardTile` / `TournamentPlacardCarouselTile` / `PreviewTextTile` | Title hierarchy: H1 name, H2 season, then Location / Date / Players / Winner; multi-event posts switch between event slides; View All adds the selected event's submitted deck links in `.preview-text-tile__footer` | Fluid `clamp()` type; unified content (no art/body split) |
 | Bar chart | `StatsChartTile` + `TournamentBarChart` | Horizontal bars, `fillContainer`, max 5 rows on rail | Title + subtitle + footnote, **bottom-center** |
 | Pie chart | `StatsChartTile` + `TournamentPieChart` | Donut fills art (42% outer when labeled); preview portion labels use **straight radial** leader lines to tile edge (~2.12× slice radius), `clamp()`/radius-scaled font; **2-slice pies** stagger labels top-right / bottom-left (~22° off vertical) | Title + subtitle, **bottom-center** |
 | Card spotlight | `TournamentHighlightTile` | Card full-bleed (no text overlay) | Label (caps) + detail + name, **bottom-center** |
@@ -700,6 +788,10 @@ the character art is not clipped from the leading side. Every card remains click
 ### Admin user analytics (`/admin/user-analytics`)
 
 - The route remains inside `AppShell`, preserving the desktop header and mobile bottom navigation, but is linked only from the ADMIN profile menu.
+- The User Analytics hero is followed by an accent-edged **Supporter entitlement** manager.
+  It uses existing input and button tokens, exposes effective complimentary/Stripe source status,
+  and supports 30-day, 90-day, one-year, custom, and permanent complimentary grants.  The form
+  stacks to one column on mobile, and requires a reason before grant or revoke actions become active.
 - The analytics panel uses the standard deep navy surfaces, cyan accent, stat-value type, rounded bordered KPI cards, and the textless Excelsior emblem.
 - Desktop layout: six KPI cards in a three-column grid, then a wide rolling 12-month acquisition chart beside login-recency bars. Below 1050px KPI cards become two columns and chart sections stack; below 640px KPI cards become one column.
 - A second full-width analytics band pairs two equal bordered cards: cumulative site-section API request-share bars for Home, Database, Decks, and Collection, and a 24-point Pacific-time login radar chart. The usage card must say it is request share rather than time, page views, or unique users. The radar shows all known tracked history and clearly states that the series is incomplete before telemetry began.

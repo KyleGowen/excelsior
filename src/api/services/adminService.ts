@@ -2,6 +2,11 @@ import type { User } from '../../types';
 import type { AdminUserAnalyticsDto } from '../dto/v1/AdminUserAnalyticsDto';
 import type { UserAnalyticsCounts, UserAnalyticsQuery } from '../../repository/UserRepository';
 import { USER_ANALYTICS_UTILITY_USERNAMES } from '../../constants/userAnalytics';
+import type { AdminUserDto } from '../dto/v1/AdminUserDto';
+import type {
+  ComplimentaryGrantDuration,
+  SupporterEntitlementService
+} from './supporterEntitlementService';
 
 type SiteSectionKey = AdminUserAnalyticsDto['siteSectionUsage']['sections'][number]['key'];
 
@@ -40,6 +45,7 @@ function formatPacificHour(hour: number): string {
 
 export interface AdminServiceUserRepository {
   getAllUsers: () => Promise<User[]>;
+  getUserById: (id: string) => Promise<User | undefined>;
   getUserByUsername: (username: string) => Promise<User | undefined>;
   createUser: (username: string, email: string, password: string, role: 'USER') => Promise<User>;
   getUserAnalytics: (query: UserAnalyticsQuery) => Promise<UserAnalyticsCounts>;
@@ -63,14 +69,73 @@ export interface AdminServiceDeps {
   deckRepository: AdminServiceDeckRepository;
   cardRepository: AdminServiceCardRepository;
   databaseInit: AdminServiceDatabaseInit;
+  supporterEntitlementService: SupporterEntitlementService;
   now?: () => Date;
 }
 
 export class AdminService {
   constructor(private readonly deps: AdminServiceDeps) {}
 
-  listUsers(): Promise<User[]> {
-    return this.deps.userRepository.getAllUsers();
+  async listUsers(): Promise<AdminUserDto[]> {
+    const users = await this.deps.userRepository.getAllUsers();
+    const statuses = await this.deps.supporterEntitlementService.getStatuses(users.map((user) => user.id));
+    return users.map((user) => this.toAdminUser(user, statuses.get(user.id)));
+  }
+
+  private toAdminUser(
+    user: User,
+    status?: Awaited<ReturnType<SupporterEntitlementService['getStatus']>>
+  ): AdminUserDto {
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      lastLoginAt: user.lastLoginAt?.toISOString() ?? null,
+      isSupporter: status?.isSupporter ?? false,
+      supporterSources: status?.sources ?? [],
+      complimentarySupporterExpiresAt: status?.complimentaryExpiresAt?.toISOString() ?? null
+    };
+  }
+
+  async updateSupporterEntitlement(input: {
+    userId: string;
+    actorUserId: string;
+    action: 'grant' | 'revoke';
+    duration?: ComplimentaryGrantDuration;
+    customExpiresAt?: Date;
+    reason: string;
+  }): Promise<
+    | { ok: true; user: AdminUserDto }
+    | { ok: false; kind: 'not_found' | 'invalid_role' | 'invalid_expiry'; message: string }
+  > {
+    const user = await this.deps.userRepository.getUserById(input.userId);
+    if (!user) return { ok: false, kind: 'not_found', message: 'User not found' };
+    if (user.role !== 'USER') {
+      return { ok: false, kind: 'invalid_role', message: 'Supporter access can only be granted to USER accounts' };
+    }
+
+    try {
+      const status = input.action === 'grant'
+        ? await this.deps.supporterEntitlementService.grantComplimentary({
+            userId: user.id,
+            actorUserId: input.actorUserId,
+            duration: input.duration!,
+            ...(input.customExpiresAt ? { customExpiresAt: input.customExpiresAt } : {}),
+            reason: input.reason
+          })
+        : await this.deps.supporterEntitlementService.revokeComplimentary({
+            userId: user.id,
+            actorUserId: input.actorUserId,
+            reason: input.reason
+          });
+      return { ok: true, user: this.toAdminUser(user, status) };
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('expiry')) {
+        return { ok: false, kind: 'invalid_expiry', message: error.message };
+      }
+      throw error;
+    }
   }
 
   async getUserAnalytics(): Promise<AdminUserAnalyticsDto> {
@@ -203,13 +268,13 @@ export class AdminService {
   async createUser(
     username: string,
     password: string
-  ): Promise<{ ok: true; user: User } | { ok: false; kind: 'bad_request' | 'conflict'; message: string }> {
+  ): Promise<{ ok: true; user: AdminUserDto } | { ok: false; kind: 'bad_request' | 'conflict'; message: string }> {
     const existingUser = await this.deps.userRepository.getUserByUsername(username);
     if (existingUser) {
       return { ok: false, kind: 'conflict', message: 'Username already exists' };
     }
     const newUser = await this.deps.userRepository.createUser(username, `${username}@example.com`, password, 'USER');
-    return { ok: true, user: newUser };
+    return { ok: true, user: this.toAdminUser(newUser) };
   }
 
   clearDeckCache(): void {

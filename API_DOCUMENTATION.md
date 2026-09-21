@@ -6,6 +6,10 @@ This document describes the **Excelsior / Overpower Deckbuilder** backend HTTP s
 
 **Versioned API (`/api/v1`):** the separate **[API_V1.md](API_V1.md)** document describes the Bearer JWT API, `{ data, meta, errors }` envelope, and per-endpoint examples. Use it for all new v1 clients.
 
+Supporter purchase, canonical status, webhook, and hosted-portal routes exist only under
+`/api/v1/supporter/*`; see [API_V1.md](API_V1.md#supporter-billing) and
+[docs/current/SUPPORTER_BILLING.md](docs/current/SUPPORTER_BILLING.md). There is no legacy billing route.
+
 **Migration:** track route-by-route work in **[API_MIGRATION_CHECKLIST.md](API_MIGRATION_CHECKLIST.md)**. Architecture and layering rules are in **[MIGRATION_ARCHITECTURE.md](MIGRATION_ARCHITECTURE.md)**.
 
 **Related code:** route registration order matches `registerRoutes()` in `src/routes/index.ts`. The application composition root is `src/index.ts`. v1 routes are registered via `registerApiV1Routes()` from `src/api/http/registerApiV1Routes.ts`.
@@ -204,7 +208,8 @@ Host: localhost:8085
     "username": "kyle",
     "email": "user@example.com",
     "role": "USER",
-    "authProvider": "password"
+    "authProvider": "password",
+    "isSupporter": true
   }
 }
 ```
@@ -219,7 +224,7 @@ Host: localhost:8085
 { "username": "newuser", "email": "newuser@example.com", "password": "secret" }
 ```
 
-**Response 201:** Session cookie set; body same shape as login (`userId`, `username`, `role`). **400:** validation. **409:** username or email exists. **429:** signup rate limit.
+**Response 201:** Session cookie set; body includes `userId`, `username`, `role`, and `isSupporter`. **400:** validation. **409:** username or email exists. **429:** signup rate limit.
 
 ### `POST /api/auth/google/preview`
 
@@ -280,7 +285,8 @@ Clears server session and `sessionId` cookie.
     "email": "kyle@example.com",
     "role": "USER",
     "authProvider": "password",
-    "lastLoginAt": "2026-04-03T10:00:00.000Z"
+    "lastLoginAt": "2026-04-03T10:00:00.000Z",
+    "isSupporter": true
   }
 }
 ```

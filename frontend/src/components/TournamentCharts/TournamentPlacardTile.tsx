@@ -11,6 +11,7 @@ interface TournamentPlacardTileProps {
   variant?: DashboardTileVariant;
   podiumEntries?: TournamentPodiumDeckEntry[];
   onOpenPodiumDeck?: (deckId: string, userId: string) => void;
+  showWinnerWithPodium?: boolean;
 }
 
 export function TournamentPlacardTile({
@@ -18,9 +19,10 @@ export function TournamentPlacardTile({
   variant = 'rail',
   podiumEntries,
   onOpenPodiumDeck,
+  showWinnerWithPodium = false,
 }: TournamentPlacardTileProps) {
   const showPodium = Boolean(podiumEntries?.length && onOpenPodiumDeck);
-  const sections = getTournamentPlacardSections(meta, showPodium);
+  const sections = getTournamentPlacardSections(meta, showPodium, showWinnerWithPodium);
 
   return (
     <PreviewTextTile

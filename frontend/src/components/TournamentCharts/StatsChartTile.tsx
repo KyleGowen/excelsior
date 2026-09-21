@@ -3,6 +3,7 @@ import { DashboardTile, type DashboardTileVariant } from '../dashboard';
 
 interface StatsChartTileProps {
   title: string;
+  eventSubtitle?: string;
   subtitle?: string;
   footnote?: string;
   detail?: string;
@@ -14,6 +15,7 @@ interface StatsChartTileProps {
 
 export function StatsChartTile({
   title,
+  eventSubtitle,
   subtitle,
   footnote,
   detail,
@@ -27,6 +29,7 @@ export function StatsChartTile({
       variant={variant}
       layout="chart"
       title={title}
+      eventSubtitle={eventSubtitle}
       subtitle={subtitle}
       footnote={footnote}
       detail={detail}

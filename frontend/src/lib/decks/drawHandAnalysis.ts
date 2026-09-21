@@ -66,7 +66,11 @@ function specialVentureValue(card: CatalogCard): number {
   return firstNonNegativeNumber(printedLevel);
 }
 
-/** Numerical contribution printed on a card, without resolving playability or combos. */
+/**
+ * Potential Venture contribution printed on a card, without resolving playability or combos.
+ * Basic and Training Universe bonuses modify an action but do not add damage or Venture
+ * unless another card explicitly creates an exception in the live battle state.
+ */
 export function drawHandVentureValue(
   entry: DeckCardEntry,
   cardIndex: DeckCardIndex,
@@ -78,9 +82,7 @@ export function drawHandVentureValue(
   if (type === 'special') return specialVentureValue(catalogCard);
   if (type === 'teamwork') return firstNonNegativeNumber(catalogCard.acts_as);
   if (type === 'ally-universe') return firstNonNegativeNumber(catalogCard.attack_value);
-  if (type === 'training' || type === 'basic-universe') {
-    return firstNonNegativeNumber(catalogCard.bonus);
-  }
+  if (type === 'training' || type === 'basic-universe') return 0;
 
   return firstNonNegativeNumber(catalogCard.value);
 }

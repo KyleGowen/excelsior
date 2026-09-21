@@ -269,6 +269,13 @@ export const IconSparkles = (p: IconProps) => (
   </Svg>
 );
 
+export const IconLeaf = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 18 2.5 19 2c.4 2 2 10-3.5 14.5-1.5 1.2-3 1.6-4.5 1.5Z" />
+    <path d="M2 21c0-3 1.9-5.4 5.1-6.9C9.2 13 12 12 16 12" />
+  </Svg>
+);
+
 export const IconBuild = (p: IconProps) => (
   <Svg {...p}>
     <path d="M14.7 6.3a4 4 0 0 0-5.3 5l-6 6 1.3 1.3 6-6a4 4 0 0 0 5-5.3l-2.4 2.4-2-2 2.4-2.4Z" />
@@ -334,6 +341,19 @@ export const IconSettings = (p: IconProps) => (
   <Svg {...p}>
     <circle cx="12" cy="12" r="3" />
     <path d="M19.4 13.5a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 0 1-4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1A2 2 0 1 1 4.2 16.7l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 0 1 0-4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1A2 2 0 1 1 7.1 4l.1.1a1.7 1.7 0 0 0 2.9-1.2V3a2 2 0 0 1 4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H21a2 2 0 0 1 0 4h-.2a1.7 1.7 0 0 0-1.4.9Z" />
+  </Svg>
+);
+
+export const IconGears = (p: IconProps) => (
+  <Svg {...p}>
+    <g transform="translate(1 1) scale(.62)">
+      <circle cx="12" cy="12" r="3" vectorEffect="non-scaling-stroke" />
+      <path vectorEffect="non-scaling-stroke" d="M19.4 13.5a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 0 1-4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1A2 2 0 1 1 4.2 16.7l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 0 1 0-4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1A2 2 0 1 1 7.1 4l.1.1a1.7 1.7 0 0 0 2.9-1.2V3a2 2 0 0 1 4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H21a2 2 0 0 1 0 4h-.2a1.7 1.7 0 0 0-1.4.9Z" />
+    </g>
+    <g transform="translate(11.25 11.25) scale(.48)">
+      <circle cx="12" cy="12" r="3" vectorEffect="non-scaling-stroke" />
+      <path vectorEffect="non-scaling-stroke" d="M19.4 13.5a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 0 1-4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1A2 2 0 1 1 4.2 16.7l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 0 1 0-4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1A2 2 0 1 1 7.1 4l.1.1a1.7 1.7 0 0 0 2.9-1.2V3a2 2 0 0 1 4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H21a2 2 0 0 1 0 4h-.2a1.7 1.7 0 0 0-1.4.9Z" />
+    </g>
   </Svg>
 );
 
@@ -416,6 +436,14 @@ export const IconBook = (p: IconProps) => (
   <Svg {...p}>
     <path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5Z" />
     <path d="M4 19a2 2 0 0 0 2 2h13" />
+  </Svg>
+);
+
+export const IconBookOpen = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 7v14" />
+    <path d="M3 18a1 1 0 0 1-1-1V5a2 2 0 0 1 2-2h5a3 3 0 0 1 3 3v15a3 3 0 0 0-3-3Z" />
+    <path d="M21 18a1 1 0 0 0 1-1V5a2 2 0 0 0-2-2h-5a3 3 0 0 0-3 3v15a3 3 0 0 1 3-3Z" />
   </Svg>
 );
 

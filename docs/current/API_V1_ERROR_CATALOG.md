@@ -40,7 +40,19 @@ to [`docs/openapi.yaml`](../openapi.yaml)) in the same PR.**
 | `SESSION_REQUIRED`            | 401  | Guest deck APIs need a session cookie.                                   | Allow cookies or call `/api/auth/...` first.                                         |
 | `VALIDATION_ERROR`            | 400  | Body/params/query failed validation (zod).                               | Fix the field listed in `errors[].field` and retry.                                  |
 | `RATE_LIMITED`                | 429  | Too many requests per window.                                            | Honor `X-RateLimit-Reset`; retry after.                                              |
-| `SAVED_DATABASE_VIEW_FORBIDDEN` | 403 | Saved Views eligibility policy denied this account.                    | Use an eligible account; the temporary policy allows ADMIN only.                    |
+| `SAVED_DATABASE_VIEW_FORBIDDEN` | 403 | Saved Views eligibility policy denied this account.                    | Use an ADMIN account or a USER account with active Supporter access.                 |
+| `SUPPORTER_USER_NOT_FOUND`     | 404  | The target user ID does not exist.                                      | Refresh the admin user list and retry with a current ID.                             |
+| `SUPPORTER_INVALID_USER_ROLE`  | 400  | Complimentary Supporter access targeted a non-USER account.             | Select a standard USER account.                                                       |
+| `SUPPORTER_INVALID_EXPIRY`     | 400  | A custom Supporter expiration is missing or not in the future.          | Supply a future ISO date-time.                                                        |
+| `SUPPORTER_ENTITLEMENT_UPDATE_ERROR` | 500 | Supporter entitlement persistence failed unexpectedly.           | Retry; report `requestId` if persistent.                                              |
+| `SUPPORTER_BILLING_UNAVAILABLE` | 503 | Checkout, portal, or webhook billing configuration is disabled or invalid. | Keep using free Excelsior and retry later; operators inspect sanitized server diagnostics. |
+| `SUPPORTER_CONTRIBUTION_INVALID` | 400 | Monthly contribution is not a safe whole dollar within the configured range. | Choose `$3` or more within the displayed maximum. |
+| `SUPPORTER_ALREADY_PAID` | 409 | The account already has active, recovery, or paid-through Stripe access. | Open **Manage monthly support** instead of starting another Checkout. |
+| `SUPPORTER_CHECKOUT_ERROR` | 409/502 | A checkout attempt is already in flight or Stripe could not create the Session. | Wait briefly and retry without changing the amount. |
+| `SUPPORTER_PORTAL_UNAVAILABLE` | 404/502 | No server-owned paid mapping exists or Stripe could not create a fresh portal Session. | Confirm paid status or retry later. |
+| `SUPPORTER_WEBHOOK_INVALID` | 400 | Missing/invalid Stripe signature or raw body. | Stripe/operator must resend a correctly signed event. |
+| `SUPPORTER_BILLING_ERROR` | 500 | Unexpected Supporter billing failure. | Retry; report `requestId` if persistent. |
+| `SUPPORTER_STATUS_ERROR` | 500 | Canonical Supporter status could not be loaded. | Retry; free features remain available. |
 | `SAVED_DATABASE_VIEW_INVALID_NAME` | 400 | Name is empty, whitespace-only, oversized, or not a string.          | Supply a trimmed display name of 1–80 characters.                                   |
 | `SAVED_DATABASE_VIEW_INVALID_STATE` | 400 | Persisted state is incomplete or has an invalid tab/filter value.     | Supply the complete documented schemaVersion 1 state.                               |
 | `SAVED_DATABASE_VIEW_UNSUPPORTED_SCHEMA_VERSION` | 400 | `schemaVersion` is not supported.                         | Send `schemaVersion: 1`.                                                            |

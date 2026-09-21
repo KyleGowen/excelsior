@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../app/AuthProvider';
 import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';

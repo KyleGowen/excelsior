@@ -2,7 +2,7 @@
 
 Reusable tiles for tournament metagame stats. **Home rail** uses `DashboardTile` variant `rail`
 (deck-tile dimensions: 380×280 art + compact body). **View All** (`/home/regionals`) uses
-larger dashboard variants on a 12-column grid — see [`DashboardGrid.md`](../dashboard/DashboardGrid.md).
+larger dashboard variants in a measured 12-column masonry collage — see [`DashboardGrid.md`](../dashboard/DashboardGrid.md).
 
 Shell: shadcn **Card** via [`DashboardTile`](../dashboard/DashboardTile.tsx). Setup: [`SHADCN_UI.md`](../../../../docs/current/SHADCN_UI.md).
 
@@ -13,9 +13,9 @@ Visual spec: [`STYLE_GUIDE_V2.md`](../../../../STYLE_GUIDE_V2.md) § Home — Re
 Chart-based tiles compose `DashboardTile` (`layout="chart"`):
 
 - `dashboard-tile__art` — chart or card visual; `rail` = `aspect-ratio: 380/280`; dashboard variants use fluid `min-height`
-- `dashboard-tile__body` — shadcn `CardFooter` caption (title, detail, subtitle, footnote badge)
+- `dashboard-tile__body` — shadcn `CardFooter` caption (title, optional event subtitle, detail, context subtitle, footnote badge)
 
-Props: `title`, `subtitle?`, `footnote?`, `detail?`, `captionAlign?`, `variant?` (`rail` | `sm` | `md` | `lg` | `wide` | `tall`).
+Props: `title`, `eventSubtitle?`, `subtitle?`, `footnote?`, `detail?`, `captionAlign?`, `variant?` (`rail` | `sm` | `md` | `lg` | `wide` | `tall`).
 
 ## Text tile: `PreviewTextTile`
 
@@ -28,7 +28,8 @@ Generic text-only preview tile (no chart art zone). Single content column with t
 
 | Type | Component | When to use |
 |------|-----------|-------------|
-| Event placard | `TournamentPlacardTile` (`TournamentSummaryTile` alias) | Tournament meta: name, season, location, date, players; winner on Home rail; View All adds podium deck links in placard footer |
+| Event placard | `TournamentPlacardTile` (`TournamentSummaryTile` alias) | Single-event metadata: name, season, location, date, players, winner; View All adds reported deck links in the placard footer |
+| Multi-event placard | `TournamentPlacardCarouselTile` | Switches between Regional and NAOL summaries inside one metadata tile; View All changes the submitted deck links with the active event |
 | Bar chart | `StatsChartTile` + `TournamentBarChart` | Ranked counts (characters, homebases, reserves, …) |
 | Pie chart | `StatsChartTile` + `TournamentPieChart` | Small categorical sets (cataclysms, ≤4 character groups) |
 | Card spotlight | `TournamentHighlightTile` | Single highlighted card + stat label |
@@ -48,6 +49,10 @@ Generic text-only preview tile (no chart art zone). Single content column with t
 Axis labels use `#a8b8d8`, truncated with ellipsis (no wrap).
 
 **`TournamentPieChart`:** pass `fillContainer`, `showLegend={false}` on rails. Portion labels (small text + colored leader lines) render on slices by default when the legend is hidden; tooltips show full names on hover/click.
+
+When an event has no reported cataclysm selections, the Top Cataclysms tile replaces the empty pie
+surface with a centered missing-data message while retaining the reported-deck count in its caption.
+This represents unreported source data, not a zero-value result.
 
 Bar and pie tooltips disable Recharts position animation. On first hover, the tooltip must appear at the active segment instead of transitioning from the chart origin; subsequent pointer tracking remains immediate.
 
@@ -76,9 +81,11 @@ import {
 
 ## Data
 
-Regional events are registered in `regionalTournaments.ts` and use committed static JSON in
-`frontend/src/data/tournaments/`. Card slideout resolution: `resolveTournamentCard` +
-`useAllCatalogCards()`.
+Tournament events are registered in `regionalTournaments.ts` and use committed static JSON in
+`frontend/src/data/tournaments/`. Multi-event posts aggregate reliable metrics in the presentation
+layer with `combineTournamentStats.ts`; source events remain separate. The expanded Tournament Data
+page keeps event-specific deck lists in the Event recap tab and the sortable ongoing tally in the
+Season 1 totals tab. Card slideout resolution: `resolveTournamentCard` + `useAllCatalogCards()`.
 
 ## Files
 
@@ -86,10 +93,11 @@ Regional events are registered in `regionalTournaments.ts` and use committed sta
 |------|------|
 | `PreviewTextTile.tsx` | Generic text-only preview tile |
 | `TournamentPlacardTile.tsx` | Tournament event placard (optional podium link footer on View All) |
-| `StatsChartTile.tsx` | Chart shell + caption |
+| `TournamentPlacardCarouselTile.tsx` | Multi-event placard switcher with event-specific winner and submitted deck links |
+| `StatsChartTile.tsx` | Chart shell + title/event/context caption hierarchy |
 | `TournamentSummaryTile.tsx` | Re-export alias of `TournamentPlacardTile` |
 | `TournamentHighlightTile.tsx` | Single-card spotlight |
-| `TournamentPodiumDeckRows.tsx` | 1st/2nd/3rd deck link rows (placard footer) |
+| `TournamentPodiumDeckRows.tsx` | Reported tournament deck link rows (placard footer; Seattle includes 6th/8th) |
 | `TournamentPodiumDecksTile.tsx` | Standalone podium tile (legacy export; View All uses placard footer) |
 | `TournamentCharacterListTile.tsx` | Selects rail cycle or dashboard mosaic presentation |
 | `TournamentCharacterRosterTile.tsx` | Clickable artwork mosaic and deck-style cycling roster |

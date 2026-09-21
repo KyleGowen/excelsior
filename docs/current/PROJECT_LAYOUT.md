@@ -15,6 +15,8 @@ This document provides a comprehensive overview of the Excelsior Deckbuilder pro
 ├── 📄 docs/current/FRONTEND_V2.md  # v2 architecture and dev workflow
 ├── 📄 docs/current/AGENTOS_INHERITANCE.md  # Cross-project rule inheritance contract
 ├── 📄 docs/current/TESTING_GUIDE.md        # How to run unit/integration tests
+├── 📄 docs/current/VENTURE_TOTAL.md         # Modern Venture Total calculation reference
+├── 📄 docs/current/SUPPORTER_BILLING.md      # Supporter Checkout, portal, webhook, lifecycle, and sandbox QA
 ├── 📄 docs/current/API_DOCUMENTATION.md  # Legacy HTTP API
 ├── 📄 API_V1.md                    # /api/v1 contract
 ├── 📄 package.json                 # Node.js dependencies and scripts

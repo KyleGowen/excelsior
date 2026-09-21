@@ -41,6 +41,9 @@ import type { SavedDatabaseViewAccessPolicy } from '../services/savedDatabaseVie
 import type { Pool } from 'pg';
 import { COMMUNITY_DECKS_USER_ID } from '../../constants/communityDecksUser';
 import { TOURNAMENT_DECKS_USER_ID } from '../../constants/tournamentDecksUser';
+import type { SupporterEntitlementService } from '../services/supporterEntitlementService';
+import type { SupporterBillingService } from '../services/supporterBillingService';
+import { registerSupporterV1HttpRoutes } from './supporter.http';
 
 export interface RegisterApiV1Deps {
   authenticationService: AuthenticationService;
@@ -82,6 +85,8 @@ export interface RegisterApiV1Deps {
   feedbackService: FeedbackService;
   savedDatabaseViewService: SavedDatabaseViewService;
   savedDatabaseViewAccessPolicy: SavedDatabaseViewAccessPolicy;
+  supporterEntitlementService: SupporterEntitlementService;
+  supporterBillingService: SupporterBillingService;
   /** Phase 2: when provided, enables refresh tokens + Bearer on decks/collections. */
   pool?: Pool;
 }
@@ -137,7 +142,8 @@ export function createApiV1Router(deps: RegisterApiV1Deps): IRouter {
   const authDeps: Parameters<typeof registerAuthV1HttpRoutes>[1] = {
     authenticationService: deps.authenticationService,
     userRepository: deps.userRepository,
-    jwtTokenService
+    jwtTokenService,
+    supporterEntitlementService: deps.supporterEntitlementService
   };
   if (refreshTokenService) {
     authDeps.refreshTokenService = refreshTokenService;
@@ -222,6 +228,12 @@ export function createApiV1Router(deps: RegisterApiV1Deps): IRouter {
   registerFeedbackV1HttpRoutes(router, {
     feedbackService: deps.feedbackService,
     authenticateUser: deps.authenticateUser
+  });
+
+  registerSupporterV1HttpRoutes(router, {
+    supporterBillingService: deps.supporterBillingService,
+    authenticateUser: ownedAuth,
+    optionalAuth: optionalOwnedAuth
   });
 
   return router;

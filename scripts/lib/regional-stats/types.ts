@@ -3,12 +3,18 @@ export type TournamentCatalogType = 'characters' | 'locations' | 'special-cards'
 export interface RegionalDeckRow {
   rank: number;
   player: string;
+  wins: number;
+  losses: number;
   frontLine1: string;
   frontLine2: string;
   frontLine3: string;
   reserve: string;
   homebase: string;
+  battleground: string;
   cataclysm: string;
+  mission: string;
+  cardCount: number | null;
+  event: string;
 }
 
 export interface CountEntry {
@@ -21,6 +27,31 @@ export interface HomebaseCountEntry extends CountEntry {
   top8: number;
   top3: number;
   wins: number;
+}
+
+export interface TournamentBreakdownEntry {
+  name: string;
+  count: number;
+}
+
+export interface SeasonCharacterPerformanceEntry extends CountEntry {
+  appearances: number;
+  gameWins: number;
+  gameLosses: number;
+  gameWinRate: number;
+  top8: number;
+  top3: number;
+  tournamentWins: number;
+}
+
+export interface SeasonCharacterPerformance {
+  meta: {
+    title: string;
+    throughDate: string;
+    eventCount: number;
+    deckCount: number;
+  };
+  characters: SeasonCharacterPerformanceEntry[];
 }
 
 export interface SpotlightEntry {
@@ -63,6 +94,8 @@ export interface TournamentEventStats {
   newTop8Characters: CountEntry[];
   topReserves: CountEntry[];
   topHomebases: HomebaseCountEntry[];
+  topBattlegrounds: TournamentBreakdownEntry[];
   topCataclysms: CountEntry[];
   cataclysmReportedCount: number;
+  deckRows: RegionalDeckRow[];
 }

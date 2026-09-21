@@ -19,6 +19,7 @@ import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/LoadingState';
 import { fetchUserAnalytics } from '../../lib/api/adminAnalytics';
 import { useScrollToTopOnMount } from '../../lib/layout/useScrollToTopOnMount';
+import { SupporterAccessManager } from './SupporterAccessManager';
 import './UserAnalyticsPage.css';
 
 function formatDate(value: string): string {
@@ -97,6 +98,8 @@ export default function UserAnalyticsPage() {
             <strong>{formatDate(analytics.generatedAt)}</strong>
           </div>
         </header>
+
+        <SupporterAccessManager />
 
         <section className="user-analytics-kpis" aria-label="User account highlights">
           <div className="user-analytics-kpi">

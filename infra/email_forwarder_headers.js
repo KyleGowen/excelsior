@@ -46,4 +46,13 @@ function stripResigningHeaders(rawEmail) {
     return keptLines.join(lineEnding);
 }
 
-module.exports = { stripResigningHeaders };
+/**
+ * Keep the sender-provided reply target when forwarding into Gmail. Messages
+ * without Reply-To should continue to reply to their original From address.
+ */
+function selectForwardReplyTo(originalReplyTo, originalFrom) {
+    const replyTo = String(originalReplyTo || '').trim();
+    return replyTo || String(originalFrom || '').trim();
+}
+
+module.exports = { selectForwardReplyTo, stripResigningHeaders };

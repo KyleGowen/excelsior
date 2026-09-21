@@ -1,9 +1,11 @@
 import type { Request, RequestHandler, Response, Router } from 'express';
-import type { User } from '../../types';
 import type { AdminService } from '../services/adminService';
 import type { AdminBizOpsDashboardService } from '../services/adminBizOpsDashboardService';
 import { sendV1Json, sendV1Success } from './v1Envelope';
 import { CreateAdminUserBody } from './models/admin/CreateAdminUserBody';
+import { UpdateSupporterEntitlementSchema } from './models/admin/UpdateSupporterEntitlementBody';
+import { parseV1Body } from './parseV1Body';
+import { z } from 'zod';
 
 export interface AdminV1HttpDeps {
   adminService: AdminService;
@@ -19,16 +21,6 @@ function requireAdminV1(req: Request, res: Response): boolean {
     return false;
   }
   return true;
-}
-
-function userToJson(u: User) {
-  return {
-    id: u.id,
-    name: u.name,
-    email: u.email,
-    role: u.role,
-    lastLoginAt: u.lastLoginAt ? u.lastLoginAt.toISOString() : null
-  };
 }
 
 export function registerAdminV1HttpRoutes(router: Router, deps: AdminV1HttpDeps): void {
@@ -60,7 +52,7 @@ export function registerAdminV1HttpRoutes(router: Router, deps: AdminV1HttpDeps)
     try {
       if (!requireAdminV1(req, res)) return;
       const users = await deps.adminService.listUsers();
-      sendV1Success(res, users.map(userToJson));
+      sendV1Success(res, users);
     } catch (error) {
       console.error('v1 GET /admin/users error:', error);
       sendV1Json(res, 500, null, [{ code: 'ADMIN_USERS_LIST_ERROR', message: 'Failed to fetch users' }]);
@@ -82,10 +74,50 @@ export function registerAdminV1HttpRoutes(router: Router, deps: AdminV1HttpDeps)
         sendV1Json(res, status, null, [{ code, message: result.message }]);
         return;
       }
-      sendV1Success(res, userToJson(result.user), 201);
+      sendV1Success(res, result.user, 201);
     } catch (error) {
       console.error('v1 POST /admin/users error:', error);
       sendV1Json(res, 500, null, [{ code: 'ADMIN_USER_CREATE_ERROR', message: 'Failed to create user' }]);
+    }
+  });
+
+  router.patch('/admin/users/:userId/supporter', deps.authenticateUser, async (req, res) => {
+    try {
+      if (!requireAdminV1(req, res)) return;
+      const userId = z.string().uuid().safeParse(req.params.userId);
+      if (!userId.success) {
+        sendV1Json(res, 400, null, [
+          { code: 'VALIDATION_ERROR', field: 'userId', message: 'userId must be a UUID' }
+        ]);
+        return;
+      }
+      const parsed = parseV1Body(UpdateSupporterEntitlementSchema, req.body, res);
+      if (!parsed) return;
+
+      const result = await deps.adminService.updateSupporterEntitlement({
+        userId: userId.data,
+        actorUserId: req.user!.id,
+        action: parsed.value.action,
+        ...(parsed.value.duration ? { duration: parsed.value.duration } : {}),
+        ...(parsed.value.customExpiresAt ? { customExpiresAt: new Date(parsed.value.customExpiresAt) } : {}),
+        reason: parsed.value.reason
+      });
+      if (!result.ok) {
+        const status = result.kind === 'not_found' ? 404 : 400;
+        const code = result.kind === 'not_found'
+          ? 'SUPPORTER_USER_NOT_FOUND'
+          : result.kind === 'invalid_role'
+            ? 'SUPPORTER_INVALID_USER_ROLE'
+            : 'SUPPORTER_INVALID_EXPIRY';
+        sendV1Json(res, status, null, [{ code, message: result.message }]);
+        return;
+      }
+      sendV1Success(res, result.user);
+    } catch (error) {
+      console.error('v1 PATCH /admin/users/:userId/supporter error:', error);
+      sendV1Json(res, 500, null, [
+        { code: 'SUPPORTER_ENTITLEMENT_UPDATE_ERROR', message: 'Failed to update Supporter access' }
+      ]);
     }
   });
 

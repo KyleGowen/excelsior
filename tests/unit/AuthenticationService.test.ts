@@ -298,7 +298,8 @@ describe('AuthenticationService', () => {
           username: user.name,
           email: user.email,
           role: user.role,
-          authProvider: 'password'
+          authProvider: 'password',
+          isSupporter: false
         }
       });
       expect((mockUserRepository as any).updateLastLoginAt).toHaveBeenCalledWith(user.id);
@@ -395,7 +396,7 @@ describe('AuthenticationService', () => {
 
       expect(mockResponse.json).toHaveBeenCalledWith({
         success: true,
-        data: user
+        data: { ...user, isSupporter: false }
       });
     });
 
@@ -580,7 +581,8 @@ describe('AuthenticationService', () => {
           username: existingUser.name,
           email: existingUser.email,
           role: existingUser.role,
-          authProvider: 'google'
+          authProvider: 'google',
+          isSupporter: false
         }
       });
     });
@@ -618,7 +620,8 @@ describe('AuthenticationService', () => {
           username: existingUser.name,
           email: existingUser.email,
           role: existingUser.role,
-          authProvider: 'google'
+          authProvider: 'google',
+          isSupporter: false
         }
       });
     });
@@ -699,7 +702,8 @@ describe('AuthenticationService', () => {
           username: newUser.name,
           email: newUser.email,
           role: newUser.role,
-          authProvider: 'google'
+          authProvider: 'google',
+          isSupporter: false
         }
       });
     });
@@ -965,7 +969,7 @@ describe('AuthenticationService', () => {
       expect(mockResponse.status).toHaveBeenCalledWith(201);
       expect(mockResponse.json).toHaveBeenCalledWith({
         success: true,
-        data: { userId: newUser.id, username: newUser.name, role: newUser.role }
+        data: { userId: newUser.id, username: newUser.name, role: newUser.role, isSupporter: false }
       });
     });
 

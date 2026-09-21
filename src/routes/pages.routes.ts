@@ -60,4 +60,8 @@ export function registerPageRoutes(app: express.Application, deps: PageRoutesDep
   app.get('/login', (_req, res) => {
     sendAppShell(res);
   });
+
+  app.get('/supporter', (_req, res) => {
+    sendAppShell(res);
+  });
 }

@@ -17,6 +17,8 @@ interface DashboardTileProps {
   /** Chart tiles use art + footer; text tiles fill the card body. */
   layout?: 'chart' | 'text';
   title?: string;
+  /** Optional event context shown directly below the title on combined Home rails. */
+  eventSubtitle?: string;
   subtitle?: string;
   detail?: string;
   footnote?: string;
@@ -31,6 +33,7 @@ export function DashboardTile({
   variant = 'rail',
   layout = 'chart',
   title,
+  eventSubtitle,
   subtitle,
   detail,
   footnote,
@@ -71,7 +74,7 @@ export function DashboardTile({
       >
         {children}
       </div>
-      {(title || subtitle || detail || footnote) ? (
+      {(title || eventSubtitle || subtitle || detail || footnote) ? (
         <CardFooter
           className={cn(
             dashboardBodyVariants({ variant, align: bodyAlign }),
@@ -90,6 +93,9 @@ export function DashboardTile({
             >
               {title}
             </h3>
+          ) : null}
+          {eventSubtitle ? (
+            <p className="preview-tile__event-subtitle w-full">{eventSubtitle}</p>
           ) : null}
           {detail ? <p className="preview-tile__detail w-full">{detail}</p> : null}
           {subtitle ? (

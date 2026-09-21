@@ -16,6 +16,7 @@ export interface PreviewTextTileProps {
   title: string;
   subtitle?: string;
   sections: PreviewTextTileSection[];
+  header?: ReactNode;
   footer?: ReactNode;
   className?: string;
   variant?: DashboardTileVariant;
@@ -25,6 +26,7 @@ export function PreviewTextTile({
   title,
   subtitle,
   sections,
+  header,
   footer,
   className = '',
   variant = 'rail',
@@ -36,6 +38,7 @@ export function PreviewTextTile({
       className={`stats-chart-tile preview-text-tile ${className}`.trim()}
     >
       <div className="preview-text-tile__content">
+        {header}
         <h1 className="preview-text-tile__h1">{title}</h1>
         {subtitle ? <h2 className="preview-text-tile__h2">{subtitle}</h2> : null}
         <div className="preview-text-tile__divider" aria-hidden="true" />

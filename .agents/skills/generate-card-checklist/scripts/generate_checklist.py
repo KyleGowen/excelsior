@@ -182,6 +182,39 @@ PRESETS = {
         order_file=REPO_ROOT / "src/resources/legacy/dcop/manifest.csv",
         default_sort="number",
     ),
+    "iq-overpower": Preset(
+        slug="iq-overpower",
+        title="IQ OverPower Checklist",
+        subtitle=(
+            "Standalone personal checklist generated from Excelsior's local IQ OverPower documentation. "
+            "Checkbox progress is saved in this browser and can be exported or connected to a portable JSON file."
+        ),
+        source_files=(
+            REPO_ROOT / "src/resources/legacy/iqop/mission-control-md/type--characters--rarity-6bdcb47e99.md",
+            REPO_ROOT / "src/resources/legacy/iqop/mission-control-md/type--control--numbers--game-text--characters--rarity-6b522b190a.md",
+            REPO_ROOT / "src/resources/legacy/iqop/mission-control-md/type--control--numbers--game-text--characters--rarity-bd1d49c1d0.md",
+            REPO_ROOT / "src/resources/legacy/iqop/mission-control-md/type--numbers--characters--rarity-512ae0986a.md",
+            REPO_ROOT / "src/resources/legacy/iqop/mission-control-md/type--numbers--characters--rarity-5e94e1f2a0.md",
+            REPO_ROOT / "src/resources/legacy/iqop/mission-control-md/type--numbers--game-text--characters--rarity-80a479084f.md",
+            REPO_ROOT / "src/resources/legacy/iqop/mission-control-md/type--numbers--game-text--characters--rarity-b6d9cb625e.md",
+            REPO_ROOT / "src/resources/legacy/iqop/mission-control-md/type--numbers--game-text--characters--rarity-c89c5505c2.md",
+        ),
+        image_dir=REPO_ROOT / "src/resources/legacy/iqop/mission-control-images",
+        price_collection="iq",
+        type_order=(
+            "Character",
+            "Special",
+            "Power",
+            "Universe - Basic",
+            "Universe - Training",
+            "Universe - Teamwork",
+        ),
+        output=REPO_ROOT / "data/personal/iq-overpower-checklist.html",
+        progress_output=REPO_ROOT / "data/personal/iq-overpower-checklist-progress.json",
+        price_cache=REPO_ROOT / "data/personal/iq-overpower-prices.json",
+        order_file=REPO_ROOT / "src/resources/legacy/iqop/manifest.csv",
+        default_sort="number",
+    ),
 }
 
 
@@ -250,27 +283,41 @@ def display_type(row: dict[str, str]) -> str:
     return card_type or "Unknown"
 
 
-def load_card_number_map(preset: Preset) -> dict[str, int]:
+def load_card_number_map(preset: Preset) -> dict[str, list[int]]:
     if preset.order_file is None or not preset.order_file.exists():
         return {}
     with preset.order_file.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
-    order: dict[str, int] = {}
+    order: dict[str, list[int]] = {}
     for index, row in enumerate(rows, start=1):
         image = row.get("ImageName", "").strip()
         name = normalize_ascii(row.get("Name", ""))
         if image and name:
-            order[f"card:{slug_text(name)}|{image}"] = index
+            order.setdefault(f"card:{slug_text(name)}|{image}", []).append(index)
         if image and image != PLACEHOLDER_IMAGE:
-            order[f"image:{image}"] = index
+            order.setdefault(f"image:{image}", []).append(index)
         if name:
-            order[f"name:{slug_text(name)}"] = index
+            order.setdefault(f"name:{slug_text(name)}", []).append(index)
     return order
 
 
 def load_cards(preset: Preset) -> list[Card]:
     cards: list[Card] = []
     card_numbers = load_card_number_map(preset)
+    claimed_card_numbers: set[int] = set()
+
+    def claim_card_number(keys: tuple[str, ...]) -> int:
+        for key in keys:
+            for candidate in card_numbers.get(key, []):
+                if candidate not in claimed_card_numbers:
+                    claimed_card_numbers.add(candidate)
+                    return candidate
+        candidate = len(cards) + 1
+        while candidate in claimed_card_numbers:
+            candidate += 1
+        claimed_card_numbers.add(candidate)
+        return candidate
+
     for source_path in preset.source_files:
         rows = parse_markdown_table(source_path)
         for index, row in enumerate(rows):
@@ -279,11 +326,12 @@ def load_cards(preset: Preset) -> list[Card]:
             name = CARD_NAME_FIXES_BY_IMAGE.get(image, source_name)
             if not name:
                 continue
-            card_number = (
-                card_numbers.get(f"card:{slug_text(source_name)}|{image}")
-                or card_numbers.get(f"image:{image}")
-                or card_numbers.get(f"name:{slug_text(source_name)}")
-                or len(cards) + 1
+            card_number = claim_card_number(
+                (
+                    f"card:{slug_text(source_name)}|{image}",
+                    f"image:{image}",
+                    f"name:{slug_text(source_name)}",
+                )
             )
             cards.append(
                 Card(

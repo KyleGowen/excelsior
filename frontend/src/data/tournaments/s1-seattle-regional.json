@@ -1,0 +1,1129 @@
+{
+  "meta": {
+    "id": "s1-seattle-regional",
+    "title": "Seattle Regional",
+    "subtitle": "Seattle Weekend",
+    "date": "2026-09-05",
+    "seasonLabel": "Season One Regional",
+    "location": {
+      "city": "Seattle",
+      "region": "WA"
+    },
+    "playerCount": 32,
+    "winnerName": "Andrew Taylor"
+  },
+  "characterAppearances": [
+    {
+      "name": "Wicked Witch",
+      "count": 10,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Flaxans",
+      "count": 9,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Glenn",
+      "count": 7,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Governor & Woodbury",
+      "count": 7,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Jane Porter",
+      "count": 7,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Joan of Arc",
+      "count": 6,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Omni-Man",
+      "count": 6,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Morgan le Fay",
+      "count": 4,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Billy the Kid",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Black Samson",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Cthulhu",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Hercules",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Mikey Rhodes",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Mummy",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Walkers: Herd",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Zeus",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Zorro",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Alpha and the Whisperers",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Angry Mob (Middle Ages)",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Atom Eve",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Carson of Venus",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Doc Seismic",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Hilltop",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "John Carter of Mars",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Maggie",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Rex Splode",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Rick Grimes",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Robot",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Saviors",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Sherlock Holmes",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Alexandria",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Allen The Alien",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Angry Mob (Modern Age)",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Angstrom Levy",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Battle Beast",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Captain Nemo",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Dr. Watson",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Dupli-Kate",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Immortal",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Invincible",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Invisible Man",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Lizard League",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Michonne",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Mina Harker",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Mr. Hyde",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Negan",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Ra",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Sun Wukong",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Victory Harben",
+      "count": 1,
+      "catalogType": "characters"
+    }
+  ],
+  "top8CharacterAppearances": [
+    {
+      "name": "The Flaxans",
+      "count": 5,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Morgan le Fay",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Wicked Witch",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Black Samson",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Glenn",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Governor & Woodbury",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Jane Porter",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Joan of Arc",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Omni-Man",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Angry Mob (Middle Ages)",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Carson of Venus",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Doc Seismic",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Immortal",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "John Carter of Mars",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Maggie",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Mummy",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Ra",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Sun Wukong",
+      "count": 1,
+      "catalogType": "characters"
+    }
+  ],
+  "mostPlaysWithoutTop8": {
+    "name": "Walkers: Herd",
+    "catalogType": "characters",
+    "totalPlays": 3,
+    "top8Plays": 0,
+    "label": "Most plays w/o Top 8",
+    "detail": "3"
+  },
+  "highestTop8Rate": {
+    "name": "Morgan le Fay",
+    "catalogType": "characters",
+    "totalPlays": 4,
+    "top8Plays": 3,
+    "label": "Highest Top 8 %",
+    "detail": "3 of 4 (75.0%)"
+  },
+  "newWinningCharacters": [
+    {
+      "name": "The Flaxans",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Black Samson",
+      "count": 1,
+      "catalogType": "characters"
+    }
+  ],
+  "newTop8Characters": [
+    {
+      "name": "Black Samson",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Doc Seismic",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Flaxans",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Glenn",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Governor & Woodbury",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Immortal",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Maggie",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Omni-Man",
+      "count": 1,
+      "catalogType": "characters"
+    }
+  ],
+  "topReserves": [
+    {
+      "name": "The Governor & Woodbury",
+      "count": 6,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Glenn",
+      "count": 5,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Billy the Kid",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Black Samson",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Cthulhu",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Jane Porter",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Morgan le Fay",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Alpha and the Whisperers",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Carson of Venus",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Dr. Watson",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Dupli-Kate",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Maggie",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Rex Splode",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Rick Grimes",
+      "count": 1,
+      "catalogType": "characters"
+    }
+  ],
+  "topHomebases": [
+    {
+      "name": "The Round Table",
+      "count": 13,
+      "catalogType": "locations",
+      "top8": 2,
+      "top3": 1,
+      "wins": 1
+    },
+    {
+      "name": "Asclepieion",
+      "count": 4,
+      "catalogType": "locations",
+      "top8": 2,
+      "top3": 0,
+      "wins": 0
+    },
+    {
+      "name": "The Commonwealth",
+      "count": 4,
+      "catalogType": "locations",
+      "top8": 2,
+      "top3": 1,
+      "wins": 0
+    },
+    {
+      "name": "The Greene Farm",
+      "count": 3,
+      "catalogType": "locations",
+      "top8": 0,
+      "top3": 0,
+      "wins": 0
+    },
+    {
+      "name": "221-B Baker St.",
+      "count": 2,
+      "catalogType": "locations",
+      "top8": 0,
+      "top3": 0,
+      "wins": 0
+    },
+    {
+      "name": "Spartan Training Ground",
+      "count": 2,
+      "catalogType": "locations",
+      "top8": 0,
+      "top3": 0,
+      "wins": 0
+    },
+    {
+      "name": "Dracula's Armory",
+      "count": 1,
+      "catalogType": "locations",
+      "top8": 1,
+      "top3": 1,
+      "wins": 0
+    },
+    {
+      "name": "Mars",
+      "count": 1,
+      "catalogType": "locations",
+      "top8": 0,
+      "top3": 0,
+      "wins": 0
+    },
+    {
+      "name": "Streets Of Chicago",
+      "count": 1,
+      "catalogType": "locations",
+      "top8": 0,
+      "top3": 0,
+      "wins": 0
+    },
+    {
+      "name": "Teen Team Headquarters",
+      "count": 1,
+      "catalogType": "locations",
+      "top8": 1,
+      "top3": 0,
+      "wins": 0
+    }
+  ],
+  "topBattlegrounds": [
+    {
+      "name": "GDA",
+      "count": 28
+    },
+    {
+      "name": "ERB",
+      "count": 2
+    },
+    {
+      "name": "Unreported",
+      "count": 2
+    }
+  ],
+  "topCataclysms": [
+    {
+      "name": "Green Ghost",
+      "count": 9,
+      "catalogType": "special-cards"
+    },
+    {
+      "name": "War Woman",
+      "count": 4,
+      "catalogType": "special-cards"
+    },
+    {
+      "name": "Red Rush",
+      "count": 2,
+      "catalogType": "special-cards"
+    },
+    {
+      "name": "Fairy Protection",
+      "count": 1,
+      "catalogType": "special-cards"
+    }
+  ],
+  "cataclysmReportedCount": 16,
+  "deckRows": [
+    {
+      "rank": 1,
+      "player": "Andrew Taylor",
+      "wins": 10,
+      "losses": 0,
+      "frontLine1": "The Flaxans",
+      "frontLine2": "Wicked Witch",
+      "frontLine3": "Joan of Arc",
+      "reserve": "Black Samson",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Green Ghost",
+      "mission": "None",
+      "cardCount": 51,
+      "event": "Unreported"
+    },
+    {
+      "rank": 2,
+      "player": "Charlie Hanford",
+      "wins": 7,
+      "losses": 3,
+      "frontLine1": "The Flaxans",
+      "frontLine2": "Doc Seismic",
+      "frontLine3": "Carson of Venus",
+      "reserve": "Glenn",
+      "homebase": "Dracula's Armory",
+      "battleground": "GDA",
+      "cataclysm": "War Woman",
+      "mission": "All Out War",
+      "cardCount": 56,
+      "event": "Half of Everything, Is That a Bite"
+    },
+    {
+      "rank": 3,
+      "player": "Diego Lopez",
+      "wins": 6,
+      "losses": 3,
+      "frontLine1": "The Flaxans",
+      "frontLine2": "Jane Porter",
+      "frontLine3": "Wicked Witch",
+      "reserve": "Morgan le Fay",
+      "homebase": "The Commonwealth",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 4,
+      "player": "Adam Abelkop",
+      "wins": 6,
+      "losses": 3,
+      "frontLine1": "Morgan le Fay",
+      "frontLine2": "The Flaxans",
+      "frontLine3": "Ra",
+      "reserve": "The Governor & Woodbury",
+      "homebase": "Asclepieion",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "The Call of Cthulhu",
+      "cardCount": 56,
+      "event": "Stars Align"
+    },
+    {
+      "rank": 5,
+      "player": "Josh Alexander",
+      "wins": 5,
+      "losses": 3,
+      "frontLine1": "Angry Mob (Middle Ages)",
+      "frontLine2": "Sun Wukong",
+      "frontLine3": "The Mummy",
+      "reserve": "Morgan le Fay",
+      "homebase": "Asclepieion",
+      "battleground": "Unreported",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 6,
+      "player": "Anthony Anzalone",
+      "wins": 5,
+      "losses": 3,
+      "frontLine1": "Immortal",
+      "frontLine2": "Omni-Man",
+      "frontLine3": "Glenn",
+      "reserve": "Maggie",
+      "homebase": "The Commonwealth",
+      "battleground": "GDA",
+      "cataclysm": "Green Ghost",
+      "mission": "Warlord of Mars",
+      "cardCount": 56,
+      "event": "Giant Man of Mars"
+    },
+    {
+      "rank": 7,
+      "player": "Doug Taylor",
+      "wins": 5,
+      "losses": 3,
+      "frontLine1": "Omni-Man",
+      "frontLine2": "John Carter of Mars",
+      "frontLine3": "The Governor & Woodbury",
+      "reserve": "Black Samson",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 8,
+      "player": "Dalton Vodegel",
+      "wins": 4,
+      "losses": 4,
+      "frontLine1": "The Flaxans",
+      "frontLine2": "Wicked Witch",
+      "frontLine3": "Joan of Arc",
+      "reserve": "Jane Porter",
+      "homebase": "Teen Team Headquarters",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 9,
+      "player": "Brandon West",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Robot",
+      "frontLine2": "The Flaxans",
+      "frontLine3": "The Saviors",
+      "reserve": "The Governor & Woodbury",
+      "homebase": "The Commonwealth",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 10,
+      "player": "Derek Bertrand",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Omni-Man",
+      "frontLine2": "The Mummy",
+      "frontLine3": "Walkers: Herd",
+      "reserve": "Glenn",
+      "homebase": "Asclepieion",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 11,
+      "player": "Marcel Lejot",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Hercules",
+      "frontLine2": "Invincible",
+      "frontLine3": "John Carter of Mars",
+      "reserve": "Glenn",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 12,
+      "player": "Charlie Disciple",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Mikey Rhodes",
+      "frontLine2": "Wicked Witch",
+      "frontLine3": "Zorro",
+      "reserve": "The Governor & Woodbury",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 13,
+      "player": "Ray Tan",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Mikey Rhodes",
+      "frontLine2": "The Hilltop",
+      "frontLine3": "Hercules",
+      "reserve": "Jane Porter",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 14,
+      "player": "Thomas Kiene",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Wicked Witch",
+      "frontLine2": "Joan of Arc",
+      "frontLine3": "The Hilltop",
+      "reserve": "Cthulhu",
+      "homebase": "The Round Table",
+      "battleground": "ERB",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 15,
+      "player": "Sean Ballantyne",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Zorro",
+      "frontLine2": "Maggie",
+      "frontLine3": "Mikey Rhodes",
+      "reserve": "Billy the Kid",
+      "homebase": "Spartan Training Ground",
+      "battleground": "GDA",
+      "cataclysm": "Green Ghost",
+      "mission": "Warlord of Mars",
+      "cardCount": null,
+      "event": "Giant Man of Mars"
+    },
+    {
+      "rank": 16,
+      "player": "Ty Bertrand",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Victory Harben",
+      "frontLine2": "Atom Eve",
+      "frontLine3": "The Mummy",
+      "reserve": "Glenn",
+      "homebase": "The Commonwealth",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 17,
+      "player": "Charlie Hankins",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "Zorro",
+      "frontLine2": "Battle Beast",
+      "frontLine3": "Allen The Alien",
+      "reserve": "The Governor & Woodbury",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Green Ghost",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 18,
+      "player": "Theo Hatziliadis",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "Zeus",
+      "frontLine2": "Jane Porter",
+      "frontLine3": "Wicked Witch",
+      "reserve": "The Governor & Woodbury",
+      "homebase": "The Greene Farm",
+      "battleground": "GDA",
+      "cataclysm": "Red Rush",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 19,
+      "player": "BilboSwaggins",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "Doc Seismic",
+      "frontLine2": "Wicked Witch",
+      "frontLine3": "The Flaxans",
+      "reserve": "Black Samson",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Green Ghost",
+      "mission": "None",
+      "cardCount": 54,
+      "event": "Unreported"
+    },
+    {
+      "rank": 20,
+      "player": "Nic Cannelora",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "Joan of Arc",
+      "frontLine2": "Michonne",
+      "frontLine3": "Alexandria",
+      "reserve": "Rick Grimes",
+      "homebase": "The Greene Farm",
+      "battleground": "ERB",
+      "cataclysm": "Fairy Protection",
+      "mission": "Warlord of Mars",
+      "cardCount": 59,
+      "event": "Giant Man of Mars"
+    },
+    {
+      "rank": 21,
+      "player": "Anthony Hatziliadis",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "Zeus",
+      "frontLine2": "Jane Porter",
+      "frontLine3": "Angstrom Levy",
+      "reserve": "The Governor & Woodbury",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 22,
+      "player": "Noah Hudson",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "Omni-Man",
+      "frontLine2": "Mr. Hyde",
+      "frontLine3": "Captain Nemo",
+      "reserve": "Billy the Kid",
+      "homebase": "Mars",
+      "battleground": "GDA",
+      "cataclysm": "Green Ghost",
+      "mission": "None",
+      "cardCount": 51,
+      "event": "Unreported"
+    },
+    {
+      "rank": 23,
+      "player": "Chris Rice",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "Zeus",
+      "frontLine2": "Glenn",
+      "frontLine3": "Angry Mob (Middle Ages)",
+      "reserve": "Cthulhu",
+      "homebase": "Asclepieion",
+      "battleground": "GDA",
+      "cataclysm": "War Woman",
+      "mission": "None",
+      "cardCount": 59,
+      "event": "Unreported"
+    },
+    {
+      "rank": 24,
+      "player": "Andy Hauge",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "Alpha and the Whisperers",
+      "frontLine2": "Jane Porter",
+      "frontLine3": "Walkers: Herd",
+      "reserve": "Cthulhu",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "War Woman",
+      "mission": "All Out War",
+      "cardCount": 56,
+      "event": "Half of Everything"
+    },
+    {
+      "rank": 25,
+      "player": "Pierre Cieniewicz",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "Lizard League",
+      "frontLine2": "Rick Grimes",
+      "frontLine3": "Hercules",
+      "reserve": "Billy the Kid",
+      "homebase": "Streets Of Chicago",
+      "battleground": "GDA",
+      "cataclysm": "Green Ghost",
+      "mission": "Who Killed the Guardians of the Globe?",
+      "cardCount": 59,
+      "event": "Traitor Revealed"
+    },
+    {
+      "rank": 26,
+      "player": "Tim Wan",
+      "wins": 2,
+      "losses": 3,
+      "frontLine1": "Robot",
+      "frontLine2": "Morgan le Fay",
+      "frontLine3": "Joan of Arc",
+      "reserve": "Jane Porter",
+      "homebase": "Spartan Training Ground",
+      "battleground": "GDA",
+      "cataclysm": "Green Ghost",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 27,
+      "player": "Stefan Bridges",
+      "wins": 2,
+      "losses": 5,
+      "frontLine1": "Omni-Man",
+      "frontLine2": "Angry Mob (Modern Age)",
+      "frontLine3": "Rex Splode",
+      "reserve": "Dr. Watson",
+      "homebase": "221-B Baker St.",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 28,
+      "player": "Ben Newcomer",
+      "wins": 1,
+      "losses": 5,
+      "frontLine1": "The Flaxans",
+      "frontLine2": "Wicked Witch",
+      "frontLine3": "Sherlock Holmes",
+      "reserve": "Rex Splode",
+      "homebase": "The Round Table",
+      "battleground": "Unreported",
+      "cataclysm": "Green Ghost",
+      "mission": "None",
+      "cardCount": 61,
+      "event": "Unreported"
+    },
+    {
+      "rank": 29,
+      "player": "Chris Daniels",
+      "wins": 1,
+      "losses": 5,
+      "frontLine1": "Omni-Man",
+      "frontLine2": "Wicked Witch",
+      "frontLine3": "Mina Harker",
+      "reserve": "Glenn",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "War Woman",
+      "mission": "None",
+      "cardCount": 61,
+      "event": "Unreported"
+    },
+    {
+      "rank": 30,
+      "player": "Larry Van Etten",
+      "wins": 1,
+      "losses": 6,
+      "frontLine1": "The Saviors",
+      "frontLine2": "Negan",
+      "frontLine3": "Walkers: Herd",
+      "reserve": "Alpha and the Whisperers",
+      "homebase": "The Greene Farm",
+      "battleground": "GDA",
+      "cataclysm": "Red Rush",
+      "mission": "None",
+      "cardCount": 57,
+      "event": "Unreported"
+    },
+    {
+      "rank": 31,
+      "player": "La Tisha Simmons",
+      "wins": 1,
+      "losses": 6,
+      "frontLine1": "Atom Eve",
+      "frontLine2": "Joan of Arc",
+      "frontLine3": "Wicked Witch",
+      "reserve": "Dupli-Kate",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 32,
+      "player": "Chris Hogue",
+      "wins": 0,
+      "losses": 5,
+      "frontLine1": "The Flaxans",
+      "frontLine2": "Sherlock Holmes",
+      "frontLine3": "Invisible Man",
+      "reserve": "Carson of Venus",
+      "homebase": "221-B Baker St.",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Unreported",
+      "cardCount": null,
+      "event": "Unreported"
+    }
+  ]
+}

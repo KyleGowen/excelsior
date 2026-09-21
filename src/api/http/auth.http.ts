@@ -10,6 +10,7 @@ import { v1LoginRateLimit } from './middleware/v1LoginRateLimit';
 import { createV1BearerAuthMiddleware } from './middleware/v1BearerAuth';
 import type { LoginSuccessDataDto } from '../dto/v1/LoginSuccessDataDto';
 import type { AuthMeDataDto } from '../dto/v1/AuthMeDataDto';
+import type { SupporterEntitlementService } from '../services/supporterEntitlementService';
 
 // Phase 2 §6.1.7 — zod schema for POST /api/v1/auth/refresh bodies.
 // Parsed via parseV1Body so validation errors emit the standard
@@ -39,6 +40,7 @@ export interface AuthV1HttpDeps {
     updateLastLoginAt: (id: string) => Promise<void>;
   };
   jwtTokenService: V1JwtTokenService;
+  supporterEntitlementService: Pick<SupporterEntitlementService, 'isSupporter'>;
   /**
    * Phase 2 §6.1.1-§6.1.4: optional. Absent or `DISABLE_AUTH_REFRESH=1` keeps
    * legacy shape (no refresh token, `/auth/refresh` → 501, `/auth/logout` no-op).
@@ -85,7 +87,12 @@ export function registerAuthV1HttpRoutes(router: Router, deps: AuthV1HttpDeps): 
       accessToken: token,
       tokenType: 'Bearer',
       expiresInSeconds,
-      user: { id: user.id, username: user.name, role: user.role }
+      user: {
+        id: user.id,
+        username: user.name,
+        role: user.role,
+        isSupporter: await deps.supporterEntitlementService.isSupporter(user.id)
+      }
     };
 
     if (deps.refreshTokenService && !isRefreshDisabled()) {
@@ -137,7 +144,12 @@ export function registerAuthV1HttpRoutes(router: Router, deps: AuthV1HttpDeps): 
           0,
           Math.floor((rotated.expiresAt.getTime() - Date.now()) / 1000)
         ),
-        user: { id: full.id, username: full.name, role: full.role }
+        user: {
+          id: full.id,
+          username: full.name,
+          role: full.role,
+          isSupporter: await deps.supporterEntitlementService.isSupporter(full.id)
+        }
       };
       sendV1Success(res, data);
     } catch (error) {
@@ -171,7 +183,8 @@ export function registerAuthV1HttpRoutes(router: Router, deps: AuthV1HttpDeps): 
         role: full.role,
         lastLoginAt: full.lastLoginAt ? full.lastLoginAt.toISOString() : null,
         displayName: full.displayName ?? null,
-        authProvider: full.authProvider ?? 'password'
+        authProvider: full.authProvider ?? 'password',
+        isSupporter: await deps.supporterEntitlementService.isSupporter(full.id)
       };
       sendV1Success(res, data);
     } catch (error) {

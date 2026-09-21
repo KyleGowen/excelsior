@@ -1,0 +1,1122 @@
+{
+  "fetchedAt": "2026-09-21",
+  "prices": {
+    "Character|Apocalypse": {
+      "price": "$30.00",
+      "url": "https://theorangeking.com/products/apocalypse-iq-hero-vr"
+    },
+    "Character|Banshee": {
+      "price": "$7.50",
+      "url": "https://theorangeking.com/products/banshee-iq-character-r"
+    },
+    "Character|Beast": {
+      "price": "$10.50",
+      "url": "https://theorangeking.com/products/beast-iq-character-r"
+    },
+    "Character|Bishop": {
+      "price": "$20.00",
+      "url": "https://theorangeking.com/products/bishop-iq-character-r"
+    },
+    "Character|Black Cat": {
+      "price": "$10.00",
+      "url": "https://theorangeking.com/products/black-cat-iq-character-r"
+    },
+    "Character|Black Widow": {
+      "price": "$7.50",
+      "url": "https://theorangeking.com/products/black-widow-iq-character-r"
+    },
+    "Character|Blob": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/blob-iq-character-r"
+    },
+    "Character|Brood": {
+      "price": "$1.00",
+      "url": "https://theorangeking.com/products/brood-iq-character-r"
+    },
+    "Character|Cable": {
+      "price": "$52.50",
+      "url": "https://theorangeking.com/products/cable-iq-hero-vr"
+    },
+    "Character|Captain America": {
+      "price": "$45.00",
+      "url": "https://theorangeking.com/products/captain-america-iq-hero-r"
+    },
+    "Character|Carnage": {
+      "price": "$8.50",
+      "url": "https://theorangeking.com/products/carnage-iq-hero-r"
+    },
+    "Character|Colossus": {
+      "price": "$6.50",
+      "url": "https://theorangeking.com/products/colossus-iq-hero-r"
+    },
+    "Character|Cyclops": {
+      "price": "$15.00",
+      "url": "https://theorangeking.com/products/cyclops-iq-hero-r"
+    },
+    "Character|Daredevil": {
+      "price": "$3.00",
+      "url": "https://theorangeking.com/products/daredevil-iq-hero-r"
+    },
+    "Character|Deadpool": {
+      "price": "$4.00",
+      "url": "https://theorangeking.com/products/deadpool-iq-hero-r"
+    },
+    "Character|Doc Samson": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/doc-samson-iq-hero-r"
+    },
+    "Character|Doctor Doom": {
+      "price": "$47.50",
+      "url": "https://theorangeking.com/products/doctor-doom-iq-hero-vr"
+    },
+    "Character|Doctor Octopus": {
+      "price": "$1.00",
+      "url": "https://theorangeking.com/products/doctor-octopus-iq-hero-r"
+    },
+    "Character|Domino": {
+      "price": "$2.50",
+      "url": "https://theorangeking.com/products/domino-iq-hero-r"
+    },
+    "Character|Dr. Strange": {
+      "price": "$50.00",
+      "url": "https://theorangeking.com/products/dr-strange-iq-hero-r"
+    },
+    "Character|Elektra": {
+      "price": "$5.50",
+      "url": "https://theorangeking.com/products/elektra-iq-hero-r"
+    },
+    "Character|Forge": {
+      "price": "$7.50",
+      "url": "https://theorangeking.com/products/forge-iq-hero-r"
+    },
+    "Character|Gambit": {
+      "price": "$6.50",
+      "url": "https://theorangeking.com/products/gambit-iq-hero-r"
+    },
+    "Character|Ghost Rider": {
+      "price": "$45.00",
+      "url": "https://theorangeking.com/products/ghost-rider-iq-hero-r"
+    },
+    "Character|Green Goblin": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/green-goblin-iq-hero-u"
+    },
+    "Character|Hawkeye": {
+      "price": "$5.00",
+      "url": "https://theorangeking.com/products/hawkeye-iq-hero-r"
+    },
+    "Character|Henry Pym": {
+      "price": "$10.50",
+      "url": "https://theorangeking.com/products/henry-pym-iq-hero-r"
+    },
+    "Character|Hobgoblin": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/hobgoblin-iq-hero-u"
+    },
+    "Character|Hulk": {
+      "price": "$35.00",
+      "url": "https://theorangeking.com/products/hulk-iq-hero-r"
+    },
+    "Character|Human Torch": {
+      "price": "$1.00",
+      "url": "https://theorangeking.com/products/human-torch-iq-hero-r"
+    },
+    "Character|Iceman": {
+      "price": "$8.50",
+      "url": "https://theorangeking.com/products/iceman-iq-hero-r"
+    },
+    "Character|Invisible Woman": {
+      "price": "$10.50",
+      "url": "https://theorangeking.com/products/invisible-woman-iq-hero-r"
+    },
+    "Character|Iron Man": {
+      "price": "$52.50",
+      "url": "https://theorangeking.com/products/iron-man-iq-hero-vr"
+    },
+    "Character|Jean Grey": {
+      "price": "$18.50",
+      "url": "https://theorangeking.com/products/jean-grey-iq-hero-r"
+    },
+    "Character|Jubilee": {
+      "price": "$7.50",
+      "url": "https://theorangeking.com/products/jubilee-iq-hero-r"
+    },
+    "Character|Juggernaut": {
+      "price": "$35.00",
+      "url": "https://theorangeking.com/products/juggernaut-iq-hero-r"
+    },
+    "Character|Kingpin": {
+      "price": "$17.50",
+      "url": "https://theorangeking.com/products/kingpin-iq-hero-r"
+    },
+    "Character|Longshot": {
+      "price": "$9.50",
+      "url": "https://theorangeking.com/products/longshot-iq-hero-r"
+    },
+    "Character|Magneto": {
+      "price": "$47.50",
+      "url": "https://theorangeking.com/products/magneto-iq-hero-r"
+    },
+    "Character|Mandarin": {
+      "price": "$5.00",
+      "url": "https://theorangeking.com/products/mandarin-iq-hero-r"
+    },
+    "Character|Mojo": {
+      "price": "$1.25",
+      "url": "https://theorangeking.com/products/mojo-iq-hero-u"
+    },
+    "Character|Morbius": {
+      "price": "$1.50",
+      "url": "https://theorangeking.com/products/morbius-iq-hero-r"
+    },
+    "Character|Morph": {
+      "price": "$1.25",
+      "url": "https://theorangeking.com/products/morph-iq-hero-r"
+    },
+    "Character|Mr. Fantastic": {
+      "price": "$70.00",
+      "url": "https://theorangeking.com/products/mr-fantastic-iq-hero-vr"
+    },
+    "Character|Mr. Sinister": {
+      "price": "$62.50",
+      "url": "https://theorangeking.com/products/mr-sinister-iq-hero-vr"
+    },
+    "Character|Mysterio": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/mysterio-iq-hero-u"
+    },
+    "Character|Mystqiue": {
+      "price": "No TOK price",
+      "url": ""
+    },
+    "Character|Namor": {
+      "price": "$1.00",
+      "url": "https://theorangeking.com/products/namor-iq-hero-r"
+    },
+    "Character|Nick Fury": {
+      "price": "$7.50",
+      "url": "https://theorangeking.com/products/nick-fury-iq-hero-r"
+    },
+    "Character|Nightcrawler": {
+      "price": "$12.50",
+      "url": "https://theorangeking.com/products/nightcrawler-iq-hero-r"
+    },
+    "Character|Omega Red": {
+      "price": "$6.50",
+      "url": "https://theorangeking.com/products/omega-red-iq-hero-r"
+    },
+    "Character|Professor X": {
+      "price": "$32.50",
+      "url": "https://theorangeking.com/products/professor-x-iq-hero-r"
+    },
+    "Character|Psylocke": {
+      "price": "$5.50",
+      "url": "https://theorangeking.com/products/psylocke-iq-hero-r"
+    },
+    "Character|Punisher": {
+      "price": "$4.00",
+      "url": "https://theorangeking.com/products/punisher-iq-hero-r"
+    },
+    "Character|Quicksilver": {
+      "price": "$13.50",
+      "url": "https://theorangeking.com/products/quicksilver-iq-hero-r"
+    },
+    "Character|Red Skull": {
+      "price": "$11.50",
+      "url": "https://theorangeking.com/products/red-skull-iq-hero-r"
+    },
+    "Character|Rhino": {
+      "price": "$1.25",
+      "url": "https://theorangeking.com/products/rhino-iq-hero-r"
+    },
+    "Character|Rogue": {
+      "price": "$25.00",
+      "url": "https://theorangeking.com/products/rogue-iq-hero-r"
+    },
+    "Character|Sabretooth": {
+      "price": "$25.00",
+      "url": "https://theorangeking.com/products/sabretooth-io-hero-r"
+    },
+    "Character|Scarlet Spider": {
+      "price": "$20.00",
+      "url": "https://theorangeking.com/products/scarlet-spider-iq-hero-r"
+    },
+    "Character|Scarlet Witch": {
+      "price": "$52.50",
+      "url": "https://theorangeking.com/products/scarlet-witch-iq-hero-r"
+    },
+    "Character|Sentinels": {
+      "price": "$32.50",
+      "url": "https://theorangeking.com/products/sentinels-iq-hero-r"
+    },
+    "Character|Shadowcat": {
+      "price": "$1.00",
+      "url": "https://theorangeking.com/products/shadowcat-iq-hero-u"
+    },
+    "Character|She Hulk (sic)": {
+      "price": "$13.50",
+      "url": "https://theorangeking.com/products/she-hulk-iq-hero-r"
+    },
+    "Character|Silver Sable": {
+      "price": "$1.00",
+      "url": "https://theorangeking.com/products/silver-sable-iq-hero-u"
+    },
+    "Character|Silver Surfer": {
+      "price": "$22.50",
+      "url": "https://theorangeking.com/products/silver-surfer-iq-hero-r"
+    },
+    "Character|Spider-Man": {
+      "price": "$70.00",
+      "url": "https://theorangeking.com/products/spider-man-iq-hero-vr"
+    },
+    "Character|Spider-Woman": {
+      "price": "$1.50",
+      "url": "https://theorangeking.com/products/spider-woman-iq-hero-u"
+    },
+    "Character|Storm": {
+      "price": "$9.50",
+      "url": "https://theorangeking.com/products/storm-iq-hero-r"
+    },
+    "Character|Strong Guy": {
+      "price": "$7.50",
+      "url": "https://theorangeking.com/products/strong-guy-iq-hero-r"
+    },
+    "Character|Super Skrull": {
+      "price": "$6.50",
+      "url": "https://theorangeking.com/products/super-skrull-iq-hero-r"
+    },
+    "Character|Thing": {
+      "price": "$27.50",
+      "url": "https://theorangeking.com/products/thing-iq-hero-r"
+    },
+    "Character|Thor": {
+      "price": "$65.00",
+      "url": "https://theorangeking.com/products/thor-iq-hero-vr"
+    },
+    "Character|Venom": {
+      "price": "$27.50",
+      "url": "https://theorangeking.com/products/venom-iq-hero-r"
+    },
+    "Character|Vision": {
+      "price": "$8.50",
+      "url": "https://theorangeking.com/products/vision-iq-hero-r"
+    },
+    "Character|War Machine": {
+      "price": "$6.50",
+      "url": "https://theorangeking.com/products/war-machine-iq-hero-r"
+    },
+    "Character|White Queen": {
+      "price": "$20.00",
+      "url": "https://theorangeking.com/products/white-queen-iq-hero-r"
+    },
+    "Character|Wolverine": {
+      "price": "$67.50",
+      "url": "https://theorangeking.com/products/wolverine-iq-hero-r"
+    },
+    "Power|1 Intellect": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/power-1i-iq-c-lizard"
+    },
+    "Power|1 MultiPower": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/power-1m-iq-c-chamber"
+    },
+    "Power|2 Intellect": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/power-2i-iq-c-lady-deathstrike"
+    },
+    "Power|2 MultiPower": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/power-2m-iq-c-havok"
+    },
+    "Power|3 Intellect": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/power-3i-iq-c-kraven"
+    },
+    "Power|3 MultiPower": {
+      "price": "$1.00",
+      "url": "https://theorangeking.com/products/power-3m-iq-c-x-man"
+    },
+    "Power|4 Intellect": {
+      "price": "$0.35",
+      "url": "https://theorangeking.com/products/power-4i-iq-c-modok"
+    },
+    "Power|4 MultiPower": {
+      "price": "$6.50",
+      "url": "https://theorangeking.com/products/power-4m-iq-r-black-bolt"
+    },
+    "Power|5 Intellect": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/power-5i-iq-c-sebastian-shaw"
+    },
+    "Power|6 Intellect": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/power-6i-iq-c-ultron"
+    },
+    "Power|7 Intellect": {
+      "price": "$6.50",
+      "url": "https://theorangeking.com/products/power-7i-iq-c-leader"
+    },
+    "Power|8 Intellect": {
+      "price": "$10.00",
+      "url": "https://theorangeking.com/products/power-8i-iq-r-doom-2099"
+    },
+    "Special|Any Hero - Alien Symbiote": {
+      "price": "$2.50",
+      "url": "https://theorangeking.com/products/alien-symbiote-iq-promo"
+    },
+    "Special|Any Hero - Power Leech": {
+      "price": "$47.50",
+      "url": "https://theorangeking.com/products/ah-power-leech-iq-opd-vr"
+    },
+    "Special|Apocalypse - Ageless Evil": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/apocalypse-ageless-evil-iq-u"
+    },
+    "Special|Apocalypse - Techno-Virus": {
+      "price": "$12.50",
+      "url": "https://theorangeking.com/products/apocalypse-techno-virus-iq-opd-vr"
+    },
+    "Special|Banshee - Cassidy Keep": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/banshee-cassidy-keep-iq-u"
+    },
+    "Special|Beast - Ambidexterity": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/beast-ambidexterity-iq-u"
+    },
+    "Special|Beast - Brilliant Deduction": {
+      "price": "$1.50",
+      "url": "https://theorangeking.com/products/beast-brilliant-deduction-iq-u"
+    },
+    "Special|Bishop - Paramilitary Skill": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/bishop-paramilitary-skill-iq-c"
+    },
+    "Special|Bishop - Temporal Anomaly": {
+      "price": "No TOK price",
+      "url": ""
+    },
+    "Special|Black Cat - Feline Fortune": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/black-cat-feline-fortune-iq-c"
+    },
+    "Special|Black Cat - Feline Fury": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/black-cat-feline-fury-iq-u"
+    },
+    "Special|Black Widow - Champion": {
+      "price": "$1.00",
+      "url": "https://theorangeking.com/products/black-widow-champion-iq-u"
+    },
+    "Special|Black Widow - KGB Intelligence": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/black-widow-kgb-intelligence-iq-c"
+    },
+    "Special|Blob - Flabby Fighter": {
+      "price": "$2.00",
+      "url": "https://theorangeking.com/products/blob-flabby-fighter-iq-opd-vr"
+    },
+    "Special|Brood - Plan of Conquest": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/brood-plan-of-conquest-iq-c"
+    },
+    "Special|Brood - Power Hungry Monsters": {
+      "price": "$6.50",
+      "url": "https://theorangeking.com/products/brood-power-hungry-monsters-iq-opd-vr"
+    },
+    "Special|Cable - Askani'Son": {
+      "price": "$15.50",
+      "url": "https://theorangeking.com/products/cable-askanison-iq-opd-vr"
+    },
+    "Special|Captain America - Sentinel of Liberty": {
+      "price": "$42.50",
+      "url": "https://theorangeking.com/products/captain-america-sentinel-of-liberty-iq-opd-vr"
+    },
+    "Special|Carnage - Anarchy": {
+      "price": "$8.50",
+      "url": "https://theorangeking.com/products/carnage-anarchy-iq-opd-vr"
+    },
+    "Special|Carnage - Destructive Mind": {
+      "price": "$1.00",
+      "url": "https://theorangeking.com/products/carnage-destructive-mind-iq-u"
+    },
+    "Special|Colossus - M": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/colossus-mighty-metal-iq-c"
+    },
+    "Special|Colossus - Organic Steel": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/colossus-organic-steel-iq-u"
+    },
+    "Special|Cyclops - Battle Savvy": {
+      "price": "$2.50",
+      "url": "https://theorangeking.com/products/cyclops-battle-savvy-iq-u"
+    },
+    "Special|Cyclops - X-Men Strategy": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/cyclops-x-men-strategy-iq-u"
+    },
+    "Special|Daredevil - Blind Justice": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/daredevil-blind-justice-iq-u"
+    },
+    "Special|Daredevil - Radar Combat": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/daredevil-radar-combat-iq-c"
+    },
+    "Special|Deadpool - Distracting Chatter": {
+      "price": "$2.50",
+      "url": "https://theorangeking.com/products/deadpool-distracting-chatter-iq-u"
+    },
+    "Special|Deadpool - Don't Lose Your Head!": {
+      "price": "$60.00",
+      "url": "https://theorangeking.com/products/deadpool-dont-lose-your-head-iq-opd-vr"
+    },
+    "Special|Doc Samson - Cautious Advisor": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/doc-samson-cautious-advisor-iq-u"
+    },
+    "Special|Doc Samson - Head Shrinker": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/doc-samson-head-shrinker-iq-u"
+    },
+    "Special|Doctor Doom - Diplomatic Immunity": {
+      "price": "$8.00",
+      "url": "https://theorangeking.com/products/doctor-doom-diplomatic-immunity-iq-opd-vr"
+    },
+    "Special|Doctor Doom - Doombots": {
+      "price": "$8.00",
+      "url": "https://theorangeking.com/products/doctor-doom-doombots-iq-opd-vr"
+    },
+    "Special|Domino - Battle Medic": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/domino-battle-medic-iq-u"
+    },
+    "Special|Domino - Dumb Luck": {
+      "price": "$0.30",
+      "url": "https://theorangeking.com/products/domino-dumb-luck-iq-u"
+    },
+    "Special|Dr. Octopus - Big Plans": {
+      "price": "No TOK price",
+      "url": ""
+    },
+    "Special|Dr. Strange - Catastrophic Magic": {
+      "price": "No TOK price",
+      "url": ""
+    },
+    "Special|Dr. Strange - Defender": {
+      "price": "$8.00",
+      "url": "https://theorangeking.com/products/dr-strange-defender-iq-opd-vr"
+    },
+    "Special|Elektra - Infiltration": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/elektra-infiltration-iq-u"
+    },
+    "Special|Elektra - Ninja Trap": {
+      "price": "$3.00",
+      "url": "https://theorangeking.com/products/elektra-ninja-trap-iq-opd-vr"
+    },
+    "Special|Forge - Cherokee Magic": {
+      "price": "$6.00",
+      "url": "https://theorangeking.com/products/forge-cherokee-magic-iq-opd-vr"
+    },
+    "Special|Forge - Cybernetic Limbs": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/forge-cybernetic-limbs-iq-c"
+    },
+    "Special|Forge - Footsoldier Training": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/forge-footsoldier-training-iq-c"
+    },
+    "Special|Forge - The Maker": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/forge-the-maker-iq-c"
+    },
+    "Special|Forge - The Neutralizer": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/forge-the-neutralizer-iq-c"
+    },
+    "Special|Gambit - Kinetic Detonation": {
+      "price": "$3.50",
+      "url": "https://theorangeking.com/products/gambit-kinetic-detonation-iq-u"
+    },
+    "Special|Gambit - Sinister Connection": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/gambit-sinister-connection-iq-u"
+    },
+    "Special|Ghost Rider - Skeletal Summoning": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/ghost-rider-skeletal-summoning-iq-u"
+    },
+    "Special|Ghost Rider - Spiritual Duality": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/ghost-rider-spiritual-duality-iq-c"
+    },
+    "Special|Green Goblin - Explosive Pumpkins": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/green-goblin-explosive-pumpkins-iq-u"
+    },
+    "Special|Green Goblin - Flying Platform": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/green-goblin-flying-platform-iq-c"
+    },
+    "Special|Green Goblin - Gauntlet Blasters": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/green-goblin-gauntlet-blasters-iq-c"
+    },
+    "Special|Green Goblin - Goblin Legacy": {
+      "price": "$14.50",
+      "url": "https://theorangeking.com/products/green-goblin-goblin-legacy-iq-opd-vr"
+    },
+    "Special|Green Goblin - Murderous Ploy": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/green-goblin-murderous-ploy-iq-u"
+    },
+    "Special|Hawkeye - Field Dressing": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/hawkeye-field-dressing-iq-u"
+    },
+    "Special|Hawkeye - Quiver of Arrows": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/hawkeye-quiver-of-arrows-iq-u"
+    },
+    "Special|Henry Pym - Ant-Man": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/henry-pym-ant-man-iq-c"
+    },
+    "Special|Henry Pym - Giant-Man": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/henry-pym-giant-man-iq-opd-c"
+    },
+    "Special|Henry Pym - Goliath": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/henry-pym-goliath-iq-c"
+    },
+    "Special|Henry Pym - Medical Knowledge": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/henry-pym-medical-knowledge-iq-u"
+    },
+    "Special|Henry Pym - Yellowjacket": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/henry-pym-yellowjacket-iq-c"
+    },
+    "Special|Hobgoblin - Cybernetic Upgrade": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/hobgoblin-cybernetic-upgrade-iq-u"
+    },
+    "Special|Hobgoblin - Goblin Cache": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/hobgoblin-goblin-cache-iq-u"
+    },
+    "Special|Holocaust - Horrifying Image": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/holocaust-horrifying-image-iq-c"
+    },
+    "Special|Hulk - Gamma Transfusion": {
+      "price": "$5.00",
+      "url": "https://theorangeking.com/products/hulk-gamma-transfusion-iq-opd-vr"
+    },
+    "Special|Human Torch - Fire Cage": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/human-torch-fire-cage-iq-u"
+    },
+    "Special|Human Torch - Hot Head": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/human-torch-hot-head-iq-u"
+    },
+    "Special|Iceman - Ice Tactics": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/iceman-ice-tactics-iq-c"
+    },
+    "Special|Invisible Woman - Protective Wall": {
+      "price": "$13.50",
+      "url": "https://theorangeking.com/products/invisible-woman-protective-wall-iq-u"
+    },
+    "Special|Invisible Woman - Team Coordination": {
+      "price": "$1.00",
+      "url": "https://theorangeking.com/products/invisible-woman-team-coordination-iq-u"
+    },
+    "Special|Iron Man - Stealth Armor": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/iron-man-stealth-armor-iq-c"
+    },
+    "Special|Iron Man - Weapons Inventor": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/iron-man-weapons-inventor-iq-u"
+    },
+    "Special|Jean Grey - Phoenix Effect": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/jean-grey-phoenix-effect-iq-c"
+    },
+    "Special|Jean Grey - Psychic Soothing": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/jean-grey-psychic-soothing-iq-u"
+    },
+    "Special|Jubilee - Troublemaker": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/jubilee-troublemaker-iq-u"
+    },
+    "Special|Jubilee - Wisecrack": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/jubilee-wisecrack-iq-u"
+    },
+    "Special|Juggernaut - Magic Helm": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/juggernaut-magic-helm-iq-c"
+    },
+    "Special|Kingpin - Business Savvy": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/kingpin-business-savvy-iq-opd-u"
+    },
+    "Special|Kingpin - Crime Magnate": {
+      "price": "$3.00",
+      "url": "https://theorangeking.com/products/kingpin-crime-magnate-iq-opd-vr"
+    },
+    "Special|Kingpin - Sumo Knowledge": {
+      "price": "$20.00",
+      "url": "https://theorangeking.com/products/kingpin-sumo-knowledge-as-hr-iq-opd-vr"
+    },
+    "Special|Kingpin - Underworld Henchmen": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/kingpin-underworld-henchmen-iq-c"
+    },
+    "Special|Kingpin - Walking Stick": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/kingpin-walking-stick-iq-c"
+    },
+    "Special|Longshot - Fortunate Accident": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/longshot-fortunate-accident-iq-u"
+    },
+    "Special|Longshot - Purity of Thought": {
+      "price": "$8.50",
+      "url": "https://theorangeking.com/products/longshot-purity-of-thought-iq-opd-vr"
+    },
+    "Special|Magneto - Magnetic Devastation": {
+      "price": "$1.00",
+      "url": "https://theorangeking.com/products/magneto-magnetic-devastation-iq-c"
+    },
+    "Special|Magneto - Magnetic Devastation (variant)": {
+      "price": "No TOK price",
+      "url": ""
+    },
+    "Special|Magneto - Master of Magnetism": {
+      "price": "$14.50",
+      "url": "https://theorangeking.com/products/magneto-master-of-magnetism-iq-opd-vr"
+    },
+    "Special|Mandarin - Energy Void": {
+      "price": "$3.00",
+      "url": "https://theorangeking.com/products/mandarin-energy-void-iq-opd-vr"
+    },
+    "Special|Mandarin - Master Tactician": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/mandarin-master-tactician-iq-u"
+    },
+    "Special|Mojo - Caught on Film": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/mojo-caught-on-film-iq-u"
+    },
+    "Special|Mojo - Director's Cut": {
+      "price": "$4.50",
+      "url": "https://theorangeking.com/products/mojo-directors-cut-iq-u"
+    },
+    "Special|Morbius - Induce Panic": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/morbius-induce-panic-iq-u"
+    },
+    "Special|Morbius - Shadowy Escape": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/morbius-shadowy-escape-iq-c"
+    },
+    "Special|Morph - Ridiculous Behavior": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/morph-ridiculous-behavior-iq-c"
+    },
+    "Special|Morph - Substitute Death": {
+      "price": "$12.50",
+      "url": "https://theorangeking.com/products/morph-substitute-death-iq-opd-vr"
+    },
+    "Special|Mr. Fantastic - Fantastic Mind": {
+      "price": "$1.50",
+      "url": "https://theorangeking.com/products/mr-fantastic-fantastic-mind-iq-u"
+    },
+    "Special|Mr. Fantastic - Inventive Genius": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/mr-fantastic-inventive-genius-iq-opd-u"
+    },
+    "Special|Mr. Sinister - Cloning Process": {
+      "price": "$4.50",
+      "url": "https://theorangeking.com/products/mr-sinister-cloning-process-iq-opd-vr"
+    },
+    "Special|Mr. Sinister - Marauder": {
+      "price": "$25.00",
+      "url": "https://theorangeking.com/products/mr-sinister-marauder-iq-opd-vr"
+    },
+    "Special|Mysterio - Holographic Decoy": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/mysterio-holographic-decoy-iq-c"
+    },
+    "Special|Mysterio - Mysteryvision": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/mysterio-mysteryvision-iq-u"
+    },
+    "Special|Mystique - Fatal Marksman": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/mystique-fatal-marksman-iq-u"
+    },
+    "Special|Mystique - Government Agent": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/mystique-government-agent-iq-u"
+    },
+    "Special|Namor - Neptune's Armor": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/namor-neptunes-armor-iq-u"
+    },
+    "Special|Namor - Sub-Mariner": {
+      "price": "$4.00",
+      "url": "https://theorangeking.com/products/namor-sub-mariner-iq-opd-vr"
+    },
+    "Special|Nick Fury - Agent of S.H.I.E.L.D.": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/nick-fury-agent-of-s-h-i-e-l-d-iq-c"
+    },
+    "Special|Nick Fury - Battle Strategy": {
+      "price": "$4.00",
+      "url": "https://theorangeking.com/products/nick-fury-battle-strategy-iq-opd-vr"
+    },
+    "Special|Nick Fury - Howling Commando": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/nick-fury-howling-commando-iq-u"
+    },
+    "Special|Nick Fury - Infinity Formula": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/nick-fury-infinity-formula-iq-u"
+    },
+    "Special|Nick Fury - War Hero": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/nick-fury-war-hero-iq-c"
+    },
+    "Special|Nightcrawler - Acrobatic Precision": {
+      "price": "$0.35",
+      "url": "https://theorangeking.com/products/nightcrawler-acrobatic-precision-iq-c"
+    },
+    "Special|Nightcrawler - Power 'Port": {
+      "price": "$13.50",
+      "url": "https://theorangeking.com/products/nightcrawler-power-port-iq-opd-vr"
+    },
+    "Special|Omega Red - Carbonadium Synthesizer": {
+      "price": "$8.00",
+      "url": "https://theorangeking.com/products/omega-red-carbonadium-synthesizer-iq-opd-vr"
+    },
+    "Special|Omega Red - Twin Tentacles": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/omega-red-twin-tentacles-iq-c"
+    },
+    "Special|Onslaught - Cannon Fodder": {
+      "price": "$9.50",
+      "url": "https://theorangeking.com/products/onslaught-cannon-fodder-iq-opd-vr"
+    },
+    "Special|Post - Covert Manipulations": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/post-covert-manipulations-iq-u"
+    },
+    "Special|Professor X - Mindwipe": {
+      "price": "$32.50",
+      "url": "https://theorangeking.com/products/professor-x-mindwipe-iq-opd-vr"
+    },
+    "Special|Professor X - Psychic Shield": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/professor-x-psychic-shield-iq-u"
+    },
+    "Special|Psylocke - Crimson Dawn": {
+      "price": "$37.50",
+      "url": "https://theorangeking.com/products/psylocke-crimson-dawn-iq-opd-vr"
+    },
+    "Special|Psylocke - Lady Mandarin": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/psylocke-lady-mandarin-iq-c"
+    },
+    "Special|Punisher - Dodge": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/punisher-dodge-iq-u"
+    },
+    "Special|Punisher - Outwit": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/punisher-outwit-iq-u"
+    },
+    "Special|Quicksilver - High Speed Impact": {
+      "price": "$4.00",
+      "url": "https://theorangeking.com/products/quicksilver-high-speed-impact-iq-opd-vr"
+    },
+    "Special|Quicksilver - Rapid-Fire Punches": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/quicksilver-rapid-fire-punches-iq-c"
+    },
+    "Special|Red Skull - Cosmic Cube": {
+      "price": "$2.00",
+      "url": "https://theorangeking.com/products/red-skull-cosmic-cube-iq-opd-vr"
+    },
+    "Special|Red Skull - Depraved Evil": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/red-skull-depraved-evil-iq-u"
+    },
+    "Special|Red Skull - Dust of Death": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/red-skull-dust-of-death-iq-u"
+    },
+    "Special|Red Skull - Evil Super Soldier": {
+      "price": "$10.50",
+      "url": "https://theorangeking.com/products/red-skull-evil-super-soldier-iq-opd-vr"
+    },
+    "Special|Red Skull - Master Racist": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/red-skull-master-racist-iq-u"
+    },
+    "Special|Rhino - Animal Stamina": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/rhino-animal-stamina-iq-c"
+    },
+    "Special|Rogue - Combination Punch": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/rogue-combination-punch-iq-c"
+    },
+    "Special|Rogue - Southern Belle": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/rogue-southern-belle-iq-u"
+    },
+    "Special|Sabretooth - Dangerous Mind": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/sabretooth-dangerous-mind-iq-c"
+    },
+    "Special|Sabretooth - Government Operative": {
+      "price": "$3.00",
+      "url": "https://theorangeking.com/products/sabretooth-government-operative-iq-u"
+    },
+    "Special|Scarlet Spider - Clonal Confusion": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/scarlet-spider-clonal-confusion-iq-c"
+    },
+    "Special|Scarlet Witch - Impropability Hex": {
+      "price": "No TOK price",
+      "url": ""
+    },
+    "Special|Scarlet Witch - Witchcraft": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/scarlet-witch-witchcraft-iq-c"
+    },
+    "Special|Sentinels - Mutant Countermeasures": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/sentinels-mutant-countermeasures-iq-c"
+    },
+    "Special|Sentinels - Robot Mentality": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/sentinels-robot-mentality-iq-c"
+    },
+    "Special|Shadowcat - Computer Genius": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/shadowcat-computer-genius-iq-opd-c"
+    },
+    "Special|Shadowcat - Electronic Scramble": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/shadowcat-electronic-scramble-iq-u"
+    },
+    "Special|Shadowcat - Ghostly Phase": {
+      "price": "$5.50",
+      "url": "https://theorangeking.com/products/shadowcat-ghostly-phase-iq-u"
+    },
+    "Special|Shadowcat - Pryde & Wisdom": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/shadowcat-pryde-and-wisdom-iq-c"
+    },
+    "Special|Shadowcat - Soulsword": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/shadowcat-soulsword-iq-c"
+    },
+    "Special|She Hulk - Brains & Brawn": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/she-hulk-brains-brawn-iq-c"
+    },
+    "Special|She Hulk - Public Defender": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/she-hulk-public-defender-iq-c"
+    },
+    "Special|Silver Sable - Battle Plans": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/silver-sable-battle-plans-iq-c"
+    },
+    "Special|Silver Sable - Sandman": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/silver-sable-sandman-iq-c"
+    },
+    "Special|Silver Surfer - Cosmic Awareness": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/silver-surfer-cosmic-awareness-iq-c"
+    },
+    "Special|Spider-Man - Clonal Confusion": {
+      "price": "$0.35",
+      "url": "https://theorangeking.com/products/spider-man-clonal-confusion-iq-c"
+    },
+    "Special|Spider-Man - Science Whiz": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/spider-man-science-whiz-iq-c"
+    },
+    "Special|Spider-Woman - Force Works": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/spider-woman-force-works-iq-c"
+    },
+    "Special|Spider-Woman - Rescue Operation": {
+      "price": "$9.50",
+      "url": "https://theorangeking.com/products/spider-woman-rescue-operation-iq-c"
+    },
+    "Special|Storm - Morlock Combat": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/storm-morlock-combat-iq-c"
+    },
+    "Special|Storm - X-Men Leader": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/storm-x-men-leader-iq-c"
+    },
+    "Special|Strong Guy - Bodyguard": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/strong-guy-bodyguard-iq-c"
+    },
+    "Special|Strong Guy - Simple Strategy": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/strong-gut-simple-strategy-iq-c"
+    },
+    "Special|Super Skrull - Alien Methods": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/super-skrull-alien-methods-iq-c"
+    },
+    "Special|Super Skrull - Fantastic Enemy": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/super-skrull-fantastic-enemy-iq-c"
+    },
+    "Special|Thing - Bucket O' Shame": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/thing-bucket-o-shame-iq-u"
+    },
+    "Special|Thor - Gift of the Gods": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/thor-gift-of-the-gods-iq-c"
+    },
+    "Special|Thor - Viking Pyre": {
+      "price": "$17.50",
+      "url": "https://theorangeking.com/products/thor-viking-pyre-iq-opd-vr"
+    },
+    "Special|Venom - Eddie Brock: Reporter": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/venom-eddie-brock-reporter-iq-c"
+    },
+    "Special|Venom - Healing Bond": {
+      "price": "$1.25",
+      "url": "https://theorangeking.com/products/venom-healing-bond-iq-u"
+    },
+    "Special|Vision - Android Avenger": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/vision-android-avenger-iq-c"
+    },
+    "Special|Vision - Calculated Attack": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/vision-calculated-attack-iq-c"
+    },
+    "Special|War Machine - War Drone": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/war-machine-war-drone-iq-c"
+    },
+    "Special|White Queen - Cold-Hearted Enemy": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/white-queen-cold-hearted-enemy-iq-opd-c"
+    },
+    "Special|White Queen - Hellfire Leader": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/white-queen-hellfire-leader-iq-c"
+    },
+    "Special|White Queen - Mental Override": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/white-queen-mental-override-iq-c"
+    },
+    "Special|White Queen - Mutant Headmistress": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/white-queen-mutant-headmistress-iq-c"
+    },
+    "Special|White Queen - Telepathic Manipulator": {
+      "price": "$32.50",
+      "url": "https://theorangeking.com/products/white-queen-telepathic-manipulator-iq-opd-vr"
+    },
+    "Special|Wolverine - Canucklehead": {
+      "price": "$10.50",
+      "url": "https://theorangeking.com/products/wolverine-canucklehead-iq-opd-vr"
+    },
+    "Special|Wolverine - Savage Regression": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/wolverine-savage-regression-iq-u"
+    },
+    "Universe - Basic|Bucky Barnes": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/ally-8f-3f-iq-c-bucky-barnes-captain-america"
+    },
+    "Universe - Basic|Edwin Jarvis": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/ally-6f-1f-iq-u-edwin-jarvis-black-widow-wasp"
+    },
+    "Universe - Basic|Kristoff Vernard": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/ally-8i-3i-iq-c-kristoff-vernard-doctor-doom"
+    },
+    "Universe - Basic|Mary Jane Watson-Parker": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/ally-6s-1s-iq-u-mary-jane-watson-parker-spider-man"
+    },
+    "Universe - Basic|Moira MacTaggart": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/ally-8e-3e-iq-c-moira-mactaggart-professor-x"
+    },
+    "Universe - Basic|Rick Jones": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/ally-8s-3s-iq-c-rick-jones-hulk"
+    },
+    "Universe - Teamwork|6 Fighting Intellect/Strength +1 +2": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/tw-6f-si-1-2-iq-c-mystique-forge-strong-guy"
+    },
+    "Universe - Teamwork|6 Intellect Energy/Strength +1 +2": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/tw-6i-es-1-2-iq-c-shadowcat-nightcrawler-colossus"
+    },
+    "Universe - Teamwork|7 Energy Intellect/Fighting +2 +2": {
+      "price": "$0.75",
+      "url": "https://theorangeking.com/products/tw-7e-fi-2-2-iq-c-cyclops-jean-grey-cable"
+    },
+    "Universe - Teamwork|7 Intellect Fighting/Strength +2 +2": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/tw-7i-fs-2-2-iq-c-henry-pym-vision-black-widow"
+    },
+    "Universe - Teamwork|7 Strenght Intellect/Fighting +2 +2": {
+      "price": "No TOK price",
+      "url": ""
+    },
+    "Universe - Teamwork|8 Energy Intellect/Strength +2 +3": {
+      "price": "$0.35",
+      "url": "https://theorangeking.com/products/tw-8e-si-2-3-iq-c-magneto-quicksilver-scarlet-witch"
+    },
+    "Universe - Teamwork|8 Fighting Intellect/Strength +2 +3": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/tw-8f-si-2-3-iq-c-maverick-wolverine-sabretooth"
+    },
+    "Universe - Teamwork|8 Fighting Strength/Intellect +2": {
+      "price": "No TOK price",
+      "url": ""
+    },
+    "Universe - Teamwork|8 Intellect Fighting/Strength +2 +3": {
+      "price": "$0.25",
+      "url": "https://theorangeking.com/products/tw-8i-fs-2-3-iq-c-mr-sinister-apocalypse-dark-beast"
+    },
+    "Universe - Teamwork|8 Strength Intellect/Energy +2 +3": {
+      "price": "$0.50",
+      "url": "https://theorangeking.com/products/tw-8s-ei-2-3-iq-c-galactus-silver-surfer-adam-warlock"
+    }
+  },
+  "source": "The Orange King"
+}

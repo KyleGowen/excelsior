@@ -1,139 +1,88 @@
+import fs from 'fs';
+import path from 'path';
 import {
-  COLUMBUS_DASHBOARD_BANDS,
   COLUMBUS_DASHBOARD_LAYOUT,
+  COLUMBUS_DESKTOP_MASONRY_ORDER,
   COLUMBUS_TILE_ORDER,
+  columbusMasonryColumnSpanClass,
   dashboardPlacementClass,
-  getColumbusDashboardBandTileIds,
-  getColumbusDashboardBands,
   getColumbusDashboardGridPlacements,
   getColumbusMobileTileOrder,
   getPlacementForTile,
   getStackedPlacements,
 } from '../../../../frontend/src/lib/tournaments/columbusDashboardLayout';
 
+const repoRoot = path.join(__dirname, '../../../..');
+const dashboardGrid = fs.readFileSync(
+  path.join(repoRoot, 'frontend/src/components/dashboard/ColumbusDashboardGrid.tsx'),
+  'utf8',
+);
+
 describe('columbusDashboardLayout', () => {
-  it('defines 10 layout placements and 10 home-rail tiles', () => {
-    expect(COLUMBUS_TILE_ORDER).toHaveLength(10);
-    expect(COLUMBUS_DASHBOARD_LAYOUT).toHaveLength(10);
+  it('defines 11 layout placements and 11 home-rail tiles', () => {
+    expect(COLUMBUS_TILE_ORDER).toHaveLength(11);
+    expect(COLUMBUS_DASHBOARD_LAYOUT).toHaveLength(11);
+    expect(new Set(COLUMBUS_TILE_ORDER).size).toBe(11);
   });
 
-  it('uses explicit grid coordinates with no stacking', () => {
+  it('uses every tile once in desktop masonry and keeps metadata first', () => {
+    expect(COLUMBUS_DESKTOP_MASONRY_ORDER).toHaveLength(11);
+    expect(new Set(COLUMBUS_DESKTOP_MASONRY_ORDER).size).toBe(11);
+    expect(new Set(COLUMBUS_DESKTOP_MASONRY_ORDER)).toEqual(new Set(COLUMBUS_TILE_ORDER));
+    expect(COLUMBUS_DESKTOP_MASONRY_ORDER[0]).toBe('meta');
+  });
+
+  it('preserves the established desktop tile widths and variants', () => {
+    expect(getPlacementForTile('meta')).toMatchObject({ colSpan: 3, tileVariant: 'sm' });
+    expect(getPlacementForTile('characterAppearances')).toMatchObject({ colSpan: 5, tileVariant: 'wide' });
+    expect(getPlacementForTile('top8Characters')).toMatchObject({ colSpan: 4, tileVariant: 'tall' });
+    expect(getPlacementForTile('highestTop8Rate')).toMatchObject({ colSpan: 3, tileVariant: 'sm' });
+    expect(getPlacementForTile('topReservists')).toMatchObject({ colSpan: 5, tileVariant: 'md' });
+    expect(getPlacementForTile('topCataclysms')).toMatchObject({ colSpan: 4, tileVariant: 'md' });
+    expect(getPlacementForTile('newTop8Characters')).toMatchObject({ colSpan: 3, tileVariant: 'sm' });
+    expect(getPlacementForTile('mostPlaysWithoutTop8')).toMatchObject({ colSpan: 2, tileVariant: 'sm' });
+    expect(getPlacementForTile('newWinningCharacters')).toMatchObject({ colSpan: 2, tileVariant: 'sm' });
+  });
+
+  it('leaves desktop positions fluid instead of assigning fixed rows and columns', () => {
     for (const placement of COLUMBUS_DASHBOARD_LAYOUT) {
+      expect(placement.colStart).toBeUndefined();
+      expect(placement.rowStart).toBeUndefined();
       expect(placement.stackIn).toBeUndefined();
       expect(placement.stackRole).toBeUndefined();
-      expect(placement.colStart).toBeDefined();
-      expect(placement.rowStart).toBeDefined();
+      expect(placement.rowSpan).toBe(1);
     }
-    expect(getColumbusDashboardGridPlacements()).toHaveLength(10);
+    expect(getColumbusDashboardGridPlacements()).toHaveLength(11);
     expect(getStackedPlacements('meta')).toHaveLength(0);
-    expect(getStackedPlacements('mostPlaysWithoutTop8')).toHaveLength(0);
   });
 
-  it('mobile bands prioritize high-impact stats with podium links inside meta', () => {
+  it('measures dense rows and pins the metadata tile upper left', () => {
+    expect(dashboardGrid).toContain("gridAutoFlow: 'dense'");
+    expect(dashboardGrid).toContain("gridAutoRows: `${MASONRY_ROW_HEIGHT_PX}px`");
+    expect(dashboardGrid).toContain('gridColumnStart: 1, gridRowStart: 1');
+    expect(dashboardGrid).toContain('new ResizeObserver(scheduleMeasure)');
+    expect(dashboardGrid).toContain('data-dashboard-masonry-item={id}');
+  });
+
+  it('keeps the deliberate mobile order in one full-width stack', () => {
     const mobileOrder = getColumbusMobileTileOrder();
-    expect(mobileOrder).toHaveLength(10);
+    expect(mobileOrder).toHaveLength(11);
     expect(mobileOrder[0]).toBe('meta');
     expect(mobileOrder[1]).toBe('top8Characters');
     expect(mobileOrder[2]).toBe('topHomebases');
-    expect(mobileOrder[3]).toBe('characterAppearances');
+    expect(mobileOrder[3]).toBe('topBattlegrounds');
+    expect(mobileOrder[4]).toBe('characterAppearances');
     expect(mobileOrder.slice(-4)).toEqual([
       'highestTop8Rate',
       'mostPlaysWithoutTop8',
       'newWinningCharacters',
       'newTop8Characters',
     ]);
-    expect(getColumbusDashboardBands(true)).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          columns: [expect.objectContaining({ colSpan: 12, tileIds: mobileOrder })],
-        }),
-      ]),
-    );
-    expect(getColumbusDashboardBands(false)).toBe(COLUMBUS_DASHBOARD_BANDS);
   });
 
-  it('bands stack all 10 desktop stats tiles in column groups without shared row tracks', () => {
-    const bandTileIds = getColumbusDashboardBandTileIds();
-    expect(bandTileIds).toHaveLength(10);
-    expect(new Set(bandTileIds).size).toBe(10);
-    expect(COLUMBUS_DASHBOARD_BANDS).toHaveLength(1);
-    expect(COLUMBUS_DASHBOARD_BANDS[0]?.columns).toHaveLength(3);
-    expect(COLUMBUS_DASHBOARD_BANDS[0]?.columns[0]?.colSpan).toBe(3);
-    expect(COLUMBUS_DASHBOARD_BANDS[0]?.columns[1]?.colSpan).toBe(5);
-    expect(COLUMBUS_DASHBOARD_BANDS[0]?.columns[0]?.tileIds).toEqual([
-      'meta',
-      'highestTop8Rate',
-      'topHomebases',
-      'newTop8Characters',
-    ]);
-    expect(COLUMBUS_DASHBOARD_BANDS[0]?.columns[2]?.pairFirstRow).toBe(true);
-  });
-
-  it('event metadata spans cols 1-2, rows 1-4 on desktop (includes podium footer)', () => {
-    const placement = getPlacementForTile('meta');
-    expect(placement).toMatchObject({ colSpan: 2, rowSpan: 4, colStart: 1, rowStart: 1 });
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:col-span-2');
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:row-span-4');
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:col-start-1');
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:row-start-1');
-  });
-
-  it('highest top 8 rate spans cols 1-2, rows 5-7 on desktop', () => {
-    const placement = getPlacementForTile('highestTop8Rate');
-    expect(placement).toMatchObject({ colSpan: 2, rowSpan: 3, colStart: 1, rowStart: 5 });
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:row-start-5');
-  });
-
-  it('character appearances spans cols 3-8, rows 1-6 on desktop', () => {
-    const placement = getPlacementForTile('characterAppearances');
-    expect(placement).toMatchObject({ colSpan: 6, rowSpan: 6, colStart: 3, rowStart: 1, tileVariant: 'wide' });
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:col-span-6');
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:row-span-6');
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:col-start-3');
-  });
-
-  it('most plays without top 8 spans cols 9-10, rows 1-3 on desktop', () => {
-    const placement = getPlacementForTile('mostPlaysWithoutTop8');
-    expect(placement).toMatchObject({ colSpan: 2, rowSpan: 3, colStart: 9, rowStart: 1, tileVariant: 'sm' });
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:col-span-2');
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:col-start-9');
-  });
-
-  it('new winning characters spans cols 11-12, rows 1-3 on desktop', () => {
-    const placement = getPlacementForTile('newWinningCharacters');
-    expect(placement).toMatchObject({ colSpan: 2, rowSpan: 3, colStart: 11, rowStart: 1, tileVariant: 'sm' });
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:col-start-11');
-  });
-
-  it('top 8 characters spans cols 9-12, rows 4-8 on desktop', () => {
-    const placement = getPlacementForTile('top8Characters');
-    expect(placement).toMatchObject({ colSpan: 4, rowSpan: 5, colStart: 9, rowStart: 4, tileVariant: 'tall' });
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:row-span-5');
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:row-start-4');
-  });
-
-  it('top homebases spans cols 1-3, rows 7-10 on desktop', () => {
-    const placement = getPlacementForTile('topHomebases');
-    expect(placement).toMatchObject({ colSpan: 3, rowSpan: 4, colStart: 1, rowStart: 7, tileVariant: 'md' });
-  });
-
-  it('top reservists spans cols 4-8, rows 7-10 on desktop', () => {
-    const placement = getPlacementForTile('topReservists');
-    expect(placement).toMatchObject({ colSpan: 5, rowSpan: 4, colStart: 4, rowStart: 7, tileVariant: 'md' });
-  });
-
-  it('top cataclysms spans cols 9-12, rows 9-12 on desktop', () => {
-    const placement = getPlacementForTile('topCataclysms');
-    expect(placement).toMatchObject({ colSpan: 4, rowSpan: 4, colStart: 9, rowStart: 9, tileVariant: 'md' });
-  });
-
-  it('new top 8 characters spans cols 1-3, rows 11-12 on desktop', () => {
-    const placement = getPlacementForTile('newTop8Characters');
-    expect(placement).toMatchObject({ colSpan: 3, rowSpan: 2, colStart: 1, rowStart: 11, tileVariant: 'sm' });
-    expect(dashboardPlacementClass(placement.colSpan, placement.rowSpan, placement)).toContain('lg:row-start-11');
-  });
-
-  it('mobile placement is full width', () => {
+  it('provides fixed desktop width classes and full-width responsive fallbacks', () => {
+    expect(columbusMasonryColumnSpanClass(3)).toBe('col-span-3');
+    expect(columbusMasonryColumnSpanClass(5)).toBe('col-span-5');
     expect(dashboardPlacementClass(3, 1)).toContain('col-span-12');
   });
 });

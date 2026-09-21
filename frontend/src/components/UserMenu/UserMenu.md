@@ -7,7 +7,8 @@ Log Out / Exit Guest.
 ## Behavior
 - Closes on outside click and `Escape`.
 - Renders nothing when there is no authenticated user.
-- Uses `useAuth()` for user/guest/logout; navigates with React Router.
+- Uses `useAuth()` for account state. Once canonical Supporter status resolves, non-admins receive
+  the appropriate Supporter action; the dropdown closes before navigation to `/supporter`.
 
 ## Notes
 - Mobile uses the AppShell account sheet instead of this menu.

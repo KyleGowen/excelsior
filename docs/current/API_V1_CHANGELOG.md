@@ -5,6 +5,13 @@ One line per change. Newest first. Keep this in sync with
 
 ## Unreleased — Phase 3 (scale + docs)
 
+- Added the server-authoritative customer-chosen monthly Supporter flow: optional canonical status,
+  persistent-USER Checkout creation, fresh hosted-portal sessions, signed/idempotent webhooks,
+  one `$1/month` Price with whole-dollar quantity `>= 3`, and source-independent lifecycle recovery.
+- Added central Supporter entitlements with independent complimentary and Stripe sources,
+  expiring or permanent grants, immutable grant/revoke audit history, auth response status,
+  and ADMIN-only grant management. Saved Database Views now authorize active Supporters as
+  well as admins without gating any game data.
 - User Analytics deck averages now exclude the sample starter-deck copy automatically
   assigned during signup; total, legal, and Limited deck inventory counts remain unchanged.
 - Added `GET /api/v1/community/preconstructed-decks` and the Community page's
@@ -16,7 +23,8 @@ One line per change. Newest first. Keep this in sync with
 - Added current-user-owned Saved Database Views under `/api/v1/saved-database-views`:
   strict versioned state, list/create/rename/pin/delete/bulk-delete, private
   cache headers, non-enumerating ownership failures, and a transactionally enforced
-  50-view cap. Eligibility is temporarily ADMIN-only behind a replaceable centralized policy.
+  50-view cap. Eligibility launched as ADMIN-only behind a replaceable centralized policy and
+  is now extended to active Supporter accounts by the newer entitlement change above.
 - Expanded the User Analytics Pacific-hour distribution with an all-known-history
   total and per-hour counts alongside the rolling 24-hour values. The paired radar
   series use the same aggregate, identifier-free telemetry table; the historical

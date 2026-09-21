@@ -1,0 +1,1266 @@
+{
+  "meta": {
+    "id": "s1-seattle-naol",
+    "title": "Seattle NAOL",
+    "subtitle": "Seattle Weekend",
+    "date": "2026-09-06",
+    "seasonLabel": "Season One NAOL",
+    "location": {
+      "city": "Seattle",
+      "region": "WA"
+    },
+    "playerCount": 36,
+    "winnerName": "Andrew Taylor"
+  },
+  "characterAppearances": [
+    {
+      "name": "The Flaxans",
+      "count": 9,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Wicked Witch",
+      "count": 9,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Omni-Man",
+      "count": 8,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Joan of Arc",
+      "count": 7,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Glenn",
+      "count": 6,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Jane Porter",
+      "count": 6,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Billy the Kid",
+      "count": 5,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Alexandria",
+      "count": 4,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Governor & Woodbury",
+      "count": 4,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Allen The Alien",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Atom Eve",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Cecil And The G.D.A.",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Hercules",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Hilltop",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Immortal",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Maggie",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Michonne",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Mina Harker",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Morgan le Fay",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Mummy",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Rick Grimes",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Sherlock Holmes",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Walkers: Herd",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Andrea",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Battle Beast",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Black Samson",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Doc Seismic",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Dr. Watson",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Invincible",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Saviors",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Sun Wukong",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Zorro",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Abraham, Rosita And Eugene",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Angry Mob (Middle Ages)",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Carson of Venus",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Count of Monte Cristo",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Dejah Thoris",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Dracula",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Ezekiel",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Leonidas",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Lizard League",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Mauler Twins",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Mikey Rhodes",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Monster Girl",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Mr. Hyde",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Negan",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Professor Moriarty",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Ra",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Rex Splode",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Robot",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Sheriff of Nottingham",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Spencer Dales",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Tars Tarkas",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Tarzan",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Time Traveler",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Van Helsing",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Victory Harben",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Zeus",
+      "count": 1,
+      "catalogType": "characters"
+    }
+  ],
+  "top8CharacterAppearances": [
+    {
+      "name": "The Flaxans",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Billy the Kid",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Dr. Watson",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Hercules",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Hilltop",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Morgan le Fay",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Omni-Man",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Allen The Alien",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Carson of Venus",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Count of Monte Cristo",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Glenn",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Jane Porter",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Joan of Arc",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Mikey Rhodes",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Mina Harker",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Mummy",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Ra",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Robot",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Sheriff of Nottingham",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Tarzan",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Time Traveler",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Van Helsing",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Walkers: Herd",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Wicked Witch",
+      "count": 1,
+      "catalogType": "characters"
+    }
+  ],
+  "mostPlaysWithoutTop8": {
+    "name": "Alexandria",
+    "catalogType": "characters",
+    "totalPlays": 4,
+    "top8Plays": 0,
+    "label": "Most plays w/o Top 8",
+    "detail": "4"
+  },
+  "highestTop8Rate": {
+    "name": "Morgan le Fay",
+    "catalogType": "characters",
+    "totalPlays": 3,
+    "top8Plays": 2,
+    "label": "Highest Top 8 %",
+    "detail": "2 of 3 (66.7%)"
+  },
+  "newWinningCharacters": [
+    {
+      "name": "Count of Monte Cristo",
+      "count": 1,
+      "catalogType": "characters"
+    }
+  ],
+  "newTop8Characters": [
+    {
+      "name": "Allen The Alien",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Hercules",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Hilltop",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Mikey Rhodes",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Robot",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Time Traveler",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Walkers: Herd",
+      "count": 1,
+      "catalogType": "characters"
+    }
+  ],
+  "topReserves": [
+    {
+      "name": "Billy the Kid",
+      "count": 5,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Glenn",
+      "count": 4,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Jane Porter",
+      "count": 4,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Cecil And The G.D.A.",
+      "count": 3,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Andrea",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Black Samson",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "The Governor & Woodbury",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Maggie",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Rick Grimes",
+      "count": 2,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Alexandria",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Allen The Alien",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Carson of Venus",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Dr. Watson",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Ezekiel",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Morgan le Fay",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Mr. Hyde",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Rex Splode",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Robot",
+      "count": 1,
+      "catalogType": "characters"
+    },
+    {
+      "name": "Sheriff of Nottingham",
+      "count": 1,
+      "catalogType": "characters"
+    }
+  ],
+  "topHomebases": [
+    {
+      "name": "The Round Table",
+      "count": 13,
+      "catalogType": "locations",
+      "top8": 3,
+      "top3": 1,
+      "wins": 0
+    },
+    {
+      "name": "The Commonwealth",
+      "count": 7,
+      "catalogType": "locations",
+      "top8": 2,
+      "top3": 0,
+      "wins": 0
+    },
+    {
+      "name": "Asclepieion",
+      "count": 4,
+      "catalogType": "locations",
+      "top8": 2,
+      "top3": 1,
+      "wins": 0
+    },
+    {
+      "name": "221-B Baker St.",
+      "count": 2,
+      "catalogType": "locations",
+      "top8": 1,
+      "top3": 1,
+      "wins": 1
+    },
+    {
+      "name": "Barsoom",
+      "count": 2,
+      "catalogType": "locations",
+      "top8": 0,
+      "top3": 0,
+      "wins": 0
+    },
+    {
+      "name": "Streets Of Chicago",
+      "count": 2,
+      "catalogType": "locations",
+      "top8": 0,
+      "top3": 0,
+      "wins": 0
+    },
+    {
+      "name": "Teen Team Headquarters",
+      "count": 2,
+      "catalogType": "locations",
+      "top8": 0,
+      "top3": 0,
+      "wins": 0
+    },
+    {
+      "name": "Event Horizon: The Future",
+      "count": 1,
+      "catalogType": "locations",
+      "top8": 0,
+      "top3": 0,
+      "wins": 0
+    },
+    {
+      "name": "The Greene Farm",
+      "count": 1,
+      "catalogType": "locations",
+      "top8": 0,
+      "top3": 0,
+      "wins": 0
+    },
+    {
+      "name": "Mars",
+      "count": 1,
+      "catalogType": "locations",
+      "top8": 0,
+      "top3": 0,
+      "wins": 0
+    },
+    {
+      "name": "The Sanctuary",
+      "count": 1,
+      "catalogType": "locations",
+      "top8": 0,
+      "top3": 0,
+      "wins": 0
+    }
+  ],
+  "topBattlegrounds": [
+    {
+      "name": "GDA",
+      "count": 35
+    },
+    {
+      "name": "ERB",
+      "count": 1
+    }
+  ],
+  "topCataclysms": [],
+  "cataclysmReportedCount": 0,
+  "deckRows": [
+    {
+      "rank": 1,
+      "player": "Andrew Taylor",
+      "wins": 10,
+      "losses": 0,
+      "frontLine1": "Wicked Witch",
+      "frontLine2": "The Flaxans",
+      "frontLine3": "Count of Monte Cristo",
+      "reserve": "Dr. Watson",
+      "homebase": "221-B Baker St.",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "All Out War",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 2,
+      "player": "Josh Alexander",
+      "wins": 7,
+      "losses": 3,
+      "frontLine1": "Van Helsing",
+      "frontLine2": "Omni-Man",
+      "frontLine3": "Dr. Watson",
+      "reserve": "Billy the Kid",
+      "homebase": "Asclepieion",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Warlord of Mars",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 3,
+      "player": "Tim Wan",
+      "wins": 6,
+      "losses": 3,
+      "frontLine1": "Morgan le Fay",
+      "frontLine2": "Joan of Arc",
+      "frontLine3": "The Flaxans",
+      "reserve": "Sheriff of Nottingham",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "King of the Jungle",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 4,
+      "player": "Derek Bertrand",
+      "wins": 6,
+      "losses": 3,
+      "frontLine1": "Omni-Man",
+      "frontLine2": "The Mummy",
+      "frontLine3": "Walkers: Herd",
+      "reserve": "Glenn",
+      "homebase": "The Commonwealth",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "King of the Jungle",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 5,
+      "player": "Marcel Lejot",
+      "wins": 6,
+      "losses": 2,
+      "frontLine1": "Morgan le Fay",
+      "frontLine2": "The Flaxans",
+      "frontLine3": "The Hilltop",
+      "reserve": "Carson of Venus",
+      "homebase": "Asclepieion",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Warlord of Mars",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 6,
+      "player": "Dave McMillan",
+      "wins": 5,
+      "losses": 3,
+      "frontLine1": "Hercules",
+      "frontLine2": "Mina Harker",
+      "frontLine3": "Tarzan",
+      "reserve": "Billy the Kid",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "King of the Jungle",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 7,
+      "player": "Ray Tan",
+      "wins": 5,
+      "losses": 3,
+      "frontLine1": "Mikey Rhodes",
+      "frontLine2": "Hercules",
+      "frontLine3": "The Hilltop",
+      "reserve": "Jane Porter",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Time Wars",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 8,
+      "player": "Charlie Hanford",
+      "wins": 5,
+      "losses": 3,
+      "frontLine1": "Allen The Alien",
+      "frontLine2": "Ra",
+      "frontLine3": "Time Traveler",
+      "reserve": "Robot",
+      "homebase": "The Commonwealth",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Who Killed the Guardians of the Globe?",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 9,
+      "player": "Dalton Vodegel",
+      "wins": 5,
+      "losses": 2,
+      "frontLine1": "The Flaxans",
+      "frontLine2": "Wicked Witch",
+      "frontLine3": "Joan of Arc",
+      "reserve": "Jane Porter",
+      "homebase": "Teen Team Headquarters",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "King of the Jungle",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 10,
+      "player": "Nic Cannelora",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Joan of Arc",
+      "frontLine2": "Michonne",
+      "frontLine3": "Alexandria",
+      "reserve": "Rick Grimes",
+      "homebase": "The Greene Farm",
+      "battleground": "ERB",
+      "cataclysm": "Unreported",
+      "mission": "Warlord of Mars",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 11,
+      "player": "Keith Bursack",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Zorro",
+      "frontLine2": "Michonne",
+      "frontLine3": "Alexandria",
+      "reserve": "Glenn",
+      "homebase": "The Sanctuary",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "King of the Jungle",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 12,
+      "player": "Chris Rice",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Mauler Twins",
+      "frontLine2": "Immortal",
+      "frontLine3": "Walkers: Herd",
+      "reserve": "Ezekiel",
+      "homebase": "Asclepieion",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Who Killed the Guardians of the Globe?",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 13,
+      "player": "Andy Hauge",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Sun Wukong",
+      "frontLine2": "Allen The Alien",
+      "frontLine3": "Tars Tarkas",
+      "reserve": "Billy the Kid",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Warlord of Mars",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 14,
+      "player": "Adam Abelkop",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Atom Eve",
+      "frontLine2": "Joan of Arc",
+      "frontLine3": "Wicked Witch",
+      "reserve": "Jane Porter",
+      "homebase": "Barsoom",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "All Out War",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 15,
+      "player": "Diego Lopez",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Wicked Witch",
+      "frontLine2": "Jane Porter",
+      "frontLine3": "The Flaxans",
+      "reserve": "Morgan le Fay",
+      "homebase": "The Commonwealth",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Who Killed the Guardians of the Globe?",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 16,
+      "player": "Joseph Gagnepain",
+      "wins": 4,
+      "losses": 3,
+      "frontLine1": "Negan",
+      "frontLine2": "The Saviors",
+      "frontLine3": "Abraham, Rosita And Eugene",
+      "reserve": "Andrea",
+      "homebase": "The Commonwealth",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Time Wars",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 17,
+      "player": "Ben Newcomer",
+      "wins": 2,
+      "losses": 4,
+      "frontLine1": "Sherlock Holmes",
+      "frontLine2": "Wicked Witch",
+      "frontLine3": "The Flaxans",
+      "reserve": "Rex Splode",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "All Out War",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 18,
+      "player": "Larry Van Etten",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "The Saviors",
+      "frontLine2": "Omni-Man",
+      "frontLine3": "Walkers: Herd",
+      "reserve": "Glenn",
+      "homebase": "Mars",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "All Out War",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 19,
+      "player": "Brandon West",
+      "wins": 3,
+      "losses": 3,
+      "frontLine1": "Omni-Man",
+      "frontLine2": "Maggie",
+      "frontLine3": "Joan of Arc",
+      "reserve": "Alexandria",
+      "homebase": "Teen Team Headquarters",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Warlord of Mars",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 20,
+      "player": "Ty Bertrand",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "Atom Eve",
+      "frontLine2": "The Mummy",
+      "frontLine3": "Invincible",
+      "reserve": "The Governor & Woodbury",
+      "homebase": "The Commonwealth",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "King of the Jungle",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 21,
+      "player": "Charles Hankins",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "Wicked Witch",
+      "frontLine2": "Doc Seismic",
+      "frontLine3": "Spencer Dales",
+      "reserve": "Cecil And The G.D.A.",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Time Wars",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 22,
+      "player": "Jacob Peters",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "Battle Beast",
+      "frontLine2": "Angry Mob (Middle Ages)",
+      "frontLine3": "Zorro",
+      "reserve": "Billy the Kid",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "The Call of Cthulhu",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 23,
+      "player": "BilboSwaggins",
+      "wins": 3,
+      "losses": 4,
+      "frontLine1": "The Flaxans",
+      "frontLine2": "Jane Porter",
+      "frontLine3": "Professor Moriarty",
+      "reserve": "Black Samson",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "The Call of Cthulhu",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 24,
+      "player": "Mike Riedy",
+      "wins": 2,
+      "losses": 3,
+      "frontLine1": "Omni-Man",
+      "frontLine2": "Immortal",
+      "frontLine3": "The Governor & Woodbury",
+      "reserve": "Allen The Alien",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "All Out War",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 25,
+      "player": "Theo Hatziliadis",
+      "wins": 2,
+      "losses": 3,
+      "frontLine1": "Wicked Witch",
+      "frontLine2": "Zeus",
+      "frontLine3": "Mina Harker",
+      "reserve": "The Governor & Woodbury",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Warlord of Mars",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 26,
+      "player": "Adam Konertz",
+      "wins": 1,
+      "losses": 5,
+      "frontLine1": "The Governor & Woodbury",
+      "frontLine2": "Joan of Arc",
+      "frontLine3": "The Flaxans",
+      "reserve": "Cecil And The G.D.A.",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "None",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 27,
+      "player": "Stefan Bridges",
+      "wins": 2,
+      "losses": 3,
+      "frontLine1": "Sherlock Holmes",
+      "frontLine2": "Victory Harben",
+      "frontLine3": "Doc Seismic",
+      "reserve": "Cecil And The G.D.A.",
+      "homebase": "221-B Baker St.",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Warlord of Mars",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 28,
+      "player": "Anthony Anzalone",
+      "wins": 1,
+      "losses": 5,
+      "frontLine1": "Immortal",
+      "frontLine2": "Omni-Man",
+      "frontLine3": "Glenn",
+      "reserve": "Maggie",
+      "homebase": "The Commonwealth",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Warlord of Mars",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 29,
+      "player": "Amy Hopkins",
+      "wins": 2,
+      "losses": 3,
+      "frontLine1": "The Mummy",
+      "frontLine2": "Monster Girl",
+      "frontLine3": "Battle Beast",
+      "reserve": "Mr. Hyde",
+      "homebase": "The Commonwealth",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Time Wars",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 30,
+      "player": "Noah Hudson",
+      "wins": 2,
+      "losses": 3,
+      "frontLine1": "Sherlock Holmes",
+      "frontLine2": "The Flaxans",
+      "frontLine3": "Wicked Witch",
+      "reserve": "Jane Porter",
+      "homebase": "Event Horizon: The Future",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "King of the Jungle",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 31,
+      "player": "Pierre Cieniewicz",
+      "wins": 1,
+      "losses": 4,
+      "frontLine1": "Lizard League",
+      "frontLine2": "Rick Grimes",
+      "frontLine3": "Hercules",
+      "reserve": "Billy the Kid",
+      "homebase": "Streets Of Chicago",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "The Call of Cthulhu",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 32,
+      "player": "Owen Hopkins",
+      "wins": 1,
+      "losses": 4,
+      "frontLine1": "Omni-Man",
+      "frontLine2": "Glenn",
+      "frontLine3": "Sun Wukong",
+      "reserve": "Maggie",
+      "homebase": "Asclepieion",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "The Call of Cthulhu",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 33,
+      "player": "Aria Hopkins",
+      "wins": 1,
+      "losses": 4,
+      "frontLine1": "Joan of Arc",
+      "frontLine2": "Dejah Thoris",
+      "frontLine3": "Atom Eve",
+      "reserve": "Andrea",
+      "homebase": "Barsoom",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "Warlord of Mars",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 34,
+      "player": "Chris Daniels",
+      "wins": 0,
+      "losses": 4,
+      "frontLine1": "Omni-Man",
+      "frontLine2": "Mina Harker",
+      "frontLine3": "Wicked Witch",
+      "reserve": "Glenn",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "None",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 35,
+      "player": "Asher",
+      "wins": 0,
+      "losses": 6,
+      "frontLine1": "Dracula",
+      "frontLine2": "Invincible",
+      "frontLine3": "The Hilltop",
+      "reserve": "Black Samson",
+      "homebase": "The Round Table",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "King of the Jungle",
+      "cardCount": null,
+      "event": "Unreported"
+    },
+    {
+      "rank": 36,
+      "player": "David Lovelace-Macon",
+      "wins": 0,
+      "losses": 1,
+      "frontLine1": "Michonne",
+      "frontLine2": "Leonidas",
+      "frontLine3": "Alexandria",
+      "reserve": "Rick Grimes",
+      "homebase": "Streets Of Chicago",
+      "battleground": "GDA",
+      "cataclysm": "Unreported",
+      "mission": "King of the Jungle",
+      "cardCount": null,
+      "event": "Unreported"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../app/AuthProvider';
 import { AppBackground } from '../../components/AppBackground';
 import { Logo } from '../../components/Logo';
@@ -29,6 +29,10 @@ export default function LoginPage() {
     clearGoogleRedirectError,
   } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const postAuthDestination = searchParams.get('supporter') === '1'
+    ? '/supporter?supporter=open'
+    : '/home';
   const { isMobile } = useLayoutMode();
 
   const [mode, setMode] = useState<Mode>('login');
@@ -41,8 +45,8 @@ export default function LoginPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (user) navigate('/home', { replace: true });
-  }, [user, navigate]);
+    if (user) navigate(postAuthDestination, { replace: true });
+  }, [user, navigate, postAuthDestination]);
 
   useEffect(() => {
     if (!googleRedirectError) return;
@@ -57,7 +61,7 @@ export default function LoginPage() {
     setOfferGoogleRedirect(false);
     try {
       await fn();
-      navigate('/home', { replace: true });
+      navigate(postAuthDestination, { replace: true });
     } catch (err) {
       setError((err as Error)?.message || 'Something went wrong. Please try again.');
     } finally {
@@ -81,7 +85,7 @@ export default function LoginPage() {
     setError(null);
     setOfferGoogleRedirect(false);
     void signInWithGoogle()
-      .then(() => navigate('/home', { replace: true }))
+      .then(() => navigate(postAuthDestination, { replace: true }))
       .catch((signInError: unknown) => {
         const info = describeGoogleSignInError(signInError);
         setError(info.message);
@@ -202,9 +206,9 @@ export default function LoginPage() {
         <Logo height={210} className="login__brand-logo" />
         <h1 className="login__tagline">Build. Battle. OverPower.</h1>
         <p className="login__brand-sub">
-          Excelsior is a modern OverPower deckbuilding hub and card database. Browse
-          tournament-winning lists, study community builds, and craft Venture-ready decks
-          from the full modern card pool.
+          Excelsior is an independently developed and operated OverPower database and deck
+          builder, built for the Modern OverPower community.&nbsp; Browse tournament-winning lists,
+          study community builds, and craft Venture-ready decks using the full modern card pool.
         </p>
         <ul className="login__callouts">
           {CALLOUTS.map((c) => (

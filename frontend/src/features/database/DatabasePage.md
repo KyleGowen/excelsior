@@ -2,6 +2,15 @@
 
 Browse, search, filter, and sort the full modern OverPower catalog.
 
+After canonical status resolves, guests and persistent non-Supporters see the shared Supporter invitation at
+the top of the page content, immediately below the global navigation divider and before the
+Database heading and card-type controls. Its action links directly to the full `/supporter` page,
+matching Home and the profile surfaces. Unlike the Home invitation, its standard chevron control can collapse it into a thin rule. That choice
+is stored in `sessionStorage`, so it persists through navigation and reloads in the current tab
+but defaults to expanded in a new browser session.
+Production hides the invitation while new checkout is disabled; local development keeps it visible
+so the shared Supporter experience remains reviewable without Stripe credentials.
+
 ## Controls
 - **Search** by card name, character name, mission-set name, or card text including inherent abilities
   (debounced, header bar; `cardMatchesSearchQuery` in `catalogTypeMap`).
@@ -61,7 +70,7 @@ Browse, search, filter, and sort the full modern OverPower catalog.
 
 ## Saved Views
 
-- Temporarily rendered only for authenticated `ADMIN` users. The API independently applies the same rule through the replaceable Saved Views access policy; `USER` and `GUEST` retain the complete Card Database without Saved Views calls or restricted card information.
+- Rendered for authenticated `ADMIN` users and `USER` accounts with an active Supporter entitlement. The API independently applies the same rule through the centralized Saved Views access policy; other users retain the complete Card Database without Saved Views calls or restricted card information.
 - **Save this view** captures the active tab (including All), raw search text, Set, the complete advanced filter state, Has Foil, and Hide Alts in schema version 1. It deliberately excludes page, selected card/detail, filter-rail collapse, and sidebar state.
 - Naming is inline at the top of the unpinned list, never modal. Names are trimmed, may repeat, and are limited to 80 characters. Enter/check confirms, Escape/cancel removes the local draft, and failed saves preserve the typed name.
 - Recalling restores the snapshot, starts on page 1, closes Card Detail, leaves the desktop sidebar open, and closes the mobile drawer. An unavailable set, mission set, or config-driven filter is cleared to its neutral value with a non-destructive status notice.

@@ -10,6 +10,7 @@ function buildDeps(counts: UserAnalyticsCounts): AdminServiceDeps {
     now: () => new Date('2026-08-24T12:00:00.000Z'),
     userRepository: {
       getAllUsers: jest.fn().mockResolvedValue([]),
+      getUserById: jest.fn().mockResolvedValue(undefined),
       getUserByUsername: jest.fn().mockResolvedValue(undefined),
       createUser: jest.fn(),
       getUserAnalytics: jest.fn().mockResolvedValue(counts)
@@ -19,7 +20,15 @@ function buildDeps(counts: UserAnalyticsCounts): AdminServiceDeps {
     databaseInit: {
       validateDatabase: jest.fn().mockResolvedValue(true),
       checkDatabaseStatus: jest.fn().mockResolvedValue(true)
-    }
+    },
+    supporterEntitlementService: {
+      getStatuses: jest.fn().mockResolvedValue(new Map()),
+      getStatus: jest.fn(),
+      isSupporter: jest.fn(),
+      grantComplimentary: jest.fn(),
+      revokeComplimentary: jest.fn(),
+      setStripeSubscription: jest.fn()
+    } as unknown as AdminServiceDeps['supporterEntitlementService']
   };
 }
 

@@ -4,45 +4,55 @@ import { useQuery } from '@tanstack/react-query';
 import { CardDetailPanel } from '../../components/CardDetailPanel';
 import { ColumbusDashboardGrid, DashboardRail, DashboardRailItem } from '../../components/dashboard';
 import { IconChevronRight, IconTrophy } from '../../components/icons';
+import { TournamentHighlightTile } from '../../components/TournamentCharts';
 import { fetchTournamentDecks } from '../../lib/api/decks';
 import { fetchFoilCardMap } from '../../lib/api/catalog';
+import type { CatalogCard, CatalogType } from '../../lib/api/types';
 import { buildFoilCardMapLookup } from '../../lib/catalog/foilCatalog';
 import { useAllCatalogCards } from '../../lib/catalog/useAllCatalogCards';
 import { useCardDetailHistory } from '../../lib/layout/useCardDetailHistory';
-import { resolveTournamentPodiumDecks } from '../../lib/tournaments/tournamentPodiumDecks';
-import {
-  buildRegionalEventPath,
-  FEATURED_TOURNAMENT_ID,
-  getRegionalTournament,
-} from '../../lib/tournaments/regionalTournaments';
-import { resolveTournamentCard, isTournamentCardClickable } from '../../lib/tournaments/resolveTournamentCard';
+import { buildDeckEditorNavigateState } from '../../lib/navigation/deckEditorReturn';
+import { buildColumbusTileById, HOME_CHART_LIMIT } from '../../lib/tournaments/buildColumbusStatsTiles';
 import {
   COLUMBUS_TILE_ORDER,
   getPlacementForTile,
   type ColumbusDashboardTileId,
 } from '../../lib/tournaments/columbusDashboardLayout';
-import { buildColumbusTileById, HOME_CHART_LIMIT } from '../../lib/tournaments/buildColumbusStatsTiles';
-import { buildDeckEditorNavigateState } from '../../lib/navigation/deckEditorReturn';
-import { TournamentHighlightTile } from '../../components/TournamentCharts';
-import type { CatalogCard, CatalogType } from '../../lib/api/types';
+import {
+  buildRegionalEventPath,
+  FEATURED_TOURNAMENT_ID,
+  getTournamentPost,
+  type RegionalTournamentDefinition,
+} from '../../lib/tournaments/regionalTournaments';
+import { combineTournamentStats } from '../../lib/tournaments/combineTournamentStats';
+import { resolveTournamentCard, isTournamentCardClickable } from '../../lib/tournaments/resolveTournamentCard';
+import { resolveTournamentPodiumDecks } from '../../lib/tournaments/tournamentPodiumDecks';
 import type { CountEntry, HomebaseCountEntry, SpotlightEntry } from '../../lib/tournaments/types';
 import './TournamentStatsRail.css';
 
 const HOME_TILE_ORDER: ColumbusDashboardTileId[] = COLUMBUS_TILE_ORDER;
-
 interface TournamentStatsRailProps {
-  /** When true, show full data on the 12-column dashboard grid. */
+  /** When true, show full event dashboards on the 12-column grid. */
   expanded?: boolean;
-  /** Tournament registry ID. Home defaults to the newest featured regional. */
+  /** Tournament post ID. Home defaults to the combined Seattle Weekend post. */
   tournamentId?: string;
+}
+
+function getHiddenTileIds(tournament: RegionalTournamentDefinition): ColumbusDashboardTileId[] {
+  return tournament.unavailableStats ?? [];
+}
+
+function getSeattleTilePrefix(tournament: RegionalTournamentDefinition): string | undefined {
+  if (tournament.id === 's1-seattle-regional') return 'Regional';
+  if (tournament.id === 's1-seattle-naol') return 'NAOL';
+  return undefined;
 }
 
 export function TournamentStatsRail({
   expanded = false,
   tournamentId = FEATURED_TOURNAMENT_ID,
 }: TournamentStatsRailProps) {
-  const tournament = getRegionalTournament(tournamentId);
-  const stats = tournament.stats;
+  const post = getTournamentPost(tournamentId);
   const navigate = useNavigate();
   const { cards: allCards } = useAllCatalogCards();
   const tournamentQuery = useQuery({
@@ -51,9 +61,41 @@ export function TournamentStatsRail({
     staleTime: 10 * 60 * 1000,
     enabled: expanded,
   });
-  const podiumEntries = useMemo(
-    () => resolveTournamentPodiumDecks(tournamentQuery.data ?? [], tournament),
-    [tournament, tournamentQuery.data],
+  const podiumEntriesByEvent = useMemo(
+    () => new Map(
+      post.events.map((event) => [
+        event.id,
+        resolveTournamentPodiumDecks(tournamentQuery.data ?? [], event),
+      ]),
+    ),
+    [post.events, tournamentQuery.data],
+  );
+  const displayStats = useMemo(
+    () => combineTournamentStats({
+      id: post.id,
+      title: post.title,
+      subtitle: post.subtitle,
+      events: post.events.map((event) => ({
+        label: getSeattleTilePrefix(event) ?? event.stats.meta.title,
+        stats: event.stats,
+        ...(event.unavailableStats ? { unavailableStats: event.unavailableStats } : {}),
+      })),
+    }),
+    [post],
+  );
+  const displayTournament = useMemo<RegionalTournamentDefinition>(
+    () => ({
+      ...post.events[0],
+      id: post.id,
+      selectorLabel: post.selectorLabel,
+      deckNameLabel: post.title,
+      stats: displayStats,
+      podium: [],
+      stableDeckIds: undefined,
+      stableDeckUserId: undefined,
+      unavailableStats: undefined,
+    }),
+    [displayStats, post],
   );
   const foilMapQuery = useQuery({
     queryKey: ['foil-card-map'],
@@ -83,36 +125,56 @@ export function TournamentStatsRail({
     [allCards],
   );
 
-  const charFootnote = !expanded && stats.characterAppearances.length > HOME_CHART_LIMIT
-    ? `+${stats.characterAppearances.length - HOME_CHART_LIMIT} more characters`
-    : undefined;
-
-  const homebaseTooltip = useMemo(
-    () => (entry: CountEntry) => {
-      const hb = stats.topHomebases.find((h: HomebaseCountEntry) => h.name === entry.name);
-      if (!hb) return undefined;
-      return [`Top 8: ${hb.top8}`, `Top 3: ${hb.top3}`, `Wins: ${hb.wins}`];
-    },
-    [stats.topHomebases],
-  );
-
   const resolveCard = useCallback(
     (entry: CountEntry) =>
       resolveTournamentCard(allCards, entry.name, entry.catalogType, { foilLookup })?.card ?? null,
     [allCards, foilLookup],
   );
 
-  const renderSpotlight = useCallback(
-    (spot: SpotlightEntry | null, key: string) => {
+  const openPodiumDeck = useCallback(
+    (deckId: string, userId: string) => {
+      navigate(`/users/${userId}/decks/${deckId}?readonly=true`, {
+        state: buildDeckEditorNavigateState(buildRegionalEventPath(post.id)),
+      });
+    },
+    [navigate, post.id],
+  );
+
+  const buildTileOptions = (
+    tournament: RegionalTournamentDefinition,
+    eventSubtitle?: string,
+    summarySlides = post.events.length > 1
+      ? post.events.map((event) => ({
+          id: event.id,
+          label: getSeattleTilePrefix(event) ?? event.stats.meta.title,
+          meta: event.stats.meta,
+          podiumEntries: expanded ? podiumEntriesByEvent.get(event.id) : undefined,
+        }))
+      : undefined,
+  ) => {
+    const stats = tournament.stats;
+    const charFootnote = !expanded && stats.characterAppearances.length > HOME_CHART_LIMIT
+      ? `+${stats.characterAppearances.length - HOME_CHART_LIMIT} more characters`
+      : undefined;
+    const homebaseTooltip = (entry: CountEntry) => {
+      const homebase = stats.topHomebases.find((item: HomebaseCountEntry) => item.name === entry.name);
+      return homebase
+        ? [`Top 8: ${homebase.top8}`, `Top 3: ${homebase.top3}`, `Wins: ${homebase.wins}`]
+        : undefined;
+    };
+    const renderSpotlight = (spot: SpotlightEntry | null, key: string) => {
       if (!spot) return null;
       const hit = resolveTournamentCard(allCards, spot.name, spot.catalogType, { foilLookup });
-      const placement = expanded ? getPlacementForTile(key as typeof COLUMBUS_TILE_ORDER[number]) : null;
-      const variant = placement?.tileVariant ?? 'rail';
+      const placement = expanded
+        ? getPlacementForTile(key as typeof COLUMBUS_TILE_ORDER[number])
+        : null;
+
       return (
         <TournamentHighlightTile
-          key={key}
-          variant={variant}
+          key={`${tournament.id}-${key}`}
+          variant={placement?.tileVariant ?? 'rail'}
           label={spot.label}
+          eventSubtitle={eventSubtitle}
           detail={spot.detail}
           cardName={spot.name}
           card={hit?.card ?? null}
@@ -120,21 +182,9 @@ export function TournamentStatsRail({
           onClick={hit ? () => openEntry(spot) : undefined}
         />
       );
-    },
-    [allCards, expanded, foilLookup, openEntry],
-  );
+    };
 
-  const openPodiumDeck = useCallback(
-    (deckId: string, userId: string) => {
-      navigate(`/users/${userId}/decks/${deckId}?readonly=true`, {
-        state: buildDeckEditorNavigateState(buildRegionalEventPath(tournament.id)),
-      });
-    },
-    [navigate, tournament.id],
-  );
-
-  const tileBuildOptions = useMemo(
-    () => ({
+    return {
       stats,
       expanded,
       charFootnote,
@@ -143,22 +193,13 @@ export function TournamentStatsRail({
       isClickable,
       resolveCard,
       renderSpotlight,
-      podiumEntries: expanded ? podiumEntries : undefined,
+      podiumEntries: expanded ? podiumEntriesByEvent.get(tournament.id) : undefined,
+      summarySlides,
       onOpenPodiumDeck: expanded ? openPodiumDeck : undefined,
-    }),
-    [
-      stats,
-      expanded,
-      charFootnote,
-      homebaseTooltip,
-      openEntry,
-      isClickable,
-      resolveCard,
-      renderSpotlight,
-      podiumEntries,
-      openPodiumDeck,
-    ],
-  );
+      eventSubtitle,
+      showWinnerWithPodium: expanded,
+    };
+  };
 
   const cardPanel = (
     <CardDetailPanel
@@ -170,36 +211,57 @@ export function TournamentStatsRail({
   );
 
   if (expanded) {
-    const renderDashboardTile = (id: ColumbusDashboardTileId) => {
-      const placement = getPlacementForTile(id);
-      return buildColumbusTileById(id, {
-        ...tileBuildOptions,
-        tileVariant: placement.tileVariant,
-      });
-    };
-
+    const tileBuildOptions = buildTileOptions(displayTournament);
     return (
       <>
-        <ColumbusDashboardGrid renderTile={renderDashboardTile} />
+        <section
+          className="tournament-event-dashboard"
+          aria-labelledby={`${post.id}-dashboard-title`}
+        >
+          {post.events.length > 1 ? (
+            <header className="tournament-event-dashboard__head">
+              <p className="tournament-data__eyebrow">{post.title}</p>
+              <h2 id={`${post.id}-dashboard-title`}>Combined Regional + NAOL</h2>
+            </header>
+          ) : (
+            <h2 id={`${post.id}-dashboard-title`} className="sr-only">
+              {displayTournament.stats.meta.title}
+            </h2>
+          )}
+          <ColumbusDashboardGrid
+            hiddenTileIds={getHiddenTileIds(displayTournament)}
+            renderTile={(id) => {
+              const placement = getPlacementForTile(id);
+              return buildColumbusTileById(id, {
+                ...tileBuildOptions,
+                tileVariant: placement.tileVariant,
+              });
+            }}
+          />
+        </section>
         {cardPanel}
       </>
     );
   }
 
-  const railTiles = HOME_TILE_ORDER.map((id) => (
-    <DashboardRailItem key={id}>
-      {buildColumbusTileById(id, tileBuildOptions)}
-    </DashboardRailItem>
-  ));
+  const hiddenTiles = new Set(getHiddenTileIds(displayTournament));
+  const tileBuildOptions = buildTileOptions(displayTournament);
+  const railTiles = HOME_TILE_ORDER
+    .filter((id) => !hiddenTiles.has(id))
+    .map((id) => (
+      <DashboardRailItem key={`${displayTournament.id}-${id}`}>
+        {buildColumbusTileById(id, tileBuildOptions)}
+      </DashboardRailItem>
+    ));
 
   return (
     <section className="home__section">
       <header className="home__section-head">
         <h2 className="home__section-title">
           <span className="home__section-icon"><IconTrophy /></span>
-          {stats.meta.title}
+          {post.title}
         </h2>
-        <Link className="home__view-all" to={buildRegionalEventPath(tournament.id)}>
+        <Link className="home__view-all" to={buildRegionalEventPath(post.id)}>
           View All <IconChevronRight />
         </Link>
       </header>

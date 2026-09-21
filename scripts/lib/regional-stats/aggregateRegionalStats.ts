@@ -1,15 +1,19 @@
 import { catalogTypeForCanonicalName, normalizeTournamentName } from './nameAliases';
+import { compareAlphabetically } from '../../../src/utils/alphabeticalSort';
 import type {
   CountEntry,
   HomebaseCountEntry,
   RegionalDeckRow,
+  SeasonCharacterPerformance,
   SpotlightEntry,
   TournamentCatalogType,
+  TournamentBreakdownEntry,
   TournamentEventMeta,
   TournamentEventStats,
 } from './types';
 
 const CHARACTER_COLS = ['frontLine1', 'frontLine2', 'frontLine3', 'reserve'] as const;
+const UNREPORTED = 'Unreported';
 
 function inc(map: Map<string, number>, rawName: string, slot: 'character' | 'reserve' | 'homebase' | 'cataclysm'): void {
   const name = normalizeTournamentName(rawName);
@@ -22,6 +26,26 @@ function characterSlots(row: RegionalDeckRow): string[] {
   return [row.frontLine1, row.frontLine2, row.frontLine3, row.reserve]
     .map((v) => normalizeTournamentName(v))
     .filter(Boolean);
+}
+
+function reportValue(rawName: string): string {
+  const value = rawName.trim();
+  return value && value.toLowerCase() !== UNREPORTED.toLowerCase() ? value : UNREPORTED;
+}
+
+function normalizeDeckRow(row: RegionalDeckRow): RegionalDeckRow {
+  return {
+    ...row,
+    frontLine1: normalizeTournamentName(row.frontLine1),
+    frontLine2: normalizeTournamentName(row.frontLine2),
+    frontLine3: normalizeTournamentName(row.frontLine3),
+    reserve: normalizeTournamentName(row.reserve),
+    homebase: normalizeTournamentName(row.homebase),
+    battleground: reportValue(row.battleground),
+    cataclysm: reportValue(row.cataclysm),
+    mission: reportValue(row.mission),
+    event: reportValue(row.event),
+  };
 }
 
 function mapToCountEntries(
@@ -46,7 +70,7 @@ function mapToCountEntries(
       count,
       catalogType: catalogTypeForCanonicalName(name, slot),
     }))
-    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+    .sort((a, b) => b.count - a.count || compareAlphabetically(a.name, b.name));
 }
 
 function collectPriorFirstPlaceCharacters(priorRows: RegionalDeckRow[][]): Set<string> {
@@ -143,6 +167,7 @@ export function aggregateRegionalStats(input: AggregateRegionalStatsInput): Tour
   const homeTop8 = new Map<string, number>();
   const homeTop3 = new Map<string, number>();
   const homeWins = new Map<string, number>();
+  const battlegroundMap = new Map<string, number>();
   const catMap = new Map<string, number>();
   let cataclysmReportedCount = 0;
 
@@ -173,8 +198,11 @@ export function aggregateRegionalStats(input: AggregateRegionalStatsInput): Tour
       if (isWin) homeWins.set(homeName, (homeWins.get(homeName) ?? 0) + 1);
     }
 
+    const battlegroundName = reportValue(row.battleground);
+    battlegroundMap.set(battlegroundName, (battlegroundMap.get(battlegroundName) ?? 0) + 1);
+
     const catName = normalizeTournamentName(row.cataclysm);
-    if (catName) {
+    if (catName && catName.toLowerCase() !== UNREPORTED.toLowerCase()) {
       cataclysmReportedCount += 1;
       inc(catMap, row.cataclysm, 'cataclysm');
     }
@@ -200,7 +228,7 @@ export function aggregateRegionalStats(input: AggregateRegionalStatsInput): Tour
     }
   }
   const newTop8Characters: CountEntry[] = [...newTop8Chars]
-    .sort((a, b) => a.localeCompare(b))
+    .sort(compareAlphabetically)
     .map((name) => ({ name, count: 1, catalogType: 'characters' as TournamentCatalogType }));
 
   const topHomebases: HomebaseCountEntry[] = [...homeMap.entries()]
@@ -215,9 +243,12 @@ export function aggregateRegionalStats(input: AggregateRegionalStatsInput): Tour
         wins: homeWins.get(name) ?? 0,
       };
     })
-    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+    .sort((a, b) => b.count - a.count || compareAlphabetically(a.name, b.name));
 
   const spotlights = computeSpotlight(decks, top8Decks);
+  const topBattlegrounds: TournamentBreakdownEntry[] = [...battlegroundMap.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count || compareAlphabetically(a.name, b.name));
 
   return {
     meta,
@@ -229,8 +260,61 @@ export function aggregateRegionalStats(input: AggregateRegionalStatsInput): Tour
     newTop8Characters,
     topReserves: mapToCountEntries(reserveMap, 'reserve'),
     topHomebases,
+    topBattlegrounds,
     topCataclysms: mapToCountEntries(catMap, 'cataclysm'),
     cataclysmReportedCount,
+    deckRows: decks.map(normalizeDeckRow),
+  };
+}
+
+export function aggregateSeasonCharacterPerformance(
+  eventDecks: RegionalDeckRow[][],
+  throughDate: string,
+): SeasonCharacterPerformance {
+  const byCharacter = new Map<string, Omit<SeasonCharacterPerformance['characters'][number], 'name' | 'catalogType' | 'count' | 'gameWinRate'>>();
+
+  for (const decks of eventDecks) {
+    for (const row of decks) {
+      for (const name of characterSlots(row)) {
+        const current = byCharacter.get(name) ?? {
+          appearances: 0,
+          gameWins: 0,
+          gameLosses: 0,
+          top8: 0,
+          top3: 0,
+          tournamentWins: 0,
+        };
+        current.appearances += 1;
+        current.gameWins += row.wins;
+        current.gameLosses += row.losses;
+        if (row.rank <= 8) current.top8 += 1;
+        if (row.rank <= 3) current.top3 += 1;
+        if (row.rank === 1) current.tournamentWins += 1;
+        byCharacter.set(name, current);
+      }
+    }
+  }
+
+  const characters = [...byCharacter.entries()]
+    .map(([name, data]) => ({
+      name,
+      catalogType: 'characters' as const,
+      count: data.appearances,
+      ...data,
+      gameWinRate: data.gameWins + data.gameLosses > 0
+        ? data.gameWins / (data.gameWins + data.gameLosses)
+        : 0,
+    }))
+    .sort((a, b) => b.appearances - a.appearances || compareAlphabetically(a.name, b.name));
+
+  return {
+    meta: {
+      title: '2026 Season One character performance',
+      throughDate,
+      eventCount: eventDecks.length,
+      deckCount: eventDecks.reduce((sum, decks) => sum + decks.length, 0),
+    },
+    characters,
   };
 }
 
@@ -244,12 +328,18 @@ export function parseS1SheetRows(rows: unknown[][]): RegionalDeckRow[] {
     decks.push({
       rank,
       player: String(r[1] ?? '').trim(),
+      wins: 0,
+      losses: 0,
       frontLine1: String(r[2] ?? '').trim(),
       frontLine2: String(r[3] ?? '').trim(),
       frontLine3: String(r[4] ?? '').trim(),
       reserve: String(r[5] ?? '').trim(),
       homebase: String(r[6] ?? '').trim(),
+      battleground: String(r[7] ?? '').trim(),
       cataclysm: String(r[8] ?? '').trim(),
+      mission: '',
+      cardCount: null,
+      event: '',
     });
   }
   return decks;
@@ -269,12 +359,54 @@ export function parseS0SheetRows(rows: unknown[][]): RegionalDeckRow[] {
     decks.push({
       rank,
       player,
+      wins: 0,
+      losses: 0,
       frontLine1: String(r[1] ?? '').trim(),
       frontLine2: String(r[2] ?? '').trim(),
       frontLine3: String(r[3] ?? '').trim(),
       reserve: String(r[4] ?? '').trim(),
       homebase: String(r[5] ?? '').trim(),
+      battleground: '',
       cataclysm: String(r[6] ?? '').trim(),
+      mission: '',
+      cardCount: null,
+      event: '',
+    });
+  }
+  return decks;
+}
+
+export function parse2026DeckSectionRows(
+  rows: unknown[][],
+  sectionName: string,
+): RegionalDeckRow[] {
+  const headerIndex = rows.findIndex((row) => String(row?.[0] ?? '').trim() === sectionName);
+  if (headerIndex < 0) {
+    throw new Error(`Missing 2026 deck section: ${sectionName}`);
+  }
+
+  const decks: RegionalDeckRow[] = [];
+  for (let i = headerIndex + 1; i < rows.length; i += 1) {
+    const row = rows[i] ?? [];
+    const rank = Number(row[0]);
+    if (!Number.isFinite(rank) || rank < 1) break;
+
+    const cardCountValue = Number(row[13]);
+    decks.push({
+      rank,
+      player: String(row[2] ?? '').trim(),
+      wins: Number(row[3]) || 0,
+      losses: Number(row[4]) || 0,
+      frontLine1: String(row[5] ?? '').trim(),
+      frontLine2: String(row[6] ?? '').trim(),
+      frontLine3: String(row[7] ?? '').trim(),
+      reserve: String(row[8] ?? '').trim(),
+      homebase: String(row[9] ?? '').trim(),
+      battleground: String(row[10] ?? '').trim(),
+      cataclysm: String(row[11] ?? '').trim(),
+      mission: String(row[12] ?? '').trim(),
+      cardCount: Number.isFinite(cardCountValue) && cardCountValue > 0 ? cardCountValue : null,
+      event: String(row[14] ?? '').trim(),
     });
   }
   return decks;

@@ -1,7 +1,6 @@
 import type { DeckListItem } from '../api/types';
 import {
-  TOURNAMENT_PODIUM_PLACEMENTS,
-  type TournamentPodiumPlacement,
+  type TournamentDeckPlacement,
   type TournamentPodiumResult,
 } from './types';
 
@@ -13,17 +12,19 @@ export interface TournamentPodiumDeckEntry extends TournamentPodiumResult {
 
 export interface TournamentPodiumDeckOptions {
   deckNameLabel: string;
+  deckTitleSeries?: string;
   podium: TournamentPodiumResult[];
-  stableDeckIds?: Partial<Record<TournamentPodiumPlacement, string>>;
+  stableDeckIds?: Partial<Record<TournamentDeckPlacement, string>>;
   stableDeckUserId?: string;
 }
 
 function findDeckByNamePrefix(
   decks: DeckListItem[],
   deckNameLabel: string,
-  placement: TournamentPodiumPlacement,
+  placement: TournamentDeckPlacement,
+  deckTitleSeries = 'S1 Regionals',
 ): DeckListItem | undefined {
-  const prefix = `S1 Regionals (${deckNameLabel} ${placement}`.toLowerCase();
+  const prefix = `${deckTitleSeries} (${deckNameLabel} ${placement}`.toLowerCase();
   return decks.find((deck) => deck.metadata.name.toLowerCase().startsWith(prefix));
 }
 
@@ -32,17 +33,22 @@ export function resolveTournamentPodiumDecks(
   decks: DeckListItem[],
   options: TournamentPodiumDeckOptions,
 ): TournamentPodiumDeckEntry[] {
-  return TOURNAMENT_PODIUM_PLACEMENTS.map((placement) => {
-    const result = options.podium.find((entry) => entry.placement === placement);
+  return options.podium.map((result) => {
+    const placement = result.placement;
     const stableId = options.stableDeckIds?.[placement];
     const deck =
       (stableId ? decks.find((entry) => entry.metadata.id === stableId) : undefined) ??
-      findDeckByNamePrefix(decks, options.deckNameLabel, placement) ??
+      findDeckByNamePrefix(
+        decks,
+        options.deckNameLabel,
+        placement,
+        options.deckTitleSeries,
+      ) ??
       null;
 
     return {
       placement,
-      playerName: result?.playerName ?? 'Deck unavailable',
+      playerName: result.playerName,
       deck,
       deckId: deck?.metadata.id ?? stableId ?? null,
       userId: deck?.metadata.userId ?? (stableId ? options.stableDeckUserId ?? null : null),
@@ -53,7 +59,7 @@ export function resolveTournamentPodiumDecks(
 /** Extract the player name from a conventionally named tournament deck. */
 export function extractTournamentPodiumPlayerName(
   deckName: string,
-  placement: TournamentPodiumPlacement,
+  placement: TournamentDeckPlacement,
   deckNameLabel: string,
 ): string {
   const escapedLabel = deckNameLabel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

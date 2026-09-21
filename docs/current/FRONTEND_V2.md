@@ -35,9 +35,17 @@ frontend/src/
 `main.tsx` mounts: `QueryClientProvider` → `LayoutModeProvider` → `AuthProvider` →
 `RouterProvider`. So every route has Query, layout mode, and auth in context.
 
+`RootLayout` additionally owns `SupporterFlowProvider` around the router outlet. Home, Database,
+desktop Profile, mobile Profile, and the public Supporter overview all open that one responsive
+panel; status, amount restoration, Checkout return polling, and hosted-portal handoff are not
+duplicated by entry points.
+
 ## Routing
 Defined in [`frontend/src/app/router.tsx`](../../frontend/src/app/router.tsx):
 - `/login` — standalone (no shell).
+- `/supporter` — public and shareable. Signed-in visitors see the standard AppShell;
+  signed-out visitors see a compact public header. Its local billing actions remain disconnected
+  until Stripe Checkout and the customer portal are wired.
 - `ShelledLayout` (`ProtectedRoute` + `AppShell`) wraps:
   - `/` → redirects to `/home`
   - `/home`, `/home/updates`, `/data`, `/community`, `/users/:userId/decks`, `/users/:userId/collection`

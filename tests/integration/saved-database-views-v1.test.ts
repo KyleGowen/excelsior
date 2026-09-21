@@ -61,14 +61,26 @@ describe('Saved database views v1 integration', () => {
     expect(remaining.rowCount).toBe(0);
   });
 
-  it('allows ADMIN only and requires authentication', async () => {
+  it('allows ADMIN and Supporter users, denies other accounts, and requires authentication', async () => {
     await request(app).get('/api/v1/saved-database-views').expect(401);
-    for (const principal of [user, guest]) {
-      const response = await request(app).get('/api/v1/saved-database-views').set(as(principal.id)).expect(403);
-      expect(response.body.errors[0].code).toBe('SAVED_DATABASE_VIEW_FORBIDDEN');
-    }
+    const regularResponse = await request(app).get('/api/v1/saved-database-views').set(as(user.id)).expect(403);
+    expect(regularResponse.body.errors[0].code).toBe('SAVED_DATABASE_VIEW_FORBIDDEN');
+    const guestResponse = await request(app).get('/api/v1/saved-database-views').set(as(guest.id)).expect(403);
+    expect(guestResponse.body.errors[0].code).toBe('SAVED_DATABASE_VIEW_FORBIDDEN');
     const allowed = await request(app).get('/api/v1/saved-database-views').set(as(admin1.id)).expect(200);
     expect(allowed.body.data).toEqual({ views: [], count: 0, max: 50 });
+
+    await pool.query(
+      `INSERT INTO supporter_entitlement_sources
+         (user_id, source, source_reference, reason, created_by_user_id)
+       VALUES ($1, 'COMPLIMENTARY', 'manual', 'Saved Views integration test', $2)`,
+      [user.id, admin1.id],
+    );
+    const supporterAllowed = await request(app)
+      .get('/api/v1/saved-database-views')
+      .set(as(user.id))
+      .expect(200);
+    expect(supporterAllowed.body.data).toEqual({ views: [], count: 0, max: 50 });
   });
 
   it('creates duplicate names, lists deterministically, renames, and pins without mutating state', async () => {

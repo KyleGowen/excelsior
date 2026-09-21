@@ -26,6 +26,8 @@ interface CardImageProps {
   imagePath?: string | null;
   /** Optional second face. When present, an in-art control swaps the displayed image. */
   reverseImagePath?: string | null;
+  /** Suppress the in-art flip button when the image is already inside another interactive control. */
+  showFlipControl?: boolean;
   alt: string;
   /** Use the thumbnail variant (lists, tiles, ribbons). Default true. */
   useThumbnail?: boolean;
@@ -112,6 +114,7 @@ function syncImageLoaded(img: HTMLImageElement | null): boolean {
 export function CardImage({
   imagePath,
   reverseImagePath,
+  showFlipControl = true,
   alt,
   useThumbnail = true,
   progressive = false,
@@ -138,7 +141,7 @@ export function CardImage({
     setShowReverse(false);
   }, [imagePath, effectiveReverseImagePath]);
 
-  const flipControl = effectiveReverseImagePath ? (
+  const flipControl = showFlipControl && effectiveReverseImagePath ? (
     <button
       type="button"
       className="card-image__flip"

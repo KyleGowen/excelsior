@@ -35,6 +35,7 @@ Key docs:
 - [docs/current/ENDPOINT_HIT_METRICS.md](docs/current/ENDPOINT_HIT_METRICS.md) — `endpoint_hit_counts` async metrics; on startup the app seeds missing route keys at zero and **deletes rows for routes no longer registered** (no per-route migration).
 - [docs/current/SIMULATE_KO_FEATURE.md](docs/current/SIMULATE_KO_FEATURE.md) — Simulate KO in [`frontend/src/features/deck-editor/DeckEditorPage.md`](frontend/src/features/deck-editor/DeckEditorPage.md).
 - [docs/current/DRAW_HAND_FEATURE.md](docs/current/DRAW_HAND_FEATURE.md) — Draw Hand in [`DrawHandPanel.tsx`](frontend/src/features/deck-editor/DrawHandPanel.tsx) + [`drawHand.ts`](frontend/src/lib/decks/drawHand.ts).
+- [docs/current/VENTURE_TOTAL.md](docs/current/VENTURE_TOTAL.md) — concise Modern-rulebook reference for calculating Venture Total and the Draw Hand estimate's scope.
 - [docs/current/COLLECTION_CHECKLIST_SOURCE.md](docs/current/COLLECTION_CHECKLIST_SOURCE.md) — Source of truth for collection card names and numbers (OverPower Check List).
 
 ## External API hardening

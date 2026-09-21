@@ -3,6 +3,8 @@ export { StatsChartTile } from './StatsChartTile';
 export { PreviewTextTile } from './PreviewTextTile';
 export type { PreviewTextTileSection } from './PreviewTextTile';
 export { TournamentPlacardTile } from './TournamentPlacardTile';
+export { TournamentPlacardCarouselTile } from './TournamentPlacardCarouselTile';
+export type { TournamentPlacardSlide } from './TournamentPlacardCarouselTile';
 export { TournamentBarChart } from './TournamentBarChart';
 export { TournamentPieChart } from './TournamentPieChart';
 export { TournamentHighlightTile } from './TournamentHighlightTile';

@@ -212,6 +212,19 @@ and delivered through SES without persisting the message body.
 
 ---
 
+## P4d — Supporter billing (additive v1 routes)
+
+| Legacy | v1 | Migrated | Service | Unit tests | Integration | Docs/OpenAPI |
+| ------ | -- | -------- | ------- | ---------- | ----------- | ------------ |
+| — | GET /api/v1/supporter/status | [x] | `SupporterBillingService` + `supporter.http.ts` | [x] | [x] | [x] |
+| — | POST /api/v1/supporter/checkout | [x] | `SupporterBillingService` + `supporter.http.ts` | [x] | [x] | [x] |
+| — | POST /api/v1/supporter/portal | [x] | `SupporterBillingService` + `supporter.http.ts` | [x] | [x] | [x] |
+| — | POST /api/v1/supporter/webhook | [x] | `SupporterBillingService` + `supporter.http.ts` | [x] | [x] | [x] |
+
+These routes use canonical entitlement sources and server-owned Stripe configuration. No legacy billing route exists.
+
+---
+
 ## P5 — Admin only (`/api/v1/admin/...`)
 
 All elevated operations must live under `/api/v1/admin/...` (no client “admin” flags).
@@ -223,6 +236,7 @@ All elevated operations must live under `/api/v1/admin/...` (no client “admin�
 | GET /api/debug/*            | /api/v1/admin/debug/*         | [x]      |
 | GET /api/database/status    | /api/v1/admin/database/status | [x]      |
 | —                           | /api/v1/admin/biz-ops-dashboard | [x]    |
+| —                           | PATCH /api/v1/admin/users/:userId/supporter | [x] |
 
 
 ---

@@ -40,4 +40,13 @@ describe('Login mobile viewport styling', () => {
       /\{credentialsForm\}[\s\S]*\{divider\}[\s\S]*\{googleButton\}/,
     );
   });
+
+  it('describes Excelsior as independently built for the Modern OverPower community', () => {
+    expect(pageSource).toContain(
+      'Excelsior is an independently developed and operated OverPower database and deck',
+    );
+    expect(pageSource).toContain('builder, built for the Modern OverPower community.&nbsp; Browse');
+    expect(pageSource).not.toContain('single developer');
+    expect(pageSource).not.toContain('independently owned');
+  });
 });

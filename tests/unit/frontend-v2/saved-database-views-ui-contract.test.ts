@@ -19,9 +19,10 @@ const panelStyles = fs.readFileSync(
 );
 
 describe('Saved database views UI contract', () => {
-  it('gates both endpoint access and controls behind the ADMIN role', () => {
-    expect(databasePage).toContain('enabled: isAdmin');
-    expect(databasePage).toContain('{isAdmin ? (');
+  it('gates both endpoint access and controls behind ADMIN or Supporter access', () => {
+    expect(databasePage).toContain('const canUseSavedViews = isAdmin || isSupporter');
+    expect(databasePage).toContain('enabled: canUseSavedViews');
+    expect(databasePage).toContain('{canUseSavedViews ? (');
     expect(databasePage).toContain('<SavedDatabaseViewsPanel');
   });
 

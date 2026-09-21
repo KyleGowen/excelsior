@@ -20,6 +20,7 @@ const ART_TOUCH_HOLD_DELAY_MS = 750;
 
 interface TournamentCharacterRosterTileProps {
   title: string;
+  eventSubtitle?: string;
   entries: CountEntry[];
   variant: DashboardTileVariant;
   mode: 'cycle' | 'mosaic';
@@ -225,6 +226,7 @@ function TournamentCharacterCycle({
 
 export function TournamentCharacterRosterTile({
   title,
+  eventSubtitle,
   entries,
   variant,
   mode,
@@ -242,6 +244,7 @@ export function TournamentCharacterRosterTile({
       variant={variant}
       layout="chart"
       title={title}
+      eventSubtitle={eventSubtitle}
       subtitle={`${entries.length} newcomer${entries.length === 1 ? '' : 's'}`}
       className="stats-chart-tile tournament-character-roster"
     >

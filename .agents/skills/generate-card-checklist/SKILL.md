@@ -52,6 +52,15 @@ python3 .agents/skills/generate-card-checklist/scripts/generate_checklist.py \
   --output data/personal/dc-overpower-batman-superman-checklist.html
 ```
 
+For IQ OverPower:
+
+```bash
+python3 .agents/skills/generate-card-checklist/scripts/generate_checklist.py \
+  --preset iq-overpower \
+  --with-prices \
+  --output data/personal/iq-overpower-checklist.html
+```
+
 ## Workflow
 
 1. Confirm the set and source files. Prefer existing local structured data:
@@ -76,6 +85,7 @@ python3 .agents/skills/generate-card-checklist/scripts/generate_checklist.py --p
 python3 .agents/skills/generate-card-checklist/scripts/generate_checklist.py --preset powersurge
 python3 .agents/skills/generate-card-checklist/scripts/generate_checklist.py --preset mission-control
 python3 .agents/skills/generate-card-checklist/scripts/generate_checklist.py --preset dc-overpower-batman-superman
+python3 .agents/skills/generate-card-checklist/scripts/generate_checklist.py --preset iq-overpower
 ```
 
 Important options:

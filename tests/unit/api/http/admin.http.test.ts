@@ -116,11 +116,30 @@ function stubAdminService(over: Partial<AdminService> = {}): AdminService {
       }
     }),
     listUsers: jest.fn().mockResolvedValue([
-      { id: '1', name: 'n', email: 'n@e.com', role: 'USER', lastLoginAt: null }
+      {
+        id: '1', name: 'n', email: 'n@e.com', role: 'USER', lastLoginAt: null,
+        isSupporter: false, supporterSources: [], complimentarySupporterExpiresAt: null
+      }
     ]),
     createUser: jest.fn().mockResolvedValue({
       ok: true,
-      user: { id: '2', name: 'new', email: 'new@example.com', role: 'USER', lastLoginAt: null }
+      user: {
+        id: '2', name: 'new', email: 'new@example.com', role: 'USER', lastLoginAt: null,
+        isSupporter: false, supporterSources: [], complimentarySupporterExpiresAt: null
+      }
+    }),
+    updateSupporterEntitlement: jest.fn().mockResolvedValue({
+      ok: true,
+      user: {
+        id: '11111111-1111-4111-8111-111111111111',
+        name: 'supporter',
+        email: 'supporter@example.com',
+        role: 'USER',
+        lastLoginAt: null,
+        isSupporter: true,
+        supporterSources: ['COMPLIMENTARY'],
+        complimentarySupporterExpiresAt: '2026-10-14T12:00:00.000Z'
+      }
     }),
     clearDeckCache: jest.fn(),
     clearCardCaches: jest.fn(),
@@ -238,6 +257,38 @@ describe('admin.http', () => {
     const res = await request(app).post('/admin/users').send({}).expect(400);
     expect(res.body.errors.length).toBeGreaterThan(0);
     expect(svc.createUser).not.toHaveBeenCalled();
+  });
+
+  it('PATCH /admin/users/:userId/supporter grants access with an audited reason', async () => {
+    const svc = stubAdminService();
+    const app = buildApp({ adminService: svc, authenticateUser: adminAuth });
+    const res = await request(app)
+      .patch('/admin/users/11111111-1111-4111-8111-111111111111/supporter')
+      .send({ action: 'grant', duration: '30_DAYS', reason: 'Community thank-you' })
+      .expect(200);
+    expect(res.body.data.isSupporter).toBe(true);
+    expect(svc.updateSupporterEntitlement).toHaveBeenCalledWith({
+      userId: '11111111-1111-4111-8111-111111111111',
+      actorUserId: 'admin-1',
+      action: 'grant',
+      duration: '30_DAYS',
+      reason: 'Community thank-you'
+    });
+  });
+
+  it('PATCH /admin/users/:userId/supporter requires admin and validates grant metadata', async () => {
+    const svc = stubAdminService();
+    const userApp = buildApp({ adminService: svc, authenticateUser: userAuth });
+    await request(userApp)
+      .patch('/admin/users/11111111-1111-4111-8111-111111111111/supporter')
+      .send({ action: 'grant', duration: '30_DAYS', reason: 'Community thank-you' })
+      .expect(403);
+    const adminApp = buildApp({ adminService: svc, authenticateUser: adminAuth });
+    await request(adminApp)
+      .patch('/admin/users/11111111-1111-4111-8111-111111111111/supporter')
+      .send({ action: 'grant', reason: 'x' })
+      .expect(400);
+    expect(svc.updateSupporterEntitlement).not.toHaveBeenCalled();
   });
 
   it('GET /admin/debug/clear-cache', async () => {

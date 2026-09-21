@@ -18,6 +18,8 @@ import { EmptyState } from '../../components/EmptyState';
 import { RecentUpdatesList } from './RecentUpdatesList';
 import { useRecentUpdates } from './useRecentUpdates';
 import { TournamentStatsRail } from './TournamentStatsRail';
+import { SupporterInvitation } from '../../components/SupporterInvitation';
+import { useSupporterFlow } from '../supporter-flow';
 import {
   buildDeckEditorNavigateState,
   DECK_EDITOR_RETURN_HOME,
@@ -59,6 +61,7 @@ const HOME_PRECONSTRUCTED_DECKS_KEY = ['decks', 'preconstructed'] as const;
 
 export default function HomePage() {
   const { user, tournamentDecksUserId } = useAuth();
+  const { showInvitation } = useSupporterFlow();
   const navigate = useNavigate();
 
   const communityQuery = useQuery({
@@ -180,6 +183,10 @@ export default function HomePage() {
             />
           </div>
         </section>
+
+        {showInvitation ? (
+          <SupporterInvitation />
+        ) : null}
 
         <NewsSection />
 

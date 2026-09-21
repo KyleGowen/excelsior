@@ -17,6 +17,7 @@ function formatEventDate(iso: string): string {
 export function getTournamentPlacardSections(
   meta: TournamentEventMeta,
   showPodium: boolean,
+  showWinnerWithPodium = false,
 ): TournamentPlacardSection[] {
   return [
     ...(meta.location
@@ -35,7 +36,7 @@ export function getTournamentPlacardSections(
       label: 'Players',
       value: String(meta.playerCount),
     },
-    ...(showPodium
+    ...(showPodium && !showWinnerWithPodium
       ? []
       : [
           {

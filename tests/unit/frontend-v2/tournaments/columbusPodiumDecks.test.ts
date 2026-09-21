@@ -3,6 +3,8 @@ import {
   COLUMBUS_PODIUM_DECK_IDS,
   NIAGARA_PODIUM_DECK_IDS,
   REGIONAL_TOURNAMENTS,
+  SEATTLE_NAOL_DECK_IDS,
+  SEATTLE_REGIONAL_DECK_IDS,
 } from '../../../../frontend/src/lib/tournaments/regionalTournaments';
 import {
   extractTournamentPodiumPlayerName,
@@ -29,6 +31,8 @@ function makeDeck(id: string, name: string): DeckListItem {
 
 const columbus = REGIONAL_TOURNAMENTS.find((event) => event.id === 's1-columbus')!;
 const niagara = REGIONAL_TOURNAMENTS.find((event) => event.id === 's1-niagara')!;
+const seattleRegional = REGIONAL_TOURNAMENTS.find((event) => event.id === 's1-seattle-regional')!;
+const seattleNaol = REGIONAL_TOURNAMENTS.find((event) => event.id === 's1-seattle-naol')!;
 
 describe('tournamentPodiumDecks', () => {
   it('resolves decks by stable production IDs', () => {
@@ -103,5 +107,43 @@ describe('tournamentPodiumDecks', () => {
       userId: '00000000-0000-0000-0000-000000000003',
     });
     expect(resolved[2]).toMatchObject({ deck: null, deckId: null, userId: null });
+  });
+
+  it('resolves every reported Seattle deck placement, including 6th and 8th', () => {
+    const decks = [
+      makeDeck('sea-1', 'S1 Regionals (Seattle 1st, Andrew Taylor)'),
+      makeDeck('sea-2', 'S1 Regionals (Seattle 2nd, Charlie Hanford)'),
+      makeDeck('sea-6', 'S1 Regionals (Seattle 6th, Anthony Anzalone)'),
+      makeDeck('naol-1', 'S1 NAOL Majors (Seattle 1st, Andrew Taylor)'),
+      makeDeck('naol-2', 'S1 NAOL Majors (Seattle 2nd, Josh Alexander)'),
+      makeDeck('naol-8', 'S1 NAOL Majors (Seattle 8th, Charlie Hanford)'),
+    ];
+
+    expect(resolveTournamentPodiumDecks(decks, seattleRegional).map((entry) => entry.deckId))
+      .toEqual(['sea-1', 'sea-2', 'sea-6']);
+    expect(resolveTournamentPodiumDecks(decks, seattleNaol).map((entry) => entry.deckId))
+      .toEqual(['naol-1', 'naol-2', 'naol-8']);
+  });
+
+  it('keeps all six Seattle links active before the local deck feed catches up', () => {
+    const regional = resolveTournamentPodiumDecks([], seattleRegional);
+    const naol = resolveTournamentPodiumDecks([], seattleNaol);
+
+    expect(regional.map((entry) => entry.deckId)).toEqual(Object.values(SEATTLE_REGIONAL_DECK_IDS));
+    expect(naol.map((entry) => entry.deckId)).toEqual(Object.values(SEATTLE_NAOL_DECK_IDS));
+    expect([...regional, ...naol].every((entry) => (
+      entry.userId === '00000000-0000-0000-0000-000000000003'
+    ))).toBe(true);
+  });
+
+  it('matches the distinct production title series for NAOL decks', () => {
+    const decks = [makeDeck('naol-live', 'S1 NAOL Majors (Seattle 1st, Andrew Taylor)')];
+    const [winner] = resolveTournamentPodiumDecks(decks, {
+      deckNameLabel: 'Seattle',
+      deckTitleSeries: 'S1 NAOL Majors',
+      podium: seattleNaol.podium,
+    });
+
+    expect(winner.deckId).toBe('naol-live');
   });
 });

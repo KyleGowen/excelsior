@@ -8,6 +8,7 @@ import './TournamentCharts.css';
 
 interface TournamentCharacterListTileProps {
   title: string;
+  eventSubtitle?: string;
   entries: CountEntry[];
   variant?: DashboardTileVariant;
   onEntryClick: (entry: CountEntry) => void;
@@ -17,6 +18,7 @@ interface TournamentCharacterListTileProps {
 
 export function TournamentCharacterListTile({
   title,
+  eventSubtitle,
   entries,
   variant = 'rail',
   onEntryClick,
@@ -25,7 +27,7 @@ export function TournamentCharacterListTile({
 }: TournamentCharacterListTileProps) {
   if (entries.length === 0) {
     return (
-      <StatsChartTile variant={variant} title={title}>
+      <StatsChartTile variant={variant} title={title} eventSubtitle={eventSubtitle}>
         <p className="tournament-tile-empty">None this event</p>
       </StatsChartTile>
     );
@@ -34,6 +36,7 @@ export function TournamentCharacterListTile({
   return (
     <TournamentCharacterRosterTile
       title={title}
+      eventSubtitle={eventSubtitle}
       entries={entries}
       variant={variant}
       mode={isDashboardRailVariant(variant) ? 'cycle' : 'mosaic'}

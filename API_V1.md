@@ -37,7 +37,11 @@ Versioned JSON API for Excelsior. **Legacy** routes remain documented in [API_DO
 | `POST /api/v1/feedback` | ✓ | — | Any authenticated role; 5 submissions/minute |
 | `/api/v1/guest/decks*` | ✓ (GUEST only) | ✗ | GUEST role required; wrong role→403 |
 | `/api/v1/collections/me*` | ✓ | ✗ | USER/ADMIN; GUEST→401 (no collection) |
-| `/api/v1/saved-database-views*` | ✓ | ✓ | Current-user-owned records; temporarily ADMIN-only via centralized eligibility policy |
+| `/api/v1/saved-database-views*` | ✓ | ✓ | Current-user-owned records; available to ADMIN and active Supporter accounts via centralized eligibility policy |
+| `GET /api/v1/supporter/status` | ✓ (optional) | ✓ (optional) | Public canonical offer/status; paid details only for the authenticated USER |
+| `POST /api/v1/supporter/checkout` | ✓ | ✓ | Persistent USER only; GUEST/ADMIN forbidden |
+| `POST /api/v1/supporter/portal` | ✓ | ✓ | Persistent USER with a server-owned paid mapping only |
+| `POST /api/v1/supporter/webhook` | Stripe signature | — | Raw-body verified provider callback; no browser authentication |
 | `/api/v1/admin/*` | ✓ | — | ADMIN role required; other roles→403 |
 
 Bearer support on decks/catalog can be disabled server-side via `DISABLE_BEARER_DECKS_COLLECTIONS=1`. For a complete guide including token lifetimes, cookie names, and the GUEST session flow, see [docs/current/FRONTEND_AUTH_AND_SESSION.md](docs/current/FRONTEND_AUTH_AND_SESSION.md).
@@ -131,7 +135,8 @@ All v1 JSON responses use:
   "user": {
     "id": "uuid",
     "username": "kyle",
-    "role": "USER"
+    "role": "USER",
+    "isSupporter": true
   }
 }
 ```
@@ -183,7 +188,8 @@ See `[docs/current/API_V1_AUTH_REFRESH.md](docs/current/API_V1_AUTH_REFRESH.md)`
     "username": "kyle",
     "email": "user@example.com",
     "role": "USER",
-    "lastLoginAt": "2026-04-03T10:00:00.000Z"
+    "lastLoginAt": "2026-04-03T10:00:00.000Z",
+    "isSupporter": true
   },
   "meta": {},
   "errors": []
@@ -1345,7 +1351,39 @@ Deletes one caller-owned record.
 
 **Shared errors:** 401 `UNAUTHORIZED`; 403 `SAVED_DATABASE_VIEW_FORBIDDEN`; 400 `SAVED_DATABASE_VIEW_INVALID_NAME`, `SAVED_DATABASE_VIEW_INVALID_STATE`, `SAVED_DATABASE_VIEW_UNSUPPORTED_SCHEMA_VERSION`, `SAVED_DATABASE_VIEW_INVALID_ID`, or `SAVED_DATABASE_VIEW_INVALID_METADATA`; 404 `SAVED_DATABASE_VIEW_NOT_FOUND`; 409 `SAVED_DATABASE_VIEW_LIMIT_REACHED`; 500 `SAVED_DATABASE_VIEW_ERROR`.
 
+**Eligibility:** ADMIN accounts and USER accounts with an active Supporter entitlement.  Card data and the rest of the Database remain available to every account.
+
 **Implementation:** HTTP [`saved-database-views.http.ts`](src/api/http/saved-database-views.http.ts) · service [`savedDatabaseViewService.ts`](src/api/services/savedDatabaseViewService.ts) · DTO [`SavedDatabaseViewDto.ts`](src/api/dto/v1/SavedDatabaseViewDto.ts)
+
+---
+
+## Supporter billing
+
+One Supporter membership uses one configured recurring `$1 USD/month` Stripe Price. A whole-dollar monthly contribution is the subscription item quantity, so `$3`, `$5`, and `$10` map to quantities `3`, `5`, and `10`. Every valid quantity grants the same boolean Supporter entitlement. The default and minimum are `$3`; the server-configured technical maximum is authoritative.
+
+### `GET /api/v1/supporter/status`
+
+Optional authentication. Returns the effective entitlement sources, complimentary expiry, whether checkout/portal integration is currently available, the contribution limits/presets, and canonical paid state. Paid `monthlyContributionUsd` is stored only after provider-side Product, Price, currency, unit amount, interval, mode, and quantity validation. Anonymous callers receive no account-specific paid state.
+
+### `POST /api/v1/supporter/checkout`
+
+Persistent USER authentication required; GUEST, ADMIN, and unauthenticated callers are rejected.
+
+**Body:** exactly `{ "monthlyContributionUsd": 5 }`. Extra keys are rejected. The amount must be a safe whole integer between `3` and the configured maximum.
+
+The server selects the configured Price/Customer/URLs, creates an expiring opaque checkout-attempt token, maps dollars directly to quantity, and creates a hosted subscription Checkout Session with the same adjustable-quantity limits. Dynamic payment methods remain Dashboard controlled; automatic tax is disabled. Browser return state never grants entitlement.
+
+**Response 201:** `{ "url": "https://checkout.stripe.com/...", "expiresAt": "ISO date-time" }`.
+
+### `POST /api/v1/supporter/portal`
+
+Persistent USER authentication and an existing server-owned Stripe Customer/subscription mapping are required. The body must be empty. Each request creates a new short-lived hosted portal Session with the explicitly configured portal configuration and same-origin return URL. Portal URLs are not persisted, logged, cached, or emailed.
+
+**Response 201:** `{ "url": "https://billing.stripe.com/..." }`.
+
+### `POST /api/v1/supporter/webhook`
+
+Stripe-signature verified against the exact raw request bytes. Durable event receipts deduplicate callbacks and reclaim stale/failed processing. `invoice.paid` is the initial/renewal entitlement signal; checkout/subscription events trigger canonical retrieval only. Reconciliation is monotonic and validates the full configured billing contract before changing the Stripe entitlement source. Recovery grace, paid-through cancellation, refund, dispute, and overlapping-source behavior are documented in [`docs/current/SUPPORTER_BILLING.md`](docs/current/SUPPORTER_BILLING.md).
 
 ---
 
@@ -1399,9 +1437,23 @@ Deck legality reads the server-authoritative `decks.is_valid` value. Deck totals
 
 ### `GET /api/v1/admin/users`
 
-**Response 200:** v1 envelope; `**data`** = array of `{ "id", "name", "email", "role", "lastLoginAt" }` (no password hash).
+**Response 200:** v1 envelope; `data` = array of `{ "id", "name", "email", "role", "lastLoginAt", "isSupporter", "supporterSources", "complimentarySupporterExpiresAt" }` (no password hash).  `supporterSources` contains active `COMPLIMENTARY` and/or `STRIPE` sources.
 
 **Response 500:** `**ADMIN_USERS_LIST_ERROR`**.
+
+### `PATCH /api/v1/admin/users/:userId/supporter`
+
+Grants or revokes the target USER account's complimentary Supporter source.  Stripe-backed access is independent and cannot be revoked by this route.
+
+**Grant body:** `{ "action": "grant", "duration": "30_DAYS" | "90_DAYS" | "1_YEAR" | "CUSTOM" | "PERMANENT", "customExpiresAt"?: "ISO date-time", "reason": "..." }`.  `customExpiresAt` is required only for `CUSTOM` and must be in the future.
+
+**Revoke body:** `{ "action": "revoke", "reason": "..." }`.
+
+Every grant and revoke requires a 3–500 character reason and creates an immutable audit record.  Re-granting replaces the current complimentary period while retaining prior history.
+
+**Response 200:** updated admin user DTO, including effective Supporter state and active sources.
+
+**Errors:** 400 `VALIDATION_ERROR`, `SUPPORTER_INVALID_USER_ROLE`, or `SUPPORTER_INVALID_EXPIRY`; 404 `SUPPORTER_USER_NOT_FOUND`; 500 `SUPPORTER_ENTITLEMENT_UPDATE_ERROR`.
 
 ### `POST /api/v1/admin/users`
 
@@ -1503,6 +1555,7 @@ Clears card repository caches.
 | GET    | /api/v1/admin/biz-ops-dashboard         | admin.http.ts       |
 | GET    | /api/v1/admin/user-analytics            | admin.http.ts       |
 | POST   | /api/v1/admin/users                     | admin.http.ts       |
+| PATCH  | /api/v1/admin/users/:userId/supporter   | admin.http.ts       |
 | GET    | /api/v1/admin/debug/clear-cache         | admin.http.ts       |
 | GET    | /api/v1/admin/debug/clear-card-cache    | admin.http.ts       |
 | GET    | /api/v1/admin/database/status           | admin.http.ts       |

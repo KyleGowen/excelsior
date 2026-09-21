@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../app/AuthProvider';
+import { useSupporterFlow } from '../../features/supporter-flow';
 import { IconChevronDown } from '../icons';
 import { ProfileMenuContent } from '../ProfileMenu/ProfileMenuContent';
 import { resolveUserDisplayName } from '../../lib/auth/resolveUserDisplayName';
@@ -7,7 +8,8 @@ import { HelpFeedbackFlow } from '../HelpFeedback';
 import './UserMenu.css';
 
 export function UserMenu() {
-  const { user, isGuest } = useAuth();
+  const { user, isGuest, isAdmin } = useAuth();
+  const { openSupporter, profileLabel, statusResolved } = useSupporterFlow();
   const [open, setOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -58,6 +60,11 @@ export function UserMenu() {
             <ProfileMenuContent
               onClose={() => setOpen(false)}
               onOpenHelp={openHelp}
+              onOpenSupporter={!isAdmin && statusResolved ? () => {
+                setOpen(false);
+                openSupporter();
+              } : undefined}
+              supporterLabel={profileLabel}
               variant="dropdown"
             />
           </div>

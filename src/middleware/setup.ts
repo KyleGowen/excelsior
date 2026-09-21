@@ -27,7 +27,15 @@ export function setupMiddleware(app: express.Application): void {
   app.use(createSecurityHeadersMiddleware());
   app.use(createCompressionMiddleware());
 
-  app.use(express.json());
+  app.use(express.json({
+    verify: (req, _res, buffer) => {
+      // Stripe signature verification needs the exact request bytes. Keep them only
+      // in memory for this route; never persist or log the raw webhook payload.
+      if ((req as Request).originalUrl.startsWith('/api/v1/supporter/webhook')) {
+        (req as typeof req & { rawBody?: Buffer }).rawBody = Buffer.from(buffer);
+      }
+    },
+  }));
 
   app.use((req: Request, res: Response, next: NextFunction) => {
     const cookieHeader = req.headers.cookie;

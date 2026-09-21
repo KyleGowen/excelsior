@@ -122,6 +122,10 @@
   }
 }
 
+.home__hero + .supporter-invitation {
+  margin-top: calc(-1 * var(--space-4));
+}
+
 /* ---- Sections ---- */
 .home__section-head {
   display: flex;
@@ -209,4 +213,8 @@
 }
 .layout-mobile .home__rail {
   grid-auto-columns: clamp(210px, 78vw, 280px);
+}
+
+.layout-mobile .home__hero + .supporter-invitation {
+  margin-top: calc(-1 * var(--space-2));
 }
