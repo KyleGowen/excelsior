@@ -184,12 +184,10 @@ account-sheet row (`.account-sheet__toggle`) with `justify-content: space-betwee
   while a new browser session starts expanded. The Home strip remains permanently expanded.
 - The invitation renders only after canonical status resolves. Production requires new checkout to
   be enabled; local development keeps the invitation visible for UI preview without Stripe secrets.
-  It is shown to guests and persistent non-Supporters, hidden for Supporters and admins. Paid
-  Supporters access **Manage monthly support** from Profile; complimentary-only users see
-  **Supporter status**.
-- Supporter status never appears as a separate top-navigation pill. Desktop and mobile both
-  keep support actions inside the Profile menu/sheet.
-- Home, Database, desktop Profile, and mobile Profile navigate directly to the full `/supporter`
+  It is shown to guests and persistent non-Supporters, hidden for Supporters and admins.
+- Supporter promotion and account management do not appear in the top navigation, desktop Profile
+  menu, or mobile Profile sheet.
+- Home and Database navigate directly to the full `/supporter`
   page; there is no Supporter drawer or intermediary. The page's support card renders the
   server-backed `SupporterFlow` inline. Its acquisition state is deliberately price-led and concise:
   a large **$3/month** minimum, one line explaining customer-chosen whole-dollar support, the amount
@@ -789,10 +787,8 @@ the character art is not clipped from the leading side. Every card remains click
 ### Admin user analytics (`/admin/user-analytics`)
 
 - The route remains inside `AppShell`, preserving the desktop header and mobile bottom navigation, but is linked only from the ADMIN profile menu.
-- The User Analytics hero is followed by an accent-edged **Supporter entitlement** manager.
-  It uses existing input and button tokens, exposes effective complimentary/Stripe source status,
-  and supports 30-day, 90-day, one-year, custom, and permanent complimentary grants.  The form
-  stacks to one column on mobile, and requires a reason before grant or revoke actions become active.
+- User Analytics contains account and engagement reporting only; it does not expose Supporter
+  entitlement administration.
 - The analytics panel uses the standard deep navy surfaces, cyan accent, stat-value type, rounded bordered KPI cards, and the textless Excelsior emblem.
 - Desktop layout: six KPI cards in a three-column grid, then a wide rolling 12-month acquisition chart beside login-recency bars. Below 1050px KPI cards become two columns and chart sections stack; below 640px KPI cards become one column.
 - A second full-width analytics band pairs two equal bordered cards: cumulative site-section API request-share bars for Home, Database, Decks, and Collection, and a 24-point Pacific-time login radar chart. The usage card must say it is request share rather than time, page views, or unique users. The radar shows all known tracked history and clearly states that the series is incomplete before telemetry began.

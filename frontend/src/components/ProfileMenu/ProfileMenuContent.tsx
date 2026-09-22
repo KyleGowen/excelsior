@@ -7,7 +7,7 @@ import { changeEmail, changePassword, setDisplayName } from '../../lib/api/accou
 import { resolveUserDisplayName } from '../../lib/auth/resolveUserDisplayName';
 import { isValidEmail } from '../../lib/validation/email';
 import { PasswordInput } from '../PasswordInput/PasswordInput';
-import { IconAnalytics, IconChartBar, IconPlus, IconLogout, IconLock, IconSettings, IconProfile, IconHelp, IconHeart } from '../icons';
+import { IconAnalytics, IconChartBar, IconPlus, IconLogout, IconLock, IconSettings, IconProfile, IconHelp } from '../icons';
 import './ProfileMenuContent.css';
 
 type OpenForm = 'displayName' | 'email' | 'password' | null;
@@ -15,16 +15,12 @@ type OpenForm = 'displayName' | 'email' | 'password' | null;
 export interface ProfileMenuContentProps {
   onClose: () => void;
   onOpenHelp: () => void;
-  onOpenSupporter?: () => void;
-  supporterLabel?: 'Support Excelsior' | 'Manage monthly support' | 'Supporter status';
   variant?: 'dropdown' | 'sheet';
 }
 
 export function ProfileMenuContent({
   onClose,
   onOpenHelp,
-  onOpenSupporter,
-  supporterLabel = 'Support Excelsior',
   variant = 'dropdown',
 }: ProfileMenuContentProps) {
   const { user, isGuest, logout, refresh } = useAuth();
@@ -350,16 +346,6 @@ export function ProfileMenuContent({
         >
           <IconHelp /> Help &amp; Feedback
         </button>
-        {onOpenSupporter ? (
-          <button
-            type="button"
-            className="profile-menu__item profile-menu__item--supporter"
-            role="menuitem"
-            onClick={onOpenSupporter}
-          >
-            <IconHeart /> {supporterLabel}
-          </button>
-        ) : null}
         <div className="profile-menu__divider" />
         <button
           type="button"

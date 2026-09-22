@@ -12,4 +12,9 @@ describe('User Analytics rolling acquisition window', () => {
     expect(page).toContain('were created since {formatDate(analytics.acquisitionPeriodStart)}. The latest month is month-to-date.');
     expect(page).not.toContain('in the previous 30 days');
   });
+
+  it('does not expose Supporter entitlement management in User Analytics', () => {
+    expect(page).not.toContain('SupporterAccessManager');
+    expect(page).not.toContain('Supporter entitlement');
+  });
 });

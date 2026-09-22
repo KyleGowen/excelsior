@@ -7,8 +7,8 @@ Log Out / Exit Guest.
 ## Behavior
 - Closes on outside click and `Escape`.
 - Renders nothing when there is no authenticated user.
-- Uses `useAuth()` for account state. Once canonical Supporter status resolves, non-admins receive
-  the appropriate Supporter action; the dropdown closes before navigation to `/supporter`.
+- Uses `useAuth()` for account state. Supporter promotion and account management are intentionally
+  excluded from the dropdown.
 
 ## Notes
 - Mobile uses the AppShell account sheet instead of this menu.

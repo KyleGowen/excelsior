@@ -9,8 +9,6 @@ dropdown or a mobile sheet by the nav.
 |---|---|---|---|
 | `onClose` | `() => void` | – | Closes the host dropdown/sheet (called before navigation and on logout). |
 | `onOpenHelp` | `() => void` | – | Closes the profile surface and opens the shared Help & Feedback workflow. |
-| `onOpenSupporter` | `() => void` | optional | Closes the host before navigating to the full Supporter page. Omitted for admins or unresolved status. |
-| `supporterLabel` | Supporter profile label | optional | Canonical **Support Excelsior**, **Manage monthly support**, or **Supporter status** copy. |
 | `variant` | `'dropdown' \| 'sheet'` | `'dropdown'` | Root class `profile-menu--{variant}` for desktop vs mobile presentation. |
 
 ## Notes
@@ -28,7 +26,6 @@ dropdown or a mobile sheet by the nav.
   [`PasswordInput`](../PasswordInput/PasswordInput.md)s with live match validation.
 - Help & Feedback is always placed before the divider above logout. Desktop renders its inspector
   from `UserMenu`; mobile renders the same flow from `MobileBottomNav` after closing the account sheet.
-- The Supporter action uses the canonical billing-status label and navigates to `/supporter`, where
-  the Stripe-backed controls render inline. It never mutates membership inside the menu.
+- Supporter promotion and account management intentionally do not appear in the profile menu.
 - Create Deck navigates to `/users/:id/decks?create=1`; logout clears auth and routes to
   `/login`. Styling in `ProfileMenuContent.css`.

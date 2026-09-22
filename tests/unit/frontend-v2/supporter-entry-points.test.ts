@@ -10,6 +10,7 @@ describe('Supporter page entry points', () => {
   const appShell = read('frontend/src/components/AppShell/AppShell.tsx');
   const userMenu = read('frontend/src/components/UserMenu/UserMenu.tsx');
   const mobileNav = read('frontend/src/components/MobileBottomNav/MobileBottomNav.tsx');
+  const profileMenu = read('frontend/src/components/ProfileMenu/ProfileMenuContent.tsx');
   const invitation = read('frontend/src/components/SupporterInvitation/SupporterInvitation.tsx');
   const login = read('frontend/src/features/login/LoginPage.tsx');
   const root = read('frontend/src/app/RootLayout.tsx');
@@ -35,13 +36,13 @@ describe('Supporter page entry points', () => {
     expect(invitation).toContain('aria-label="Expand supporter invitation"');
   });
 
-  it('closes desktop and mobile profile surfaces before navigating to the Supporter page', () => {
-    expect(userMenu).toContain('setOpen(false)');
-    expect(userMenu).toContain('openSupporter();');
-    expect(mobileNav).toContain('setAccountOpen(false)');
-    expect(mobileNav).toContain('openSupporter();');
-    expect(userMenu).toContain('supporterLabel={profileLabel}');
-    expect(mobileNav).toContain('supporterLabel={profileLabel}');
+  it('keeps Supporter actions out of desktop and mobile profile surfaces', () => {
+    expect(userMenu).not.toContain('onOpenSupporter');
+    expect(userMenu).not.toContain('supporterLabel');
+    expect(mobileNav).not.toContain('onOpenSupporter');
+    expect(mobileNav).not.toContain('supporterLabel');
+    expect(profileMenu).not.toContain('Support Excelsior');
+    expect(profileMenu).not.toContain('profile-menu__item--supporter');
     expect(flow).toContain("navigate('/supporter')");
   });
 

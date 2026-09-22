@@ -5,9 +5,7 @@ Fixed **bottom navigation bar** for mobile layout mode (`useLayoutMode().isMobil
 ## Tabs
 Ordered **Database, Decks, Home, Collection, Profile** (Home centered with a larger icon). Profile opens the bottom-sheet account panel (Create New Deck, Change Email/Password for password users, desktop-layout toggle, Log Out / Exit Guest). **The Account sheet auto-closes on route change** (e.g. tapping another bottom-nav tab while the sheet is open).
 
-After canonical Supporter status resolves, non-admin profiles also show **Support Excelsior**,
-**Manage monthly support**, or **Supporter status**. Selecting it closes the account sheet first,
-then navigates to the full `/supporter` page used by desktop and Home.
+Supporter promotion and account management are intentionally excluded from the account sheet.
 
 ## Usage
 - Composed by [`AppShell`](../AppShell/AppShell.tsx) for all shelled primary routes.

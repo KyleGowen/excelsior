@@ -7,13 +7,11 @@ import { SlideOutPanel } from '../SlideOutPanel';
 import { ProfileMenuContent } from '../ProfileMenu/ProfileMenuContent';
 import { IconProfile } from '../icons';
 import { HelpFeedbackFlow } from '../HelpFeedback';
-import { useSupporterFlow } from '../../features/supporter-flow';
 import { MOBILE_NAV_ORDER, NAV_ITEMS } from './navConfig';
 import '../AppShell/AppShell.css';
 
 export function MobileBottomNav() {
-  const { user, isAdmin } = useAuth();
-  const { openSupporter, profileLabel, statusResolved } = useSupporterFlow();
+  const { user } = useAuth();
   const { preferDesktop, setPreferDesktop } = useLayoutMode();
   const location = useLocation();
   const [accountOpen, setAccountOpen] = useState(false);
@@ -66,11 +64,6 @@ export function MobileBottomNav() {
           <ProfileMenuContent
             onClose={() => setAccountOpen(false)}
             onOpenHelp={openHelp}
-            onOpenSupporter={!isAdmin && statusResolved ? () => {
-              setAccountOpen(false);
-              openSupporter();
-            } : undefined}
-            supporterLabel={profileLabel}
             variant="sheet"
           />
           <Checkbox

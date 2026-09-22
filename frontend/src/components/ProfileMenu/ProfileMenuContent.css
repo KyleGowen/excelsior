@@ -48,14 +48,6 @@
   background: var(--color-bg-hover);
 }
 
-.profile-menu__item--supporter {
-  color: var(--color-accent-bright);
-}
-
-.profile-menu__item--supporter svg {
-  color: var(--color-accent-bright);
-}
-
 .profile-menu__item--danger {
   color: var(--color-danger);
 }
