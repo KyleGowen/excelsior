@@ -9,6 +9,7 @@ Repo-local Codex skills live here. They are the project source of truth for recu
 | `add-card` | "add card", `/add-card`, image path under `src/resources/cards/images/` | Active | Migrated from `.cursor/skills/add-card` |
 | `api-layer-migration` | route migration, `/api/v1`, thinning `src/routes` | Active | Migrated from `.cursor/skills/api-layer-migration` |
 | `start-aws-db-tunnel` | SSM DB tunnel, production RDS, TablePlus/psql to prod | Active guarded runbook | Migrated from `.cursor/skills/start-aws-db-tunnel` |
+| `reset-production-user-password` | reset a named production user password | Active guarded workflow | Validates password-auth account, reuses/starts SSM tunnel, and verifies a single guarded reset |
 | `pdf-to-png` | `/pdf-to-png`, convert PDF artwork to PNG | Active | Migrated from `.cursor/skills/pdf-to-png` |
 | `fix-trivy` | Trivy CI failure, dependency scanner failure | Active | Existing Codex skill |
 | `orange-king-price` | The Orange King, theOrangeKing, Orange King, OverPower retail price | Active | Repo-local Shopify price scraper |

@@ -51,6 +51,7 @@ Repo-local Codex skills live in [`.agents/skills/`](.agents/skills/README.md). U
 - **Add Card**: use [`add-card`](.agents/skills/add-card/SKILL.md) for cataloging new card images.
 - **API Layer Migration**: use [`api-layer-migration`](.agents/skills/api-layer-migration/SKILL.md) for `/api/v1` work and route thinning.
 - **Start AWS DB Tunnel**: use [`start-aws-db-tunnel`](.agents/skills/start-aws-db-tunnel/SKILL.md) for guarded production DB tunnel work.
+- **Reset Production User Password**: use [`reset-production-user-password`](.agents/skills/reset-production-user-password/SKILL.md) for an explicitly authorized, guarded password reset of one named production user.
 - **PDF to PNG**: use [`pdf-to-png`](.agents/skills/pdf-to-png/SKILL.md) for native-resolution card-art PDF exports.
 - **Fix Trivy**: use [`fix-trivy`](.agents/skills/fix-trivy/SKILL.md) for dependency scanner failures.
 - **AWS Cost Audit**: use [`aws-cost-audit`](.agents/skills/aws-cost-audit/SKILL.md) for read-only Excelsior production AWS cost, waste, cleanup, and production-risk reviews.

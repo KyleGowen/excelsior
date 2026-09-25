@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reset Production User Password"
+  short_description: "Guardedly reset an Excelsior production password"
+  default_prompt: "Use $reset-production-user-password to reset the password for a named Excelsior production user."
