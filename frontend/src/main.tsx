@@ -5,10 +5,7 @@ import { RouterProvider } from 'react-router-dom';
 import { LayoutModeProvider } from './lib/layout/LayoutModeProvider';
 import { AuthProvider } from './app/AuthProvider';
 import { router } from './app/router';
-import './styles/tokens.css';
-import './styles/shadcn-theme.css';
-import './styles/tailwind.css';
-import './styles/global.css';
+import './styles/appStyles';
 
 const queryClient = new QueryClient({
   defaultOptions: {

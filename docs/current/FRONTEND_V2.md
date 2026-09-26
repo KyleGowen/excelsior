@@ -8,6 +8,8 @@ and serving.
 ## Stack
 - **React 19** + **React Router** (`createBrowserRouter`, lazy routes).
 - **Vite 6** dev server / bundler (TypeScript, hashed asset output to `dist/`).
+- **Storybook** provides a separate local gallery of the same React components
+  and styles at `:6006`; see [`frontend/STORYBOOK.md`](../../frontend/STORYBOOK.md).
 - **TanStack Query** for all server state (caching, invalidation).
 - **Tailwind CSS v4** + **shadcn/ui** (dashboard tiles, `src/components/ui/`). See [`SHADCN_UI.md`](SHADCN_UI.md).
 - **Recharts** for tournament stat charts inside dashboard tiles.

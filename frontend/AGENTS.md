@@ -13,6 +13,7 @@ Read first: [`.cursorrules`](.cursorrules) (this dir), repo-root
   `/src/resources` to it.
 - `npm run build` → `dist/`, served in prod by Express ([`src/routes/spaIndexPath.ts`](../src/routes/spaIndexPath.ts)).
 - `tsc -b` / `vite build` must pass before shipping (strict TS, `exactOptionalPropertyTypes`).
+- `npm run storybook` opens the separate local gallery at `http://localhost:6006`; its stories directly import production components and styles. Add new global CSS imports to `src/styles/appStyles.ts`, shared by the site and Storybook. For every new React component in `src/`, add a named Storybook example under `src/stories/` in the same change, whether it is shared, feature-local, a route, layout, modal, or mobile component. If it only makes sense inside its parent or provider, add a named parent story variant that exercises it instead of exporting private internals solely for Storybook. For new pages or visual states, add or update a screen story using fictional fixtures and mocked API data. Existing stories pick up component and CSS changes automatically. Before finishing, check every newly added React component against the stories and run `npm run build:storybook`. See [`STORYBOOK.md`](STORYBOOK.md).
 
 ## Layout map
 

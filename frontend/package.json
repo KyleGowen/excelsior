@@ -8,6 +8,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:analyze": "tsc -b && vite build --mode analyze",
+    "storybook": "node scripts/prepare-storybook-assets.mjs && storybook dev -p 6006 --host 127.0.0.1 --no-open --disable-telemetry",
+    "build:storybook": "node scripts/prepare-storybook-assets.mjs && storybook build --output-dir storybook-static --disable-telemetry",
     "preview": "vite preview",
     "lint": "tsc -b --noEmit"
   },
@@ -30,10 +32,15 @@
     "tailwindcss": "^4.3.2"
   },
   "devDependencies": {
+    "@storybook/addon-docs": "10.6.0",
+    "@storybook/react-vite": "10.6.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "msw": "^2.15.0",
+    "msw-storybook-addon": "^3.0.3",
     "rollup-plugin-visualizer": "^7.0.1",
+    "storybook": "10.6.0",
     "typescript": "^5.7.2",
     "vite": "^6.0.5"
   },

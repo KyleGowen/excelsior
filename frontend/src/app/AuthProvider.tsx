@@ -26,7 +26,7 @@ import { preloadGoogleAuthClient } from '../lib/auth/googleAuthClient';
 import { describeGoogleSignInError } from '../lib/auth/googleSignInErrors';
 import type { AppUser } from '../lib/api/types';
 
-interface AuthContextValue {
+export interface AuthContextValue {
   user: AppUser | null;
   isLoading: boolean;
   isGuest: boolean;
@@ -46,7 +46,7 @@ interface AuthContextValue {
   refresh: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextValue | null>(null);
+export const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
