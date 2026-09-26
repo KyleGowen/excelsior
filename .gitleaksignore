@@ -1,0 +1,17 @@
+# Reviewed 2026-09-26. Exact historical false positives only.
+# Do not add path-wide or rule-wide exclusions; new commits remain scanned.
+
+# Explicit Stripe placeholder in a mocked configuration test.
+d3786c38a39d24912458e008e30e8d530134ea0d:tests/unit/api/config/supporterBillingConfig.test.ts:stripe-access-token:10
+
+# Same Stripe placeholder in a mocked service test.
+d3786c38a39d24912458e008e30e8d530134ea0d:tests/unit/api/services/supporterBillingService.test.ts:stripe-access-token:17
+
+# Disposable integration-test account password, not a service API key.
+c573976ae805131a26217734c2b0ae82346c6e67:tests/integration/api-v1/v1-api.integration.test.ts:generic-api-key:17
+
+# Fixed repeating hexadecimal CSRF length-test fixture.
+5338b5867189bcead90bc8f2e2f3926469830c7e:tests/unit/phase4-security-simple.test.ts:generic-api-key:36
+
+# Card-art .webp filenames misidentified as a generic API key.
+4fe867484677f079a8afa873d9c37e11c92af460:src/database/inMemoryDatabase.ts:generic-api-key:364

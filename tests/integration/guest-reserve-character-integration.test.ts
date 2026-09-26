@@ -19,19 +19,15 @@ describe('Guest User Reserve Character Integration Tests', () => {
 
     beforeAll(async () => {
         pool = new Pool({
-            host: 'localhost',
-            port: 1337,
-            database: 'overpower',
-            user: 'postgres',
-            password: 'password'
+            connectionString: process.env.DATABASE_URL
         });
 
         // Get the special characters that have reserve rules
         const characterResult = await pool.query(`
-            SELECT id, name, threat_level 
+            SELECT DISTINCT ON (name) id, name, threat_level
             FROM characters 
             WHERE name IN ('Carson of Venus', 'Morgan le Fay', 'Victory Harben') 
-            ORDER BY name
+            ORDER BY name, id
         `);
         
         expect(characterResult.rows).toHaveLength(3);

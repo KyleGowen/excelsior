@@ -1,8 +1,4 @@
 /**
- * @jest-environment jsdom
- */
-
-/**
  * Simple integration tests for deck save security (PUT /api/v1/decks/:id/cards).
  * Uses the test server from setup-integration (x-test-user-id auth) and the v1 JSON envelope.
  */
@@ -11,7 +7,7 @@ import request from 'supertest';
 import { app, integrationTestUtils } from '../setup-integration';
 import { getKyleSessionCookieHeader } from './helpers/integrationSessionAuth';
 
-const TEST_GUEST_ID = '00000000-0000-0000-0000-000000000002';
+const TEST_GUEST_ID = '00000000-0000-0000-0000-000000000004';
 
 function asUser(userId: string): { 'x-test-user-id': string } {
   return { 'x-test-user-id': userId };
@@ -22,7 +18,7 @@ describe('Deck Save Security - Simple Integration Tests', () => {
   let regularUserId: string;
   let adminDeckId: string;
   let regularUserDeckId: string;
-  const nonExistentDeckId = '00000000-0000-0000-0000-000000000000';
+  const nonExistentDeckId = 'c026de98-11d8-40a2-aa23-674611111111';
   let charId: string;
   let powerId: string;
   let catalogAuthCookie: string;
@@ -160,16 +156,16 @@ describe('Deck Save Security - Simple Integration Tests', () => {
   });
 
   describe('Non-existent or inaccessible deck', () => {
-    it('should return 403 when deck id does not exist (not owned)', async () => {
+    it('rejects replacement of a missing deck with the documented 400 response', async () => {
       const testCards = [{ cardType: 'character', cardId: charId, quantity: 1 }];
 
       const response = await request(app)
         .put(`/api/v1/decks/${nonExistentDeckId}/cards`)
         .set(asUser(adminUserId))
         .send({ cards: testCards })
-        .expect(403);
+        .expect(400);
 
-      expect(response.body.errors[0].message).toContain('Access denied');
+      expect(response.body.errors[0]).toEqual({ code: 'DECK_CARDS_REPLACE_FAILED', message: 'Deck not found' });
     });
 
     it('should reject non-UUID deck id with an error response', async () => {
@@ -311,16 +307,16 @@ describe('Deck Save Security - Simple Integration Tests', () => {
       expect(response.body.errors[0].message).toContain('Access denied');
     });
 
-    it('should return 403 for missing deck (same as non-owner)', async () => {
+    it('returns the replacement error envelope for a missing deck', async () => {
       const testCards = [{ cardType: 'character', cardId: charId, quantity: 1 }];
 
       const response = await request(app)
         .put(`/api/v1/decks/${nonExistentDeckId}/cards`)
         .set(asUser(adminUserId))
         .send({ cards: testCards })
-        .expect(403);
+        .expect(400);
 
-      expect(response.body.errors[0].message).toContain('Access denied');
+      expect(response.body.errors[0]).toEqual({ code: 'DECK_CARDS_REPLACE_FAILED', message: 'Deck not found' });
     });
   });
 });

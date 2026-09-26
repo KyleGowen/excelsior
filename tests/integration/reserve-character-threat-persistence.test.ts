@@ -10,11 +10,7 @@ describe('Reserve Character Threat Persistence Integration Tests', () => {
 
     beforeAll(async () => {
         pool = new Pool({
-            host: 'localhost',
-            port: 1337,
-            database: 'overpower',
-            user: 'postgres',
-            password: 'password'
+            connectionString: process.env.DATABASE_URL
         });
 
         const characterResult = await pool.query(`
@@ -112,7 +108,7 @@ describe('Reserve Character Threat Persistence Integration Tests', () => {
                 .expect(200);
 
             expect(getResponse.body.success).toBe(true);
-            expect(getResponse.body.data.threat).toBe(19);
+            expect(getResponse.body.data.metadata.threat).toBe(19);
         });
 
         it('should persist threat level 18 when Carson of Venus is not reserve character', async () => {
@@ -147,7 +143,7 @@ describe('Reserve Character Threat Persistence Integration Tests', () => {
                 .expect(200);
 
             expect(getResponse.body.success).toBe(true);
-            expect(getResponse.body.data.threat).toBe(18);
+            expect(getResponse.body.data.metadata.threat).toBe(18);
         });
     });
 
@@ -184,7 +180,7 @@ describe('Reserve Character Threat Persistence Integration Tests', () => {
                 .expect(200);
 
             expect(getResponse.body.success).toBe(true);
-            expect(getResponse.body.data.threat).toBe(20);
+            expect(getResponse.body.data.metadata.threat).toBe(20);
         });
 
         it('should persist threat level 19 when Morgan le Fay is not reserve character', async () => {
@@ -219,7 +215,7 @@ describe('Reserve Character Threat Persistence Integration Tests', () => {
                 .expect(200);
 
             expect(getResponse.body.success).toBe(true);
-            expect(getResponse.body.data.threat).toBe(19);
+            expect(getResponse.body.data.metadata.threat).toBe(19);
         });
     });
 
@@ -256,7 +252,7 @@ describe('Reserve Character Threat Persistence Integration Tests', () => {
                 .expect(200);
 
             expect(getResponse.body.success).toBe(true);
-            expect(getResponse.body.data.threat).toBe(20);
+            expect(getResponse.body.data.metadata.threat).toBe(20);
         });
 
         it('should persist threat level 18 when Victory Harben is not reserve character', async () => {
@@ -291,7 +287,7 @@ describe('Reserve Character Threat Persistence Integration Tests', () => {
                 .expect(200);
 
             expect(getResponse.body.success).toBe(true);
-            expect(getResponse.body.data.threat).toBe(18);
+            expect(getResponse.body.data.metadata.threat).toBe(18);
         });
     });
 
@@ -331,7 +327,7 @@ describe('Reserve Character Threat Persistence Integration Tests', () => {
                 .expect(200);
 
             expect(getResponse.body.success).toBe(true);
-            expect(getResponse.body.data.threat).toBe(56);
+            expect(getResponse.body.data.metadata.threat).toBe(56);
         });
 
         it('should recalculate threat when reserve character changes', async () => {
@@ -364,7 +360,7 @@ describe('Reserve Character Threat Persistence Integration Tests', () => {
                 .set('Cookie', `sessionId=${testUser.sessionId}`)
                 .expect(200);
 
-            expect(getResponse.body.data.threat).toBe(56);
+            expect(getResponse.body.data.metadata.threat).toBe(56);
 
             // Then change to Morgan as reserve (18 + 20 + 18 = 56)
             await request(app)
@@ -382,7 +378,7 @@ describe('Reserve Character Threat Persistence Integration Tests', () => {
                 .set('Cookie', `sessionId=${testUser.sessionId}`)
                 .expect(200);
 
-            expect(getResponse.body.data.threat).toBe(56);
+            expect(getResponse.body.data.metadata.threat).toBe(56);
 
             // Finally change to Victory as reserve (18 + 19 + 20 = 57)
             await request(app)
@@ -400,7 +396,7 @@ describe('Reserve Character Threat Persistence Integration Tests', () => {
                 .set('Cookie', `sessionId=${testUser.sessionId}`)
                 .expect(200);
 
-            expect(getResponse.body.data.threat).toBe(57);
+            expect(getResponse.body.data.metadata.threat).toBe(57);
         });
     });
 });

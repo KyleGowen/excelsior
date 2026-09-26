@@ -331,7 +331,7 @@ describe('Deck Ownership Security - Simple Integration Tests', () => {
       // Test with a non-existent deck ID to avoid cleanup issues
       const fakeDeckId = '00000000-0000-0000-0000-000000000000';
       const unauthenticatedResponse = await request(app)
-        .get(`/api/v1/decks/${fakeDeckId}`);
+        .put(`/api/v1/decks/${fakeDeckId}`).send({ name: 'Unauthorized change' });
 
       expect(unauthenticatedResponse.status).toBe(401);
       expect(unauthenticatedResponse.body.errors?.[0]?.code).toBe('UNAUTHORIZED');

@@ -574,3 +574,62 @@ For deployment issues:
 - Database migrations run automatically on each deployment
 - The application loads card data from the `src/resources` directory
 - All API endpoints are available at the root URL
+
+## Automatic security gate (September 2026)
+
+Every push, PR update targeting main/master, manual run, and daily 09:23 UTC
+schedule runs the same validation. Scheduled and non-main runs cannot deploy.
+`Security Gate` requires build, frontend build, all unit shards, coverage, Knip,
+Semgrep, Trivy, technical security regressions, and all eight integration shards
+to succeed. Failure, cancellation, and skipped prerequisites fail the gate.
+Production image publication and asset sync depend on that gate. Explicit Bash
+pipeline failure handling prevents log capture from hiding test failures.
+
+Integration suites are discovered from all `tests/integration/**/*.test.ts` and
+`*.spec.ts` files. The shard planner compares discovery with the filesystem and
+verifies complete, non-overlapping assignments. Each CI shard has its own fresh
+PostgreSQL service and runs serially inside that database. The production React
+artifact is downloaded before app-route tests. JSON test results and scanner
+reports are retained for 90 days. The local runner can preserve equivalent logs
+and JSON via `INTEGRATION_SHARD_REPORT_DIR=/tmp/security-results`.
+
+Semgrep retains the custom SQL checks and adds maintained JavaScript, TypeScript,
+and React rules across backend and frontend application code. Trivy scans both
+lockfiles; fixable findings block release at every severity. Its JSON evidence
+also includes findings with no available fix. `.trivyignore` entries require a
+valid expiration date; expired exceptions fail validation until reviewed.
+Gitleaks also scans history daily; `.gitleaksignore` contains only five reviewed
+historical fixture/filename fingerprints, never whole-file or whole-rule exclusions.
+Actions are pinned to commit SHAs. Trivy installation verifies an immutable
+release checksum. GitHub's normal Actions failure notifications apply; an owner
+should enable email/web notifications for failed scheduled runs.
+
+### Ship without pull requests
+
+Ship pushes the exact candidate commit to `codex/ship/<short-sha>`, waits for its
+Security Gate, then fast-forwards the same SHA to main. The main run validates
+again and deploys. No PR, merge commit, administrator bypass, or force push is
+needed. If main advances, validate the newly integrated commit before promotion.
+
+The reviewed branch-protection payload is `.github/main-protection.json`.
+A repository administrator can apply it with:
+
+```sh
+gh api --method PUT repos/KyleGowen/excelsior/branches/main/protection \
+  --input .github/main-protection.json
+```
+
+It requires the GitHub Actions Security Gate, includes administrators, blocks
+force pushes/deletion, and does not require pull requests. The file alone does
+not change GitHub settings; verify the live branch after applying it.
+
+### Limits of the evidence
+
+The SOC 2-named job runs behavioral security regressions; it is not SOC 2
+certification. Production-app tests verify anonymous access to protected v1
+routes, every admin route's role boundary, forged test headers, session logout,
+refresh rotation/replay/revocation, owner writes, and cross-user isolation.
+Public catalogs and shared deck links remain intentionally readable. Existing
+unit suites cover cookies, CORS, security headers, rate limits, and JWT validation.
+Infrastructure drift, backup restoration, access reviews, incident response,
+and an independent SOC 2 examination remain separate operational controls.

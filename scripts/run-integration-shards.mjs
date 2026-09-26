@@ -69,6 +69,13 @@ function listTests(shard) {
 function buildShardPlan(shardCount) {
   const allTests = listTests();
   const expected = new Set(allTests);
+  // Compare Jest discovery with files on disk, not just against its own shards.
+  const discover = directory => fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
+    const filename = path.join(directory, entry.name);
+    return entry.isDirectory() ? discover(filename) : (/\.(test|spec)\.ts$/.test(entry.name) ? [filename] : []);
+  });
+  const omitted = discover(path.join(repositoryRoot, 'tests/integration')).filter(filename => !expected.has(filename));
+  if (omitted.length) throw new Error(`Integration tests omitted by Jest configuration: ${omitted.join(', ')}`);
   const assignments = Array.from({ length: shardCount }, (_, index) => (
     listTests(`${index + 1}/${shardCount}`)
   ));
@@ -179,6 +186,8 @@ function runShard({ databasePort, index, runDirectory, shardCount }) {
       '--config', jestConfig,
       `--shard=${shardLabel}`,
       '--runInBand',
+      '--json',
+      `--outputFile=${path.join(runDirectory, `shard-${index + 1}.json`)}`,
       `--cacheDirectory=${path.join(runDirectory, `jest-cache-${index + 1}`)}`,
     ],
     logPath,
@@ -223,6 +232,14 @@ async function main() {
       spawnSync('docker', ['rm', '--force', containerName], { encoding: 'utf8' });
     }
     createdContainers.clear();
+    if (process.env.INTEGRATION_SHARD_REPORT_DIR) {
+      fs.mkdirSync(process.env.INTEGRATION_SHARD_REPORT_DIR, { recursive: true });
+      for (const entry of fs.readdirSync(runDirectory)) {
+        if (/\.(log|json)$/.test(entry)) {
+          fs.copyFileSync(path.join(runDirectory, entry), path.join(process.env.INTEGRATION_SHARD_REPORT_DIR, entry));
+        }
+      }
+    }
     fs.rmSync(runDirectory, { recursive: true, force: true });
   };
 

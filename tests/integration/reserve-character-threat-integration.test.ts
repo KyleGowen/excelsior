@@ -20,19 +20,15 @@ describe('Reserve Character Threat Integration Tests', () => {
 
     beforeAll(async () => {
         pool = new Pool({
-            host: 'localhost',
-            port: 1337,
-            database: 'overpower',
-            user: 'postgres',
-            password: 'password'
+            connectionString: process.env.DATABASE_URL
         });
 
         // Get character IDs and data for the special characters
         const characterResult = await pool.query(`
-            SELECT id, name, threat_level, special_abilities
+            SELECT DISTINCT ON (name) id, name, threat_level, special_abilities
             FROM characters 
             WHERE name IN ('Carson of Venus', 'Morgan le Fay', 'Victory Harben') 
-            ORDER BY name
+            ORDER BY name, id
         `);
         
         expect(characterResult.rows).toHaveLength(3);

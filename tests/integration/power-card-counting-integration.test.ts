@@ -2,6 +2,10 @@ import request from 'supertest';
 import { app } from '../setup-integration';
 import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 
+function uniquePowerCards(cards: any[]): any[] {
+  return [...new Map(cards.map(card => [`${card.power_type}:${card.value}`, card])).values()];
+}
+
 describe('Power Card Counting Integration Tests', () => {
   let testUser: any;
   let testDeck: any;
@@ -78,7 +82,7 @@ describe('Power Card Counting Integration Tests', () => {
         .set('Cookie', userCookie)
         .expect(200);
 
-      const powerCards = powerCardsResponse.body.data;
+      const powerCards = uniquePowerCards(powerCardsResponse.body.data);
       expect(powerCards.length).toBeGreaterThan(0);
 
       // Group power cards by type
@@ -99,7 +103,7 @@ describe('Power Card Counting Integration Tests', () => {
         const card = powerCardsByType[powerType][0]; // Take first card of each type
         
         const addCardResponse = await request(app)
-          .post(`/api/v1/decks/${testDeckId}/cards`)
+          .post(`/api/v1/decks/${testDeck.id}/cards`)
           .set('Cookie', userCookie)
           .send({
             cardType: 'power',
@@ -132,7 +136,7 @@ describe('Power Card Counting Integration Tests', () => {
         .set('Cookie', userCookie)
         .expect(200);
 
-      const powerCards = powerCardsResponse.body.data;
+      const powerCards = uniquePowerCards(powerCardsResponse.body.data);
       expect(powerCards.length).toBeGreaterThan(0);
 
       // Group power cards by type
@@ -157,7 +161,7 @@ describe('Power Card Counting Integration Tests', () => {
         const card = powerCardsByType[powerType][0]; // Take first card of each type
         
         const addCardResponse = await request(app)
-          .post(`/api/v1/decks/${testDeckId}/cards`)
+          .post(`/api/v1/decks/${testDeck.id}/cards`)
           .set('Cookie', userCookie)
           .send({
             cardType: 'power',
@@ -189,7 +193,7 @@ describe('Power Card Counting Integration Tests', () => {
         .set('Cookie', userCookie)
         .expect(200);
 
-      const powerCards = powerCardsResponse.body.data;
+      const powerCards = uniquePowerCards(powerCardsResponse.body.data);
       expect(powerCards.length).toBeGreaterThan(0);
 
       const testCard = powerCards[0];
@@ -197,7 +201,7 @@ describe('Power Card Counting Integration Tests', () => {
 
       // Add the same card multiple times
       const addCardResponse = await request(app)
-        .post(`/api/v1/decks/${testDeckId}/cards`)
+        .post(`/api/v1/decks/${testDeck.id}/cards`)
         .set('Cookie', userCookie)
         .send({
           cardType: 'power',
@@ -228,7 +232,7 @@ describe('Power Card Counting Integration Tests', () => {
         .set('Cookie', userCookie)
         .expect(200);
 
-      const powerCards = powerCardsResponse.body.data;
+      const powerCards = uniquePowerCards(powerCardsResponse.body.data);
       expect(powerCards.length).toBeGreaterThan(0);
 
       // Add 2 power cards
@@ -236,7 +240,7 @@ describe('Power Card Counting Integration Tests', () => {
       const powerCard2 = powerCards[1];
 
       await request(app)
-        .post(`/api/v1/decks/${testDeckId}/cards`)
+        .post(`/api/v1/decks/${testDeck.id}/cards`)
         .set('Cookie', userCookie)
         .send({
           cardType: 'power',
@@ -246,7 +250,7 @@ describe('Power Card Counting Integration Tests', () => {
         .expect(200);
 
       await request(app)
-        .post(`/api/v1/decks/${testDeckId}/cards`)
+        .post(`/api/v1/decks/${testDeck.id}/cards`)
         .set('Cookie', userCookie)
         .send({
           cardType: 'power',
@@ -265,7 +269,7 @@ describe('Power Card Counting Integration Tests', () => {
       expect(characters.length).toBeGreaterThan(0);
 
       await request(app)
-        .post(`/api/v1/decks/${testDeckId}/cards`)
+        .post(`/api/v1/decks/${testDeck.id}/cards`)
         .set('Cookie', userCookie)
         .send({
           cardType: 'character',
@@ -283,7 +287,7 @@ describe('Power Card Counting Integration Tests', () => {
       const specialCards = specialCardsResponse.body.data;
       if (specialCards.length > 0) {
         await request(app)
-          .post(`/api/v1/decks/${testDeckId}/cards`)
+          .post(`/api/v1/decks/${testDeck.id}/cards`)
           .set('Cookie', userCookie)
           .send({
             cardType: 'special',
@@ -321,14 +325,14 @@ describe('Power Card Counting Integration Tests', () => {
         .set('Cookie', userCookie)
         .expect(200);
 
-      const powerCards = powerCardsResponse.body.data;
+      const powerCards = uniquePowerCards(powerCardsResponse.body.data);
       expect(powerCards.length).toBeGreaterThan(0);
 
       const testCard = powerCards[0];
 
       // Add 5 copies of a power card
       await request(app)
-        .post(`/api/v1/decks/${testDeckId}/cards`)
+        .post(`/api/v1/decks/${testDeck.id}/cards`)
         .set('Cookie', userCookie)
         .send({
           cardType: 'power',
@@ -349,7 +353,7 @@ describe('Power Card Counting Integration Tests', () => {
 
       // Remove 2 copies
       const removeResponse = await request(app)
-        .delete(`/api/v1/decks/${testDeckId}/cards`)
+        .delete(`/api/v1/decks/${testDeck.id}/cards`)
         .set('Cookie', userCookie)
         .send({
           cardType: 'power',
@@ -378,14 +382,14 @@ describe('Power Card Counting Integration Tests', () => {
         .set('Cookie', userCookie)
         .expect(200);
 
-      const powerCards = powerCardsResponse.body.data;
+      const powerCards = uniquePowerCards(powerCardsResponse.body.data);
       expect(powerCards.length).toBeGreaterThan(0);
 
       const testCard = powerCards[0];
 
       // Add power cards
       await request(app)
-        .post(`/api/v1/decks/${testDeckId}/cards`)
+        .post(`/api/v1/decks/${testDeck.id}/cards`)
         .set('Cookie', userCookie)
         .send({
           cardType: 'power',
@@ -406,7 +410,7 @@ describe('Power Card Counting Integration Tests', () => {
 
       // Remove all power cards
       const removeResponse = await request(app)
-        .delete(`/api/v1/decks/${testDeckId}/cards`)
+        .delete(`/api/v1/decks/${testDeck.id}/cards`)
         .set('Cookie', userCookie)
         .send({
           cardType: 'power',
@@ -449,7 +453,7 @@ describe('Power Card Counting Integration Tests', () => {
         .set('Cookie', userCookie)
         .expect(200);
 
-      const powerCards = powerCardsResponse.body.data;
+      const powerCards = uniquePowerCards(powerCardsResponse.body.data);
       expect(powerCards.length).toBeGreaterThan(0);
 
       const testCard = powerCards[0];
@@ -457,7 +461,7 @@ describe('Power Card Counting Integration Tests', () => {
 
       // Add a large quantity of power cards
       await request(app)
-        .post(`/api/v1/decks/${testDeckId}/cards`)
+        .post(`/api/v1/decks/${testDeck.id}/cards`)
         .set('Cookie', userCookie)
         .send({
           cardType: 'power',
@@ -484,7 +488,7 @@ describe('Power Card Counting Integration Tests', () => {
         .set('Cookie', userCookie)
         .expect(200);
 
-      const powerCards = powerCardsResponse.body.data;
+      const powerCards = uniquePowerCards(powerCardsResponse.body.data);
       expect(powerCards.length).toBeGreaterThan(2);
 
       // Add different power cards with different quantities
@@ -497,7 +501,7 @@ describe('Power Card Counting Integration Tests', () => {
         const quantity = quantities[i];
 
         await request(app)
-          .post(`/api/v1/decks/${testDeckId}/cards`)
+          .post(`/api/v1/decks/${testDeck.id}/cards`)
           .set('Cookie', userCookie)
           .send({
             cardType: 'power',

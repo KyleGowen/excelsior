@@ -2,10 +2,19 @@ name: Build, Test, and Deploy
 
 on:
   push:
-    branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
+  schedule:
+    - cron: '23 9 * * *'
+
+permissions:
+  contents: read
+  pull-requests: read
+
+defaults:
+  run:
+    shell: bash
 
 # The production jobs mutate shared EC2 state. Serialize main deployments from
 # the start of the workflow so an older run cannot race a newer run's .env.
@@ -25,10 +34,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: '20'
         cache: 'npm'
@@ -36,6 +45,9 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
+    - name: Verify complete integration test selection
+      run: node scripts/run-integration-shards.mjs --plan-only --shards=8
+
     - name: Build project
       run: npm run build
       
@@ -43,7 +55,7 @@ jobs:
       run: npx eslint src --ext .ts --max-warnings 0
 
     - name: Upload dist artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
       with:
         name: dist
         path: dist/
@@ -55,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         fetch-depth: 1
         sparse-checkout: |
@@ -64,7 +76,7 @@ jobs:
         sparse-checkout-cone-mode: false
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: '20'
         cache: 'npm'
@@ -87,7 +99,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         fetch-depth: 1
         sparse-checkout: |
@@ -96,7 +108,7 @@ jobs:
         sparse-checkout-cone-mode: false
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: '20'
         cache: 'npm'
@@ -105,7 +117,7 @@ jobs:
       run: npm ci
 
     - name: Cache Jest timing
-      uses: actions/cache@v4
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
       with:
         path: /tmp/jest-cache
         key: jest-unit-${{ runner.os }}-${{ hashFiles('tests/config/jest.ci.config.js', 'package-lock.json') }}
@@ -121,7 +133,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         fetch-depth: 1
         sparse-checkout: |
@@ -130,7 +142,7 @@ jobs:
         sparse-checkout-cone-mode: false
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: '20'
         cache: 'npm'
@@ -144,18 +156,18 @@ jobs:
 
     - name: Upload coverage to Codecov
       if: success()
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@ab904c41d6ece82784817410c45d8b8c02684457 # v3
       with:
         directory: coverage/unit/
         flags: unit
         fail_ci_if_error: false
 
   semgrep:
-    name: Semgrep (SQL injection patterns)
+    name: Semgrep (application security)
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         fetch-depth: 1
         sparse-checkout: |
@@ -164,7 +176,7 @@ jobs:
         sparse-checkout-cone-mode: false
 
     - name: Setup Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
       with:
         python-version: '3.11'
 
@@ -174,29 +186,39 @@ jobs:
     - name: Semgrep scan (human-readable)
       run: semgrep scan --config .semgrep.yml src tests --exclude src/resources --error
 
+    - name: Scan maintained JavaScript, TypeScript, and React security rules
+      run: >-
+        semgrep scan --config p/javascript --config p/typescript --config p/react
+        src frontend/src --exclude src/resources --exclude src/test-server
+        --exclude src/test-server.ts --metrics=off --strict --error
+        --json --output semgrep-application.json
+
     - name: Semgrep scan (JSON artifact)
       if: always()
       run: semgrep scan --config .semgrep.yml src tests --exclude src/resources --json --output semgrep.json || true
 
     - name: Upload Semgrep report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
       with:
         name: semgrep-report
-        path: semgrep.json
+        path: |
+          semgrep.json
+          semgrep-application.json
+        retention-days: 90
 
   soc2-compliance:
     name: SOC 2 Compliance Checks
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         # Push and PR events provide a bounded commit range to Gitleaks, but a
         # manual dispatch has no range and otherwise scans the entire 1,800+
         # commit history. Keep two commits for dispatches so the same release
         # change is scanned without turning a deployment retry into a history
-        # audit. Scheduled/deep history scans belong in a separate workflow.
+        # audit. The daily schedule deliberately scans the full history.
         fetch-depth: ${{ github.event_name == 'workflow_dispatch' && 2 || 0 }}
         sparse-checkout: |
           /*
@@ -204,11 +226,22 @@ jobs:
         sparse-checkout-cone-mode: false
 
     - name: Run gitleaks (secret detection)
-      uses: gitleaks/gitleaks-action@v3
+      uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3
       continue-on-error: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITLEAKS_LICENSE: ''
+        GITLEAKS_VERSION: '8.30.1'
+        GITLEAKS_ENABLE_COMMENTS: 'false'
+
+    - name: Setup Node.js
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install test dependencies
+      run: npm ci
 
     - name: Run SOC 2 technical compliance checks
       run: bash scripts/soc2-compliance-checks.sh
@@ -218,7 +251,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         fetch-depth: 1
         sparse-checkout: |
@@ -227,7 +260,7 @@ jobs:
         sparse-checkout-cone-mode: false
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: '20'
         cache: 'npm'
@@ -235,14 +268,12 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Install Trivy
-      # The apt-repo GPG key ring broke in 2026-04 (NO_PUBKEY
-      # E9D0A3616276FA6C from noble InRelease), so we install via the
-      # upstream install script which fetches the signed binary directly
-      # from GitHub releases and bypasses apt entirely.
+    - name: Install verified Trivy release
       run: |
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
-          | sudo sh -s -- -b /usr/local/bin
+        curl -fsSL --retry 2 https://github.com/aquasecurity/trivy/releases/download/v0.69.3/trivy_0.69.3_Linux-64bit.tar.gz -o /tmp/trivy.tar.gz
+        echo '1816b632dfe529869c740c0913e36bd1629cb7688bd5634f4a858c1d57c88b75  /tmp/trivy.tar.gz' | sha256sum --check
+        tar -xzf /tmp/trivy.tar.gz -C /tmp trivy
+        sudo install /tmp/trivy /usr/local/bin/trivy
         trivy --version
 
     - name: Run Trivy vulnerability scanner
@@ -266,27 +297,26 @@ jobs:
         trivy fs \
           --ignorefile .trivyignore \
           --severity CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN \
-          --ignore-unfixed \
           --scanners vuln \
           --format json \
           --output trivy-report.json \
-          . || true
+          .
 
     - name: Upload Trivy report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
       with:
         name: trivy-report
         path: trivy-report.json
+        retention-days: 90
 
   frontend-build:
     name: Build v2 Frontend
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
 
     steps:
     - name: Checkout frontend code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         fetch-depth: 1
         # The SPA shares the tournament threat cap with the backend.
@@ -295,7 +325,7 @@ jobs:
           src/constants
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: '20'
         cache: 'npm'
@@ -316,126 +346,23 @@ jobs:
         fi
 
     - name: Upload frontend artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
       with:
         name: frontend-dist
         path: frontend/dist/
         # Match the backend artifact so failed deploy jobs can be re-run.
         retention-days: 14
 
-  # Checkout can occasionally be slow on some runners; sparse-checkout skips images to reduce fetch size.
-  # Integration Tests - Matrix (consolidated like unit-tests)
+  # Every integration file is discovered automatically; each shard gets its own DB.
   integration-tests:
-    name: ${{ matrix.category }}
+    name: Integration Tests (shard ${{ matrix.shard }}/8)
     runs-on: ubuntu-latest
-    needs: [build, unit-tests]
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-    # Must exceed the slowest matrix step timeout + setup (migrate, npm ci, Flyway).
-    timeout-minutes: 45
+    needs: [build, frontend-build, unit-tests]
+    timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - category: Security
-            slug: security
-            script: test:integration:security
-            args: ""
-            timeout: 25
-          - category: AuthZ Security
-            slug: authz-security
-            script: test:integration
-            args: "tests/integration/security/session-impersonation-security.test.ts tests/integration/security/debug-endpoints-access.test.ts tests/integration/security/cross-user-mutation-attempts.test.ts"
-            timeout: 20
-          - category: Authentication
-            slug: auth
-            script: test:integration
-            args: "tests/integration/bcrypt-authentication.test.ts tests/integration/authentication*.test.ts tests/integration/auth-*.test.ts"
-            timeout: 15
-          - category: Guest
-            slug: guest
-            script: test:integration
-            args: "tests/integration/guest-deck-editing.test.ts tests/integration/guest-read-only-layout-integration.test.ts tests/integration/guest-add-to-deck-buttons.test.ts tests/integration/guest-deck-deletion.test.ts tests/integration/guestLogin.test.ts tests/integration/autoGuestLogin.test.ts"
-            timeout: 15
-          - category: Search
-            slug: search
-            script: test:integration
-            args: "tests/integration/deck-editor-search-bar-basic.test.ts tests/integration/deck-editor-search-visible-results.test.ts tests/integration/deck-editor-search-results-visible.test.ts tests/integration/search-functionality-integration.test.ts tests/integration/ally-search-integration.test.ts"
-            timeout: 15
-          - category: Filtering
-            slug: filtering
-            script: test:integration
-            args: "tests/integration/stat-type-filtering-integration.test.ts tests/integration/stat-type-filtering-time-traveler.test.ts tests/integration/stat-type-filtering-john-carter.test.ts tests/integration/power-card-filtering-time-traveler.test.ts tests/integration/power-card-filtering-john-carter.test.ts"
-            timeout: 15
-          - category: Deck Building & Management
-            slug: deck-building
-            script: test:integration
-            args: "tests/integration/deckBuilding.test.ts tests/integration/deckManagement.test.ts tests/integration/deck-navigation-flow.test.ts tests/integration/deck-editor-search-new-deck.test.ts tests/integration/deckClickability.test.ts tests/integration/limitedDeckIntegration.test.ts tests/integration/limitedDeckSaveAndLoad.test.ts tests/integration/limitedDeckSimpleIntegration.test.ts"
-            timeout: 15
-          - category: Deck Editing & Validation
-            slug: deck-editing
-            script: test:integration
-            args: "tests/integration/deckEditabilityBrowser.test.ts tests/integration/deckEditabilityHTML.test.ts tests/integration/deckTitleDescriptionEditability.test.ts tests/integration/deck-validation-unusable-cards.test.ts"
-            timeout: 15
-          - category: Deck Security Ownership
-            slug: deck-security-ownership
-            script: test:integration:deck-security-ownership
-            args: ""
-            timeout: 10
-          - category: Deck Security Save
-            slug: deck-security-save
-            script: test:integration:deck-security-save
-            args: ""
-            timeout: 10
-          - category: Deck Security Frontend
-            slug: deck-security-frontend
-            script: test:integration:deck-security-frontend
-            args: ""
-            timeout: 10
-          - category: Game Logic Character Validation
-            slug: game-logic-character-validation
-            script: test:integration:game-logic-character-validation
-            args: ""
-            timeout: 15
-          - category: Game Logic Character Layout
-            slug: game-logic-character-layout
-            script: test:integration:game-logic-character-layout
-            args: ""
-            timeout: 25
-          - category: Game Logic Character Threat
-            slug: game-logic-character-threat
-            script: test:integration:game-logic-character-threat
-            args: ""
-            timeout: 25
-          - category: Reserve
-            slug: reserve
-            script: test:integration
-            args: "tests/integration/reserve-character-integration.test.ts tests/integration/reserve-character-loading-integration.test.ts tests/integration/reserve-character-simple.test.ts tests/integration/reserve-character-threat-integration.test.ts tests/integration/reserve-character-threat-persistence.test.ts tests/integration/guest-reserve-character-integration.test.ts"
-            timeout: 15
-          - category: Game Logic Power & Teamwork
-            slug: game-logic-power-teamwork
-            script: test:integration:game-logic-power-teamwork
-            args: ""
-            timeout: 10
-          - category: UI/UX & Frontend
-            slug: ui
-            script: test:integration
-            args: "tests/integration/*HTML*.test.ts tests/integration/*Browser*.test.ts tests/integration/*Clickability*.test.ts tests/integration/*Editability*.test.ts tests/integration/*Layout*.test.ts tests/integration/*Navigation*.test.ts tests/integration/*Tooltip*.test.ts tests/integration/toast-notification-role-based.test.ts tests/integration/global-nav-integration.test.ts tests/integration/view-button-readonly.test.ts"
-            timeout: 15
-          - category: User Management
-            slug: user-management
-            script: test:integration
-            args: "tests/integration/create*.test.ts tests/integration/user*.test.ts tests/integration/cross*.test.ts tests/integration/change*.test.ts tests/integration/username*.test.ts"
-            timeout: 15
-          - category: Collection
-            slug: collection
-            script: test:integration
-            args: "tests/integration/collection/collection-workflow.test.ts tests/integration/collection/collection-api-endpoints.test.ts tests/integration/collection/collection-database-persistence.test.ts tests/integration/collection/collection-cross-user-isolation.test.ts tests/integration/collection/collection-sql-injection-hardening.test.ts tests/integration/collection/collection-admin-access.test.ts tests/integration/collection/collection-error-handling.test.ts"
-            timeout: 20
-          - category: Remaining
-            slug: remaining
-            script: test:integration
-            args: "tests/integration/new*.test.ts tests/integration/auto*.test.ts tests/integration/database*.test.ts tests/integration/alternate*.test.ts tests/integration/card-duplication-bug.test.ts"
-            timeout: 15
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
 
     services:
       postgres:
@@ -454,7 +381,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         fetch-depth: 1
         sparse-checkout: |
@@ -463,7 +390,7 @@ jobs:
         sparse-checkout-cone-mode: false
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: '20'
         cache: 'npm'
@@ -474,7 +401,7 @@ jobs:
     - name: Download dist artifact
       id: download-dist
       continue-on-error: true
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
       with:
         name: dist
         path: dist/
@@ -491,7 +418,7 @@ jobs:
 
     - name: Cache Flyway
       id: flyway-cache
-      uses: actions/cache@v4
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
       with:
         path: /opt/flyway
         key: flyway-9.22.3-linux-x64
@@ -517,39 +444,51 @@ jobs:
         /opt/flyway/flyway --version
         npm run migrate
 
-    - name: Run ${{ matrix.category }} Integration Tests
-      run: |
-        echo "Running ${{ matrix.category }} Integration Tests..."
-        if [ -z "${{ matrix.args }}" ]; then
-          npm run ${{ matrix.script }} -- \
-            --verbose --testTimeout=60000 --maxWorkers=2 2>&1 | tee ${{ matrix.slug }}-test-output.log || {
-            echo "❌ ${{ matrix.category }} tests failed, checking output..."
-            cat ${{ matrix.slug }}-test-output.log | tail -100
-            exit 1
-          }
-        else
-          npm run ${{ matrix.script }} -- \
-            ${{ matrix.args }} \
-            --verbose --testTimeout=60000 --maxWorkers=2 2>&1 | tee ${{ matrix.slug }}-test-output.log || {
-            echo "❌ ${{ matrix.category }} tests failed, checking output..."
-            cat ${{ matrix.slug }}-test-output.log | tail -100
-            exit 1
-          }
-        fi
-        echo "✅ ${{ matrix.category }} tests completed successfully!"
-      timeout-minutes: ${{ matrix.timeout }}
+    - name: Download production frontend for app-route tests
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      with:
+        name: frontend-dist
+        path: frontend/dist/
+
+    - name: Run integration tests
+      run: >-
+        npx jest --config tests/config/jest.integration.config.js
+        --shard=${{ matrix.shard }}/8 --runInBand --json
+        --outputFile=integration-results.json
       env:
         DATABASE_URL: postgresql://postgres:password@localhost:1337/overpower
+        NODE_ENV: test
+        SKIP_MIGRATIONS: 'true'
+
+    - name: Preserve integration evidence
+      if: always()
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      with:
+        name: integration-results-${{ matrix.shard }}
+        path: integration-results.json
+        retention-days: 90
+
+  security-gate:
+    name: Security Gate
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [build, frontend-build, unit-tests, unit-coverage, knip, semgrep, trivy, soc2-compliance, integration-tests]
+    steps:
+    - name: Require every validation job to succeed
+      env:
+        RESULTS: ${{ toJSON(needs) }}
+      run: |
+        echo "$RESULTS" | jq -e 'length > 0 and all(.[]; .result == "success")'
 
   build-docker:
     name: Build & Push Docker Image
-    needs: [build, frontend-build, unit-tests, knip, semgrep, trivy, soc2-compliance, integration-tests]
+    needs: [security-gate]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         # Two commits preserve the HEAD~1 changed-file verification without
         # downloading the repository's multi-gigabyte history.
@@ -562,7 +501,7 @@ jobs:
         sparse-checkout-cone-mode: false
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: '20'
         cache: 'npm'
@@ -573,7 +512,7 @@ jobs:
     - name: Download dist artifact
       id: download-dist-docker
       continue-on-error: true
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
       with:
         name: dist
         path: dist/
@@ -583,7 +522,7 @@ jobs:
       run: npm run build
 
     - name: Download frontend artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
       with:
         name: frontend-dist
         path: frontend/dist/
@@ -607,7 +546,7 @@ jobs:
         echo "=== END GIT VERIFICATION ==="
       
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -615,7 +554,7 @@ jobs:
         
     - name: Login to Amazon ECR
       id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
+      uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2
       
     - name: Build Docker Image
       id: build-image
@@ -718,16 +657,16 @@ jobs:
 
   sync-images:
     name: Sync Card Images to S3
-    needs: [build, unit-tests, knip, semgrep, trivy, soc2-compliance, integration-tests]
+    needs: [security-gate]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: '20'
         cache: 'npm'
@@ -742,7 +681,7 @@ jobs:
         echo "✅ Thumbnails generated"
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -803,7 +742,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         fetch-depth: 1
         sparse-checkout: |
@@ -826,7 +765,7 @@ jobs:
         echo "Expected production migration: $VERSION"
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -876,7 +815,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         fetch-depth: 1
         sparse-checkout: |
@@ -884,7 +823,7 @@ jobs:
         sparse-checkout-cone-mode: false
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

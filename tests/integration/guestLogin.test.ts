@@ -62,7 +62,7 @@ describe('Guest Login Integration Tests', () => {
       expect(result.rows.length).toBeGreaterThanOrEqual(1);
       
       // Verify the main guest user exists
-      const mainGuest = result.rows.find(user => user.username === 'guest');
+      const mainGuest = result.rows.find(user => user.username === 'Test-Guest');
       expect(mainGuest).toBeDefined();
       expect(mainGuest.id).toBeDefined();
       expect(mainGuest.email).toBeDefined();

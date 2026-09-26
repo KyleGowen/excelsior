@@ -37,8 +37,8 @@ describe('Stat Type Filtering - John Carter special case', () => {
   it('treats Brute Force 8 as usable for John Carter, 9 as unusable', async () => {
     // Get characters
     const charactersResp = await request(app)
-      .set('Cookie', apiClient.getSessionCookieHeader())
       .get('/api/v1/catalog/characters')
+      .set('Cookie', apiClient.getSessionCookieHeader())
       .expect(200);
     const characters = charactersResp.body.data || [];
     const johnCarter = characters.find((c: any) => (c.name || '').toLowerCase().includes('john carter'));
@@ -53,8 +53,8 @@ describe('Stat Type Filtering - John Carter special case', () => {
 
     // Fetch power cards
     const powerResp = await request(app)
-      .set('Cookie', apiClient.getSessionCookieHeader())
       .get('/api/v1/catalog/power-cards')
+      .set('Cookie', apiClient.getSessionCookieHeader())
       .expect(200);
     const powerCards = powerResp.body.data || [];
 
@@ -74,16 +74,16 @@ describe('Stat Type Filtering - John Carter special case', () => {
 
   it('uses effective overrides for Any-Power/Multi Power with John Carter', async () => {
     const charactersResp = await request(app)
-      .set('Cookie', apiClient.getSessionCookieHeader())
       .get('/api/v1/catalog/characters')
+      .set('Cookie', apiClient.getSessionCookieHeader())
       .expect(200);
     const characters = charactersResp.body.data || [];
     const johnCarter = characters.find((c: any) => (c.name || '').toLowerCase().includes('john carter'));
     expect(johnCarter).toBeTruthy();
 
     const powerResp = await request(app)
-      .set('Cookie', apiClient.getSessionCookieHeader())
       .get('/api/v1/catalog/power-cards')
+      .set('Cookie', apiClient.getSessionCookieHeader())
       .expect(200);
     const powerCards = powerResp.body.data || [];
 

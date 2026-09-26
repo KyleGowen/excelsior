@@ -238,7 +238,7 @@ describe('Reserve Character Loading Integration Tests', () => {
                 .set('Cookie', `sessionId=${testUser.sessionId}`)
                 .send({
                     cardType: 'power',
-                    cardId: 'test-power-id',
+                    cardId: (await pool.query('SELECT id FROM power_cards LIMIT 1')).rows[0].id,
                     quantity: 1
                 })
                 .expect([200, 201]); // Accept both 200 (already exists) and 201 (created)

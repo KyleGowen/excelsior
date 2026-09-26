@@ -357,8 +357,8 @@ describe('Deck Ownership Security Integration Tests', () => {
     });
   });
 
-  describe('Frontend Read-Only Mode Enforcement', () => {
-    it('should verify deck editor route returns correct ownership info', async () => {
+  describe('React app shell delivery', () => {
+    it('serves the React shell to owners and readers; API tests enforce ownership', async () => {
       console.log('🧪 Testing deck editor route ownership info...');
 
       // Test owner access
@@ -368,7 +368,7 @@ describe('Deck Ownership Security Integration Tests', () => {
 
       expect(ownerEditorResponse.status).toBe(200);
       // Check that the response contains deck-related content (more flexible than checking exact name)
-      expect(ownerEditorResponse.text).toContain('deck'); // Check for deck-related content
+      expect(ownerEditorResponse.text).toContain('id="root"'); // Check for deck-related content
       
       console.log('✅ Deck editor accessible to owner');
 
@@ -379,12 +379,12 @@ describe('Deck Ownership Security Integration Tests', () => {
 
       expect(nonOwnerEditorResponse.status).toBe(200);
       // Check that the response contains deck-related content (more flexible than checking exact name)
-      expect(nonOwnerEditorResponse.text).toContain('deck'); // Check for deck-related content
+      expect(nonOwnerEditorResponse.text).toContain('id="root"'); // Check for deck-related content
       
       console.log('✅ Deck editor accessible to non-owner (read-only mode)');
     });
 
-    it('should verify readonly=true parameter enforces read-only mode', async () => {
+    it('serves the React shell when a readonly link is opened', async () => {
       console.log('🧪 Testing readonly=true parameter enforcement...');
 
       const readonlyResponse = await request(app)
@@ -393,7 +393,7 @@ describe('Deck Ownership Security Integration Tests', () => {
 
       expect(readonlyResponse.status).toBe(200);
       // Check that the response contains deck-related content (more flexible than checking exact name)
-      expect(readonlyResponse.text).toContain('deck'); // Check for deck-related content
+      expect(readonlyResponse.text).toContain('id="root"'); // Check for deck-related content
       
       console.log('✅ Readonly parameter enforces read-only mode even for owner');
     });
@@ -418,7 +418,7 @@ describe('Deck Ownership Security Integration Tests', () => {
       console.log('🧪 Testing unauthenticated deck access...');
 
       const unauthenticatedResponse = await request(app)
-        .get(`/api/v1/decks/${testDeckId}`);
+        .put(`/api/v1/decks/${testDeckId}`).send({ name: 'Unauthorized change' });
 
       expect(unauthenticatedResponse.status).toBe(401);
       expect(unauthenticatedResponse.body.errors?.[0]?.code).toBe('UNAUTHORIZED');
@@ -431,8 +431,9 @@ describe('Deck Ownership Security Integration Tests', () => {
       console.log('🧪 Testing invalid session deck access...');
 
       const invalidSessionResponse = await request(app)
-        .get(`/api/v1/decks/${testDeckId}`)
-        .set('Cookie', 'invalid-session-cookie');
+        .put(`/api/v1/decks/${testDeckId}`)
+        .set('Cookie', 'sessionId=invalid-session-id')
+        .send({ name: 'Unauthorized change' });
 
       expect(invalidSessionResponse.status).toBe(401);
       expect(invalidSessionResponse.body.errors?.[0]?.code).toBe('UNAUTHORIZED');

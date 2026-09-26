@@ -7,7 +7,6 @@ import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 describe('Authentication Scenarios Integration Tests', () => {
   let userPersistence: UserPersistenceService;
   let userRepository: any;
-  let server: any;
   let testUser: User | undefined;
 
   beforeAll(async () => {
@@ -18,24 +17,9 @@ describe('Authentication Scenarios Integration Tests', () => {
     // Use the same userPersistence instance as the test server
     userPersistence = new UserPersistenceService();
 
-    // Start the server on a different port for tests
-    const PORT = process.env.TEST_PORT || 3002;
-    server = app.listen(PORT, () => {
-      console.log(`Test server listening on port ${PORT}`);
-    });
   });
 
   afterAll(async () => {
-    // Close the server first
-    if (server) {
-      await new Promise<void>((resolve) => {
-        server.close(() => {
-          console.log('Test server closed');
-          resolve();
-        });
-      });
-    }
-    
     // Clean up test user
     if (testUser) {
       try {

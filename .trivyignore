@@ -11,7 +11,7 @@
 # Upstream issue: Google's teeny-request hasn't updated to http-proxy-agent v7+
 #
 # Review periodically: Check if teeny-request updates http-proxy-agent dependency
-CVE-2026-3449
+CVE-2026-3449 exp:2026-10-26
 
 # GHSA-qwww-vcr4-c8h2: React Router RSC Mode CSRF Bypass
 # High severity | patched upstream in React Router 8.3.0
@@ -23,4 +23,4 @@ CVE-2026-3449
 # - React Router 8.3.0 is not available from the npm registry yet
 #
 # Review when a patched npm release is available or if RSC APIs are introduced.
-GHSA-qwww-vcr4-c8h2
+GHSA-qwww-vcr4-c8h2 exp:2026-10-26

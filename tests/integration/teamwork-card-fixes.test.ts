@@ -25,97 +25,97 @@ describe('Teamwork Card Fixes', () => {
       {
         name: '6 Combat',
         description: 'Teamwork card: 6 Combat acts as 4 Attack with Brute Force + Energy followup',
-        expectedPath: 'teamwork-universe/6_combat_0e_1bf.webp'
+        expectedPath: 'erb/teamwork/407_6_combat.png'
       },
       {
         name: '6 Combat',
         description: 'Teamwork card: 6 Combat acts as 4 Attack with Energy + Intelligence followup',
-        expectedPath: 'teamwork-universe/6_combat_0e_1i.webp'
+        expectedPath: 'erb/teamwork/409_6_combat.png'
       },
       {
         name: '6 Energy',
         description: 'Teamwork card: 6 Energy acts as 4 Attack with Combat + Intelligence followup',
-        expectedPath: 'teamwork-universe/6_energy_0c_1i.webp'
+        expectedPath: 'erb/teamwork/400_6_energy.png'
       },
       {
         name: '6 Energy',
         description: 'Teamwork card: 6 Energy acts as 4 Attack with Brute Force + Combat followup',
-        expectedPath: 'teamwork-universe/6_energy_0c_1bf.webp'
+        expectedPath: 'erb/teamwork/399_6_energy.png'
       },
       {
         name: '6 Intelligence',
         description: 'Teamwork card: 6 Intelligence acts as 4 Attack with Brute Force + Combat followup',
-        expectedPath: 'teamwork-universe/6_intelligence_0c_1bf.webp'
+        expectedPath: 'erb/teamwork/425_6_intelligence.png'
       },
       {
         name: '6 Intelligence',
         description: 'Teamwork card: 6 Intelligence acts as 4 Attack with Combat + Energy followup',
-        expectedPath: 'teamwork-universe/6_intelligence_0e_1c.webp'
+        expectedPath: 'erb/teamwork/427_6_intelligence.png'
       },
       {
         name: '7 Combat',
         description: 'Teamwork card: 7 Combat acts as 4 Attack with Energy + Intelligence followup',
-        expectedPath: 'teamwork-universe/7_combat_1e_1i.webp'
+        expectedPath: 'erb/teamwork/411_7_combat.png'
       },
       {
         name: '7 Combat',
         description: 'Teamwork card: 7 Combat acts as 4 Attack with Brute Force + Energy followup',
-        expectedPath: 'teamwork-universe/7_combat_1e_1bf.webp'
+        expectedPath: 'erb/teamwork/412_7_combat.png'
       },
       {
         name: '7 Energy',
         description: 'Teamwork card: 7 Energy acts as 4 Attack with Brute Force + Combat followup',
-        expectedPath: 'teamwork-universe/7_energy_1c_1bf.webp'
+        expectedPath: 'erb/teamwork/402_7_energy.png'
       },
       {
         name: '7 Energy',
         description: 'Teamwork card: 7 Energy acts as 4 Attack with Combat + Intelligence followup',
-        expectedPath: 'teamwork-universe/7_energy_1c_1i.webp'
+        expectedPath: 'erb/teamwork/401_7_energy.png'
       },
       {
         name: '7 Intelligence',
         description: 'Teamwork card: 7 Intelligence acts as 4 Attack with Brute Force + Combat followup',
-        expectedPath: 'teamwork-universe/7_intelligence_1c_1bf.webp'
+        expectedPath: 'erb/teamwork/428_7_intelligence.png'
       },
       {
         name: '7 Intelligence',
         description: 'Teamwork card: 7 Intelligence acts as 4 Attack with Combat + Energy followup',
-        expectedPath: 'teamwork-universe/7_intelligence_1e_1c.webp'
+        expectedPath: 'erb/teamwork/430_7_intelligence.png'
       },
       {
         name: '8 Brute Force',
         description: 'Teamwork card: 8 Brute Force acts as 4 Attack with Intelligence + Combat followup',
-        expectedPath: 'teamwork-universe/8_brute_force_1c_2i.webp'
+        expectedPath: 'erb/teamwork/422_8_brute_force.png'
       },
       {
         name: '8 Combat',
         description: 'Teamwork card: 8 Combat acts as 4 Attack with Brute Force + Energy followup',
-        expectedPath: 'teamwork-universe/8_combat_1e_2bf.webp'
+        expectedPath: 'erb/teamwork/415_8_combat.png'
       },
       {
         name: '8 Combat',
         description: 'Teamwork card: 8 Combat acts as 4 Attack with Energy + Intelligence followup',
-        expectedPath: 'teamwork-universe/8_combat_1e_2i.webp'
+        expectedPath: 'erb/teamwork/413_8_combat.png'
       },
       {
         name: '8 Energy',
         description: 'Teamwork card: 8 Energy acts as 4 Attack with Intelligence + Brute Force followup',
-        expectedPath: 'teamwork-universe/8_energy_1c_2bf.webp'
+        expectedPath: 'erb/teamwork/404_8_energy.png'
       },
       {
         name: '8 Energy',
         description: 'Teamwork card: 8 Energy acts as 4 Attack with Brute Force + Combat followup',
-        expectedPath: 'teamwork-universe/8_energy_1c_2i.webp'
+        expectedPath: 'erb/teamwork/406_8_energy.png'
       },
       {
         name: '8 Intelligence',
         description: 'Teamwork card: 8 Intelligence acts as 4 Attack with Combat + Energy followup',
-        expectedPath: 'teamwork-universe/8_intelligence_1e_2c.webp'
+        expectedPath: 'erb/teamwork/432_8_intelligence.png'
       },
       {
         name: '8 Intelligence',
         description: 'Teamwork card: 8 Intelligence acts as 4 Attack with Brute Force + Combat followup',
-        expectedPath: 'teamwork-universe/8_intelligence_1c_2bf.webp'
+        expectedPath: 'erb/teamwork/431_8_intelligence.png'
       }
     ];
 
@@ -126,7 +126,7 @@ describe('Teamwork Card Fixes', () => {
           FROM teamwork_cards 
           WHERE name = $1 
           AND card_description = $2 
-          AND universe = 'ERB'
+          AND "set" = 'ERB'
         `, [name, description]);
 
         expect(result.rows).toHaveLength(1);
@@ -141,8 +141,8 @@ describe('Teamwork Card Fixes', () => {
         SELECT card_description 
         FROM teamwork_cards 
         WHERE name = '8 Energy' 
-        AND image_path = 'teamwork-universe/8_energy_1c_2bf.webp'
-        AND universe = 'ERB'
+        AND image_path = 'erb/teamwork/404_8_energy.png'
+        AND "set" = 'ERB'
       `);
 
       expect(result.rows).toHaveLength(1);
@@ -154,8 +154,8 @@ describe('Teamwork Card Fixes', () => {
         SELECT card_description 
         FROM teamwork_cards 
         WHERE name = '8 Energy' 
-        AND image_path = 'teamwork-universe/8_energy_1c_2i.webp'
-        AND universe = 'ERB'
+        AND image_path = 'erb/teamwork/406_8_energy.png'
+        AND "set" = 'ERB'
       `);
 
       expect(result.rows).toHaveLength(1);
@@ -168,7 +168,7 @@ describe('Teamwork Card Fixes', () => {
       const result = await pool.query(`
         SELECT COUNT(*) as count 
         FROM teamwork_cards 
-        WHERE universe = 'ERB'
+        WHERE "set" = 'ERB'
       `);
 
       expect(parseInt(result.rows[0].count)).toBe(38);
@@ -180,7 +180,7 @@ describe('Teamwork Card Fixes', () => {
       const result = await pool.query(`
         SELECT name, card_description, image_path 
         FROM teamwork_cards 
-        WHERE universe = 'ERB'
+        WHERE "set" = 'ERB'
         ORDER BY name, card_description
       `);
 
@@ -189,14 +189,14 @@ describe('Teamwork Card Fixes', () => {
       
       // Verify all image paths start with 'teamwork-universe/' and end with '.webp'
       result.rows.forEach((row, index) => {
-        expect(row.image_path).toMatch(/^teamwork-universe\/.*\.webp$/);
+        expect(row.image_path).toMatch(/^erb\/teamwork\/.*\.png$/);
       });
       
       // Verify specific key cards have correct paths
       const anyPowerCards = result.rows.filter(row => row.name.includes('Any-Power'));
       expect(anyPowerCards).toHaveLength(2);
-      expect(anyPowerCards[0].image_path).toBe('teamwork-universe/6_anypower.webp');
-      expect(anyPowerCards[1].image_path).toBe('teamwork-universe/7_anypower.webp');
+      expect(anyPowerCards[0].image_path).toBe('erb/teamwork/480_6_any_power.png');
+      expect(anyPowerCards[1].image_path).toBe('erb/teamwork/481_7_any_power.png');
     });
   });
 });

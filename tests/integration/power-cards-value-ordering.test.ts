@@ -1,5 +1,6 @@
 /**
- * Integration test: verifies Power Cards are ordered by value with OP type tiebreakers
+ * Integration test: persists the power-card value-sort preference used by the React UI.
+ * Rendering and tie-breakers are covered by frontend unit tests.
  */
 
 process.env.NODE_ENV = 'test';
@@ -11,13 +12,7 @@ import { app } from '../../src/test-server';
 import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 import { integrationTestUtils } from '../setup-integration';
 
-describe('Power Cards ordering by value (with OP type tiebreakers)', () => {
-  const preferredOrder = ['Energy', 'Combat', 'Brute Force', 'Intelligence', 'Multi Power', 'Any-Power'];
-  const orderIndex = (t: string) => {
-    const idx = preferredOrder.indexOf(t);
-    return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
-  };
-
+describe('Power card value-sort preference persistence', () => {
   let testUser: any;
   let testDeck: any;
   let authCookie: string;
@@ -67,68 +62,13 @@ describe('Power Cards ordering by value (with OP type tiebreakers)', () => {
     }
   });
 
-  it('adds all power cards and verifies value ordering in deck editor', async () => {
-    // Fetch all power cards
-    const powerResp = await request(app).get('/api/v1/catalog/power-cards').set('Cookie', authCookie).expect(200);
-    expect(powerResp.body.errors ?? []).toEqual([]);
-    const allPowerCards = powerResp.body.data as Array<{ id: string; value: number; power_type: string }>;
-    expect(allPowerCards.length).toBeGreaterThan(0);
-
-    // Add every power card to the deck
-    for (const card of allPowerCards) {
-      const add = await request(app)
-        .post(`/api/v1/decks/${testDeck.id}/cards`)
-        .set('Cookie', authCookie)
-        .send({ cardId: card.id, cardType: 'power' });
-      expect([200, 201, 204]).toContain(add.status);
-    }
-
-    // Enable value-sort in UI preferences for this deck
-    const prefs = {
-      powerCardsSortMode: 'value'
-    } as any;
-    const putPrefs = await request(app)
-      .put(`/api/v1/decks/${testDeck.id}/ui-preferences`)
-      .set('Cookie', authCookie)
-      .send(prefs);
-    expect([200, 201]).toContain(putPrefs.status);
-
-    // Load deck editor HTML
-    const htmlResp = await request(app)
-      .get(`/users/${testUser.id}/decks/${testDeck.id}`)
-      .set('Cookie', authCookie);
-    expect(htmlResp.status).toBe(200);
-    const html = htmlResp.text;
-
-    // Extract the Power Cards section lines in the order they appear
-    // Each power card renders a name like: `${value} - ${power_type}`
-    const regex = /<div class="deck-card-editor-name">(\d+) - ([^<]+)\b/g;
-    const found: Array<{ value: number; type: string }> = [];
-    let m: RegExpExecArray | null;
-    while ((m = regex.exec(html)) !== null) {
-      const v = parseInt(m[1], 10);
-      const t = m[2].trim();
-      found.push({ value: v, type: t });
-    }
-
-    // Sanity check: we should have at least as many items as the number of power cards added
-    expect(found.length).toBeGreaterThan(0);
-
-    // Verify non-decreasing by value, and ties use OP type order
-    for (let i = 1; i < found.length; i++) {
-      const prev = found[i - 1];
-      const curr = found[i];
-      if (curr.value < prev.value) {
-        throw new Error(`Value order violated at index ${i}: ${prev.value} -> ${curr.value}`);
-      }
-      if (curr.value === prev.value) {
-        const cmp = orderIndex(prev.type) - orderIndex(curr.type);
-        if (cmp > 0) {
-          throw new Error(`Type tiebreak violated at value ${curr.value}: '${prev.type}' before '${curr.type}'`);
-        }
-      }
-    }
+  it('persists the power-card value-sort preference across API reloads', async () => {
+    // React owns rendering/sorting; its numeric ordering is covered by the v2 unit suite.
+    // The API contract is that the selected sorting preference survives a reload.
+    await request(app).put(`/api/v1/decks/${testDeck.id}/ui-preferences`)
+      .set('Cookie', authCookie).send({ powerCardsSortMode: 'value' }).expect(200);
+    const saved = await request(app).get(`/api/v1/decks/${testDeck.id}/ui-preferences`)
+      .set('Cookie', authCookie).expect(200);
+    expect(saved.body.data.powerCardsSortMode).toBe('value');
   });
 });
-
-

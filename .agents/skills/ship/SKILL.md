@@ -125,7 +125,7 @@ The Git agent must:
 1. Run `git status --short --branch` and confirm the expected branch and path scope.
 2. Stage only the supplied paths with explicit pathspecs. Never use `git add -A`, `git add .`, or a broad directory when unrelated changes exist.
 3. Run `git diff --cached --check` and `git diff --cached --name-only`; stop if the staged set differs from the supplied manifest.
-4. Commit with the supplied message, push only the supplied remote/ref, and return the full commit SHA plus push result.
+4. Commit with the supplied message, push only the supplied validation branch (normally `HEAD:refs/heads/codex/ship/<short-sha>`), and return the full commit SHA plus push result. Do not push `main` in this first handoff.
 5. Retry a transient GitHub-facing failure at most once. After two consecutive failures of the same logical operation, stop and return both exact errors so the main agent can execute the GitHub circuit breaker.
 
 The Git agent must not edit files, choose scope, run gates, pull, fetch, merge, rebase, reset, switch branches, create empty commits, recover Actions, or monitor deployment. Git commands remain serial. The main agent waits for this agent to finish before continuing.
@@ -141,13 +141,35 @@ node .agents/skills/ship/scripts/verify-commit.mjs \
 
 Any mismatch is a hard stop. This postcondition is required when using the lower-cost Git model.
 
-### 5. Monitor the exact deployment
+### 5. Validate before main, without a pull request
+
+`main` requires the GitHub Actions **Security Gate** check. Kyle uses Ship rather
+than PRs: push the frozen commit to a `codex/ship/<short-sha>` validation branch,
+wait for the exact-SHA workflow to finish successfully, then push **that same
+commit** to main. Every push runs validation; only a main push deploys.
+
+- The originating agent performs all interpretation. Use the existing watcher
+  for the candidate run; verify its SHA, branch, event, and terminal success.
+- Re-read remote main immediately before promotion and prove it is an ancestor
+  of the candidate (`git merge-base --is-ancestor origin/main <sha>` after fetch).
+  If main advanced incompatibly, integrate safely, rerun affected gates, and
+  validate the new SHA before promotion. Never force-push or bypass protection.
+- After candidate success, give `ship_git` a second mechanical-only handoff:
+  verify HEAD is the approved SHA, push `<sha>:refs/heads/main`, and report the
+  result. No new commit, merge, or PR is needed for this promotion.
+- Check `main` protection read-only when shipping; if enforcement is unavailable,
+  retain this validation-first sequence and report that GitHub enforcement could
+  not be confirmed. Do not silently change repository settings as part of Ship.
+- When a fresh integration run is required, build `frontend/dist` before it:
+  app-route tests use the actual React shell. A missing build is a setup failure.
+
+### 6. Monitor the exact deployment
 
 Back on the originating model:
 
 1. Confirm the returned SHA is local `HEAD` and the remote branch points to it.
-2. Look up the workflow once by exact SHA:
-   `gh run list --commit <sha> --json databaseId,status,conclusion,url,headSha,createdAt`.
+2. Look up the **main-branch** workflow once by exact SHA (the candidate run shares the SHA):
+   `gh run list --branch main --commit <sha> --json databaseId,status,conclusion,url,headSha,createdAt`.
 3. If the exact run already exists and is progressing, attach to it. Never create a second run merely because an older run is queued or GitHub Status still shows recovery in progress.
 4. Once the exact run ID is known, start the deterministic watcher with the GitHub network permission already required for `gh`:
 

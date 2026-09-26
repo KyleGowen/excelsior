@@ -95,7 +95,7 @@ When you want me to write tests for specific scenarios, just describe them like 
 
 ### Test configuration and categories
 
-Unit and integration tests use separate Jest configs in `tests/config/`. Integration tests are split into categories so CI can run them in parallel.
+Unit and integration tests use separate Jest configs in `tests/config/`. CI automatically shards the complete integration suite; category commands are available for focused local debugging.
 
 **Unit tests**
 
@@ -107,7 +107,7 @@ Unit and integration tests use separate Jest configs in `tests/config/`. Integra
 **Integration tests (all)**
 
 - Config: `tests/config/jest.integration.config.js`
-- Match: `**/tests/integration/**/*.test.ts` (with some files excluded and run by category configs)
+- Match: `**/tests/integration/**/*.test.ts` (no category exclusions)
 - Run: `npm run test:integration`
 - Legacy JSON user/session persistence is automatically redirected to a process-scoped temporary directory whenever `NODE_ENV=test`. Tests must not rewrite repository `data/users.json` or `data/sessions.json`. Set `USER_PERSISTENCE_DATA_DIR` only when a test needs an explicit isolated location.
 - Run `npm run test:integration:isolated` for the complete suite against a disposable PostgreSQL database without touching the development database.
@@ -194,3 +194,27 @@ The tests use a separate test database (`overpower_test`) to avoid affecting you
 ---
 
 **Ready to test!** 🎉 Just describe any scenario you want tested and I'll write comprehensive tests for it!
+
+### Authoritative integration discovery
+
+The main integration config now includes **every** integration test; the CI
+workflow uses eight automatic shards instead of hand-maintained categories.
+Category commands remain useful for focused debugging but do not define CI
+coverage. `npm run test:integration:shard-plan` additionally rejects any test
+file omitted by the Jest configuration. Build the production frontend before
+running integration tests that serve app routes.
+
+Security tests in `production-access-policy.test.ts` and the deck-save suites
+use the production Express app, real login cookies/JWTs, and disposable data.
+Do not use `x-test-user-id` as evidence of production authentication. React
+markup must be tested through React; the API's HTML shell is not rendered deck
+content. Integration fixtures must use `DATABASE_URL`, never a hardcoded local
+port, and must use real current card IDs rather than made-up IDs or old art paths.
+
+Fresh Flyway replay includes a guarded `beforeEachMigrate` repair at version 358:
+V201's unordered alternate-art selection could give Van Helsing 529F prize-pack
+art and make V359's catalog assertion fail. The callback fixes that foil's source
+and map before V359, preserves the prize-pack base, and does nothing after V359.
+Applied migration checksums remain unchanged. `legacy-foil-migration.test.ts`
+covers the adverse fixture, idempotence, and the version guard; every fresh CI
+shard also runs the full migration history.

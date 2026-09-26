@@ -17,11 +17,7 @@ describe('Special Character Threat Display Integration Tests', () => {
 
     beforeAll(async () => {
         pool = new Pool({
-            host: 'localhost',
-            port: 1337,
-            database: 'overpower',
-            user: 'postgres',
-            password: 'password'
+            connectionString: process.env.DATABASE_URL
         });
 
         // One row per canonical name (DB may contain duplicate name rows across sets)
