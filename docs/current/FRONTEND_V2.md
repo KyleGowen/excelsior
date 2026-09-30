@@ -186,6 +186,12 @@ the utility-account owner, updated timestamp, and Limited badge. Seed migrations
   `npm --prefix frontend run build` first).
   - `src/routes/static-health.routes.ts` mounts `express.static(spaDistDir())` when the
     build exists (hashed `/assets/*` before the shell).
+  - During blue-green deploy, the previous build's hashed assets are copied to a
+    host directory mounted read-only in the new container. Express serves these
+    only when an asset is absent from the current build. Files older than 30 days
+    are pruned at deploy time so tabs left open across releases can finish loading.
+  - The root router error screen offers a refresh when a page bundle cannot load,
+    including tabs older than the retained asset window or network failures.
   - `src/routes/pages.routes.ts` serves the shell via `sendAppShell()` for `/`, `/home`,
     `/login`, `/data`, `/users/:userId/decks`, `/users/:userId/collection`, and the deck
     editor route, with `no-store` HTML cache headers.

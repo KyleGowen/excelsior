@@ -21,23 +21,32 @@ function LayoutClasses({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-function StoryProviders({ children, route, user }: {
+function StoryProviders({ children, route, user, withoutRouter }: {
   children: ReactNode;
   route: string;
   user: AppUser | null | undefined;
+  withoutRouter: boolean;
 }) {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } },
   }));
   return (
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={[route]}>
+      {withoutRouter ? (
         <LayoutModeProvider>
           <StorybookAuthProvider user={user}>
             <LayoutClasses>{children}</LayoutClasses>
           </StorybookAuthProvider>
         </LayoutModeProvider>
-      </MemoryRouter>
+      ) : (
+        <MemoryRouter initialEntries={[route]}>
+          <LayoutModeProvider>
+            <StorybookAuthProvider user={user}>
+              <LayoutClasses>{children}</LayoutClasses>
+            </StorybookAuthProvider>
+          </LayoutModeProvider>
+        </MemoryRouter>
+      )}
     </QueryClientProvider>
   );
 }
@@ -56,6 +65,7 @@ const preview: Preview = {
         key={context.id}
         route={(context.parameters.route as string | undefined) ?? '/home'}
         user={context.parameters.authUser as AppUser | null | undefined}
+        withoutRouter={context.parameters.withoutRouter === true}
       >
         <Story />
       </StoryProviders>

@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { LoadingState } from '../components/LoadingState';
 import { RootLayout } from './RootLayout';
 import { AdminRoute } from './AdminRoute';
+import { RouteErrorScreen } from './RouteErrorScreen';
 
 const LoginPage = lazy(() => import('../features/login/LoginPage'));
 const HomePage = lazy(() => import('../features/home/HomePage'));
@@ -25,6 +26,7 @@ function Lazy({ children }: { children: ReactNode }) {
 export const router = createBrowserRouter([
   {
     element: <RootLayout />,
+    errorElement: <RouteErrorScreen />,
     children: [
       {
         path: '/login',

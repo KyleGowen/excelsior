@@ -1,0 +1,29 @@
+.route-error {
+  display: grid;
+  min-height: 100vh;
+  padding: var(--space-6);
+  place-items: center;
+  background: var(--color-bg-base);
+}
+
+.route-error__card {
+  width: min(100%, 440px);
+  padding: var(--space-8);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-panel);
+  text-align: center;
+}
+
+.route-error__eyebrow {
+  display: block;
+  margin-bottom: var(--space-3);
+  color: var(--color-accent-bright);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.route-error__card p {
+  margin: var(--space-4) 0 var(--space-6);
+  color: var(--color-text-muted);
+}

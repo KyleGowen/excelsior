@@ -1,4 +1,7 @@
 import express from 'express';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import request from 'supertest';
 import { setStaticAssetCacheHeaders, SHORT_STATIC_CACHE_CONTROL, APP_SHELL_CACHE_CONTROL, buildStaticImageCdnRedirectUrl } from '../../src/middleware/staticAssetCache';
 import { registerStaticAndHealthRoutes } from '../../src/routes/static-health.routes';
@@ -30,6 +33,26 @@ function buildStaticApp(): express.Application {
 }
 
 describe('static asset cache headers', () => {
+  it('serves retained hashed JavaScript bundles for tabs opened before a deploy', async () => {
+    const legacyDir = fs.mkdtempSync(path.join(os.tmpdir(), 'excelsior-legacy-assets-'));
+    const originalDir = process.env.LEGACY_FRONTEND_ASSETS_DIR;
+    try {
+      fs.writeFileSync(path.join(legacyDir, 'DatabasePage-old.js'), 'export default "old bundle";');
+      process.env.LEGACY_FRONTEND_ASSETS_DIR = legacyDir;
+      const app = buildStaticApp();
+
+      const response = await request(app).get('/assets/DatabasePage-old.js');
+      expect(response.status).toBe(200);
+      expect(response.text).toBe('export default "old bundle";');
+      expect(response.headers['cache-control']).toBe(SHORT_STATIC_CACHE_CONTROL);
+      expect((await request(app).get('/assets/missing.js')).status).toBe(404);
+    } finally {
+      if (originalDir === undefined) delete process.env.LEGACY_FRONTEND_ASSETS_DIR;
+      else process.env.LEGACY_FRONTEND_ASSETS_DIR = originalDir;
+      fs.rmSync(legacyDir, { recursive: true, force: true });
+    }
+  });
+
   it('serves resource images with a short public cache', async () => {
     const app = buildStaticApp();
 

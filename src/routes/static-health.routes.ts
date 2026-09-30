@@ -238,6 +238,16 @@ export function registerStaticAndHealthRoutes(app: express.Application, deps: St
     );
   }
 
+  // Keep recently deployed hashed chunks reachable for tabs opened before a
+  // blue-green cutover. The current build takes precedence above this mount.
+  const legacyAssetsDir = process.env.LEGACY_FRONTEND_ASSETS_DIR;
+  if (legacyAssetsDir) {
+    app.use('/assets', express.static(legacyAssetsDir, {
+      index: false,
+      setHeaders: setStaticAssetCacheHeaders,
+    }));
+  }
+
   const splitDisabled = process.env.DISABLE_HEALTH_SPLIT === '1';
 
   // Public liveness — never hits the database.
