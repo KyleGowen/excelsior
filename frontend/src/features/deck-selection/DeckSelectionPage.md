@@ -39,7 +39,7 @@ regular deck metadata.
 ## Data
 - `fetchDecksForUser(isGuest)` → user (`/api/v1/decks`) or guest (`/api/v1/guest/decks`).
 - Characters catalog is fetched to compute each tile's max-stat line (`deckMaxStats`).
-- **Export deck** (actions menu) uses `useDeckExportInput` → `fetchDeckFull` + catalog fetches (list tiles only carry preview cards) → reuses [`ExportDeckPanel`](../deck-editor/ExportDeckPanel.tsx) and `buildDeckExportJson`. Available to deck owners from selection (editor export remains read-only-only).
+- **Export deck** (actions menu) uses `useDeckExportInput` → `fetchDeckFull` + catalog fetches (list tiles only carry preview cards) → reuses [`ExportDeckPanel`](../deck-editor/ExportDeckPanel.tsx) and `buildDeckExportJson`. The deck view uses this same loader and panel for owners and read-only visitors.
 
 ## Notes
 - Guest decks (ids prefixed `guest_`) are session/local only; delete is allowed for guest's

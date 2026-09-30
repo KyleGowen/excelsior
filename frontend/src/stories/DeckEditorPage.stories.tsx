@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { userEvent } from 'storybook/test';
 import { Route, Routes } from 'react-router-dom';
 import DeckEditorPage from '../features/deck-editor/DeckEditorPage';
 import { pageHandlers } from './pageMocks';
@@ -21,5 +22,22 @@ export const ReadOnly: Story = {
   parameters: { route: '/users/storybook-user/decks/storybook-deck?readonly=true' },
 };
 export const Mobile: Story = {
-  parameters: { viewport: { defaultViewport: 'mobile' } },
+  globals: { viewport: { value: 'mobile' } },
+};
+
+export const ExportOpen: Story = {
+  parameters: { route: '/users/storybook-user/decks/storybook-deck?readonly=true' },
+  play: async ({ canvas }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'Export' }));
+    await canvas.findByRole('dialog', { name: 'Export deck JSON' });
+    await canvas.findByText(/"name": "Storybook Sample Deck"/);
+  },
+};
+
+export const MobileExportOpen: Story = {
+  parameters: {
+    route: '/users/storybook-user/decks/storybook-deck?readonly=true',
+  },
+  globals: { viewport: { value: 'mobile' } },
+  play: ExportOpen.play,
 };

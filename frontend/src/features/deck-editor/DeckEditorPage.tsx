@@ -67,6 +67,7 @@ import {
   IconCards,
   IconList,
   IconGrid,
+  IconExport,
   IconHeart,
   IconChevronUp,
   IconChevronDown,
@@ -103,6 +104,8 @@ import {
 import { DeckListView, persistDeckViewMode, readDeckViewMode } from './DeckListView';
 import { KoToggleButton } from './KoToggleButton';
 import { ReserveCharacterButton } from './ReserveCharacterButton';
+import { ExportDeckPanel } from './ExportDeckPanel';
+import { useDeckExportInput, createStubDeckExportInput } from '../deck-selection/useDeckExportInput';
 import type {
   CatalogCard,
   CatalogType,
@@ -345,6 +348,12 @@ export default function DeckEditorPage() {
   const [reserveCharacterId, setReserveCharacterId] = useState<string | null>(null);
   const [koCharacterIds, setKoCharacterIds] = useState<Set<string>>(() => new Set());
   const [drawHandOpen, setDrawHandOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const { input: exportDeckInput, loading: exportLoading } = useDeckExportInput(
+    deckId,
+    isGuest,
+    exportOpen,
+  );
   const [drawnCards, setDrawnCards] = useState<DeckCardEntry[]>([]);
   const [mobileDeckTypeTab, setMobileDeckTypeTab] = useState<CatalogType | null>(null);
   const [deckViewMode, setDeckViewMode] = useState(readDeckViewMode);
@@ -594,7 +603,7 @@ export default function DeckEditorPage() {
     }).filter((g) => g.entries.length > 0);
   }, [cards, cardIndex]);
 
-  const immersiveOpen = addOpen || drawHandOpen || Boolean(selected);
+  const immersiveOpen = addOpen || drawHandOpen || exportOpen || Boolean(selected);
   const deckTypeTabs = grouped;
 
   useEffect(() => {
@@ -746,6 +755,10 @@ export default function DeckEditorPage() {
   const handleBackToDecks = () => {
     if (selected) {
       closeCardDetail();
+      return;
+    }
+    if (exportOpen) {
+      setExportOpen(false);
       return;
     }
     if (drawHandOpen) {
@@ -1223,6 +1236,14 @@ export default function DeckEditorPage() {
               >
                 <IconCards /> Draw Hand
               </button>
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => setExportOpen(true)}
+                title="Export deck"
+              >
+                <IconExport /> Export
+              </button>
               {isOwner ? (
                 <>
                   <button type="button" className="btn btn-secondary" onClick={() => setAddOpen(true)}>
@@ -1635,6 +1656,14 @@ export default function DeckEditorPage() {
             : undefined
         }
       />
+      {exportOpen ? (
+        <ExportDeckPanel
+          open
+          input={exportDeckInput ?? createStubDeckExportInput(user?.username ?? 'Guest')}
+          loading={exportLoading || !exportDeckInput}
+          onClose={() => setExportOpen(false)}
+        />
+      ) : null}
     </div>
     {showMobileNav ? <MobileBottomNav /> : null}
     </>
