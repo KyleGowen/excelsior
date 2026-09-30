@@ -811,3 +811,8 @@ the character art is not clipped from the leading side. Every card remains click
 - The API response contains only chart-ready aggregates. Source record keys, hashes, email identifiers, and the raw ledger are never sent to the browser.
 
 **Interaction:** Bar/pie segment or card click opens `CardDetailPanel`. Home rail bar charts show top 5 rows with `+N more` footnote when truncated.
+
+### Route load error
+
+- A failed lazy page load shows a centered deep navy card with a concise explanation and a primary **Refresh page** button. Other route rendering errors use the same card with a general message.
+- The fallback works without the app shell or an authenticated session so a missing page bundle can still be recovered on desktop and mobile.
