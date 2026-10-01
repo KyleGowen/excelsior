@@ -44,7 +44,7 @@ function formatDate(value: string | null): string | null {
 }
 
 export function SupporterFlowProvider({ children }: { children: ReactNode }) {
-  const { user, isGuest, isAdmin, logout } = useAuth();
+  const { user, isGuest, isAdmin } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -152,8 +152,7 @@ export function SupporterFlowProvider({ children }: { children: ReactNode }) {
     if (!status?.billingAvailable || busy) return;
     if (!user || isGuest) {
       if (selectedAmount !== null) sessionStorage.setItem(RESTORED_AMOUNT_KEY, String(selectedAmount));
-      if (isGuest) await logout();
-      navigate('/login?supporter=1');
+      setActionError('Open Profile to log in or create an account, then continue here.');
       return;
     }
     if (isPaid) {

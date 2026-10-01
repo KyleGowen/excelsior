@@ -12,7 +12,6 @@ describe('Supporter page entry points', () => {
   const mobileNav = read('frontend/src/components/MobileBottomNav/MobileBottomNav.tsx');
   const profileMenu = read('frontend/src/components/ProfileMenu/ProfileMenuContent.tsx');
   const invitation = read('frontend/src/components/SupporterInvitation/SupporterInvitation.tsx');
-  const login = read('frontend/src/features/login/LoginPage.tsx');
   const root = read('frontend/src/app/RootLayout.tsx');
   const flow = read('frontend/src/features/supporter-flow/SupporterFlowProvider.tsx');
 
@@ -71,6 +70,7 @@ describe('Supporter page entry points', () => {
     expect(flow).toContain('supporter-flow--embedded');
     expect(flow).not.toContain('supporter-flow-panel');
     expect(flow).not.toContain("side={isMobile ? 'bottom' : 'right'}");
-    expect(login).toContain("'/supporter?supporter=open'");
+    expect(flow).toContain('if (!user || isGuest) {');
+    expect(flow).toContain('Open Profile to log in or create an account, then continue here.');
   });
 });

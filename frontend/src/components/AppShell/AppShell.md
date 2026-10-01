@@ -1,6 +1,6 @@
 # AppShell
 
-The application chrome for all primary routes (everything except Login). Renders a responsive
+The application chrome for all primary routes. Renders a responsive
 navigation frame around its `children`.
 
 ## Layout
@@ -10,8 +10,8 @@ navigation frame around its `children`.
 - **Mobile**: composes [`MobileBottomNav`](../MobileBottomNav/MobileBottomNav.tsx) — fixed
   **bottom nav** with icon+label tabs ordered **Database, Decks, Home, Collection, Profile**
   (Home centered; its icon is 15% larger via `.bottom-nav__item--home`). Profile opens a
-  bottom-sheet `SlideOutPanel` ("account sheet") with My Decks, Collection, a **Use desktop
-  layout** toggle (`preferDesktop`), and Log Out / Exit Guest.
+  bottom-sheet `SlideOutPanel` ("account sheet") with Guest sign-in and account creation or
+  member account settings and Log Out, plus a **Use desktop layout** toggle (`preferDesktop`).
 
 ## Nav model
 [`navConfig.tsx`](../MobileBottomNav/navConfig.tsx) — `NAV_ITEMS` defines each tab's

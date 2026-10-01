@@ -3,7 +3,7 @@
 Fixed **bottom navigation bar** for mobile layout mode (`useLayoutMode().isMobile` / `.layout-mobile`).
 
 ## Tabs
-Ordered **Database, Decks, Home, Collection, Profile** (Home centered with a larger icon). Profile opens the bottom-sheet account panel (Create New Deck, Change Email/Password for password users, desktop-layout toggle, Log Out / Exit Guest). **The Account sheet auto-closes on route change** (e.g. tapping another bottom-nav tab while the sheet is open).
+Ordered **Database, Decks, Home, Collection, Profile** (Home centered with a larger icon). Profile opens the bottom-sheet account panel (Guest sign-in and account creation, or account settings and Log Out for signed-in members, plus the desktop-layout toggle). **The Account sheet auto-closes on route change** (e.g. tapping another bottom-nav tab while the sheet is open).
 
 Supporter promotion and account management are intentionally excluded from the account sheet.
 

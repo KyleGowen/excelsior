@@ -81,6 +81,27 @@
   gap: var(--space-3);
 }
 
+/* Keep the account menu reachable when desktop layout is requested on a phone. */
+@media (max-width: 900px) {
+  .layout-desktop .top-nav__inner {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    padding-inline: var(--space-2);
+  }
+
+  .layout-desktop .top-nav__tabs {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    justify-self: stretch;
+    justify-content: flex-start;
+    scrollbar-width: none;
+  }
+
+  .layout-desktop .top-nav__tab {
+    flex-shrink: 0;
+  }
+}
+
 /* ---------- Mobile bottom nav ---------- */
 .layout-mobile .app-shell,
 .layout-mobile .app-shell__content {

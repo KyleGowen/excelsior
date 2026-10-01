@@ -122,12 +122,12 @@ export default function SupporterPage() {
   return (
     <div className="supporter-page-shell supporter-page-shell--public">
       <header className="supporter-page-public-nav">
-        <Link to="/login" className="supporter-page-public-nav__brand" aria-label="Excelsior login">
+        <Link to="/home" className="supporter-page-public-nav__brand" aria-label="Excelsior home">
           <Logo variant="emblem" height={30} />
           <span>Excelsior</span>
         </Link>
-        <Link to="/login" className="btn btn-secondary supporter-page-public-nav__login">
-          Log in
+        <Link to="/home" className="btn btn-secondary supporter-page-public-nav__login">
+          Home
         </Link>
       </header>
       {content}

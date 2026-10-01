@@ -21,11 +21,12 @@ function LayoutClasses({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-function StoryProviders({ children, route, user, withoutRouter }: {
+function StoryProviders({ children, route, user, withoutRouter, interactiveAuth }: {
   children: ReactNode;
   route: string;
   user: AppUser | null | undefined;
   withoutRouter: boolean;
+  interactiveAuth: boolean;
 }) {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } },
@@ -34,14 +35,14 @@ function StoryProviders({ children, route, user, withoutRouter }: {
     <QueryClientProvider client={queryClient}>
       {withoutRouter ? (
         <LayoutModeProvider>
-          <StorybookAuthProvider user={user}>
+          <StorybookAuthProvider user={user} interactiveAuth={interactiveAuth}>
             <LayoutClasses>{children}</LayoutClasses>
           </StorybookAuthProvider>
         </LayoutModeProvider>
       ) : (
         <MemoryRouter initialEntries={[route]}>
           <LayoutModeProvider>
-            <StorybookAuthProvider user={user}>
+            <StorybookAuthProvider user={user} interactiveAuth={interactiveAuth}>
               <LayoutClasses>{children}</LayoutClasses>
             </StorybookAuthProvider>
           </LayoutModeProvider>
@@ -66,6 +67,7 @@ const preview: Preview = {
         route={(context.parameters.route as string | undefined) ?? '/home'}
         user={context.parameters.authUser as AppUser | null | undefined}
         withoutRouter={context.parameters.withoutRouter === true}
+        interactiveAuth={context.parameters.interactiveAuth === true}
       >
         <Story />
       </StoryProviders>

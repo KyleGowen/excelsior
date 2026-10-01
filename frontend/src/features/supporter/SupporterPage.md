@@ -1,8 +1,8 @@
 # Supporter Feature Page
 
-`SupporterPage` is the public, shareable Supporter overview at `/supporter`.  Signed-in visitors
-keep the standard app shell.  Signed-out visitors receive a compact public header and can review
-the Supporter program before creating an account.
+`SupporterPage` is the public, shareable Supporter overview at `/supporter`. Guests and
+signed-in visitors keep the standard app shell. If a Guest session cannot start, a compact
+header links to Home and its session retry screen.
 
 ## Purpose
 
@@ -17,8 +17,8 @@ the Supporter program before creating an account.
 - Feature tabs swap the visible screenshot, explanation, and benefit list.
 - `/supporter#saved-views` and `/supporter#draw-hand` select the corresponding preview.
 - Clicking the screenshot opens the complete capture in an accessible modal.
-- The hero support card renders the root-owned `SupporterFlow` inline. Guests sign in before
-  Checkout; persistent users receive server-created Stripe-hosted URLs; paid Supporters receive a
+- The hero support card renders the root-owned `SupporterFlow` inline. Guests are directed to
+  sign in or create an account from Profile without losing the selected amount; persistent users receive server-created Stripe-hosted URLs; paid Supporters receive a
   fresh hosted-portal URL. Home, Database, and Profile link to this page instead of opening a drawer.
 - Escape or clicking the scrim closes the image modal.
 

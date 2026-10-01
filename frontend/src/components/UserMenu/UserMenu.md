@@ -2,7 +2,7 @@
 
 Desktop top-nav avatar + dropdown. Shows the user's initial, name (or "Guest"), and a
 caret; the dropdown links to My Decks and Collection, a disabled "Profile (Soon)" item, and
-Log Out / Exit Guest.
+Guest sign-in actions or member Log Out.
 
 ## Behavior
 - Closes on outside click and `Escape`.

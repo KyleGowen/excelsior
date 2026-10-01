@@ -6,7 +6,7 @@ Full-viewport nebula background image with a darkening veil. Decorative only
 ## Props
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `variant` | `'hero' \| 'subtle'` | `'subtle'` | `hero` = brighter, eager-loaded (login); `subtle` = dimmed, lazy (site-wide). |
+| `variant` | `'hero' \| 'subtle'` | `'subtle'` | `hero` = brighter, eager-loaded variant; `subtle` = dimmed, lazy (site-wide). |
 | `className` | `string` | – | Extra classes merged onto the root. |
 
 ## Notes
@@ -15,8 +15,7 @@ Full-viewport nebula background image with a darkening veil. Decorative only
   layout helpers used by [`RootLayout`](../../app/RootLayout.tsx).
 - Image asset `src/resources/images/login/login-bg.png` resolved via `assetUrl()` (CDN base),
   never a hardcoded path.
-- Mount points: `RootLayout` renders `subtle` on every route except `/login`; `LoginPage`
-  renders `hero` locally.
-- When tuning darkness, adjust the `subtle` brightness/opacity/veil values — leave `hero`
-  unchanged unless intentionally restyling the login screen. See also
+- Mount points: `RootLayout` renders `subtle` on every route. `hero` remains available for
+  visual previews.
+- When tuning darkness, adjust the `subtle` brightness/opacity/veil values. See also
   [`.cursorrules`](./.cursorrules).

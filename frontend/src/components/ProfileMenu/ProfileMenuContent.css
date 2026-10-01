@@ -48,6 +48,11 @@
   background: var(--color-bg-hover);
 }
 
+.profile-menu__item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .profile-menu__item--danger {
   color: var(--color-danger);
 }
@@ -131,9 +136,20 @@
   line-height: 1.35;
 }
 
+.profile-menu__guest-deck-note {
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: 1.35;
+}
+
 .profile-menu__error {
   font-size: var(--font-size-xs);
   color: var(--color-danger);
+}
+
+.profile-menu__auth-error {
+  padding: var(--space-2) var(--space-3);
 }
 
 .profile-menu--sheet .profile-menu__header {

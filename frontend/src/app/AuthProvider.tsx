@@ -1,7 +1,7 @@
 /**
  * Auth context. Session-cookie based; loads the current user and app config
  * (CDN base + pool user ids) via TanStack Query. Exposes login, signup,
- * guest login, Google sign-in and logout to the rest of the app.
+ * default Guest entry, account sign-in, Google sign-in and logout.
  */
 import {
   createContext,
@@ -14,7 +14,7 @@ import {
 } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  fetchCurrentUser,
+  loadCurrentUserOrGuest,
   fetchAppConfig,
   login as apiLogin,
   signUp as apiSignUp,
@@ -24,11 +24,14 @@ import {
 } from '../lib/api/auth';
 import { preloadGoogleAuthClient } from '../lib/auth/googleAuthClient';
 import { describeGoogleSignInError } from '../lib/auth/googleSignInErrors';
+import { clearGoogleAuthReturn, postAuthPath, takeGoogleAuthReturn } from '../lib/auth/postAuthNavigation';
 import type { AppUser } from '../lib/api/types';
 
 export interface AuthContextValue {
   user: AppUser | null;
   isLoading: boolean;
+  authError: string | null;
+  retryAuth: () => Promise<void>;
   isGuest: boolean;
   isAdmin: boolean;
   isSupporter: boolean;
@@ -36,13 +39,12 @@ export interface AuthContextValue {
   tournamentDecksUserId: string | null;
   login: (username: string, password: string) => Promise<AppUser | null>;
   signUp: (username: string, email: string, password: string) => Promise<AppUser | null>;
-  loginAsGuest: () => Promise<AppUser | null>;
   signInWithGoogle: () => Promise<AppUser | null>;
   signInWithGoogleRedirect: () => Promise<void>;
   isGoogleSignInReady: boolean;
   googleRedirectError: string | null;
   clearGoogleRedirectError: () => void;
-  logout: () => Promise<void>;
+  logout: () => Promise<AppUser>;
   refresh: () => Promise<void>;
 }
 
@@ -51,11 +53,13 @@ export const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const [googleRedirectError, setGoogleRedirectError] = useState<string | null>(null);
+  const [isSwitchingAccount, setIsSwitchingAccount] = useState(false);
 
   const userQuery = useQuery({
     queryKey: ['auth', 'me'],
-    queryFn: () => fetchCurrentUser(),
+    queryFn: loadCurrentUserOrGuest,
     staleTime: 2 * 60 * 1000,
+    retry: false,
   });
 
   const configQuery = useQuery({
@@ -75,6 +79,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const setUser = useCallback(
     (next: AppUser | null) => {
+      queryClient.removeQueries({
+        predicate: ({ queryKey }) => queryKey[0] !== 'auth' && queryKey[0] !== 'app-config',
+      });
       queryClient.setQueryData(['auth', 'me'], next);
     },
     [queryClient],
@@ -83,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(
     async (username: string, password: string) => {
       const u = await apiLogin(username, password);
+      if (!u) throw new Error('Could not sign in. Please try again.');
       setUser(u);
       return u;
     },
@@ -92,17 +100,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signUp = useCallback(
     async (username: string, email: string, password: string) => {
       const u = await apiSignUp(username, email, password);
+      if (!u) throw new Error('Could not create account. Please try again.');
       setUser(u);
       return u;
     },
     [setUser],
   );
-
-  const loginAsGuest = useCallback(async () => {
-    const u = await apiLoginAsGuest();
-    setUser(u);
-    return u;
-  }, [setUser]);
 
   const signInWithGoogle = useCallback(async () => {
     const googleAuth = googleAuthQuery.data;
@@ -111,6 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const result = await googleAuth.signInWithPopup();
     const idToken = await result.user.getIdToken();
     const u = await completeGoogleSignIn(idToken);
+    if (!u) throw new Error('Could not sign in with Google. Please try again.');
     setUser(u);
     return u;
   }, [googleAuthQuery.data, setUser]);
@@ -135,9 +139,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!result || !active) return;
         const idToken = await result.user.getIdToken();
         const u = await completeGoogleSignIn(idToken);
-        if (active) setUser(u);
+        if (!u) throw new Error('Could not sign in with Google. Please try again.');
+        if (active) {
+          const saved = takeGoogleAuthReturn();
+          const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+          const nextPath = postAuthPath(saved?.path ?? currentPath, saved?.previousUserId ?? '', u);
+          setUser(u);
+          if (nextPath !== currentPath) window.location.replace(nextPath);
+        }
       })
       .catch((error: unknown) => {
+        clearGoogleAuthReturn();
         if (active) setGoogleRedirectError(describeGoogleSignInError(error).message);
       });
 
@@ -148,18 +160,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await apiLogout();
-    setUser(null);
-    queryClient.clear();
-  }, [setUser, queryClient]);
+    setIsSwitchingAccount(true);
+    try {
+      const guest = await apiLoginAsGuest();
+      if (!guest) throw new Error('Could not start Guest mode. Please try again.');
+      setUser(guest);
+      return guest;
+    } catch (error) {
+      setUser(null);
+      throw error;
+    } finally {
+      setIsSwitchingAccount(false);
+    }
+  }, [setUser]);
 
-  const refresh = useCallback(async () => {
-    await userQuery.refetch();
-  }, [userQuery]);
+  const refetchUser = userQuery.refetch;
+  const retryAuth = useCallback(async () => {
+    await refetchUser();
+  }, [refetchUser]);
+  const refresh = retryAuth;
 
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
-      isLoading: userQuery.isLoading || configQuery.isLoading,
+      isLoading: userQuery.isLoading || (!user && userQuery.isFetching) || configQuery.isLoading || isSwitchingAccount,
+      authError: userQuery.isError ? 'Could not connect to Excelsior. Please try again.' : null,
+      retryAuth,
       isGuest: user?.role === 'GUEST',
       isAdmin: user?.role === 'ADMIN',
       isSupporter: user?.isSupporter === true,
@@ -167,7 +193,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       tournamentDecksUserId: configQuery.data?.tournamentDecksUserId ?? null,
       login,
       signUp,
-      loginAsGuest,
       signInWithGoogle,
       signInWithGoogleRedirect,
       isGoogleSignInReady: googleAuthQuery.isSuccess,
@@ -179,11 +204,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [
       user,
       userQuery.isLoading,
+      userQuery.isFetching,
+      userQuery.isError,
+      retryAuth,
       configQuery.isLoading,
+      isSwitchingAccount,
       configQuery.data,
       login,
       signUp,
-      loginAsGuest,
       signInWithGoogle,
       signInWithGoogleRedirect,
       googleAuthQuery.isSuccess,

@@ -1,5 +1,5 @@
 /** Auth + app-config API calls (session-cookie based). */
-import { api, apiRequest } from './client';
+import { api, apiRequest, ApiError } from './client';
 import { setCdnBase } from '../images/cardImages';
 import type { AppUser, AppConfig, UserRole } from './types';
 
@@ -40,10 +40,22 @@ function normaliseUser(raw: RawMe | null | undefined): AppUser | null {
 export async function fetchCurrentUser(): Promise<AppUser | null> {
   try {
     const raw = await apiRequest<RawMe>('/api/auth/me', { raw: false });
-    return normaliseUser(raw);
-  } catch {
-    return null;
+    const user = normaliseUser(raw);
+    if (!user) throw new Error('Invalid session response. Please try again.');
+    return user;
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) return null;
+    throw error;
   }
+}
+
+/** Establish a Guest session only when there is no valid session. */
+export async function loadCurrentUserOrGuest(): Promise<AppUser> {
+  const user = await fetchCurrentUser();
+  if (user) return user;
+  const guest = await loginAsGuest();
+  if (!guest) throw new Error('Could not start Guest mode. Please try again.');
+  return guest;
 }
 
 export async function login(username: string, password: string): Promise<AppUser | null> {
@@ -75,11 +87,7 @@ export async function loginAsGuest(): Promise<AppUser | null> {
 }
 
 export async function logout(): Promise<void> {
-  try {
-    await api.post('/api/auth/logout');
-  } catch {
-    /* best-effort */
-  }
+  await api.post('/api/auth/logout');
 }
 
 export async function fetchAppConfig(): Promise<AppConfig> {

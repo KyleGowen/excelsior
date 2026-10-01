@@ -119,13 +119,11 @@ Defined in [`frontend/src/styles/global.css`](frontend/src/styles/global.css).
 - **DBV detail slide-out actions** (`.db__detail-actions .btn`): same accent-outline pill family for Add to Deck / Collection under `CardDetailPanel` on `/data`.
 - Disabled buttons drop to ~50% opacity and `cursor: not-allowed`; loading buttons show
   text like `Saving...` / `Creating...` and are disabled.
-- Login authentication failures use the existing danger panel. Recoverable Google popup
-  failures add one underlined inline action, **Continue with Google in this window**, which
-  keeps the recovery path inside the alert instead of adding another persistent auth button.
-- The desktop login brand introduction describes Excelsior as an independently developed and
-  operated OverPower database and deck builder for the Modern OverPower community; it does not
-  name the developer or describe the project as independently owned.  Paragraph copy preserves
-  Kyle's two-spaces-after-a-period preference in rendered HTML.
+- Guest sign-in and account creation use inline forms in the profile menu. Authentication
+  failures appear beside the form; recoverable Google popup failures offer **Continue with
+  Google in this window** there. Each form expands directly below its own menu action. Opening
+  Log In focuses Email or Username; opening Create Account focuses Username. When a Guest has
+  session decks, a muted note explains that those decks will not transfer to an account.
 - Inputs/selects/textareas use `--color-bg-input`, `--color-border`, `--radius-md`, and a
   cyan focus ring (`--color-border-accent`).
 
@@ -166,12 +164,14 @@ account-sheet row (`.account-sheet__toggle`) with `justify-content: space-betwee
   `.bottom-nav__item--home .bottom-nav__icon` at `calc(1.4rem * 1.15)` vs `1.4rem` for other
   tabs). Top nav is hidden. Deck editor (outside AppShell) uses the same bottom nav on mobile;
   `.deck-editor__content` bottom padding clears the fixed bar (`--bottom-nav-height` + safe area).
-- **Mobile login viewport:** `.login` uses `100dvh` with safe-area-aware block padding,
-  `align-content: safe center`, and vertical scrolling. The mobile login wordmark renders at
-  `250px` high. Google sign-in appears above the `OR` divider and username/password form on mobile;
-  desktop retains username/password first. The responsive DOM order matches keyboard focus. The
-  full auth stack stays centered when it fits, but short browser viewports anchor it below the
-  visible top instead of clipping the logo.
+- **Guest entry:** New visitors arrive at Home in Guest mode. Desktop account actions live in
+  the top-right profile dropdown; mobile uses the Profile bottom sheet. Both surfaces show Log In,
+  Create Account, and Sign in with Google. Expanded forms scroll within the available viewport.
+  Signing in or out keeps the current view when accessible; personal Decks and Collection URLs
+  switch to the current account. A Guest session deck returns to Decks when the account changes.
+  If Guest session setup fails, a centered retry card appears before the app shell.
+- When a phone is set to **Use desktop layout**, the top tabs scroll within the header so the
+  profile menu remains reachable at narrow widths.
 - Nav, dropdowns, and tooltips sit at `--z-nav: 9999` so they always clear page content.
 
 ### Supporter Invitation
@@ -201,8 +201,8 @@ account-sheet row (`.account-sheet__toggle`) with `justify-content: space-betwee
 - `/supporter` is the public, shareable home for Supporter details. It is intentionally absent from
   primary navigation: non-Supporters reach it through the Home or Database invitation link,
   and its feature rows deep-link to the matching page preview.
-- Signed-in visitors retain the standard app shell. Signed-out visitors receive a compact public
-  header with the Excelsior emblem and Log in action so the page can be shared before account creation.
+- Guests and signed-in visitors use the standard app shell. If Guest session setup fails, a compact
+  header offers a Home link to the session retry screen.
 - The page leads with a personal, multi-paragraph account of Kyle building the independently developed
   community tool, its nights-and-weekends development, and the service costs that support offsets; `$3+` customer-chosen
   monthly support with equal benefits at every amount. The hero begins directly with the
@@ -228,7 +228,7 @@ account-sheet row (`.account-sheet__toggle`) with `justify-content: space-betwee
 ### Branding & favicon
 - **In-app logo:** [`Logo`](frontend/src/components/Logo/Logo.tsx) `variant="emblem"` uses
   `/src/resources/images/logo/logo6.png` (textless triangle mark) in desktop top nav and deck
-  editor rail; login uses `wordmark` (`logo5.png`).
+  editor rail.
 - **Browser tab favicon:** [`frontend/index.html`](frontend/index.html) links
   `/src/resources/images/favicon.png` (32×32 PNG) and
   `/src/resources/images/apple-touch-icon.png` (180×180). Both are generated from `logo6.png`
@@ -359,7 +359,7 @@ OverPower stat colors (also exposed as `.stat-energy` etc. utility classes):
   group with readable supporting text; unlisted is selected by default, remains link-readable, and
   is persisted with the deck.
 - **Help & feedback:** the profile menu places a question-mark action after account settings and
-  before the divider above Log Out / Exit Guest. It closes the profile surface before opening a
+  before Log Out for signed-in users. Guests see sign-in actions and no exit action. It closes the profile surface before opening a
   compact, top-right desktop inspector or mobile bottom sheet. Bug and feature/change rows use
   48px accent-soft icon tiles and open a focused text-entry modal; Email support uses a `mailto:` link,
   while Message on Discord shows `@GirlsGoneKyle` in its subtext and opens the OverPower invite in a
@@ -393,7 +393,6 @@ OverPower stat colors (also exposed as `.stat-energy` etc. utility classes):
 
 ## Per-Screen Notes
 Each screen has a companion doc in its feature folder:
-- Login — [`frontend/src/features/login/LoginPage.md`](frontend/src/features/login/LoginPage.md)
 - Home — [`frontend/src/features/home/HomePage.md`](frontend/src/features/home/HomePage.md)
 - Home Recent Updates list — [`frontend/src/features/home/HomeUpdatesPage.md`](frontend/src/features/home/HomeUpdatesPage.md)
 - Database (DBV) — [`frontend/src/features/database/DatabasePage.md`](frontend/src/features/database/DatabasePage.md)

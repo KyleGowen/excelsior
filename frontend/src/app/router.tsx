@@ -5,7 +5,6 @@ import { RootLayout } from './RootLayout';
 import { AdminRoute } from './AdminRoute';
 import { RouteErrorScreen } from './RouteErrorScreen';
 
-const LoginPage = lazy(() => import('../features/login/LoginPage'));
 const HomePage = lazy(() => import('../features/home/HomePage'));
 const HomeUpdatesPage = lazy(() => import('../features/home/HomeUpdatesPage'));
 const RegionalsPage = lazy(() => import('../features/home/RegionalsPage'));
@@ -30,11 +29,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/login',
-        element: (
-          <Lazy>
-            <LoginPage />
-          </Lazy>
-        ),
+        element: <Navigate to="/home" replace />,
       },
       {
         path: '/supporter',

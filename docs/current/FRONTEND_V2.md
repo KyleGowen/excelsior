@@ -20,7 +20,7 @@ and serving.
 frontend/src/
   app/        router.tsx, AuthProvider.tsx, ProtectedRoute.tsx
   components/ reusable UI (each: Component.tsx/.css/.md/index.ts)
-  features/   route pages: login, home, database, collection,
+  features/   route pages: home, database, collection,
               community, deck-selection, deck-editor
   lib/
     api/        client.ts, types.ts, auth.ts, catalog.ts, decks.ts, collection.ts
@@ -44,9 +44,9 @@ duplicated by entry points.
 
 ## Routing
 Defined in [`frontend/src/app/router.tsx`](../../frontend/src/app/router.tsx):
-- `/login` — standalone (no shell).
-- `/supporter` — public and shareable. Signed-in visitors see the standard AppShell;
-  signed-out visitors see a compact public header. Its local billing actions remain disconnected
+- `/login` — compatibility redirect to `/home`; there is no separate sign-in screen.
+- `/supporter` — public and shareable. Guests and signed-in visitors see the standard AppShell;
+  a failed Guest session shows a compact header with a Home link. Its local billing actions remain disconnected
   until Stripe Checkout and the customer portal are wired.
 - `ShelledLayout` (`ProtectedRoute` + `AppShell`) wraps:
   - `/` → redirects to `/home`
@@ -61,21 +61,28 @@ Defined in [`frontend/src/app/router.tsx`](../../frontend/src/app/router.tsx):
   [`DRAW_HAND_FEATURE.md`](DRAW_HAND_FEATURE.md).
 - `*` → redirect to `/home`.
 
-`ProtectedRoute` redirects unauthenticated users to `/login` and shows a loading state
-while auth resolves.
+`ProtectedRoute` shows a loading state while the existing or default Guest session resolves.
+If session setup fails, it shows a retry action.
 
 ## Authentication
 [`AuthProvider`](../../frontend/src/app/AuthProvider.tsx) exposes
-`{ user, isGuest, isLoading, login, signUp, loginAsGuest, signInWithGoogle, logout }`.
+`{ user, isGuest, isLoading, login, signUp, signInWithGoogle, logout, retryAuth }`.
 
 - Bootstraps by fetching app config (`GET /api/v1/config/app`, sets the CDN base) and the
-  current user (`GET /api/auth/me`).
+  current user (`GET /api/auth/me`). A 401 creates a Guest session before the app shell renders.
 - **Response shape note (important):** `/api/auth/me` returns `{ id, name, email, role }`
   while `/api/auth/login` returns `{ userId, username, role }`. `normaliseUser` in
   [`lib/api/auth.ts`](../../frontend/src/lib/api/auth.ts) accepts **both** (`id || userId`,
   `username || name`).
-- Guest sessions log in with the shared `guest`/`guest` credentials; `isGuest` is derived
-  from the role.
+- Guest sessions use the existing shared Guest account; `isGuest` is derived from the role.
+  The desktop profile dropdown and mobile Profile sheet provide credential sign-in, account
+  creation, and Google sign-in. Account changes preserve the current route and in-page view when
+  accessible, while replacing own Decks/Collection URL ids with the new account id. Persistent
+  decks remain open read-only after log out; Guest session decks return to the new account's Decks
+  view because they do not transfer. Admin views return to Home after access is lost. Google
+  redirect sign-in restores the saved route after returning to the app. Log out establishes a new
+  Guest session. The Supporter page asks Guests to sign in through Profile while keeping their
+  selected contribution amount.
 
 ## Data layer
 All calls go through [`lib/api/client.ts`](../../frontend/src/lib/api/client.ts), which:
@@ -91,7 +98,9 @@ Data endpoints used:
   text and canonical source deep link; the shared `CardDetailPanel` displays it.
 - Decks: `GET/POST/PUT/DELETE /api/v1/decks*`, guest equivalents under
   `/api/v1/guest/decks*` (guest deck ids are prefixed `guest_`), `GET /api/v1/decks/community`,
-  `GET /api/v1/decks/tournament`.
+  `GET /api/v1/decks/tournament`. Session-created Guest decks stay with the Guest session and
+  are not moved into an account by credential or Google sign-in or account creation. New
+  accounts still receive the existing shared `Sample:` starter deck.
 - Collection: `GET /api/v1/collections/me/cards`, `POST` to add, `PUT /…/:cardId` to update.
 
 ### Endpoint quirks captured in the client
