@@ -14,6 +14,8 @@ so the shared Supporter experience remains reviewable without Stripe credentials
 ## Controls
 - **Search** by card name, character name, mission-set name, or card text including inherent abilities
   (debounced, header bar; `cardMatchesSearchQuery` in `catalogTypeMap`).
+  Skybound Hidden Danger (#379) also matches both "Green Farm" (printed typo) and
+  "Greene Farm" (canonical location) in this shared search, including Collection and Add Cards.
 - **Type tabs**: Characters, Special Cards, Any Character, Power Cards, Locations, Missions, Events,
   Aspects, and the Universe types (Advanced/Teamwork/Ally/Training/Basic) — vocab via
   `catalogTypeMap`. **All** is the first tab (default selection remains Characters): text list across every type (no images).

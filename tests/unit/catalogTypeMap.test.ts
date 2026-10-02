@@ -66,6 +66,30 @@ describe('cardMatchesSearchQuery foil keyword', () => {
   });
 });
 
+describe('cardMatchesSearchQuery printed card typo', () => {
+  const hiddenDanger: CatalogCard = {
+    id: 'hidden-danger',
+    card_name: 'Hidden Danger',
+    set: 'SKY',
+    set_number: '379',
+    location: 'The Greene Farm',
+    aspect_description: 'Any attack made on any character may be shifted to any Front Line character.',
+  };
+
+  it.each(['Green', 'Greene', 'The Green Farm', 'The Greene Farm'])(
+    'finds Hidden Danger using %s',
+    (query) => {
+      expect(cardMatchesSearchQuery(hiddenDanger, query)).toBe(true);
+    },
+  );
+
+  it('keeps the alias specific to the Skybound Hidden Danger printing', () => {
+    expect(cardMatchesSearchQuery({ ...hiddenDanger, card_name: 'Hershel Greene' }, 'The Green Farm')).toBe(false);
+    expect(cardMatchesSearchQuery({ ...hiddenDanger, set_number: '380' }, 'The Green Farm')).toBe(false);
+    expect(cardMatchesSearchQuery(hiddenDanger, 'Hidden Danger')).toBe(true);
+  });
+});
+
 describe('compareCatalogCards power-cards', () => {
   const card = (id: string, power_type: string, value: number): CatalogCard => ({
     id,
