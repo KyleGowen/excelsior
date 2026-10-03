@@ -3,12 +3,7 @@
 Landing page after login. Sections, top to bottom:
 
 1. **Hero** — "Welcome to Excelsior" over dedicated landscape character art from `src/resources/images/home/banners/`, loaded via `assetUrl()` / `srcSet`. The active Skybound Immortal banner is mirrored so the character sits on the right, away from the copy; the retained Victory Harben pair remains available for an explicit future switch. Art scales fluidly in the right two-thirds until the hero tile reaches ~2000px wide (≈ 2048px viewport); wider viewports freeze art width and grow the left panel behind copy. Run `npm run generate:home-hero` after editing or adding a non-`-2x` banner master. Banner selection remains explicit—there is no randomization or cycling yet. CTA is a compact accent-outline pill (`btn btn-ghost home__hero-cta`), not a filled primary button.
-2. **Supporter invitation** — after canonical status resolves, guests and persistent non-Supporters
-   see a calm strip beneath the hero with **Keep Excelsior free. Support what comes next.**, the
-   `$3+`/equal-benefits/cancel-anytime summary, and **Become a Supporter**. It remains expanded and
-   links directly to the full `/supporter` page. It is hidden for Supporters and admins. Production
-   also hides it while new checkout is disabled; local development keeps it visible for UI preview.
-3. **Recent Updates** — news cards from
+2. **Recent Updates** — news cards from
    `GET /api/v1/recent-updates` (`useRecentUpdates`; rows in `recent_updates` table).
    Shows the **3 newest** tiles (`HOME_RECENT_UPDATES_LIMIT`). When more than 3 exist,
    a **View All** link in the section header navigates to [`/home/updates`](./HomeUpdatesPage.md).
@@ -29,7 +24,7 @@ Landing page after login. Sections, top to bottom:
    tile grows, siblings shrink) to reveal its full title and summary — no card ever changes
    height. Opening a card collapses any previously open one. On mobile the row stacks into
    a full-width column and expansion is vertical instead. No modal or navigation from the tile.
-4. **Seattle Weekend** stats rail — one horizontally scrolling rail with a single combined set of
+3. **Seattle Weekend** stats rail — one horizontally scrolling rail with a single combined set of
    Regional + NAOL statistical tiles. The compact metadata placard switches between Regional and
    NAOL winner summaries; the two static JSON event datasets remain separate underneath the
    presentation. NAOL battleground and cataclysm values are excluded because their source coverage
@@ -37,16 +32,16 @@ Landing page after login. Sections, top to bottom:
    `/home/regionals?event=s1-seattle-weekend`. Its **Event recap** tab shows the combined masonry
    collage and separate Regional / NAOL deck lists. Its peer **Season 1 totals** tab contains the
    ongoing sortable character-performance tally.
-5. **Community Decks** rail — horizontally scrolling `DeckTile`s backed by
+4. **Community Decks** rail — horizontally scrolling `DeckTile`s backed by
    `GET /api/v1/community/decks` (user-shared public legal decks; first 12 from
    the feed). Same data as the Community page Community tab — see
    [`COMMUNITY_DECKS.md`](./COMMUNITY_DECKS.md). Tiles show the owner's display
    name in the footer lower-left (click → `/users/:userId/decks`); tile body
    click opens the deck readonly in the editor.
-6. **Tournament Winning Decks** rail — horizontally scrolling `DeckTile`s backed by
+5. **Tournament Winning Decks** rail — horizontally scrolling `DeckTile`s backed by
    `GET /api/v1/decks/tournament` (the `tournament_decks` account's decks only; see
    [`TOURNAMENT_DECKS.md`](./TOURNAMENT_DECKS.md)).
-7. **Preconstructed Decks** rail — the official decks from
+6. **Preconstructed Decks** rail — the official decks from
    `GET /api/v1/community/preconstructed-decks`, flattened in the endpoint's newest-first
    release-set order (Skybound before Edgar Rice Burroughs and the World Legends). Featured
    upgrade recommendations are intentionally excluded. **View All** →

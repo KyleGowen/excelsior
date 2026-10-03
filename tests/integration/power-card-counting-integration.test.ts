@@ -491,8 +491,10 @@ describe('Power Card Counting Integration Tests', () => {
       const powerCards = uniquePowerCards(powerCardsResponse.body.data);
       expect(powerCards.length).toBeGreaterThan(2);
 
-      // Add different power cards with different quantities
-      const testCards = powerCards.slice(0, 3);
+      // Count unrestricted cards: tied catalog printings may include a one-per-deck
+      // Any-Power printing, which correctly rejects a quantity greater than one.
+      const testCards = powerCards.filter((card: any) => card.one_per_deck === false).slice(0, 3);
+      expect(testCards).toHaveLength(3);
       const quantities = [1, 3, 7];
       let expectedTotal = 0;
 

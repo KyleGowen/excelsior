@@ -270,7 +270,7 @@ export default function DeckEditorPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, isGuest, isSupporter } = useAuth();
+  const { user, isGuest } = useAuth();
   const { isMobile } = useLayoutMode();
   const returnTo = getDeckEditorReturnTo(location.state);
   const backAriaLabel = getDeckEditorBackAriaLabel(returnTo);
@@ -506,10 +506,10 @@ export default function DeckEditorPage() {
   const canDraw = useMemo(() => canDrawHand(cards), [cards]);
   const drawHandAnalysis = useMemo(
     () =>
-      canAccessDrawHandAnalysis(user?.role, isSupporter)
+      canAccessDrawHandAnalysis(user?.role)
         ? analyzeDrawnHand(drawnCards, cards, cardIndex)
         : null,
-    [user?.role, isSupporter, drawnCards, cards, cardIndex],
+    [user?.role, drawnCards, cards, cardIndex],
   );
 
   useEffect(() => {

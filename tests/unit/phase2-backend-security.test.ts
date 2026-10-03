@@ -10,14 +10,13 @@
  */
 
 import { jest } from '@jest/globals';
-import type { SpyInstance } from 'jest-mock';
 
 describe('Phase 2 Backend Security', () => {
   let mockRequest: any;
   let mockResponse: any;
   let mockNext: any;
-  let mockConsoleLog: SpyInstance;
-  let mockConsoleError: SpyInstance;
+  let mockConsoleLog: jest.Spied<typeof console.log>;
+  let mockConsoleError: jest.Spied<typeof console.error>;
 
   beforeEach(() => {
     // Mock request object

@@ -37,13 +37,7 @@ import { FeedbackService } from './api/services/feedbackService';
 import { SesFeedbackEmailSender } from './api/services/sesFeedbackEmailSender';
 import { PostgreSQLSavedDatabaseViewRepository } from './database/savedDatabaseViewRepository';
 import { SavedDatabaseViewService } from './api/services/savedDatabaseViewService';
-import { SupporterSavedDatabaseViewAccessPolicy } from './api/services/savedDatabaseViewAccessPolicy';
-import { PostgreSQLSupporterEntitlementRepository } from './database/supporterEntitlementRepository';
-import { SupporterEntitlementService } from './api/services/supporterEntitlementService';
-import { PostgreSQLSupporterBillingRepository } from './database/supporterBillingRepository';
-import { SupporterBillingService } from './api/services/supporterBillingService';
-import { resolveSupporterBillingConfig } from './api/config/supporterBillingConfig';
-import { StripeSdkSupporterClient } from './api/services/stripeSupporterClient';
+import { AdminSavedDatabaseViewAccessPolicy } from './api/services/savedDatabaseViewAccessPolicy';
 import { GUEST_USER_ID } from './constants/guestUser';
 import { TOURNAMENT_DECKS_USER_ID } from './constants/tournamentDecksUser';
 import { requireAdmin, blockGuestMutation, requireDeckOwner } from './middleware/authorizationHelpers';
@@ -74,19 +68,6 @@ const dataSource = DataSourceConfig.getInstance();
 const userRepository = dataSource.getUserRepository();
 const deckRepository = dataSource.getDeckRepository();
 const cardRepository = dataSource.getCardRepository();
-const supporterEntitlementRepository = new PostgreSQLSupporterEntitlementRepository(dataSource.getPool());
-const supporterEntitlementService = new SupporterEntitlementService(supporterEntitlementRepository);
-const supporterBillingConfig = resolveSupporterBillingConfig();
-const supporterBillingRepository = new PostgreSQLSupporterBillingRepository(dataSource.getPool());
-const supporterStripeClient = supporterBillingConfig.secretKey
-  ? new StripeSdkSupporterClient(supporterBillingConfig.secretKey)
-  : null;
-const supporterBillingService = new SupporterBillingService(
-  supporterBillingConfig,
-  supporterBillingRepository,
-  supporterEntitlementService,
-  supporterStripeClient
-);
 const deckAddValidation = createDeckAddValidation(cardRepository);
 export const {
   validateCardAddition,
@@ -104,12 +85,7 @@ const deckBusinessService = new DeckService(deckRepository);
 // Initialize authentication service
 const newUserSampleDeckService = new NewUserSampleDeckService(userRepository, deckRepository, deckValidationService);
 const sessionRepository = createSessionRepositoryFromDataSource(dataSource);
-const authService = new AuthenticationService(
-  userRepository,
-  sessionRepository,
-  newUserSampleDeckService,
-  supporterEntitlementService
-);
+const authService = new AuthenticationService(userRepository, sessionRepository, newUserSampleDeckService);
 
 // Initialize collection repository and service
 const collectionsRepository = new CollectionsRepository(dataSource.getPool());
@@ -160,15 +136,14 @@ const adminService = new AdminService({
   userRepository,
   deckRepository,
   cardRepository,
-  databaseInit,
-  supporterEntitlementService
+  databaseInit
 });
 
 const userAccountService = new UserAccountService(userRepository);
 const feedbackService = new FeedbackService(new SesFeedbackEmailSender());
 const savedDatabaseViewRepository = new PostgreSQLSavedDatabaseViewRepository(dataSource.getPool());
 const savedDatabaseViewService = new SavedDatabaseViewService(savedDatabaseViewRepository);
-const savedDatabaseViewAccessPolicy = new SupporterSavedDatabaseViewAccessPolicy(supporterEntitlementService);
+const savedDatabaseViewAccessPolicy = new AdminSavedDatabaseViewAccessPolicy();
 
 // Community feed excludes internal/curated accounts (guest + tournament).
 const communityService = new CommunityService(deckRepository, userRepository, [
@@ -357,8 +332,6 @@ registerApiV1Routes(app, {
   feedbackService,
   savedDatabaseViewService,
   savedDatabaseViewAccessPolicy,
-  supporterEntitlementService,
-  supporterBillingService,
   pool: dataSource.getPool()
 });
 

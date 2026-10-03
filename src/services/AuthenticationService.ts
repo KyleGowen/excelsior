@@ -10,7 +10,6 @@ import { type ISessionRepository, SESSION_TTL_MS } from '../database/sessionRepo
 import { buildSessionCookieOptions, clearSessionCookieOptions } from './authCookieOptions';
 import { debugAuth, requestAuthContext, tokenPrefix } from './authDebug';
 import { isValidEmail } from '../utils/emailValidation';
-import type { SupporterEntitlementService } from '../api/services/supporterEntitlementService';
 
 export interface LoginCredentials {
   username: string;
@@ -30,23 +29,16 @@ export class AuthenticationService {
   private userRepository: UserRepository;
   private sessionRepository: ISessionRepository;
   private newUserSampleDeckService: NewUserSampleDeckService | null;
-  private supporterEntitlementService: Pick<SupporterEntitlementService, 'isSupporter'> | null;
 
   constructor(
     userRepository: UserRepository,
     sessionRepository: ISessionRepository,
-    newUserSampleDeckService?: NewUserSampleDeckService,
-    supporterEntitlementService?: Pick<SupporterEntitlementService, 'isSupporter'>
+    newUserSampleDeckService?: NewUserSampleDeckService
   ) {
     this.userRepository = userRepository;
     this.sessionRepository = sessionRepository;
     this.newUserSampleDeckService = newUserSampleDeckService ?? null;
-    this.supporterEntitlementService = supporterEntitlementService ?? null;
     initializeFirebaseAdmin();
-  }
-
-  private async getIsSupporter(userId: string): Promise<boolean> {
-    return this.supporterEntitlementService?.isSupporter(userId) ?? false;
   }
 
   /**
@@ -149,7 +141,6 @@ export class AuthenticationService {
       const user = await this.authenticateUser({ username, password });
 
       if (user) {
-        const isSupporter = await this.getIsSupporter(user.id);
         const sessionId = await this.createSession(user);
 
         this.issueSessionCookie(req, res, sessionId);
@@ -168,8 +159,7 @@ export class AuthenticationService {
             username: user.name,
             email: user.email,
             role: user.role,
-            authProvider: user.authProvider ?? 'password',
-            isSupporter
+            authProvider: user.authProvider ?? 'password'
           }
         });
       } else {
@@ -267,7 +257,6 @@ export class AuthenticationService {
       }
 
       const sessionId = await this.createSession(user);
-      const isSupporter = await this.getIsSupporter(user.id);
       this.issueSessionCookie(req, res, sessionId);
 
       try {
@@ -283,8 +272,7 @@ export class AuthenticationService {
           username: user.name,
           email: user.email,
           role: user.role,
-          authProvider: 'google',
-          isSupporter
+          authProvider: 'google'
         }
       });
     } catch (error) {
@@ -466,10 +454,9 @@ export class AuthenticationService {
         console.error('Warning: failed to update last_login_at:', e);
       }
 
-      const isSupporter = await this.getIsSupporter(user.id);
       res.status(201).json({
         success: true,
-        data: { userId: user.id, username: user.name, role: user.role, isSupporter }
+        data: { userId: user.id, username: user.name, role: user.role }
       });
     } catch (error) {
       console.error('Signup error:', error);
@@ -511,10 +498,7 @@ export class AuthenticationService {
 
       res.json({
         success: true,
-        data: {
-          ...user,
-          isSupporter: await this.getIsSupporter(user.id)
-        }
+        data: user
       });
     } catch (error) {
       console.error('Session validation error:', error);

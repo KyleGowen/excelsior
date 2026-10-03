@@ -1,5 +1,4 @@
 import type { UserRole } from '../../types';
-import type { SupporterEntitlementService } from './supporterEntitlementService';
 
 export interface SavedDatabaseViewAccessPrincipal {
   id: string;
@@ -10,11 +9,8 @@ export interface SavedDatabaseViewAccessPolicy {
   canAccess(principal: SavedDatabaseViewAccessPrincipal): Promise<boolean> | boolean;
 }
 
-export class SupporterSavedDatabaseViewAccessPolicy implements SavedDatabaseViewAccessPolicy {
-  constructor(private readonly supporterEntitlementService: Pick<SupporterEntitlementService, 'isSupporter'>) {}
-
-  async canAccess(principal: SavedDatabaseViewAccessPrincipal): Promise<boolean> {
-    return principal.role === 'ADMIN'
-      || (principal.role === 'USER' && await this.supporterEntitlementService.isSupporter(principal.id));
+export class AdminSavedDatabaseViewAccessPolicy implements SavedDatabaseViewAccessPolicy {
+  canAccess(principal: SavedDatabaseViewAccessPrincipal): boolean {
+    return principal.role === 'ADMIN';
   }
 }

@@ -13,5 +13,4 @@ export interface AuthMeDataDto {
   displayName: string | null;
   /** `'password'` or `'google'`. */
   authProvider: string;
-  isSupporter: boolean;
 }

@@ -1,0 +1,2397 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-10-03T18:58:07.950Z",
+  "__export_source": "excelsior:frontend-preparation-milestone-1",
+  "resources": [
+    {
+      "_id": "wrk_excelsior_preparation_production",
+      "parentId": null,
+      "_type": "workspace",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Excelsior API — Production",
+      "scope": "collection",
+      "description": "Current Card Database, Deck Builder, and Collection APIs. See INSOMNIA_API.md. Credentials and tokens are intentionally blank. Use a private Insomnia environment for credentials. Existing user identities and ownership apply. Service-client authentication will be added in Milestone 2; it is not available yet."
+    },
+    {
+      "_id": "env_excelsior_preparation_production",
+      "parentId": "wrk_excelsior_preparation_production",
+      "_type": "environment",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Production — https://excelsior.cards",
+      "data": {
+        "base_url": "https://excelsior.cards",
+        "username": "",
+        "password": "",
+        "access_token": "",
+        "refresh_token": "",
+        "deck_id": "",
+        "guest_deck_id": "",
+        "card_id": "",
+        "card_type": "character",
+        "image_path": "",
+        "user_id": "",
+        "catalog_etag": ""
+      },
+      "dataPropertyOrder": null,
+      "color": "#dc2626",
+      "isPrivate": false,
+      "metaSortKey": 0
+    },
+    {
+      "_id": "fld_excelsior_production_1",
+      "parentId": "wrk_excelsior_preparation_production",
+      "_type": "request_group",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "01 Health and app configuration",
+      "description": "Public reads; no authentication needed. HTTP API ports are separate from the PostgreSQL SSM tunnel.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1
+    },
+    {
+      "_id": "req_excelsior_production_2",
+      "parentId": "fld_excelsior_production_1",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /health",
+      "method": "GET",
+      "url": "{{ base_url }}/health",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 2,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_3",
+      "parentId": "fld_excelsior_production_1",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /health/ready",
+      "method": "GET",
+      "url": "{{ base_url }}/health/ready",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 3,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_4",
+      "parentId": "fld_excelsior_production_1",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /health/live",
+      "method": "GET",
+      "url": "{{ base_url }}/health/live",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 4,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_5",
+      "parentId": "fld_excelsior_production_1",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/config/app",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/config/app",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_excelsior_production_6",
+      "parentId": "wrk_excelsior_preparation_production",
+      "_type": "request_group",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "02 Authentication",
+      "description": "Cookie login establishes a session for cookie-backed folders. Bearer login returns data.accessToken and data.refreshToken; copy these into a private environment. Refresh rotates both tokens. JWT logout revokes the supplied refresh token; existing access tokens remain valid until expiry.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 6
+    },
+    {
+      "_id": "req_excelsior_production_7",
+      "parentId": "fld_excelsior_production_6",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Cookie login",
+      "method": "POST",
+      "url": "{{ base_url }}/api/auth/login",
+      "description": "",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"{{ username }}\",\n  \"password\": \"{{ password }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 7,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_8",
+      "parentId": "fld_excelsior_production_6",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Cookie current user",
+      "method": "GET",
+      "url": "{{ base_url }}/api/auth/me",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 8,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_9",
+      "parentId": "fld_excelsior_production_6",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Cookie logout",
+      "method": "POST",
+      "url": "{{ base_url }}/api/auth/logout",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 9,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_10",
+      "parentId": "fld_excelsior_production_6",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Guest cookie login",
+      "method": "POST",
+      "url": "{{ base_url }}/api/auth/login",
+      "description": "Existing shared Guest login; guest decks are isolated by session.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"guest\",\n  \"password\": \"guest\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 10,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_11",
+      "parentId": "fld_excelsior_production_6",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Bearer login",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/auth/login",
+      "description": "Copy data.accessToken and data.refreshToken into private access_token and refresh_token variables.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"{{ username }}\",\n  \"password\": \"{{ password }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 11,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_12",
+      "parentId": "fld_excelsior_production_6",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Bearer current user",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/auth/me",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": 12,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": false,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_13",
+      "parentId": "fld_excelsior_production_6",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Bearer refresh",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/auth/refresh",
+      "description": "Replace both saved tokens with the returned values after every refresh.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"refreshToken\": \"{{ refresh_token }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 13,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_14",
+      "parentId": "fld_excelsior_production_6",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Bearer logout",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/auth/logout",
+      "description": "",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"refreshToken\": \"{{ refresh_token }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 14,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_excelsior_production_15",
+      "parentId": "wrk_excelsior_preparation_production",
+      "_type": "request_group",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "03 Card Database",
+      "description": "Public full-array catalogs. Filtering, sorting, printing grouping, and card-specific eligibility currently have browser consumers.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 15
+    },
+    {
+      "_id": "req_excelsior_production_16",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/characters",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/characters",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_17",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/locations",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/locations",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 17,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_18",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/battlegrounds",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/battlegrounds",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 18,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_19",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/special-cards",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/special-cards",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 19,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_20",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/missions",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/missions",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 20,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_21",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/events",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/events",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 21,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_22",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/aspects",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/aspects",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 22,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_23",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/advanced-universe",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/advanced-universe",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 23,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_24",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/teamwork",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/teamwork",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 24,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_25",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/ally-universe",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/ally-universe",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 25,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_26",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/training",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/training",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 26,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_27",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/basic-universe",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/basic-universe",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 27,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_28",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/power-cards",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/power-cards",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 28,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_29",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/foil-card-map",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/foil-card-map",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 29,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_30",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/dbv/sets",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/dbv/sets",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 30,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_31",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/dbv/deck-backgrounds",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/dbv/deck-backgrounds",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 31,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_32",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/recent-updates",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/recent-updates",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 32,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_33",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Conditional characters (ETag)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/characters",
+      "description": "Copy ETag from an ordinary characters response into catalog_etag; unchanged catalog returns HTTP 304.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "If-None-Match",
+          "value": "{{ catalog_etag }}",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 33,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_excelsior_production_34",
+      "parentId": "wrk_excelsior_preparation_production",
+      "_type": "request_group",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "04 Owned decks — cookie",
+      "description": "Run Cookie login first as USER or ADMIN. Deck writes require ownership; Guest cannot mutate persistent decks. Validate uses type, while mutations use cardType. Invalid drafts can be saved according to existing save semantics.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 34
+    },
+    {
+      "_id": "req_excelsior_production_35",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/decks",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/decks",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 35,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_36",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/decks/stats",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/decks/stats",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 36,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_37",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/decks/community",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/decks/community",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 37,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_38",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/decks/tournament",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/decks/tournament",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 38,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_39",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/decks/{{ deck_id }}",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/decks/{{ deck_id }}",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 39,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_40",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/decks/{{ deck_id }}/full",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/decks/{{ deck_id }}/full",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 40,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_41",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/decks/{{ deck_id }}/cards",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/decks/{{ deck_id }}/cards",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 41,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_42",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/decks/{{ deck_id }}/ui-preferences",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/decks/{{ deck_id }}/ui-preferences",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 42,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_43",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "POST /api/v1/decks",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/decks",
+      "description": "Creates a deck. Copy data.id into deck_id.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Insomnia example deck\",\n  \"description\": \"\",\n  \"is_private\": true\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 43,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_44",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "POST /api/v1/decks/validate",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/decks/validate",
+      "description": "Does not save the draft. HTTP 400 DECK_VALIDATION_FAILED is a completed check that found an illegal deck.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"cards\": [\n    {\n      \"type\": \"{{ card_type }}\",\n      \"cardId\": \"{{ card_id }}\",\n      \"quantity\": 1,\n      \"exclude_from_draw\": false\n    }\n  ]\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 44,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_45",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "PUT /api/v1/decks/{{ deck_id }}",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v1/decks/{{ deck_id }}",
+      "description": "Only send intended metadata updates. is_valid is server-owned.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Insomnia example deck\",\n  \"is_limited\": false,\n  \"reserve_character\": null\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 45,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_46",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "POST /api/v1/decks/{{ deck_id }}/cards",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/decks/{{ deck_id }}/cards",
+      "description": "",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"cardType\": \"{{ card_type }}\",\n  \"cardId\": \"{{ card_id }}\",\n  \"quantity\": 1\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 46,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_47",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "PUT /api/v1/decks/{{ deck_id }}/cards",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v1/decks/{{ deck_id }}/cards",
+      "description": "Replaces the entire deck card list.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"cards\": [\n    {\n      \"cardType\": \"{{ card_type }}\",\n      \"cardId\": \"{{ card_id }}\",\n      \"quantity\": 1,\n      \"displayOrder\": 0,\n      \"exclude_from_draw\": false\n    }\n  ]\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 47,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_48",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "DELETE /api/v1/decks/{{ deck_id }}/cards",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v1/decks/{{ deck_id }}/cards",
+      "description": "",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"cardType\": \"{{ card_type }}\",\n  \"cardId\": \"{{ card_id }}\",\n  \"quantity\": 1\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 48,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_49",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "PUT /api/v1/decks/{{ deck_id }}/ui-preferences",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v1/decks/{{ deck_id }}/ui-preferences",
+      "description": "",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"cardViewMode\": \"list\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 49,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_50",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "DELETE /api/v1/decks/{{ deck_id }}",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v1/decks/{{ deck_id }}",
+      "description": "Deletes the named owned deck. Review deck_id and selected environment before sending.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 50,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_excelsior_production_51",
+      "parentId": "wrk_excelsior_preparation_production",
+      "_type": "request_group",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "05 Guest decks — cookie",
+      "description": "Run Guest cookie login first. These decks stay within this session and do not transfer after account sign-in. Guest collection is browser-local and has no saved collection API.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 51
+    },
+    {
+      "_id": "req_excelsior_production_52",
+      "parentId": "fld_excelsior_production_51",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/guest/decks",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/guest/decks",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 52,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_53",
+      "parentId": "fld_excelsior_production_51",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "POST /api/v1/guest/decks",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/guest/decks",
+      "description": "Copy data.metadata.id into guest_deck_id.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Insomnia guest example\",\n  \"description\": \"\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 53,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_54",
+      "parentId": "fld_excelsior_production_51",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/guest/decks/{{ guest_deck_id }}",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/guest/decks/{{ guest_deck_id }}",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 54,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_55",
+      "parentId": "fld_excelsior_production_51",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "PUT /api/v1/guest/decks/{{ guest_deck_id }}",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v1/guest/decks/{{ guest_deck_id }}",
+      "description": "",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Insomnia guest example\",\n  \"reserve_character\": null\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 55,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_56",
+      "parentId": "fld_excelsior_production_51",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "POST /api/v1/guest/decks/{{ guest_deck_id }}/cards",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/guest/decks/{{ guest_deck_id }}/cards",
+      "description": "",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"cardType\": \"{{ card_type }}\",\n  \"cardId\": \"{{ card_id }}\",\n  \"quantity\": 1\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 56,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_57",
+      "parentId": "fld_excelsior_production_51",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "PUT /api/v1/guest/decks/{{ guest_deck_id }}/cards",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v1/guest/decks/{{ guest_deck_id }}/cards",
+      "description": "",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"cards\": [\n    {\n      \"cardType\": \"{{ card_type }}\",\n      \"cardId\": \"{{ card_id }}\",\n      \"quantity\": 1\n    }\n  ]\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 57,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_58",
+      "parentId": "fld_excelsior_production_51",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "DELETE /api/v1/guest/decks/{{ guest_deck_id }}",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v1/guest/decks/{{ guest_deck_id }}",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 58,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_excelsior_production_59",
+      "parentId": "wrk_excelsior_preparation_production",
+      "_type": "request_group",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "06 Collection — cookie",
+      "description": "Run Cookie login first as USER or ADMIN. Add missing owned printings with POST before changing quantity using PUT. Use image_path returned by the catalog.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 59
+    },
+    {
+      "_id": "req_excelsior_production_60",
+      "parentId": "fld_excelsior_production_59",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/collections/me",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/collections/me",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 60,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_61",
+      "parentId": "fld_excelsior_production_59",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/collections/me/cards",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/collections/me/cards",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 61,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_62",
+      "parentId": "fld_excelsior_production_59",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/collections/me/history",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/collections/me/history",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 62,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_63",
+      "parentId": "fld_excelsior_production_59",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "POST /api/v1/collections/me/cards",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/collections/me/cards",
+      "description": "",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"cardId\": \"{{ card_id }}\",\n  \"cardType\": \"{{ card_type }}\",\n  \"imagePath\": \"{{ image_path }}\",\n  \"quantity\": 1\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 63,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_64",
+      "parentId": "fld_excelsior_production_59",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "POST /api/v1/collections/me/cards/remove-one",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/collections/me/cards/remove-one",
+      "description": "",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"cardId\": \"{{ card_id }}\",\n  \"cardType\": \"{{ card_type }}\",\n  \"imagePath\": \"{{ image_path }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 64,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_65",
+      "parentId": "fld_excelsior_production_59",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "PUT /api/v1/collections/me/cards/{{ card_id }}",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/v1/collections/me/cards/{{ card_id }}",
+      "description": "Quantity 0 removes this owned printing; absent entries return 404.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"cardType\": \"{{ card_type }}\",\n  \"imagePath\": \"{{ image_path }}\",\n  \"quantity\": 2\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 65,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_66",
+      "parentId": "fld_excelsior_production_59",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "DELETE /api/v1/collections/me/cards/{{ card_id }}",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v1/collections/me/cards/{{ card_id }}",
+      "description": "Deletes all printings for this card ID using the existing API behavior. Prefer quantity 0 for one printing.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 66,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_excelsior_production_67",
+      "parentId": "wrk_excelsior_preparation_production",
+      "_type": "request_group",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "07 Bearer access examples",
+      "description": "Run Bearer login and populate access_token. Cookies are disabled in this folder to prove direct HTTP token authentication. Same ownership rules apply as cookie paths.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 67
+    },
+    {
+      "_id": "req_excelsior_production_68",
+      "parentId": "fld_excelsior_production_67",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/decks",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/decks",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": 68,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": false,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_69",
+      "parentId": "fld_excelsior_production_67",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/decks/{{ deck_id }}/full",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/decks/{{ deck_id }}/full",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": 69,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": false,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_70",
+      "parentId": "fld_excelsior_production_67",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/collections/me/cards",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/collections/me/cards",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": 70,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": false,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_71",
+      "parentId": "fld_excelsior_production_67",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "POST /api/v1/decks/validate",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/decks/validate",
+      "description": "",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"cards\": [\n    {\n      \"type\": \"{{ card_type }}\",\n      \"cardId\": \"{{ card_id }}\",\n      \"quantity\": 1\n    }\n  ]\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": 71,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": false,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_excelsior_production_72",
+      "parentId": "wrk_excelsior_preparation_production",
+      "_type": "request_group",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "08 Public discovery",
+      "description": "Public reads of community and official preconstructed decks.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 72
+    },
+    {
+      "_id": "req_excelsior_production_73",
+      "parentId": "fld_excelsior_production_72",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/community/decks",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/community/decks",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 73,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_74",
+      "parentId": "fld_excelsior_production_72",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/community/preconstructed-decks",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/community/preconstructed-decks",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 74,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_75",
+      "parentId": "fld_excelsior_production_72",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/users/{{ user_id }}/public-decks",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/users/{{ user_id }}/public-decks",
+      "description": "",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 75,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    }
+  ]
+}

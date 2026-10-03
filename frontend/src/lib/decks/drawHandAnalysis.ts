@@ -208,10 +208,9 @@ export function analyzeDrawnHand(
   return { ventureTotal, duplicateCount, duplicateCardIndexes };
 }
 
-/** Premium analysis gate: admins plus authenticated users with Supporter entitlement. */
+/** Administrative analysis gate. */
 export function canAccessDrawHandAnalysis(
   role: UserRole | null | undefined,
-  isSupporter = false,
 ): boolean {
-  return role === 'ADMIN' || (role === 'USER' && isSupporter);
+  return role === 'ADMIN';
 }

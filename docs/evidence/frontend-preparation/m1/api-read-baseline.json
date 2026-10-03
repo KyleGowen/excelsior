@@ -1,0 +1,122 @@
+{
+  "observedAt": "2026-10-03T19:08:45.570573+00:00",
+  "baseUrl": "http://localhost:8086",
+  "databaseMigration": "365",
+  "sampling": "One controlled sequential HTTP GET per endpoint; no gzip request; not a browser waterfall",
+  "requestCount": 16,
+  "totalBodyBytes": 774417,
+  "requests": [
+    {
+      "path": "/api/v1/config/app",
+      "status": 200,
+      "bodyBytes": 175,
+      "elapsedMs": 11.53,
+      "etag": "W/\"af-yob2OHDlr7/JNdYNKA7U05wSLsI\""
+    },
+    {
+      "path": "/api/v1/dbv/sets",
+      "status": 200,
+      "bodyBytes": 394,
+      "elapsedMs": 3.59,
+      "etag": "\"1-1dea1104ea4fed96fa6c9fa2f8a8df6048f027ec\""
+    },
+    {
+      "path": "/api/v1/catalog/characters",
+      "status": 200,
+      "bodyBytes": 132931,
+      "elapsedMs": 1.52,
+      "etag": "\"1-be0e72f2e6b4f56ac0985786119979998676ac53\""
+    },
+    {
+      "path": "/api/v1/catalog/locations",
+      "status": 200,
+      "bodyBytes": 13528,
+      "elapsedMs": 3.52,
+      "etag": "\"1-481d11a85e2ae750b3f5464d55069bda8037d52f\""
+    },
+    {
+      "path": "/api/v1/catalog/battlegrounds",
+      "status": 200,
+      "bodyBytes": 506,
+      "elapsedMs": 9.76,
+      "etag": "\"1-53099152472fd1263c4b0b68c558c12ca8593c77\""
+    },
+    {
+      "path": "/api/v1/catalog/special-cards",
+      "status": 200,
+      "bodyBytes": 467013,
+      "elapsedMs": 13.11,
+      "etag": "\"1-713ae930d41d57a72a6ab4565ae63c93963fb967\""
+    },
+    {
+      "path": "/api/v1/catalog/missions",
+      "status": 200,
+      "bodyBytes": 18380,
+      "elapsedMs": 3.57,
+      "etag": "\"1-ef89ab5aafecb709082c63b75861367b6eb3b4d1\""
+    },
+    {
+      "path": "/api/v1/catalog/events",
+      "status": 200,
+      "bodyBytes": 20300,
+      "elapsedMs": 2.75,
+      "etag": "\"1-20bbd228d0cac0f861375cd4c086f53e58395cb5\""
+    },
+    {
+      "path": "/api/v1/catalog/aspects",
+      "status": 200,
+      "bodyBytes": 4121,
+      "elapsedMs": 1.65,
+      "etag": "\"1-0554698095e50bf4eb25a9bab3a6ac66ddb88476\""
+    },
+    {
+      "path": "/api/v1/catalog/advanced-universe",
+      "status": 200,
+      "bodyBytes": 4837,
+      "elapsedMs": 1.82,
+      "etag": "\"1-f8bbe75709776503bc293ad7a2362c875dfb1ced\""
+    },
+    {
+      "path": "/api/v1/catalog/teamwork",
+      "status": 200,
+      "bodyBytes": 28091,
+      "elapsedMs": 2.75,
+      "etag": "\"1-aff1092e1e9a3910b400ac3fef70aceb13f9b9ab\""
+    },
+    {
+      "path": "/api/v1/catalog/ally-universe",
+      "status": 200,
+      "bodyBytes": 7574,
+      "elapsedMs": 1.48,
+      "etag": "\"1-5d8e14596aa78354182e39a7e4171595fd9d6316\""
+    },
+    {
+      "path": "/api/v1/catalog/training",
+      "status": 200,
+      "bodyBytes": 5589,
+      "elapsedMs": 1.43,
+      "etag": "\"1-acfe6e77ac77fa3b904fea90bfcb60c910412490\""
+    },
+    {
+      "path": "/api/v1/catalog/basic-universe",
+      "status": 200,
+      "bodyBytes": 7455,
+      "elapsedMs": 1.32,
+      "etag": "\"1-e656630e46e0084e92c3178ff1db52bb61f503a3\""
+    },
+    {
+      "path": "/api/v1/catalog/power-cards",
+      "status": 200,
+      "bodyBytes": 33578,
+      "elapsedMs": 3.48,
+      "etag": "\"1-53e6ceb813b53d115ff5c26b7bb1fc71830a29d7\""
+    },
+    {
+      "path": "/api/v1/catalog/foil-card-map",
+      "status": 200,
+      "bodyBytes": 29945,
+      "elapsedMs": 1.5,
+      "etag": "\"1-899d1bf533901b4628de8efe0a30acc42f6bff1e\""
+    }
+  ]
+}

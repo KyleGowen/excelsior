@@ -37,7 +37,6 @@ export function StorybookAuthProvider({ children, user = exampleUser, interactiv
     retryAuth: async () => {},
     isGuest: activeUser?.role === 'GUEST',
     isAdmin: activeUser?.role === 'ADMIN',
-    isSupporter: false,
     communityDecksUserId: null,
     tournamentDecksUserId: null,
     login: interactiveAuth ? signIn : unavailable,

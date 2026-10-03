@@ -1,0 +1,81 @@
+{
+  "description": "Catalog-backed disposable fixture; no user or credential data. UI will flag one Sword and Shield copy as pre-placed.",
+  "name": "Pre-placement Fixture",
+  "limited": true,
+  "cards": [
+    {
+      "cardType": "character",
+      "cardId": "0a889443-7b83-4ab4-92c8-eea9bf3267be",
+      "quantity": 1
+    },
+    {
+      "cardType": "special",
+      "cardId": "294e14d2-3d8a-4785-8e26-8e0baeebfa51",
+      "quantity": 3
+    },
+    {
+      "cardType": "power",
+      "cardId": "24d15769-0342-4309-bb52-b18f244ef6af",
+      "quantity": 5
+    }
+  ],
+  "catalog": [
+    {
+      "id": "0a889443-7b83-4ab4-92c8-eea9bf3267be",
+      "name": "Lancelot",
+      "set": "ERB",
+      "set_number": "132",
+      "rarity": null,
+      "energy": 2,
+      "combat": 7,
+      "brute_force": 5,
+      "intelligence": 4,
+      "threat_level": 18,
+      "special_abilities": "Start the game with \"Sword and Shield\" placed; does not take up placing slot.",
+      "image": "erb/characters/132_lancelot.png",
+      "image_path": "erb/characters/132_lancelot.png",
+      "reverse_image_path": null,
+      "is_foil": false
+    },
+    {
+      "id": "294e14d2-3d8a-4785-8e26-8e0baeebfa51",
+      "name": "Sword and Shield",
+      "character": "Lancelot",
+      "card_effect": "Lancelot's Power card attacks are +2 for remainder of battle. Lancelot may discard this card from play to avoid 1 attack made on Lancelot. **One Per Deck**",
+      "image": "erb/specials/137_sword_and_shield.png",
+      "image_path": "erb/specials/137_sword_and_shield.png",
+      "set": "ERB",
+      "set_number": "137",
+      "rarity": null,
+      "icons": null,
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "icon_offensive_swords": true,
+      "icon_defensive_shield": false,
+      "icon_remainder_of_battle": true,
+      "icon_remainder_of_game": false,
+      "icon_attached_paperclip": true,
+      "icon_astral_plane": false,
+      "icon_first_action_only": false,
+      "banned": false,
+      "is_foil": false
+    },
+    {
+      "id": "24d15769-0342-4309-bb52-b18f244ef6af",
+      "name": "5 - Combat",
+      "power_type": "Combat",
+      "value": 5,
+      "image": "erb/power/303_5_combat.png",
+      "image_path": "erb/power/303_5_combat.png",
+      "set": "ERB",
+      "set_number": "303",
+      "rarity": null,
+      "set_name": "Edgar Rice Burroughs and the World Legends",
+      "one_per_deck": false,
+      "is_foil": false
+    }
+  ]
+}

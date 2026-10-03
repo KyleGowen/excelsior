@@ -18,8 +18,6 @@ export interface AppUser {
   authProvider?: string | null;
   /** Optional public display name (SSO users). Null/absent for password users. */
   displayName?: string | null;
-  /** Effective Supporter entitlement from complimentary and/or Stripe-backed sources. */
-  isSupporter?: boolean;
 }
 
 export interface AppConfig {

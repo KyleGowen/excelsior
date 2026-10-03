@@ -193,15 +193,11 @@ describe('drawHand (v2)', () => {
         ],
       );
 
-    it('shows the enhancement only to admins and entitled Supporter users', () => {
+    it('shows the enhancement only to admins', () => {
       expect(canAccessDrawHandAnalysis('ADMIN')).toBe(true);
-      expect(canAccessDrawHandAnalysis('ADMIN', true)).toBe(true);
-      expect(canAccessDrawHandAnalysis('USER', true)).toBe(true);
       expect(canAccessDrawHandAnalysis('USER')).toBe(false);
       expect(canAccessDrawHandAnalysis('GUEST')).toBe(false);
-      expect(canAccessDrawHandAnalysis('GUEST', true)).toBe(false);
       expect(canAccessDrawHandAnalysis(null)).toBe(false);
-      expect(canAccessDrawHandAnalysis(null, true)).toBe(false);
       expect(canAccessDrawHandAnalysis(undefined)).toBe(false);
     });
 

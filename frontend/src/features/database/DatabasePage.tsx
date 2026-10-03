@@ -59,13 +59,10 @@ import {
   captureSavedDatabaseViewState,
   normalizeSavedDatabaseViewState,
 } from './savedDatabaseViewState';
-import { SupporterInvitation } from '../../components/SupporterInvitation';
-import { useSupporterFlow } from '../supporter-flow';
 import './DatabasePage.css';
 
 const PAGE_SIZE_GRID = 24;
 const PAGE_SIZE_ALL = 48;
-const SUPPORTER_INVITATION_COLLAPSED_KEY = 'excelsior.supporterInvitation.database.collapsed';
 
 function useDebounced<T>(value: T, delay = 250): T {
   const [v, setV] = useState(value);
@@ -78,9 +75,7 @@ function useDebounced<T>(value: T, delay = 250): T {
 
 export default function DatabasePage() {
   const { isMobile } = useLayoutMode();
-  const { isAdmin, isSupporter } = useAuth();
-  const { showInvitation } = useSupporterFlow();
-  const canUseSavedViews = isAdmin || isSupporter;
+  const { isAdmin } = useAuth();
   const queryClient = useQueryClient();
   const dbRef = useRef<HTMLDivElement>(null);
   const typeTabsRef = useRef<HTMLDivElement>(null);
@@ -98,9 +93,6 @@ export default function DatabasePage() {
   const [savedViewCreateRequest, setSavedViewCreateRequest] = useState<SavedViewCreateRequest | null>(null);
   const [activeSavedViewId, setActiveSavedViewId] = useState<string | null>(null);
   const [recallNotice, setRecallNotice] = useState<string | null>(null);
-  const [supporterInvitationCollapsed, setSupporterInvitationCollapsed] = useState(
-    () => sessionStorage.getItem(SUPPORTER_INVITATION_COLLAPSED_KEY) === 'true',
-  );
   const savedViewRequestIdRef = useRef(0);
 
   const { close: closeCardDetail } = useCardDetailHistory(Boolean(selected), () => setSelected(null));
@@ -118,7 +110,7 @@ export default function DatabasePage() {
   const savedViewsQuery = useQuery({
     queryKey: SAVED_DATABASE_VIEWS_QUERY_KEY,
     queryFn: fetchSavedDatabaseViews,
-    enabled: canUseSavedViews,
+    enabled: isAdmin,
     staleTime: 60 * 1000,
   });
 
@@ -372,20 +364,10 @@ export default function DatabasePage() {
     savedViewsQuery.data && savedViewsQuery.data.count >= savedViewsQuery.data.max,
   );
   const savedViewsTooltipId = 'saved-views-limit-tooltip';
-  const setSupporterInvitationCollapsedForSession = (collapsed: boolean) => {
-    setSupporterInvitationCollapsed(collapsed);
-    sessionStorage.setItem(SUPPORTER_INVITATION_COLLAPSED_KEY, String(collapsed));
-  };
 
   return (
     <div className="db" ref={dbRef}>
       <div className="db__inner">
-        {showInvitation ? (
-          <SupporterInvitation
-            collapsed={supporterInvitationCollapsed}
-            onCollapsedChange={setSupporterInvitationCollapsedForSession}
-          />
-        ) : null}
         <header className="db__header">
           <h1 className="db__title"><IconDatabase /> Card Database</h1>
           <div className="db__header-controls">
@@ -413,7 +395,7 @@ export default function DatabasePage() {
                 ))}
               </select>
             </div>
-            {canUseSavedViews ? (
+            {isAdmin ? (
               <div className="db__saved-controls">
                 <span
                   className={`db__save-view-wrap${savedViewsAtLimit ? ' is-disabled' : ''}`}
@@ -536,7 +518,7 @@ export default function DatabasePage() {
         )}
       </div>
 
-      {canUseSavedViews ? (
+      {isAdmin ? (
         <SavedDatabaseViewsPanel
           open={savedViewsOpen}
           isMobile={isMobile}

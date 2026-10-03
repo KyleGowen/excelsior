@@ -25,7 +25,6 @@ guide describes the dark, neon, card-game-companion theme derived from the mocks
 13. [Home Recent Updates](#home-recent-updates)
 14. [Home — Regionals stats rail](#home--regionals-stats-rail)
 15. [Database Saved Views](#database-saved-views)
-16. [Supporter Invitation](#supporter-invitation)
 
 ---
 
@@ -173,57 +172,6 @@ account-sheet row (`.account-sheet__toggle`) with `justify-content: space-betwee
 - When a phone is set to **Use desktop layout**, the top tabs scroll within the header so the
   profile menu remains reachable at narrow widths.
 - Nav, dropdowns, and tooltips sit at `--z-nav: 9999` so they always clear page content.
-
-### Supporter Invitation
-
-- A calm invitation strip appears directly below the Home hero and at the top of the Card
-  Database content. It uses a glowing heart, the ongoing-development message, `$3+` customer-choice
-  summary, equal-benefits reassurance, and a filled **Become a Supporter** action.
-- The Database strip alone can collapse into the standard left-chevron-and-rule treatment.
-  Its state uses browser-session storage: navigation and reload preserve it in the current tab,
-  while a new browser session starts expanded. The Home strip remains permanently expanded.
-- The invitation renders only after canonical status resolves. Production requires new checkout to
-  be enabled; local development keeps the invitation visible for UI preview without Stripe secrets.
-  It is shown to guests and persistent non-Supporters, hidden for Supporters and admins.
-- Supporter promotion and account management do not appear in the top navigation, desktop Profile
-  menu, or mobile Profile sheet.
-- Home and Database navigate directly to the full `/supporter`
-  page; there is no Supporter drawer or intermediary. The page's support card renders the
-  server-backed `SupporterFlow` inline. Its acquisition state is deliberately price-led and concise:
-  a large **$3/month** minimum, one line explaining customer-chosen whole-dollar support, the amount
-  controls, and the relevant action or availability state—without repeating the mission copy or
-  feature descriptions beside and below it. Desktop shows four amount choices in one row; mobile uses
-  two columns and a non-overflowing inline custom-dollar field. The same inline flow renders acquisition, confirmation, paid, cancellation,
-  recovery, complimentary, overlapping-source, and billing-unavailable states.
-
-### Supporter Feature Page
-
-- `/supporter` is the public, shareable home for Supporter details. It is intentionally absent from
-  primary navigation: non-Supporters reach it through the Home or Database invitation link,
-  and its feature rows deep-link to the matching page preview.
-- Guests and signed-in visitors use the standard app shell. If Guest session setup fails, a compact
-  header offers a Home link to the session retry screen.
-- The page leads with a personal, multi-paragraph account of Kyle building the independently developed
-  community tool, its nights-and-weekends development, and the service costs that support offsets; `$3+` customer-chosen
-  monthly support with equal benefits at every amount. The hero begins directly with the
-  **Excelsior Supporter** label and omits both the redundant exploration pill and in-page scroll
-  buttons. Customer-chosen amount, Stripe checkout, confirmation, and membership-management states
-  live directly in the hero support card.
-- A three-tab feature navigator spans the full content width: Saved Database Views and Enhanced Draw
-  Hand swap real local Supporter captures, while **More personal tools ahead** opens a dedicated
-  informational panel. Like the page's other sections, **Supporter features** appears as the small
-  label above the large **Thank you for your support.** headline. The open-book promise that game
-  knowledge and data will never be gated sits in a compact gap between that introduction and the feature tabs. The selected item uses the
-  standard accent-soft surface and inset top accent edge. Each supplied wide capture spans the top of its
-  feature panel, with the description stacked beneath it rather than compressed into a side-by-side
-  column. The future-tools panel directs users with ideas to **Help & Feedback** in the profile menu
-  and its **Request a feature or change** action. The capture may be opened in a wide modal for inspection. `/supporter#saved-views` and
-  `/supporter#draw-hand` select the relevant preview directly.
-- The Stripe Climate note is an untiled line inside the monthly-support card beneath its horizontal divider, using a leaf icon sized 25% larger than its accompanying copy for clearer visual presence. Saved Database Views and Enhanced Draw Hand each cycle through three real feature captures every three seconds in a fixed sequence, waiting for all captures in the active feature to decode and using an overlapping opacity crossfade so Chrome never repaints an empty image plane; pause the cycle while its full-size preview is open or the document is hidden, and keep the first capture static when reduced motion is requested. Screenshot-specific framing corrections may be applied narrowly; the Venture 35 Draw Hand capture is raised by 1px to align with its two companion frames. The page omits separate impact, FAQ, and closing call-to-action sections so the feature preview is the final page section.
-- Desktop uses a restrained marketing-page maximum width with a split hero and left-side feature
-  navigator. The final feature panel retains an extra small step of bottom breathing room before the page edge.
-  Mobile stacks the hero, turns the feature choices into horizontal snap cards, preserves the extra
-  bottom padding, and presents preview dialogs as bottom sheets above the shared bottom navigation.
 
 ### Branding & favicon
 - **In-app logo:** [`Logo`](frontend/src/components/Logo/Logo.tsx) `variant="emblem"` uses
@@ -461,8 +409,8 @@ Top slide-out overlay ([`DrawHandPanel.css`](frontend/src/features/deck-editor/D
 | Redraw (`.draw-hand__redraw`) | Compact accent-outline action in the header rail; keeps an extra `--space-2` gap before the close control |
 | Close (`.draw-hand-slideout .slideout__close`) | Standard 34px hit target with the X glyph reduced 15% to `1.0625rem` |
 | KO-dimmed drawn card | Same `.deck-editor__card--ko-dimmed` art filter as main grid |
-| ADMIN / Supporter metrics (`.draw-hand__analysis`) | Compact summary surface centered against the full desktop panel in the same universal header rail as **Drawn Hand**, **Draw again**, and close. A restrained accent edge and “After duplicate rules” caption establish context; the two metrics share one container and matching hierarchy. Venture is the rules-based potential numerical total after duplicate discards: Basic and Training Universe bonuses are excluded. Venture uses Excelsior teal `--color-accent-bright`, while only a nonzero Duplicates value uses `--color-danger`. On mobile, the module spans the full padded header width on row one; **Drawn Hand**, **Draw again**, and close share row two |
-| Duplicate group (`.draw-hand__card--duplicate`) | Restrained `--color-danger` border/ring/glow on every card in an over-limit group; mobile reduces each layer’s color intensity by roughly 20% to compensate for the larger cards; no duplicate styling is rendered outside the ADMIN / Supporter entitlement gate |
+| ADMIN metrics (`.draw-hand__analysis`) | Compact summary surface centered against the full desktop panel in the same universal header rail as **Drawn Hand**, **Draw again**, and close. A restrained accent edge and “After duplicate rules” caption establish context; the two metrics share one container and matching hierarchy. Venture is the rules-based potential numerical total after duplicate discards: Basic and Training Universe bonuses are excluded. Venture uses Excelsior teal `--color-accent-bright`, while only a nonzero Duplicates value uses `--color-danger`. On mobile, the module spans the full padded header width on row one; **Drawn Hand**, **Draw again**, and close share row two |
+| Duplicate group (`.draw-hand__card--duplicate`) | Restrained `--color-danger` border/ring/glow on every card in an over-limit group; mobile reduces each layer’s color intensity by roughly 20% to compensate for the larger cards; no duplicate styling is rendered outside the ADMIN gate |
 
 ### Deck Editor — Card detail Printings (owners)
 Shown in [`CardDetailPanel`](frontend/src/components/CardDetailPanel/CardDetailPanel.tsx) when a deck tile has **more than one** catalog printing. Section sits **above Details** (after Ability/stats).
@@ -593,8 +541,8 @@ trailing chips + Clear sit at the rail end; Add Cards places Set + Hide Unusable
 
 Saved Views adds a quiet navy workflow surface to `/data` without restricting any catalog information.
 
-- Saved Views controls render for admins and users with an active Supporter entitlement.  Other
-  users retain the complete database, search, filters, details, and deck-building workflow.
+- Saved Views controls render only for admins. Other users retain the complete database, search,
+  filters, details, and deck-building workflow.
 
 | Element | Visual and behavior contract |
 |---|---|
@@ -789,8 +737,7 @@ the character art is not clipped from the leading side. Every card remains click
 ### Admin user analytics (`/admin/user-analytics`)
 
 - The route remains inside `AppShell`, preserving the desktop header and mobile bottom navigation, but is linked only from the ADMIN profile menu.
-- User Analytics contains account and engagement reporting only; it does not expose Supporter
-  entitlement administration.
+- User Analytics contains account and engagement reporting only.
 - The analytics panel uses the standard deep navy surfaces, cyan accent, stat-value type, rounded bordered KPI cards, and the textless Excelsior emblem.
 - Desktop layout: six KPI cards in a three-column grid, then a wide rolling 12-month acquisition chart beside login-recency bars. Below 1050px KPI cards become two columns and chart sections stack; below 640px KPI cards become one column.
 - A second full-width analytics band pairs two equal bordered cards: cumulative site-section API request-share bars for Home, Database, Decks, and Collection, and a 24-point Pacific-time login radar chart. The usage card must say it is request share rather than time, page views, or unique users. The radar shows all known tracked history and clearly states that the series is incomplete before telemetry began.

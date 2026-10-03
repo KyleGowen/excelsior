@@ -1,0 +1,83 @@
+{
+  "observedAt": "2026-10-03T19:29:28.675566+00:00",
+  "sourceBase": "200fe228f622db546895a19e10e228fb731c7afe",
+  "scope": "Current-main Supporter shelving reconciliation plus M1 compatibility baseline and root Insomnia imports",
+  "localApproval": "Kyle approved the local spot check and audit remediation followed by Ship on 2026-10-03",
+  "shipment": "not committed or pushed",
+  "checks": {
+    "backendLint": "pass",
+    "backendTypecheck": "pass",
+    "frontendBuild": "pass",
+    "storybookBuild": "pass",
+    "unit": {
+      "status": "pass",
+      "passedSuites": 320,
+      "passedTests": 3729,
+      "skippedTests": 18,
+      "note": "Existing worker teardown warning; Jest completed with exit 0. Six updated compatibility tests also passed in a focused rerun."
+    },
+    "integration": {
+      "status": "pass",
+      "testFiles": 112,
+      "passedTests": 1003,
+      "shards": [
+        473,
+        530
+      ],
+      "note": "Initial fixture selected a one-per-deck power printing and expected seven copies; fixture now selects unrestricted cards. Product rules unchanged."
+    },
+    "soc2": {
+      "status": "pass",
+      "focusedTests": 45
+    },
+    "dependencyAudit": {
+      "status": "pass",
+      "high": 0,
+      "critical": 0,
+      "total": 0,
+      "remediation": {
+        "@fastify/busboy": "3.2.2",
+        "jest / babel-jest / jest-environment-jsdom": "30.5.2",
+        "ts-jest": "29.4.14",
+        "knip": "6.39.0",
+        "watcher": "tsx 4.23.15 replaces ts-node-dev"
+      },
+      "note": "Kyle explicitly approved remediation. No installed braces remains; no advisory suppression."
+    },
+    "insomnia": {
+      "status": "structure and request body validation passed",
+      "files": 2,
+      "requestsEach": 67,
+      "productionDefault": "https://excelsior.cards",
+      "credentials": "blank"
+    },
+    "browser": {
+      "status": "pass for listed paths",
+      "paths": [
+        "Guest Home and account menu; login/logout and safe Guest navigation",
+        "Card Database search empty/result; Carson foil printing selection",
+        "Account collection add, quantity two, reload; Guest local quantity one and reload",
+        "Owned deck name/reserve save; KO/un-KO; draw and redraw",
+        "Pre-placement save/reload: one flagged physical copy, seven drawable copies",
+        "Export/import: eight physical copies, pre-placement not represented",
+        "Limited off -> Not Legal; invalid draft save",
+        "Desktop/mobile captures of Database, Collection, Deck Editor, Home",
+        "Storybook fictional Database, Collection, read-only Deck Editor; read-only export opens",
+        "/supporter SPA redirects to Home; no Supporter text"
+      ],
+      "knownLimits": [
+        "Fixed dark theme only; light theme unavailable",
+        "Google OAuth unavailable in isolated configuration",
+        "Controlled API timing samples are not a browser waterfall",
+        "Real alternate host/service identity not implemented until later milestones"
+      ]
+    },
+    "updatedToolReadiness": {
+      "backendTypecheck": "pass",
+      "deadCodeCi": "pass",
+      "tsxDevelopmentHealth": "database OK, migration V365 on disposable local DB"
+    }
+  },
+  "releaseGates": "Final frozen-candidate gates and exact-SHA deployment pending at this evidence snapshot",
+  "baselineCheckNote": "Unit, integration, SOC2, lint and frontend/Storybook results below were recorded before the approved dependency remediation; final Ship gates must revalidate the candidate."
+}

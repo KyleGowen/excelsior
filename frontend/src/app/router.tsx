@@ -15,7 +15,6 @@ const CommunityPage = lazy(() => import('../features/community/CommunityPage'));
 const DeckEditorPage = lazy(() => import('../features/deck-editor/DeckEditorPage'));
 const UserAnalyticsPage = lazy(() => import('../features/admin-user-analytics/UserAnalyticsPage'));
 const BizOpsDashboardPage = lazy(() => import('../features/admin-biz-ops/BizOpsDashboardPage'));
-const SupporterPage = lazy(() => import('../features/supporter/SupporterPage'));
 const ShelledLayout = lazy(() => import('./ShelledLayout'));
 
 function Lazy({ children }: { children: ReactNode }) {
@@ -30,14 +29,6 @@ export const router = createBrowserRouter([
       {
         path: '/login',
         element: <Navigate to="/home" replace />,
-      },
-      {
-        path: '/supporter',
-        element: (
-          <Lazy>
-            <SupporterPage />
-          </Lazy>
-        ),
       },
       {
         element: (

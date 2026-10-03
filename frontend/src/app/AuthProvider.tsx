@@ -34,7 +34,6 @@ export interface AuthContextValue {
   retryAuth: () => Promise<void>;
   isGuest: boolean;
   isAdmin: boolean;
-  isSupporter: boolean;
   communityDecksUserId: string | null;
   tournamentDecksUserId: string | null;
   login: (username: string, password: string) => Promise<AppUser | null>;
@@ -188,7 +187,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       retryAuth,
       isGuest: user?.role === 'GUEST',
       isAdmin: user?.role === 'ADMIN',
-      isSupporter: user?.isSupporter === true,
       communityDecksUserId: configQuery.data?.communityDecksUserId ?? null,
       tournamentDecksUserId: configQuery.data?.tournamentDecksUserId ?? null,
       login,

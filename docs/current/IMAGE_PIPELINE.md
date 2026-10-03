@@ -156,7 +156,7 @@ runs fast. A fit-only change that retains the same canvas dimensions still requi
 Thumbnail generation is wired into both the dev and build scripts in `package.json`:
 
 ```json
-"dev":   "npm run generate:thumbnails && ts-node-dev ...",
+"dev":   "npm run generate:thumbnails && tsx watch src/index.ts",
 "build": "npm run generate:thumbnails && tsc"
 ```
 

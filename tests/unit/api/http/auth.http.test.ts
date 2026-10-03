@@ -20,8 +20,7 @@ function buildAuthApp(deps: {
   registerAuthV1HttpRoutes(router, {
     authenticationService: deps.authenticationService as AuthenticationService,
     userRepository: deps.userRepository,
-    jwtTokenService: deps.jwtTokenService,
-    supporterEntitlementService: { isSupporter: jest.fn().mockResolvedValue(true) }
+    jwtTokenService: deps.jwtTokenService
   });
   app.use(router);
   return app;
@@ -84,7 +83,6 @@ describe('auth.http', () => {
     expect(res.body.data.accessToken).toBeDefined();
     expect(res.body.data.tokenType).toBe('Bearer');
     expect(res.body.data.user.id).toBe(user.id);
-    expect(res.body.data.user.isSupporter).toBe(true);
     expect(updateLastLoginAt).toHaveBeenCalledWith(user.id);
   });
 
@@ -111,7 +109,6 @@ describe('auth.http', () => {
     const res = await request(app).get('/auth/me').set('Authorization', `Bearer ${token}`).expect(200);
     expect(res.body.data.username).toBe('alice');
     expect(res.body.data.email).toBe('a@example.com');
-    expect(res.body.data.isSupporter).toBe(true);
   });
 
   it('POST /auth/logout returns success envelope', async () => {
