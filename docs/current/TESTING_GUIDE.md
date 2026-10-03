@@ -1,5 +1,15 @@
 # Excelsior Deckbuilder Testing Guide
 
+## Live browser verification
+
+Use [Test Local Browser](../../.agents/skills/test-local-browser/SKILL.md) for the running local app and [Verify Production Browser](../../.agents/skills/verify-production-browser/SKILL.md) for selected production-safe smoke checks. [Browser testing](BROWSER_TESTING.md) records M1's demonstrated scenarios, fixtures, mixed screenshot dimensions, recovery lessons, and reporting contract.
+
+The shared CUA runner is `tests/browser/milestone1.mjs`, with evidence helpers in `tests/helpers/browserEvidence.mjs` and an explicit selection example in `tests/browser/milestone1.config.example.json`. Import it inside the documented CUA browser runtime; it is not a Jest suite or standalone Playwright CLI, and there is no browser CI command. The read-only `scripts/browser-test-target.mjs` verifies the selected health/proxy target first; its `--dry-run` mode never makes HTTP requests.
+
+Jest/Supertest and mocked Storybook tests remain separate evidence. A live browser pass is distinct from readiness for Kyle's local verification and his explicit acceptance. Production mutations require separate authorization and defined fixture cleanup. Missing access, data, credentials, theme support, or harness dependencies must be reported as skipped/blocked, not a pass.
+
+For the new workflow's guard checks, run `node --test tests/unit/browser-workflow-guards.test.mjs`. These test target/selection safety, not rendered browser behavior. Reuse [the skill-creation validation report](../evidence/browser-skills-validation/validation.md) for the representative unchanged M1 inputs rather than rerunning the whole baseline.
+
 ## 🚀 Jest Integration Test Framework Setup Complete!
 
 Your project now has a comprehensive Jest testing framework set up with the following features:
@@ -154,7 +164,7 @@ npx jest -c tests/config/jest.integration.deck-security-save.config.js
 
 ### v2 layout mode
 
-Mobile/desktop layout in the v2 SPA is driven by `LayoutModeProvider` at the 900px breakpoint. Feature-level unit tests live under `frontend/src/` and `tests/unit/frontend-v2/`; manual mobile checks use viewport ≤900px at `http://localhost:5173`.
+Mobile/desktop layout in the v2 SPA is driven by `LayoutModeProvider` at the 900px breakpoint. Feature-level unit tests live under `frontend/src/` and `tests/unit/frontend-v2/`; live mobile checks use viewport ≤900px at `http://localhost:5173`. M1 automated 390×844 checks; verify actual DOM dimensions and reset overrides. M1 supported fixed dark only, so light-theme parity is unavailable rather than passed. See [the case matrix](BROWSER_TESTING.md#m1-local-cases-beyond-the-packaged-subset).
 
 ### 🔧 Test Configuration
 
@@ -218,3 +228,9 @@ and map before V359, preserves the prize-pack base, and does nothing after V359.
 Applied migration checksums remain unchanged. `legacy-foil-migration.test.ts`
 covers the adverse fixture, idempotence, and the version guard; every fresh CI
 shard also runs the full migration history.
+
+## Reusable verification receipts
+
+For changes to these helpers, use `node --test tests/unit/ship-verification-guards.test.mjs tests/unit/browser-workflow-guards.test.mjs`, focused `tests/unit/shipWorkflowScripts.test.ts`, and `python3 -B -m unittest discover -s tests/unit -p test_start_local_dev.py`. Offline fixtures test watcher/gate/shard/identity safety; they are not browser, API persistence or production evidence.
+
+[Ship verification](../../.agents/skills/ship/references/verification.md) documents approved parallel batches, content/environment unit/integration receipts, frozen commit contents, offline Actions replay and compact browser reports. `node scripts/run-verification-gates.mjs --plan <private-plan.json> --dry-run` executes nothing. Changed inputs or green commands with no confirmed tests fail. Legacy bare hashes are ignored; unknown files stay inputs. Store evidence outside source; distinguish reused coverage from executed tests. Main-agent/Kyle coverage, recovery, acceptance and production-write authority are preserved.

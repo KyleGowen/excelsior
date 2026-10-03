@@ -19,7 +19,9 @@ description: >-
 
 **Patterns:** `src/api/deckTransform.ts` (transforms); `src/api/services/catalogService.ts`; `registerApiV1Routes` in `src/api/http/registerApiV1Routes.ts`.
 
-## When to read
+## Load relevant contract context
+
+For contract inspection, read relevant endpoint sections and actual callers. Apply the migration loop only when migration is authorized. Load security/path instructions before implementation; templates only when using their pattern. Reuse current instructions already loaded.
 
 1. **[API_DOCUMENTATION.md](../../../API_DOCUMENTATION.md)** — legacy contract.
 2. **[API_V1.md](../../../API_V1.md)** — v1 contract (examples, status codes, request model file paths).
@@ -41,7 +43,7 @@ description: >-
 8. **Docs** — **`API_V1.md`** for v1; **`API_DOCUMENTATION.md`**: remove or mark **removed** legacy paths (callers must not rely on them); checklist checkboxes and “legacy removed” meaning.
 9. **Codex context** — update **`AGENTS.md`** or the relevant directory context only when global API rules change; keep **`src/api/.cursorrules`** / **`src/routes/.cursorrules`** accurate while they remain in the repo.
 10. **Local dev server** — when migration work for this task is **complete** (handlers, callers, tests, docs), restart or verify the local development stack with `$start-excelsior` so Express picks up new routes and any in-memory caches stay aligned with the code. If you added or edited **`migrations/*.sql`**, use the Flyway Docker workflow from [`docs/current/LOCAL_FLYWAY.md`](../../../docs/current/LOCAL_FLYWAY.md) before restarting.
-11. **Codex verification proof (required)** — With the local stack running, prove the new or changed route behaves correctly against **`http://localhost:5173`** for UI flows or **`http://localhost:8085`** for direct API checks. Prefer browser automation/screenshots when a UI path exists; use `curl` or Supertest-style checks for direct API contracts. Match the contract you migrated: session cookie flows → log in locally as **kyle** / **test** when needed; public GETs → hit the path or the app screen that triggers it; 401/403 → confirm the expected failure when unauthenticated or forbidden. Do not skip this step: unit/integration tests validate code paths, but local proof confirms Express mount order, cookies, CORS, proxies, and real client usage.
+11. **Codex verification proof (required)** — With the local stack running, prove the new or changed route behaves correctly against **`http://localhost:5173`** for UI flows or **`http://localhost:8085`** for direct API checks. Prefer browser automation/screenshots when a UI path exists; use `curl` or Supertest-style checks for direct API contracts. Match the contract you migrated: session cookie flows → use an isolated fictional local account and privately supplied run-only authentication; public GETs → hit the path or the app screen that triggers it; 401/403 → confirm the expected failure when unauthenticated or forbidden. Do not skip this step: unit/integration tests validate code paths, but local proof confirms Express mount order, cookies, CORS, proxies, and real client usage.
 
 ## Pre-merge checklist (security)
 
@@ -63,3 +65,7 @@ description: >-
 ## Evolving this skill
 
 Append a one-line note to **[REFERENCE.md](REFERENCE.md)** when conventions change.
+
+## Verification handoff
+
+Use [Test Local Browser](../test-local-browser/SKILL.md) for UI paths and [Ship receipts](../ship/references/verification.md) for selected commands. Distinguish API-only from browser proof; reuse unchanged inputs/evidence instead of rerunning a full suite merely for handoff. Coverage and security judgment remain with the main agent.

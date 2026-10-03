@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Local Browser"
+  short_description: "Verify Excelsior locally with browser evidence"
+  default_prompt: "Use $test-local-browser to verify the relevant Excelsior cases locally and prepare a spot-check handoff."

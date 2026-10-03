@@ -1,5 +1,7 @@
 # Excelsior Codex Skills
 
+Ship uses deterministic receipts and tool-level waits. Bounded Luna Low execution does not transfer scope, coverage, security, recovery, visual acceptance, or production-write authority. See [verification contracts](ship/references/verification.md).
+
 Repo-local Codex skills live here. They are the project source of truth for recurring Excelsior workflows; do not maintain a separate Cursor/global mirror.
 
 AWS phases use **AWS Core** by default under [AWS operations](../../docs/current/AWS_OPERATIONS.md). The connector handles live AWS evidence; persistent local SSM tunnels and existing runner/local scripts retain their documented credential paths. Check current authentication and Excelsior ownership each task.
@@ -7,6 +9,8 @@ AWS phases use **AWS Core** by default under [AWS operations](../../docs/current
 | Skill | Trigger phrases | Status | Source |
 |-------|-----------------|--------|--------|
 | `start-excelsior` | `/start`, "Start Excelsior", "start dev servers" | Active | Merged from `.cursor/skills/start` plus existing Codex helper |
+| [`test-local-browser`](test-local-browser/SKILL.md) | local browser checks, before/after UI verification, spot-check handoff | Active | M1 CUA workflow; shared scenarios and evidence under `tests/` and `docs/` |
+| [`verify-production-browser`](verify-production-browser/SKILL.md) | post-release browser smoke, verify deployed UI | Active read-only workflow | Exact-SHA health contract and selected M1 production-safe cases |
 | `ship` | "ship", "ship it" | Active | Migrated from `.cursor/skills/ship` |
 | `add-card` | "add card", `/add-card`, image path under `src/resources/cards/images/` | Active | Migrated from `.cursor/skills/add-card` |
 | `api-layer-migration` | route migration, `/api/v1`, thinning `src/routes` | Active | Migrated from `.cursor/skills/api-layer-migration` |

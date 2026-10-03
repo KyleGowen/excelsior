@@ -1,0 +1,7 @@
+{
+  "sameObservableResults": true,
+  "sameViewport": true,
+  "visualReview": "Card detail presentation unchanged in reviewed screenshots; no pixel-diff tolerance or baseline replacement introduced",
+  "baseline": "docs/evidence/browser-skills-validation/local-catalog-confirmed/report.json",
+  "current": "docs/evidence/skill-hygiene/local-browser/report.json"
+}

@@ -8,7 +8,6 @@ const preflightScript = path.join(repositoryRoot, '.agents/skills/ship/scripts/p
 const verifyCommitScript = path.join(repositoryRoot, '.agents/skills/ship/scripts/verify-commit.mjs');
 const watchActionsScript = path.join(repositoryRoot, '.agents/skills/ship/scripts/watch-actions.mjs');
 const integrationShardScript = path.join(repositoryRoot, 'scripts/run-integration-shards.mjs');
-const conditionalTestScript = path.join(repositoryRoot, 'scripts/ship-conditional-test.sh');
 
 function git(cwd: string, args: string[]): string {
   return execFileSync('git', args, { cwd, encoding: 'utf8' }).trim();
@@ -46,7 +45,7 @@ describe('ship workflow scripts', () => {
       [preflightScript, '--repo', directory, '--include', 'src/index.ts'],
       { encoding: 'utf8' },
     );
-    const result = JSON.parse(output);
+    const result = JSON.parse(fs.readFileSync(JSON.parse(output).receipt, 'utf8'));
 
     expect(['main', 'master']).toContain(result.branch);
     expect(result.intendedPaths).toEqual(['src/index.ts']);
@@ -64,16 +63,17 @@ describe('ship workflow scripts', () => {
     const directory = createRepository();
     temporaryDirectories.push(directory);
     fs.writeFileSync(path.join(directory, 'src/index.ts'), 'export const value = 2;\n');
+    const frozen = JSON.parse(execFileSync(process.execPath, [preflightScript, '--repo', directory, '--include', 'src/index.ts'], { encoding: 'utf8' }));
     git(directory, ['add', 'src/index.ts']);
     git(directory, ['commit', '-qm', 'Update']);
     const sha = git(directory, ['rev-parse', 'HEAD']);
 
     const output = execFileSync(
       process.execPath,
-      [verifyCommitScript, '--repo', directory, '--sha', sha, '--include', 'src/index.ts'],
+      [verifyCommitScript, '--repo', directory, '--sha', sha, '--manifest', frozen.manifest],
       { encoding: 'utf8' },
     );
-    const result = JSON.parse(output);
+    const result = JSON.parse(fs.readFileSync(JSON.parse(output).receipt, 'utf8'));
 
     expect(result.head).toBe(sha);
     expect(result.committedPaths).toEqual(['src/index.ts']);
@@ -82,37 +82,19 @@ describe('ship workflow scripts', () => {
   it('watches one exact Actions run and emits only changed states', () => {
     const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'excelsior-actions-test-'));
     temporaryDirectories.push(directory);
-    const stateFile = path.join(directory, 'state');
-    const mockGh = path.join(directory, 'mock-gh.mjs');
     const sha = 'a'.repeat(40);
-    fs.writeFileSync(
-      mockGh,
-      `#!/usr/bin/env node
-import fs from 'node:fs';
-const stateFile = process.env.MOCK_GH_STATE;
-const count = fs.existsSync(stateFile) ? Number(fs.readFileSync(stateFile, 'utf8')) : 0;
-fs.writeFileSync(stateFile, String(count + 1));
-const completed = count > 0;
-process.stdout.write(JSON.stringify({
-  status: completed ? 'completed' : 'in_progress',
-  conclusion: completed ? 'success' : '',
-  url: 'https://github.example/run/123',
-  headSha: process.env.MOCK_GH_SHA,
-  jobs: [{ name: 'Build', status: completed ? 'completed' : 'in_progress', conclusion: completed ? 'success' : '' }],
-}));
-`,
-      { mode: 0o755 },
-    );
 
+    const replayFile = path.join(directory, 'replay.json');
+    fs.writeFileSync(replayFile, JSON.stringify(['in_progress', 'in_progress', 'completed'].map(status => ({ status, conclusion: status === 'completed' ? 'success' : '', headSha: sha, jobs: [] }))));
     const output = execFileSync(
       process.execPath,
-      [watchActionsScript, '--run-id', '123', '--sha', sha, '--poll-seconds', '0'],
+      [watchActionsScript, '--run-id', '123', '--sha', sha, '--replay', replayFile, '--poll-seconds', '0'],
       {
         encoding: 'utf8',
-        env: { ...process.env, SHIP_GH_BIN: mockGh, MOCK_GH_STATE: stateFile, MOCK_GH_SHA: sha },
+        env: process.env,
       },
     );
-    const states = output.trim().split('\n').map(line => JSON.parse(line));
+    const states = output.trim().split('\n').map(line => JSON.parse(line)).filter(state => state.headSha);
 
     expect(states).toHaveLength(2);
     expect(states[0].status).toBe('in_progress');
@@ -133,7 +115,7 @@ process.stdout.write(JSON.stringify({ status: 'completed', conclusion: 'success'
 
     const result = spawnSync(
       process.execPath,
-      [watchActionsScript, '--run-id', '123', '--sha', 'a'.repeat(40), '--poll-seconds', '0'],
+      [watchActionsScript, '--run-id', '123', '--sha', 'a'.repeat(40)],
       { encoding: 'utf8', env: { ...process.env, SHIP_GH_BIN: mockGh } },
     );
 
@@ -159,7 +141,7 @@ process.exit(1);
 
     const result = spawnSync(
       process.execPath,
-      [watchActionsScript, '--run-id', '123', '--sha', 'a'.repeat(40), '--poll-seconds', '0'],
+      [watchActionsScript, '--run-id', '123', '--sha', 'a'.repeat(40)],
       {
         encoding: 'utf8',
         env: { ...process.env, SHIP_GH_BIN: mockGh, MOCK_GH_INVOCATIONS: invocationFile },
@@ -227,17 +209,19 @@ describe('integration shard runner', () => {
   it('routes the Ship integration gate through the guarded sharded runner', () => {
     const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'excelsior-conditional-test-'));
     shardRunnerTemporaryDirectories.push(directory);
+    const isolatedRepository = createRepository();
+    shardRunnerTemporaryDirectories.push(isolatedRepository);
     const binaryDirectory = path.join(directory, 'bin');
     const invocationFile = path.join(directory, 'npm-arguments');
     fs.mkdirSync(binaryDirectory);
     fs.writeFileSync(
       path.join(binaryDirectory, 'npm'),
-      '#!/usr/bin/env bash\nprintf \'%s\\n\' "$*" > "$MOCK_NPM_ARGS"\n',
+      '#!/usr/bin/env bash\nprintf \'%s\\n\' "$*" > "$MOCK_NPM_ARGS"\nprintf \'Test Suites: 1 passed, 1 total\\nTests: 1 passed, 1 total\\n{"status":"passed","cleanup":"completed"}\\n\'\n',
       { mode: 0o755 },
     );
 
-    execFileSync('bash', [conditionalTestScript, 'integration'], {
-      cwd: repositoryRoot,
+    execFileSync(process.execPath, ['--input-type=module', '-e', `import {runTestGate} from ${JSON.stringify(path.join(repositoryRoot, 'scripts/ship-test-gate.mjs'))}; process.exitCode = await runTestGate(${JSON.stringify(isolatedRepository)}, 'integration');`], {
+      cwd: isolatedRepository,
       encoding: 'utf8',
       env: {
         ...process.env,

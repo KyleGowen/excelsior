@@ -174,3 +174,6 @@ infra/firebase-service-account.json
 
 # Firebase service account (sensitive - used for Terraform)
 infra/firebase-service-account.json
+
+# Retained verification evidence for the skill hygiene change.
+!docs/evidence/skill-hygiene/*.log

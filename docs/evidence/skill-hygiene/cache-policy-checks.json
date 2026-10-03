@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "kind": "gate-batch",
+  "environment": "local",
+  "sourceRevision": "3075fba84450919773845ff10159d454119c4132",
+  "fingerprint": "ac2ea45a49befabd976d9c4e8dcd4dad561d8441c49728c25655076197a40d6b",
+  "status": "passed",
+  "gates": [
+    {
+      "name": "node-guards",
+      "command": [
+        "node",
+        "--test",
+        "tests/unit/ship-verification-guards.test.mjs",
+        "tests/unit/browser-workflow-guards.test.mjs"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 0,
+        "tests": 16,
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0,
+        "cancelled": 0
+      },
+      "executedTests": 16,
+      "reused": false,
+      "durationSeconds": 11.683,
+      "evidence": {
+        "log": "/Users/kyle/cursored/docs/evidence/skill-hygiene/node-guards.log",
+        "receipt": null
+      },
+      "gaps": []
+    }
+  ],
+  "selected": [
+    "node-guards"
+  ],
+  "gaps": [
+    "Gate coverage and release acceptance require main-agent review"
+  ],
+  "cleanup": "no application fixtures created by this wrapper"
+}

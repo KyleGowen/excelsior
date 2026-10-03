@@ -1,0 +1,19 @@
+PASS tests/unit/shipWorkflowScripts.test.ts (11.096 s)
+  ship workflow scripts
+    ✓ reports frozen scope, gate triggers, unrelated files, and added debug output (1669 ms)
+    ✓ verifies that HEAD contains exactly the frozen manifest (1824 ms)
+    ✓ watches one exact Actions run and emits only changed states (604 ms)
+    ✓ rejects an Actions run whose head SHA differs from the shipped SHA (496 ms)
+    ✓ returns the first GitHub error without retrying (549 ms)
+  UserPersistenceService test isolation
+    ✓ writes test sessions outside the repository data directory (6 ms)
+  integration shard runner
+    ✓ assigns every integration test file to exactly one balanced shard (1320 ms)
+    ✓ routes the Ship integration gate through the guarded sharded runner (2297 ms)
+    ✓ rejects an unsafe shard count before starting Docker (201 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       9 passed, 9 total
+Snapshots:   0 total
+Time:        11.211 s, estimated 24 s
+Ran all test suites within paths "tests/unit/shipWorkflowScripts.test.ts".

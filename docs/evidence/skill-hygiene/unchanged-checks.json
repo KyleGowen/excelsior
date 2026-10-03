@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "kind": "gate-batch",
+  "environment": "local",
+  "sourceRevision": "3075fba84450919773845ff10159d454119c4132",
+  "fingerprint": "0df59e2baddeb7c730db661fdc7edaf2f489558dd64494d1b26080f7f7399d6a",
+  "status": "passed",
+  "gates": [
+    {
+      "name": "jest-workflow",
+      "command": [
+        "node",
+        "/Users/kyle/cursored/node_modules/jest/bin/jest.js",
+        "--config",
+        "tests/config/jest.unit.config.js",
+        "--runTestsByPath",
+        "tests/unit/shipWorkflowScripts.test.ts",
+        "--runInBand",
+        "--testTimeout=30000"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 1,
+        "tests": 9,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "executedTests": 9,
+      "reused": false,
+      "durationSeconds": 11.86,
+      "evidence": {
+        "log": "/Users/kyle/cursored/docs/evidence/skill-hygiene/jest-workflow.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "focused-lint",
+      "command": [
+        "node",
+        "/Users/kyle/cursored/node_modules/eslint/bin/eslint.js",
+        "tests/unit/shipWorkflowScripts.test.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 0.979,
+      "evidence": {
+        "log": "/Users/kyle/cursored/docs/evidence/skill-hygiene/focused-lint.log",
+        "receipt": null
+      },
+      "gaps": []
+    }
+  ],
+  "selected": [
+    "node-guards",
+    "jest-workflow",
+    "startup-identity",
+    "syntax",
+    "focused-lint"
+  ],
+  "gaps": [
+    "Gate coverage and release acceptance require main-agent review"
+  ],
+  "cleanup": "no application fixtures created by this wrapper",
+  "evidenceReuse": "Unchanged results retained; only affected checks rerun"
+}

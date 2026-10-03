@@ -6,6 +6,7 @@ import net from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { jestCounts, sourceRevision, writeReceipt } from './verification-receipt.mjs';
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, '..');
@@ -226,21 +227,21 @@ async function main() {
     (_, index) => `excelsior-integration-${runId}-${index + 1}`,
   );
   const createdContainers = new Set();
+  const reportDirectory = process.env.INTEGRATION_REPORT_DIR || process.env.INTEGRATION_SHARD_REPORT_DIR || fs.mkdtempSync(path.join(os.tmpdir(), 'excelsior-integration-evidence-'));
+  fs.mkdirSync(reportDirectory, { recursive: true });
+  const receipt = { kind: 'integration-shards', environment: 'isolated-local', sourceRevision: sourceRevision(repositoryRoot),
+    status: 'failed', selectedFiles: plan.testCount, shards, counts: null, evidence: { directory: reportDirectory }, cleanup: 'pending' };
 
   const cleanup = () => {
+    const failedCleanup = [];
     for (const containerName of createdContainers) {
-      spawnSync('docker', ['rm', '--force', containerName], { encoding: 'utf8' });
+      const removed = spawnSync('docker', ['rm', '--force', containerName], { encoding: 'utf8', timeout: 30000 });
+      if (removed.status !== 0) failedCleanup.push(containerName);
     }
     createdContainers.clear();
-    if (process.env.INTEGRATION_SHARD_REPORT_DIR) {
-      fs.mkdirSync(process.env.INTEGRATION_SHARD_REPORT_DIR, { recursive: true });
-      for (const entry of fs.readdirSync(runDirectory)) {
-        if (/\.(log|json)$/.test(entry)) {
-          fs.copyFileSync(path.join(runDirectory, entry), path.join(process.env.INTEGRATION_SHARD_REPORT_DIR, entry));
-        }
-      }
-    }
     fs.rmSync(runDirectory, { recursive: true, force: true });
+    receipt.cleanup = failedCleanup.length ? { status: 'blocked', containers: failedCleanup } : 'completed';
+    if (failedCleanup.length) { receipt.status = 'failed'; process.exitCode = 1; }
   };
 
   const terminate = signal => {
@@ -320,8 +321,11 @@ async function main() {
       runShard({ databasePort: databasePorts[index], index, runDirectory, shardCount: shards })
     )));
     clearInterval(heartbeat);
+    const raw = results.map(result => fs.readFileSync(result.logPath, 'utf8').replace(/\x1b\[[0-9;]*m/g, ''));
+    receipt.counts = jestCounts(raw.join('\n'));
+    for (const result of results) fs.copyFileSync(result.logPath, path.join(reportDirectory, `shard-${result.index + 1}.log`));
 
-    let failed = false;
+    let failed = !receipt.counts?.passed || receipt.counts.suites !== plan.testCount;
     results.forEach(result => {
       const label = `${result.index + 1}/${shards}`;
       if (result.error || result.status !== 0) {
@@ -333,15 +337,22 @@ async function main() {
           .filter(line => /^(Test Suites:|Tests:|Snapshots:|Time:)/.test(line))
           .join(' | ');
         console.log(`integration-shards: shard ${label} passed in ${result.seconds}s${summary ? ` (${summary})` : ''}`);
+        // Separate summary lines let the outer gate confirm actual execution.
+        console.log(summary.split(' | ').join('\n'));
       }
     });
 
     const testSeconds = elapsedSeconds(testStartedAt);
     const totalSeconds = elapsedSeconds(overallStartedAt);
     console.log(`integration-shards: ${failed ? 'FAILED' : 'PASS'} setup=${setupSeconds}s tests=${testSeconds}s total=${totalSeconds}s`);
+    receipt.status = failed ? 'failed' : 'passed';
     if (failed) process.exitCode = 1;
   } finally {
+    for (const file of fs.readdirSync(runDirectory).filter(file => /\.(log|json)$/.test(file))) fs.copyFileSync(path.join(runDirectory, file), path.join(reportDirectory, file));
     cleanup();
+    receipt.durationSeconds = elapsedSeconds(overallStartedAt);
+    writeReceipt(path.join(reportDirectory, 'receipt.json'), receipt);
+    console.log(JSON.stringify({ status: receipt.status, counts: receipt.counts, cleanup: receipt.cleanup, receipt: path.join(reportDirectory, 'receipt.json') }));
   }
 }
 

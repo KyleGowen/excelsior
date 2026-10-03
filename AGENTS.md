@@ -53,6 +53,8 @@ Before touching auth, transport, CORS, caching, or `/api/v1` routes, read [`src/
 Repo-local Codex skills live in [`.agents/skills/`](.agents/skills/README.md). Use them for recurring workflows:
 
 - **Start Excelsior**: use [`start-excelsior`](.agents/skills/start-excelsior/SKILL.md) for `/start`, "Start Excelsior", local server startup, and health verification.
+- **Test Local Browser**: use [`test-local-browser`](.agents/skills/test-local-browser/SKILL.md) for live local UI checks, comparable before/after evidence, and Kyle's spot-check handoff. Reuse the shared scenarios in `tests/browser/`; automated success does not imply Kyle's acceptance.
+- **Verify Production Browser**: use [`verify-production-browser`](.agents/skills/verify-production-browser/SKILL.md) for selected read-only post-release browser checks against the confirmed deployed SHA. Production record mutations need specific authorization and a fixture/cleanup plan; this skill grants no release authority.
 - **Ship**: use [`ship`](.agents/skills/ship/SKILL.md) when Kyle says "ship" or "ship it". In this project, that phrase authorizes `git add`, `git commit`, and `git push` after required gates pass.
 - **Add Card**: use [`add-card`](.agents/skills/add-card/SKILL.md) for cataloging new card images.
 - **API Layer Migration**: use [`api-layer-migration`](.agents/skills/api-layer-migration/SKILL.md) for `/api/v1` work and route thinning.

@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "kind": "gate-batch",
+  "environment": "local",
+  "sourceRevision": "3075fba84450919773845ff10159d454119c4132",
+  "fingerprint": "0961bd9be75d5464765214906374c38cb0dddeb408b6bd78409c89b40346cb98",
+  "status": "passed",
+  "gates": [
+    {
+      "name": "node-guards",
+      "command": [
+        "node",
+        "--test",
+        "tests/unit/ship-verification-guards.test.mjs",
+        "tests/unit/browser-workflow-guards.test.mjs"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 0,
+        "tests": 16,
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0,
+        "cancelled": 0
+      },
+      "executedTests": 16,
+      "reused": false,
+      "durationSeconds": 11.767,
+      "evidence": {
+        "log": "/Users/kyle/cursored/docs/evidence/skill-hygiene/node-guards.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "startup-identity",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/unit",
+        "-p",
+        "test_start_local_dev.py"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 0.289,
+      "evidence": {
+        "log": "/Users/kyle/cursored/docs/evidence/skill-hygiene/startup-identity.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "syntax",
+      "command": [
+        "node",
+        "-e",
+        "const {spawnSync}=require(\"node:child_process\"); for(const file of [\"scripts/verification-receipt.mjs\", \"scripts/ship-candidate.mjs\", \"scripts/ship-test-inputs.mjs\", \"scripts/ship-test-gate.mjs\", \"scripts/run-verification-gates.mjs\", \"scripts/browser-test-target.mjs\", \"scripts/run-integration-shards.mjs\", \".agents/skills/ship/scripts/preflight.mjs\", \".agents/skills/ship/scripts/verify-commit.mjs\", \".agents/skills/ship/scripts/watch-actions.mjs\", \"tests/browser/milestone1.mjs\", \"tests/helpers/browserEvidence.mjs\"]){const r=spawnSync(process.execPath,[\"--check\",file],{encoding:\"utf8\"});if(r.status!==0){console.error(r.stderr);process.exit(1)}}"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 3.854,
+      "evidence": {
+        "log": "/Users/kyle/cursored/docs/evidence/skill-hygiene/syntax.log",
+        "receipt": null
+      },
+      "gaps": []
+    }
+  ],
+  "selected": [
+    "node-guards",
+    "startup-identity",
+    "syntax"
+  ],
+  "gaps": [
+    "Gate coverage and release acceptance require main-agent review"
+  ],
+  "cleanup": "no application fixtures created by this wrapper",
+  "evidenceReuse": "Unchanged results retained; only affected checks rerun"
+}

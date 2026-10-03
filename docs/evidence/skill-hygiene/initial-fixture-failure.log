@@ -1,0 +1,114 @@
+TAP version 13
+# Subtest: local target cannot point to production or expose credentials
+ok 1 - local target cannot point to production or expose credentials
+  ---
+  duration_ms: 0.801833
+  ...
+# Subtest: health gate rejects a stale deployment or wrong data migration
+ok 2 - health gate rejects a stale deployment or wrong data migration
+  ---
+  duration_ms: 0.095291
+  ...
+# Subtest: production scenarios require exact healthy target, explicit selection, and Guest
+ok 3 - production scenarios require exact healthy target, explicit selection, and Guest
+  ---
+  duration_ms: 0.167583
+  ...
+# Subtest: before/after browser comparisons cannot suppress baseline screenshots
+ok 4 - before/after browser comparisons cannot suppress baseline screenshots
+  ---
+  duration_ms: 0.394958
+  ...
+# {"status":"dry-run","gates":[],"receipt":"/var/folders/lb/xr02_l594rlg4bv03hlppd840000gp/T/excelsior-batch-test-udYtJJ/dry/receipt.json"}
+# Subtest: content cache survives staging/commit and reviewed prose, but not unknown inputs or environment
+ok 5 - content cache survives staging/commit and reviewed prose, but not unknown inputs or environment
+  ---
+  duration_ms: 543.47175
+  ...
+# Subtest: missing installed dependencies disables reuse and dotenv stays private in the receipt
+ok 6 - missing installed dependencies disables reuse and dotenv stays private in the receipt
+  ---
+  duration_ms: 138.097
+  ...
+# Subtest: commit with the same file list but changed contents is rejected
+ok 7 - commit with the same file list but changed contents is rejected
+  ---
+  duration_ms: 173.715084
+  ...
+# Subtest: exact frozen contents and deletions verify without staging unrelated files
+ok 8 - exact frozen contents and deletions verify without staging unrelated files
+  ---
+  duration_ms: 176.537541
+  ...
+# Subtest: Jest evidence rejects empty, absent and inconsistent counts
+ok 9 - Jest evidence rejects empty, absent and inconsistent counts
+  ---
+  duration_ms: 0.719125
+  ...
+# Subtest: fixture acquisition cannot hide source/environment edits or replace a known image
+ok 10 - fixture acquisition cannot hide source/environment edits or replace a known image
+  ---
+  duration_ms: 0.173458
+  ...
+# Subtest: Node test receipts reject empty/missing/cancelled execution
+ok 11 - Node test receipts reject empty/missing/cancelled execution
+  ---
+  duration_ms: 0.309417
+  ...
+# Subtest: gate reuses confirmed counts, rejects forced and ordinary edits during execution, and never caches zero tests
+ok 12 - gate reuses confirmed counts, rejects forced and ordinary edits during execution, and never caches zero tests
+  ---
+  duration_ms: 5284.4205
+  ...
+# Subtest: Actions replay suppresses duplicates and retains exact-SHA and stall failures
+ok 13 - Actions replay suppresses duplicates and retains exact-SHA and stall failures
+  ---
+  duration_ms: 566.315875
+  ...
+# Subtest: live watcher rejects tight polling and times out a supplied local GitHub mock without retry
+ok 14 - live watcher rejects tight polling and times out a supplied local GitHub mock without retry
+  ---
+  duration_ms: 1330.7505
+  ...
+# {"status":"failed","gates":[{"name":"empty","status":"failed","counts":null,"reused":false}],"receipt":"/var/folders/lb/xr02_l594rlg4bv03hlppd840000gp/T/excelsior-batch-test-udYtJJ/live/receipt.json"}
+# Subtest: gate plan dry-run never executes and an empty test command cannot pass
+ok 15 - gate plan dry-run never executes and an empty test command cannot pass
+  ---
+  duration_ms: 832.381959
+  ...
+# Subtest: integration runner preserves discovery/counts/logs and refuses incomplete cleanup using offline tools
+not ok 16 - integration runner preserves discovery/counts/logs and refuses incomplete cleanup using offline tools
+  ---
+  duration_ms: 1187.313042
+  location: '/Users/kyle/cursored/tests/unit/ship-verification-guards.test.mjs:126:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    integration-shards: Unable to determine PostgreSQL port from:
+
+
+    1 !== 0
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/kyle/cursored/tests/unit/ship-verification-guards.test.mjs:146:40)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 15
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10289.348166

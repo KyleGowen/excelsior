@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
 import { execFileSync, spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, existsSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { resolve, relative, sep } from 'node:path';
 import { computeShipTreeFingerprint } from '../../../../scripts/ship-tree-fingerprint.mjs';
+import { captureCandidate } from '../../../../scripts/ship-candidate.mjs';
+import { writeReceipt } from '../../../../scripts/verification-receipt.mjs';
 
 function fail(message) {
   process.stderr.write(`ship-preflight: ${message}\n`);
@@ -12,12 +16,15 @@ function fail(message) {
 
 function parseArgs(argv) {
   let repo = process.cwd();
+  let reportDir;
   const intended = [];
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === '--repo') {
       repo = argv[++index] ?? fail('--repo requires a value');
+    } else if (arg === '--report-dir') {
+      reportDir = argv[++index] ?? fail('--report-dir requires a value');
     } else if (arg === '--include') {
       intended.push(argv[++index] ?? fail('--include requires a path'));
     } else {
@@ -26,7 +33,7 @@ function parseArgs(argv) {
   }
 
   if (intended.length === 0) fail('provide each intended path with --include');
-  return { repo, intended };
+  return { repo, intended, reportDir };
 }
 
 function git(root, args, encoding = 'utf8') {
@@ -94,7 +101,7 @@ function addedDebugLines(root, paths, untrackedSet) {
   return matches;
 }
 
-const { repo, intended: intendedArgs } = parseArgs(process.argv.slice(2));
+const { repo, intended: intendedArgs, reportDir: requestedReportDir } = parseArgs(process.argv.slice(2));
 const root = git(repo, ['rev-parse', '--show-toplevel']).trim();
 const intendedPaths = [...new Set(intendedArgs.map(path => normalizePath(root, path)))].sort();
 const allChangedPaths = changedPaths(root);
@@ -128,12 +135,20 @@ const result = {
     soc2: intendedPaths.some(path =>
       path === 'src/index.ts' || path.startsWith('src/routes/') || path.startsWith('src/api/http/'),
     ),
-    dependencyAudit: intendedPaths.some(path => path === 'package.json' || path === 'package-lock.json'),
+    dependencyAudit: intendedPaths.some(path => /^(?:frontend\/)?package(?:-lock)?\.json$/.test(path)),
     frontendChanged: intendedPaths.some(path => path.startsWith('frontend/')),
     migrationChanged: intendedPaths.some(path => path.startsWith('migrations/')),
   },
   addedDebugLines: addedDebugLines(root, intendedPaths, untrackedSet),
 };
 
-process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+const reportDir = requestedReportDir ?? mkdtempSync(join(tmpdir(), 'excelsior-preflight-'));
+if (existsSync(join(reportDir, 'candidate.json'))) fail('Frozen candidate exists; use a fresh evidence directory');
+const candidate = captureCandidate(root, intendedPaths);
+const manifest = writeReceipt(join(reportDir, 'candidate.json'), candidate);
+const receipt = writeReceipt(join(reportDir, 'preflight.json'), { kind: 'preflight', ...result, candidateId: candidate.candidateId, manifest });
+process.stdout.write(`${JSON.stringify({ status: result.diffCheck.ok && !result.missingIntendedPaths.length ? 'ready' : 'blocked',
+  branch: result.branch, intendedCount: intendedPaths.length, unrelatedCount: result.unrelatedPaths.length,
+  fingerprint: result.fingerprint, candidateId: candidate.candidateId, triggers: result.triggers,
+  missingIntendedPaths: result.missingIntendedPaths, debugLineCount: result.addedDebugLines.length, receipt, manifest })}\n`);
 if (!result.diffCheck.ok || result.missingIntendedPaths.length > 0) process.exitCode = 1;

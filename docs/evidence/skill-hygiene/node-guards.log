@@ -1,0 +1,92 @@
+TAP version 13
+# Subtest: local target cannot point to production or expose credentials
+ok 1 - local target cannot point to production or expose credentials
+  ---
+  duration_ms: 0.740875
+  ...
+# Subtest: health gate rejects a stale deployment or wrong data migration
+ok 2 - health gate rejects a stale deployment or wrong data migration
+  ---
+  duration_ms: 0.086875
+  ...
+# Subtest: production scenarios require exact healthy target, explicit selection, and Guest
+ok 3 - production scenarios require exact healthy target, explicit selection, and Guest
+  ---
+  duration_ms: 0.163083
+  ...
+# Subtest: before/after browser comparisons cannot suppress baseline screenshots
+ok 4 - before/after browser comparisons cannot suppress baseline screenshots
+  ---
+  duration_ms: 0.360792
+  ...
+# {"status":"dry-run","gates":[],"receipt":"/var/folders/lb/xr02_l594rlg4bv03hlppd840000gp/T/excelsior-batch-test-5qSey9/dry/receipt.json"}
+# Subtest: content cache survives staging/commit and reviewed prose, but not unknown inputs or environment
+ok 5 - content cache survives staging/commit and reviewed prose, but not unknown inputs or environment
+  ---
+  duration_ms: 642.622292
+  ...
+# Subtest: missing installed dependencies disables reuse and dotenv stays private in the receipt
+ok 6 - missing installed dependencies disables reuse and dotenv stays private in the receipt
+  ---
+  duration_ms: 128.998917
+  ...
+# Subtest: commit with the same file list but changed contents is rejected
+ok 7 - commit with the same file list but changed contents is rejected
+  ---
+  duration_ms: 181.608334
+  ...
+# Subtest: exact frozen contents and deletions verify without staging unrelated files
+ok 8 - exact frozen contents and deletions verify without staging unrelated files
+  ---
+  duration_ms: 174.510291
+  ...
+# Subtest: Jest evidence rejects empty, absent and inconsistent counts
+ok 9 - Jest evidence rejects empty, absent and inconsistent counts
+  ---
+  duration_ms: 0.697458
+  ...
+# Subtest: fixture acquisition cannot hide source/environment edits or replace a known image
+ok 10 - fixture acquisition cannot hide source/environment edits or replace a known image
+  ---
+  duration_ms: 0.142542
+  ...
+# Subtest: Node test receipts reject empty/missing/cancelled execution
+ok 11 - Node test receipts reject empty/missing/cancelled execution
+  ---
+  duration_ms: 0.27625
+  ...
+# Subtest: gate reuses confirmed counts, rejects forced and ordinary edits during execution, and never caches zero tests
+ok 12 - gate reuses confirmed counts, rejects forced and ordinary edits during execution, and never caches zero tests
+  ---
+  duration_ms: 5363.609208
+  ...
+# Subtest: Actions replay suppresses duplicates and retains exact-SHA and stall failures
+ok 13 - Actions replay suppresses duplicates and retains exact-SHA and stall failures
+  ---
+  duration_ms: 556.468333
+  ...
+# Subtest: live watcher rejects tight polling and times out a supplied local GitHub mock without retry
+ok 14 - live watcher rejects tight polling and times out a supplied local GitHub mock without retry
+  ---
+  duration_ms: 1319.094333
+  ...
+# {"status":"failed","gates":[{"name":"empty","status":"failed","counts":null,"reused":false}],"receipt":"/var/folders/lb/xr02_l594rlg4bv03hlppd840000gp/T/excelsior-batch-test-5qSey9/live/receipt.json"}
+# Subtest: gate plan dry-run never executes and an empty test command cannot pass
+ok 15 - gate plan dry-run never executes and an empty test command cannot pass
+  ---
+  duration_ms: 785.757167
+  ...
+# Subtest: integration runner preserves discovery/counts/logs and refuses incomplete cleanup using offline tools
+ok 16 - integration runner preserves discovery/counts/logs and refuses incomplete cleanup using offline tools
+  ---
+  duration_ms: 2296.08875
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11499.618625

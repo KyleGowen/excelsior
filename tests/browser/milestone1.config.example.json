@@ -1,0 +1,7 @@
+{
+  "actor": "guest",
+  "scenarioIds": ["home-guest", "database-search-detail", "collection-guest-read", "supporter-retired"],
+  "options": { "cardName": "Lancelot", "expectEmpty": false },
+  "dimensions": { "width": 1440, "height": 1000 },
+  "note": "Select cases explicitly. For read-only deck testing supply a current public deckUrl, expectedDrawCount, and expectedExport from an independently verified fixture. No credentials belong here."
+}

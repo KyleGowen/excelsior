@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verify Production Browser"
+  short_description: "Check a deployed Excelsior release safely"
+  default_prompt: "Use $verify-production-browser to check the intended deployed revision with selected production-safe browser scenarios."

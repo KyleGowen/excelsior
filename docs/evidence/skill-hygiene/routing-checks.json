@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "kind": "gate-batch",
+  "environment": "local",
+  "sourceRevision": "3075fba84450919773845ff10159d454119c4132",
+  "fingerprint": "ac2ea45a49befabd976d9c4e8dcd4dad561d8441c49728c25655076197a40d6b",
+  "status": "passed",
+  "gates": [
+    {
+      "name": "jest-routing",
+      "command": [
+        "node",
+        "/Users/kyle/cursored/node_modules/jest/bin/jest.js",
+        "--config",
+        "tests/config/jest.unit.config.js",
+        "--runTestsByPath",
+        "tests/unit/shipWorkflowScripts.test.ts",
+        "--runInBand",
+        "--testTimeout=30000",
+        "--testNamePattern",
+        "routes the Ship integration gate"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 1,
+        "tests": 9,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 8,
+        "todo": 0
+      },
+      "executedTests": 1,
+      "reused": false,
+      "durationSeconds": 3.543,
+      "evidence": {
+        "log": "/Users/kyle/cursored/docs/evidence/skill-hygiene/jest-routing.log",
+        "receipt": null
+      },
+      "gaps": []
+    }
+  ],
+  "selected": [
+    "jest-routing"
+  ],
+  "gaps": [
+    "Gate coverage and release acceptance require main-agent review"
+  ],
+  "cleanup": "no application fixtures created by this wrapper"
+}

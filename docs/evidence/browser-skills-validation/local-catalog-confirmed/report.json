@@ -1,0 +1,110 @@
+{
+  "target": {
+    "environment": "local",
+    "frontendUrl": "http://localhost:5174",
+    "apiUrl": "http://localhost:8086",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation/cursored",
+    "sourceRevision": "9f8685c3eae7d9261d061055074216f45e073c72",
+    "sourceTreeFingerprint": "79cfc79f8387c774c1a8ba8801ab6057304d7dfd8661e30ce203779847be2b12",
+    "expectedRevision": "9f8685c3eae7d9261d061055074216f45e073c72",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation",
+    "verified": true,
+    "observedAt": "2026-10-03T20:22:20.580Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "9f8685c3eae7d9261d061055074216f45e073c72",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "9f8685c3eae7d9261d061055074216f45e073c72",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "actor": "fictional-account",
+  "theme": "fixed dark",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "database-search-detail",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/Users/kyle/cursored/docs/evidence/browser-skills-validation/local-catalog-confirmed/database-search-detail-empty.jpg",
+          "dom": "/Users/kyle/cursored/docs/evidence/browser-skills-validation/local-catalog-confirmed/database-search-detail-empty.txt",
+          "dimensions": {
+            "height": 833,
+            "width": 1200
+          },
+          "url": "http://localhost:5174/data"
+        },
+        {
+          "screenshot": "/Users/kyle/cursored/docs/evidence/browser-skills-validation/local-catalog-confirmed/database-search-detail-detail.jpg",
+          "dom": "/Users/kyle/cursored/docs/evidence/browser-skills-validation/local-catalog-confirmed/database-search-detail-detail.txt",
+          "dimensions": {
+            "height": 833,
+            "width": 1200
+          },
+          "url": "http://localhost:5174/data"
+        },
+        {
+          "screenshot": "/Users/kyle/cursored/docs/evidence/browser-skills-validation/local-catalog-confirmed/database-search-detail-result.jpg",
+          "dom": "/Users/kyle/cursored/docs/evidence/browser-skills-validation/local-catalog-confirmed/database-search-detail-result.txt",
+          "dimensions": {
+            "height": 833,
+            "width": 1200
+          },
+          "url": "http://localhost:5174/data"
+        }
+      ],
+      "observed": {
+        "emptySearch": "passed",
+        "cardName": "Lancelot",
+        "artwork": {
+          "complete": true,
+          "naturalHeight": 744,
+          "naturalWidth": 1039
+        },
+        "detailsClosed": true
+      }
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only scenarios",
+    "browser": "test-owned tab closed; viewport reset; existing preview retained for Kyle and refreshed to healthy Home",
+    "viewport": "reset"
+  },
+  "acceptance": "automated evidence only; Kyle acceptance not inferred",
+  "gaps": [
+    "light theme unavailable in M1",
+    "Google OAuth not exercised",
+    "independent module harness unavailable in M1"
+  ],
+  "viewport": {
+    "height": 833,
+    "width": 1200
+  },
+  "browserErrorCount": 0,
+  "status": "passed",
+  "fixtureProvenance": {
+    "environment": "existing run-owned disposable M1 database",
+    "container": "excelsior-frontend-preparation-baseline",
+    "port": 15437,
+    "catalogMigration": "365",
+    "recordsCreated": 0,
+    "recordsChanged": 0,
+    "retention": "Existing M1 fixtures retained for paused preparation; no new fixtures to delete"
+  },
+  "skipped": [
+    "Remaining M1 baseline: unchanged inputs; prior evidence reused",
+    "Production browser: forbidden in skill-creation task",
+    "Light theme and real OAuth: unavailable/unverified",
+    "Independent module harness: unavailable"
+  ],
+  "initialEvidence": "../local-catalog/report.json; incomplete close assertion preserved separately"
+}
