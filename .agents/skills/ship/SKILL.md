@@ -15,6 +15,8 @@ Project rules in [`AGENTS.md`](../../../AGENTS.md) and [`.cursorrules`](../../..
 
 **Ship** means: validate the intended changes, commit and push only that scope, follow the matching deployment, and verify production health for the pushed commit. The word **ship** authorizes `git add`, `git commit`, `git push`, normal deployment monitoring, and one bounded Actions recovery attempt. It does not authorize unrelated changes, repeated trigger commits, workflow rewrites, or other production mutations.
 
+When release monitoring requires AWS evidence or deployment diagnosis, follow [AWS operations](../../../docs/current/AWS_OPERATIONS.md) and use AWS Core after its identity check. Keep GitHub Actions and the exact-SHA `/health` gates authoritative for release completion; existing runner credentials and deployment scripts retain their documented paths.
+
 ## Model and responsibility boundary
 
 The originating/main agent owns every decision-bearing phase:

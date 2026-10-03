@@ -9,6 +9,8 @@ Produce a conservative, evidence-backed cost audit of Excelsior's production AWS
 
 Read [references/excelsior-production.md](references/excelsior-production.md) before collecting data. Treat repository sources as intended architecture and live AWS as current runtime state. Neither source alone proves that a resource is safe to change.
 
+Read [AWS operations](../../../docs/current/AWS_OPERATIONS.md). Use AWS Core for live AWS collection, verify its caller identity first, and preserve every ownership and report-only rule below.
+
 ## Fixed operating policy
 
 - Scope only resources verified as Excelsior-owned by the ownership rules below. Do not report or investigate unrelated account resources.
@@ -34,7 +36,9 @@ An untagged or unassociated account resource is not Excelsior-owned merely becau
 
 ## Collection workflow
 
-1. From the repository root, confirm the AWS CLI is available and run:
+1. Use AWS Core `run_script` to collect the evidence in **Required checks** and the production reference's **Audit coverage expectations**. Verify account `474120878015` before dependent calls, use `us-west-2` for regional resources and `us-east-1` for billing, and inspect each API-call status. Return complete in-scope data and explicit coverage failures; a connector audit need not reproduce the CLI collector's JSON shape.
+
+   If the connector is unavailable or cannot supply required evidence, follow the shared fallback policy, verify the local caller identity, and run the deterministic CLI collector from the repository root:
 
    ```bash
    python3 .agents/skills/aws-cost-audit/scripts/collect_excelsior_aws_cost_audit.py > "$TMPDIR/excelsior-aws-cost-audit.json"
@@ -42,7 +46,7 @@ An untagged or unassociated account resource is not Excelsior-owned merely becau
 
    Use a private temporary directory when `$TMPDIR` is unavailable. Do not write the JSON into the repository. The collector verifies AWS account `474120878015`, uses `us-west-2` for regional resources and `us-east-1` only for global billing APIs, and stops on an identity mismatch.
 
-2. Read the generated JSON completely. A successful AWS call with an empty result is evidence of absence; a denied or failed call is a coverage gap, not evidence of absence.
+2. Read the complete connector results and API-call statuses, or the complete fallback JSON. A successful AWS call with an empty result is evidence of absence; a denied or failed call is a coverage gap, not evidence of absence.
 3. Read the newest applicable rows in `../../../business-operations/metrics/aws-costs.csv`. Use them to corroborate service totals and trends, not to infer resource-level ownership.
 4. Inspect current repository references for every deletion, release, retention, network, or deployment recommendation. At minimum check `../../../infra/`, `../../../.github/workflows/deploy.yml`, `../../../Dockerfile`, `../../../scripts/`, and the relevant file under `../../../docs/current/`.
 5. Check production health with a cache-bypassed request to `https://excelsior.cards/health`. This is context only; a healthy app does not make a risky recommendation safe. Do not perform authenticated probes or send production traffic beyond one ordinary health request.

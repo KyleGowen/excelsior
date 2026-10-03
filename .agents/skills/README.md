@@ -2,6 +2,8 @@
 
 Repo-local Codex skills live here. They are the project source of truth for recurring Excelsior workflows; do not maintain a separate Cursor/global mirror.
 
+AWS phases use **AWS Core** by default under [AWS operations](../../docs/current/AWS_OPERATIONS.md). The connector handles live AWS evidence; persistent local SSM tunnels and existing runner/local scripts retain their documented credential paths. Check current authentication and Excelsior ownership each task.
+
 | Skill | Trigger phrases | Status | Source |
 |-------|-----------------|--------|--------|
 | `start-excelsior` | `/start`, "Start Excelsior", "start dev servers" | Active | Merged from `.cursor/skills/start` plus existing Codex helper |

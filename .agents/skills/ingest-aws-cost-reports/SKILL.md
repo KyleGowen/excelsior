@@ -7,6 +7,10 @@ description: Reconcile Excelsior AWS cost data across scheduled Billing dashboar
 
 Maintain one append-only ledger at `../../../business-operations/metrics/aws-costs.csv`. The CSV is both the business-operations dataset and the idempotency ledger; do not create a second state file.
 
+## AWS connection
+
+Read [AWS operations](../../../docs/current/AWS_OPERATIONS.md). Use AWS Core for STS identity, Invoice Management discovery, and Cost Explorer reads. Verify the connector account before dependent calls and inspect API-call statuses. Use the documented CLI/SDK fallback only for a specific connector limitation, including a PDF transfer that cannot be completed without exposing a signed URL. Keep local extraction, ledger verification, Gmail scope, and cleanup gates as specified below.
+
 ## Completeness contract
 
 A normal run is a three-source reconciliation, not just a weekly-email check:
@@ -37,7 +41,7 @@ Do not put the weekly report subject in the Gmail query. Its literal `|` previou
 Read metadata only for discovered IDs. Continue only when the parsed sender and subject match the applicable contract:
 
 - Weekly: sender `bcm-dashboards@aws.com`; subject exactly `Excelsior AWS Costs | AWS Billing and Cost Management`.
-- Invoice notice: sender `invoicing@aws.com`; subject matches `Amazon Web Services Billing Statement Available [Account: <12 digits>]`, and that account equals the current `aws sts get-caller-identity` account.
+- Invoice notice: sender `invoicing@aws.com`; subject matches `Amazon Web Services Billing Statement Available [Account: <12 digits>]`, and that account equals the verified AWS Core STS `GetCallerIdentity` account (or the separately verified CLI/SDK identity for a permitted fallback).
 
 Leave metadata mismatches unread, unlabeled, and otherwise unchanged; report only their opaque Gmail IDs. Run `scripts/aws_cost_ledger.py contains` before opening any weekly candidate body. Read an exact invoice-notice body only to extract its billing year/month and stated total. Do not retain any other body content.
 

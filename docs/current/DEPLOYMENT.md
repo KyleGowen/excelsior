@@ -2,6 +2,8 @@
 
 **This is the single combined reference for CI/CD pipeline strategy AND the operational runbook.** `DEPLOYMENT_STRATEGY.md` has been merged here; it is now a pointer to this file.
 
+For agent-driven AWS inspection and diagnosis, follow [AWS operations](AWS_OPERATIONS.md): **AWS Core** is the default connector. Verify its live Excelsior identity before resource calls. Shell examples below remain the runner/local execution path for deployments, persistent SSM tunnels, and permitted connector fallbacks; connector authentication does not authenticate those paths or authorize a deployment.
+
 **Table of contents:**
 - [CI/CD Pipeline Overview](#cicd-pipeline-overview) — GitHub Actions, Docker, blue-green deploy, SSM timing
 - [Quick Deployment](#quick-deployment) — script or manual deploy commands

@@ -42,6 +42,12 @@ Key docs:
 
 Before touching auth, transport, CORS, caching, or `/api/v1` routes, read [`src/api/.cursorrules`](src/api/.cursorrules) — it has the full Phase 0–3 security index (kill switches, middleware files, per-phase doc links).
 
+## AWS operations
+
+- **AWS Core is Kyle's selected connector for Excelsior AWS operations.** Use its available tools by default for AWS documentation, live inspection, billing, and operational diagnosis. Read [`docs/current/AWS_OPERATIONS.md`](docs/current/AWS_OPERATIONS.md) when the task involves AWS, including the AWS phases of repo-local skills.
+- Verify the connector's live caller identity against Excelsior account `474120878015` before resource access; use explicit regions and resolve current resources from project selectors. Authentication can expire, so this preference is durable but connection state must be checked each task.
+- Local SSM port forwarding and existing CI/deployment scripts retain their local/runner AWS credentials. Connector authentication does not authenticate the local CLI. Follow the shared runbook for these exceptions and any fallback; preserve the task's existing approval, ownership, and secret-handling boundaries.
+
 ## Codex Skills
 
 Repo-local Codex skills live in [`.agents/skills/`](.agents/skills/README.md). Use them for recurring workflows:

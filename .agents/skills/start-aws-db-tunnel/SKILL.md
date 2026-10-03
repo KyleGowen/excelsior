@@ -23,7 +23,9 @@ Do **not** duplicate IAM policy JSON here; use the runbook and [docs/examples/ss
 
 ## Prerequisites
 
-Per DEPLOYMENT: AWS CLI v2, **Session Manager plugin**, credentials (`aws sts get-caller-identity`), and IAM allowing `ssm:StartSession` for the target instance and port-forward document. Use `--profile NAME` on every `aws` command when the user relies on a non-default profile.
+Read [AWS operations](../../../docs/current/AWS_OPERATIONS.md). Use AWS Core for non-secret preflight: verify STS identity, resolve the running app EC2 instance, and confirm SSM is online. The persistent laptop tunnel still requires local AWS CLI v2 and the **Session Manager plugin**; AWS Core authentication does not supply local credentials or establish a laptop listener.
+
+Per DEPLOYMENT: verify the local credentials separately with `aws sts get-caller-identity`, require Excelsior account `474120878015`, and confirm IAM allows `ssm:StartSession` for the target instance and port-forward document. Use `--profile NAME` on every `aws` command when the user relies on a non-default profile. Keep secret retrieval inside the guarded local process rather than connector output.
 
 ## Windows (PowerShell) specifics
 
@@ -72,7 +74,7 @@ postgresql://postgres:YOUR_PASSWORD@127.0.0.1:15432/overpower?sslmode=require
 
 ## Resolve EC2 instance ID
 
-Prefer an `i-...` the user supplies. Otherwise list the running app instance (tag `Name=op-deckbuilder-app`, region `us-west-2`):
+Verify a user-supplied `i-...` against the running app selector. Otherwise resolve it through AWS Core `DescribeInstances` (tag `Name=op-deckbuilder-app`, state `running`, region `us-west-2`), then confirm SSM `DescribeInstanceInformation` reports that instance online. Do not choose arbitrarily if multiple instances match. For the documented CLI fallback, use:
 
 ```bash
 aws ec2 describe-instances --region us-west-2 \

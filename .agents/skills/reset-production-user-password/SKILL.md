@@ -22,6 +22,8 @@ password hash to files, reports, or memory. Do not reset Google-linked accounts.
 
 ## Prerequisites
 
+Follow [AWS operations](../../../docs/current/AWS_OPERATIONS.md): use AWS Core for non-secret AWS preflight, and independently verify the local AWS identity before any local SSM credential retrieval, even when a tunnel already exists. Keep database credentials and the transaction inside the guarded local process; never fetch decrypted values through connector output.
+
 Read and follow [Start AWS DB Tunnel](../start-aws-db-tunnel/SKILL.md) before
 database access. First check `lsof -nP -iTCP:15432 -sTCP:LISTEN`. If no listener
 exists, use that skill to validate AWS identity, resolve the running
