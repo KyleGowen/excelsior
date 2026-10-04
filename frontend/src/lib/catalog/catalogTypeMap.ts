@@ -490,6 +490,7 @@ function cardSearchAliases(card: Partial<CatalogCard>): string[] {
 /** Lowercase haystack for catalog search across name, character, mission set, and card text/abilities. */
 export function cardSearchHaystack(card: Partial<CatalogCard> | null | undefined): string {
   if (!card) return '';
+  if (card.presentation) return card.presentation.searchText;
   return [
     cardDisplayName(card),
     cardCharacterName(card),

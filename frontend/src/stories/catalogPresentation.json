@@ -1,0 +1,124 @@
+{
+  "characters": [
+    {
+      "id": "story-billy-the-kid",
+      "name": "Billy the Kid",
+      "set": "ERB",
+      "image_path": "characters/billy_the_kid.webp",
+      "energy": 4,
+      "combat": 7,
+      "brute_force": 3,
+      "intelligence": 4,
+      "presentation": {
+        "schemaVersion": 1,
+        "catalogVersion": "adb754413d499f2526fb740720960001d37dbb3ca7c80c7026beeb6c61d1ef0f",
+        "rulesVersion": "catalog-presentation-compatibility-v1",
+        "logicalCardId": "9717d1874ec498a3f72068765c7338a3632c79e580b6b9f81fda5da002ee5ddd",
+        "printingId": "story-billy-the-kid",
+        "groupKey": "Billy the Kid|ERB",
+        "isFoil": false,
+        "isAlternateArt": false,
+        "normalizedSet": "ERB",
+        "defaultRank": 0,
+        "addDefaultPrintingId": "story-billy-the-kid",
+        "basePrintingId": null,
+        "foilPrintingId": null,
+        "printingIds": [
+          "story-billy-the-kid"
+        ],
+        "searchText": "billy the kid ",
+        "searchAliases": [],
+        "characterNames": []
+      }
+    },
+    {
+      "id": "story-sherlock-holmes",
+      "name": "Sherlock Holmes",
+      "set": "ERB",
+      "image_path": "characters/sherlock_holmes.webp",
+      "energy": 3,
+      "combat": 3,
+      "brute_force": 2,
+      "intelligence": 8,
+      "presentation": {
+        "schemaVersion": 1,
+        "catalogVersion": "adb754413d499f2526fb740720960001d37dbb3ca7c80c7026beeb6c61d1ef0f",
+        "rulesVersion": "catalog-presentation-compatibility-v1",
+        "logicalCardId": "da31677fc2da2001ea3e2765952598764db76c0bcba683c466282d457e6757dc",
+        "printingId": "story-sherlock-holmes",
+        "groupKey": "Sherlock Holmes|ERB",
+        "isFoil": false,
+        "isAlternateArt": false,
+        "normalizedSet": "ERB",
+        "defaultRank": 0,
+        "addDefaultPrintingId": "story-sherlock-holmes",
+        "basePrintingId": null,
+        "foilPrintingId": null,
+        "printingIds": [
+          "story-sherlock-holmes"
+        ],
+        "searchText": "sherlock holmes ",
+        "searchAliases": [],
+        "characterNames": []
+      }
+    }
+  ],
+  "events": [
+    {
+      "id": "story-heroes-we-need",
+      "name": "Heroes We Need",
+      "set": "ERB",
+      "image_path": "events/heroes_we_need.webp",
+      "presentation": {
+        "schemaVersion": 1,
+        "catalogVersion": "7311008b35beaf2a17a611966aef925481e4297b5c5feb1a57346b4b0207880e",
+        "rulesVersion": "catalog-presentation-compatibility-v1",
+        "logicalCardId": "7ae5550b1d395a17dd404babc22cfb8b0990734acdcec8ff1015f4c03e100118",
+        "printingId": "story-heroes-we-need",
+        "groupKey": "Heroes We Need|ERB",
+        "isFoil": false,
+        "isAlternateArt": false,
+        "normalizedSet": "ERB",
+        "defaultRank": 0,
+        "addDefaultPrintingId": "story-heroes-we-need",
+        "basePrintingId": null,
+        "foilPrintingId": null,
+        "printingIds": [
+          "story-heroes-we-need"
+        ],
+        "searchText": "heroes we need ",
+        "searchAliases": [],
+        "characterNames": []
+      }
+    }
+  ],
+  "aspects": [
+    {
+      "id": "story-mallku",
+      "card_name": "Mallku",
+      "set": "ERB",
+      "image_path": "aspects/mallku.webp",
+      "presentation": {
+        "schemaVersion": 1,
+        "catalogVersion": "c0f2389183d199c95c12f9f1d160e6af587fc003822bff12986a7a54d6b43133",
+        "rulesVersion": "catalog-presentation-compatibility-v1",
+        "logicalCardId": "2756faa2984ffe0f2bfbf0788d7cebb3bc707ad83eee5305be037f7842e9dc6b",
+        "printingId": "story-mallku",
+        "groupKey": "Mallku|ERB",
+        "isFoil": false,
+        "isAlternateArt": false,
+        "normalizedSet": "ERB",
+        "defaultRank": 0,
+        "addDefaultPrintingId": "story-mallku",
+        "basePrintingId": null,
+        "foilPrintingId": null,
+        "printingIds": [
+          "story-mallku"
+        ],
+        "searchText": "mallku ",
+        "searchAliases": [],
+        "characterNames": []
+      }
+    }
+  ]
+}

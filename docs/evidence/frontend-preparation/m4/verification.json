@@ -1,0 +1,60 @@
+{
+  "milestone": 4,
+  "status": "first catalog slice and navigation fix verified locally; milestone remains in progress",
+  "sourceRevision": "67ec425773f31a2703c81f01a6acf5a36c39cf2d",
+  "branch": "codex/frontend-preparation-m4",
+  "localPreview": "http://127.0.0.1:5177",
+  "api": "http://127.0.0.1:8090",
+  "database": "owned isolated Docker; migration 365",
+  "authorization": "No commit, push, deployment, or production mutation performed",
+  "acceptance": "Kyle approved the identified M4 first slice and authorized Ship on October 4, 2026; full milestone remains in progress",
+  "browser": {
+    "passed": 4,
+    "failedFinal": 0,
+    "cases": [
+      "Warmed deck cache",
+      "Database add previously absent 1 - Energy then normal Decks/tile navigation: visible with total6\u21927, no refresh",
+      "Database search, unmatched search and detail/art",
+      "Supporter retired redirect"
+    ],
+    "environment": "desktop1280\u00d7720, fixed dark, owned fictional account",
+    "report": "navigation-final/report.json",
+    "baseline": "navigation-before/deck.png confirms missing new card after success; old cached special quantity3 remained after fixture normalization to1, so baseline totals differ; no visual baseline accepted",
+    "superseded": "navigation-after used earlier target fingerprint; final replay uses target-after verified fingerprint"
+  },
+  "automatedChecks": {
+    "unitPassed": 3840,
+    "unitSkipped": 18,
+    "suites": 329,
+    "frontendBuild": "passed",
+    "storybookBuild": "passed after replacing backend crypto import with static fictional catalog fixtures",
+    "backendTypes": "passed unchanged backend",
+    "lint": "passed unchanged backend",
+    "soc2Passed": 45,
+    "catalogIntegrationPassed": 1,
+    "apiRows": 1298,
+    "apiTypes": 13,
+    "catalogParity": "every live row/default add resolution/printing picker and character association; deterministic API-backed comparison, not browser proof",
+    "openapi": "parsed; thirteen presentation paths",
+    "diffWhitespace": "passed"
+  },
+  "screenshots": {
+    "databaseResultsAndDetailsPixelsChanged": 0,
+    "unmatchedSearchPixelsAboveTolerance16": 60,
+    "retiredRouteHomePixelsAboveTolerance16": 979,
+    "dimensionsMatched": true,
+    "interpretation": "Home has animated chart render differences; small unmatched-search difference retained without baseline acceptance. No changed visual baseline was silently accepted."
+  },
+  "failuresPreserved": [
+    "Initial Guest-selected cases blocked by existing fictional account session; account subset selected explicitly",
+    "First catalog parity assertion exposed mapped-foil picker mismatch; corrected with passing replay",
+    "Storybook server crypto import failed; corrected using precomputed fictional JSON fixtures"
+  ],
+  "cleanup": "cleanup.json",
+  "remainingGaps": [
+    "Full M4 deck-candidate rules/usability, simulations, import/export atomicity, collection totals/capabilities and shared consumers remain",
+    "Mobile navigation-add path not yet run",
+    "Light theme, real OAuth and independent module harness unverified/unavailable",
+    "No production verification performed for M4"
+  ]
+}

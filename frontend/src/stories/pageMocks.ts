@@ -1,3 +1,4 @@
+import presentedCatalog from './catalogPresentation.json';
 import { evaluationInputKey, type DeckEvaluationInput } from '../../../src/services/deck-evaluation/draftInput';
 import type { DraftEvaluation, DraftEvaluationInput } from '../lib/api/decks';
 import { http, HttpResponse } from 'msw';
@@ -78,6 +79,8 @@ export function pageHandlers({
     http.get('/api/v1/collections/me/cards', () => respond(collection)),
     http.get('/api/v1/dbv/sets', () => respond([{ code: 'ERB', name: 'Example release' }])),
     http.get('/api/v1/catalog/foil-card-map', () => respond([])),
+    http.get('/api/v1/catalog/presentation/:type', ({ params }) =>
+      respond(presentedCatalog[params.type as keyof typeof presentedCatalog] ?? [])),
     http.get('/api/v1/catalog/:type', ({ params }) =>
       respond(catalog[params.type as CatalogType] ?? [])),
   ];

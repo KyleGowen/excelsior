@@ -129,3 +129,9 @@ Browse, search, filter, and sort the full modern OverPower catalog.
 - Type tabs use short labels under `.layout-mobile`.
 - Type tab strip (`.db__types`) scrolls horizontally inside the page; page-level sideways pan is blocked by mobile `overflow-x: clip` on the document/shell chain.
 - **Mobile swipe between type tabs:** swipe left/right on the card grid, All list, or content area cycles tabs in `DBV_TAB_ORDER` (cyclical wrap). Swipe is disabled while card detail is open. See `useHorizontalSwipe` + `DBV_SWIPE_BLOCK_SELECTOR`.
+
+## M4 catalog and deck freshness
+
+Live catalog reads use `/api/v1/catalog/presentation/<type>` metadata for grouping, default add printing, aliases, foil identity and character associations. Legacy helpers remain for raw synthetic fixtures while other M4 workflows migrate. Static Storybook catalog response fixtures are generated from the fictional story cards; backend hashing is never imported into the browser gallery.
+
+After a successful Database Add to Deck, cancel any older full-deck read and publish the returned deck (including evaluated stats) into its exact query key before showing success. Navigating through Decks then initializes the editor from this authoritative snapshot. List invalidation still updates deck tiles. Failed additions do not publish changes. This avoids a second read and does not overwrite an editor's unsaved state. The local-only regression in `tests/browser/milestone4-database-deck.mjs` warms the cache, adds a previously absent card and returns through product links/buttons without reloading.

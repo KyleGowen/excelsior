@@ -1,0 +1,26 @@
+[
+  {
+    "image": "database-search-detail-result.jpg",
+    "sameDimensions": true,
+    "pixelsAboveTolerance16": 0,
+    "totalPixels": 921600
+  },
+  {
+    "image": "supporter-retired-result.jpg",
+    "sameDimensions": true,
+    "pixelsAboveTolerance16": 979,
+    "totalPixels": 921600
+  },
+  {
+    "image": "database-search-detail-empty.jpg",
+    "sameDimensions": true,
+    "pixelsAboveTolerance16": 60,
+    "totalPixels": 921600
+  },
+  {
+    "image": "database-search-detail-detail.jpg",
+    "sameDimensions": true,
+    "pixelsAboveTolerance16": 0,
+    "totalPixels": 921600
+  }
+]

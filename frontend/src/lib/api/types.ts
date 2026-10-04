@@ -85,6 +85,8 @@ export interface CatalogErrataEntry {
 }
 
 export interface CatalogCard {
+  /** Domain metadata supplied by the presentation catalog contract. Raw fixture rows may omit it. */
+  presentation?: import('../../../../src/api/dto/v1/CatalogPresentationDto').CatalogPresentationDto;
   id: string;
   /** Characters/specials/power/missions/events use `name`. */
   name?: string;

@@ -2621,6 +2621,409 @@
       "settingEncodeUrl": true,
       "settingRebuildPath": true,
       "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_16_presentation_characters",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/presentation/characters",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/presentation/characters",
+      "description": "Read-only authoritative catalog presentation. Production availability requires the M4 release; local success does not verify deployment.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_16_presentation_special-cards",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/presentation/special-cards",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/presentation/special-cards",
+      "description": "Read-only authoritative catalog presentation. Production availability requires the M4 release; local success does not verify deployment.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_16_presentation_power-cards",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/presentation/power-cards",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/presentation/power-cards",
+      "description": "Read-only authoritative catalog presentation. Production availability requires the M4 release; local success does not verify deployment.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_16_presentation_locations",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/presentation/locations",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/presentation/locations",
+      "description": "Read-only authoritative catalog presentation. Production availability requires the M4 release; local success does not verify deployment.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_16_presentation_battlegrounds",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/presentation/battlegrounds",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/presentation/battlegrounds",
+      "description": "Read-only authoritative catalog presentation. Production availability requires the M4 release; local success does not verify deployment.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_16_presentation_missions",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/presentation/missions",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/presentation/missions",
+      "description": "Read-only authoritative catalog presentation. Production availability requires the M4 release; local success does not verify deployment.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_16_presentation_events",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/presentation/events",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/presentation/events",
+      "description": "Read-only authoritative catalog presentation. Production availability requires the M4 release; local success does not verify deployment.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_16_presentation_aspects",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/presentation/aspects",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/presentation/aspects",
+      "description": "Read-only authoritative catalog presentation. Production availability requires the M4 release; local success does not verify deployment.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_16_presentation_advanced-universe",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/presentation/advanced-universe",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/presentation/advanced-universe",
+      "description": "Read-only authoritative catalog presentation. Production availability requires the M4 release; local success does not verify deployment.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_16_presentation_teamwork",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/presentation/teamwork",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/presentation/teamwork",
+      "description": "Read-only authoritative catalog presentation. Production availability requires the M4 release; local success does not verify deployment.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_16_presentation_ally-universe",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/presentation/ally-universe",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/presentation/ally-universe",
+      "description": "Read-only authoritative catalog presentation. Production availability requires the M4 release; local success does not verify deployment.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_16_presentation_training",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/presentation/training",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/presentation/training",
+      "description": "Read-only authoritative catalog presentation. Production availability requires the M4 release; local success does not verify deployment.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_16_presentation_basic-universe",
+      "parentId": "fld_excelsior_production_15",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "GET /api/v1/catalog/presentation/basic-universe",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/presentation/basic-universe",
+      "description": "Read-only authoritative catalog presentation. Production availability requires the M4 release; local success does not verify deployment.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
     }
   ]
 }

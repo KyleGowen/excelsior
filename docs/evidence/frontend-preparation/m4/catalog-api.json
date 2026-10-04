@@ -1,0 +1,85 @@
+{
+  "environment": "local",
+  "method": "API-only live contract checks",
+  "results": [
+    {
+      "type": "characters",
+      "rows": 328,
+      "identityAndRawParity": "passed",
+      "seconds": 0.068
+    },
+    {
+      "type": "special-cards",
+      "rows": 607,
+      "identityAndRawParity": "passed",
+      "seconds": 0.095
+    },
+    {
+      "type": "power-cards",
+      "rows": 106,
+      "identityAndRawParity": "passed",
+      "seconds": 0.026
+    },
+    {
+      "type": "locations",
+      "rows": 19,
+      "identityAndRawParity": "passed",
+      "seconds": 0.006
+    },
+    {
+      "type": "battlegrounds",
+      "rows": 1,
+      "identityAndRawParity": "passed",
+      "seconds": 0.004
+    },
+    {
+      "type": "missions",
+      "rows": 56,
+      "identityAndRawParity": "passed",
+      "seconds": 0.01
+    },
+    {
+      "type": "events",
+      "rows": 30,
+      "identityAndRawParity": "passed",
+      "seconds": 0.007
+    },
+    {
+      "type": "aspects",
+      "rows": 8,
+      "identityAndRawParity": "passed",
+      "seconds": 0.005
+    },
+    {
+      "type": "advanced-universe",
+      "rows": 8,
+      "identityAndRawParity": "passed",
+      "seconds": 0.006
+    },
+    {
+      "type": "teamwork",
+      "rows": 76,
+      "identityAndRawParity": "passed",
+      "seconds": 0.017
+    },
+    {
+      "type": "ally-universe",
+      "rows": 20,
+      "identityAndRawParity": "passed",
+      "seconds": 0.007
+    },
+    {
+      "type": "training",
+      "rows": 15,
+      "identityAndRawParity": "passed",
+      "seconds": 0.006
+    },
+    {
+      "type": "basic-universe",
+      "rows": 24,
+      "identityAndRawParity": "passed",
+      "seconds": 0.006
+    }
+  ],
+  "recordsChanged": false
+}

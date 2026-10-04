@@ -62,6 +62,7 @@ function missingSkyboundFoilPrinting(
     set_number: foilNumber,
     set_number_foil: null,
     is_foil: true,
+    ...(base.presentation ? { presentation: { ...base.presentation, printingId: foilId, isFoil: true, basePrintingId: base.id, foilPrintingId: null } } : {}),
   };
 }
 
@@ -76,6 +77,18 @@ export function collectPrintingsForCard(
   setNameFor: (set: string | undefined) => string = (set) => String(set ?? ''),
 ): CatalogCard[] {
   const catalogById = new Map(allCatalogCards.map((c) => [c.id, c]));
+  if (card.presentation) {
+    const rows = card.presentation.printingIds.map(id => catalogById.get(id)).filter((row): row is CatalogCard => row !== undefined);
+    for (const base of [...rows]) {
+      const foilId = base.presentation?.foilPrintingId;
+      if (foilId && !rows.some(row => row.id === foilId)) {
+        const foil = catalogById.get(foilId) ?? missingSkyboundFoilPrinting(base, foilId, catalogById);
+        if (foil) rows.push(foil);
+      }
+    }
+    if (!rows.some(row => row.id === card.id)) rows.push(card);
+    return rows.sort((a, b) => comparePrintings(a, b, setNameFor));
+  }
   const anchor = resolveAnchorCard(card, catalogById, foilLookup);
   const refKey = variantGroupKey(anchor, catalogType);
   if (!refKey) return [card];

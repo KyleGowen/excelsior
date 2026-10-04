@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "kind": "target-health",
+  "environment": "local",
+  "frontendUrl": "http://127.0.0.1:5177",
+  "apiUrl": "http://127.0.0.1:8090",
+  "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m4/cursored",
+  "sourceRevision": "67ec425773f31a2703c81f01a6acf5a36c39cf2d",
+  "sourceTreeFingerprint": "bd5b24aef4ddfcd474496ffc81ac7f98ef71d7d1ba21f5cbc1eaff931b1f628b",
+  "expectedRevision": "67ec425773f31a2703c81f01a6acf5a36c39cf2d",
+  "expectedMigration": "365",
+  "branch": "codex/frontend-preparation-m4",
+  "verified": true,
+  "observedAt": "2026-10-04T18:12:51.935Z",
+  "health": {
+    "status": "OK",
+    "database": "OK",
+    "revision": "67ec425773f31a2703c81f01a6acf5a36c39cf2d",
+    "migration": "365"
+  },
+  "frontendProxyHealth": {
+    "status": "OK",
+    "database": "OK",
+    "revision": "67ec425773f31a2703c81f01a6acf5a36c39cf2d",
+    "migration": "365"
+  },
+  "frontendStatus": 200,
+  "status": "target health verified; browser still required"
+}

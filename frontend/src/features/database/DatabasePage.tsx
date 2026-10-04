@@ -606,10 +606,14 @@ function DbDetailActions({
     setStatus(null);
     try {
       const resolved = resolveDefaultCardForDeckAdd(card, type, catalogCards, foilLookup);
-      await addCardToDeck(deckId, { cardType: deckType, cardId: resolved.id, quantity: 1 });
+      const updatedDeck = await addCardToDeck(deckId, { cardType: deckType, cardId: resolved.id, quantity: 1 });
+      // Publish the authoritative mutation snapshot before navigation can mount
+      // the editor from its previously cached card list. Cancel an older read
+      // so it cannot replace this snapshot after the successful addition.
+      await queryClient.cancelQueries({ queryKey: ['deck', deckId], exact: true });
+      queryClient.setQueryData(['deck', deckId], updatedDeck);
       setStatus({ kind: 'success', message: `Added to ${deckName}` });
       queryClient.invalidateQueries({ queryKey: ['decks', 'mine', user?.id] });
-      queryClient.invalidateQueries({ queryKey: ['deck', deckId] });
     } catch (err) {
       setStatus({ kind: 'error', message: (err as Error)?.message || 'Could not add card' });
     }

@@ -1,3 +1,4 @@
+import { CATALOG_PRESENTATION_TYPES } from '../../services/catalog-presentation/presentCatalog';
 import type { Request, RequestHandler, Response, Router } from 'express';
 import { CatalogService } from '../services/catalogService';
 import {
@@ -42,6 +43,10 @@ function registerCachedCatalogGet<T>(
 }
 
 export function registerDbvCatalogV1HttpRoutes(router: Router, deps: DbvCatalogV1HttpDeps): void {
+  for (const type of CATALOG_PRESENTATION_TYPES) {
+    registerCachedCatalogGet(router, '/catalog/presentation/' + type, deps.catalogAuth,
+      () => deps.catalogService.getPresentation(type));
+  }
   registerCachedCatalogGet(
     router,
     '/catalog/characters',

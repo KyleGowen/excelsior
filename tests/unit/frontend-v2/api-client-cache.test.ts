@@ -18,7 +18,7 @@ describe('fresh catalog requests', () => {
     await fetchCatalogFresh('power-cards');
 
     expect(fetchMock).toHaveBeenCalledWith(
-      '/api/v1/catalog/power-cards',
+      '/api/v1/catalog/presentation/power-cards',
       expect.objectContaining({
         method: 'GET',
         credentials: 'include',

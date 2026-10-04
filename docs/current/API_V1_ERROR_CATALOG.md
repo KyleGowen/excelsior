@@ -50,7 +50,7 @@ to [`docs/openapi.yaml`](../openapi.yaml)) in the same PR.**
 | `SAVED_DATABASE_VIEW_LIMIT_REACHED` | 409 | The caller already owns 50 saved views.                              | Delete a saved view before creating another.                                        |
 | `SAVED_DATABASE_VIEW_ERROR`   | 500  | Saved Views persistence failed unexpectedly.                             | Retry; report `requestId` if persistent.                                            |
 | `FEEDBACK_DELIVERY_ERROR`     | 500  | In-app feedback could not be delivered through SES.                      | Retry; use email or Discord if the failure continues.                               |
-| `CATALOG_ERROR`               | 500  | Upstream catalog query failed.                                           | Retry; report `requestId` if persistent.                                             |
+| `CATALOG_ERROR`               | 500  | Catalog query or presentation failed (raw and `/catalog/presentation/*` paths).                                           | Retry; report `requestId` if persistent.                                             |
 | `DBV_SUPPORT_ERROR`           | 500  | DBV support lookup failed.                                               | Retry; report `requestId` if persistent.                                             |
 | `DECK_LIST_ERROR`             | 500  | Listing decks failed.                                                    | Retry.                                                                                |
 | `PRECONSTRUCTED_DECKS_ERROR` | 500  | Listing official preconstructed decks failed.                            | Retry; report `requestId` if persistent.                                             |

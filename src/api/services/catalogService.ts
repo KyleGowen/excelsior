@@ -1,3 +1,5 @@
+import { presentCatalog } from '../../services/catalog-presentation/presentCatalog';
+import type { CatalogType, CatalogCard, FoilMapEntry } from '../../services/catalog-presentation/types';
 import type { CardRepository } from '../../repository/CardRepository';
 import type {
   CardErrataAssociation,
@@ -134,6 +136,23 @@ export class CatalogService {
 
   getFoilCardMap(): Promise<unknown[]> {
     return this.foilMap.getFoilCardMap();
+  }
+
+  async getPresentation(type: CatalogType) {
+    const loaders: Record<CatalogType, () => Promise<unknown[]>> = {
+      characters: () => this.getAllCharacters(), 'special-cards': () => this.getAllSpecialCards(),
+      'power-cards': () => this.getAllPowerCards(), locations: () => this.getAllLocations(),
+      battlegrounds: () => this.getAllBattlegrounds(), missions: () => this.getAllMissions(),
+      events: () => this.getAllEvents(), aspects: () => this.getAllAspects(),
+      'advanced-universe': () => this.getAllAdvancedUniverse(), teamwork: () => this.getAllTeamwork(),
+      'ally-universe': () => this.getAllAllyUniverse(), training: () => this.getAllTraining(),
+      'basic-universe': () => this.getAllBasicUniverse(),
+    };
+    const [rows, foilEntries, characters] = await Promise.all([
+      loaders[type](), this.getFoilCardMap(),
+      type === 'special-cards' || type === 'advanced-universe' ? this.getAllCharacters() : Promise.resolve([]),
+    ]);
+    return presentCatalog(rows as CatalogCard[], type, foilEntries as FoilMapEntry[], characters as CatalogCard[]);
   }
 
   getCardStats() {

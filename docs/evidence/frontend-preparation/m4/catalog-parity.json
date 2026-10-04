@@ -1,0 +1,138 @@
+{
+  "environment": "local",
+  "method": "live API snapshot plus deterministic compatibility comparisons; not a browser test",
+  "status": "passed",
+  "outcomes": [
+    {
+      "type": "characters",
+      "rows": 328,
+      "status": "passed",
+      "cases": [
+        "defaults full and set-filtered",
+        "add printing resolution",
+        "printing picker each row"
+      ]
+    },
+    {
+      "type": "special-cards",
+      "rows": 607,
+      "status": "passed",
+      "cases": [
+        "defaults full and set-filtered",
+        "add printing resolution",
+        "printing picker each row"
+      ]
+    },
+    {
+      "type": "power-cards",
+      "rows": 106,
+      "status": "passed",
+      "cases": [
+        "defaults full and set-filtered",
+        "add printing resolution",
+        "printing picker each row"
+      ]
+    },
+    {
+      "type": "locations",
+      "rows": 19,
+      "status": "passed",
+      "cases": [
+        "defaults full and set-filtered",
+        "add printing resolution",
+        "printing picker each row"
+      ]
+    },
+    {
+      "type": "battlegrounds",
+      "rows": 1,
+      "status": "passed",
+      "cases": [
+        "defaults full and set-filtered",
+        "add printing resolution",
+        "printing picker each row"
+      ]
+    },
+    {
+      "type": "missions",
+      "rows": 56,
+      "status": "passed",
+      "cases": [
+        "defaults full and set-filtered",
+        "add printing resolution",
+        "printing picker each row"
+      ]
+    },
+    {
+      "type": "events",
+      "rows": 30,
+      "status": "passed",
+      "cases": [
+        "defaults full and set-filtered",
+        "add printing resolution",
+        "printing picker each row"
+      ]
+    },
+    {
+      "type": "aspects",
+      "rows": 8,
+      "status": "passed",
+      "cases": [
+        "defaults full and set-filtered",
+        "add printing resolution",
+        "printing picker each row"
+      ]
+    },
+    {
+      "type": "advanced-universe",
+      "rows": 8,
+      "status": "passed",
+      "cases": [
+        "defaults full and set-filtered",
+        "add printing resolution",
+        "printing picker each row"
+      ]
+    },
+    {
+      "type": "teamwork",
+      "rows": 76,
+      "status": "passed",
+      "cases": [
+        "defaults full and set-filtered",
+        "add printing resolution",
+        "printing picker each row"
+      ]
+    },
+    {
+      "type": "ally-universe",
+      "rows": 20,
+      "status": "passed",
+      "cases": [
+        "defaults full and set-filtered",
+        "add printing resolution",
+        "printing picker each row"
+      ]
+    },
+    {
+      "type": "training",
+      "rows": 15,
+      "status": "passed",
+      "cases": [
+        "defaults full and set-filtered",
+        "add printing resolution",
+        "printing picker each row"
+      ]
+    },
+    {
+      "type": "basic-universe",
+      "rows": 24,
+      "status": "passed",
+      "cases": [
+        "defaults full and set-filtered",
+        "add printing resolution",
+        "printing picker each row"
+      ]
+    }
+  ],
+  "characterStacks": "passed"
+}

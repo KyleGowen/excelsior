@@ -1,0 +1,192 @@
+{
+  "schema": 1,
+  "kind": "gate-batch",
+  "environment": "local",
+  "sourceRevision": "67ec425773f31a2703c81f01a6acf5a36c39cf2d",
+  "fingerprint": "463a933da4f9dca1aa8c236b03508125ed1f61bd8a96dff9447d984dcda41bfd",
+  "status": "failed",
+  "gates": [
+    {
+      "name": "unit",
+      "command": [
+        "npm",
+        "run",
+        "test:unit",
+        "--",
+        "--maxWorkers=2"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 329,
+        "tests": 3858,
+        "passed": 3840,
+        "failed": 0,
+        "skipped": 18,
+        "todo": 0
+      },
+      "executedTests": 3840,
+      "reused": false,
+      "durationSeconds": 37.742,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-verification/gates-catalog/unit.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "lint",
+      "command": [
+        "npx",
+        "eslint",
+        "src",
+        "--ext",
+        ".ts",
+        "--max-warnings",
+        "0"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 4.376,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-verification/gates-catalog/lint.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "types",
+      "command": [
+        "npx",
+        "tsc",
+        "--noEmit"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 5.178,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-verification/gates-catalog/types.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "frontend-build",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "build"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 11.228,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-verification/gates-catalog/frontend-build.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "storybook-build",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "build:storybook"
+      ],
+      "status": "failed",
+      "exitCode": 1,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 10.155,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-verification/gates-catalog/storybook-build.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "soc2",
+      "command": [
+        "bash",
+        "scripts/soc2-compliance-checks.sh"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 9,
+        "tests": 45,
+        "passed": 45,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "executedTests": 45,
+      "reused": false,
+      "durationSeconds": 8.223,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-verification/gates-catalog/soc2.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "catalog-integration",
+      "command": [
+        "python3",
+        "/private/tmp/excelsior-m4-private/run_catalog_integration.py"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 1,
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "executedTests": 1,
+      "reused": false,
+      "durationSeconds": 11.133,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-verification/gates-catalog/catalog-integration.log",
+        "receipt": null
+      },
+      "gaps": []
+    }
+  ],
+  "selected": [
+    "unit",
+    "lint",
+    "types",
+    "frontend-build",
+    "storybook-build",
+    "soc2",
+    "catalog-integration"
+  ],
+  "gaps": [
+    "Gate coverage and release acceptance require main-agent review"
+  ],
+  "cleanup": "no application fixtures created by this wrapper"
+}

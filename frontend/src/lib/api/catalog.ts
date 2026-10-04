@@ -3,12 +3,12 @@ import { api } from './client';
 import type { CatalogCard, CatalogType, SetInfo } from './types';
 
 export function fetchCatalog(type: CatalogType, signal?: AbortSignal): Promise<CatalogCard[]> {
-  return api.get<CatalogCard[]>(`/api/v1/catalog/${type}`, signal);
+  return api.get<CatalogCard[]>(`/api/v1/catalog/presentation/${type}`, signal);
 }
 
 /** Bypass the browser HTTP cache when a selected printing must reflect current catalog data. */
 export function fetchCatalogFresh(type: CatalogType, signal?: AbortSignal): Promise<CatalogCard[]> {
-  return api.getFresh<CatalogCard[]>(`/api/v1/catalog/${type}`, signal);
+  return api.getFresh<CatalogCard[]>(`/api/v1/catalog/presentation/${type}`, signal);
 }
 
 export function fetchSets(signal?: AbortSignal): Promise<SetInfo[]> {

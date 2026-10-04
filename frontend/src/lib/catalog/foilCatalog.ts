@@ -8,6 +8,7 @@ export interface FoilCardMapLookup {
 
 export function isFoilCard(card: Partial<CatalogCard> | null | undefined): boolean {
   if (!card) return false;
+  if (card.presentation) return card.presentation.isFoil;
   const v = card.is_foil as unknown;
   return v === true || v === 'true' || v === 1;
 }

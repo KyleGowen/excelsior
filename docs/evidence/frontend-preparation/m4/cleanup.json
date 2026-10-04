@@ -1,0 +1,15 @@
+{
+  "environment": "owned local M4 database only",
+  "restored": true,
+  "cards": {
+    "character": 1,
+    "special": 3,
+    "power": 5
+  },
+  "addedEnergyCardRemoved": true,
+  "productionTouched": false,
+  "integrationContainerRemoved": true,
+  "previewRetained": true,
+  "browser": "Owned M4 tab retained for continued milestone work; user tabs preserved",
+  "metadata": "Original validity, Limited, privacy and reserve match source fixture; original updated timestamp restored"
+}

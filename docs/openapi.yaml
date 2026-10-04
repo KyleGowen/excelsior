@@ -237,6 +237,34 @@ components:
         notFoundCount: { type: integer, minimum: 0, maximum: 50 }
         count: { type: integer, minimum: 0, maximum: 50 }
         max: { type: integer, enum: [50] }
+    CatalogPresentation:
+      type: object
+      required: [schemaVersion, catalogVersion, rulesVersion, logicalCardId, printingId, groupKey, isFoil, isAlternateArt, normalizedSet, defaultRank, addDefaultPrintingId, basePrintingId, foilPrintingId, printingIds, searchText, searchAliases, characterNames]
+      properties:
+        schemaVersion: { type: integer, enum: [1] }
+        catalogVersion: { type: string, description: SHA-256 of catalog and related inputs }
+        rulesVersion: { type: string, enum: [catalog-presentation-compatibility-v1] }
+        logicalCardId: { type: string, description: Group-key derived identity; may change on catalog rename }
+        printingId: { type: string }
+        groupKey: { type: string, nullable: true }
+        isFoil: { type: boolean }
+        isAlternateArt: { type: boolean }
+        normalizedSet: { type: string }
+        defaultRank: { type: integer, minimum: 0 }
+        addDefaultPrintingId: { type: string }
+        basePrintingId: { type: string, nullable: true }
+        foilPrintingId: { type: string, nullable: true }
+        printingIds: { type: array, items: { type: string } }
+        searchText: { type: string }
+        searchAliases: { type: array, items: { type: string } }
+        characterNames: { type: array, items: { type: string } }
+    PresentedCatalogItem:
+      type: object
+      additionalProperties: true
+      required: [id, presentation]
+      properties:
+        id: { type: string }
+        presentation: { $ref: '#/components/schemas/CatalogPresentation' }
     CatalogErrataItem:
       type: object
       required: [id, source_section, entry_title, entry_text, source_url]
@@ -699,6 +727,292 @@ paths:
           description: RATE_LIMITED.
         '500':
           description: FEEDBACK_DELIVERY_ERROR.
+  /api/v1/catalog/presentation/characters:
+    get:
+      tags: [Catalog]
+      summary: Full characters catalog with authoritative presentation metadata.
+      parameters:
+        - $ref: '#/components/parameters/SinceVersion'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          description: Original card fields plus additive presentation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/PresentedCatalogItem' }
+        '304': { description: Not Modified (ETag match or since) }
+        '401': { description: Catalog authentication required when enabled }
+        '500': { description: CATALOG_ERROR }
+  /api/v1/catalog/presentation/special-cards:
+    get:
+      tags: [Catalog]
+      summary: Full special-cards catalog with authoritative presentation metadata.
+      parameters:
+        - $ref: '#/components/parameters/SinceVersion'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          description: Original card fields plus additive presentation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/PresentedCatalogItem' }
+        '304': { description: Not Modified (ETag match or since) }
+        '401': { description: Catalog authentication required when enabled }
+        '500': { description: CATALOG_ERROR }
+  /api/v1/catalog/presentation/power-cards:
+    get:
+      tags: [Catalog]
+      summary: Full power-cards catalog with authoritative presentation metadata.
+      parameters:
+        - $ref: '#/components/parameters/SinceVersion'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          description: Original card fields plus additive presentation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/PresentedCatalogItem' }
+        '304': { description: Not Modified (ETag match or since) }
+        '401': { description: Catalog authentication required when enabled }
+        '500': { description: CATALOG_ERROR }
+  /api/v1/catalog/presentation/locations:
+    get:
+      tags: [Catalog]
+      summary: Full locations catalog with authoritative presentation metadata.
+      parameters:
+        - $ref: '#/components/parameters/SinceVersion'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          description: Original card fields plus additive presentation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/PresentedCatalogItem' }
+        '304': { description: Not Modified (ETag match or since) }
+        '401': { description: Catalog authentication required when enabled }
+        '500': { description: CATALOG_ERROR }
+  /api/v1/catalog/presentation/battlegrounds:
+    get:
+      tags: [Catalog]
+      summary: Full battlegrounds catalog with authoritative presentation metadata.
+      parameters:
+        - $ref: '#/components/parameters/SinceVersion'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          description: Original card fields plus additive presentation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/PresentedCatalogItem' }
+        '304': { description: Not Modified (ETag match or since) }
+        '401': { description: Catalog authentication required when enabled }
+        '500': { description: CATALOG_ERROR }
+  /api/v1/catalog/presentation/missions:
+    get:
+      tags: [Catalog]
+      summary: Full missions catalog with authoritative presentation metadata.
+      parameters:
+        - $ref: '#/components/parameters/SinceVersion'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          description: Original card fields plus additive presentation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/PresentedCatalogItem' }
+        '304': { description: Not Modified (ETag match or since) }
+        '401': { description: Catalog authentication required when enabled }
+        '500': { description: CATALOG_ERROR }
+  /api/v1/catalog/presentation/events:
+    get:
+      tags: [Catalog]
+      summary: Full events catalog with authoritative presentation metadata.
+      parameters:
+        - $ref: '#/components/parameters/SinceVersion'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          description: Original card fields plus additive presentation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/PresentedCatalogItem' }
+        '304': { description: Not Modified (ETag match or since) }
+        '401': { description: Catalog authentication required when enabled }
+        '500': { description: CATALOG_ERROR }
+  /api/v1/catalog/presentation/aspects:
+    get:
+      tags: [Catalog]
+      summary: Full aspects catalog with authoritative presentation metadata.
+      parameters:
+        - $ref: '#/components/parameters/SinceVersion'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          description: Original card fields plus additive presentation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/PresentedCatalogItem' }
+        '304': { description: Not Modified (ETag match or since) }
+        '401': { description: Catalog authentication required when enabled }
+        '500': { description: CATALOG_ERROR }
+  /api/v1/catalog/presentation/advanced-universe:
+    get:
+      tags: [Catalog]
+      summary: Full advanced-universe catalog with authoritative presentation metadata.
+      parameters:
+        - $ref: '#/components/parameters/SinceVersion'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          description: Original card fields plus additive presentation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/PresentedCatalogItem' }
+        '304': { description: Not Modified (ETag match or since) }
+        '401': { description: Catalog authentication required when enabled }
+        '500': { description: CATALOG_ERROR }
+  /api/v1/catalog/presentation/teamwork:
+    get:
+      tags: [Catalog]
+      summary: Full teamwork catalog with authoritative presentation metadata.
+      parameters:
+        - $ref: '#/components/parameters/SinceVersion'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          description: Original card fields plus additive presentation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/PresentedCatalogItem' }
+        '304': { description: Not Modified (ETag match or since) }
+        '401': { description: Catalog authentication required when enabled }
+        '500': { description: CATALOG_ERROR }
+  /api/v1/catalog/presentation/ally-universe:
+    get:
+      tags: [Catalog]
+      summary: Full ally-universe catalog with authoritative presentation metadata.
+      parameters:
+        - $ref: '#/components/parameters/SinceVersion'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          description: Original card fields plus additive presentation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/PresentedCatalogItem' }
+        '304': { description: Not Modified (ETag match or since) }
+        '401': { description: Catalog authentication required when enabled }
+        '500': { description: CATALOG_ERROR }
+  /api/v1/catalog/presentation/training:
+    get:
+      tags: [Catalog]
+      summary: Full training catalog with authoritative presentation metadata.
+      parameters:
+        - $ref: '#/components/parameters/SinceVersion'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          description: Original card fields plus additive presentation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/PresentedCatalogItem' }
+        '304': { description: Not Modified (ETag match or since) }
+        '401': { description: Catalog authentication required when enabled }
+        '500': { description: CATALOG_ERROR }
+  /api/v1/catalog/presentation/basic-universe:
+    get:
+      tags: [Catalog]
+      summary: Full basic-universe catalog with authoritative presentation metadata.
+      parameters:
+        - $ref: '#/components/parameters/SinceVersion'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          description: Original card fields plus additive presentation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/PresentedCatalogItem' }
+        '304': { description: Not Modified (ETag match or since) }
+        '401': { description: Catalog authentication required when enabled }
+        '500': { description: CATALOG_ERROR }
   /api/v1/catalog/characters:
     get:
       tags: [Catalog]

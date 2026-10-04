@@ -36,6 +36,7 @@ export function specialCardMatchesCharacter(
   special: CatalogCard,
   characterName: string,
 ): boolean {
+  if (special.presentation) return special.presentation.characterNames.includes(characterName);
   const specialCharacter = cardCharacterName(special);
   if (specialCharacter === 'Any Character') {
     return false;
@@ -64,6 +65,7 @@ export function specialCardMatchesCharacter(
 }
 
 function advancedUniverseMatchesCharacter(card: CatalogCard, characterName: string): boolean {
+  if (card.presentation) return card.presentation.characterNames.includes(characterName);
   const linked = cardCharacterName(card);
   return linked !== '' && linked !== 'Any Character' && linked === characterName;
 }

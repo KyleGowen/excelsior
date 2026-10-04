@@ -252,3 +252,7 @@ All elevated operations must live under `/api/v1/admin/...` (no client â€œadminâ
 **Optional later:** Per-IP or CDN rate limits for catalog traffic; token denylist for JWT.
 
 - [x] Milestone 3: stateless authoritative draft display under `/api/v1/decks/evaluate`; existing authenticated validity-only route retained for compatibility with distinct contract.
+
+### M4 additive catalog presentation
+
+Thirteen `/api/v1/catalog/presentation/<type>` reads use the existing catalog service/HTTP/cache/auth layers. Existing raw routes are retained as a compatibility contract; this is an additive presentation contract, not completion of all M4 domain migrations.

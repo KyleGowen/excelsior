@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "kind": "gate-batch",
+  "environment": "local",
+  "sourceRevision": "67ec425773f31a2703c81f01a6acf5a36c39cf2d",
+  "fingerprint": "f8ac2584d60e22c3e5b91e819a8908f9ef00ae737da0a8ba95c636fe9ab3cd99",
+  "status": "passed",
+  "gates": [
+    {
+      "name": "unit",
+      "command": [
+        "npm",
+        "run",
+        "test:unit",
+        "--",
+        "--maxWorkers=2"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 329,
+        "tests": 3858,
+        "passed": 3840,
+        "failed": 0,
+        "skipped": 18,
+        "todo": 0
+      },
+      "executedTests": 3840,
+      "reused": false,
+      "durationSeconds": 15.816,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-verification/gates-catalog-corrected/unit.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "frontend-build",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "build"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 8.258,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-verification/gates-catalog-corrected/frontend-build.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "storybook-build",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "build:storybook"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 10.045,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-verification/gates-catalog-corrected/storybook-build.log",
+        "receipt": null
+      },
+      "gaps": []
+    }
+  ],
+  "selected": [
+    "unit",
+    "frontend-build",
+    "storybook-build"
+  ],
+  "gaps": [
+    "Gate coverage and release acceptance require main-agent review"
+  ],
+  "cleanup": "no application fixtures created by this wrapper"
+}

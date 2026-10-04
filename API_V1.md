@@ -361,6 +361,14 @@ addresses are also set as the email's reply-to address.
 
 **Official errata:** Any catalog item linked through `card_errata` includes an `errata` array ordered by `source_section`. Each entry contains `id`, `source_section`, `entry_title`, `entry_text` (card-scoped plain text with shared guidance and paragraph breaks preserved), and `source_url` (the canonical deep link on overpowercardgame.com). The canonical full source transcription remains in `errata.entry_text`; an association may narrow the returned text through `card_errata.display_text` when one source entry discusses multiple cards. Unlinked cards omit the field.
 
+### `GET /api/v1/catalog/presentation/<type>`
+
+Additive authoritative catalog presentation for `characters`, `special-cards`, `power-cards`, `locations`, `battlegrounds`, `missions`, `events`, `aspects`, `advanced-universe`, `teamwork`, `ally-universe`, `training`, and `basic-universe`. Existing raw catalog paths remain compatible. The SPA uses these enriched paths; filtering and visual sorting remain local.
+
+Each unchanged catalog row carries `presentation`: `schemaVersion: 1`, `catalogVersion` (SHA-256 of catalog, foil and linked-character inputs), `rulesVersion: catalog-presentation-compatibility-v1`, `logicalCardId`, `printingId`, nullable `groupKey`, `isFoil`, `isAlternateArt`, `normalizedSet`, `defaultRank`, `addDefaultPrintingId`, nullable `basePrintingId`/`foilPrintingId`, `printingIds`, `searchText`, `searchAliases`, and `characterNames`. Rank selects a representative within the filtered group, preserving set-specific choices. Printing IDs retain persisted row identity; logical IDs derive from the characterized grouping key and may change if that key changes. No permanent identity across catalog renames is promised. `printingIds` preserves mapped-foil/foil-only picker behavior.
+
+Uses the same catalog authentication/kill switch, envelope, ETag/304 and `since` behavior as raw paths. Unknown types return404; query/presentation failures return500 `CATALOG_ERROR`. No player data or writes. Implementation: `CatalogService.getPresentation`, `src/services/catalog-presentation/`, `CatalogPresentationDto`.
+
 ### `GET /api/v1/catalog/characters`
 
 **Auth:** Session cookie or Bearer JWT (see introduction above).

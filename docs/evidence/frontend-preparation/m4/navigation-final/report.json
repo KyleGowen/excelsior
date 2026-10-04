@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "method": "CUA live browser automation",
+  "sourceRevision": "67ec425773f31a2703c81f01a6acf5a36c39cf2d",
+  "inputFingerprint": "f8ac2584d60e22c3e5b91e819a8908f9ef00ae737da0a8ba95c636fe9ab3cd99",
+  "theme": "fixed dark",
+  "scenarios": [
+    {
+      "id": "warm-deck-cache",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "/private/tmp/excelsior-m4-verification/navigation-final/warm-deck-cache.jpg",
+        "dom": "/private/tmp/excelsior-m4-verification/navigation-final/warm-deck-cache.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "database-add-normal-navigation",
+      "status": "passed",
+      "observed": {
+        "addedCard": "1 - Energy",
+        "total": 7,
+        "reloadAfterAdd": false
+      },
+      "evidence": {
+        "screenshot": "/private/tmp/excelsior-m4-verification/navigation-final/database-add-normal-navigation.jpg",
+        "dom": "/private/tmp/excelsior-m4-verification/navigation-final/database-add-normal-navigation.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    }
+  ],
+  "acceptance": "automated only; Kyle acceptance pending",
+  "cleanup": {
+    "applicationRecords": "caller must restore owned fixture",
+    "browser": "test-owned tab"
+  },
+  "gaps": [
+    "desktop account flow only; mobile and Guest not executed by this case"
+  ],
+  "dimensions": {
+    "height": 720,
+    "width": 1280
+  },
+  "status": "passed",
+  "counts": {
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  }
+}

@@ -14,6 +14,7 @@ function cardImagePath(card: CatalogCard): string {
 
 /** True when the card row uses alternate art (path contains `alternate/`). */
 export function isAlternateArtCard(card: CatalogCard): boolean {
+  if (card.presentation) return card.presentation.isAlternateArt;
   return cardImagePath(card).includes('alternate/');
 }
 
@@ -50,6 +51,7 @@ function setNumberSortTuple(setNumRaw: string | null | undefined): [number, numb
 }
 
 function compareDefaultRepresentative(a: CatalogCard, b: CatalogCard, catalogType: CatalogType): number {
+  if (a.presentation && b.presentation) return a.presentation.defaultRank - b.presentation.defaultRank;
   const aFoil = isFoilCard(a);
   const bFoil = isFoilCard(b);
   if (aFoil !== bFoil) return aFoil ? 1 : -1;
@@ -78,6 +80,7 @@ function compareDefaultRepresentative(a: CatalogCard, b: CatalogCard, catalogTyp
 
 /** Logical variant group key for alternate-art / cross-set printings. */
 export function variantGroupKey(card: CatalogCard, catalogType: CatalogType): string | null {
+  if (card.presentation) return card.presentation.groupKey;
   const name = cardDisplayName(card).trim();
   if (!name) return null;
 
@@ -173,6 +176,9 @@ export function resolveDefaultCardForDeckAdd(
   allCatalogCards: CatalogCard[],
   foilLookup?: Pick<FoilCardMapLookup, 'foilToBase' | 'baseToFoil'>,
 ): CatalogCard {
+  if (card.presentation) {
+    return allCatalogCards.find(row => row.id === card.presentation!.addDefaultPrintingId) ?? card;
+  }
   const foilToBase = foilLookup?.foilToBase ?? new Map<string, string>();
   const baseToFoil = foilLookup?.baseToFoil ?? new Map<string, string>();
 

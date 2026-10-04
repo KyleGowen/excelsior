@@ -323,3 +323,35 @@ describe('dbv-catalog.http', () => {
     expect(res.body.errors[0].code).toBe('CATALOG_ERROR');
   });
 });
+
+describe('M4 catalog presentation HTTP contract', () => {
+  const makeService = () => new CatalogService({ getAllCharacters: jest.fn().mockResolvedValue([{ id: 'a', name: 'Hero' }]) } as unknown as CatalogCardRepository, foilStub());
+  it.each(['characters','special-cards','power-cards','locations','battlegrounds','missions','events','aspects','advanced-universe','teamwork','ally-universe','training','basic-universe'])('registers and delegates the %s presentation contract', async type => {
+    const service = makeService();
+    const read = jest.spyOn(service, 'getPresentation').mockResolvedValue([]);
+    const response = await request(buildApp(service)).get('/catalog/presentation/' + type).expect(200);
+    expect(read).toHaveBeenCalledWith(type);
+    expect(response.body.data).toEqual([]);
+    expect(response.headers.etag).toBeDefined();
+  });
+  it('returns enriched rows with the existing envelope and honors conditional GET', async () => {
+    const app = buildApp(makeService());
+    const response = await request(app).get('/catalog/presentation/characters').expect(200);
+    expect(response.body.data[0]).toMatchObject({ id: 'a', name: 'Hero', presentation: { schemaVersion: 1, printingId: 'a', addDefaultPrintingId: 'a' } });
+    await request(app).get('/catalog/presentation/characters').set('If-None-Match', response.headers.etag).expect(304);
+  });
+  it('returns a catalog error on presentation service failure', async () => {
+    const service = makeService(); jest.spyOn(service, 'getPresentation').mockRejectedValue(new Error('fictional outage'));
+    const response = await request(buildApp(service)).get('/catalog/presentation/characters').expect(500);
+    expect(response.body.data).toBeNull(); expect(response.body.errors[0].code).toBe('CATALOG_ERROR');
+  });
+  it('does not expose unknown type routes', async () => {
+    await request(buildApp(makeService())).get('/catalog/presentation/unsupported').expect(404);
+  });
+  it('enforces the existing catalog auth middleware before service access', async () => {
+    const service = makeService(); const read = jest.spyOn(service, 'getPresentation');
+    const app = express(); const router = express.Router();
+    registerDbvCatalogV1HttpRoutes(router, { catalogService: service, catalogAuth: (_req, res) => { res.status(401).end(); } });
+    app.use(router); await request(app).get('/catalog/presentation/characters').expect(401); expect(read).not.toHaveBeenCalled();
+  });
+});
