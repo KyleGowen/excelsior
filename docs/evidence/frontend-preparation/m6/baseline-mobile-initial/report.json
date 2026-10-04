@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "deployedRevision": null,
+  "url": "http://127.0.0.1:5178/module-harness.html",
+  "status": "failed",
+  "scenarios": [
+    {
+      "id": "database-alone",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m6/baseline-mobile-initial/database-alone.jpg",
+        "dom": "docs/evidence/frontend-preparation/m6/baseline-mobile-initial/database-alone.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5178/module-harness.html"
+      }
+    },
+    {
+      "id": "collection-alone",
+      "status": "failed",
+      "reason": "Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector internal:role=region[name=\"Independent Collection\"s] >> internal:role=button[name=\"View Lancelot\"s]\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"internal:role=region[name=\\\"Independent Collection\\\"s] >> internal:role=button[name=\\\"View Lancelot\\\"s]\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m6/baseline-mobile-initial/collection-alone-failed.jpg",
+        "dom": "docs/evidence/frontend-preparation/m6/baseline-mobile-initial/collection-alone-failed.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5178/module-harness.html"
+      }
+    },
+    {
+      "id": "deck-alone-host-callback",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m6/baseline-mobile-initial/deck-alone-host-callback.jpg",
+        "dom": "docs/evidence/frontend-preparation/m6/baseline-mobile-initial/deck-alone-host-callback.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5178/module-harness.html"
+      }
+    },
+    {
+      "id": "together",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m6/baseline-mobile-initial/together.jpg",
+        "dom": "docs/evidence/frontend-preparation/m6/baseline-mobile-initial/together.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5178/module-harness.html"
+      }
+    },
+    {
+      "id": "close-detail-and-unmount",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m6/baseline-mobile-initial/close-detail-and-unmount.jpg",
+        "dom": "docs/evidence/frontend-preparation/m6/baseline-mobile-initial/close-detail-and-unmount.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5178/module-harness.html"
+      }
+    },
+    {
+      "id": "remount",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m6/baseline-mobile-initial/remount.jpg",
+        "dom": "docs/evidence/frontend-preparation/m6/baseline-mobile-initial/remount.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5178/module-harness.html"
+      }
+    }
+  ],
+  "counts": {
+    "passed": 5,
+    "failed": 1,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "cleanup": "Read-only browser actions; no Save, quantity changes or record writes. Detail closed before host controls; modules unmounted and remounted.",
+  "acceptance": "Automated evidence only; Kyle acceptance pending",
+  "gaps": [
+    "Fixture component tests cover outage/retry/cancellation independently; no live API outage injected.",
+    "M6 style containment and M7 packaging remain future work."
+  ]
+}

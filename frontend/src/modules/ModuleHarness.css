@@ -4,3 +4,14 @@
 .module-harness__controls button, .module-harness__controls input { padding: 6px 10px; }
 .module-harness section { border: 1px solid var(--border-color); margin-bottom: 16px; }
 .deck-editor--module { grid-template-columns: 1fr; }
+
+.module-harness__surface { position: relative; }
+.module-harness__surface--host-overlay { min-height: 560px; }
+.module-harness__overlay-root { position: absolute; inset: 0; pointer-events: none; z-index: var(--z-modal); }
+.module-harness__overlay-root > .slideout { pointer-events: auto; }
+/* Keep fixture controls from covering the mobile module's centered click targets. */
+.module-harness__controls label:has(input[type="checkbox"]) { display: inline-flex; align-items: center; gap: 8px; }
+.module-harness__controls input[type="checkbox"] { width: 16px; height: 16px; padding: 0; }
+@media (max-width: 900px) {
+  .module-harness__controls { max-height: 45vh; overflow-y: auto; }
+}

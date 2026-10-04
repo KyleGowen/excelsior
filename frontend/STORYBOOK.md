@@ -59,3 +59,5 @@ states; they are not a second full application with persistent account or deck
 data. Use the regular local site for end-to-end workflows.
 
 M5 Independent host stories exercise the actual modules with fictional operations and no Storybook auth/router wrappers (`withoutAuth`, `withoutRouter`). Ordinary Screen stories exercise the Excelsior route adapter and host chrome. DatabaseAlone, DeckBuilderAlone, CollectionAlone, Together, Guest, HostLoading, HostUnavailable and HostWithoutSession cover module/provider/harness states. New controllers are hooks, not additional presentation components. Existing detail and screen stories retain feature interaction examples.
+
+M6's first overlay slice adds `HostOwnedOverlay`, `NonmodalHostPanel` and `IndependentOverlayRoots` under Modules/Independent host. These are named examples for OverlayHostProvider and host-owned placement; builds do not prove Storybook play functions or live browser behavior.

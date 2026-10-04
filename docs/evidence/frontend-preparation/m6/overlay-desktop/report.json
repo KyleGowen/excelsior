@@ -1,0 +1,157 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5178",
+    "apiUrl": "http://localhost:8090",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/m4-release-repair/cursored",
+    "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "sourceTreeFingerprint": "5082ce4b711463b4498a4ae2bc7470bac2179736cd199eb93f5bd649ed08d4a7",
+    "expectedRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m6",
+    "verified": true,
+    "observedAt": "2026-10-04T22:12:16.408Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "url": "http://127.0.0.1:5178/module-harness.html",
+  "scenarios": [
+    {
+      "id": "host-placement-and-image",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m6/overlay-desktop-initial-clean/host-placement-and-image-open.jpg",
+          "dom": "docs/evidence/frontend-preparation/m6/overlay-desktop-initial-clean/host-placement-and-image-open.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        },
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m6/overlay-desktop-initial-clean/host-placement-and-image-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m6/overlay-desktop-initial-clean/host-placement-and-image-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        }
+      ],
+      "observed": {
+        "bounds": {
+          "panel": {
+            "bottom": 688.109375,
+            "left": 760,
+            "right": 1264,
+            "top": 24.5
+          },
+          "root": {
+            "bottom": 688.109375,
+            "left": 16,
+            "right": 1264,
+            "top": 24.5
+          }
+        },
+        "settled": {
+          "contained": true
+        },
+        "recordsChanged": false
+      }
+    },
+    {
+      "id": "host-keyboard-focus",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m6/overlay-desktop-initial-clean/host-keyboard-focus-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m6/overlay-desktop-initial-clean/host-keyboard-focus-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        }
+      ],
+      "observed": {
+        "focusWrapped": true,
+        "restored": true
+      }
+    },
+    {
+      "id": "host-unmount-open-panel",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m6/overlay-desktop-initial-clean/host-unmount-open-panel-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m6/overlay-desktop-initial-clean/host-unmount-open-panel-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        }
+      ],
+      "observed": {
+        "portalCleared": true,
+        "attributesUnchanged": true,
+        "remounted": true
+      }
+    },
+    {
+      "id": "host-deck-draw-export",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m6/overlay-desktop-initial-clean/host-deck-draw-export-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m6/overlay-desktop-initial-clean/host-deck-draw-export-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        }
+      ],
+      "observed": {
+        "drawCount": 8,
+        "exported": {
+          "cards": 8,
+          "threat": 18
+        },
+        "recordsChanged": false
+      }
+    }
+  ],
+  "counts": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "browserErrors": 0,
+  "status": "passed",
+  "cleanup": "Read-only fixture; no Save/quantity writes; panels closed, host root cleared during unmount, module remounted; preview retained.",
+  "acceptance": "Kyle acceptance pending",
+  "gaps": [
+    "Full style containment/container layout/theme/brand/auth/action configuration remains M6 backlog.",
+    "No production M6 tests; no light theme/OAuth; independent simultaneous roots covered by component fixtures."
+  ]
+}

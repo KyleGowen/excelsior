@@ -28,3 +28,7 @@ deck, deck actions, add cards, mobile account sheet).
 ## Notes
 - Sits above content via the drawer z-index with a scrim.
 - There is also a `.cursorrules` in this folder describing the pattern.
+
+## Host-configured overlays (M6 first slice)
+
+A module host may supply `ModuleHost.overlays` through `OverlayHostProvider`. With a root supplied, the panel portals there; position defaults absolute, and host panels respect the root's rectangle. Modal defaults true, wraps Tab/Shift-Tab, and Escape applies only to the panel containing focus. Nonmodal mode keeps `aria-modal=false` and permits Tab to leave. Close/unmount restores a still-connected trigger and disposes the listener/portal. Root or modality changes also refresh focus ownership. No body/document attributes or scroll styles are changed. Default Excelsior overlays retain inline placement and existing keyboard behavior. Host styling/asset/container containment remains separate work.

@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "deployedRevision": null,
+  "url": "http://127.0.0.1:5178/module-harness.html",
+  "status": "passed",
+  "scenarios": [
+    {
+      "id": "database-alone",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m6/baseline-desktop/database-alone.jpg",
+        "dom": "docs/evidence/frontend-preparation/m6/baseline-desktop/database-alone.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5178/module-harness.html"
+      }
+    },
+    {
+      "id": "collection-alone",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m6/baseline-desktop/collection-alone.jpg",
+        "dom": "docs/evidence/frontend-preparation/m6/baseline-desktop/collection-alone.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5178/module-harness.html"
+      }
+    },
+    {
+      "id": "deck-alone-host-callback",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m6/baseline-desktop/deck-alone-host-callback.jpg",
+        "dom": "docs/evidence/frontend-preparation/m6/baseline-desktop/deck-alone-host-callback.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5178/module-harness.html"
+      }
+    },
+    {
+      "id": "together",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m6/baseline-desktop/together.jpg",
+        "dom": "docs/evidence/frontend-preparation/m6/baseline-desktop/together.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5178/module-harness.html"
+      }
+    },
+    {
+      "id": "close-detail-and-unmount",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m6/baseline-desktop/close-detail-and-unmount.jpg",
+        "dom": "docs/evidence/frontend-preparation/m6/baseline-desktop/close-detail-and-unmount.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5178/module-harness.html"
+      }
+    },
+    {
+      "id": "remount",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m6/baseline-desktop/remount.jpg",
+        "dom": "docs/evidence/frontend-preparation/m6/baseline-desktop/remount.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5178/module-harness.html"
+      }
+    }
+  ],
+  "counts": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "cleanup": "Read-only browser actions; no Save, quantity changes or record writes. Detail closed before host controls; modules unmounted and remounted.",
+  "acceptance": "Automated evidence only; Kyle acceptance pending",
+  "gaps": [
+    "Fixture component tests cover outage/retry/cancellation independently; no live API outage injected.",
+    "M6 style containment and M7 packaging remain future work."
+  ]
+}

@@ -778,3 +778,7 @@ Add Cards uses server eligibility metadata and retains the draft on unavailable 
 ## Independent module development host (M5)
 
 Existing page appearance and controls remain in the production modules. Excelsior supplies branded Deck Builder navigation as host slots; the standalone module omits those slots and uses a single-column layout (`deck-editor--module`). The development harness has a compact sticky wrapped selector/input area with explicit pressed selection states, module borders and an explicit identity/read-only indicator. It uses existing dark theme tokens and shared appStyles; it is not a production page. Per-host theme, overlay/container and CSS isolation remain M6. Catalog/deck load failures provide local Retry; an unavailable deck still offers the host's Home callback. Named standalone/together/Guest/host loading/error examples appear in Independent host stories.
+
+### M6 host overlay fixture
+
+Default Excelsior panel styling/placement is preserved. An explicit module host overlay root receives the same panels with host-bounded geometry; this is a fixture configuration, not a site reskin. Development-harness checkbox labels use compact inline controls and the mobile sticky control area is capped at45vh to prevent covering centered module targets. Production layout/theme defaults are unchanged. Global CSS/container/theme/brand isolation remains open M6 work.

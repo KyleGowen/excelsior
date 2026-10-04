@@ -1,4 +1,7 @@
 import { http, HttpResponse, delay } from 'msw';
+import { useState } from 'react';
+import { OverlayHostProvider } from '../lib/layout/OverlayHostProvider';
+import { SlideOutPanel } from '../components/SlideOutPanel';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ModuleHarness, LocalModuleHarness } from '../modules/ModuleHarness';
 import { pageHandlers } from './pageMocks';
@@ -22,3 +25,22 @@ export const DatabaseLoading: Story = { parameters: { msw: [http.get('/api/v1/ca
 export const DatabaseEmpty: Story = { parameters: { msw: [http.get('/api/v1/catalog/presentation/:type', () => HttpResponse.json({ data: [] })), ...pageHandlers()] } };
 export const DeckUnavailable: Story = { ...DeckBuilderAlone, parameters: { msw: [http.get('/api/v1/decks/:deckId/full', () => HttpResponse.json({ errors: [{ message: 'Fictional deck outage' }] }, { status: 503 })), ...pageHandlers()] }, play: async ({ canvas }) => { (await canvas.findByRole('button', { name: 'Deck Builder module' })).click(); await canvas.findByRole('button', { name: 'Retry deck' }); } };
 export const CollectionUnavailable: Story = { ...CollectionAlone, parameters: { msw: [http.get('/api/v1/collections/me/cards', () => HttpResponse.json({ errors: [{ message: 'Fictional collection outage' }] }, { status: 503 })), ...pageHandlers()] } };
+
+/** Named example for OverlayHostProvider through the declared module host. */
+export const HostOwnedOverlay: Story = { args: { initialHostOverlay: true }, ...DatabaseDetailActions };
+
+function HostOverlayExample({ modal = true, pair = false }: { modal?: boolean; pair?: boolean }) {
+ const [firstRoot, setFirstRoot] = useState<HTMLDivElement | null>(null);
+ const [secondRoot, setSecondRoot] = useState<HTMLDivElement | null>(null);
+ const [firstOpen, setFirstOpen] = useState(false); const [secondOpen, setSecondOpen] = useState(false);
+ return <div style={{ display: 'grid', gridTemplateColumns: pair ? '1fr 1fr' : '1fr', gap: 16 }}>
+  <section style={{ position: 'relative', minHeight: 560 }}><button onClick={() => setFirstOpen(true)}>Open first host panel</button><div ref={setFirstRoot} />
+   {firstRoot && <OverlayHostProvider options={{ root: firstRoot, modal }}><SlideOutPanel open={firstOpen} onClose={() => setFirstOpen(false)} ariaLabel="First host panel"><button>Fictional first action</button></SlideOutPanel></OverlayHostProvider>}
+  </section>
+  {pair && <section style={{ position: 'relative', minHeight: 560 }}><button onClick={() => setSecondOpen(true)}>Open second host panel</button><div ref={setSecondRoot} />
+   {secondRoot && <OverlayHostProvider options={{ root: secondRoot }}><SlideOutPanel open={secondOpen} onClose={() => setSecondOpen(false)} ariaLabel="Second host panel"><button>Fictional second action</button></SlideOutPanel></OverlayHostProvider>}
+  </section>}
+ </div>;
+}
+export const NonmodalHostPanel: Story = { render: () => <HostOverlayExample modal={false} /> };
+export const IndependentOverlayRoots: Story = { render: () => <HostOverlayExample pair /> };

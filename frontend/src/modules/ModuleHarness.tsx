@@ -6,16 +6,18 @@ import { fetchCurrentUser, fetchAppConfig } from '../lib/api/auth';
 import { useLayoutMode } from '../lib/layout/LayoutModeProvider';
 type Selection = 'database' | 'deck' | 'collection' | 'together' | 'unmounted';
 /** Local fixture host: neither Excelsior's router nor AuthProvider is mounted. */
-export function ModuleHarness({ user, initialDeckId = '' }: { user: AppUser | null; initialDeckId?: string }) {
+export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = false }: { user: AppUser | null; initialDeckId?: string; initialHostOverlay?: boolean }) {
  const [selection, setSelection] = useState<Selection>('database');
  const [deckId, setDeckId] = useState(initialDeckId);
  const [readonly, setReadonly] = useState(true);
  const [feedback, setFeedback] = useState('');
+ const [useHostOverlay, setUseHostOverlay] = useState(initialHostOverlay);
+ const [overlayRoot, setOverlayRoot] = useState<HTMLDivElement | null>(null);
  const api = useMemo(() => createModuleApi(), []);
  const onOpenDeck = useCallback((id: string) => { setDeckId(id); setSelection('deck'); setFeedback('Host opened deck'); }, []);
  const onBack = useCallback(() => setFeedback('Host received Back'), []);
  const onHome = useCallback(() => setFeedback('Host received Home'), []);
- const host = useMemo(() => ({ api, identity: { user, isGuest: !user || user.role === 'GUEST', isAdmin: user?.role === 'ADMIN' }, onOpenDeck, onBack, onHome, backLabel: 'Back to host' }), [api, user, onOpenDeck, onBack, onHome]);
+ const host = useMemo(() => ({ api, identity: { user, isGuest: !user || user.role === 'GUEST', isAdmin: user?.role === 'ADMIN' }, onOpenDeck, onBack, onHome, backLabel: 'Back to host', ...(useHostOverlay && overlayRoot ? { overlays: { root: overlayRoot, position: 'absolute' as const } } : {}) }), [api, user, onOpenDeck, onBack, onHome, useHostOverlay, overlayRoot]);
  return <div className="module-harness">
   <header className="module-harness__controls">
    <h1>Independent module harness</h1>
@@ -29,13 +31,17 @@ export function ModuleHarness({ user, initialDeckId = '' }: { user: AppUser | nu
    </nav>
    <label>Local deck ID <input value={deckId} onChange={e => setDeckId(e.target.value)} /></label>
    <label><input type="checkbox" checked={readonly} onChange={e => setReadonly(e.target.checked)} />Read-only deck</label>
+   <label><input type="checkbox" checked={useHostOverlay} onChange={e => setUseHostOverlay(e.target.checked)} />Use host overlay root</label>
    <output aria-label="Host callback result">{feedback}</output>
   </header>
+  <div className={`module-harness__surface${useHostOverlay ? ' module-harness__surface--host-overlay' : ''}`}>
+  <div ref={setOverlayRoot} className="module-harness__overlay-root" role="region" aria-label="Host overlay root" />
   <ModuleHostProvider host={host}>
    {(selection === 'database' || selection === 'together') && <section aria-label="Independent Card Database"><CardDatabaseModule /></section>}
    {(selection === 'deck' || selection === 'together') && <section aria-label="Independent Deck Builder">{deckId ? <DeckBuilderModule deckId={deckId} readonly={readonly} /> : <p>Supply a valid local fixture deck ID.</p>}</section>}
    {(selection === 'collection' || selection === 'together') && <section aria-label="Independent Collection"><CollectionModule /></section>}
   </ModuleHostProvider>
+  </div>
  </div>;
 }
 

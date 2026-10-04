@@ -208,3 +208,5 @@ shape, collection POST-vs-PUT) — see the "Endpoint quirks" section.
 ## M5 source module boundary
 
 Database, Deck Builder and Collection now use [the independent module source entry](../../frontend/src/modules/README.md). Existing page files adapt routes to the same controller/view implementation. `app/ExcelsiorModuleHost.tsx` supplies SPA identity, navigation, detail-history and chrome; independent modules use typed API operations and callbacks. `/module-harness.html` is a development entry outside AuthProvider/router/AppShell, not a production route or package. Global style/asset containment and packaging remain M6/M7.
+
+M6's first local slice adds a typed `ModuleHost.overlays` root/position/modality contract. Shared SlideOutPanel portals only when explicitly configured; the ordinary Excelsior adapter omits it, retaining current placement. Configured keyboard/focus/cleanup is host-scoped. See the module guide. Global style containment, container responsiveness and remaining host configuration are not complete.

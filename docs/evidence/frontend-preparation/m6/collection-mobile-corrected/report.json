@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "method": "CUA live browser automation; targeted recovery",
+  "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "sourceState": "uncommitted M6",
+  "counts": {
+    "passed": 1,
+    "failed": 0,
+    "blocked": 0,
+    "skipped": 0
+  },
+  "scenarios": [
+    {
+      "id": "collection-alone",
+      "status": "passed",
+      "observed": {
+        "charactersTabSelected": true,
+        "lancelotDetailTriggerVisible": true
+      },
+      "evidence": [
+        "collection-selected.jpg",
+        "collection-selected.txt"
+      ]
+    }
+  ],
+  "priorFailure": "../baseline-mobile-initial/report.json",
+  "recovery": "Compact controls and a scrollable 45vh maximum mobile harness header remove observed click occlusion. No Collection product logic changed.",
+  "cleanup": "No quantity or application record writes; viewport reset; test tab closed.",
+  "acceptance": "Kyle acceptance pending"
+}

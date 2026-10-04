@@ -1,0 +1,5 @@
+- alert:
+  - generic: Excelsior
+  - heading "This page needs a refresh" [level=1]
+  - paragraph: The app could not load this page. A newer version may be available. Refresh to continue.
+  - button "Refresh page"

@@ -125,3 +125,8 @@
   max-width: 100%;
   border-left: none;
 }
+
+/* An explicitly configured host controls the panel's available rectangle. */
+.slideout--host .slideout__panel { max-width: 100%; max-height: 100%; }
+.slideout--host .slideout__panel--top { max-height: min(70vh, 100%); }
+.slideout--host .slideout__panel--bottom { max-height: min(85vh, 100%); }

@@ -1,0 +1,142 @@
+{
+  "schema": 1,
+  "kind": "gate-batch",
+  "environment": "local",
+  "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "fingerprint": "5082ce4b711463b4498a4ae2bc7470bac2179736cd199eb93f5bd649ed08d4a7",
+  "status": "passed",
+  "gates": [
+    {
+      "name": "lint",
+      "command": [
+        "npx",
+        "eslint",
+        "src",
+        "--ext",
+        ".ts",
+        "--max-warnings",
+        "0"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 7.469,
+      "gaps": []
+    },
+    {
+      "name": "unit",
+      "command": [
+        "bash",
+        "scripts/ship-conditional-test.sh",
+        "unit"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 333,
+        "tests": 3893,
+        "passed": 3875,
+        "failed": 0,
+        "skipped": 18,
+        "todo": 0
+      },
+      "executedTests": 3875,
+      "reused": false,
+      "durationSeconds": 18.408,
+      "gaps": []
+    },
+    {
+      "name": "modules",
+      "command": [
+        "npx",
+        "jest",
+        "--config",
+        "tests/config/jest.frontend-modules.config.js",
+        "--runInBand"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 2,
+        "tests": 19,
+        "passed": 19,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "executedTests": 19,
+      "reused": false,
+      "durationSeconds": 19.056,
+      "gaps": []
+    },
+    {
+      "name": "frontend",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "build"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 21.482,
+      "gaps": []
+    },
+    {
+      "name": "storybook",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "build:storybook"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 22.086,
+      "gaps": []
+    },
+    {
+      "name": "knip",
+      "command": [
+        "npm",
+        "run",
+        "find:unused:ci"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 1.952,
+      "gaps": []
+    }
+  ],
+  "selected": [
+    "lint",
+    "unit",
+    "modules",
+    "frontend",
+    "storybook",
+    "knip"
+  ],
+  "gaps": [
+    "Gate coverage and release acceptance require main-agent review"
+  ],
+  "cleanup": "no application fixtures created by this wrapper"
+}

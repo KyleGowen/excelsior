@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "kind": "target-health",
+  "environment": "local",
+  "frontendUrl": "http://127.0.0.1:5178",
+  "apiUrl": "http://localhost:8090",
+  "sourceRoot": "/Users/kyle/.codex/worktrees/m4-release-repair/cursored",
+  "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "sourceTreeFingerprint": "5082ce4b711463b4498a4ae2bc7470bac2179736cd199eb93f5bd649ed08d4a7",
+  "expectedRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "expectedMigration": "365",
+  "branch": "codex/frontend-preparation-m6",
+  "verified": true,
+  "observedAt": "2026-10-04T22:12:16.408Z",
+  "health": {
+    "status": "OK",
+    "database": "OK",
+    "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "migration": "365"
+  },
+  "frontendProxyHealth": {
+    "status": "OK",
+    "database": "OK",
+    "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "migration": "365"
+  },
+  "frontendStatus": 200,
+  "status": "target health verified; browser still required"
+}

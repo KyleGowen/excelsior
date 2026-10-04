@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "status": "first M6 overlay slice ready for Kyle local verification",
+  "environment": "local",
+  "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "sourceState": "uncommitted codex/frontend-preparation-m6",
+  "frontend": "http://127.0.0.1:5178/module-harness.html",
+  "backend": "existing local API8090 from separate M5 checkout at same HEAD; Docker15442/V365",
+  "browser": {
+    "method": "CUA live browser automation",
+    "currentSelectedResults": {
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0,
+      "blocked": 0
+    },
+    "composition": "12 default-harness cases (6 desktop, 5 mobile plus 1 corrected targeted mobile); 8 final host-root cases (4 each desktop/mobile); 5 normal-route cases desktop",
+    "reuse": "Default-harness results reused across provider JSX-to-createElement compatibility correction; same rendered provider, no module logic change. Final host-root and ordinary routes rerun after correction/restart.",
+    "theme": "fixed dark",
+    "recordsChanged": false,
+    "viewport": "desktop1280x720; mobile390x844; reset",
+    "initialFailuresRetained": [
+      "Mobile default Collection click occlusion: diagnosed and targeted corrected case passed.",
+      "Unit discovery compilation: JSX provider imported by non-JSX test runtime; renamed .ts and createElement; broad unit replay passed.",
+      "Development dynamic import after filename change: restarted only M6 Vite; fresh normal-route replay passed.",
+      "Retained harness tab had an earlier HMR error despite four passing cases; fresh tab four cases passed with zero errors."
+    ],
+    "screenshotComparison": "Observable geometry/placement/focus/cleanup verified. No full pixel-difference comparison or baseline replacement claimed.",
+    "scenarioHelperGap": "Shared M1 runner retains its historical unavailable-harness note; separate M5/M6 harness reports provide actual current coverage."
+  },
+  "gates": {
+    "status": "passed",
+    "unitPassed": 3875,
+    "unitSkipped": 18,
+    "dedicatedModulePassed": 19,
+    "lint": "passed",
+    "frontend": "passed",
+    "storybook": "passed",
+    "knip": "passed"
+  },
+  "cleanup": "Read-only fictional fixture; no Save/quantity writes. Panels closed after automation; host unmount cleanup verified. Extra owned test tabs closed; viewport reset. One M6 handoff tab retained with detail open; M5/M3/user tabs and shared API/database preserved.",
+  "acceptance": "Automated success only; Kyle M6 acceptance pending. No M6 commit/push/deployment/production tests.",
+  "gaps": [
+    "Full M6 global styles/container layout/theme/brand/icons/auth/actions and real LRG host matching remain open.",
+    "Simultaneous independent overlay roots and nonmodal/root-replacement behavior covered by component fixtures, not this live browser subset.",
+    "Light theme, OAuth, account persistence and production M6 not executed.",
+    "Full M4 backlog remains open."
+  ],
+  "efficiency": "Shared existing API/database; parallel gate batch; bounded scripted CI watching for M5; reused unchanged browser baseline cases. No weekly credit savings estimate."
+}

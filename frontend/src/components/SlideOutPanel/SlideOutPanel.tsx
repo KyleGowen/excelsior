@@ -1,5 +1,7 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { IconClose } from '../icons';
+import { createPortal } from 'react-dom';
+import { useOverlayHost } from '../../lib/layout/OverlayHostProvider';
 import './SlideOutPanel.css';
 
 interface SlideOutPanelProps {
@@ -39,6 +41,10 @@ export function SlideOutPanel({
   ariaLabel,
   closeOnEscape = true,
 }: SlideOutPanelProps) {
+  const overlayHost = useOverlayHost();
+  const portalRoot = overlayHost?.root;
+  const effectivePosition = portalRoot ? (overlayHost?.position ?? 'absolute') : position;
+  const modal = overlayHost?.modal ?? true;
   const panelRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
   const onCloseRef = useRef(onClose);
@@ -48,27 +54,40 @@ export function SlideOutPanel({
 
   useEffect(() => {
     if (!open) return;
-    previouslyFocused.current = document.activeElement as HTMLElement | null;
+    const owner = portalRoot?.ownerDocument ?? document;
+    previouslyFocused.current = owner.activeElement as HTMLElement | null;
     const onKey = (e: KeyboardEvent) => {
+      const panel = panelRef.current;
+      // Independent host panels must not dismiss an unrelated module's panel.
+      if (portalRoot && (!panel || !panel.contains(owner.activeElement))) return;
       if (e.key === 'Escape' && closeOnEscapeRef.current) onCloseRef.current();
+      if (portalRoot && modal && panel && e.key === 'Tab') {
+        const controls = Array.from(panel.querySelectorAll<HTMLElement>('button, a[href], input, select, textarea, [tabindex]')).filter(element =>
+          !element.matches(':disabled, [tabindex="-1"]') && !element.closest('[hidden], [aria-hidden="true"]') &&
+          getComputedStyle(element).display !== 'none' && getComputedStyle(element).visibility !== 'hidden');
+        const first = controls[0]; const last = controls.at(-1);
+        if (!first || !last) { e.preventDefault(); panel.focus(); }
+        else if (e.shiftKey && (owner.activeElement === first || owner.activeElement === panel)) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && (owner.activeElement === last || owner.activeElement === panel)) { e.preventDefault(); first.focus(); }
+      }
     };
-    document.addEventListener('keydown', onKey);
+    owner.addEventListener('keydown', onKey);
     // Move focus into the panel.
     const t = window.setTimeout(() => {
       panelRef.current?.focus();
     }, 0);
     return () => {
-      document.removeEventListener('keydown', onKey);
+      owner.removeEventListener('keydown', onKey);
       window.clearTimeout(t);
-      previouslyFocused.current?.focus?.();
+      if (previouslyFocused.current?.isConnected) previouslyFocused.current.focus();
     };
-  }, [open]);
+  }, [open, portalRoot, modal]);
 
   if (!open) return null;
 
-  return (
+  const content = (
     <div
-      className={`slideout${position === 'absolute' ? ' slideout--absolute' : ''}`}
+      className={`slideout${effectivePosition === 'absolute' ? ' slideout--absolute' : ''}${portalRoot ? ' slideout--host' : ''}`}
       role="presentation"
     >
       <div className="slideout__backdrop" onClick={onClose} aria-hidden="true" />
@@ -77,7 +96,7 @@ export function SlideOutPanel({
         className={`slideout__panel slideout__panel--${side} ${className}`}
         style={side === 'right' ? { width } : undefined}
         role="dialog"
-        aria-modal="true"
+        aria-modal={modal}
         aria-label={ariaLabel}
         tabIndex={-1}
       >
@@ -92,4 +111,5 @@ export function SlideOutPanel({
       </div>
     </div>
   );
+  return portalRoot ? createPortal(content, portalRoot) : content;
 }
