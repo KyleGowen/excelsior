@@ -2582,6 +2582,45 @@
       "settingEncodeUrl": true,
       "settingRebuildPath": true,
       "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_production_44_evaluate",
+      "parentId": "fld_excelsior_production_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "POST /api/v1/decks/evaluate",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/decks/evaluate",
+      "description": "Stateless unsaved/Guest draft preview. Public request; no deck or collection writes. Supply only catalog identities and input choices; server resolves metrics. Illegal editable drafts return 200 with legality.valid=false. Unknown identities and unsupported format return 400.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"schemaVersion\": 1,\n  \"draftId\": \"insomnia-preview\",\n  \"revision\": 1,\n  \"cards\": [],\n  \"reserveCharacterId\": null,\n  \"limited\": false,\n  \"format\": \"venture\",\n  \"koCharacterIds\": []\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 44,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
     }
   ]
 }

@@ -67,7 +67,7 @@ describe('DeckWriteService.createDeck — server-owned is_valid', () => {
     expect(result.is_valid).toBe(true);
   });
 
-  it('does not fail deck creation if validation throws', async () => {
+  it('does not report fresh successful creation when validation is unavailable', async () => {
     const created = makeDeck({ is_valid: false });
     const deckBusiness = {
       createDeck: jest.fn().mockResolvedValue(created),
@@ -76,9 +76,8 @@ describe('DeckWriteService.createDeck — server-owned is_valid', () => {
     const deckValidation = { validateDeck: jest.fn().mockRejectedValue(new Error('boom')) };
 
     const service = new DeckWriteService(deckBusiness, deckValidation);
-    const result = await service.createDeck('user-1', 'New Deck', undefined, ['c1']);
-
-    expect(result).toBe(created);
-    expect(deckBusiness.updateDeck).not.toHaveBeenCalled();
+    await expect(service.createDeck('user-1', 'New Deck', undefined, ['c1'])).rejects.toThrow('boom');
+    expect(created.is_valid).toBe(false);
+    expect(deckBusiness.updateDeck).toHaveBeenCalledWith('deck-1', { is_valid: false });
   });
 });

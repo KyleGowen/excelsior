@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "environment": "isolated local M3 Docker database",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "sourceState": "Uncommitted M3; see per-file implementation manifest",
+  "deployedRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1 (M2 only)",
+  "status": "in progress; browser input blocked after disposable Guest cleanup dialog",
+  "gates": {
+    "unit": {
+      "passed": 3803,
+      "skipped": 18
+    },
+    "integration": {
+      "passed": 1014,
+      "failed": 0,
+      "cleanup": "completed"
+    },
+    "soc2": {
+      "passed": 45
+    },
+    "lint": "passed",
+    "backendTypes": "passed",
+    "frontendBuild": "passed",
+    "storybookBuild": "passed",
+    "productionKnipDependenciesDuplicates": "passed"
+  },
+  "browser": {
+    "passedScenarios": 14,
+    "selection": [
+      "Guest Home",
+      "Database empty/result/detail/art",
+      "Guest Collection",
+      "Supporter retired",
+      "owned metrics baseline",
+      "Limited/raw legality",
+      "reserve/KO",
+      "preplacement/save/reload",
+      "rapid unsaved edits",
+      "read-only draw/redraw/export (account)",
+      "controlled network failure draft preservation",
+      "retry same unsaved draft",
+      "Guest unsaved evaluation",
+      "Guest reload non-persistence"
+    ],
+    "blocked": [
+      "Matched Guest read-only rerun after native cleanup dialog",
+      "Mobile 390x844",
+      "Final frozen-source browser replay"
+    ],
+    "failedAttemptsRetained": [
+      "Guest integration synthetic IDs replaced with real local catalog IDs",
+      "One isolated transport failure cleared on bounded retry",
+      "Metric selector was a title, not a label",
+      "KO restore is Un-KO",
+      "First outage restart rewrote Vite configuration and reloaded page; corrected private launcher",
+      "Guest cleanup native dialog blocks CDP and ignores input in other tabs; exact owned Guest fixture removed via API, GET404 confirmed"
+    ]
+  },
+  "requestVolume": "Real React Query hook tests prove one debounced request for rapid changes and abort/stale-revision protection; no browser waterfall collector available",
+  "timing": "API-only old/new contract medians 1.315ms/10.29ms, 10 requests each; not production or strict M1 browser comparison",
+  "comparison": "Database detail identical; Home differs one pixel at established tolerance. Read-only header differs because account adds Favorite; unmatched actor comparison not accepted; matched Guest replay blocked by dialog.",
+  "cleanup": {
+    "applicationRecords": "Owned M3 account/deck retained for later Kyle check. Exact empty disposable Guest deck deleted via local API and absence confirmed. All temporary owned deck edits restored.",
+    "infrastructure": "Primary and unrelated Docker resources preserved. M3 API restored and healthy on8089/UI5176; V365 owned DB15441 retained.",
+    "browser": "Temporary Guest tab dialog needs dismissal; other tab loads/reads but click actions ignored. Pending user input."
+  },
+  "acceptance": "Automated evidence only; NOT yet ready for Kyle verification; M3 has not been accepted/committed/pushed/deployed",
+  "gaps": [
+    "Light theme unavailable",
+    "Real Google OAuth unavailable",
+    "Independent module harness remains M5 future work",
+    "M3 production browser verification deferred until explicit acceptance and Ship",
+    "Retained M2 baselines reused without overwriting; no silent screenshot acceptance"
+  ]
+}

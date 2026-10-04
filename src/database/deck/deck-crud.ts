@@ -829,13 +829,16 @@ export async function getDeckSummaryWithAllCards(
   ctx: DeckRepositoryContext,
   deckId: string
 ): Promise<Deck | undefined> {
+  if (!UUID_REGEX.test(deckId)) return undefined;
   const client = await ctx.pool.connect();
   try {
+    await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
     const deckResult = await client.query(
       'SELECT * FROM decks WHERE id = $1',
       [deckId]
     );
     if (deckResult.rows.length === 0) {
+      await client.query('COMMIT');
       return undefined;
     }
 
@@ -858,8 +861,12 @@ export async function getDeckSummaryWithAllCards(
     }));
 
     const fullDeck = mapDeckRowWithCards(deck, cards);
+    await client.query('COMMIT');
     ctx.cache.set(deckId, { deck: fullDeck, timestamp: Date.now() });
     return fullDeck;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
   } finally {
     client.release();
   }

@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "inputFingerprint": "52008f3cd5eb175f86cad44e57747b98b0a1fbf88ead243fcb051894e4026d6e",
+  "status": "passed",
+  "method": "CUA live browser with controlled owned local API outage",
+  "scenarios": [
+    {
+      "id": "network-failure-keeps-draft",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-recovery-v2/api-unavailable.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-recovery-v2/api-unavailable.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "retry-same-unsaved-draft",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-recovery-v2/api-recovered.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-recovery-v2/api-recovered.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    }
+  ],
+  "counts": {
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "cleanup": {
+    "applicationRecords": "Original 8-card saved fixture restored by reload; unsaved edit discarded",
+    "processes": "Owned API restarted; primary unchanged"
+  },
+  "acceptance": "automated only; Kyle acceptance pending",
+  "gaps": [
+    "Expected HTTP failures during deliberately stopped API; not counted as a zero-error normal smoke"
+  ]
+}

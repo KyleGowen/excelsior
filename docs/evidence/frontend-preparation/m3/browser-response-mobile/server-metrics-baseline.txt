@@ -1,0 +1,79 @@
+- banner:
+  - button "Back to decks":
+  - textbox "Deck name": Milestone 3 Local Fixture
+  - button "Saved" [disabled]:
+    - text: Saved
+  - generic: 8 cards
+  - generic "Deck is not legal. Press and hold to view validation errors.":
+    - button "Limited" [pressed]
+  - button "Unlisted"
+  - 'generic "Threat: 18"':
+    - generic: "18"
+  - region "Character maximums":
+    - generic: Max
+    - 'generic "Character max — Energy: 2"':
+      - 'generic "Energy: 2"':
+        - generic: "2"
+    - 'generic "Character max — Combat: 7"':
+      - 'generic "Combat: 7"':
+        - generic: "7"
+    - 'generic "Character max — Brute Force: 5"':
+      - 'generic "Brute Force: 5"':
+        - generic: "5"
+    - 'generic "Character max — Intelligence: 4"':
+      - 'generic "Intelligence: 4"':
+        - generic: "4"
+  - region "Icon totals":
+    - generic: Total
+    - 'generic "Icon total — Energy: 0"':
+      - 'generic "Energy: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Combat: 5"':
+      - 'generic "Combat: 5"':
+        - generic: "5"
+    - 'generic "Icon total — Brute Force: 0"':
+      - 'generic "Brute Force: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Intelligence: 0"':
+      - 'generic "Intelligence: 0"':
+        - generic: "0"
+  - button "List View":
+    - text: List View
+  - button "Draw Hand":
+    - text: Draw Hand
+  - button "Export":
+    - text: Export
+  - button "Add Cards":
+    - text: Add Cards
+- tablist "Deck card types":
+  - tab "Characters 1" [selected]:
+    - text: Characters
+    - generic: "1"
+  - tab "Special 3":
+    - text: Special
+    - generic: "3"
+  - tab "Power 5":
+    - text: Power
+    - generic: "5"
+- button "Unknown Characters card" [disabled]:
+  - img "Unknown Characters card"
+- button "Select Unknown Characters card as reserve": Select Reserve
+- 'button "KO character: Unknown Characters card"': KO
+- button "Remove Unknown Characters card":
+- status:
+  - generic: Loading...
+- navigation "Primary":
+  - link "Database":
+    - /url: /data
+    - generic: Database
+  - link "Decks":
+    - /url: /users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks
+    - generic: Decks
+  - link "Home":
+    - /url: /home
+    - generic: Home
+  - link "Collection":
+    - /url: /users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/collection
+    - generic: Collection
+  - button "Profile":
+    - generic: Profile

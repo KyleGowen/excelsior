@@ -170,6 +170,8 @@ export interface DeckMetadata {
 }
 
 export interface DeckDetail {
+  evaluation?: import('../../../../src/api/dto/v1/DeckDraftEvaluationDto').DeckDraftEvaluationDto | null;
+  evaluationError?: 'DRAFT_EVALUATION_UNAVAILABLE';
   metadata: DeckMetadata;
   cards: DeckCardEntry[];
 }

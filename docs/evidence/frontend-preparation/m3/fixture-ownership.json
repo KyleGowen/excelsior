@@ -1,0 +1,30 @@
+{
+  "ownedFixture": true,
+  "userId": "764cf0a4-35ef-4e5a-8170-ee56cadc9c63",
+  "deckId": "b4ec3a04-ab17-4a33-b813-df35f8195d75",
+  "deckName": "Milestone 3 Local Fixture",
+  "deckUrl": "/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75",
+  "cards": [
+    {
+      "cardType": "character",
+      "cardId": "c90e4d06-f4d6-40ab-803c-662eac86ade3",
+      "quantity": 1,
+      "exclude_from_draw": false
+    },
+    {
+      "cardType": "power",
+      "cardId": "f030416f-b95e-4b32-aef4-6d4541ad2146",
+      "quantity": 5,
+      "exclude_from_draw": false
+    },
+    {
+      "cardType": "special",
+      "cardId": "ec16c169-4ee0-4e7f-aac0-a653cf7fbf6c",
+      "quantity": 3,
+      "exclude_from_draw": false
+    }
+  ],
+  "environment": "local",
+  "databaseOwner": "excelsior-frontend-preparation-m3",
+  "cleanup": "Retain only owned M3 fixture until Kyle spot check; remove account and its decks by IDs, then stop only M3 processes and remove M3 database. Copied M2 fixtures are local baseline records and retained within this disposable container."
+}

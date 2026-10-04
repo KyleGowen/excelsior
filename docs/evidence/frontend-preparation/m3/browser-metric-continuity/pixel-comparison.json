@@ -1,0 +1,38 @@
+[
+  {
+    "scenario": "desktop-pending-and-replacement",
+    "pending": "pending-first-edit.jpg",
+    "region": "stats panel",
+    "changedPixelsAboveTolerance16": 0,
+    "totalPixels": 58784,
+    "fraction": 0.0,
+    "geometryDelta": 0
+  },
+  {
+    "scenario": "desktop-pending-and-replacement",
+    "pending": "pending-second-edit.jpg",
+    "region": "stats panel",
+    "changedPixelsAboveTolerance16": 0,
+    "totalPixels": 58784,
+    "fraction": 0.0,
+    "geometryDelta": 0
+  },
+  {
+    "scenario": "mobile-pending-and-replacement",
+    "pending": "pending-first-edit.jpg",
+    "region": "stats panel",
+    "changedPixelsAboveTolerance16": 0,
+    "totalPixels": 31110,
+    "fraction": 0.0,
+    "geometryDelta": 0
+  },
+  {
+    "scenario": "mobile-pending-and-replacement",
+    "pending": "pending-second-edit.jpg",
+    "region": "stats panel",
+    "changedPixelsAboveTolerance16": 0,
+    "totalPixels": 31110,
+    "fraction": 0.0,
+    "geometryDelta": 0
+  }
+]

@@ -250,3 +250,5 @@ All elevated operations must live under `/api/v1/admin/...` (no client “admin�
 **Docs / tooling:** [API_V1.md](API_V1.md), [API_DOCUMENTATION.md](API_DOCUMENTATION.md), Postman “Card catalog” folder description, [`public/js/catalog-legacy-fetch-rewrite.js`](public/js/catalog-legacy-fetch-rewrite.js) (`credentials: 'include'` + one-shot **401** → `showLoginModal`), [`public/js/catalog-v1-envelope.js`](public/js/catalog-v1-envelope.js). Integration helper: [`tests/integration/helpers/integrationSessionAuth.ts`](tests/integration/helpers/integrationSessionAuth.ts).
 
 **Optional later:** Per-IP or CDN rate limits for catalog traffic; token denylist for JWT.
+
+- [x] Milestone 3: stateless authoritative draft display under `/api/v1/decks/evaluate`; existing authenticated validity-only route retained for compatibility with distinct contract.

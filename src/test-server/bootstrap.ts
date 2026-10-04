@@ -1,3 +1,4 @@
+import { DeckDraftEvaluationService } from '../api/services/deckDraftEvaluationService';
 /**
  * Test app bootstrap: builds Express app with test deps and shared route registration.
  * Reuses registerRoutes from main app so test server does not duplicate route handlers.
@@ -69,6 +70,7 @@ const userRepository = dataSource.getUserRepository();
 const deckRepository = dataSource.getDeckRepository();
 const cardRepository = dataSource.getCardRepository();
 const deckValidationService = new DeckValidationService(cardRepository);
+const deckDraftEvaluationService = new DeckDraftEvaluationService(deckValidationService);
 const deckBusinessService = new DeckService(deckRepository);
 const newUserSampleDeckService = new NewUserSampleDeckService(userRepository, deckRepository, deckValidationService);
 const sessionRepository = createSessionRepositoryFromDataSource(dataSource);
@@ -84,8 +86,8 @@ const dbvSupportService = new DbvSupportService(() => dataSource.getPool());
 const recentUpdatesService = new RecentUpdatesService(() => dataSource.getPool());
 const deckListService = new DeckListService(deckRepository);
 const deckStatsService = new DeckStatsService(deckRepository);
-const deckWriteService = new DeckWriteService(deckBusinessService, deckValidationService);
-const deckDetailService = new DeckDetailService(deckRepository);
+const deckWriteService = new DeckWriteService(deckBusinessService, deckValidationService, deckDraftEvaluationService, deckRepository);
+const deckDetailService = new DeckDetailService(deckRepository, deckDraftEvaluationService);
 const deckCardsService = new DeckCardsService(deckRepository, {
   validateCardAddition,
   checkIfCardIsCataclysm,
@@ -93,16 +95,18 @@ const deckCardsService = new DeckCardsService(deckRepository, {
   checkIfCardIsAmbush,
   checkIfCardIsFortification,
   checkIfCardIsOnePerDeck,
-  validateDeck: (cards) => deckValidationService.validateDeck(cards)
-});
+  validateDeck: (cards) => deckDraftEvaluationService.validateForPersistence(cards)
+}, deckDraftEvaluationService);
 const deckUIPreferencesService = new DeckUIPreferencesService(deckRepository);
 
 const guestDeckService = new GuestDeckService({
+  evaluator: deckDraftEvaluationService,
   guestDeckPersistence,
   deckRepository,
   validateCardAddition,
   checkIfCardIsOnePerDeck,
-  checkIfCardIsCataclysm
+  checkIfCardIsCataclysm,
+  validateDeck: (cards) => deckDraftEvaluationService.validateForPersistence(cards)
 });
 
 const awsCostLedgerRepository = new AwsCostLedgerRepository();
@@ -243,6 +247,7 @@ registerApiV1Routes(app, {
   deckListService,
   deckStatsService,
   deckWriteService,
+  deckDraftEvaluationService,
   deckDetailService,
   deckCardsService,
   deckUIPreferencesService,

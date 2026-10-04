@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "kind": "gate-batch",
+  "environment": "local",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "fingerprint": "bef880d64399de85d68c859d912213423c8e65f334de26494010f71d04646ca3",
+  "status": "failed",
+  "gates": [
+    {
+      "name": "unit",
+      "command": [
+        "npm",
+        "run",
+        "test:unit",
+        "--",
+        "--maxWorkers=2"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 328,
+        "tests": 3828,
+        "passed": 3810,
+        "failed": 0,
+        "skipped": 18,
+        "todo": 0
+      },
+      "executedTests": 3810,
+      "reused": false,
+      "durationSeconds": 16.678,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-test-retry/unit.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "integration",
+      "command": [
+        "bash",
+        "scripts/ship-conditional-test.sh",
+        "integration"
+      ],
+      "status": "failed",
+      "exitCode": 1,
+      "timedOut": false,
+      "counts": {
+        "suites": 114,
+        "tests": 1016,
+        "passed": 1014,
+        "failed": 2,
+        "skipped": 0,
+        "todo": 0
+      },
+      "executedTests": 1016,
+      "reused": false,
+      "durationSeconds": 96.004,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-test-retry/integration.log",
+        "receipt": "/var/folders/lb/xr02_l594rlg4bv03hlppd840000gp/T/excelsior-test-gate-lrr8lc/integration-1791131962551-54909.json"
+      },
+      "gaps": [
+        "Test execution or reusable evidence not confirmed"
+      ]
+    }
+  ],
+  "selected": [
+    "unit",
+    "integration"
+  ],
+  "gaps": [
+    "Gate coverage and release acceptance require main-agent review"
+  ],
+  "cleanup": "no application fixtures created by this wrapper"
+}

@@ -1,0 +1,172 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "deployedRevision": null,
+  "inputFingerprint": "52008f3cd5eb175f86cad44e57747b98b0a1fbf88ead243fcb051894e4026d6e",
+  "selectedScenarios": [
+    "home-guest",
+    "database-search-detail",
+    "collection-guest-read",
+    "supporter-retired"
+  ],
+  "capturePolicy": "all",
+  "comparison": false,
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5176",
+    "apiUrl": "http://localhost:8089",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m3/cursored",
+    "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+    "sourceTreeFingerprint": "52008f3cd5eb175f86cad44e57747b98b0a1fbf88ead243fcb051894e4026d6e",
+    "expectedRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m3",
+    "verified": true,
+    "observedAt": "2026-10-04T04:46:11.805Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "actor": "guest",
+  "theme": "fixed dark",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "home-guest",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-smoke/home-guest-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-smoke/home-guest-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5176/home"
+        }
+      ],
+      "observed": {
+        "guestEntry": true,
+        "contextualAuthControls": true,
+        "actualOAuth": "not executed"
+      }
+    },
+    {
+      "id": "database-search-detail",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-smoke/database-search-detail-empty.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-smoke/database-search-detail-empty.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5176/data"
+        },
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-smoke/database-search-detail-detail.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-smoke/database-search-detail-detail.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5176/data"
+        },
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-smoke/database-search-detail-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-smoke/database-search-detail-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5176/data"
+        }
+      ],
+      "observed": {
+        "emptySearch": "passed",
+        "cardName": "Lancelot",
+        "artwork": {
+          "complete": true,
+          "naturalHeight": 744,
+          "naturalWidth": 1039
+        },
+        "detailsClosed": true
+      }
+    },
+    {
+      "id": "collection-guest-read",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-smoke/collection-guest-read-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-smoke/collection-guest-read-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5176/users/00000000-0000-0000-0000-000000000001/collection"
+        }
+      ],
+      "observed": {
+        "storage": "browser-local",
+        "emptyExpected": true,
+        "quantitiesChanged": false
+      }
+    },
+    {
+      "id": "supporter-retired",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-smoke/supporter-retired-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-smoke/supporter-retired-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5176/home"
+        }
+      ],
+      "observed": {
+        "redirectedHome": true,
+        "supporterVisible": false,
+        "retiredApi": "separate API check required"
+      }
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only scenarios",
+    "browser": "returned Home; close this test-owned tab or mark handoff explicitly"
+  },
+  "acceptance": "automated evidence only; Kyle acceptance not inferred",
+  "gaps": [
+    "light theme unavailable in M1",
+    "Google OAuth not exercised",
+    "independent module harness unavailable in M1"
+  ],
+  "browserErrorCount": 0,
+  "status": "passed",
+  "durationSeconds": 5.28,
+  "counts": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  }
+}

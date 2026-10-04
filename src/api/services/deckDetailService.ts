@@ -1,4 +1,5 @@
 import type { Deck, DeckCard } from '../../types';
+import type { DeckDraftEvaluationService } from './deckDraftEvaluationService';
 import { transformDeckAfterMetadataUpdate, transformDeckDetail } from '../deckTransform';
 
 export interface DeckDetailRepository {
@@ -24,14 +25,14 @@ export function canViewDeck(): boolean {
 }
 
 export class DeckDetailService {
-  constructor(private readonly deckRepository: DeckDetailRepository) {}
+  constructor(private readonly deckRepository: DeckDetailRepository, private readonly evaluator?: Pick<DeckDraftEvaluationService, 'attach'>) {}
 
   async getDeckDetail(deckId: string, viewerUserId: string): Promise<DeckDetailView | null> {
-    const deck = await this.deckRepository.getDeckById(deckId);
+    const deck = await this.deckRepository.getDeckSummaryWithAllCards(deckId);
     if (!deck || !canViewDeck()) {
       return null;
     }
-    return transformDeckDetail(deck, viewerUserId);
+    return this.evaluator ? this.evaluator.attach(transformDeckDetail(deck, viewerUserId)) : transformDeckDetail(deck, viewerUserId);
   }
 
   async getDeckFullDetail(deckId: string, viewerUserId: string): Promise<DeckDetailView | null> {
@@ -39,7 +40,7 @@ export class DeckDetailService {
     if (!deck || !canViewDeck()) {
       return null;
     }
-    return transformDeckDetail(deck, viewerUserId);
+    return this.evaluator ? this.evaluator.attach(transformDeckDetail(deck, viewerUserId)) : transformDeckDetail(deck, viewerUserId);
   }
 
   /**
@@ -74,7 +75,12 @@ export class DeckDetailService {
     if (!updatedDeck) {
       return { ok: false, kind: 'not_found', message: 'Deck not found' };
     }
-    return { ok: true, data: transformDeckAfterMetadataUpdate(updatedDeck, ownerUserId) };
+    // UPDATE returns only the deck row. Read one fresh complete response snapshot,
+    // rather than treating the absent cards as an empty deck.
+    const responseDeck = await this.deckRepository.getDeckSummaryWithAllCards(deckId);
+    if (!responseDeck) return { ok: false, kind: 'not_found', message: 'Deck not found' };
+    const view = transformDeckAfterMetadataUpdate(responseDeck, ownerUserId);
+    return { ok: true, data: this.evaluator ? await this.evaluator.attach(view) : view };
   }
 
   async deleteDeckIfOwner(

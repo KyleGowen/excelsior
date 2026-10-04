@@ -397,6 +397,38 @@ components:
     Deck:
       type: object
       additionalProperties: true
+      description: >-
+        Single-deck loads and saved/Guest creation/edit responses include evaluation
+        for the exact returned cards/settings. List previews and UI-preference-only
+        updates omit evaluation. Metadata updates return the actual cards.
+      properties:
+        evaluation:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/DeckDraftEvaluation'
+        evaluationError:
+          type: string
+          enum: [DRAFT_EVALUATION_UNAVAILABLE]
+          description: Readable deck retained, with unchecked stats; no fresh legality claim.
+    DeckDraftEvaluation:
+      type: object
+      additionalProperties: true
+      required: [schemaVersion, draftId, revision, inputKey, versions, policy, legality, threat, grids, icons, counts, capabilities]
+      properties:
+        schemaVersion: {type: integer, enum: [1]}
+        draftId: {type: string}
+        revision: {type: integer, minimum: 0}
+        inputKey:
+          type: string
+          description: Serialized normalized complete inputs; request revision is excluded. Attached responses use revision 0 and empty KO inputs.
+        versions: {type: object, additionalProperties: true}
+        policy: {type: object, additionalProperties: true}
+        legality: {type: object, additionalProperties: true}
+        threat: {type: object, additionalProperties: true}
+        grids: {type: object, additionalProperties: true}
+        icons: {type: object, additionalProperties: true}
+        counts: {type: object, additionalProperties: true}
+        capabilities: {type: object, additionalProperties: true}
     PreconstructedDeckGroup:
       type: object
       required: [setCode, setName, decks, featuredUpgradeRecommendations]
@@ -443,6 +475,51 @@ components:
         catalog ETag, the server returns `304 Not Modified`.
 
 paths:
+  /decks/evaluate:
+    post:
+      summary: Evaluate an unsaved typed deck draft without persistence
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [schemaVersion, draftId, revision, cards]
+              additionalProperties: false
+              properties:
+                schemaVersion: {type: integer, enum: [1]}
+                draftId: {type: string, minLength: 1, maxLength: 100}
+                revision: {type: integer, minimum: 0}
+                cards:
+                  type: array
+                  maxItems: 100
+                  items:
+                    type: object
+                    additionalProperties: false
+                    required: [type, cardId, quantity]
+                    properties:
+                      type: {type: string}
+                      cardId: {type: string, minLength: 1, maxLength: 100}
+                      quantity: {type: integer, minimum: 1, maximum: 100}
+                      exclude_from_draw: {type: boolean}
+                reserveCharacterId: {type: string, nullable: true}
+                limited: {type: boolean, default: false}
+                format: {type: string, enum: [venture], default: venture}
+                koCharacterIds: {type: array, maxItems: 100, items: {type: string}}
+      responses:
+        '200':
+          description: V1 envelope with exact inputKey and echoed revision; invalid legality is an evaluated result. No persistence or result cache.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DeckDraftEvaluation'
+        '400': {description: VALIDATION_ERROR or DRAFT_STRUCTURE_INVALID; no persistence}
+        '429': {description: RATE_LIMITED}
+        '503': {description: DRAFT_EVALUATION_UNAVAILABLE; no fresh legality result}
   /api/v1/service-auth/token:
     post:
       summary: Issue an optional confidential application token

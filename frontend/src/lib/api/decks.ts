@@ -1,9 +1,10 @@
+import { evaluationInputKey } from '../../../../src/services/deck-evaluation/draftInput';
 /**
  * Deck APIs. Logged-in users use `/api/v1/decks/*`; GUEST sessions use the
  * in-memory `/api/v1/guest/decks/*` endpoints. Guest session deck ids are
  * prefixed `guest_`, which lets us route reads correctly even for shared links.
  */
-import { api, ApiError } from './client';
+import { api, apiRequest, ApiError } from './client';
 import type {
   DeckListItem,
   DeckDetail,
@@ -165,4 +166,17 @@ export async function validateDeck(cards: DeckCardEntry[]): Promise<DeckValidati
     }
     throw err;
   }
+}
+
+// Public stateless evaluation: no deck ID lookup or persistence. The server resolves all card values.
+export type { DeckDraftEvaluationDto as DraftEvaluation } from '../../../../src/api/dto/v1/DeckDraftEvaluationDto';
+export interface DraftEvaluationInput {
+  schemaVersion: 1; draftId: string; revision: number;
+  cards: Array<{ type: string; cardId: string; quantity: number; exclude_from_draw?: boolean }>;
+  reserveCharacterId: string | null; limited: boolean; format: 'venture'; koCharacterIds: string[];
+}
+export async function evaluateDraft(input: DraftEvaluationInput, signal?: AbortSignal): Promise<import('../../../../src/api/dto/v1/DeckDraftEvaluationDto').DeckDraftEvaluationDto> {
+  const result = await apiRequest<import('../../../../src/api/dto/v1/DeckDraftEvaluationDto').DeckDraftEvaluationDto>('/api/v1/decks/evaluate', { method: 'POST', body: input, ...(signal ? { signal } : {}) });
+  if (result.inputKey !== evaluationInputKey(input) || result.draftId !== input.draftId || result.revision !== input.revision) throw new Error('Evaluation revision does not match the current draft');
+  return result;
 }

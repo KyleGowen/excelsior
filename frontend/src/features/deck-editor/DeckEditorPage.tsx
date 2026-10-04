@@ -6,7 +6,6 @@ import {
   fetchDeckFull,
   replaceDeckCards,
   updateDeckMeta,
-  validateDeck,
   type DeckCardInput,
   type UpdateDeckMetaInput,
 } from '../../lib/api/decks';
@@ -15,8 +14,9 @@ import { fetchFavoriteDecks } from '../../lib/api/favorites';
 import { useFavoriteToggle } from '../../lib/decks/useFavoriteToggle';
 import { favoritesQueryKey } from '../../lib/decks/favoritesQueryKey';
 import { clonePreloadedGuestDeck, guestNeedsCloneOnOpen } from '../../lib/decks/guestCloneOnOpen';
-import { calculateDeckTotalThreat, formatThreatTooltip } from '../../lib/decks/deckThreat';
-import { calculateDeckIconTotals } from '../../lib/decks/iconTotals';
+import { formatThreatTooltip } from '../../lib/decks/deckThreat';
+import { evaluationInputKey } from '../../../../src/services/deck-evaluation/draftInput';
+import { useDraftEvaluation } from '../../lib/decks/useDraftEvaluation';
 import {
   characterDeckEntries,
   computeReserveRowState,
@@ -32,7 +32,6 @@ import { collectPrintingsForCard } from '../../lib/catalog/cardPrintings';
 import {
   CATALOG_TYPE_BY_SLUG,
   cardDisplayName,
-  cardStats,
   isLandscapeCatalogType,
 } from '../../lib/catalog/catalogTypeMap';
 import { deckEditorCatalogTypes } from '../../lib/decks/deckEditorSectionOrder';
@@ -49,7 +48,6 @@ import { CardDetailPanel } from '../../components/CardDetailPanel';
 import { StatIconBadge } from '../../components/StatIconBadge';
 import { deckLegalityBadgeFromValidity, legalityBadgeClass } from '../../components/DeckTile/deckTileLegality';
 import { LegalityErrorsPopover } from '../../components/LegalityErrorsPopover';
-import { normalizeValidationErrors } from '../../lib/decks/validationErrors';
 import { MobileBottomNav } from '../../components/MobileBottomNav';
 import { LoadingState } from '../../components/LoadingState';
 import { EmptyState } from '../../components/EmptyState';
@@ -75,11 +73,10 @@ import {
 } from '../../components/icons';
 import {
   buildKoDimmingContext,
-  calculateActiveTeamStats,
   shouldDimDeckCard,
   toggleKoCharacterId,
 } from '../../lib/decks/simulateKo';
-import { canDrawHand, countCardsInDeck, drawRandomHand, sortDrawnHandCards } from '../../lib/decks/drawHand';
+import { drawRandomHand, sortDrawnHandCards } from '../../lib/decks/drawHand';
 import {
   analyzeDrawnHand,
   canAccessDrawHandAnalysis,
@@ -120,7 +117,6 @@ import { clearProgressiveImageSession } from '../../lib/images/progressiveImageL
 import { resolveMobileDeckTypeTab, stepCyclicalIndex } from '../../lib/layout/cyclicalIndex';
 import { useHorizontalSwipe } from '../../lib/layout/useHorizontalSwipe';
 import { getDeckEditorReturnTo, getDeckEditorBackAriaLabel } from '../../lib/navigation/deckEditorReturn';
-import { effectiveTeamCharacterStats } from '../../lib/deck-usability';
 import { deckEditorCardImageLoadingProps } from './deckEditorCardImage';
 import {
   characterOrderPosition,
@@ -340,11 +336,6 @@ export default function DeckEditorPage() {
     type: CatalogType;
     instanceId: string;
   } | null>(null);
-  const [validity, setValidity] = useState<{
-    valid: boolean;
-    message?: string;
-    validationErrors?: string[];
-  } | null>(null);
   const [reserveCharacterId, setReserveCharacterId] = useState<string | null>(null);
   const [koCharacterIds, setKoCharacterIds] = useState<Set<string>>(() => new Set());
   const [drawHandOpen, setDrawHandOpen] = useState(false);
@@ -406,25 +397,19 @@ export default function DeckEditorPage() {
     }
   }, [deck]);
 
-  // Live validation (debounced) so legality reflects edits.
-  useEffect(() => {
-    if (cards.length === 0) {
-      setValidity(null);
-      return;
-    }
-    const t = setTimeout(() => {
-      validateDeck(cards)
-        .then((r) =>
-          setValidity({
-            valid: r.valid,
-            message: r.message,
-            validationErrors: r.validationErrors,
-          }),
-        )
-        .catch(() => setValidity(null));
-    }, 1000);
-    return () => clearTimeout(t);
-  }, [cards]);
+  const evaluationInput = useMemo(() => ({
+    schemaVersion: 1 as const, draftId: deckId,
+    cards: aggregateInstancesForSave(cards).map(c => ({ type: c.type, cardId: c.cardId, quantity: c.quantity, exclude_from_draw: c.exclude_from_draw === true })),
+    reserveCharacterId, limited: deck?.metadata.is_limited ?? false,
+    format: 'venture' as const, koCharacterIds: [...koCharacterIds].sort(),
+  }), [deckId, cards, reserveCharacterId, deck?.metadata.is_limited, koCharacterIds]);
+  const evaluation = useDraftEvaluation(evaluationInput, Boolean(deck && loadedRef.current), dirty ? undefined : deck?.evaluation);
+  // A save may finish after newer local edits. Never mark those edits as saved.
+  const currentSaveKey = JSON.stringify({ input: evaluationInputKey(evaluationInput), name, cards });
+  const latestSaveKey = useRef(currentSaveKey);
+  latestSaveKey.current = currentSaveKey;
+  const metrics = evaluation.result;
+  const displayMetrics = evaluation.displayResult;
 
   // Cards loaded from /full carry only { type, cardId, quantity } — no name or
   // image. Resolve those from the catalog (by deck card type → catalog slug) so
@@ -468,16 +453,6 @@ export default function DeckEditorPage() {
     [setsQuery.data],
   );
 
-  const hasCharactersInDeckCatalog = deckCatalogTypes.some(
-    (t) => catalogSlugForDeckType(t) === 'characters',
-  );
-  const charactersQuery = useQuery({
-    queryKey: ['catalog', 'characters'],
-    queryFn: () => fetchCatalog('characters'),
-    enabled: !hasCharactersInDeckCatalog,
-    staleTime: 30 * 60 * 1000,
-  });
-
   const catalogBySlug = useMemo(() => {
     const map = new Map<CatalogType, CatalogCard[]>();
     catalogQueries.forEach((q, i) => {
@@ -488,7 +463,7 @@ export default function DeckEditorPage() {
     return map;
   }, [catalogQueries, deckCatalogTypes]);
 
-  const totalCards = countCardsInDeck(cards);
+  const totalCards = displayMetrics?.counts.drawPile ?? 0;
 
   const koCtx = useMemo(
     () =>
@@ -503,7 +478,9 @@ export default function DeckEditorPage() {
     [cards, cardIndex, koCharacterIds],
   );
 
-  const canDraw = useMemo(() => canDrawHand(cards), [cards]);
+  const canDraw = metrics?.capabilities.drawHand ?? false;
+  // Keep the settled button appearance while its current eligibility is checked.
+  const keepDrawAppearance = evaluation.pending && displayMetrics?.capabilities.drawHand === true;
   const drawHandAnalysis = useMemo(
     () =>
       canAccessDrawHandAnalysis(user?.role)
@@ -513,64 +490,17 @@ export default function DeckEditorPage() {
   );
 
   useEffect(() => {
-    if (!canDraw && drawHandOpen) {
+    if (metrics && !canDraw && drawHandOpen) {
       setDrawHandOpen(false);
       setDrawnCards([]);
     }
-  }, [canDraw, drawHandOpen]);
+  }, [metrics, canDraw, drawHandOpen]);
 
-  const allCharactersCatalog = catalogBySlug.get('characters') ?? charactersQuery.data ?? [];
-
-  const maxStats = useMemo(() => {
-    if (koCtx) {
-      return calculateActiveTeamStats(koCtx);
-    }
-    const statById = new Map<string, { name: string; stats: NonNullable<ReturnType<typeof cardStats>> }>();
-    allCharactersCatalog.forEach((c) => {
-      const s = cardStats(c);
-      if (s) statById.set(c.id, { name: String(c.name ?? 'Unknown'), stats: s });
-    });
-    const chars = cards.filter((c) => c.type === 'character');
-    const effectiveCharacterStats = effectiveTeamCharacterStats(
-      chars.flatMap((c) => {
-        const resolved = statById.get(c.cardId);
-        if (!resolved) return [];
-        return [{
-          name: resolved.name,
-          energy: resolved.stats.energy,
-          combat: resolved.stats.combat,
-          brute_force: resolved.stats.bruteForce,
-          intelligence: resolved.stats.intelligence,
-        }];
-      }),
-    );
-    const acc = { energy: 0, combat: 0, bruteForce: 0, intelligence: 0 };
-    effectiveCharacterStats.forEach((stats) => {
-      acc.energy = Math.max(acc.energy, stats.energy);
-      acc.combat = Math.max(acc.combat, stats.combat);
-      acc.bruteForce = Math.max(acc.bruteForce, stats.brute_force);
-      acc.intelligence = Math.max(acc.intelligence, stats.intelligence);
-    });
-    return acc;
-  }, [cards, allCharactersCatalog, koCtx]);
-
-  const iconTotals = useMemo(
-    () =>
-      calculateDeckIconTotals(cards, (type, cardId) =>
-        cardIndex.get(`${type}:${cardId}`),
-      ),
-    [cards, cardIndex],
-  );
-
+  const emptyGrid = { energy: 0, combat: 0, bruteForce: 0, intelligence: 0 };
+  const maxStats = displayMetrics?.grids.editorMaximums ?? emptyGrid;
+  const iconTotals = displayMetrics?.icons ?? emptyGrid;
+  const totalThreat = displayMetrics?.threat.editor ?? 0;
   const characterEntries = useMemo(() => characterDeckEntries(cards), [cards]);
-
-  const totalThreat = useMemo(
-    () =>
-      calculateDeckTotalThreat(cards, reserveCharacterId, (type, cardId) =>
-        cardIndex.get(`${type}:${cardId}`),
-      ),
-    [cards, reserveCharacterId, cardIndex],
-  );
 
   const grouped = useMemo(() => {
     const map = new Map<DeckCardType, DeckCardEntry[]>();
@@ -781,6 +711,7 @@ export default function DeckEditorPage() {
       closeDrawHand();
       return;
     }
+    if (!canDraw) return;
     setDrawnCards(sortDrawnHandCards(drawRandomHand(cards), cardIndex));
     setDrawHandOpen(true);
   };
@@ -794,6 +725,7 @@ export default function DeckEditorPage() {
   };
 
   const handleDrawHandRedraw = () => {
+    if (!canDraw) return;
     setDrawnCards(sortDrawnHandCards(drawRandomHand(cards), cardIndex));
   };
 
@@ -945,6 +877,7 @@ export default function DeckEditorPage() {
 
   const handleSave = async () => {
     if (!isOwner || saving) return;
+    const savingKey = currentSaveKey;
     setSaving(true);
     setSaveMsg(null);
     try {
@@ -972,6 +905,7 @@ export default function DeckEditorPage() {
         const base = prev ?? updatedCards;
         return {
           ...base,
+          evaluation: updatedCards.evaluation ?? null,
           cards: updatedCards.cards ?? cards,
           metadata: {
             ...base.metadata,
@@ -980,13 +914,13 @@ export default function DeckEditorPage() {
           },
         };
       });
-      setDirty(false);
-      setSaveMsg('Saved');
+      const unchanged = latestSaveKey.current === savingKey;
+      if (unchanged) setDirty(false);
+      setSaveMsg(unchanged ? 'Saved' : 'Saved; newer edits pending');
       setTimeout(() => setSaveMsg(null), 2500);
       // Card changes recompute decks.is_valid server-side; refresh the deck lists
       // (My Decks, community feed, favorites, tournament) so tile legality matches.
       void queryClient.invalidateQueries({ queryKey: ['decks', 'mine', user?.id] });
-      void queryClient.invalidateQueries({ queryKey: ['deck', deckId] });
     } catch (err) {
       setSaveMsg((err as Error)?.message || 'Save failed');
     } finally {
@@ -1004,6 +938,7 @@ export default function DeckEditorPage() {
         const base = prev ?? updated;
         return {
           ...base,
+          evaluation: updated.evaluation ?? null,
           metadata: { ...base.metadata, is_private: updated.metadata.is_private ?? nextPrivate },
         };
       });
@@ -1024,12 +959,12 @@ export default function DeckEditorPage() {
         const base = prev ?? updated;
         return {
           ...base,
+          evaluation: updated.evaluation ?? null,
           metadata: { ...base.metadata, is_limited: updated.metadata.is_limited ?? nextLimited },
         };
       });
       // Refresh deck lists so tile chips reflect Limited everywhere.
       void queryClient.invalidateQueries({ queryKey: ['decks', 'mine', user?.id] });
-      void queryClient.invalidateQueries({ queryKey: ['deck', deckId] });
     } catch {
       /* leave state unchanged on failure */
     } finally {
@@ -1082,15 +1017,12 @@ export default function DeckEditorPage() {
     );
   }
 
-  // Single source of truth for the badge: live validate result when available
-  // (now correct for invalid decks), else the persisted server-owned is_valid.
-  // The Limited toggle wins via the shared helper so the editor matches tiles.
-  const liveValid = validity?.valid ?? (deck.metadata.is_valid ?? false);
-  const legalityBadgeInfo = deckLegalityBadgeFromValidity(deck.metadata.is_limited, liveValid);
-  const legalityErrors =
-    legalityBadgeInfo.variant === 'not-legal'
-      ? normalizeValidationErrors(validity?.validationErrors, validity?.message)
-      : [];
+  // Retain the last checked badge as presentation; current results still gate actions.
+  const displayedValid = displayMetrics?.legality.rawValid ?? false;
+  const legalityBadgeInfo = deckLegalityBadgeFromValidity(deck.metadata.is_limited, displayedValid);
+  const legalityErrors = displayMetrics?.legality.reasons.map(reason => reason.message) ?? [];
+  const legalityLabel = evaluation.error ? 'Unchecked' : displayMetrics ? legalityBadgeInfo.label : 'Checking…';
+  const legalityUpdating = evaluation.pending && Boolean(displayMetrics);
   const showMobileNav = isMobile && !immersiveOpen;
   const showMobileTypeTabs =
     isMobile && deckViewMode === 'card' && cards.length > 0 && deckTypeTabs.length > 1;
@@ -1150,7 +1082,7 @@ export default function DeckEditorPage() {
               </div>
 
               <div className="deck-editor__meta">
-                <span className="deck-editor__chip">{totalCards} cards</span>
+                <span className="deck-editor__chip">{displayMetrics ? `${totalCards} cards` : evaluation.error ? 'Evaluation unavailable' : 'Evaluating…'}</span>
                 <LegalityErrorsPopover errors={legalityErrors} pressAndHold={isMobile}>
                   {isOwner ? (
                     <button
@@ -1159,17 +1091,19 @@ export default function DeckEditorPage() {
                       onClick={handleToggleLimited}
                       disabled={limitedBusy}
                       aria-pressed={legalityBadgeInfo.variant === 'limited'}
+                      aria-busy={legalityUpdating}
                       title={
-                        legalityBadgeInfo.variant === 'limited'
+                        legalityUpdating ? 'Last evaluated legality; updating this deck. Click to toggle Limited.' : legalityBadgeInfo.variant === 'limited'
                           ? 'Limited - legality checks are skipped. Click to re-enable legality.'
                           : 'Click to mark this deck Limited (skips legality validation).'
                       }
                     >
-                      {legalityBadgeInfo.label}
+                      {legalityLabel}
                     </button>
                   ) : (
-                    <span className={`badge ${legalityBadgeClass(legalityBadgeInfo.variant)}`}>
-                      {legalityBadgeInfo.label}
+                    <span className={`badge ${legalityBadgeClass(legalityBadgeInfo.variant)}`} aria-busy={legalityUpdating}
+                      title={legalityUpdating ? 'Last evaluated legality; updating this deck.' : undefined}>
+                      {legalityLabel}
                     </span>
                   )}
                 </LegalityErrorsPopover>
@@ -1195,16 +1129,20 @@ export default function DeckEditorPage() {
                     {(deck.metadata.is_private ?? true) ? 'Unlisted' : 'Public'}
                   </span>
                 )}
-                {isMobile ? <DeckThreatStat totalThreat={totalThreat} /> : null}
+                {isMobile && displayMetrics ? <DeckThreatStat totalThreat={totalThreat} /> : null}
               </div>
             </div>
 
-            <DeckStatsPanel
+            {displayMetrics ? <DeckStatsPanel
               maxStats={maxStats}
               iconTotals={iconTotals}
               totalThreat={totalThreat}
               showThreatInPanel={!isMobile}
-            />
+            /> : <div className="deck-editor__stats-panel" role="status">{evaluation.error ? 'Evaluation unavailable.' : 'Evaluating deck…'}</div>}
+            {evaluation.error ? <div className="deck-editor__evaluation-error" role="status">
+              Evaluation unavailable. {displayMetrics ? 'Showing previous totals. ' : ''}Your draft is preserved.
+              <button type="button" className="btn btn-ghost" onClick={evaluation.retry}>Retry evaluation</button>
+            </div> : null}
 
             <div className="deck-editor__actions">
               <button
@@ -1225,10 +1163,11 @@ export default function DeckEditorPage() {
               </button>
               <button
                 type="button"
-                className={`btn btn-ghost${drawHandOpen ? ' is-active' : ''}`}
+                className={`btn btn-ghost deck-editor__draw-hand${drawHandOpen ? ' is-active' : ''}${keepDrawAppearance ? ' deck-editor__draw-hand--refreshing' : ''}`}
                 disabled={!canDraw}
+                aria-busy={keepDrawAppearance}
                 title={
-                  canDraw
+                  keepDrawAppearance ? 'Updating this deck before drawing a hand.' : canDraw
                     ? 'Draw a random 8-card hand'
                     : 'Deck must contain at least 8 playable cards.'
                 }

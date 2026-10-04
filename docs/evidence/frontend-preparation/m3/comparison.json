@@ -1,0 +1,44 @@
+{
+  "method": "Same-size JPEG pixel comparison; visual review required for any change",
+  "results": [
+    {
+      "case": "readonly-export",
+      "baseline": "docs/evidence/frontend-preparation/m2/browser-readonly/deck-readonly-draw-export-result.jpg",
+      "after": "docs/evidence/frontend-preparation/m3/browser-readonly/deck-readonly-draw-export-result.jpg",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "channelTolerance": 16,
+      "changedPixels": 2354,
+      "changedPercent": 0.25543,
+      "acceptedAutomatically": false
+    },
+    {
+      "case": "database-detail",
+      "baseline": "docs/evidence/frontend-preparation/m2/browser-frozen/database-search-detail-detail.jpg",
+      "after": "docs/evidence/frontend-preparation/m3/browser-smoke/database-search-detail-detail.jpg",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "channelTolerance": 16,
+      "changedPixels": 0,
+      "changedPercent": 0.0,
+      "acceptedAutomatically": false
+    },
+    {
+      "case": "guest-home",
+      "baseline": "docs/evidence/frontend-preparation/m2/browser-frozen/home-guest-result.jpg",
+      "after": "docs/evidence/frontend-preparation/m3/browser-smoke/home-guest-result.jpg",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "channelTolerance": 16,
+      "changedPixels": 1,
+      "changedPercent": 0.00011,
+      "acceptedAutomatically": false
+    }
+  ]
+}

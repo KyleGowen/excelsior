@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "inputFingerprint": "5f281d7641351edc9f0be8cbd47e8296f6192d84997e6037592e318812206713",
+  "method": "CUA live browser automation",
+  "theme": "fixed dark",
+  "scenarios": [
+    {
+      "id": "server-metrics-baseline",
+      "status": "failed",
+      "reason": "Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector internal:text=\"8 cards\"s\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"internal:text=\\\"8 cards\\\"s\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-response-read-failure/failure-server-metrics-baseline.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-response-read-failure/failure-server-metrics-baseline.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    }
+  ],
+  "acceptance": "automated only; Kyle acceptance pending",
+  "cleanup": {
+    "applicationRecords": "BLOCKED: inspect and restore only owned fixture from private manifest",
+    "browser": "pending"
+  },
+  "gaps": [
+    "light theme unavailable",
+    "real Google OAuth unavailable",
+    "independent module harness not yet available"
+  ],
+  "status": "failed",
+  "counts": {
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "browserErrorCount": 0
+}

@@ -52,7 +52,7 @@ export class DeckCardsPostBody {
     const quantityRaw = o.quantity;
     let quantity = 1;
     if (quantityRaw !== undefined) {
-      if (typeof quantityRaw !== 'number' || quantityRaw < 1 || quantityRaw > MAX_CARD_QTY) {
+      if (!Number.isInteger(quantityRaw) || typeof quantityRaw !== 'number' || quantityRaw < 1 || quantityRaw > MAX_CARD_QTY) {
         errors.push({
           code: 'VALIDATION_ERROR',
           message: `Quantity must be a number between 1 and ${MAX_CARD_QTY}`,

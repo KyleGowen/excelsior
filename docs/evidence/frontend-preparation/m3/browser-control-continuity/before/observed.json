@@ -1,0 +1,101 @@
+{
+  "baseline": [
+    {
+      "background": "rgb(20, 31, 53)",
+      "border": "rgb(29, 44, 71)",
+      "color": "rgb(138, 160, 194)",
+      "disabled": false,
+      "height": 23.5,
+      "opacity": "1",
+      "selector": ".deck-editor__chip",
+      "text": "10 cards",
+      "width": 73.265625,
+      "x": 346,
+      "y": 20.5
+    },
+    {
+      "background": "rgb(20, 31, 53)",
+      "border": "rgba(239, 77, 90, 0.4)",
+      "color": "rgb(239, 77, 90)",
+      "disabled": false,
+      "height": 22.5,
+      "opacity": "1",
+      "selector": ".deck-editor__legality-toggle",
+      "text": "Not Legal",
+      "width": 70,
+      "x": 427.265625,
+      "y": 21
+    },
+    {
+      "background": "rgb(20, 31, 53)",
+      "border": "rgb(29, 44, 71)",
+      "color": "rgb(138, 160, 194)",
+      "disabled": false,
+      "height": 22.5,
+      "opacity": "1",
+      "selector": ".deck-editor__visibility-toggle",
+      "text": "Unlisted",
+      "width": 63.5078125,
+      "x": 505.265625,
+      "y": 21
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(29, 44, 71)",
+      "color": "rgb(138, 160, 194)",
+      "disabled": false,
+      "height": 26.5,
+      "opacity": "1",
+      "selector": "button[title=\"Draw a random 8-card hand\"]",
+      "text": " Draw Hand",
+      "width": 99.9296875,
+      "x": 1049.65625,
+      "y": 11
+    }
+  ],
+  "pending": [
+    {
+      "background": "rgb(20, 31, 53)",
+      "border": "rgb(29, 44, 71)",
+      "color": "rgb(138, 160, 194)",
+      "disabled": false,
+      "height": 23.5,
+      "opacity": "1",
+      "selector": ".deck-editor__chip",
+      "text": "10 cards",
+      "width": 73.265625,
+      "x": 346,
+      "y": 20.5
+    },
+    {
+      "background": "rgb(20, 31, 53)",
+      "border": "rgba(239, 77, 90, 0.4)",
+      "color": "rgb(239, 77, 90)",
+      "disabled": false,
+      "height": 22.5,
+      "opacity": "1",
+      "selector": ".deck-editor__legality-toggle",
+      "text": "Checking…",
+      "width": 79.3671875,
+      "x": 427.265625,
+      "y": 21
+    },
+    {
+      "background": "rgb(20, 31, 53)",
+      "border": "rgb(29, 44, 71)",
+      "color": "rgb(138, 160, 194)",
+      "disabled": false,
+      "height": 22.5,
+      "opacity": "1",
+      "selector": ".deck-editor__visibility-toggle",
+      "text": "Unlisted",
+      "width": 63.5078125,
+      "x": 514.6328125,
+      "y": 21
+    },
+    {
+      "missing": true,
+      "selector": "button[title=\"Draw a random 8-card hand\"]"
+    }
+  ]
+}

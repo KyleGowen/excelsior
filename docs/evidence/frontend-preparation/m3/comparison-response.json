@@ -1,0 +1,13 @@
+{
+  "baseline": "docs/evidence/frontend-preparation/m2/browser-readonly/deck-readonly-draw-export-result.jpg",
+  "after": "docs/evidence/frontend-preparation/m3/browser-response-guest-readonly/deck-readonly-draw-export-result.jpg",
+  "dimensions": [
+    1280,
+    720
+  ],
+  "channelTolerance": 16,
+  "changedPixels": 4,
+  "changedPercent": 0.00043,
+  "acceptedAutomatically": false,
+  "review": "Main agent inspected both screenshots; values, labels, card art and layout agree. Four pixels above tolerance; no baseline replacement."
+}

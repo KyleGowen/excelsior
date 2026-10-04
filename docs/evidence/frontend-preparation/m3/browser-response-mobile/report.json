@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "inputFingerprint": "bef880d64399de85d68c859d912213423c8e65f334de26494010f71d04646ca3",
+  "method": "CUA live browser automation",
+  "theme": "fixed dark",
+  "scenarios": [
+    {
+      "id": "server-metrics-baseline",
+      "status": "passed",
+      "observed": {
+        "drawPile": 8,
+        "threat": 18,
+        "maximumCombat": 7,
+        "combatIcons": 5,
+        "limited": true
+      },
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-response-mobile/server-metrics-baseline.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-response-mobile/server-metrics-baseline.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "limited-raw-legality",
+      "status": "passed",
+      "observed": {
+        "limited": false,
+        "rawLegality": false
+      },
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-response-mobile/limited-raw-legality.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-response-mobile/limited-raw-legality.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "reserve-and-ko",
+      "status": "passed",
+      "observed": {
+        "onlyCharacterKO": true,
+        "maximumCombat": 0,
+        "threat": 18
+      },
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-response-mobile/reserve-and-ko.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-response-mobile/reserve-and-ko.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "preplacement-save-reload",
+      "status": "passed",
+      "observed": {
+        "drawPile": 7,
+        "physicalPlayable": 8,
+        "combatIcons": 5,
+        "savedAndReloaded": true
+      },
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-response-mobile/preplacement-save-reload.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-response-mobile/preplacement-save-reload.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "rapid-unsaved-edits",
+      "status": "passed",
+      "observed": {
+        "drawPile": 6,
+        "combatIcons": 3,
+        "unsaved": true
+      },
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-response-mobile/rapid-unsaved-edits.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-response-mobile/rapid-unsaved-edits.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    }
+  ],
+  "acceptance": "automated only; Kyle acceptance pending",
+  "cleanup": {
+    "applicationRecords": "Original cards, pre-placement, reserve and Limited restored; fictional account/deck retained for Kyle",
+    "browser": "owned fixture with original saved data"
+  },
+  "gaps": [
+    "light theme unavailable",
+    "real Google OAuth unavailable",
+    "independent module harness not yet available"
+  ],
+  "dimensions": {
+    "height": 844,
+    "width": 390
+  },
+  "status": "passed",
+  "counts": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "browserErrorCount": 0
+}

@@ -1,0 +1,593 @@
+{
+  "schema": 1,
+  "environment": "isolated local M3 API8089/UI5176; owned Docker V365",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "sourceState": "uncommitted control continuity follow-up",
+  "method": "CUA live browser automation; real local API delayed; no mocked responses",
+  "status": "passed",
+  "scenarios": [
+    {
+      "id": "desktop-control-continuity",
+      "status": "passed",
+      "dimensions": {
+        "width": 1440,
+        "height": 1000
+      },
+      "baseline": {
+        "observed": [
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgb(29, 44, 71)",
+            "busy": null,
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 23.5,
+            "opacity": "1",
+            "text": "10 cards",
+            "width": 90,
+            "x": 346,
+            "y": 20.5
+          },
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgba(239, 77, 90, 0.4)",
+            "busy": "false",
+            "color": "rgb(239, 77, 90)",
+            "disabled": false,
+            "height": 22.5,
+            "opacity": "1",
+            "text": "Not Legal",
+            "width": 70,
+            "x": 444,
+            "y": 21
+          },
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgb(29, 44, 71)",
+            "busy": null,
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 22.5,
+            "opacity": "1",
+            "text": "Unlisted",
+            "width": 63.5078125,
+            "x": 522,
+            "y": 21
+          },
+          {
+            "background": "rgba(0, 0, 0, 0)",
+            "border": "rgb(29, 44, 71)",
+            "busy": "false",
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 26.5,
+            "opacity": "1",
+            "text": " Draw Hand",
+            "width": 99.9296875,
+            "x": 1032.9453125,
+            "y": 11
+          }
+        ],
+        "evidence": {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-control-continuity/desktop-final/settled.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-control-continuity/desktop-final/settled.txt",
+          "dimensions": {
+            "height": 1000,
+            "width": 1440
+          },
+          "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+        }
+      },
+      "pending": [
+        {
+          "observed": [
+            {
+              "background": "rgb(20, 31, 53)",
+              "border": "rgb(29, 44, 71)",
+              "busy": null,
+              "color": "rgb(138, 160, 194)",
+              "disabled": false,
+              "height": 23.5,
+              "opacity": "1",
+              "text": "10 cards",
+              "width": 90,
+              "x": 346,
+              "y": 20.5
+            },
+            {
+              "background": "rgb(20, 31, 53)",
+              "border": "rgba(239, 77, 90, 0.4)",
+              "busy": "true",
+              "color": "rgb(239, 77, 90)",
+              "disabled": false,
+              "height": 22.5,
+              "opacity": "1",
+              "text": "Not Legal",
+              "width": 70,
+              "x": 444,
+              "y": 21
+            },
+            {
+              "background": "rgb(20, 31, 53)",
+              "border": "rgb(29, 44, 71)",
+              "busy": null,
+              "color": "rgb(138, 160, 194)",
+              "disabled": false,
+              "height": 22.5,
+              "opacity": "1",
+              "text": "Unlisted",
+              "width": 63.5078125,
+              "x": 522,
+              "y": 21
+            },
+            {
+              "background": "rgba(0, 0, 0, 0)",
+              "border": "rgb(29, 44, 71)",
+              "busy": "true",
+              "color": "rgb(138, 160, 194)",
+              "disabled": true,
+              "height": 26.5,
+              "opacity": "1",
+              "text": " Draw Hand",
+              "width": 99.9296875,
+              "x": 1032.9453125,
+              "y": 11
+            }
+          ],
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m3/browser-control-continuity/desktop-final/pending-first-edit.jpg",
+            "dom": "docs/evidence/frontend-preparation/m3/browser-control-continuity/desktop-final/pending-first-edit.txt",
+            "dimensions": {
+              "height": 1000,
+              "width": 1440
+            },
+            "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        },
+        {
+          "observed": [
+            {
+              "background": "rgb(20, 31, 53)",
+              "border": "rgb(29, 44, 71)",
+              "busy": null,
+              "color": "rgb(138, 160, 194)",
+              "disabled": false,
+              "height": 23.5,
+              "opacity": "1",
+              "text": "10 cards",
+              "width": 90,
+              "x": 346,
+              "y": 20.5
+            },
+            {
+              "background": "rgb(20, 31, 53)",
+              "border": "rgba(239, 77, 90, 0.4)",
+              "busy": "true",
+              "color": "rgb(239, 77, 90)",
+              "disabled": false,
+              "height": 22.5,
+              "opacity": "1",
+              "text": "Not Legal",
+              "width": 70,
+              "x": 444,
+              "y": 21
+            },
+            {
+              "background": "rgb(20, 31, 53)",
+              "border": "rgb(29, 44, 71)",
+              "busy": null,
+              "color": "rgb(138, 160, 194)",
+              "disabled": false,
+              "height": 22.5,
+              "opacity": "1",
+              "text": "Unlisted",
+              "width": 63.5078125,
+              "x": 522,
+              "y": 21
+            },
+            {
+              "background": "rgba(0, 0, 0, 0)",
+              "border": "rgb(29, 44, 71)",
+              "busy": "true",
+              "color": "rgb(138, 160, 194)",
+              "disabled": true,
+              "height": 26.5,
+              "opacity": "1",
+              "text": " Draw Hand",
+              "width": 99.9296875,
+              "x": 1032.9453125,
+              "y": 11
+            }
+          ],
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m3/browser-control-continuity/desktop-final/pending-second-edit.jpg",
+            "dom": "docs/evidence/frontend-preparation/m3/browser-control-continuity/desktop-final/pending-second-edit.txt",
+            "dimensions": {
+              "height": 1000,
+              "width": 1440
+            },
+            "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        }
+      ],
+      "updated": {
+        "observed": [
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgb(29, 44, 71)",
+            "busy": null,
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 23.5,
+            "opacity": "1",
+            "text": "8 cards",
+            "width": 90,
+            "x": 346,
+            "y": 20.5
+          },
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgba(239, 77, 90, 0.4)",
+            "busy": "false",
+            "color": "rgb(239, 77, 90)",
+            "disabled": false,
+            "height": 22.5,
+            "opacity": "1",
+            "text": "Not Legal",
+            "width": 70,
+            "x": 444,
+            "y": 21
+          },
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgb(29, 44, 71)",
+            "busy": null,
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 22.5,
+            "opacity": "1",
+            "text": "Unlisted",
+            "width": 63.5078125,
+            "x": 522,
+            "y": 21
+          },
+          {
+            "background": "rgba(0, 0, 0, 0)",
+            "border": "rgb(29, 44, 71)",
+            "busy": "false",
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 26.5,
+            "opacity": "1",
+            "text": " Draw Hand",
+            "width": 99.9296875,
+            "x": 1032.9453125,
+            "y": 11
+          }
+        ],
+        "evidence": {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-control-continuity/desktop-final/updated.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-control-continuity/desktop-final/updated.txt",
+          "dimensions": {
+            "height": 1000,
+            "width": 1440
+          },
+          "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+        }
+      }
+    },
+    {
+      "id": "mobile-control-continuity",
+      "status": "passed",
+      "dimensions": {
+        "width": 390,
+        "height": 844
+      },
+      "baseline": {
+        "observed": [
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgb(29, 44, 71)",
+            "busy": null,
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 25.5,
+            "opacity": "1",
+            "text": "10 cards",
+            "width": 90,
+            "x": 12,
+            "y": 77.25
+          },
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgba(239, 77, 90, 0.4)",
+            "busy": "false",
+            "color": "rgb(239, 77, 90)",
+            "disabled": false,
+            "height": 22.5,
+            "opacity": "1",
+            "text": "Not Legal",
+            "width": 70,
+            "x": 110,
+            "y": 78.75
+          },
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgb(29, 44, 71)",
+            "busy": null,
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 22.5,
+            "opacity": "1",
+            "text": "Unlisted",
+            "width": 63.5078125,
+            "x": 188,
+            "y": 78.75
+          },
+          {
+            "background": "rgba(0, 0, 0, 0)",
+            "border": "rgb(29, 44, 71)",
+            "busy": "false",
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 26.5,
+            "opacity": "1",
+            "text": " Draw Hand",
+            "width": 99.9296875,
+            "x": 109.609375,
+            "y": 224
+          }
+        ],
+        "evidence": {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-control-continuity/mobile-final/settled.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-control-continuity/mobile-final/settled.txt",
+          "dimensions": {
+            "height": 844,
+            "width": 390
+          },
+          "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+        }
+      },
+      "pending": [
+        {
+          "observed": [
+            {
+              "background": "rgb(20, 31, 53)",
+              "border": "rgb(29, 44, 71)",
+              "busy": null,
+              "color": "rgb(138, 160, 194)",
+              "disabled": false,
+              "height": 25.5,
+              "opacity": "1",
+              "text": "10 cards",
+              "width": 90,
+              "x": 12,
+              "y": 77.25
+            },
+            {
+              "background": "rgb(20, 31, 53)",
+              "border": "rgba(239, 77, 90, 0.4)",
+              "busy": "true",
+              "color": "rgb(239, 77, 90)",
+              "disabled": false,
+              "height": 22.5,
+              "opacity": "1",
+              "text": "Not Legal",
+              "width": 70,
+              "x": 110,
+              "y": 78.75
+            },
+            {
+              "background": "rgb(20, 31, 53)",
+              "border": "rgb(29, 44, 71)",
+              "busy": null,
+              "color": "rgb(138, 160, 194)",
+              "disabled": false,
+              "height": 22.5,
+              "opacity": "1",
+              "text": "Unlisted",
+              "width": 63.5078125,
+              "x": 188,
+              "y": 78.75
+            },
+            {
+              "background": "rgba(0, 0, 0, 0)",
+              "border": "rgb(29, 44, 71)",
+              "busy": "true",
+              "color": "rgb(138, 160, 194)",
+              "disabled": true,
+              "height": 26.5,
+              "opacity": "1",
+              "text": " Draw Hand",
+              "width": 99.9296875,
+              "x": 109.609375,
+              "y": 224
+            }
+          ],
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m3/browser-control-continuity/mobile-final/pending-first-edit.jpg",
+            "dom": "docs/evidence/frontend-preparation/m3/browser-control-continuity/mobile-final/pending-first-edit.txt",
+            "dimensions": {
+              "height": 844,
+              "width": 390
+            },
+            "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        },
+        {
+          "observed": [
+            {
+              "background": "rgb(20, 31, 53)",
+              "border": "rgb(29, 44, 71)",
+              "busy": null,
+              "color": "rgb(138, 160, 194)",
+              "disabled": false,
+              "height": 25.5,
+              "opacity": "1",
+              "text": "10 cards",
+              "width": 90,
+              "x": 12,
+              "y": 77.25
+            },
+            {
+              "background": "rgb(20, 31, 53)",
+              "border": "rgba(239, 77, 90, 0.4)",
+              "busy": "true",
+              "color": "rgb(239, 77, 90)",
+              "disabled": false,
+              "height": 22.5,
+              "opacity": "1",
+              "text": "Not Legal",
+              "width": 70,
+              "x": 110,
+              "y": 78.75
+            },
+            {
+              "background": "rgb(20, 31, 53)",
+              "border": "rgb(29, 44, 71)",
+              "busy": null,
+              "color": "rgb(138, 160, 194)",
+              "disabled": false,
+              "height": 22.5,
+              "opacity": "1",
+              "text": "Unlisted",
+              "width": 63.5078125,
+              "x": 188,
+              "y": 78.75
+            },
+            {
+              "background": "rgba(0, 0, 0, 0)",
+              "border": "rgb(29, 44, 71)",
+              "busy": "true",
+              "color": "rgb(138, 160, 194)",
+              "disabled": true,
+              "height": 26.5,
+              "opacity": "1",
+              "text": " Draw Hand",
+              "width": 99.9296875,
+              "x": 109.609375,
+              "y": 224
+            }
+          ],
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m3/browser-control-continuity/mobile-final/pending-second-edit.jpg",
+            "dom": "docs/evidence/frontend-preparation/m3/browser-control-continuity/mobile-final/pending-second-edit.txt",
+            "dimensions": {
+              "height": 844,
+              "width": 390
+            },
+            "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        }
+      ],
+      "updated": {
+        "observed": [
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgb(29, 44, 71)",
+            "busy": null,
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 25.5,
+            "opacity": "1",
+            "text": "8 cards",
+            "width": 90,
+            "x": 12,
+            "y": 77.25
+          },
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgba(239, 77, 90, 0.4)",
+            "busy": "false",
+            "color": "rgb(239, 77, 90)",
+            "disabled": false,
+            "height": 22.5,
+            "opacity": "1",
+            "text": "Not Legal",
+            "width": 70,
+            "x": 110,
+            "y": 78.75
+          },
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgb(29, 44, 71)",
+            "busy": null,
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 22.5,
+            "opacity": "1",
+            "text": "Unlisted",
+            "width": 63.5078125,
+            "x": 188,
+            "y": 78.75
+          },
+          {
+            "background": "rgba(0, 0, 0, 0)",
+            "border": "rgb(29, 44, 71)",
+            "busy": "false",
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 26.5,
+            "opacity": "1",
+            "text": " Draw Hand",
+            "width": 99.9296875,
+            "x": 109.609375,
+            "y": 224
+          }
+        ],
+        "evidence": {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-control-continuity/mobile-final/updated.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-control-continuity/mobile-final/updated.txt",
+          "dimensions": {
+            "height": 844,
+            "width": 390
+          },
+          "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+        }
+      }
+    },
+    {
+      "id": "draw-uses-current-eight",
+      "status": "passed",
+      "observed": "After two removals, Draw Hand contains three Sword and Shield and five Combat cards; no removed instances"
+    },
+    {
+      "id": "confirmed-below-threshold",
+      "status": "passed",
+      "observed": "After third removal, seven physical playable cards disable Draw Hand",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-control-continuity/mobile-final/confirmed-below-threshold.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-control-continuity/mobile-final/confirmed-below-threshold.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    }
+  ],
+  "counts": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "cleanup": {
+    "api": "resumed",
+    "viewport": "reset",
+    "applicationRecords": "Original eight-card fixture, Limited, cards/quantities/pre-placement/name/reserve restored; physical row IDs may regenerate on replace",
+    "fixture": "fictional local account/deck retained"
+  },
+  "acceptance": "automated only; Kyle acceptance pending",
+  "gaps": [
+    "Fixed dark only",
+    "Real OAuth not exercised",
+    "Independent module harness unavailable",
+    "Captured pending/settled states and computed appearance, not every animation frame"
+  ],
+  "applicationInputs": {
+    "frontend/src/features/deck-editor/DeckEditorPage.css": "7654ae5ca87b07bdd6bacf148e07643e65c915a719719e2ceaf9b5f44c24f989",
+    "frontend/src/features/deck-editor/DeckEditorPage.tsx": "c2e8d61bd762f67ed3ae707a0cb872d95fae5a97d7bbd86fcd97644e8a38ebdd",
+    "frontend/src/lib/decks/useDraftEvaluation.ts": "cf961fab3cb78973d1c57894bc93e68e0d502254fd1c70fb058142930693f180"
+  }
+}

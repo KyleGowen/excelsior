@@ -1,0 +1,113 @@
+{
+  "status": "failed",
+  "reason": "Count chip narrowed from 10 cards to 8 cards and moved the adjacent badges; corrected by reserving count width",
+  "baseline": [
+    {
+      "background": "rgb(20, 31, 53)",
+      "border": "rgb(29, 44, 71)",
+      "busy": null,
+      "color": "rgb(138, 160, 194)",
+      "disabled": false,
+      "height": 23.5,
+      "opacity": "1",
+      "text": "10 cards",
+      "width": 73.265625,
+      "x": 346,
+      "y": 20.5
+    },
+    {
+      "background": "rgb(20, 31, 53)",
+      "border": "rgba(239, 77, 90, 0.4)",
+      "busy": "false",
+      "color": "rgb(239, 77, 90)",
+      "disabled": false,
+      "height": 22.5,
+      "opacity": "1",
+      "text": "Not Legal",
+      "width": 70,
+      "x": 427.265625,
+      "y": 21
+    },
+    {
+      "background": "rgb(20, 31, 53)",
+      "border": "rgb(29, 44, 71)",
+      "busy": null,
+      "color": "rgb(138, 160, 194)",
+      "disabled": false,
+      "height": 22.5,
+      "opacity": "1",
+      "text": "Unlisted",
+      "width": 63.5078125,
+      "x": 505.265625,
+      "y": 21
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(29, 44, 71)",
+      "busy": "false",
+      "color": "rgb(138, 160, 194)",
+      "disabled": false,
+      "height": 26.5,
+      "opacity": "1",
+      "text": " Draw Hand",
+      "width": 99.9296875,
+      "x": 1032.9453125,
+      "y": 11
+    }
+  ],
+  "updated": [
+    {
+      "background": "rgb(20, 31, 53)",
+      "border": "rgb(29, 44, 71)",
+      "busy": null,
+      "color": "rgb(138, 160, 194)",
+      "disabled": false,
+      "height": 23.5,
+      "opacity": "1",
+      "text": "8 cards",
+      "width": 67.4296875,
+      "x": 346,
+      "y": 20.5
+    },
+    {
+      "background": "rgb(20, 31, 53)",
+      "border": "rgba(239, 77, 90, 0.4)",
+      "busy": "false",
+      "color": "rgb(239, 77, 90)",
+      "disabled": false,
+      "height": 22.5,
+      "opacity": "1",
+      "text": "Not Legal",
+      "width": 70,
+      "x": 421.4296875,
+      "y": 21
+    },
+    {
+      "background": "rgb(20, 31, 53)",
+      "border": "rgb(29, 44, 71)",
+      "busy": null,
+      "color": "rgb(138, 160, 194)",
+      "disabled": false,
+      "height": 22.5,
+      "opacity": "1",
+      "text": "Unlisted",
+      "width": 63.5078125,
+      "x": 499.4296875,
+      "y": 21
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "rgb(29, 44, 71)",
+      "busy": "false",
+      "color": "rgb(138, 160, 194)",
+      "disabled": false,
+      "height": 26.5,
+      "opacity": "1",
+      "text": " Draw Hand",
+      "width": 99.9296875,
+      "x": 1032.9453125,
+      "y": 11
+    }
+  ],
+  "screenshotTiming": "Captured after width correction; original failing geometry is retained in JSON observations, not this screenshot"
+}

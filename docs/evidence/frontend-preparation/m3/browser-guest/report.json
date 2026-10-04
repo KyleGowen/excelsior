@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "inputFingerprint": "52008f3cd5eb175f86cad44e57747b98b0a1fbf88ead243fcb051894e4026d6e",
+  "status": "passed",
+  "method": "CUA live browser Guest unsaved draft",
+  "scenarios": [
+    {
+      "id": "guest-unsaved-catalog-evaluation",
+      "status": "passed",
+      "observed": {
+        "character": "Lancelot",
+        "maxCombat": 7,
+        "threat": 18,
+        "drawPile": 0,
+        "saved": false
+      },
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-guest/unsaved-character.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-guest/unsaved-character.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5176/users/guest/decks/[owned-disposable-fixture]"
+      }
+    },
+    {
+      "id": "guest-unsaved-not-persisted",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-guest/reload-empty.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-guest/reload-empty.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5176/users/guest/decks/[owned-disposable-fixture]"
+      }
+    }
+  ],
+  "counts": {
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "cleanup": {
+    "applicationRecords": "Exact disposable Guest deck deleted through local API; GET verified 404. Browser cleanup dialog unavailable; no other Guest decks touched.",
+    "browser": "Close test-owned tab; sign back into the retained account for Kyle"
+  },
+  "acceptance": "automated only; Kyle acceptance pending",
+  "gaps": []
+}

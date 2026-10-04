@@ -22,27 +22,7 @@ function drawPileQuantity(card: DeckCardEntry): number {
   return Math.max(0, cardQuantity(card) - (card.exclude_from_draw === true ? 1 : 0));
 }
 
-/** Count playable cards for button enable (includes exclude_from_draw rows). */
-export function countPlayableCards(cards: DeckCardEntry[]): number {
-  return cards
-    .filter((card) => isPlayableType(card.type))
-    .reduce((sum, card) => sum + cardQuantity(card), 0);
-}
-
-/**
- * Count cards that belong in the deck-size metric. Pre-placed cards are
- * intentionally excluded here, while countPlayableCards still includes them
- * for the Draw Hand eligibility threshold.
- */
-export function countCardsInDeck(cards: DeckCardEntry[]): number {
-  return cards
-    .filter((card) => isPlayableType(card.type))
-    .reduce((sum, card) => sum + drawPileQuantity(card), 0);
-}
-
-export function canDrawHand(cards: DeckCardEntry[]): boolean {
-  return countPlayableCards(cards) >= 8;
-}
+export { countPlayableCards, countCardsInDeck, canDrawHand } from '../../../../src/services/deck-evaluation/deckCounts';
 
 /** Build the random draw pile (excludes non-playable types and exclude_from_draw). */
 export function buildDrawPile(cards: DeckCardEntry[]): DeckCardEntry[] {

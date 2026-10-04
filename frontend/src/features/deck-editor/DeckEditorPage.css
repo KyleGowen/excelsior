@@ -2019,3 +2019,34 @@
 .layout-desktop .deck-editor__list-row-actions .deck-editor__reserve-btn {
   font-size: 12px;
 }
+
+/* Failure is explicit without replacing the settled metric rows. */
+.deck-editor__evaluation-error {
+  grid-column: 1 / -1;
+  flex: 1 1 100%;
+  order: 7;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* A background eligibility check must not flash the settled Draw Hand button. */
+.deck-editor__draw-hand--refreshing:disabled {
+  opacity: 1;
+  cursor: progress;
+}
+.deck-editor__draw-hand--refreshing:disabled:hover {
+  color: var(--color-text);
+  border-color: var(--color-border-accent);
+}
+
+/* Reserve the longest save label so editing cannot move neighboring actions. */
+.deck-editor__save-btn {
+  min-width: 90px;
+}
+
+/* Updating the count must not move the legality and visibility controls. */
+.deck-editor__chip {
+  min-width: 90px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}

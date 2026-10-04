@@ -125,3 +125,7 @@ One line per change. Newest first. Keep this in sync with
 - Express trusts the proxy, session cookies are `Secure` +
   `SameSite=strict` in production.
 - `APP_CDN_BASE` is HTTPS.
+
+- Milestone 3: added public stateless `POST /decks/evaluate`, compatibility metrics, echoed revision/catalog/rule versions, explicit unavailable state, and server-owned Guest/save validity. No persistence or new format policy.
+
+- M3: attach exact-input evaluation to single-deck loads and saved/Guest creation/edit responses; metadata updates return actual cards; unavailable stats leave readable decks unchecked; immediate unsaved preview replaces the one-second delay.

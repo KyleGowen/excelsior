@@ -87,6 +87,8 @@ const cases = {
     await wait(role(tab, 'button', 'Export'));
     check(await role(tab, 'button', 'Save').count() === 0, 'Read-only fixture exposes Save');
     check(await role(tab, 'textbox', 'Deck name').count() === 0, 'Read-only fixture exposes editable deck name');
+    // Evaluation is asynchronous in M3; wait for the current revision's capability.
+    await wait(role(tab, 'button', 'Draw Hand').and(tab.playwright.locator(':enabled')));
     await role(tab, 'button', 'Draw Hand').click();
     const dialog = role(tab, 'dialog', 'Drawn Hand');
     await wait(dialog);

@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "method": "CUA live UI with bounded pause of exact owned M3 API and automatic resume guard",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "scenario": "save-finishes-after-newer-edit",
+  "status": "passed",
+  "observed": {
+    "savedCards": 8,
+    "newerUnsavedCards": 7,
+    "saveStillEnabled": true
+  },
+  "evidence": "browser-response-save-race/newer-edits-retained.jpg",
+  "cleanup": {
+    "ownedFixtureRestored": true,
+    "cardsMatchPrivateManifest": true,
+    "nameRestored": true,
+    "reserve": null,
+    "limited": true,
+    "drawPile": 8,
+    "prePlaced": 0,
+    "apiResumed": true,
+    "temporaryBrowserTabsClosed": [
+      6,
+      7,
+      8
+    ],
+    "handoffTab": 10,
+    "viewportReset": true,
+    "retained": "Fictional local account/deck and isolated M3 server retained for Kyle; production untouched"
+  },
+  "acceptance": "Kyle pending"
+}

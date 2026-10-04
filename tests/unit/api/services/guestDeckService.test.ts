@@ -12,7 +12,7 @@ describe('GuestDeckService', () => {
     persistence.destroy();
   });
 
-  it('preserves pre-placed cards while excluding them from the guest deck count', () => {
+  it('preserves pre-placed cards while excluding them from the guest deck count', async () => {
     const service = new GuestDeckService({
       guestDeckPersistence: persistence,
       deckRepository: { getDecksByUserId: jest.fn() },
@@ -20,10 +20,10 @@ describe('GuestDeckService', () => {
       checkIfCardIsOnePerDeck: jest.fn(),
       checkIfCardIsCataclysm: jest.fn(),
     });
-    const created = service.createDeck('session-1', { name: 'Guest copy', description: '' });
+    const created = await service.createDeck('session-1', { name: 'Guest copy', description: '' });
     if (!created.ok) throw new Error(created.message);
 
-    const result = service.replaceCards('session-1', created.data.id, [
+    const result = await service.replaceCards('session-1', created.data.id, [
       { cardType: 'character', cardId: 'character-1', quantity: 1 },
       { cardType: 'location', cardId: 'location-1', quantity: 1 },
       { cardType: 'power', cardId: 'power-1', quantity: 2 },
@@ -44,7 +44,7 @@ describe('GuestDeckService', () => {
     );
   });
 
-  it('excludes only one copy when a grouped guest card is pre-placed', () => {
+  it('excludes only one copy when a grouped guest card is pre-placed', async () => {
     const service = new GuestDeckService({
       guestDeckPersistence: persistence,
       deckRepository: { getDecksByUserId: jest.fn() },
@@ -52,10 +52,10 @@ describe('GuestDeckService', () => {
       checkIfCardIsOnePerDeck: jest.fn(),
       checkIfCardIsCataclysm: jest.fn(),
     });
-    const created = service.createDeck('session-1', { name: 'Guest duplicate', description: '' });
+    const created = await service.createDeck('session-1', { name: 'Guest duplicate', description: '' });
     if (!created.ok) throw new Error(created.message);
 
-    const result = service.replaceCards('session-1', created.data.id, [
+    const result = await service.replaceCards('session-1', created.data.id, [
       { cardType: 'training', cardId: 'training-1', quantity: 2, exclude_from_draw: true },
     ]);
 
@@ -64,7 +64,7 @@ describe('GuestDeckService', () => {
     expect(result.data.metadata.cardCount).toBe(1);
   });
 
-  it('preserves character display order in guest session decks', () => {
+  it('preserves character display order in guest session decks', async () => {
     const service = new GuestDeckService({
       guestDeckPersistence: persistence,
       deckRepository: { getDecksByUserId: jest.fn() },
@@ -72,10 +72,10 @@ describe('GuestDeckService', () => {
       checkIfCardIsOnePerDeck: jest.fn(),
       checkIfCardIsCataclysm: jest.fn(),
     });
-    const created = service.createDeck('session-1', { name: 'Ordered team', description: '' });
+    const created = await service.createDeck('session-1', { name: 'Ordered team', description: '' });
     if (!created.ok) throw new Error(created.message);
 
-    const result = service.replaceCards('session-1', created.data.id, [
+    const result = await service.replaceCards('session-1', created.data.id, [
       { cardType: 'character', cardId: 'character-2', quantity: 1, displayOrder: 0 },
       { cardType: 'character', cardId: 'character-1', quantity: 1, displayOrder: 1 },
     ]);

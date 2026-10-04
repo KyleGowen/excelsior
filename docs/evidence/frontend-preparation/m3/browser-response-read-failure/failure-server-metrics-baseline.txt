@@ -1,0 +1,4 @@
+- status:
+  - heading "Deck not found" [level=3]
+  - paragraph: This deck may have been removed or you don't have access.
+  - button "Back to Home"

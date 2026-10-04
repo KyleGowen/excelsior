@@ -1,0 +1,68 @@
+- banner:
+  - button "Back to decks":
+  - heading "Milestone 2 Local Fixture" [level=1]
+  - generic: 8 cards
+  - generic "Deck is not legal. Press and hold to view validation errors.":
+    - generic: Limited
+  - generic: Unlisted
+  - 'generic "Threat: 18"':
+    - generic: "18"
+  - region "Character maximums":
+    - generic: Max
+    - 'generic "Character max — Energy: 2"':
+      - 'generic "Energy: 2"':
+        - generic: "2"
+    - 'generic "Character max — Combat: 7"':
+      - 'generic "Combat: 7"':
+        - generic: "7"
+    - 'generic "Character max — Brute Force: 5"':
+      - 'generic "Brute Force: 5"':
+        - generic: "5"
+    - 'generic "Character max — Intelligence: 4"':
+      - 'generic "Intelligence: 4"':
+        - generic: "4"
+  - region "Icon totals":
+    - generic: Total
+    - 'generic "Icon total — Energy: 0"':
+      - 'generic "Energy: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Combat: 5"':
+      - 'generic "Combat: 5"':
+        - generic: "5"
+    - 'generic "Icon total — Brute Force: 0"':
+      - 'generic "Brute Force: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Intelligence: 0"':
+      - 'generic "Intelligence: 0"':
+        - generic: "0"
+  - button "List View":
+    - text: List View
+  - button "Draw Hand":
+    - text: Draw Hand
+  - button "Export":
+    - text: Export
+  - generic: Read-only
+- tablist "Deck card types":
+  - tab "Characters 1" [selected]:
+    - text: Characters
+    - generic: "1"
+  - tab "Special 3":
+    - text: Special
+    - generic: "3"
+  - tab "Power 5":
+    - text: Power
+    - generic: "5"
+- button "View Lancelot":
+- 'button "KO character: Lancelot"': KO
+- dialog "Drawn Hand":
+  - generic: Drawn Hand
+  - button "Draw again" [active]
+  - button "Close panel":
+  - button "Sword and Shield":
+  - button "Sword and Shield":
+  - button "Sword and Shield":
+  - button "5 - Combat":
+  - button "5 - Combat":
+  - button "5 - Combat":
+  - button "5 - Combat":
+  - button "5 - Combat":

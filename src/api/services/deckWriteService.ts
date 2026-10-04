@@ -1,4 +1,6 @@
 import type { Deck, DeckCard } from '../../types';
+import { transformDeckDetail } from '../deckTransform';
+import type { DeckDraftEvaluationService } from './deckDraftEvaluationService';
 import type { ValidationError } from '../../services/deckValidationService';
 
 export interface DeckBusinessCreatePort {
@@ -22,7 +24,9 @@ export interface DeckValidationPort {
 export class DeckWriteService {
   constructor(
     private readonly deckBusiness: DeckBusinessCreatePort,
-    private readonly deckValidation: DeckValidationPort
+    private readonly deckValidation: DeckValidationPort,
+    private readonly evaluator?: Pick<DeckDraftEvaluationService, 'attach'>,
+    private readonly snapshots?: { getDeckSummaryWithAllCards(id: string): Promise<Deck | undefined> }
   ) {}
 
   async createDeck(
@@ -32,11 +36,15 @@ export class DeckWriteService {
     characters: string[] | undefined,
     isPrivate?: boolean
   ): Promise<Deck> {
-    const deck = isPrivate === undefined
+    const created = isPrivate === undefined
       ? await this.deckBusiness.createDeck(userId, name, description, characters)
       : await this.deckBusiness.createDeck(userId, name, description, characters, isPrivate);
+    const deck = this.snapshots ? await this.snapshots.getDeckSummaryWithAllCards(created.id) : created;
+    if (!deck) throw new Error('Created deck is no longer available');
     await this.syncCreatedDeckValidity(deck, characters);
-    return deck;
+    if (!this.evaluator) return deck;
+    const view = await this.evaluator.attach(transformDeckDetail(deck, userId));
+    return { ...deck, ...view };
   }
 
   /**
@@ -55,7 +63,9 @@ export class DeckWriteService {
       }
       deck.is_valid = isValid;
     } catch (error) {
-      console.error('Failed to recompute created deck validity:', error);
+      deck.is_valid = false;
+      await this.deckBusiness.updateDeck(deck.id, { is_valid: false });
+      throw error;
     }
   }
 

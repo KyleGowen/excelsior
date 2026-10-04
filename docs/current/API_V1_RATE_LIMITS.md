@@ -62,3 +62,5 @@ Specific routes can pass `{ budget: { limit, windowMs } }` when instantiating th
 
 - [`API_V1_AUTH_REFRESH.md`](API_V1_AUTH_REFRESH.md) — `/auth/login` and `/auth/refresh` are the first routes to move onto the `login` budget.
 - [`API_V1_AUDIT_LOG.md`](API_V1_AUDIT_LOG.md) — 429s show up in `api_access_log` with `status = 429`.
+
+Stateless `POST /decks/evaluate`: dedicated 120/minute IP budget; no persistence, no player identity needed. One-second editor debounce plus one retry; callers must honor 429.

@@ -1,0 +1,195 @@
+{
+  "schema": 1,
+  "kind": "gate-batch",
+  "environment": "local",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "fingerprint": "7139724170bff54f520f90d3be907a28724dd5628c63308844ac3fb1281e79e4",
+  "status": "failed",
+  "gates": [
+    {
+      "name": "lint",
+      "command": [
+        "npx",
+        "eslint",
+        "src",
+        "--ext",
+        ".ts",
+        "--max-warnings",
+        "0"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 10.038,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-gates-final/lint.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "unit",
+      "command": [
+        "bash",
+        "scripts/ship-conditional-test.sh",
+        "unit"
+      ],
+      "status": "failed",
+      "exitCode": 1,
+      "timedOut": false,
+      "counts": {
+        "suites": 328,
+        "tests": 3826,
+        "passed": 3808,
+        "failed": 0,
+        "skipped": 18,
+        "todo": 0
+      },
+      "executedTests": 3808,
+      "reused": false,
+      "durationSeconds": 19.891,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-gates-final/unit.log",
+        "receipt": "/var/folders/lb/xr02_l594rlg4bv03hlppd840000gp/T/excelsior-test-gate-rDHOa6/unit-1791131394123-48220.json"
+      },
+      "gaps": [
+        "Test execution or reusable evidence not confirmed"
+      ]
+    },
+    {
+      "name": "integration",
+      "command": [
+        "bash",
+        "scripts/ship-conditional-test.sh",
+        "integration"
+      ],
+      "status": "failed",
+      "exitCode": 1,
+      "timedOut": false,
+      "counts": {
+        "suites": 114,
+        "tests": 0,
+        "passed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "executedTests": 0,
+      "reused": false,
+      "durationSeconds": 35.206,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-gates-final/integration.log",
+        "receipt": "/var/folders/lb/xr02_l594rlg4bv03hlppd840000gp/T/excelsior-test-gate-LjdmZn/integration-1791131394326-48222.json"
+      },
+      "gaps": [
+        "Test execution or reusable evidence not confirmed"
+      ]
+    },
+    {
+      "name": "soc2",
+      "command": [
+        "bash",
+        "scripts/soc2-compliance-checks.sh"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 9,
+        "tests": 45,
+        "passed": 45,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "executedTests": 45,
+      "reused": false,
+      "durationSeconds": 11.643,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-gates-final/soc2.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "backend-types",
+      "command": [
+        "npx",
+        "tsc",
+        "--noEmit"
+      ],
+      "status": "failed",
+      "exitCode": 2,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 11.872,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-gates-final/backend-types.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "frontend-build",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "build"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 22.592,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-gates-final/frontend-build.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "storybook-build",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "build:storybook"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 23.663,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-gates-final/storybook-build.log",
+        "receipt": null
+      },
+      "gaps": []
+    }
+  ],
+  "selected": [
+    "lint",
+    "unit",
+    "integration",
+    "soc2",
+    "backend-types",
+    "frontend-build",
+    "storybook-build"
+  ],
+  "gaps": [
+    "Gate coverage and release acceptance require main-agent review"
+  ],
+  "cleanup": "no application fixtures created by this wrapper"
+}

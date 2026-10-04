@@ -1,3 +1,4 @@
+import { DraftStructureError, type DeckDraftEvaluationService } from './deckDraftEvaluationService';
 import type { Deck, DeckCard } from '../../types';
 import type { ValidationError } from '../../services/deckValidationService';
 import { transformDeckDetail } from '../deckTransform';
@@ -5,6 +6,7 @@ import type { DeckDetailView } from './deckDetailService';
 
 /** Repository surface for deck card CRUD (PostgreSQL deck repository). */
 export interface DeckCardsRepository {
+  getDeckSummaryWithAllCards?: (id: string) => Promise<Deck | undefined>;
   getDeckCards?: (deckId: string) => Promise<Array<{ type: string; cardId: string; quantity?: number }>>;
   getDeckById: (id: string) => Promise<Deck | undefined>;
   userOwnsDeck: (deckId: string, userId: string) => Promise<boolean>;
@@ -50,8 +52,13 @@ export class DeckCardsService {
 
   constructor(
     private readonly repo: DeckCardsRepository,
-    private readonly validators: DeckCardsValidationDeps
+    private readonly validators: DeckCardsValidationDeps,
+    private readonly evaluator?: Pick<DeckDraftEvaluationService, 'attach'>
   ) {}
+
+  private readDeck(deckId: string): Promise<Deck | undefined> {
+    return this.repo.getDeckSummaryWithAllCards ? this.repo.getDeckSummaryWithAllCards(deckId) : this.repo.getDeckById(deckId);
+  }
 
   /**
    * Recompute the deck's full legality from its current cards and persist it to
@@ -68,7 +75,9 @@ export class DeckCardsService {
       }
       deck.is_valid = isValid;
     } catch (error) {
-      console.error('Failed to recompute deck validity:', error);
+      deck.is_valid = false;
+      await this.repo.updateDeck(deck.id, { is_valid: false });
+      throw error;
     }
   }
 
@@ -102,7 +111,7 @@ export class DeckCardsService {
     | { ok: false; kind: 'bad_request' | 'forbidden' | 'not_found' | 'server_error'; message: string }
   > {
     try {
-      const currentDeck = (await this.repo.getDeckById(deckId)) as Deck | undefined;
+      const currentDeck = (await this.readDeck(deckId)) as Deck | undefined;
       if (!currentDeck) {
         return { ok: false, kind: 'not_found', message: 'Deck not found' };
       }
@@ -190,12 +199,12 @@ export class DeckCardsService {
         return { ok: false, kind: 'not_found', message: 'Deck not found or failed to add card' };
       }
 
-      const updatedDeck = await this.repo.getDeckById(deckId);
+      const updatedDeck = await this.readDeck(deckId);
       if (!updatedDeck) {
         return { ok: false, kind: 'not_found', message: 'Deck not found' };
       }
       await this.syncDeckValidity(updatedDeck);
-      return { ok: true, data: transformDeckDetail(updatedDeck, ownerUserId) };
+      return { ok: true, data: this.evaluator ? await this.evaluator.attach(transformDeckDetail(updatedDeck, ownerUserId)) : transformDeckDetail(updatedDeck, ownerUserId) };
     } catch {
       return { ok: false, kind: 'server_error', message: 'Failed to add card to deck' };
     }
@@ -212,7 +221,7 @@ export class DeckCardsService {
     | { ok: false; kind: 'server_error'; message: string }
   > {
     try {
-      const currentDeck = await this.repo.getDeckById(deckId);
+      const currentDeck = await this.readDeck(deckId);
       if (!currentDeck) {
         return { ok: false, kind: 'replace_failed', status: 400, message: 'Deck not found' };
       }
@@ -220,6 +229,9 @@ export class DeckCardsService {
         return { ok: false, kind: 'forbidden', message: 'Access denied. You do not own this deck.' };
       }
 
+      // Structural/catalog resolution must finish before writing. Legality errors
+      // remain editable: an invalid draft is saved with server-owned is_valid=false.
+      await this.validators.validateDeck(cards.map((c, i) => ({ id: `replacement-${i}`, type: c.cardType as DeckCard['type'], cardId: c.cardId, quantity: c.quantity, exclude_from_draw: c.exclude_from_draw === true })));
       try {
         await this.repo.replaceAllCardsInDeck(deckId, cards);
       } catch (error: unknown) {
@@ -235,13 +247,14 @@ export class DeckCardsService {
         };
       }
 
-      const updatedDeck = await this.repo.getDeckById(deckId);
+      const updatedDeck = await this.readDeck(deckId);
       if (!updatedDeck) {
         return { ok: false, kind: 'server_error', message: 'Deck not found after replace' };
       }
       await this.syncDeckValidity(updatedDeck);
-      return { ok: true, data: transformDeckDetail(updatedDeck, ownerUserId) };
+      return { ok: true, data: this.evaluator ? await this.evaluator.attach(transformDeckDetail(updatedDeck, ownerUserId)) : transformDeckDetail(updatedDeck, ownerUserId) };
     } catch (error) {
+      if (error instanceof DraftStructureError) return { ok: false, kind: 'replace_failed', status: 400, message: error.message };
       console.error('Error replacing cards in deck:', error);
       return { ok: false, kind: 'server_error', message: 'Failed to replace cards in deck' };
     }
@@ -259,7 +272,7 @@ export class DeckCardsService {
   > {
     try {
       let success: boolean;
-      const currentDeck = await this.repo.getDeckById(deckId);
+      const currentDeck = await this.readDeck(deckId);
       if (!currentDeck) {
         return { ok: false, kind: 'not_found', message: 'Deck not found' };
       }
@@ -277,12 +290,12 @@ export class DeckCardsService {
         return { ok: false, kind: 'not_found', message: 'Deck not found or failed to remove card' };
       }
 
-      const updatedDeck = await this.repo.getDeckById(deckId);
+      const updatedDeck = await this.readDeck(deckId);
       if (!updatedDeck) {
         return { ok: false, kind: 'not_found', message: 'Deck not found' };
       }
       await this.syncDeckValidity(updatedDeck);
-      return { ok: true, data: transformDeckDetail(updatedDeck, ownerUserId) };
+      return { ok: true, data: this.evaluator ? await this.evaluator.attach(transformDeckDetail(updatedDeck, ownerUserId)) : transformDeckDetail(updatedDeck, ownerUserId) };
     } catch {
       return { ok: false, kind: 'server_error', message: 'Failed to remove card from deck' };
     }

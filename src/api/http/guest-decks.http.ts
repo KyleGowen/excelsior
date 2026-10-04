@@ -33,6 +33,7 @@ function requireGuestSessionV1(req: Request, res: Response): string | null {
 
 export function registerGuestDecksV1HttpRoutes(router: Router, deps: GuestDecksV1HttpDeps): void {
   router.post('/guest/decks', deps.authenticateUser, async (req, res) => {
+    res.set('Cache-Control', 'no-store');
     const sessionId = requireGuestSessionV1(req, res);
     if (!sessionId) return;
     const parsed = CreateGuestDeckBody.parse(req.body);
@@ -40,7 +41,7 @@ export function registerGuestDecksV1HttpRoutes(router: Router, deps: GuestDecksV
       sendV1Json(res, 400, null, parsed.errors);
       return;
     }
-    const result = deps.guestDeckService.createDeck(sessionId, parsed.value);
+    const result = await deps.guestDeckService.createDeck(sessionId, parsed.value);
     if (!result.ok) {
       sendV1Json(res, result.status, null, [{ code: result.code, message: result.message }]);
       return;
@@ -49,6 +50,7 @@ export function registerGuestDecksV1HttpRoutes(router: Router, deps: GuestDecksV
   });
 
   router.get('/guest/decks', deps.authenticateUser, async (req, res) => {
+    res.set('Cache-Control', 'no-store');
     const sessionId = requireGuestSessionV1(req, res);
     if (!sessionId) return;
     const result = await deps.guestDeckService.listDecks(sessionId, req.user!.id);
@@ -60,9 +62,10 @@ export function registerGuestDecksV1HttpRoutes(router: Router, deps: GuestDecksV
   });
 
   router.get('/guest/decks/:id', deps.authenticateUser, async (req, res) => {
+    res.set('Cache-Control', 'no-store');
     const sessionId = requireGuestSessionV1(req, res);
     if (!sessionId) return;
-    const result = deps.guestDeckService.getDeck(sessionId, req.params.id);
+    const result = await deps.guestDeckService.getDeck(sessionId, req.params.id);
     if (!result.ok) {
       sendV1Json(res, result.status, null, [{ code: result.code, message: result.message }]);
       return;
@@ -71,6 +74,7 @@ export function registerGuestDecksV1HttpRoutes(router: Router, deps: GuestDecksV
   });
 
   router.put('/guest/decks/:id', deps.authenticateUser, async (req, res) => {
+    res.set('Cache-Control', 'no-store');
     const sessionId = requireGuestSessionV1(req, res);
     if (!sessionId) return;
     const parsed = UpdateGuestDeckBody.parse(req.body);
@@ -78,7 +82,7 @@ export function registerGuestDecksV1HttpRoutes(router: Router, deps: GuestDecksV
       sendV1Json(res, 400, null, parsed.errors);
       return;
     }
-    const result = deps.guestDeckService.updateDeckMetadata(sessionId, req.params.id, parsed.value);
+    const result = await deps.guestDeckService.updateDeckMetadata(sessionId, req.params.id, parsed.value);
     if (!result.ok) {
       sendV1Json(res, result.status, null, [{ code: result.code, message: result.message }]);
       return;
@@ -87,6 +91,7 @@ export function registerGuestDecksV1HttpRoutes(router: Router, deps: GuestDecksV
   });
 
   router.put('/guest/decks/:id/cards', deps.authenticateUser, async (req, res) => {
+    res.set('Cache-Control', 'no-store');
     const sessionId = requireGuestSessionV1(req, res);
     if (!sessionId) return;
     const parsed = GuestDeckCardsPutBody.parse(req.body);
@@ -94,7 +99,7 @@ export function registerGuestDecksV1HttpRoutes(router: Router, deps: GuestDecksV
       sendV1Json(res, 400, null, parsed.errors);
       return;
     }
-    const result = deps.guestDeckService.replaceCards(sessionId, req.params.id, parsed.value);
+    const result = await deps.guestDeckService.replaceCards(sessionId, req.params.id, parsed.value);
     if (!result.ok) {
       sendV1Json(res, result.status, null, [{ code: result.code, message: result.message }]);
       return;
@@ -103,6 +108,7 @@ export function registerGuestDecksV1HttpRoutes(router: Router, deps: GuestDecksV
   });
 
   router.post('/guest/decks/:id/cards', deps.authenticateUser, async (req, res) => {
+    res.set('Cache-Control', 'no-store');
     const sessionId = requireGuestSessionV1(req, res);
     if (!sessionId) return;
     const parsed = GuestDeckCardsPostBody.parse(req.body);
@@ -119,6 +125,7 @@ export function registerGuestDecksV1HttpRoutes(router: Router, deps: GuestDecksV
   });
 
   router.delete('/guest/decks/:id', deps.authenticateUser, async (req, res) => {
+    res.set('Cache-Control', 'no-store');
     const sessionId = requireGuestSessionV1(req, res);
     if (!sessionId) return;
     const result = deps.guestDeckService.deleteDeck(sessionId, req.params.id);

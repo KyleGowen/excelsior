@@ -1,0 +1,180 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "status": "passed",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "gates": [
+    {
+      "name": "lint",
+      "command": [
+        "npx",
+        "eslint",
+        "src",
+        "--ext",
+        ".ts",
+        "--max-warnings",
+        "0"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 9.215,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-gates-complete/lint.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "soc2",
+      "command": [
+        "bash",
+        "scripts/soc2-compliance-checks.sh"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 9,
+        "tests": 45,
+        "passed": 45,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "executedTests": 45,
+      "reused": false,
+      "durationSeconds": 11.487,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-gates-complete/soc2.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "backend-types",
+      "command": [
+        "npx",
+        "tsc",
+        "--noEmit"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 15.103,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-gates-complete/backend-types.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "frontend-build",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "build"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 31.18,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-gates-complete/frontend-build.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "storybook-build",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "build:storybook"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 32.308,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-gates-complete/storybook-build.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "unit",
+      "command": [
+        "npm",
+        "run",
+        "test:unit",
+        "--",
+        "--maxWorkers=2"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 328,
+        "tests": 3828,
+        "passed": 3810,
+        "failed": 0,
+        "skipped": 18,
+        "todo": 0
+      },
+      "executedTests": 3810,
+      "reused": false,
+      "durationSeconds": 16.678,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-test-retry/unit.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "integration",
+      "command": [
+        "bash",
+        "scripts/ship-conditional-test.sh",
+        "integration"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 114,
+        "tests": 1016,
+        "passed": 1016,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "executedTests": 1016,
+      "reused": false,
+      "durationSeconds": 88.815,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-integration-fixture/integration.log",
+        "receipt": "/var/folders/lb/xr02_l594rlg4bv03hlppd840000gp/T/excelsior-test-gate-JIb9Ca/integration-1791132121808-56849.json"
+      },
+      "gaps": []
+    }
+  ],
+  "reuse": "Build, lint, types and SOC2 reused after only compatible integration fixture identities changed; unit retry used two workers after worker crash. Integration reran all 114 suites. No application/browser-suite code changed after these runtime gates. Original failed receipts retained.",
+  "releaseAuthority": "No M3 commit, push, deployment or Kyle acceptance inferred."
+}

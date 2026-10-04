@@ -118,7 +118,7 @@ the `['decks']` queries so tile chips on every surface (`DeckTile`) reflect Limi
 Edits accumulate in local working state; **Save** persists the full card list
 (`replaceDeckCards`) and metadata (`updateDeckMeta` — name and `reserve_character`) for
 owned/DB decks, or the guest equivalents for `guest_` decks. Threat in the header updates
-live while editing; legality is debounced via `validateDeck`.
+live while editing; legality comes from authoritative response/draft evaluation.
 
 After a successful save, **local `cards` state remains authoritative** — the editor does
 not re-run `expandDeckToInstances` or invalidate the deck query. React Query cache is updated
@@ -130,3 +130,5 @@ flashing card images.
   query param.
 - Deck card-view layout conventions: see `docs/current/DECK_EDITOR_CARD_VIEW_LAYOUT.md` for
   the landscape/portrait rules to preserve.
+
+M3 metrics and live legality now come from `useDraftEvaluation` / `POST /api/v1/decks/evaluate`, with cancellation and echoed revision plus exact-input matching. Initial loads and successful saved/Guest metadata/card edits carry `evaluation` with their returned cards/settings; matching response stats display without a follow-up evaluation call. Unsaved edits evaluate immediately. Settled totals/grids/icons/threat remain mounted during recalculation and update in place; the previous display is scoped to the current deck. The legality badge keeps its last evaluated label/colors with a busy state and previous-evaluation hover text; this does not confirm current legality. Draw Hand retains its last eligible appearance during refresh, but drawing and redraw handlers still require exact current eligibility. Confirmed eligibility/legality changes update controls once. A failed refresh keeps these totals visible with an explicit previous-totals notice and Retry. No evaluation cache or invalidation layer is added. A save finishing after newer edits keeps those edits dirty. Local tile/input/save state remains immediate. Pending/unavailable previews never use persisted `is_valid` as fresh legality; Retry retains the draft. KO dimming and Draw Hand composition remain M4 workflows, while displayed grids/counts/icons/threat and eligibility are server supplied. Export remains the documented saved-deck M4 contract.

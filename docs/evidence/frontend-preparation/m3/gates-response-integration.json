@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "kind": "gate-batch",
+  "environment": "local",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "fingerprint": "de1ec0fe2217163dba68784c071fc5dd2c9e32c98373d6a4b624c8289bb7dcea",
+  "status": "passed",
+  "gates": [
+    {
+      "name": "integration",
+      "command": [
+        "bash",
+        "scripts/ship-conditional-test.sh",
+        "integration"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 114,
+        "tests": 1016,
+        "passed": 1016,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "executedTests": 1016,
+      "reused": false,
+      "durationSeconds": 88.815,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m3-verification/response-integration-fixture/integration.log",
+        "receipt": "/var/folders/lb/xr02_l594rlg4bv03hlppd840000gp/T/excelsior-test-gate-JIb9Ca/integration-1791132121808-56849.json"
+      },
+      "gaps": []
+    }
+  ],
+  "selected": [
+    "integration"
+  ],
+  "gaps": [
+    "Gate coverage and release acceptance require main-agent review"
+  ],
+  "cleanup": "no application fixtures created by this wrapper"
+}

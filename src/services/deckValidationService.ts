@@ -17,7 +17,7 @@ export class DeckValidationService {
     /**
      * Validate a deck for all Overpower rules including unusable cards
      */
-    async validateDeck(cards: DeckCard[]): Promise<ValidationError[]> {
+    async resolveCatalog(): Promise<Map<string, Record<string, unknown>>> {
         const [
             allCharacters,
             allSpecialCards,
@@ -64,13 +64,17 @@ export class DeckValidationService {
             allBasicUniverse
         };
 
-        const availableCardsMap = buildAvailableCardsMap(bundle);
-        const ctx = buildDeckValidationContext(cards, availableCardsMap);
+        return buildAvailableCardsMap(bundle);
+    }
 
+    validateResolvedDeck(cards: DeckCard[], availableCardsMap: Map<string, Record<string, unknown>>): ValidationError[] {
+        const ctx = buildDeckValidationContext(cards, availableCardsMap);
         const errors: ValidationError[] = [];
-        for (const rule of this.ruleList) {
-            errors.push(...rule.validate(ctx));
-        }
+        for (const rule of this.ruleList) errors.push(...rule.validate(ctx));
         return errors;
+    }
+
+    async validateDeck(cards: DeckCard[]): Promise<ValidationError[]> {
+        return this.validateResolvedDeck(cards, await this.resolveCatalog());
     }
 }

@@ -1,0 +1,236 @@
+{
+  "schema": 1,
+  "baseRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "branch": "codex/frontend-preparation-m3",
+  "state": "accepted by Kyle; frozen for Ship validation; not yet deployed",
+  "files": [
+    {
+      "path": ".github/workflows/deploy.yml",
+      "sha256": "990c439874290a60e8f63220dec45b8b238626022fed2c9cd45a039519e9486c"
+    },
+    {
+      "path": "API_MIGRATION_CHECKLIST.md",
+      "sha256": "ddc428af881de15e24c06382601c9f6c47b42d0e2a2a20fb051ab06455fd27ee"
+    },
+    {
+      "path": "API_V1.md",
+      "sha256": "de264ea816c986feda1dc3af02ff5bb5cbdd79be300592a32887da04b4987806"
+    },
+    {
+      "path": "Excelsior-API-production.insomnia.json",
+      "sha256": "484176b360e742f1ee9113468cf1eb045322211f776881ffcb5ebff770066c0f"
+    },
+    {
+      "path": "Excelsior-API.insomnia.json",
+      "sha256": "152daea8ffe688e1235988e9100fe4907a1939e591bfd2849b60372f9bb6e93e"
+    },
+    {
+      "path": "STYLE_GUIDE_V2.md",
+      "sha256": "510abdadf548c04c5b97d6d2bd91756e9a42380b353234fa62cb944246657126"
+    },
+    {
+      "path": "docs/current/API_V1_CHANGELOG.md",
+      "sha256": "d69f318fb5d9da3b277d0730c1450120e7abd91bbdbe067a4ad6042370dcdbb1"
+    },
+    {
+      "path": "docs/current/API_V1_ERROR_CATALOG.md",
+      "sha256": "5741fc0cc06d949dea8d104bdf8b0ecc89fc186c958db4d1438647ada0f4e1b3"
+    },
+    {
+      "path": "docs/current/API_V1_RATE_LIMITS.md",
+      "sha256": "85db8a93a7fcb588588b38934b8924f3037500615d52f5e4e758a3d8ad877af4"
+    },
+    {
+      "path": "docs/current/FRONTEND_PREPARATION.md",
+      "sha256": "a989639205c684f578cb0816964deff47ad70357144eed91f87b995d89c4cddc"
+    },
+    {
+      "path": "docs/openapi.yaml",
+      "sha256": "ac556f433593bb4bc4382b7703b6559abf2cdf6018a765fa41af0fcdce4eab2b"
+    },
+    {
+      "path": "frontend/src/features/deck-editor/DeckEditorPage.css",
+      "sha256": "7654ae5ca87b07bdd6bacf148e07643e65c915a719719e2ceaf9b5f44c24f989"
+    },
+    {
+      "path": "frontend/src/features/deck-editor/DeckEditorPage.md",
+      "sha256": "0938979b90389b998d4d1c3a1103d4257a0ddb030f32646854a7089193f954cd"
+    },
+    {
+      "path": "frontend/src/features/deck-editor/DeckEditorPage.tsx",
+      "sha256": "c2e8d61bd762f67ed3ae707a0cb872d95fae5a97d7bbd86fcd97644e8a38ebdd"
+    },
+    {
+      "path": "frontend/src/lib/api/decks.ts",
+      "sha256": "2dae3a15f75d897ae50a11377984e000fbae69017f3559550372d227af626fc5"
+    },
+    {
+      "path": "frontend/src/lib/api/types.ts",
+      "sha256": "b226bb5f9fd14fc743abdc2dbb4b09d3395b7c3013dc796a2d266370ad15a0d2"
+    },
+    {
+      "path": "frontend/src/lib/decks/deckThreat.ts",
+      "sha256": "a628406718a032c5969224b9692022e5ff383cf95ebb36b54f9592a796b34000"
+    },
+    {
+      "path": "frontend/src/lib/decks/drawHand.ts",
+      "sha256": "25d7a8f774df230e170edad20ce855da49d1614195a8dde733da43d89821b1d7"
+    },
+    {
+      "path": "frontend/src/lib/decks/iconTotals.ts",
+      "sha256": "f3730584dd5598cf4cefe98a4df73253fa943fd37245ee39d564c2ff2081c734"
+    },
+    {
+      "path": "frontend/src/lib/decks/useDraftEvaluation.ts",
+      "sha256": "cf961fab3cb78973d1c57894bc93e68e0d502254fd1c70fb058142930693f180"
+    },
+    {
+      "path": "frontend/src/stories/DeckEditorPage.stories.tsx",
+      "sha256": "c6aba36ce4767535285a0126927fcd161adb92be7e6d729a3f78bca7ea3a9f7e"
+    },
+    {
+      "path": "frontend/src/stories/pageMocks.ts",
+      "sha256": "fcd25be685744735c073dfd90a54fa29e6e5c1eddaba377a5d9dc1dc583e9999"
+    },
+    {
+      "path": "src/api/access/serviceOperations.ts",
+      "sha256": "bf80b3c79d98fa7779a5b2faf7dbdf1c77dab8484a78e60535aac2bf87a1c946"
+    },
+    {
+      "path": "src/api/deckTransform.ts",
+      "sha256": "ade3fcafc30f850a59d9efaddf2ffbd8e1032668b3f2f92db38ff2f7f2507a67"
+    },
+    {
+      "path": "src/api/dto/v1/DeckDraftEvaluationDto.ts",
+      "sha256": "6708f79899a7d733b082d4efa2ca29114b29f2a9f77a92238c2dd9b2a9d59709"
+    },
+    {
+      "path": "src/api/http/deck-evaluation.http.ts",
+      "sha256": "fc9af19dc02172f4fd714e7d1ddc57061bb6c77ce2f591edef7ffa9957f11da1"
+    },
+    {
+      "path": "src/api/http/decks.http.ts",
+      "sha256": "1bd3cc76e7e39f1d80407858f6ea18c592f9ce61b714fa0e763f1b2006664dcc"
+    },
+    {
+      "path": "src/api/http/guest-decks.http.ts",
+      "sha256": "586e7068f071bd319692fbf356b73847aac156d0ea8ee19eb0e20d31b5a9cbc4"
+    },
+    {
+      "path": "src/api/http/models/decks/DeckCardsPostBody.ts",
+      "sha256": "6c211005f19a84b31cce011ee5786b4b50608326fe929d343aa90b1c0a8f4278"
+    },
+    {
+      "path": "src/api/http/models/decks/DeckCardsPutBody.ts",
+      "sha256": "939a86ae7810081ceb6e733541535dafb5e92056cc3a285af6842b215f5e5c87"
+    },
+    {
+      "path": "src/api/http/models/decks/EvaluateDraftRequestBody.ts",
+      "sha256": "0a46c8f7e21040281dfa910415998bef80fc78a12f96c55b489656dbc716d80f"
+    },
+    {
+      "path": "src/api/http/registerApiV1Routes.ts",
+      "sha256": "c616178896a07656da5be189db7732f335b2fb8280b0fa7660ee1381c238120f"
+    },
+    {
+      "path": "src/api/services/deckCardsService.ts",
+      "sha256": "e7dd37250a07196f40043022ee512d419226bbbf2d29cfe763471ab0a1fcce6c"
+    },
+    {
+      "path": "src/api/services/deckDetailService.ts",
+      "sha256": "ee224de71ce031777be9a45a674f3b5cfbbd2352d4fca1b34b22b0939468754b"
+    },
+    {
+      "path": "src/api/services/deckDraftEvaluationService.ts",
+      "sha256": "088620cc8914213ff8d0a44dd09e602048bf1aee5539ff7729dcd540869eb58f"
+    },
+    {
+      "path": "src/api/services/deckWriteService.ts",
+      "sha256": "2b9c9ca98e61eddccfa25d190b3a621271eeb89a4fcd0562d670d9a8b71ececf"
+    },
+    {
+      "path": "src/api/services/guestDeckService.ts",
+      "sha256": "c7fa6c5c33c568583d980eea512a2b13b0ef0fca1ae34dfbda533a9ca6f0738e"
+    },
+    {
+      "path": "src/database/deck/deck-crud.ts",
+      "sha256": "0571135997a39392f3a01bc01378ddfa3d9096656b347d8475210d3c139553a7"
+    },
+    {
+      "path": "src/index.ts",
+      "sha256": "983be45115231ee7ab1520ea1831bd910fd28e1f6316d2ea113d58d7db503627"
+    },
+    {
+      "path": "src/services/deck-evaluation/deckCounts.ts",
+      "sha256": "257543faaf07ec020d12836f2237fb90452aa398daff019a81860e4e7f72a77e"
+    },
+    {
+      "path": "src/services/deck-evaluation/deckThreat.ts",
+      "sha256": "bc1648827a90464e74c87a18771cd0e799202943196a8f9f52c1550cf7fa87aa"
+    },
+    {
+      "path": "src/services/deck-evaluation/draftInput.ts",
+      "sha256": "b08c6807e7fc569a668ee3feba321f9ef97a8a6aaa49bda68233bf6bb2d9b567"
+    },
+    {
+      "path": "src/services/deck-evaluation/iconTotals.ts",
+      "sha256": "7949e41338433618b532dc041b37ddf9405e18dc441430635257c3918503fa6b"
+    },
+    {
+      "path": "src/services/deckValidationService.ts",
+      "sha256": "1c8fd200c50be2e92396b33f18da1cb5eb0e803a02fef07e1cf7eb87edcc90ce"
+    },
+    {
+      "path": "src/test-server/bootstrap.ts",
+      "sha256": "fa3f832184c1285774190dc60271bc0e60de4c3cf0e9f0dd2d535c67d0b490ec"
+    },
+    {
+      "path": "src/types/index.ts",
+      "sha256": "e658e1faf267825e4ea4ebd05ff90ed07651bf0d9bdd1f0f75aea7e564f368e8"
+    },
+    {
+      "path": "tests/browser/milestone1.mjs",
+      "sha256": "b472e6c9876a6f47951b5df163cff523fa2d2ca753c3d8c47a2a1a10d32da30e"
+    },
+    {
+      "path": "tests/browser/milestone3-deck.mjs",
+      "sha256": "915c09528fcedab19b62210b142d82036666e7ac4bb87214f705093c4b2b6132"
+    },
+    {
+      "path": "tests/integration/api-v1/deck-evaluation.integration.test.ts",
+      "sha256": "f25ac9ae8ab784dbf12f5a9ecf6e35f79331d4025b1afe870b4497fc14c3c765"
+    },
+    {
+      "path": "tests/integration/guest-deck-api.test.ts",
+      "sha256": "d9f0d56953e12c1d4905ba104ba95baffc6c0fb806be38dc04488a9c85ba6823"
+    },
+    {
+      "path": "tests/integration/security/production-access-policy.test.ts",
+      "sha256": "40e4034d7e300b59138bcab9e0968d439f0da7b49a9c66fcb4f347ec8e70556a"
+    },
+    {
+      "path": "tests/unit/api/http/deck-evaluation.http.test.ts",
+      "sha256": "456d4b2cb4740180b9affd65f144f2e1e79bae2cfad3dc99089d0c69ba336e1f"
+    },
+    {
+      "path": "tests/unit/api/services/deckWriteService.test.ts",
+      "sha256": "96c48888f03f5e897aa6d59b3297a1094052facd0c2208c252ec6e2705fb43b3"
+    },
+    {
+      "path": "tests/unit/api/services/guestDeckService.test.ts",
+      "sha256": "7ab35ae8da0afbdf1b0ea2381396def6de020d6fcab989c872edc02e5800e7fa"
+    },
+    {
+      "path": "tests/unit/deckSummaryWithAllCards.test.ts",
+      "sha256": "f60ca4fc4099ca1fa4caa973e8e95bc5d5a45536f9a6776e00d8a56e4835cd39"
+    },
+    {
+      "path": "tests/unit/frontend-preparation/deck-draft-evaluation.test.ts",
+      "sha256": "aa7b17986db0e1aa10be3a4b8395d32bb665833002fb26c94393cf986a487a5c"
+    },
+    {
+      "path": "tests/unit/frontend-v2/draft-evaluation-state.test.ts",
+      "sha256": "fe70a202e758e54165474b83885fb29fbd5840e7ed0400a0cde0a976de5b42b0"
+    }
+  ]
+}

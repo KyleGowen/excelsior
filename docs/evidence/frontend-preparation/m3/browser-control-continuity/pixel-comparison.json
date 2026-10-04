@@ -1,0 +1,130 @@
+[
+  {
+    "scenario": "desktop-control-continuity",
+    "capture": "pending-first-edit.jpg",
+    "control": "10 cards",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 2070,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "desktop-control-continuity",
+    "capture": "pending-first-edit.jpg",
+    "control": "Not Legal",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 1540,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "desktop-control-continuity",
+    "capture": "pending-first-edit.jpg",
+    "control": "Unlisted",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 1386,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "desktop-control-continuity",
+    "capture": "pending-first-edit.jpg",
+    "control": "Draw Hand",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 2574,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "desktop-control-continuity",
+    "capture": "pending-second-edit.jpg",
+    "control": "10 cards",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 2070,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "desktop-control-continuity",
+    "capture": "pending-second-edit.jpg",
+    "control": "Not Legal",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 1540,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "desktop-control-continuity",
+    "capture": "pending-second-edit.jpg",
+    "control": "Unlisted",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 1386,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "desktop-control-continuity",
+    "capture": "pending-second-edit.jpg",
+    "control": "Draw Hand",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 2574,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "mobile-control-continuity",
+    "capture": "pending-first-edit.jpg",
+    "control": "10 cards",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 2160,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "mobile-control-continuity",
+    "capture": "pending-first-edit.jpg",
+    "control": "Not Legal",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 1540,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "mobile-control-continuity",
+    "capture": "pending-first-edit.jpg",
+    "control": "Unlisted",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 1386,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "mobile-control-continuity",
+    "capture": "pending-first-edit.jpg",
+    "control": "Draw Hand",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 2574,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "mobile-control-continuity",
+    "capture": "pending-second-edit.jpg",
+    "control": "10 cards",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 2160,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "mobile-control-continuity",
+    "capture": "pending-second-edit.jpg",
+    "control": "Not Legal",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 1540,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "mobile-control-continuity",
+    "capture": "pending-second-edit.jpg",
+    "control": "Unlisted",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 1386,
+    "fraction": 0.0
+  },
+  {
+    "scenario": "mobile-control-continuity",
+    "capture": "pending-second-edit.jpg",
+    "control": "Draw Hand",
+    "changedPixelsAboveTolerance16": 0,
+    "pixels": 2574,
+    "fraction": 0.0
+  }
+]

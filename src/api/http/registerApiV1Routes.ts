@@ -16,6 +16,8 @@ import { registerDbvSupportV1HttpRoutes, type DeckBackgroundListReader } from '.
 import { createV1SessionOrBearerAuthMiddleware } from './middleware/v1SessionOrBearerAuth';
 import { createV1OptionalSessionOrBearerAuthMiddleware } from './middleware/v1OptionalSessionOrBearerAuth';
 import { createApiAccessLogMiddleware } from './middleware/apiAccessLog';
+import { registerDeckEvaluationV1HttpRoutes } from './deck-evaluation.http';
+import type { DeckDraftEvaluationService } from '../services/deckDraftEvaluationService';
 import { registerDecksV1HttpRoutes } from './decks.http';
 import { registerCommunityV1HttpRoutes } from './community.http';
 import { registerCollectionsV1HttpRoutes } from './collections.http';
@@ -72,6 +74,7 @@ export interface RegisterApiV1Deps {
   deckListService: DeckListService;
   deckStatsService: DeckStatsService;
   deckWriteService: DeckWriteService;
+  deckDraftEvaluationService?: DeckDraftEvaluationService;
   deckDetailService: DeckDetailService;
   deckCardsService: DeckCardsService;
   deckUIPreferencesService: DeckUIPreferencesService;
@@ -109,6 +112,7 @@ export function createApiV1Router(deps: RegisterApiV1Deps): IRouter {
   }
 
   registerServiceAuthV1HttpRoutes(router, configuredServiceAccess);
+  if (deps.deckDraftEvaluationService) registerDeckEvaluationV1HttpRoutes(router, deps.deckDraftEvaluationService);
 
   const getUserById = async (id: string) => {
     const u = await deps.userRepository.getUserById(id);

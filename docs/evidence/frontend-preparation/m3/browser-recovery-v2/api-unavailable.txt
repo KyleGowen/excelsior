@@ -1,0 +1,54 @@
+- complementary:
+  - button "Home":
+    - img "Excelsior"
+  - navigation:
+    - button "Home":
+    - button "Card Database":
+    - button "Decks":
+    - button "Collection":
+    - button "Community":
+- banner:
+  - button "Back to decks":
+  - textbox "Deck name": Milestone 3 Local Fixture
+  - generic: Evaluation unavailable
+  - button "Unchecked" [pressed]
+  - button "Unlisted"
+  - status:
+    - text: Evaluation unavailable. Your draft is preserved.
+    - button "Retry evaluation"
+  - button "List View":
+    - text: List View
+  - button "Draw Hand" [disabled]:
+    - text: Draw Hand
+  - button "Export":
+    - text: Export
+  - button "Add Cards":
+    - text: Add Cards
+  - button "Save":
+    - text: Save
+- heading "Characters 1" [level=2]:
+  - text: Characters
+  - generic: "1"
+- button "View Lancelot":
+- button "Select Lancelot as reserve": Select Reserve
+- button "Remove Lancelot":
+- heading "Special Cards 3" [level=2]:
+  - text: Special Cards
+  - generic: "3"
+- button "View Sword and Shield":
+- button "Remove Sword and Shield":
+- button "View Sword and Shield":
+- button "Remove Sword and Shield":
+- button "View Sword and Shield":
+- button "Remove Sword and Shield":
+- heading "Power Cards 4" [level=2]:
+  - text: Power Cards
+  - generic: "4"
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":

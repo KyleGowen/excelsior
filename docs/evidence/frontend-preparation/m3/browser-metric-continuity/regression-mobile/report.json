@@ -1,0 +1,130 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "inputFingerprint": "6445c30fda5e12a47dd08cd9bd62e51311bffc8abb97709f8bc6db77feaa45d3",
+  "method": "CUA live browser automation",
+  "theme": "fixed dark",
+  "scenarios": [
+    {
+      "id": "server-metrics-baseline",
+      "status": "passed",
+      "observed": {
+        "drawPile": 8,
+        "threat": 18,
+        "maximumCombat": 7,
+        "combatIcons": 5,
+        "limited": true
+      },
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/regression-mobile/server-metrics-baseline.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/regression-mobile/server-metrics-baseline.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "limited-raw-legality",
+      "status": "passed",
+      "observed": {
+        "limited": false,
+        "rawLegality": false
+      },
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/regression-mobile/limited-raw-legality.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/regression-mobile/limited-raw-legality.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "reserve-and-ko",
+      "status": "passed",
+      "observed": {
+        "onlyCharacterKO": true,
+        "maximumCombat": 0,
+        "threat": 18
+      },
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/regression-mobile/reserve-and-ko.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/regression-mobile/reserve-and-ko.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "preplacement-save-reload",
+      "status": "passed",
+      "observed": {
+        "drawPile": 7,
+        "physicalPlayable": 8,
+        "combatIcons": 5,
+        "savedAndReloaded": true
+      },
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/regression-mobile/preplacement-save-reload.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/regression-mobile/preplacement-save-reload.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "rapid-unsaved-edits",
+      "status": "passed",
+      "observed": {
+        "drawPile": 6,
+        "combatIcons": 3,
+        "unsaved": true
+      },
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/regression-mobile/rapid-unsaved-edits.jpg",
+        "dom": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/regression-mobile/rapid-unsaved-edits.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    }
+  ],
+  "acceptance": "automated only; Kyle acceptance pending",
+  "cleanup": {
+    "applicationRecords": "Original cards, pre-placement, reserve and Limited restored; fictional account/deck retained for Kyle",
+    "browser": "owned fixture with original saved data"
+  },
+  "gaps": [
+    "light theme unavailable",
+    "real Google OAuth unavailable",
+    "independent module harness not yet available"
+  ],
+  "dimensions": {
+    "height": 844,
+    "width": 390
+  },
+  "status": "passed",
+  "counts": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "browserErrorCount": 0,
+  "applicationInputs": {
+    "frontend/src/features/deck-editor/DeckEditorPage.css": "69d72eca0665f7d0a768682317f00a53e57b3f8382f1ce9251c01b6128a22b7d",
+    "frontend/src/features/deck-editor/DeckEditorPage.tsx": "e992d1d74a486d1e6d4f4adbce4344470e7943321c8a97e8320c7b138a7ecb2f",
+    "frontend/src/lib/decks/useDraftEvaluation.ts": "cf961fab3cb78973d1c57894bc93e68e0d502254fd1c70fb058142930693f180"
+  }
+}

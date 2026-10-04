@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "deployedRevision": null,
+  "inputFingerprint": "52008f3cd5eb175f86cad44e57747b98b0a1fbf88ead243fcb051894e4026d6e",
+  "selectedScenarios": [
+    "deck-readonly-draw-export"
+  ],
+  "capturePolicy": "all",
+  "comparison": true,
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5176",
+    "apiUrl": "http://localhost:8089",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m3/cursored",
+    "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+    "sourceTreeFingerprint": "52008f3cd5eb175f86cad44e57747b98b0a1fbf88ead243fcb051894e4026d6e",
+    "expectedRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m3",
+    "verified": true,
+    "observedAt": "2026-10-04T04:46:11.805Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "actor": "fictional-account",
+  "theme": "fixed dark",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "deck-readonly-draw-export",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-readonly/deck-readonly-draw-export-draw.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-readonly/deck-readonly-draw-export-draw.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5176/users/d005c30a-5857-4581-b4c9-ba3569d283a3/decks/6b96cbc2-f3d3-4a20-8b29-9ed4d96e3137?readonly=true"
+        },
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-readonly/deck-readonly-draw-export-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-readonly/deck-readonly-draw-export-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5176/users/d005c30a-5857-4581-b4c9-ba3569d283a3/decks/6b96cbc2-f3d3-4a20-8b29-9ed4d96e3137?readonly=true"
+        }
+      ],
+      "observed": {
+        "drawCount": 8,
+        "exported": {
+          "legal": false,
+          "reserve_character": null,
+          "total_cards": 8,
+          "total_threat": 18
+        },
+        "recordsChanged": false
+      }
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only scenarios",
+    "browser": "returned Home; close this test-owned tab or mark handoff explicitly"
+  },
+  "acceptance": "automated evidence only; Kyle acceptance not inferred",
+  "gaps": [
+    "light theme unavailable in M1",
+    "Google OAuth not exercised",
+    "independent module harness unavailable in M1"
+  ],
+  "browserErrorCount": 0,
+  "status": "passed",
+  "durationSeconds": 3.878,
+  "counts": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  }
+}

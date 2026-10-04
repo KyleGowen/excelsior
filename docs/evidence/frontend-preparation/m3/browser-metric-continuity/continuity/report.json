@@ -1,0 +1,742 @@
+{
+  "schema": 1,
+  "environment": "isolated M3 local API8089/UI5176, owned Docker V365",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "sourceState": "uncommitted metric continuity change",
+  "method": "CUA live browser automation with delayed owned local API; no mocked HTTP",
+  "status": "passed",
+  "scenarios": [
+    {
+      "id": "desktop-pending-and-replacement",
+      "status": "passed",
+      "baseline": {
+        "observed": {
+          "dimensions": {
+            "height": 1000,
+            "width": 1440
+          },
+          "evaluatingPlaceholder": false,
+          "regions": [
+            {
+              "height": 45,
+              "icons": [
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/threat.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/energy.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/combat.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/brute_force.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/intelligence.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/energy.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/combat.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/brute_force.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/intelligence.png"
+                }
+              ],
+              "selector": ".deck-editor__stats-panel",
+              "text": "18Max2754Total0500",
+              "width": 1336,
+              "x": 84,
+              "y": 61.5
+            },
+            {
+              "height": 23.5,
+              "icons": [],
+              "selector": ".deck-editor__chip",
+              "text": "8 cards",
+              "width": 67.4296875,
+              "x": 346,
+              "y": 20.5
+            },
+            {
+              "height": 36,
+              "icons": [
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/threat.png"
+                }
+              ],
+              "selector": ".deck-editor__threat-stat",
+              "text": "18",
+              "width": 48,
+              "x": 431.9453125,
+              "y": 70.5
+            }
+          ]
+        },
+        "evidence": {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/desktop/settled.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/desktop/settled.txt",
+          "dimensions": {
+            "height": 1000,
+            "width": 1440
+          },
+          "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+        }
+      },
+      "pending": [
+        {
+          "observed": {
+            "dimensions": {
+              "height": 1000,
+              "width": 1440
+            },
+            "evaluatingPlaceholder": false,
+            "regions": [
+              {
+                "height": 45,
+                "icons": [
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/threat.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/energy.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/combat.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/brute_force.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/intelligence.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/energy.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/combat.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/brute_force.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/intelligence.png"
+                  }
+                ],
+                "selector": ".deck-editor__stats-panel",
+                "text": "18Max2754Total0500",
+                "width": 1336,
+                "x": 84,
+                "y": 61.5
+              },
+              {
+                "height": 23.5,
+                "icons": [],
+                "selector": ".deck-editor__chip",
+                "text": "8 cards",
+                "width": 67.4296875,
+                "x": 346,
+                "y": 20.5
+              },
+              {
+                "height": 36,
+                "icons": [
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/threat.png"
+                  }
+                ],
+                "selector": ".deck-editor__threat-stat",
+                "text": "18",
+                "width": 48,
+                "x": 431.9453125,
+                "y": 70.5
+              }
+            ]
+          },
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/desktop/pending-first-edit.jpg",
+            "dom": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/desktop/pending-first-edit.txt",
+            "dimensions": {
+              "height": 1000,
+              "width": 1440
+            },
+            "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        },
+        {
+          "observed": {
+            "dimensions": {
+              "height": 1000,
+              "width": 1440
+            },
+            "evaluatingPlaceholder": false,
+            "regions": [
+              {
+                "height": 45,
+                "icons": [
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/threat.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/energy.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/combat.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/brute_force.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/intelligence.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/energy.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/combat.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/brute_force.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/intelligence.png"
+                  }
+                ],
+                "selector": ".deck-editor__stats-panel",
+                "text": "18Max2754Total0500",
+                "width": 1336,
+                "x": 84,
+                "y": 61.5
+              },
+              {
+                "height": 23.5,
+                "icons": [],
+                "selector": ".deck-editor__chip",
+                "text": "8 cards",
+                "width": 67.4296875,
+                "x": 346,
+                "y": 20.5
+              },
+              {
+                "height": 36,
+                "icons": [
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/threat.png"
+                  }
+                ],
+                "selector": ".deck-editor__threat-stat",
+                "text": "18",
+                "width": 48,
+                "x": 431.9453125,
+                "y": 70.5
+              }
+            ]
+          },
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/desktop/pending-second-edit.jpg",
+            "dom": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/desktop/pending-second-edit.txt",
+            "dimensions": {
+              "height": 1000,
+              "width": 1440
+            },
+            "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        }
+      ],
+      "updated": {
+        "observed": {
+          "dimensions": {
+            "height": 1000,
+            "width": 1440
+          },
+          "evaluatingPlaceholder": false,
+          "regions": [
+            {
+              "height": 45,
+              "icons": [
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/threat.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/energy.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/combat.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/brute_force.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/intelligence.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/energy.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/combat.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/brute_force.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/intelligence.png"
+                }
+              ],
+              "selector": ".deck-editor__stats-panel",
+              "text": "18Max2754Total0300",
+              "width": 1336,
+              "x": 84,
+              "y": 61.5
+            },
+            {
+              "height": 23.5,
+              "icons": [],
+              "selector": ".deck-editor__chip",
+              "text": "6 cards",
+              "width": 67.3984375,
+              "x": 346,
+              "y": 20.5
+            },
+            {
+              "height": 36,
+              "icons": [
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/threat.png"
+                }
+              ],
+              "selector": ".deck-editor__threat-stat",
+              "text": "18",
+              "width": 48,
+              "x": 431.9453125,
+              "y": 70.5
+            }
+          ]
+        },
+        "evidence": {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/desktop/updated.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/desktop/updated.txt",
+          "dimensions": {
+            "height": 1000,
+            "width": 1440
+          },
+          "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+        }
+      }
+    },
+    {
+      "id": "mobile-pending-and-replacement",
+      "status": "passed",
+      "baseline": {
+        "observed": {
+          "dimensions": {
+            "height": 844,
+            "width": 390
+          },
+          "evaluatingPlaceholder": false,
+          "regions": [
+            {
+              "height": 85,
+              "icons": [
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/energy.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/combat.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/brute_force.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/intelligence.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/energy.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/combat.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/brute_force.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/intelligence.png"
+                }
+              ],
+              "selector": ".deck-editor__stats-panel",
+              "text": "Max2754Total0500",
+              "width": 366,
+              "x": 12,
+              "y": 123
+            },
+            {
+              "height": 25.5,
+              "icons": [],
+              "selector": ".deck-editor__chip",
+              "text": "8 cards",
+              "width": 71.4296875,
+              "x": 12,
+              "y": 77.25
+            },
+            {
+              "height": 34,
+              "icons": [
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/threat.png"
+                }
+              ],
+              "selector": ".deck-editor__threat-stat",
+              "text": "18",
+              "width": 34,
+              "x": 344,
+              "y": 73
+            }
+          ]
+        },
+        "evidence": {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/mobile/settled.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/mobile/settled.txt",
+          "dimensions": {
+            "height": 844,
+            "width": 390
+          },
+          "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+        }
+      },
+      "pending": [
+        {
+          "observed": {
+            "dimensions": {
+              "height": 844,
+              "width": 390
+            },
+            "evaluatingPlaceholder": false,
+            "regions": [
+              {
+                "height": 85,
+                "icons": [
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/energy.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/combat.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/brute_force.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/intelligence.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/energy.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/combat.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/brute_force.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/intelligence.png"
+                  }
+                ],
+                "selector": ".deck-editor__stats-panel",
+                "text": "Max2754Total0500",
+                "width": 366,
+                "x": 12,
+                "y": 123
+              },
+              {
+                "height": 25.5,
+                "icons": [],
+                "selector": ".deck-editor__chip",
+                "text": "8 cards",
+                "width": 71.4296875,
+                "x": 12,
+                "y": 77.25
+              },
+              {
+                "height": 34,
+                "icons": [
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/threat.png"
+                  }
+                ],
+                "selector": ".deck-editor__threat-stat",
+                "text": "18",
+                "width": 34,
+                "x": 344,
+                "y": 73
+              }
+            ]
+          },
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/mobile/pending-first-edit.jpg",
+            "dom": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/mobile/pending-first-edit.txt",
+            "dimensions": {
+              "height": 844,
+              "width": 390
+            },
+            "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        },
+        {
+          "observed": {
+            "dimensions": {
+              "height": 844,
+              "width": 390
+            },
+            "evaluatingPlaceholder": false,
+            "regions": [
+              {
+                "height": 85,
+                "icons": [
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/energy.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/combat.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/brute_force.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/intelligence.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/energy.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/combat.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/brute_force.png"
+                  },
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/intelligence.png"
+                  }
+                ],
+                "selector": ".deck-editor__stats-panel",
+                "text": "Max2754Total0500",
+                "width": 366,
+                "x": 12,
+                "y": 123
+              },
+              {
+                "height": 25.5,
+                "icons": [],
+                "selector": ".deck-editor__chip",
+                "text": "8 cards",
+                "width": 71.4296875,
+                "x": 12,
+                "y": 77.25
+              },
+              {
+                "height": 34,
+                "icons": [
+                  {
+                    "loaded": true,
+                    "source": "/src/resources/images/icons/threat.png"
+                  }
+                ],
+                "selector": ".deck-editor__threat-stat",
+                "text": "18",
+                "width": 34,
+                "x": 344,
+                "y": 73
+              }
+            ]
+          },
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/mobile/pending-second-edit.jpg",
+            "dom": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/mobile/pending-second-edit.txt",
+            "dimensions": {
+              "height": 844,
+              "width": 390
+            },
+            "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        }
+      ],
+      "updated": {
+        "observed": {
+          "dimensions": {
+            "height": 844,
+            "width": 390
+          },
+          "evaluatingPlaceholder": false,
+          "regions": [
+            {
+              "height": 85,
+              "icons": [
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/energy.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/combat.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/brute_force.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/intelligence.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/energy.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/combat.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/brute_force.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/intelligence.png"
+                }
+              ],
+              "selector": ".deck-editor__stats-panel",
+              "text": "Max2754Total0300",
+              "width": 366,
+              "x": 12,
+              "y": 123
+            },
+            {
+              "height": 25.5,
+              "icons": [],
+              "selector": ".deck-editor__chip",
+              "text": "6 cards",
+              "width": 71.3984375,
+              "x": 12,
+              "y": 77.25
+            },
+            {
+              "height": 34,
+              "icons": [
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/threat.png"
+                }
+              ],
+              "selector": ".deck-editor__threat-stat",
+              "text": "18",
+              "width": 34,
+              "x": 344,
+              "y": 73
+            }
+          ]
+        },
+        "evidence": {
+          "screenshot": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/mobile/updated.jpg",
+          "dom": "docs/evidence/frontend-preparation/m3/browser-metric-continuity/mobile/updated.txt",
+          "dimensions": {
+            "height": 844,
+            "width": 390
+          },
+          "url": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+        }
+      }
+    }
+  ],
+  "counts": {
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "cleanup": {
+    "applicationRecords": "no saves or persisted mutations; reload restored original eight-card fixture",
+    "api": "resumed",
+    "viewport": "reset",
+    "fixture": "fictional account/deck retained for Kyle"
+  },
+  "acceptance": "automated only; Kyle acceptance pending",
+  "gaps": [
+    "fixed dark only",
+    "real OAuth not exercised",
+    "independent module harness unavailable",
+    "snapshots cover settled/pending/updated states, not a video of every frame"
+  ],
+  "applicationInputs": {
+    "frontend/src/features/deck-editor/DeckEditorPage.css": "69d72eca0665f7d0a768682317f00a53e57b3f8382f1ce9251c01b6128a22b7d",
+    "frontend/src/features/deck-editor/DeckEditorPage.tsx": "e992d1d74a486d1e6d4f4adbce4344470e7943321c8a97e8320c7b138a7ecb2f",
+    "frontend/src/lib/decks/useDraftEvaluation.ts": "cf961fab3cb78973d1c57894bc93e68e0d502254fd1c70fb058142930693f180"
+  }
+}

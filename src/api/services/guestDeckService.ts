@@ -1,3 +1,5 @@
+import { DraftStructureError, type DeckDraftEvaluationService } from './deckDraftEvaluationService';
+import type { ValidationError } from '../../services/deck-validation/validation-error';
 import type { Deck, DeckCard, DeckData } from '../../types';
 import { transformDeckList, transformGuestDeckToListItem } from '../deckTransform';
 
@@ -37,6 +39,8 @@ export type GuestDeckRepositoryPort = {
 };
 
 export interface GuestDeckServiceDeps {
+  evaluator?: Pick<DeckDraftEvaluationService, 'attach'>;
+  validateDeck?: (cards: DeckCard[]) => Promise<ValidationError[]>;
   guestDeckPersistence: GuestDeckPersistencePort;
   deckRepository: GuestDeckRepositoryPort;
   validateCardAddition: (
@@ -63,10 +67,10 @@ function ok<T>(status: number, data: T): Ok<T> {
 export class GuestDeckService {
   constructor(private readonly deps: GuestDeckServiceDeps) {}
 
-  createDeck(
+  async createDeck(
     sessionId: string,
     input: { name: string; description: string }
-  ): Ok<{ id: string; name: string; description: string; created_at: string; updated_at: string }> | Fail {
+  ): Promise<Ok<{ id: string; name: string; description: string; created_at: string; updated_at: string }> | Fail> {
     const { name, description } = input;
     if (name.length > 100) {
       return fail(400, 'VALIDATION_ERROR', 'Deck name must be 100 characters or less');
@@ -83,13 +87,16 @@ export class GuestDeckService {
         created: now,
         lastModified: now,
         cardCount: 0,
+        is_valid: false,
         userId: sessionId
       },
       cards: []
     };
     const deckId = this.deps.guestDeckPersistence.createDeck(sessionId, deckData);
     const created = this.deps.guestDeckPersistence.getDeck(sessionId, deckId)!;
+    const view = this.deps.evaluator ? await this.deps.evaluator.attach({ ...created, metadata: { ...created.metadata, isOwner: true } }) : created;
     return ok(201, {
+      ...view,
       id: deckId,
       name: created.metadata.name,
       description: created.metadata.description ?? '',
@@ -111,25 +118,26 @@ export class GuestDeckService {
     }
   }
 
-  getDeck(sessionId: string, deckId: string): Ok<{ metadata: Record<string, unknown>; cards: DeckCard[] }> | Fail {
+  async getDeck(sessionId: string, deckId: string): Promise<Ok<{ metadata: Record<string, unknown>; cards: DeckCard[] }> | Fail> {
     const deckData = this.deps.guestDeckPersistence.getDeck(sessionId, deckId);
     if (!deckData) {
       return fail(404, 'DECK_NOT_FOUND', 'Deck not found');
     }
-    return ok(200, {
+    const view = {
       metadata: {
         ...deckData.metadata,
         isOwner: true
       },
       cards: deckData.cards || []
-    });
+    };
+    return ok(200, this.deps.evaluator ? await this.deps.evaluator.attach(view) : view);
   }
 
-  updateDeckMetadata(
+  async updateDeckMetadata(
     sessionId: string,
     deckId: string,
     body: { name?: string; description?: string | null; reserve_character?: string | null }
-  ): Ok<ReturnType<typeof transformGuestDeckToListItem>> | Fail {
+  ): Promise<Ok<ReturnType<typeof transformGuestDeckToListItem>> | Fail> {
     const existing = this.deps.guestDeckPersistence.getDeck(sessionId, deckId);
     if (!existing) {
       return fail(404, 'DECK_NOT_FOUND', 'Deck not found');
@@ -181,14 +189,15 @@ export class GuestDeckService {
       return fail(404, 'DECK_NOT_FOUND', 'Deck not found');
     }
     const result = this.deps.guestDeckPersistence.getDeck(sessionId, deckId)!;
-    return ok(200, transformGuestDeckToListItem(result));
+    const view = transformGuestDeckToListItem(result);
+    return ok(200, this.deps.evaluator ? await this.deps.evaluator.attach(view) : view);
   }
 
-  replaceCards(
+  async replaceCards(
     sessionId: string,
     deckId: string,
     cards: Array<{ cardType: string; cardId: string; quantity?: number; displayOrder?: number; exclude_from_draw?: boolean }>
-  ): Ok<DeckData> | Fail {
+  ): Promise<Ok<DeckData> | Fail> {
     const existing = this.deps.guestDeckPersistence.getDeck(sessionId, deckId);
     if (!existing) {
       return fail(404, 'DECK_NOT_FOUND', 'Deck not found');
@@ -212,7 +221,7 @@ export class GuestDeckService {
       }
       if (
         card.quantity !== undefined &&
-        (typeof card.quantity !== 'number' ||
+        (!Number.isInteger(card.quantity) || typeof card.quantity !== 'number' ||
           card.quantity < 1 ||
           card.quantity > MAX_CARD_QUANTITY_PER_ENTRY)
       ) {
@@ -242,11 +251,15 @@ export class GuestDeckService {
       ...(c.displayOrder !== undefined && { displayOrder: c.displayOrder }),
       ...(c.exclude_from_draw !== undefined && { exclude_from_draw: c.exclude_from_draw })
     }));
+    let isValid = false;
+    try { isValid = this.deps.validateDeck ? (await this.deps.validateDeck(mappedCards)).length === 0 : false; }
+    catch (error) { return error instanceof DraftStructureError ? fail(400, 'DRAFT_STRUCTURE_INVALID', error.message) : fail(503, 'DRAFT_EVALUATION_UNAVAILABLE', 'Unable to validate cards; draft was not saved'); }
     const updated: DeckData = {
       metadata: {
         ...existing.metadata,
         lastModified: new Date().toISOString(),
-        cardCount
+        cardCount,
+        is_valid: isValid
       },
       cards: mappedCards
     };
@@ -255,7 +268,7 @@ export class GuestDeckService {
       return fail(404, 'DECK_NOT_FOUND', 'Deck not found');
     }
     const result = this.deps.guestDeckPersistence.getDeck(sessionId, deckId)!;
-    return ok(200, result);
+    return ok(200, this.deps.evaluator ? await this.deps.evaluator.attach(result) : result);
   }
 
   async addCard(
@@ -301,12 +314,16 @@ export class GuestDeckService {
       quantity: qty
     };
     const updatedCards = [...currentCards, newCard];
+    let isValid = false;
+    try { isValid = this.deps.validateDeck ? (await this.deps.validateDeck(updatedCards)).length === 0 : false; }
+    catch (error) { return error instanceof DraftStructureError ? fail(400, 'DRAFT_STRUCTURE_INVALID', error.message) : fail(503, 'DRAFT_EVALUATION_UNAVAILABLE', 'Unable to validate cards; draft was not saved'); }
     const cardCount = countCardsInDeck(updatedCards);
     const updated: DeckData = {
       metadata: {
         ...existing.metadata,
         lastModified: new Date().toISOString(),
-        cardCount
+        cardCount,
+        is_valid: isValid
       },
       cards: updatedCards
     };
@@ -315,7 +332,7 @@ export class GuestDeckService {
       return fail(404, 'DECK_NOT_FOUND', 'Deck not found');
     }
     const result = this.deps.guestDeckPersistence.getDeck(sessionId, deckId)!;
-    return ok(200, result);
+    return ok(200, this.deps.evaluator ? await this.deps.evaluator.attach(result) : result);
   }
 
   deleteDeck(sessionId: string, deckId: string): Ok<Record<string, never>> | Fail {

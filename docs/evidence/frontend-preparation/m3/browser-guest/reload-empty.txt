@@ -1,0 +1,33 @@
+- complementary:
+  - button "Home":
+    - img "Excelsior"
+  - navigation:
+    - button "Home":
+    - button "Card Database":
+    - button "Decks":
+    - button "Collection":
+    - button "Community":
+- banner:
+  - button "Back to decks":
+  - textbox "Deck name": M3 disposable Guest draft
+  - generic: Evaluating…
+  - button "Checking…"
+  - button "Unlisted"
+  - status: Evaluating deck…
+  - button "List View":
+    - text: List View
+  - button "Draw Hand" [disabled]:
+    - text: Draw Hand
+  - button "Export":
+    - text: Export
+  - button "Add Cards":
+    - text: Add Cards
+  - button "Saved" [disabled]:
+    - text: Saved
+- status:
+  - heading "This deck is empty" [level=3]
+  - paragraph: Add cards to start building.
+  - button "Add Cards":
+    - text: Add Cards
+- status:
+  - generic: Loading...

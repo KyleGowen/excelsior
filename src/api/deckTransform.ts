@@ -42,7 +42,7 @@ export function transformGuestDeckToListItem(deckData: DeckData) {
       lastModified: deckData.metadata.lastModified,
       cardCount: deckData.metadata.cardCount ?? deckData.cards?.length ?? 0,
       threat: 0,
-      is_valid: false,
+      is_valid: deckData.metadata.is_valid ?? false,
       userId: deckData.metadata.userId,
       uiPreferences: deckData.metadata.uiPreferences,
       is_limited: false,
@@ -79,7 +79,7 @@ export function transformDeckDetail(deck: Deck, viewerUserId: string) {
   };
 }
 
-/** PUT success path returns empty cards array with updated metadata counts from DB. */
+/** PUT returns the updated cards and metadata together; flat aliases remain compatible. */
 export function transformDeckAfterMetadataUpdate(deck: Deck, viewerUserId: string) {
   const isOwner = deck.user_id === viewerUserId;
   return {
@@ -104,7 +104,7 @@ export function transformDeckAfterMetadataUpdate(deck: Deck, viewerUserId: strin
       display_mission_card_id: deck.display_mission_card_id ?? null,
       background_image_path: deck.background_image_path
     },
-    cards: [] as Deck['cards']
+    cards: deck.cards ?? []
   };
 }
 

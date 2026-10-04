@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "environment": "isolated local M3 Docker database, V365; API8089/UI5176",
+  "sourceRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1",
+  "sourceState": "Uncommitted M3 plus approved response-attached evaluation; see manifest",
+  "deployedRevision": "4bf9729fc680d618dc72d15e90ec707d2c5192d1 (M2 only; M3 not deployed)",
+  "status": "ready for Kyle local verification; acceptance pending",
+  "change": "Fresh server metrics attached to exact load/save snapshots; immediate unsaved evaluation; no evaluation cache; save finishing after newer edits retains dirty state; previous same-deck totals/icons/grids/threat stay visible while pending and update in place; fresh results alone control legality/actions",
+  "gates": {
+    "unit": {
+      "passed": 3810,
+      "skipped": 18,
+      "note": "Passing two-worker retry; latest change afterward only integration fixture selection"
+    },
+    "integration": {
+      "passed": 1016,
+      "failed": 0,
+      "suites": 114,
+      "cleanup": "completed"
+    },
+    "soc2": {
+      "passed": 45
+    },
+    "lint": "passed",
+    "backendTypes": "passed",
+    "frontendBuild": "passed",
+    "storybookBuild": "passed"
+  },
+  "browser": {
+    "currentPassedCases": 13,
+    "failedFinalCases": 0,
+    "selection": [
+      "Owned metrics, Limited/raw legality, reserve/KO, pre-placement/save/reload, rapid unsaved edits: desktop1440x1000 and mobile390x844 (10 cases)",
+      "Guest read-only draw/redraw/export: desktop1280x720 and mobile390x844 (2 cases)",
+      "Save response after newer edit: desktop1440x1000 (1 case)"
+    ],
+    "reusedEvidence": "Prior Home, Database/detail/art, Collection and Supporter-retired checks remain; those surfaces are unchanged. Earlier controlled outage/retry and account read-only evidence is retained as prior-run evidence, not relabeled as a current replay. Current hook offline/retry tests pass.",
+    "limitations": [
+      "Fixed dark only; no light theme",
+      "Real Google OAuth unavailable",
+      "Independent module harness not yet available"
+    ],
+    "comparison": "Matched Guest M2 screenshot inspected; same observable/export values; 4 pixels above channel tolerance16 (0.00043%); no baseline replaced",
+    "troubleshooting": [
+      "Service metadata UPDATE returns no cards; complete response requires fresh snapshot",
+      "Use actual-compatible catalog fixtures for incremental add validation",
+      "Preserve invalid ID 404 via existing UUID_REGEX",
+      "Viewport capability affected the most recently created test tab; assert actual DOM dimensions",
+      "Old timing comparison is invalid: old endpoint requests all returned401; only new200 evaluation timings are usable",
+      "Jest worker SIGSEGV/socket hang-up retained; bounded retries passed",
+      "Guest export expects raw saved legality:false, as recorded in M2; corrected test expectation retained"
+    ]
+  },
+  "cleanup": {
+    "ownedFixtureRestored": true,
+    "cardsMatchPrivateManifest": true,
+    "nameRestored": true,
+    "reserve": null,
+    "limited": true,
+    "drawPile": 8,
+    "prePlaced": 0,
+    "apiResumed": true,
+    "temporaryBrowserTabsClosed": [],
+    "handoffTab": 10,
+    "viewportReset": true,
+    "retained": "Fictional local account/deck and isolated M3 server retained for Kyle; production untouched"
+  },
+  "evidence": "gates-response.json; browser-response-*; comparison-response.json; startup-response.json",
+  "handoffUrl": "http://127.0.0.1:5176/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75",
+  "authority": "Ready for spot check, not accepted/shipped. Production untouched.",
+  "latestVerification": {
+    "evidence": "browser-metric-continuity/",
+    "browser": {
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "blocked": 0,
+      "selection": [
+        "Desktop1440x1000 and mobile390x844 delayed successive edits: old metrics and geometry retained; new response replaces metrics in place (2 cases)",
+        "Shared metric/Limited/reserve/KO/pre-placement/save/reload/rapid-edit cases on both sizes (10 cases)"
+      ],
+      "visualComparison": "Zero changed stats-panel pixels above tolerance16 in four pending captures; unchanged geometry (<0.1px)",
+      "limitation": "Settled/pending/updated screenshots and DOM measurements; no recording of every animation frame"
+    },
+    "focusedUnit": {
+      "passed": 8,
+      "failed": 0
+    },
+    "frontendBuild": "passed",
+    "storybookBuild": "passed",
+    "testLint": "passed",
+    "browserHelperSyntax": "passed",
+    "diffWhitespace": "passed",
+    "reused": "Prior Guest/read-only/save-race and unchanged backend/integration/SOC2 evidence retained with its original inputs; not relabeled as current replay"
+  }
+}

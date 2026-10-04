@@ -321,6 +321,8 @@ export interface UIPreferences {
 }
 
 export interface DeckMetadata {
+  /** Server-evaluated raw Venture validity; never accepted from a client. */
+  is_valid?: boolean;
   id: string;
   name: string;
   description?: string;

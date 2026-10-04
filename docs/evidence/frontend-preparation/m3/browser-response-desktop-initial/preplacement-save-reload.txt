@@ -1,0 +1,96 @@
+- complementary:
+  - button "Home":
+    - img "Excelsior"
+  - navigation:
+    - button "Home":
+    - button "Card Database":
+    - button "Decks":
+    - button "Collection":
+    - button "Community":
+- banner:
+  - button "Back to decks":
+  - textbox "Deck name": Milestone 3 Local Fixture
+  - generic: 7 cards
+  - button "Limited" [pressed]
+  - button "Unlisted"
+  - 'generic "Threat: 18"':
+    - generic: "18"
+  - region "Character maximums":
+    - generic: Max
+    - 'generic "Character max — Energy: 2"':
+      - 'generic "Energy: 2"':
+        - generic: "2"
+    - 'generic "Character max — Combat: 7"':
+      - 'generic "Combat: 7"':
+        - generic: "7"
+    - 'generic "Character max — Brute Force: 5"':
+      - 'generic "Brute Force: 5"':
+        - generic: "5"
+    - 'generic "Character max — Intelligence: 4"':
+      - 'generic "Intelligence: 4"':
+        - generic: "4"
+  - region "Icon totals":
+    - generic: Total
+    - 'generic "Icon total — Energy: 0"':
+      - 'generic "Energy: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Combat: 5"':
+      - 'generic "Combat: 5"':
+        - generic: "5"
+    - 'generic "Icon total — Brute Force: 0"':
+      - 'generic "Brute Force: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Intelligence: 0"':
+      - 'generic "Intelligence: 0"':
+        - generic: "0"
+  - button "List View":
+    - text: List View
+  - button "Draw Hand":
+    - text: Draw Hand
+  - button "Export":
+    - text: Export
+  - button "Add Cards":
+    - text: Add Cards
+  - button "Saved" [disabled]:
+    - text: Saved
+- heading "Characters 1" [level=2]:
+  - text: Characters
+  - generic: "1"
+- button "Unknown Characters card" [disabled]:
+  - img "Unknown Characters card"
+- button "Select Unknown Characters card as reserve": Select Reserve
+- 'button "KO character: Unknown Characters card"': KO
+- button "Remove Unknown Characters card":
+- heading "Special Cards 3" [level=2]:
+  - text: Special Cards
+  - generic: "3"
+- button "Unknown Special card" [disabled]:
+  - img "Unknown Special card"
+- generic: Pre-Placed
+- button "Remove Unknown Special card":
+- button "Unknown Special card" [disabled]:
+  - img "Unknown Special card"
+- button "Remove Unknown Special card":
+- button "Unknown Special card" [disabled]:
+  - img "Unknown Special card"
+- button "Remove Unknown Special card":
+- heading "Power Cards 5" [level=2]:
+  - text: Power Cards
+  - generic: "5"
+- button "Unknown Power card" [disabled]:
+  - img "Unknown Power card"
+- button "Remove Unknown Power card":
+- button "Unknown Power card" [disabled]:
+  - img "Unknown Power card"
+- button "Remove Unknown Power card":
+- button "Unknown Power card" [disabled]:
+  - img "Unknown Power card"
+- button "Remove Unknown Power card":
+- button "Unknown Power card" [disabled]:
+  - img "Unknown Power card"
+- button "Remove Unknown Power card":
+- button "Unknown Power card" [disabled]:
+  - img "Unknown Power card"
+- button "Remove Unknown Power card":
+- status:
+  - generic: Loading...

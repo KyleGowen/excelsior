@@ -231,6 +231,7 @@ export function registerDecksV1HttpRoutes(router: Router, deps: DecksV1HttpDeps)
   });
 
   router.get('/decks/:id/cards', deps.authenticateUser, async (req: Request, res: Response) => {
+    res.set('Cache-Control', 'no-store');
     try {
       const result = await deps.deckCardsService.getDeckCards(req.params.id);
       if (!result.ok) {
@@ -249,6 +250,7 @@ export function registerDecksV1HttpRoutes(router: Router, deps: DecksV1HttpDeps)
   });
 
   router.post('/decks/:id/cards', deps.authenticateUser, async (req: Request, res: Response) => {
+    res.set('Cache-Control', 'no-store');
     try {
       if (checkRateLimit(req, res, 'card addition', { v1: true })) {
         return;
@@ -301,6 +303,7 @@ export function registerDecksV1HttpRoutes(router: Router, deps: DecksV1HttpDeps)
   });
 
   router.put('/decks/:id/cards', deps.authenticateUser, async (req: Request, res: Response) => {
+    res.set('Cache-Control', 'no-store');
     try {
       if (checkRateLimit(req, res, 'card replacement', { v1: true })) {
         return;
@@ -343,6 +346,7 @@ export function registerDecksV1HttpRoutes(router: Router, deps: DecksV1HttpDeps)
   });
 
   router.delete('/decks/:id/cards', deps.authenticateUser, async (req: Request, res: Response) => {
+    res.set('Cache-Control', 'no-store');
     try {
       if (checkRateLimit(req, res, 'card removal', { v1: true })) {
         return;
@@ -405,6 +409,7 @@ export function registerDecksV1HttpRoutes(router: Router, deps: DecksV1HttpDeps)
   });
 
   router.get('/decks/:id', deckViewAuth, async (req: Request, res: Response) => {
+    res.set('Cache-Control', 'no-store');
     try {
       // See `/decks/:id/full`: both the compact and fully hydrated views must
       // reflect the current persisted deck for owners and public viewers.
@@ -423,6 +428,7 @@ export function registerDecksV1HttpRoutes(router: Router, deps: DecksV1HttpDeps)
   });
 
   router.put('/decks/:id', deps.authenticateUser, async (req: Request, res: Response) => {
+    res.set('Cache-Control', 'no-store');
     try {
       if (process.env.NODE_ENV === 'test' && req.headers['x-expect-401'] && !req.user) {
         return sendV1Unauthorized(res, 'Authentication required');
@@ -505,6 +511,7 @@ export function registerDecksV1HttpRoutes(router: Router, deps: DecksV1HttpDeps)
   });
 
   router.get('/decks/:id/ui-preferences', deps.authenticateUser, async (req: Request, res: Response) => {
+    res.set('Cache-Control', 'no-store');
     try {
       if (req.user?.role === 'GUEST') {
         sendGuestForbiddenV1(res, 'view UI preferences');
@@ -528,6 +535,7 @@ export function registerDecksV1HttpRoutes(router: Router, deps: DecksV1HttpDeps)
   });
 
   router.put('/decks/:id/ui-preferences', deps.authenticateUser, async (req: Request, res: Response) => {
+    res.set('Cache-Control', 'no-store');
     try {
       if (checkRateLimit(req, res, 'UI preferences save', { v1: true })) {
         return;
@@ -568,6 +576,7 @@ export function registerDecksV1HttpRoutes(router: Router, deps: DecksV1HttpDeps)
   });
 
   router.delete('/decks/:id', deps.authenticateUser, async (req: Request, res: Response) => {
+    res.set('Cache-Control', 'no-store');
     try {
       if (!req.user) {
         return sendV1Unauthorized(res, 'Authentication required');

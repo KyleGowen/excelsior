@@ -116,6 +116,9 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
+    - name: Install frontend hook-test dependencies
+      run: npm ci --prefix frontend
+
     - name: Cache Jest timing
       uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
       with:
@@ -149,6 +152,9 @@ jobs:
 
     - name: Install dependencies
       run: npm ci
+
+    - name: Install frontend hook-test dependencies
+      run: npm ci --prefix frontend
 
     - name: Run unit tests with coverage
       run: npx jest --config tests/config/jest.ci.config.js --coverage

@@ -4,6 +4,7 @@
  * Non-GUEST users receive 403 on guest deck endpoints.
  */
 import request from 'supertest';
+import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 import { app, initializeTestServer } from '../../src/test-server';
 import { integrationTestUtils } from '../setup-integration';
 
@@ -12,11 +13,16 @@ const v1 = '/api/v1/guest/decks';
 describe('Guest deck API integration tests', () => {
   let guestSessionCookie: string;
   let userSessionCookie: string;
+  let characterId: string;
+  let powerId: string;
   const guestPassword = 'GuestDeckApiPw1';
   const userPassword = 'UserDeckApiPw1';
 
   beforeAll(async () => {
     await initializeTestServer();
+    const pool = DataSourceConfig.getInstance().getPool();
+    characterId = (await pool.query('SELECT id FROM characters ORDER BY id LIMIT 1')).rows[0].id;
+    powerId = (await pool.query('SELECT id FROM power_cards ORDER BY id LIMIT 1')).rows[0].id;
 
     const guestUser = await integrationTestUtils.createTestUser({
       name: 'test-guest-deck-api',
@@ -120,7 +126,7 @@ describe('Guest deck API integration tests', () => {
         .set('Cookie', guestSessionCookie)
         .send({
           cardType: 'character',
-          cardId: '00000000-0000-0000-0000-000000000001',
+          cardId: characterId,
           quantity: 2
         });
       expect(postRes.status).toBe(200);
@@ -142,13 +148,32 @@ describe('Guest deck API integration tests', () => {
         .set('Cookie', guestSessionCookie)
         .send({
           cards: [
-            { cardType: 'character', cardId: '00000000-0000-0000-0000-000000000001', quantity: 1 },
-            { cardType: 'power', cardId: '00000000-0000-0000-0000-000000000002', quantity: 2 }
+            { cardType: 'character', cardId: characterId, quantity: 1 },
+            { cardType: 'power', cardId: powerId, quantity: 2 }
           ]
         });
       expect(putRes.status).toBe(200);
       expect(putRes.body.errors).toEqual([]);
       expect(putRes.body.data.cards.length).toBe(2);
+      expect(putRes.body.data.cards.map((card: { quantity: number }) => card.quantity)).toEqual([1, 2]);
+      expect(putRes.body.data.metadata.is_valid).toBe(false);
+    });
+
+    it('rejects an unknown typed identity without replacing existing Guest cards', async () => {
+      const created = await request(app).post(v1).set('Cookie', guestSessionCookie)
+        .send({ name: 'Unknown card boundary' }).expect(201);
+      const url = `${v1}/${created.body.data.id}`;
+      await request(app).put(`${url}/cards`).set('Cookie', guestSessionCookie)
+        .send({ cards: [{ cardType: 'power', cardId: powerId, quantity: 2 }] }).expect(200);
+      const before = await request(app).get(url).set('Cookie', guestSessionCookie).expect(200);
+      for (const method of ['post', 'put'] as const) {
+        const invalid = { cardType: 'power', cardId: 'nonexistent-fictional-card', quantity: 1 };
+        await request(app)[method](`${url}/cards`).set('Cookie', guestSessionCookie)
+          .send(method === 'put' ? { cards: [invalid] } : invalid).expect(400);
+        const after = await request(app).get(url).set('Cookie', guestSessionCookie).expect(200);
+        expect(after.body.data.cards).toEqual(before.body.data.cards);
+        expect(after.body.data.metadata.is_valid).toBe(false);
+      }
     });
 
     it('should delete a guest deck', async () => {

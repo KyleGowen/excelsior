@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "scope": "M3 badge/Draw Hand and adjacent count/save-width continuity only",
+  "unit": {
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "selection": "draft-evaluation-state lifecycle"
+  },
+  "frontendBuild": "passed final CSS",
+  "storybookBuild": "passed final CSS; mocked examples are not live proof",
+  "browserHelperSyntax": "passed",
+  "diffWhitespace": "passed",
+  "browser": {
+    "passed": 9,
+    "failedFinal": 0,
+    "selection": [
+      "Desktop and mobile delayed successive edits: text/color/opacity/bounds remain unchanged (2)",
+      "Current eight-card Draw Hand contains updated card instances (1)",
+      "Confirmed seven-card physical threshold disables drawing (1)",
+      "Five shared M3 metric/Limited/reserve/KO/pre-placement/save/reload/rapid-edit cases on desktop (5)"
+    ]
+  },
+  "visualComparison": {
+    "captures": 4,
+    "controlsPerCapture": 4,
+    "changedPixelsAboveTolerance16": 0
+  },
+  "boundedRecoveries": [
+    "Initial live control assertion caught Saved/Save changing the action-row width; reserve 90px",
+    "Post-result assertion caught the count chip moving adjacent badges across two-digit/single-digit counts; reserve 90px/tabular numerals",
+    "Fixture raw row equality failed after card replacement regenerated row identifiers/order; verified typed card identities, quantities, and pre-placement instead"
+  ],
+  "cleanup": "Original cards/name/reserve/pre-placement/Limited restored; owned API resumed; viewport reset; fictional account/deck retained",
+  "reused": "Unchanged backend/integration/SOC2, Guest/save-race, and earlier metric proof retained at original inputs; not replayed or claimed current full baseline",
+  "gaps": [
+    "No production tests/deployment",
+    "No full-frame video",
+    "Light/real OAuth/module harness unavailable",
+    "Failed-refresh UI covered by lifecycle tests/mocked examples; not replayed live"
+  ]
+}

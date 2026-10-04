@@ -103,3 +103,7 @@ to [`docs/openapi.yaml`](../openapi.yaml)) in the same PR.**
 | `APPLICATION_ACCESS_UNAVAILABLE` | 503 | Server adapter could not authenticate or reach its fixed API origin. | Check private host credentials and backend availability. |
 
 Token request schema failures use `VALIDATION_ERROR` (400); the endpoint's 15/IP/minute limiter uses the existing `RATE_LIMITED` (429). Player auth/ownership errors retain existing codes.
+
+| POST `/decks/evaluate` | 400 | `VALIDATION_ERROR`, `DRAFT_STRUCTURE_INVALID` | Malformed/unknown/ambiguous draft references; no record writes |
+| POST `/decks/evaluate` | 429 | `RATE_LIMITED` | Bounded stateless preview budget |
+| POST `/decks/evaluate` | 503 | `DRAFT_EVALUATION_UNAVAILABLE` | Catalog/rules unavailable; keep local draft, retry |
