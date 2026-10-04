@@ -1,4 +1,12 @@
 import crypto from 'crypto';
+import { maxCopiesForAddCards } from '../../services/deck-candidates/editorCopyCeiling';
+import { candidateContext, candidateCatalogKey } from '../../services/deck-candidates/context';
+import { candidateInputKey } from '../../services/deck-candidates/inputKey';
+import { isCatalogCardUsable } from '../../services/deck-candidates/isCatalogCardUsable';
+import type { CatalogCard } from '../../services/catalog-presentation/types';
+import type { EvaluateCandidatesInput } from '../http/models/decks/EvaluateCandidatesRequestBody';
+import type { DeckCandidatesEvaluationDto, DeckCandidateDecision } from '../dto/v1/DeckCandidatesEvaluationDto';
+
 import { evaluationInputKey } from '../../services/deck-evaluation/draftInput';
 import type { DeckCard } from '../../types';
 import type { DeckValidationService } from '../../services/deckValidationService';
@@ -66,6 +74,31 @@ export class DeckDraftEvaluationService {
         }
         const result = await this.evaluate({ schemaVersion: 1, draftId: 'saved-validation', revision: 0, cards: [...groups.values()], reserveCharacterId: null, limited: false, format: 'venture', koCharacterIds: [] });
         return result.legality.reasons;
+    }
+    /** Stateless Add Cards compatibility decisions; never grants permission to write a deck. */
+    async evaluateCandidates(input: EvaluateCandidatesInput): Promise<DeckCandidatesEvaluationDto> {
+        const catalog = await this.validator.resolveCatalog();
+        const keys = new Set<string>();
+        for (const card of input.cards) {
+            const key = candidateCatalogKey(card.type, card.cardId);
+            if (!catalog.has(key) || keys.has(key) || !Number.isInteger(card.quantity) || card.quantity < 1 || card.quantity > 100)
+                throw new DraftStructureError('Draft identities must exist and be aggregated with bounded quantities');
+            keys.add(key);
+        }
+        const ctx = candidateContext(input.cards, catalog);
+        const deckTypes = { characters: 'character', 'special-cards': 'special', 'power-cards': 'power', missions: 'mission', events: 'event', locations: 'location', battlegrounds: 'battleground', aspects: 'aspect', 'advanced-universe': 'advanced-universe', teamwork: 'teamwork', 'ally-universe': 'ally-universe', training: 'training', 'basic-universe': 'basic-universe' } as const;
+        const candidates = input.candidates.map(candidate => {
+            const row = catalog.get(candidateCatalogKey(deckTypes[candidate.catalogType], candidate.cardId));
+            if (!row) throw new DraftStructureError('A candidate does not exist for its type');
+            // The validation index stores a deck type in `type`; Basic Universe's printed grid skill is separate.
+            const card = { ...row, ...(candidate.catalogType === 'basic-universe' ? { type: row.basic_skill_type } : {}) } as CatalogCard;
+            const usable = isCatalogCardUsable(card, candidate.catalogType, ctx);
+            const code: DeckCandidateDecision['reasons'][number]['code'] = candidate.catalogType === 'aspects' ? 'HOMEBASE' : candidate.catalogType === 'events' ? 'MISSION_SET' : ['special-cards', 'advanced-universe'].includes(candidate.catalogType) ? 'STARTING_TEAM' : 'POWER_GRID';
+            const messages = { HOMEBASE: 'Requires a matching homebase.', MISSION_SET: 'Requires a matching mission set.', STARTING_TEAM: 'Requires matching starting-team or battleground conditions.', POWER_GRID: 'No starting-team character meets this card’s use requirement.' };
+            return { ...candidate, usable, reasons: usable ? [] : [{ code, message: messages[code] }], maxCopies: maxCopiesForAddCards(card) };
+        });
+        return { schemaVersion: 1, revision: input.revision, inputKey: candidateInputKey(input), versions: { catalog: crypto.createHash('sha256').update(JSON.stringify([...catalog])).digest('hex'), rules: 'add-cards-compatibility-v1' }, candidates,
+            missionLimitReached: input.cards.filter(c => c.type === 'mission').reduce((n, c) => n + c.quantity, 0) >= 7 };
     }
     async evaluate(input: EvaluateDraftInput): Promise<DeckDraftEvaluationDto> {
         const catalog = await this.validator.resolveCatalog();

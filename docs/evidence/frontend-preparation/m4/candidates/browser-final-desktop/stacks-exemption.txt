@@ -1,0 +1,259 @@
+- complementary:
+  - button "Home":
+    - img "Excelsior"
+  - navigation:
+    - button "Home":
+    - button "Card Database":
+    - button "Decks":
+    - button "Collection":
+    - button "Community":
+- banner:
+  - button "Back to decks":
+  - textbox "Deck name": Milestone 3 Local Fixture
+  - generic: 8 cards
+  - button "Limited" [pressed]
+  - button "Unlisted"
+  - 'generic "Threat: 18"':
+    - generic: "18"
+  - region "Character maximums":
+    - generic: Max
+    - 'generic "Character max — Energy: 2"':
+      - 'generic "Energy: 2"':
+        - generic: "2"
+    - 'generic "Character max — Combat: 7"':
+      - 'generic "Combat: 7"':
+        - generic: "7"
+    - 'generic "Character max — Brute Force: 5"':
+      - 'generic "Brute Force: 5"':
+        - generic: "5"
+    - 'generic "Character max — Intelligence: 4"':
+      - 'generic "Intelligence: 4"':
+        - generic: "4"
+  - region "Icon totals":
+    - generic: Total
+    - 'generic "Icon total — Energy: 0"':
+      - 'generic "Energy: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Combat: 5"':
+      - 'generic "Combat: 5"':
+        - generic: "5"
+    - 'generic "Icon total — Brute Force: 0"':
+      - 'generic "Brute Force: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Intelligence: 0"':
+      - 'generic "Intelligence: 0"':
+        - generic: "0"
+  - button "List View":
+    - text: List View
+  - button "Draw Hand":
+    - text: Draw Hand
+  - button "Export":
+    - text: Export
+  - button "Add Cards":
+    - text: Add Cards
+  - button "Saved" [disabled]:
+    - text: Saved
+- heading "Characters 1" [level=2]:
+  - text: Characters
+  - generic: "1"
+- button "View Lancelot":
+- button "Select Lancelot as reserve": Select Reserve
+- 'button "KO character: Lancelot"': KO
+- button "Remove Lancelot":
+- heading "Special Cards 3" [level=2]:
+  - text: Special Cards
+  - generic: "3"
+- button "View Sword and Shield":
+- button "Remove Sword and Shield":
+- button "View Sword and Shield":
+- button "Remove Sword and Shield":
+- button "View Sword and Shield":
+- button "Remove Sword and Shield":
+- heading "Power Cards 5" [level=2]:
+  - text: Power Cards
+  - generic: "5"
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- dialog "Add cards":
+  - generic: Add Cards
+  - button "Close panel":
+  - complementary "Add cards context":
+    - region "Team character stats":
+      - generic: Team
+      - generic: "Threat: 18"
+      - generic: Lancelot
+      - generic "Lancelot Energy":
+        - generic: "2"
+      - generic "Lancelot Combat":
+        - generic: "7"
+      - generic "Lancelot Brute Force":
+        - generic: "5"
+      - generic "Lancelot Intelligence":
+        - generic: "4"
+      - generic "Lancelot Threat Value":
+        - generic: "18"
+      - generic: Character 2
+      - generic "Empty slot Energy":
+        - generic: "0"
+      - generic "Empty slot Combat":
+        - generic: "0"
+      - generic "Empty slot Brute Force":
+        - generic: "0"
+      - generic "Empty slot Intelligence":
+        - generic: "0"
+      - generic "Empty slot Threat Value":
+        - generic: "0"
+      - generic: Character 3
+      - generic "Empty slot Energy":
+        - generic: "0"
+      - generic "Empty slot Combat":
+        - generic: "0"
+      - generic "Empty slot Brute Force":
+        - generic: "0"
+      - generic "Empty slot Intelligence":
+        - generic: "0"
+      - generic "Empty slot Threat Value":
+        - generic: "0"
+      - generic: Character 4
+      - generic "Empty slot Energy":
+        - generic: "0"
+      - generic "Empty slot Combat":
+        - generic: "0"
+      - generic "Empty slot Brute Force":
+        - generic: "0"
+      - generic "Empty slot Intelligence":
+        - generic: "0"
+      - generic "Empty slot Threat Value":
+        - generic: "0"
+      - generic: No Location or Battleground Set
+    - generic "Add cards filters":
+      - generic: Set
+      - combobox "Filter by set":
+        - option "All sets" [selected]
+        - option "Edgar Rice Burroughs and the World Legends"
+        - option "Edgar Rice Burroughs and the World Legends - Promos"
+        - option "The Few and the Cursed - Promos"
+        - option "Skybound"
+        - option "Skybound - Promos"
+      - generic "Not available on the Stacks tab":
+        - checkbox "Hide Unusables" [disabled]
+        - generic: Hide Unusables
+    - region "Hovered card preview":
+      - generic: Hover for full image.
+  - searchbox "Search character names"
+  - tablist "Card types":
+    - tab "All"
+    - tab "Stacks" [active] [selected]
+    - tab "Characters"
+    - tab "Special"
+    - tab "Any-Char"
+    - tab "Power"
+    - tab "Locations"
+    - tab "Battlegrounds"
+    - tab "Missions"
+    - tab "Events"
+    - tab "Aspects"
+    - tab "Advanced"
+    - tab "Teamwork"
+    - tab "Ally"
+    - tab "Training"
+    - tab "Basic"
+  - button "Add Abraham, Rosita And Eugene stack":
+    - article:
+    - article:
+    - article:
+    - article:
+    - article:
+    - article:
+    - article:
+      - img "Sergeant Abraham Ford"
+  - button "Add Alexandria stack":
+    - article:
+    - article:
+      - img "A Father's Legacy"
+    - article:
+      - img "Aaron"
+    - article:
+      - img "Douglas Monroe"
+    - article:
+      - img "Father Gabriel"
+    - article:
+      - img "Meet Andrea, My Sniper"
+    - article:
+      - img "The Survivors"
+  - button "Add Allen The Alien stack":
+    - article:
+    - article:
+      - img "Alien Telepathy"
+    - article:
+      - img "Bred for Battle"
+    - article:
+      - img "Evaluation Officer"
+    - article:
+      - img "Friendly Manipulation"
+    - article:
+      - img "Near Death Experience"
+    - article:
+      - img "Savior of His People"
+  - button "Add Alpha and the Whisperers stack":
+    - article:
+    - article:
+      - img "Alpha"
+    - article:
+      - img "Beta"
+    - article:
+      - img "The Dead Whisper"
+    - article:
+      - img "The Line We Don't Cross"
+    - article:
+      - img "New World Tactics"
+    - article:
+      - img "Regather the Herd"
+  - button "Add Andrea stack":
+    - article:
+    - article:
+      - img "Aim"
+    - article:
+      - img "I Can Make Any Shot"
+    - article:
+      - img "Lookout"
+    - article:
+      - img "Pin Down"
+    - article:
+      - img "Pinpoint Accuracy"
+    - article:
+      - img "Relocate"
+  - button "Add Angry Mob (Industrial Age) stack":
+    - article:
+    - article:
+      - img "Don't Let it Get Away!"
+    - article:
+      - img "Mob Mentality"
+    - article:
+      - img "Strength in Numbers"
+    - article:
+      - img "Swarm Them!"
+    - article:
+      - img "Disrupting Supply Lines"
+    - article:
+      - img "Union Power"
+  - navigation "Pagination":
+    - button "First page" [disabled]:
+    - button "Previous page" [disabled]:
+    - button "1"
+    - button "2"
+    - generic: ...
+    - button "14"
+    - button "Next page":
+    - button "Last page":
+  - generic: Showing 1-6 of 79
+  - button "Done":
+    - text: Done

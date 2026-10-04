@@ -256,3 +256,5 @@ All elevated operations must live under `/api/v1/admin/...` (no client â€œadminâ
 ### M4 additive catalog presentation
 
 Thirteen `/api/v1/catalog/presentation/<type>` reads use the existing catalog service/HTTP/cache/auth layers. Existing raw routes are retained as a compatibility contract; this is an additive presentation contract, not completion of all M4 domain migrations.
+
+- [x] M4 Add Cards stateless candidate decisions: bounded strict `/api/v1/decks/candidates/evaluate`, server catalog usability/reasons and tile ceilings; no legacy candidate route. Bulk/pre-placement and other M4 workflows remain pending.

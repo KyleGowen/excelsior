@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { fetchCatalog, fetchFoilCardMap, fetchSets } from '../../lib/api/catalog';
 import {
   ADD_CARDS_ANY_CHARACTER_SPECIALS_TAB,
@@ -17,7 +17,7 @@ import {
   qtyInDeckForRepresentative,
 } from '../../lib/catalog/defaultCatalogCards';
 import { buildFoilCardMapLookup } from '../../lib/catalog/foilCatalog';
-import { maxCopiesForAddCards } from '../../lib/decks/addCardsLimits';
+import { useCandidateEvaluation } from '../../lib/decks/useCandidateEvaluation';
 import { useAllCatalogCards } from '../../lib/catalog/useAllCatalogCards';
 import { CardImage } from '../../components/CardImage';
 import { CardTile } from '../../components/CardTile';
@@ -43,7 +43,6 @@ import { MissionSetRow } from './MissionSetRow';
 import {
   ADD_CARDS_MISSION_SETS_PAGE_SIZE,
   buildMissionSets,
-  countDeckMissions,
   missionSetCardsInAddOrder,
   type MissionSet,
 } from '../../lib/catalog/missionSets';
@@ -70,15 +69,13 @@ import {
   type AddCardsFilterOptions,
 } from './addCardsFilters';
 import { AddCardsFilterBar } from './AddCardsFilterBar';
-import { buildDeckUsabilityContext, effectiveHideUnusablesForTab, tabSupportsHideUnusables } from '../../lib/deck-usability';
+import { effectiveHideUnusablesForTab, tabSupportsHideUnusables } from '../../lib/deck-usability';
 import { useDbvFilters } from '../database/filters/useDbvFilters';
 import { calculateDeckTotalThreat, MAX_TOTAL_THREAT } from '../../lib/decks/deckThreat';
 import { buildAddCardsEffectiveCharacterStats } from './addCardsTeamStats';
 
 const STACK_CATALOG_TYPES = ['characters', 'special-cards', 'advanced-universe'] as const;
 
-/** Catalog slugs needed for hide-unusable deck context when tab-scoped data is incomplete. */
-const DECK_USABILITY_CONTEXT_TYPES = ['characters', 'missions', 'locations', 'battlegrounds'] as const;
 
 const ADD_CARDS_SEARCH_PLACEHOLDER = 'Search name, character, mission set, or card text...';
 const STACKS_SEARCH_PLACEHOLDER = 'Search character names...';
@@ -274,7 +271,6 @@ export function AddCardsPanel({
   reserveCharacterId,
 }: AddCardsPanelProps) {
   const { isMobile } = useLayoutMode();
-  const queryClient = useQueryClient();
   const addCardsRef = useRef<HTMLDivElement>(null);
   const typeTabsRef = useRef<HTMLDivElement>(null);
   const [tab, setTab] = useState<CatalogTabSelection>('all');
@@ -367,31 +363,6 @@ export function AddCardsPanel({
     })),
   });
 
-  const usabilityContextCatalogQueries = useQueries({
-    queries: DECK_USABILITY_CONTEXT_TYPES.map((type) => ({
-      queryKey: ['catalog', type] as const,
-      queryFn: () => fetchCatalog(type),
-      enabled:
-        open &&
-        queryClient.getQueryData(['catalog', type]) === undefined &&
-        !isAllTab &&
-        activeType !== type &&
-        !(isStacksTab && type === 'characters'),
-      staleTime: 30 * 60 * 1000,
-    })),
-  });
-
-  const usabilityCatalogByType = useMemo(() => {
-    const byType: Partial<Record<CatalogType, CatalogCard[]>> = {};
-    DECK_USABILITY_CONTEXT_TYPES.forEach((type, i) => {
-      const data = usabilityContextCatalogQueries[i]?.data;
-      if (data && data.length > 0) {
-        byType[type] = data;
-      }
-    });
-    return byType;
-  }, [usabilityContextCatalogQueries]);
-
   const { cardsByType, variantLookupByType } = useMemo(() => {
     const variantLookupByType = new Map<CatalogType, Map<string, string[]>>();
 
@@ -477,13 +448,19 @@ export function AddCardsPanel({
     setFilter,
   ]);
 
-  const usabilityCtx = useMemo(
-    () =>
-      buildDeckUsabilityContext(cards, usabilityCatalogByType, {
-        deckCatalogIndex,
-      }),
-    [cards, usabilityCatalogByType, deckCatalogIndex],
-  );
+  const candidateInput = useMemo(() => {
+    const groups = new Map<string, { type: string; cardId: string; quantity: number }>();
+    for (const card of cards) {
+      const key = `${card.type}:${card.cardId}`;
+      const existing = groups.get(key);
+      if (existing) existing.quantity += card.quantity;
+      else groups.set(key, { type: card.type, cardId: card.cardId, quantity: card.quantity });
+    }
+    return { schemaVersion: 1 as const, cards: [...groups.values()], candidates: CATALOG_TYPES.flatMap(meta => (cardsByType[meta.type] ?? []).map(card => ({ catalogType: meta.type, cardId: card.id }))) };
+  }, [cards, cardsByType]);
+  const candidateEvaluation = useCandidateEvaluation(candidateInput, open && candidateInput.candidates.length > 0);
+  const decisions = useMemo(() => new Map(candidateEvaluation.result?.candidates.map(c => [`${c.catalogType}:${c.cardId}`, c]) ?? []), [candidateEvaluation.result]);
+  const usableByIdentity = useMemo(() => new Map([...decisions].map(([key, value]) => [key, value.usable])), [decisions]);
 
   const effectiveHideUnusables = effectiveHideUnusablesForTab(tab, hideUnusables);
 
@@ -492,7 +469,7 @@ export function AddCardsPanel({
       searchQuery: debouncedSearch,
       setFilter,
       hideUnusables: effectiveHideUnusables,
-      usabilityCtx,
+      usableByIdentity,
       specialScope: isAnyCharacterSpecialsTab
         ? 'any-character'
         : tab === 'special-cards'
@@ -504,7 +481,7 @@ export function AddCardsPanel({
       debouncedSearch,
       setFilter,
       effectiveHideUnusables,
-      usabilityCtx,
+      usableByIdentity,
       isAnyCharacterSpecialsTab,
       tab,
       activeType,
@@ -567,8 +544,7 @@ export function AddCardsPanel({
     [missionSets, filterOptions],
   );
 
-  const deckMissionCount = useMemo(() => countDeckMissions(cards), [cards]);
-  const missionLimitReached = deckMissionCount >= 7;
+  const missionLimitReached = candidateEvaluation.result?.missionLimitReached ?? true;
 
   const pageSize = isStacksTab
     ? ADD_CARDS_STACKS_PAGE_SIZE
@@ -621,12 +597,10 @@ export function AddCardsPanel({
     return qtyInDeckForRepresentative(card, catalogType, cards, deckType, variantMap);
   };
 
-  const maxCopiesForCard = (card: CatalogCard) => {
-    return maxCopiesForAddCards(card);
-  };
+  const maxCopiesForCard = (card: CatalogCard, catalogType: CatalogType) => decisions.get(`${catalogType}:${card.id}`)?.maxCopies ?? 0;
 
   const handleAddCard = (card: CatalogCard, catalogType: CatalogType) => {
-    if (qtyInDeck(card, catalogType) >= maxCopiesForCard(card)) return;
+    if (qtyInDeck(card, catalogType) >= maxCopiesForCard(card, catalogType)) return;
     onAdd(card, catalogType);
   };
 
@@ -648,7 +622,7 @@ export function AddCardsPanel({
   const renderQtyOverlay = (card: CatalogCard, catalogType: CatalogType) => (
     <AddCardsQtyOverlay
       value={qtyInDeck(card, catalogType)}
-      max={maxCopiesForCard(card)}
+      max={maxCopiesForCard(card, catalogType)}
       onIncrement={() => handleAddCard(card, catalogType)}
       onDecrement={() => handleRemoveCard(card, catalogType)}
     />
@@ -662,7 +636,7 @@ export function AddCardsPanel({
     const missing = stackCardsInAddOrder(stack).filter(
       ({ card, catalogType }) => qtyInDeck(card, catalogType) === 0,
     );
-    if (missing.length > 0) {
+    if (candidateEvaluation.result && missing.length > 0) {
       onAddStack(missing);
     }
   };
@@ -671,21 +645,23 @@ export function AddCardsPanel({
     const missing = missionSetCardsInAddOrder(set).filter(
       ({ card }) => qtyInDeck(card, 'missions') === 0,
     );
-    if (missing.length > 0) {
+    if (candidateEvaluation.result && missing.length > 0) {
       onAddStack(missing);
     }
   };
 
-  const isLoading = isStacksTab
+  const catalogLoading = isStacksTab
     ? stackCatalogQueries.some((q) => q.isLoading) || foilMapQuery.isLoading
     : isAllTab
       ? allCatalogQuery.isLoading || foilMapQuery.isLoading
       : catalogQuery.isLoading || foilMapQuery.isLoading;
-  const isError = isStacksTab
+  const catalogError = isStacksTab
     ? stackCatalogQueries.some((q) => q.isError)
     : isAllTab
       ? allCatalogQuery.isError
       : catalogQuery.isError;
+  const isLoading = catalogLoading || candidateEvaluation.pending;
+  const isError = catalogError || candidateEvaluation.error;
   const hasResults = totalItems > 0;
   const dynamicFilterCards = activeType ? cardsByType[activeType] ?? [] : [];
 
@@ -795,7 +771,7 @@ export function AddCardsPanel({
           {isLoading ? (
           <LoadingState label="Loading..." />
         ) : isError ? (
-          <EmptyState title="Could not load cards" message="Try again in a moment." icon={<IconSearch />} />
+          <EmptyState title="Could not load cards" message="Your deck is unchanged. Try again." icon={<IconSearch />} action={<button type="button" className="btn" onClick={() => candidateEvaluation.retry()}>Retry card eligibility</button>} />
         ) : !hasResults ? (
           <EmptyState title="No cards" message="Try another search or type." icon={<IconSearch />} />
         ) : isStacksTab ? (

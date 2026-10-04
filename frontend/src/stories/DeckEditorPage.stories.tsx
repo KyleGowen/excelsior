@@ -73,3 +73,9 @@ export const EvaluationRefreshUnavailable: Story = {
     await canvas.findByRole('region', { name: 'Icon totals' });
   },
 };
+
+
+export const AddCardsEligibilityUnavailable: Story = {
+  parameters: { msw: { handlers: [http.post('/api/v1/decks/candidates/evaluate', () => HttpResponse.json({ data: null, errors: [{ code: 'DRAFT_EVALUATION_UNAVAILABLE', message: 'Fictional unavailable catalog' }] }, { status: 503 })), ...pageHandlers()] } },
+  play: async ({ canvas }) => { await userEvent.click(await canvas.findByRole('button', { name: 'Add Cards' })); await canvas.findByRole('dialog', { name: 'Add cards' }); },
+};

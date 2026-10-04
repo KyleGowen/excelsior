@@ -772,3 +772,5 @@ Deck evaluation timing (M3): load/save responses carry exact-input server metric
 ### M4 Database → Deck continuity
 
 A successful Database Add to Deck must appear on normal navigation into that deck without requiring a page refresh. Publish the returned deck snapshot before showing success; preserve existing card art, controls, stats and layout. No new loading animation or evaluating placeholder is introduced by this flow.
+
+Add Cards uses server eligibility metadata and retains the draft on unavailable evaluation, with an explicit Retry card eligibility action. Existing card filtering and tile quantity ceiling meanings remain compatible. No new visual component or theme is introduced.

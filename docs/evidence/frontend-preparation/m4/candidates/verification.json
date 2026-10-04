@@ -1,0 +1,411 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "status": "passed",
+  "scope": "M4 Add Cards starting-team usability/reasons, editor tile ceilings and mission threshold; full M4 remains in progress",
+  "sourceRevision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+  "uncommitted": true,
+  "observedSourceFingerprint": "6b77e204e97ab7945c52828bc3018391bca6fe3fa78c30f3c2b5047c61747bc7",
+  "implementationHashes": {
+    "src/api/services/deckDraftEvaluationService.ts": "f458b075604a5bdad85f43812c44ce5ac241185f806700b7c2aaecba78b3173f",
+    "src/api/http/deck-evaluation.http.ts": "99e690c6510468c7d2a0b7ea4287ed9e1baaa6d86c309d70d20fe71e2d9d800b",
+    "src/api/access/serviceOperations.ts": "472d5b7ca7603a49ee8ca249e53ac9986a3eedd5c573d12a7322ce98d3ff7c40",
+    "frontend/src/features/deck-editor/AddCardsPanel.tsx": "6ba1dde9360477b6719fd6c2195587189b3a6ad3e7d252737cf9636c8af291e2",
+    "frontend/src/features/deck-editor/addCardsFilters.ts": "ac74c3102bf728e5116db43d9971a70edefc7e3918d0af36c370f01408884a9a",
+    "frontend/src/lib/decks/useCandidateEvaluation.ts": "9228d97fedb693a5d2170339c4e2651aac4152e01216726bc08eef8e592fa1d4",
+    "frontend/src/lib/api/deckCandidates.ts": "353a4f44e8d75cfe385eac26c3b5d6a1c92b15463122e8f03e962a2ca0527706",
+    "tests/browser/milestone4-candidates.mjs": "de875348fa555a473cd19327da75d9284631b3dfedc36443247ef03d04374465",
+    "src/services/deck-candidates/editorCopyCeiling.ts": "057dea2cd0ccda7e622dca919f87599833f0dec3712f71fadbf33785c290644a",
+    "src/services/deck-candidates/inputKey.ts": "48202fd9200c65525ac0c132f7bc058fb13628d190913885f9f13e2a792484f1",
+    "src/services/deck-candidates/isCatalogCardUsable.ts": "cf6330cbeeaae84bcf12e0e88b83ddbc045dcacbef53dba959326cb57cc63c0a",
+    "src/services/deck-candidates/context.ts": "92b07af9322e4642502507a2fb7472bf2e2d7ac41e640e0e151abaf0d99351e4",
+    "src/services/deck-candidates/types.ts": "cd6f1680ccbbfc92ab3e967950f1eb866becce16b29d4e7ecc41f148e0258ee1",
+    "src/services/deck-candidates/deckUsabilityUtils.ts": "d021372692da5c1ab3c0e2c60344f57583719547ba2a2a275619d1afbfc3441a"
+  },
+  "deployedRevision": null,
+  "target": {
+    "frontend": "http://127.0.0.1:5177",
+    "api": "http://localhost:8090",
+    "databaseContainer": "excelsior-frontend-preparation-m4",
+    "databaseOwner": "frontend-preparation-m4",
+    "databasePort": 15442,
+    "migration": "365",
+    "health": "OK",
+    "database": "OK",
+    "checkoutAndProxyVerified": true
+  },
+  "actor": "Existing fictional local account",
+  "theme": "fixed dark",
+  "browser": {
+    "scenarios": {
+      "desktop": [
+        {
+          "id": "power-unfiltered",
+          "status": "passed",
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/power-unfiltered.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/power-unfiltered.txt",
+            "dimensions": {
+              "height": 720,
+              "width": 1280
+            },
+            "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        },
+        {
+          "id": "power-hidden",
+          "status": "passed",
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/power-hidden.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/power-hidden.txt",
+            "dimensions": {
+              "height": 720,
+              "width": 1280
+            },
+            "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        },
+        {
+          "id": "power-usable",
+          "status": "passed",
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/power-usable.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/power-usable.txt",
+            "dimensions": {
+              "height": 720,
+              "width": 1280
+            },
+            "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        },
+        {
+          "id": "one-per-deck-ceiling",
+          "status": "passed",
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/one-per-deck-ceiling.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/one-per-deck-ceiling.txt",
+            "dimensions": {
+              "height": 720,
+              "width": 1280
+            },
+            "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        },
+        {
+          "id": "no-homebase",
+          "status": "passed",
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/no-homebase.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/no-homebase.txt",
+            "dimensions": {
+              "height": 720,
+              "width": 1280
+            },
+            "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        },
+        {
+          "id": "stacks-exemption",
+          "status": "passed",
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/stacks-exemption.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/stacks-exemption.txt",
+            "dimensions": {
+              "height": 720,
+              "width": 1280
+            },
+            "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        }
+      ],
+      "mobile": [
+        {
+          "id": "power-unfiltered",
+          "status": "passed",
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/power-unfiltered.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/power-unfiltered.txt",
+            "dimensions": {
+              "width": 390,
+              "height": 844
+            }
+          },
+          "provenance": "Passed in the preceding six-case mobile run; references its retained captures"
+        },
+        {
+          "id": "power-hidden",
+          "status": "passed",
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/power-hidden.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/power-hidden.txt",
+            "dimensions": {
+              "width": 390,
+              "height": 844
+            }
+          },
+          "provenance": "Passed in the preceding six-case mobile run; references its retained captures"
+        },
+        {
+          "id": "power-usable",
+          "status": "passed",
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/power-usable.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/power-usable.txt",
+            "dimensions": {
+              "width": 390,
+              "height": 844
+            }
+          },
+          "provenance": "Passed in the preceding six-case mobile run; references its retained captures"
+        },
+        {
+          "id": "one-per-deck-ceiling",
+          "status": "passed",
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/one-per-deck-ceiling.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/one-per-deck-ceiling.txt",
+            "dimensions": {
+              "width": 390,
+              "height": 844
+            }
+          },
+          "provenance": "Passed in the preceding six-case mobile run; references its retained captures"
+        },
+        {
+          "id": "no-homebase",
+          "status": "passed",
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/no-homebase.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/no-homebase.txt",
+            "dimensions": {
+              "width": 390,
+              "height": 844
+            }
+          },
+          "provenance": "Passed in the preceding six-case mobile run; references its retained captures"
+        },
+        {
+          "id": "stacks-exemption",
+          "status": "passed",
+          "evidence": {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/stacks-exemption.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/stacks-exemption.txt",
+            "dimensions": {
+              "width": 390,
+              "height": 844
+            }
+          },
+          "provenance": "Passed in the preceding six-case mobile run; references its retained captures"
+        }
+      ],
+      "all": {
+        "id": "all-catalog",
+        "status": "passed",
+        "evidence": {
+          "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-all/all-catalog.jpg",
+          "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-all/all-catalog.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+        }
+      },
+      "team": {
+        "id": "unsaved-team-change",
+        "status": "passed",
+        "evidence": [
+          {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-team-change/without-lancelot.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-team-change/without-lancelot.txt",
+            "dimensions": {
+              "height": 720,
+              "width": 1280
+            },
+            "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          },
+          {
+            "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-team-change/with-lancelot-restored.jpg",
+            "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-team-change/with-lancelot-restored.txt",
+            "dimensions": {
+              "height": 720,
+              "width": 1280
+            },
+            "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+          }
+        ],
+        "cleanup": "No Save clicked; original fixture reloaded"
+      }
+    },
+    "counts": {
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "blocked": 0
+    },
+    "desktop": {
+      "width": 1280,
+      "height": 720
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844
+    },
+    "browserErrorsObserved": 0,
+    "historicalFailure": {
+      "case": "Mobile native hidden-input pointer targeting",
+      "evidence": "browser-after-mobile/power-unfiltered-failed.jpg",
+      "resolution": "Click the visible label; all six mobile cases subsequently passed. Production component behavior was not altered for the runner."
+    },
+    "beforeAfter": {
+      "executedBefore": [
+        "power-unfiltered",
+        "power-hidden"
+      ],
+      "additionalAfter": [
+        "power-usable",
+        "one-per-deck-ceiling",
+        "no-homebase",
+        "stacks-exemption",
+        "all-catalog",
+        "unsaved-team-change"
+      ],
+      "comparison": "screenshot-comparison.json",
+      "interpretation": "Hidden case: zero changed pixels. Unfiltered: 39 pixels confined to the focused search caret (x800\u2013804,y82\u201399). No changed baseline accepted."
+    }
+  },
+  "checks": {
+    "initialBatchStatus": "failed",
+    "initialGates": [
+      {
+        "name": "unit",
+        "status": "passed",
+        "counts": {
+          "suites": 332,
+          "tests": 3891,
+          "passed": 3873,
+          "failed": 0,
+          "skipped": 18,
+          "todo": 0
+        },
+        "executedTests": 3873,
+        "reused": false,
+        "durationSeconds": 20.301
+      },
+      {
+        "name": "lint",
+        "status": "failed",
+        "counts": null,
+        "executedTests": null,
+        "reused": false,
+        "durationSeconds": 7.936
+      },
+      {
+        "name": "backend-types",
+        "status": "passed",
+        "counts": null,
+        "executedTests": null,
+        "reused": false,
+        "durationSeconds": 4.826
+      },
+      {
+        "name": "frontend-build",
+        "status": "passed",
+        "counts": null,
+        "executedTests": null,
+        "reused": false,
+        "durationSeconds": 11.238
+      },
+      {
+        "name": "storybook-build",
+        "status": "passed",
+        "counts": null,
+        "executedTests": null,
+        "reused": false,
+        "durationSeconds": 12.855
+      },
+      {
+        "name": "soc2",
+        "status": "passed",
+        "counts": {
+          "suites": 9,
+          "tests": 45,
+          "passed": 45,
+          "failed": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "executedTests": 45,
+        "reused": false,
+        "durationSeconds": 4.886
+      }
+    ],
+    "correction": "Removed a redundant Boolean cast caught by lint; moved the orphaned client ceiling helper to the backend with its original tests. Added a fresh-request-on-reopen regression and reran affected tests/builds.",
+    "finalGates": [
+      {
+        "name": "affected-unit",
+        "status": "passed",
+        "counts": {
+          "suites": 4,
+          "tests": 30,
+          "passed": 30,
+          "failed": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "executedTests": 30,
+        "reused": false,
+        "durationSeconds": 4.11
+      },
+      {
+        "name": "frontend-build",
+        "status": "passed",
+        "counts": null,
+        "executedTests": null,
+        "reused": false,
+        "durationSeconds": 8.014
+      },
+      {
+        "name": "storybook-build",
+        "status": "passed",
+        "counts": null,
+        "executedTests": null,
+        "reused": false,
+        "durationSeconds": 9.889
+      }
+    ],
+    "lint": "passed on corrected root and changed frontend files",
+    "backendTypes": "passed after final backend cleanup",
+    "integration": {
+      "passed": 1,
+      "suites": 1,
+      "kind": "Real composed API against disposable Docker clone",
+      "cleanup": "integration-cleanup.json"
+    },
+    "reuse": "Prior full-unit (3873 passed,18 skipped), SOC2(45), and integration evidence remain time-specific; final affected unit(30) and frontend/Storybook builds cover the later changes. Counts are not added together."
+  },
+  "cleanup": {
+    "status": "passed",
+    "cardsRestored": true,
+    "limitedPrivacyReserveMatchStartingFixture": true,
+    "storedUpdatePredatesThisRun": true,
+    "saveClicked": false,
+    "existingFixtureRetainedForKyle": true,
+    "historicalTimestampGap": "Older M3 snapshot timestamp differs; it was not used to overwrite the current M4 fixture."
+  },
+  "acceptance": "Ready for Kyle local verification; this new slice is not accepted or shipped. Earlier shipped first-slice production acceptance is recorded separately.",
+  "gaps": [
+    "No production tests, commits, pushes or deployment for this slice.",
+    "No Guest writing, light-theme, OAuth or independent-module-harness browser run.",
+    "Unavailable response/retry and cancellation/race/reopen are unit/mocked-screen coverage; no new live outage injection.",
+    "Bulk stack/mission construction, pre-placement, Team stats, simulations, import/export atomicity, Collection/capability and shared-consumer migrations remain.",
+    "Legacy usability fixture fallback remains in addCardsFilters; the live Add Cards path always consumes server decisions. Remaining frontend helpers await shared-consumer coverage."
+  ],
+  "kyleAcceptance": {
+    "status": "approved",
+    "date": "2026-10-04",
+    "scope": "Add Cards candidate decision slice",
+    "source": "Kyle: its approved. let continue on to M5",
+    "remainingM4": "Not accepted as complete"
+  }
+}

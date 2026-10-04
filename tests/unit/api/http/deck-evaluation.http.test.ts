@@ -25,3 +25,18 @@ describe('Stateless draft evaluation HTTP', () => {
     it('limits repeated evaluation without persistence', async () => { evaluate.mockResolvedValue({}); for (let i = 0; i < 120; i++)
         await request(app).post('/decks/evaluate').send(body).expect(200); const r = await request(app).post('/decks/evaluate').send(body).expect(429); expect(r.headers['retry-after']).toBeDefined(); });
 });
+
+
+describe('Stateless candidate evaluation HTTP', () => {
+    const evaluateCandidates = jest.fn();
+    const app = express(); app.use(express.json());
+    registerDeckEvaluationV1HttpRoutes(app, { evaluateCandidates } as unknown as DeckDraftEvaluationService);
+    const input = { schemaVersion: 1, revision: 1, cards: [], candidates: [] };
+    beforeEach(() => { evaluateCandidates.mockReset(); resetV1RateLimitBucketsForTests(); delete process.env.DISABLE_ZOD_V1; });
+    afterEach(() => { delete process.env.DISABLE_ZOD_V1; });
+    it('returns public no-store decisions, never persistence authorization', async () => { evaluateCandidates.mockResolvedValue({ candidates: [] }); const r = await request(app).post('/decks/candidates/evaluate').send(input).expect(200); expect(r.headers['cache-control']).toBe('no-store'); expect(r.body.data.candidates).toEqual([]); });
+    it.each([false, true])('validates with zod kill switch=%s', async disabled => { if (disabled) process.env.DISABLE_ZOD_V1 = '1'; await request(app).post('/decks/candidates/evaluate').send({ ...input, role: 'ADMIN' }).expect(400); expect(evaluateCandidates).not.toHaveBeenCalled(); });
+    it('returns structure errors as 400', async () => { evaluateCandidates.mockRejectedValue(new DraftStructureError('Unknown identity')); const r = await request(app).post('/decks/candidates/evaluate').send(input).expect(400); expect(r.body.errors[0].code).toBe('DRAFT_STRUCTURE_INVALID'); });
+    it('sanitizes unavailable-catalog failures', async () => { evaluateCandidates.mockRejectedValue(new Error('private detail')); const r = await request(app).post('/decks/candidates/evaluate').send(input).expect(503); expect(r.body.errors[0].code).toBe('DRAFT_EVALUATION_UNAVAILABLE'); expect(JSON.stringify(r.body)).not.toContain('private detail'); });
+    it('limits candidate requests separately', async () => { evaluateCandidates.mockResolvedValue({}); for (let i = 0; i < 120; i++) await request(app).post('/decks/candidates/evaluate').send(input).expect(200); await request(app).post('/decks/candidates/evaluate').send(input).expect(429); });
+});

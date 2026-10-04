@@ -1,0 +1,200 @@
+{
+  "desktop": [
+    {
+      "id": "power-unfiltered",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/power-unfiltered.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/power-unfiltered.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "power-hidden",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/power-hidden.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/power-hidden.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "power-usable",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/power-usable.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/power-usable.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "one-per-deck-ceiling",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/one-per-deck-ceiling.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/one-per-deck-ceiling.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "no-homebase",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/no-homebase.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/no-homebase.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    },
+    {
+      "id": "stacks-exemption",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/stacks-exemption.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-desktop/stacks-exemption.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    }
+  ],
+  "mobile": [
+    {
+      "id": "power-unfiltered",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/power-unfiltered.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/power-unfiltered.txt",
+        "dimensions": {
+          "width": 390,
+          "height": 844
+        }
+      },
+      "provenance": "Passed in the preceding six-case mobile run; references its retained captures"
+    },
+    {
+      "id": "power-hidden",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/power-hidden.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/power-hidden.txt",
+        "dimensions": {
+          "width": 390,
+          "height": 844
+        }
+      },
+      "provenance": "Passed in the preceding six-case mobile run; references its retained captures"
+    },
+    {
+      "id": "power-usable",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/power-usable.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/power-usable.txt",
+        "dimensions": {
+          "width": 390,
+          "height": 844
+        }
+      },
+      "provenance": "Passed in the preceding six-case mobile run; references its retained captures"
+    },
+    {
+      "id": "one-per-deck-ceiling",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/one-per-deck-ceiling.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/one-per-deck-ceiling.txt",
+        "dimensions": {
+          "width": 390,
+          "height": 844
+        }
+      },
+      "provenance": "Passed in the preceding six-case mobile run; references its retained captures"
+    },
+    {
+      "id": "no-homebase",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/no-homebase.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/no-homebase.txt",
+        "dimensions": {
+          "width": 390,
+          "height": 844
+        }
+      },
+      "provenance": "Passed in the preceding six-case mobile run; references its retained captures"
+    },
+    {
+      "id": "stacks-exemption",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/stacks-exemption.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-mobile/stacks-exemption.txt",
+        "dimensions": {
+          "width": 390,
+          "height": 844
+        }
+      },
+      "provenance": "Passed in the preceding six-case mobile run; references its retained captures"
+    }
+  ],
+  "all": {
+    "id": "all-catalog",
+    "status": "passed",
+    "evidence": {
+      "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-all/all-catalog.jpg",
+      "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-all/all-catalog.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+    }
+  },
+  "team": {
+    "id": "unsaved-team-change",
+    "status": "passed",
+    "evidence": [
+      {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-team-change/without-lancelot.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-team-change/without-lancelot.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      },
+      {
+        "screenshot": "docs/evidence/frontend-preparation/m4/candidates/browser-final-team-change/with-lancelot-restored.jpg",
+        "dom": "docs/evidence/frontend-preparation/m4/candidates/browser-final-team-change/with-lancelot-restored.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+      }
+    ],
+    "cleanup": "No Save clicked; original fixture reloaded"
+  }
+}

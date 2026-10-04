@@ -1,0 +1,98 @@
+{
+  "kind": "read-only API evidence; not browser validation",
+  "catalog": [
+    {
+      "type": "characters",
+      "rows": 328,
+      "status": "passed"
+    },
+    {
+      "type": "special-cards",
+      "rows": 607,
+      "status": "passed"
+    },
+    {
+      "type": "power-cards",
+      "rows": 106,
+      "status": "passed"
+    },
+    {
+      "type": "locations",
+      "rows": 19,
+      "status": "passed"
+    },
+    {
+      "type": "battlegrounds",
+      "rows": 1,
+      "status": "passed"
+    },
+    {
+      "type": "missions",
+      "rows": 56,
+      "status": "passed"
+    },
+    {
+      "type": "events",
+      "rows": 30,
+      "status": "passed"
+    },
+    {
+      "type": "aspects",
+      "rows": 8,
+      "status": "passed"
+    },
+    {
+      "type": "advanced-universe",
+      "rows": 8,
+      "status": "passed"
+    },
+    {
+      "type": "teamwork",
+      "rows": 76,
+      "status": "passed"
+    },
+    {
+      "type": "ally-universe",
+      "rows": 20,
+      "status": "passed"
+    },
+    {
+      "type": "training",
+      "rows": 15,
+      "status": "passed"
+    },
+    {
+      "type": "basic-universe",
+      "rows": 24,
+      "status": "passed"
+    }
+  ],
+  "publicFixture": {
+    "status": 200,
+    "deckId": "b58df5a3-db59-4599-a51b-2834e61f3e00",
+    "userId": "00000000-0000-0000-0000-000000000003",
+    "evaluation": {
+      "schemaVersion": 1,
+      "legality": {
+        "valid": true,
+        "rawValid": true,
+        "reasons": []
+      },
+      "threat": {
+        "editor": 76,
+        "legality": 76
+      },
+      "counts": {
+        "physicalPlayable": 51,
+        "drawPile": 51,
+        "prePlaced": 0,
+        "exportCards": 51
+      },
+      "capabilities": {
+        "drawHand": true
+      }
+    }
+  },
+  "retiredApiStatus": 404,
+  "recordsChanged": false
+}

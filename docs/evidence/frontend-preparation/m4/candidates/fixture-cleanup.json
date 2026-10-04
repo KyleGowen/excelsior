@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "cardsRestored": true,
+  "limitedPrivacyReserveMatchStartingFixture": true,
+  "storedUpdatePredatesThisRun": true,
+  "saveClicked": false,
+  "existingFixtureRetainedForKyle": true,
+  "historicalTimestampGap": "Older M3 snapshot timestamp differs; it was not used to overwrite the current M4 fixture."
+}

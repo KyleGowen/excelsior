@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "kind": "target-health",
+  "environment": "production",
+  "frontendUrl": "https://excelsior.cards",
+  "apiUrl": "https://excelsior.cards",
+  "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m4/cursored",
+  "sourceRevision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+  "sourceTreeFingerprint": "935f7d2ae8dbf3cb14c39218fde6211b1bf5393ea255254d51543c000bc5ec8c",
+  "expectedRevision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+  "expectedMigration": "365",
+  "branch": "codex/frontend-preparation-m4",
+  "verified": true,
+  "observedAt": "2026-10-04T19:48:07.085Z",
+  "health": {
+    "status": "OK",
+    "database": "OK",
+    "revision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+    "migration": "365"
+  },
+  "frontendStatus": 200,
+  "status": "target health verified; browser still required"
+}

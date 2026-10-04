@@ -1,4 +1,4 @@
-import { maxCopiesForAddCards } from '../../../frontend/src/lib/decks/addCardsLimits';
+import { maxCopiesForAddCards } from '../../../src/services/deck-candidates/editorCopyCeiling';
 import type { CatalogCard } from '../../../frontend/src/lib/api/types';
 
 const card = (id: string): CatalogCard => ({ id, name: id });

@@ -23,7 +23,8 @@ export interface AddCardsFilterOptions {
   searchQuery: string;
   setFilter: string;
   hideUnusables: boolean;
-  usabilityCtx: DeckUsabilityContext;
+  usabilityCtx?: DeckUsabilityContext;
+  usableByIdentity?: ReadonlyMap<string, boolean>;
   dynamicFilters?: DbvFilterState;
   specialScope?: 'character-specific' | 'any-character';
 }
@@ -89,7 +90,7 @@ export function cardPassesAddCardsFilters(
   if (
     options.hideUnusables &&
     catalogTypeSupportsHideUnusables(catalogType) &&
-    !isCatalogCardUsable(card, catalogType, options.usabilityCtx)
+    !(options.usableByIdentity ? options.usableByIdentity.get(`${catalogType}:${card.id}`) === true : options.usabilityCtx ? isCatalogCardUsable(card, catalogType, options.usabilityCtx) : false)
   ) {
     return false;
   }

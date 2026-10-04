@@ -1,0 +1,192 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "production",
+  "sourceRevision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+  "deployedRevision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+  "inputFingerprint": "935f7d2ae8dbf3cb14c39218fde6211b1bf5393ea255254d51543c000bc5ec8c",
+  "selectedScenarios": [
+    "home-guest",
+    "database-search-detail",
+    "collection-guest-read",
+    "deck-readonly-draw-export",
+    "supporter-retired"
+  ],
+  "capturePolicy": "all",
+  "comparison": false,
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "production",
+    "frontendUrl": "https://excelsior.cards",
+    "apiUrl": "https://excelsior.cards",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m4/cursored",
+    "sourceRevision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+    "sourceTreeFingerprint": "935f7d2ae8dbf3cb14c39218fde6211b1bf5393ea255254d51543c000bc5ec8c",
+    "expectedRevision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m4",
+    "verified": true,
+    "observedAt": "2026-10-04T19:48:07.085Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "actor": "guest",
+  "theme": "fixed dark",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "home-guest",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m4-ship/production-browser/home-guest-result.jpg",
+          "dom": "/private/tmp/excelsior-m4-ship/production-browser/home-guest-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/home"
+        }
+      ],
+      "observed": {
+        "guestEntry": true,
+        "contextualAuthControls": true,
+        "actualOAuth": "not executed"
+      }
+    },
+    {
+      "id": "database-search-detail",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m4-ship/production-browser/database-search-detail-detail.jpg",
+          "dom": "/private/tmp/excelsior-m4-ship/production-browser/database-search-detail-detail.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/data"
+        },
+        {
+          "screenshot": "/private/tmp/excelsior-m4-ship/production-browser/database-search-detail-result.jpg",
+          "dom": "/private/tmp/excelsior-m4-ship/production-browser/database-search-detail-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/data"
+        }
+      ],
+      "observed": {
+        "emptySearch": "skipped by selection",
+        "cardName": "Lancelot",
+        "artwork": {
+          "complete": true,
+          "naturalHeight": 744,
+          "naturalWidth": 1039
+        },
+        "detailsClosed": true
+      }
+    },
+    {
+      "id": "collection-guest-read",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m4-ship/production-browser/collection-guest-read-result.jpg",
+          "dom": "/private/tmp/excelsior-m4-ship/production-browser/collection-guest-read-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/users/bf9460e0-6aaf-4601-9b80-397d8b169437/collection"
+        }
+      ],
+      "observed": {
+        "storage": "browser-local",
+        "emptyExpected": true,
+        "quantitiesChanged": false
+      }
+    },
+    {
+      "id": "deck-readonly-draw-export",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m4-ship/production-browser/deck-readonly-draw-export-draw.jpg",
+          "dom": "/private/tmp/excelsior-m4-ship/production-browser/deck-readonly-draw-export-draw.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/users/00000000-0000-0000-0000-000000000003/decks/b58df5a3-db59-4599-a51b-2834e61f3e00?readonly=true"
+        },
+        {
+          "screenshot": "/private/tmp/excelsior-m4-ship/production-browser/deck-readonly-draw-export-result.jpg",
+          "dom": "/private/tmp/excelsior-m4-ship/production-browser/deck-readonly-draw-export-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/users/00000000-0000-0000-0000-000000000003/decks/b58df5a3-db59-4599-a51b-2834e61f3e00?readonly=true"
+        }
+      ],
+      "observed": {
+        "drawCount": 8,
+        "exported": {
+          "legal": true,
+          "reserve_character": "Black Samson",
+          "total_cards": 51,
+          "total_threat": 76
+        },
+        "recordsChanged": false
+      }
+    },
+    {
+      "id": "supporter-retired",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m4-ship/production-browser/supporter-retired-result.jpg",
+          "dom": "/private/tmp/excelsior-m4-ship/production-browser/supporter-retired-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/home"
+        }
+      ],
+      "observed": {
+        "redirectedHome": true,
+        "supporterVisible": false,
+        "retiredApi": "separate API check required"
+      }
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only scenarios",
+    "browser": "returned Home; close this test-owned tab or mark handoff explicitly"
+  },
+  "acceptance": "automated evidence only; Kyle acceptance not inferred",
+  "gaps": [
+    "light theme unavailable in M1",
+    "Google OAuth not exercised",
+    "independent module harness unavailable in M1"
+  ],
+  "browserErrorCount": 0,
+  "status": "passed",
+  "durationSeconds": 7.708,
+  "counts": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  }
+}

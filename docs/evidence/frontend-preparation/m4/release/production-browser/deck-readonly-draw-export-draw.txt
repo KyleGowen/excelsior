@@ -1,0 +1,163 @@
+- complementary:
+  - button "Home":
+    - img "Excelsior"
+  - navigation:
+    - button "Home":
+    - button "Card Database":
+    - button "Decks":
+    - button "Collection":
+    - button "Community":
+- banner:
+  - button "Back to decks":
+  - heading "S1 Regionals (Seattle 7th, Doug Taylor)" [level=1]
+  - generic: 51 cards
+  - generic: Legal
+  - generic: Public
+  - 'generic "Threat: 76"':
+    - generic: "76"
+  - region "Character maximums":
+    - generic: Max
+    - 'generic "Character max — Energy: 5"':
+      - 'generic "Energy: 5"':
+        - generic: "5"
+    - 'generic "Character max — Combat: 6"':
+      - 'generic "Combat: 6"':
+        - generic: "6"
+    - 'generic "Character max — Brute Force: 8"':
+      - 'generic "Brute Force: 8"':
+        - generic: "8"
+    - 'generic "Character max — Intelligence: 6"':
+      - 'generic "Intelligence: 6"':
+        - generic: "6"
+  - region "Icon totals":
+    - generic: Total
+    - 'generic "Icon total — Energy: 9"':
+      - 'generic "Energy: 9"':
+        - generic: "9"
+    - 'generic "Icon total — Combat: 9"':
+      - 'generic "Combat: 9"':
+        - generic: "9"
+    - 'generic "Icon total — Brute Force: 12"':
+      - 'generic "Brute Force: 12"':
+        - generic: "12"
+    - 'generic "Icon total — Intelligence: 7"':
+      - 'generic "Intelligence: 7"':
+        - generic: "7"
+  - button "List View":
+    - text: List View
+  - button "Draw Hand":
+    - text: Draw Hand
+  - button "Export":
+    - text: Export
+  - generic: Read-only
+- heading "Characters 4" [level=2]:
+  - text: Characters
+  - generic: "4"
+- button "View Omni-Man":
+- 'button "KO character: Omni-Man"': KO
+- button "View John Carter of Mars":
+- 'button "KO character: John Carter of Mars"': KO
+- button "View The Governor & Woodbury":
+- 'button "KO character: The Governor & Woodbury"': KO
+- button "View Black Samson":
+- button "Black Samson is the reserve character" [disabled]: Reserve
+- 'button "KO character: Black Samson"': KO
+- heading "Location and Battleground 2" [level=2]:
+  - text: Location and Battleground
+  - generic: "2"
+- button "View The Round Table":
+  - img "The Round Table"
+- button "View Global Defense Agency":
+  - img "Global Defense Agency"
+- heading "Special Cards 26" [level=2]:
+  - text: Special Cards
+  - generic: "26"
+- button "View Train To Fight as a Team":
+- button "View Bradley Fighting Vehicle":
+- button "View Dr. Stookey":
+- button "View We Will Take It":
+- button "View We Will Take It":
+- button "View Dotar Sojat":
+- button "View Dotar Sojat":
+- button "View Leap into the Fray":
+- button "View Virginia Fighting Man":
+- button "View Brutal Efficiency":
+- button "View Earth's Greatest Hero":
+- button "View I'm Here to Help":
+- button "View Not Who You Thought":
+- button "View Viltrumite Physiology":
+- button "View Viltrumite Physiology":
+- separator "Any Character specials"
+- button "View Agent Donald":
+- button "View Bulletproof":
+- button "View Damien Darkblood":
+- button "View Darkwing":
+- button "View Force Fist & Knuckle Buster":
+- button "View Green Ghost":
+- button "View Monster Girl":
+- button "View Omni-Man":
+- button "View Robot":
+- button "View Shrinking Ray":
+- button "View Titan":
+- heading "Power Cards 14" [level=2]:
+  - text: Power Cards
+  - generic: "14"
+- button "View 1 - Combat":
+- button "View 2 - Energy":
+- button "View 3 - Multi-Power":
+- button "View 4 - Intelligence":
+- button "View 4 - Multi-Power":
+- button "View 5 - Intelligence":
+- button "View 5 - Multi-Power":
+- button "View 6 - Brute Force":
+- button "View 6 - Any-Power":
+- button "View 7 - Brute Force":
+- button "View 7 - Any-Power":
+- button "View 8 - Brute Force":
+- button "View 8 - Brute Force":
+- button "View 8 - Brute Force":
+- heading "Missions 7" [level=2]:
+  - text: Missions
+  - generic: "7"
+- button "View We Are Negan":
+- button "View The Devil Himself":
+- button "View A Traitor Among Us":
+- button "View Dogs of War":
+- button "View Casualties on Both Sides":
+- button "View A Desperate Gamble":
+- button "View A Better Way":
+- heading "Aspects 1" [level=2]:
+  - text: Aspects
+  - generic: "1"
+- button "View Isis":
+- 'heading "Universe: Advanced 2" [level=2]':
+  - text: "Universe: Advanced"
+  - generic: "2"
+- button "View Power Suit":
+- button "View Power Suit":
+- 'heading "Universe: Teamwork 5" [level=2]':
+  - text: "Universe: Teamwork"
+  - generic: "5"
+- button "View 7 Any-Power":
+- button "View 6 Brute Force":
+- button "View 6 Combat":
+- button "View 7 Brute Force":
+- button "View 6 Any-Power":
+- 'heading "Universe: Ally 3" [level=2]':
+  - text: "Universe: Ally"
+  - generic: "3"
+- button "View Darkwing Ii":
+- button "View D.A. Sinclair":
+- button "View Carl Grimes":
+- dialog "Drawn Hand":
+  - generic: Drawn Hand
+  - button "Draw again" [active]
+  - button "Close panel":
+  - button "Agent Donald":
+  - button "Omni-Man":
+  - button "Titan":
+  - button "5 - Intelligence":
+  - button "8 - Brute Force":
+  - button "Power Suit":
+  - button "Power Suit":
+  - button "6 Brute Force":

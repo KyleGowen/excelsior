@@ -1,3 +1,4 @@
+import { candidateInputKey, type CandidateEvaluationInput } from '../../../src/services/deck-candidates/inputKey';
 import presentedCatalog from './catalogPresentation.json';
 import { evaluationInputKey, type DeckEvaluationInput } from '../../../src/services/deck-evaluation/draftInput';
 import type { DraftEvaluation, DraftEvaluationInput } from '../lib/api/decks';
@@ -60,6 +61,10 @@ export function pageHandlers({
     http.get('/api/v1/decks', () => respond(decks)),
     http.get('/api/v1/decks/:deckId/full', ({ params }) =>
       respond(withEvaluation(decks.find((deck) => deck.metadata.id === params.deckId) ?? null, responseEvaluation))),
+    http.post('/api/v1/decks/candidates/evaluate', async ({ request }) => {
+      const input = await request.json() as CandidateEvaluationInput & { revision: number };
+      return respond({ schemaVersion: 1, revision: input.revision, inputKey: candidateInputKey(input), versions: { catalog: 'fictional-story-catalog', rules: 'fictional-story-decisions' }, candidates: input.candidates.map(c => ({ ...c, usable: true, reasons: [], maxCopies: 99 })), missionLimitReached: false });
+    }),
     http.post('/api/v1/decks/validate', () => respond({ valid: true })),
     http.post('/api/v1/decks/evaluate', async ({ request }) => respond(exampleEvaluation(await request.json() as DraftEvaluationInput))),
     http.put('/api/v1/decks/:deckId', async ({ params, request }) => {

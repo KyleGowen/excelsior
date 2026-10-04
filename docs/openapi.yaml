@@ -438,6 +438,38 @@ components:
           type: string
           enum: [DRAFT_EVALUATION_UNAVAILABLE]
           description: Readable deck retained, with unchecked stats; no fresh legality claim.
+    DeckCandidatesEvaluation:
+      type: object
+      required: [schemaVersion, revision, inputKey, versions, candidates, missionLimitReached]
+      properties:
+        schemaVersion: {type: integer, enum: [1]}
+        revision: {type: integer}
+        inputKey: {type: string}
+        versions:
+          type: object
+          required: [catalog, rules]
+          properties:
+            catalog: {type: string}
+            rules: {type: string}
+        missionLimitReached: {type: boolean}
+        candidates:
+          type: array
+          items:
+            type: object
+            required: [catalogType, cardId, usable, reasons, maxCopies]
+            properties:
+              catalogType: {type: string}
+              cardId: {type: string}
+              usable: {type: boolean}
+              maxCopies: {type: integer, enum: [1, 99]}
+              reasons:
+                type: array
+                items:
+                  type: object
+                  required: [code, message]
+                  properties:
+                    code: {type: string, enum: [STARTING_TEAM, POWER_GRID, MISSION_SET, HOMEBASE]}
+                    message: {type: string}
     DeckDraftEvaluation:
       type: object
       additionalProperties: true
@@ -503,6 +535,54 @@ components:
         catalog ETag, the server returns `304 Not Modified`.
 
 paths:
+  /decks/candidates/evaluate:
+    post:
+      summary: Evaluate Add Cards starting-team usability without persistence
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [schemaVersion, revision, cards, candidates]
+              properties:
+                schemaVersion: {type: integer, enum: [1]}
+                revision: {type: integer, minimum: 0, maximum: 9007199254740991}
+                cards:
+                  type: array
+                  maxItems: 100
+                  items:
+                    type: object
+                    additionalProperties: false
+                    required: [type, cardId, quantity]
+                    properties:
+                      type: {type: string, enum: [character, special, power, mission, event, location, battleground, aspect, advanced-universe, advanced_universe, teamwork, ally-universe, ally_universe, training, basic-universe, basic_universe]}
+                      cardId: {type: string, minLength: 1, maxLength: 100, pattern: '^[a-zA-Z0-9_-]+$'}
+                      quantity: {type: integer, minimum: 1, maximum: 100}
+                candidates:
+                  type: array
+                  maxItems: 1500
+                  items:
+                    type: object
+                    additionalProperties: false
+                    required: [catalogType, cardId]
+                    properties:
+                      catalogType: {type: string, enum: [characters, special-cards, power-cards, missions, events, locations, battlegrounds, aspects, advanced-universe, teamwork, ally-universe, training, basic-universe]}
+                      cardId: {type: string, minLength: 1, maxLength: 100, pattern: '^[a-zA-Z0-9_-]+$'}
+      responses:
+        '200':
+          description: No-store v1 envelope with exact input/revision, versioned starting-team usability/reasons, tile ceilings and mission threshold; never write permission.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/DeckCandidatesEvaluation'}
+        '400': {description: VALIDATION_ERROR or DRAFT_STRUCTURE_INVALID}
+        '429': {description: RATE_LIMITED}
+        '503': {description: DRAFT_EVALUATION_UNAVAILABLE}
   /decks/evaluate:
     post:
       summary: Evaluate an unsaved typed deck draft without persistence

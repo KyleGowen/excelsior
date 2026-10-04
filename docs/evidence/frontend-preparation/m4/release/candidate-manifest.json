@@ -1,0 +1,377 @@
+{
+  "schema": 1,
+  "baseRevision": "67ec425773f31a2703c81f01a6acf5a36c39cf2d",
+  "entries": [
+    {
+      "path": "API_MIGRATION_CHECKLIST.md",
+      "mode": "100644",
+      "blob": "f33d4a81d746f252197571d5e36631818895ff49"
+    },
+    {
+      "path": "API_V1.md",
+      "mode": "100644",
+      "blob": "da8db5b709bedf1a61d8a5fe8f11a9a3e71dce12"
+    },
+    {
+      "path": "Excelsior-API-production.insomnia.json",
+      "mode": "100644",
+      "blob": "ed67069d2c6a9d208251e122fa48f2f583cce5d9"
+    },
+    {
+      "path": "Excelsior-API.insomnia.json",
+      "mode": "100644",
+      "blob": "4ed6c7ee1d6181b2269166b33f3cdff51d5fbc35"
+    },
+    {
+      "path": "STYLE_GUIDE_V2.md",
+      "mode": "100644",
+      "blob": "0bd5e89bfc9a3406fb05eedb1c4c9b27363b70d0"
+    },
+    {
+      "path": "docs/current/API_V1_CHANGELOG.md",
+      "mode": "100644",
+      "blob": "da80c2d53977807f17902064060399abcff786db"
+    },
+    {
+      "path": "docs/current/API_V1_ERROR_CATALOG.md",
+      "mode": "100644",
+      "blob": "3ce02fc64c5f8ce79af2ffb5faffabd230d3130a"
+    },
+    {
+      "path": "docs/current/FRONTEND_PREPARATION.md",
+      "mode": "100644",
+      "blob": "0a1ce6d729c1c61dec3a67758c6fe42a46c3b62b"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/README.md",
+      "mode": "100644",
+      "blob": "ee61093a6158e2b94edb2c14ce99a8639111723e"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-after-account/database-search-detail-detail.jpg",
+      "mode": "100644",
+      "blob": "d5f15a8fbc6aeae6b146f707b377228f4653d3e4"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-after-account/database-search-detail-detail.txt",
+      "mode": "100644",
+      "blob": "075ec6ae72767adb05691985045bce7565cf21e9"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-after-account/database-search-detail-empty.jpg",
+      "mode": "100644",
+      "blob": "cde84fc28883bcf26458a3c36f8c29644ed9986b"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-after-account/database-search-detail-empty.txt",
+      "mode": "100644",
+      "blob": "a8cd342488803cfe24d615d0222cb0a03c444acf"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-after-account/database-search-detail-result.jpg",
+      "mode": "100644",
+      "blob": "de953b717b95b7c080fa90e625098c9f7dd57cde"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-after-account/database-search-detail-result.txt",
+      "mode": "100644",
+      "blob": "f8d34f0f54bdb9e9e39a7aadbdbf90d1212c2619"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-after-account/report.json",
+      "mode": "100644",
+      "blob": "79f8166a8b8e9dfec8c62ab16b26603515c41406"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-after-account/supporter-retired-result.jpg",
+      "mode": "100644",
+      "blob": "8b260dae6a4f97b5e7499eacdae35fd1152d68e0"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-after-account/supporter-retired-result.txt",
+      "mode": "100644",
+      "blob": "2f756845a74327d2bbf65248cb50dda450f40238"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-before-account/database-search-detail-detail.jpg",
+      "mode": "100644",
+      "blob": "d5f15a8fbc6aeae6b146f707b377228f4653d3e4"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-before-account/database-search-detail-detail.txt",
+      "mode": "100644",
+      "blob": "075ec6ae72767adb05691985045bce7565cf21e9"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-before-account/database-search-detail-empty.jpg",
+      "mode": "100644",
+      "blob": "8b4e577243d37661e67ca093e31f64611020af5c"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-before-account/database-search-detail-empty.txt",
+      "mode": "100644",
+      "blob": "a8cd342488803cfe24d615d0222cb0a03c444acf"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-before-account/database-search-detail-result.jpg",
+      "mode": "100644",
+      "blob": "666f22fa3c0dc2d2113f03379684ccc62e72ef03"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-before-account/database-search-detail-result.txt",
+      "mode": "100644",
+      "blob": "f8d34f0f54bdb9e9e39a7aadbdbf90d1212c2619"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-before-account/report.json",
+      "mode": "100644",
+      "blob": "5db97a7541685f99ad881265539a0d2f6843349c"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-before-account/supporter-retired-result.jpg",
+      "mode": "100644",
+      "blob": "7cb7409ccbb8545347d9fedf2cd8f34db114abea"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/browser-before-account/supporter-retired-result.txt",
+      "mode": "100644",
+      "blob": "2f756845a74327d2bbf65248cb50dda450f40238"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/catalog-api.json",
+      "mode": "100644",
+      "blob": "0009d543e2c30f2ce155b4c78d948b954fb18e4f"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/catalog-parity.json",
+      "mode": "100644",
+      "blob": "3b2d6fad3fd3e394e0134d0afc695fd565ff1d43"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/catalog-screenshot-comparison.json",
+      "mode": "100644",
+      "blob": "1e65fd6ba51d63a5d3b98487364a4f1b8fd2ef32"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/cleanup.json",
+      "mode": "100644",
+      "blob": "9d076039154b9a34340945c505b244e2c248bea8"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/gates-catalog-corrected/receipt.json",
+      "mode": "100644",
+      "blob": "478ac4ab60814e5f6d8f9c5646ea9d9950b0edae"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/gates-catalog/receipt.json",
+      "mode": "100644",
+      "blob": "92b053964dd9885424e163c5be7b2ee09a2aa238"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/integration-cleanup.json",
+      "mode": "100644",
+      "blob": "f3c6035b2a93d95aade1a2005589109d5d11635a"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/navigation-after/database-add-normal-navigation.jpg",
+      "mode": "100644",
+      "blob": "d6fb31d1d0155d344655b5dbe26f14f8435f3794"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/navigation-after/database-add-normal-navigation.txt",
+      "mode": "100644",
+      "blob": "d9aeb73136c7902bd5f790b33b80dc46fed4ed90"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/navigation-after/report.json",
+      "mode": "100644",
+      "blob": "554baf19178a121a9ed4285673b4497ad441a738"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/navigation-after/warm-deck-cache.jpg",
+      "mode": "100644",
+      "blob": "1daa4266b1bc8fe507c1600c78523f3c8612eb10"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/navigation-after/warm-deck-cache.txt",
+      "mode": "100644",
+      "blob": "bb77e7bf651fc25763da9df289716ba4fb448127"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/navigation-before/deck.png",
+      "mode": "100644",
+      "blob": "d995fadf3ec621e57f1b55084b92a39261e17397"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/navigation-before/dom.txt",
+      "mode": "100644",
+      "blob": "f6ffd5e04f070afae59eaded3d2522a8c51436d7"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/navigation-final/database-add-normal-navigation.jpg",
+      "mode": "100644",
+      "blob": "d6fb31d1d0155d344655b5dbe26f14f8435f3794"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/navigation-final/database-add-normal-navigation.txt",
+      "mode": "100644",
+      "blob": "d9aeb73136c7902bd5f790b33b80dc46fed4ed90"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/navigation-final/report.json",
+      "mode": "100644",
+      "blob": "0132372aa8893b1b857b8971420822a130ba3c5a"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/navigation-final/warm-deck-cache.jpg",
+      "mode": "100644",
+      "blob": "24d2674854ff0e31f45e324b16d586ac17d22e91"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/navigation-final/warm-deck-cache.txt",
+      "mode": "100644",
+      "blob": "95ae8cb481f9feb0c84266601d7f08e5958f2ad7"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/target-after.json",
+      "mode": "100644",
+      "blob": "618c2253108ef8b566457376dba0a7227607c551"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/target-before.json",
+      "mode": "100644",
+      "blob": "f7923cc88ecb58f524930543df15717df2fc8619"
+    },
+    {
+      "path": "docs/evidence/frontend-preparation/m4/verification.json",
+      "mode": "100644",
+      "blob": "98f56f80d4d5dc08eaa242d2237baddf1c06994b"
+    },
+    {
+      "path": "docs/openapi.yaml",
+      "mode": "100644",
+      "blob": "a54f91c17ba423ee92cbd5dcb26663ff5da38b60"
+    },
+    {
+      "path": "frontend/src/features/database/DatabasePage.md",
+      "mode": "100644",
+      "blob": "cf079e956b16d6a1a14ab6803cdbafb785000a94"
+    },
+    {
+      "path": "frontend/src/features/database/DatabasePage.tsx",
+      "mode": "100644",
+      "blob": "0df474e09040bd2e842dbe4a7fc5c14a392c43e8"
+    },
+    {
+      "path": "frontend/src/lib/api/catalog.ts",
+      "mode": "100644",
+      "blob": "a50509bbd75d11f27861e0331643c2efe84faa66"
+    },
+    {
+      "path": "frontend/src/lib/api/types.ts",
+      "mode": "100644",
+      "blob": "e0409705e91c61085339557c2262998e19fcd80c"
+    },
+    {
+      "path": "frontend/src/lib/catalog/cardPrintings.ts",
+      "mode": "100644",
+      "blob": "ad40ca6b0afb0e9ca61a9e2efc9c7ad3d73491dd"
+    },
+    {
+      "path": "frontend/src/lib/catalog/catalogTypeMap.ts",
+      "mode": "100644",
+      "blob": "89608a616c7c8746d2bd6cad078f4b5c80f86d39"
+    },
+    {
+      "path": "frontend/src/lib/catalog/characterStacks.ts",
+      "mode": "100644",
+      "blob": "0daa985c1ad6ec234140bfe0a43d24c7fe1f2e64"
+    },
+    {
+      "path": "frontend/src/lib/catalog/defaultCatalogCards.ts",
+      "mode": "100644",
+      "blob": "8072ae47ab44b62ea0ce765d0a5a14486448fee8"
+    },
+    {
+      "path": "frontend/src/lib/catalog/foilCatalog.ts",
+      "mode": "100644",
+      "blob": "06e6874d30f249e565f406272f242dbd5fe87827"
+    },
+    {
+      "path": "frontend/src/stories/catalogPresentation.json",
+      "mode": "100644",
+      "blob": "cc413038d44951134d69f80db40dbd05286695c6"
+    },
+    {
+      "path": "frontend/src/stories/pageMocks.ts",
+      "mode": "100644",
+      "blob": "cda6e2471f89932a152e379208fdaca88bb8f0e9"
+    },
+    {
+      "path": "src/api/dto/v1/CatalogPresentationDto.ts",
+      "mode": "100644",
+      "blob": "1fc1be743ea55ed1c10e5297554377ceb9901936"
+    },
+    {
+      "path": "src/api/http/dbv-catalog.http.ts",
+      "mode": "100644",
+      "blob": "46ac109dc8262ab9de81145d73a89719f2281a24"
+    },
+    {
+      "path": "src/api/services/catalogService.ts",
+      "mode": "100644",
+      "blob": "fac4001b133987bec7eb584dfe1af7423ca9ec11"
+    },
+    {
+      "path": "src/services/catalog-presentation/defaultCatalogCards.ts",
+      "mode": "100644",
+      "blob": "1d0ac3c09c1f1afebddd6aecc1a4a6f3c8807c66"
+    },
+    {
+      "path": "src/services/catalog-presentation/displayFields.ts",
+      "mode": "100644",
+      "blob": "cddc176d903efa09e29fba158f184d1a577ad606"
+    },
+    {
+      "path": "src/services/catalog-presentation/foilCatalog.ts",
+      "mode": "100644",
+      "blob": "eec78ff22a69187b5bdc703b0a4ee6f896a31713"
+    },
+    {
+      "path": "src/services/catalog-presentation/presentCatalog.ts",
+      "mode": "100644",
+      "blob": "33324dc5e2d6e540f6ea1ed4dfcdc3738974c115"
+    },
+    {
+      "path": "src/services/catalog-presentation/types.ts",
+      "mode": "100644",
+      "blob": "e3a94329cb56885aefdf26d70abb9aee0cfc735b"
+    },
+    {
+      "path": "tests/browser/milestone4-database-deck.mjs",
+      "mode": "100644",
+      "blob": "a552249d0a26cd2f8e6c0f88b4a59274590479a6"
+    },
+    {
+      "path": "tests/integration/api-v1/catalog-presentation.integration.test.ts",
+      "mode": "100644",
+      "blob": "f8b5d4a2e0b76856555fb594a61686be93e97f8b"
+    },
+    {
+      "path": "tests/unit/api/http/dbv-catalog.http.test.ts",
+      "mode": "100644",
+      "blob": "007880cb226c85cdd48f2faa2a4c13bf1470e9c3"
+    },
+    {
+      "path": "tests/unit/frontend-preparation/catalog-presentation.test.ts",
+      "mode": "100644",
+      "blob": "a5d621fa10d8fa2760fb1090d9c578bf182059a6"
+    },
+    {
+      "path": "tests/unit/frontend-v2/api-client-cache.test.ts",
+      "mode": "100644",
+      "blob": "3c1528a792cf57f1e63d1fd143ad7f364b461e6b"
+    }
+  ],
+  "candidateId": "9847887ce5dfe6eb7859c49f151664fbc9c001906947851bfee7ac92d29c1703"
+}

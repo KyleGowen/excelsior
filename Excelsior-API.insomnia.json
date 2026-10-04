@@ -3092,6 +3092,37 @@
       "settingEncodeUrl": true,
       "settingRebuildPath": true,
       "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_m4_candidate_evaluation",
+      "parentId": "fld_excelsior_local_34",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Evaluate Add Cards candidates (stateless)",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/decks/candidates/evaluate",
+      "description": "Public read-only stateless example. Supply valid typed catalog IDs for candidates; never writes decks or collections. Not yet deployed until the M4 candidate slice ships.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"schemaVersion\": 1,\n  \"revision\": 1,\n  \"cards\": [],\n  \"candidates\": []\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 44,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
     }
   ]
 }

@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "kind": "actions",
+  "environment": "github",
+  "status": "passed",
+  "exitCode": 0,
+  "reason": null,
+  "intendedRevision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+  "deployedRevision": null,
+  "runId": "37228766348",
+  "run": {
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/KyleGowen/excelsior/actions/runs/37228766348",
+    "headSha": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+    "jobCounts": {
+      "total": 29,
+      "completed": 29,
+      "successful": 29,
+      "attention": 0
+    },
+    "attentionJobs": []
+  },
+  "pollCount": 14,
+  "unchangedStates": 4,
+  "durationSeconds": 802.738,
+  "finishedAt": "2026-10-04T19:47:49.087Z",
+  "cleanup": "no GitHub mutations",
+  "gaps": [
+    "Required job/test execution and deployment health need main-agent review"
+  ]
+}

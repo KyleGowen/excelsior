@@ -1,0 +1,16 @@
+[
+  {
+    "case": "power-unfiltered",
+    "sameDimensions": true,
+    "tolerance": 16,
+    "acceptedNewBaseline": false,
+    "changedPixelsAboveTolerance": 39
+  },
+  {
+    "case": "power-hidden",
+    "sameDimensions": true,
+    "tolerance": 16,
+    "acceptedNewBaseline": false,
+    "changedPixelsAboveTolerance": 0
+  }
+]

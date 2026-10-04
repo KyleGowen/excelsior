@@ -1,0 +1,120 @@
+{
+  "schema": 1,
+  "kind": "gate-batch",
+  "environment": "local",
+  "sourceRevision": "67ec425773f31a2703c81f01a6acf5a36c39cf2d",
+  "fingerprint": "4142f16e74e9a0692e3abb6631decb7d27fb581cfebce654fb88f39c6940bf77",
+  "status": "failed",
+  "gates": [
+    {
+      "name": "lint",
+      "command": [
+        "npx",
+        "eslint",
+        "src",
+        "--ext",
+        ".ts",
+        "--max-warnings",
+        "0"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 8.152,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-ship/gates-corrected/lint.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "unit",
+      "command": [
+        "bash",
+        "scripts/ship-conditional-test.sh",
+        "unit"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 329,
+        "tests": 3858,
+        "passed": 3840,
+        "failed": 0,
+        "skipped": 18,
+        "todo": 0
+      },
+      "executedTests": 3840,
+      "reused": false,
+      "durationSeconds": 17.491,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-ship/gates-corrected/unit.log",
+        "receipt": "/private/tmp/excelsior-m4-ship/test-receipts/unit-1791141679241-80932.json"
+      },
+      "gaps": []
+    },
+    {
+      "name": "integration",
+      "command": [
+        "bash",
+        "scripts/ship-conditional-test.sh",
+        "integration"
+      ],
+      "status": "failed",
+      "exitCode": 1,
+      "timedOut": false,
+      "counts": {
+        "suites": 115,
+        "tests": 1017,
+        "passed": 1016,
+        "failed": 1,
+        "skipped": 0,
+        "todo": 0
+      },
+      "executedTests": 1017,
+      "reused": false,
+      "durationSeconds": 99.895,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-ship/gates-corrected/integration.log",
+        "receipt": "/private/tmp/excelsior-m4-ship/test-receipts/integration-1791141679335-80934.json"
+      },
+      "gaps": [
+        "Test execution or reusable evidence not confirmed"
+      ]
+    },
+    {
+      "name": "types",
+      "command": [
+        "npx",
+        "tsc",
+        "--noEmit"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 10.834,
+      "evidence": {
+        "log": "/private/tmp/excelsior-m4-ship/gates-corrected/types.log",
+        "receipt": null
+      },
+      "gaps": []
+    }
+  ],
+  "selected": [
+    "lint",
+    "unit",
+    "integration",
+    "types"
+  ],
+  "gaps": [
+    "Gate coverage and release acceptance require main-agent review"
+  ],
+  "cleanup": "no application fixtures created by this wrapper"
+}

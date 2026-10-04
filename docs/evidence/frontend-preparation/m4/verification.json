@@ -56,5 +56,18 @@
     "Mobile navigation-add path not yet run",
     "Light theme, real OAuth and independent module harness unverified/unavailable",
     "No production verification performed for M4"
-  ]
+  ],
+  "release": {
+    "status": "shipped first slice; full milestone remains in progress",
+    "revision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+    "summary": "release/summary.json",
+    "productionBrowser": "release/production-browser/report.json"
+  },
+  "productionAcceptance": {
+    "actor": "Kyle",
+    "date": "2026-10-04",
+    "statement": "i verified, M4 looks good",
+    "revision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+    "scope": "Shipped first M4 slice; remaining M4 workflows pending"
+  }
 }

@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "kind": "test-gate",
+  "gate": "integration",
+  "environment": "local",
+  "sourceRevision": "67ec425773f31a2703c81f01a6acf5a36c39cf2d",
+  "inputs": {
+    "fingerprint": "1cfe63c5e2de7a78863ea4a7751aadea4b302cf03936ffef46dc3e5cc8f18d50",
+    "baseFingerprint": "0fa82611e12952b81615bf55932dd8637257814521adeeaa974d7b6b25b61e7a",
+    "mode": "integration",
+    "inputFiles": 8704,
+    "node": "v24.21.0",
+    "docker": "28.1.1/28.1.1",
+    "imageIds": [
+      "sha256:1cd9dd548427751dc0fabb24a3bdf96a6dd08c0025a167ecbb5c14bec21ff94c",
+      "sha256:c748a1e82c40d4ee63b2f02a78295cf2460e8b4f1abae8abcd7ad5d6e879f959"
+    ],
+    "cacheable": true,
+    "gaps": []
+  },
+  "command": [
+    "npm",
+    "run",
+    "test:integration:sharded"
+  ],
+  "startedAt": "2026-10-04T19:23:49.897Z",
+  "evidence": {
+    "log": "/private/tmp/excelsior-m4-ship/test-receipts/integration-1791141830116-82809.log",
+    "integrationReceipt": "/var/folders/lb/xr02_l594rlg4bv03hlppd840000gp/T/excelsior-integration-evidence-bRlXjj/receipt.json",
+    "sha256": "99a2b1b250d3cf2326b95c861372ee9bddf11e0a60a7c57eedee7b4d3af8af64"
+  },
+  "cleanup": "completed",
+  "status": "passed",
+  "subprocessExitCode": 0,
+  "counts": {
+    "suites": 115,
+    "tests": 1017,
+    "passed": 1017,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "executedTests": 1017,
+  "durationSeconds": 89.381,
+  "finishedAt": "2026-10-04T19:25:19.278Z",
+  "gaps": []
+}

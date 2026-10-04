@@ -10,7 +10,7 @@ const publicReads = new Set([
   '/config/app', '/decks/:id', '/decks/:id/full', '/community/decks', '/community/preconstructed-decks',
   '/users/:userId/public-decks', '/recent-updates', '/dbv/sets', '/dbv/deck-backgrounds', '/supporter/status'
 ]);
-const publicMutations = new Set(['/auth/login', '/auth/refresh', '/auth/logout', '/service-auth/token', '/decks/evaluate', '/supporter/webhook']);
+const publicMutations = new Set(['/auth/login', '/auth/refresh', '/auth/logout', '/service-auth/token', '/decks/evaluate', '/decks/candidates/evaluate', '/supporter/webhook']);
 const protectedRoutes = routes.filter(key => {
   const [method, path] = key.split(' ');
   const relative = path.replace('/api/v1', '');
@@ -57,6 +57,14 @@ describe('Production endpoint access policy', () => {
       const response = await call(key).set('Cookie', cookie).send({});
       expect(response.status).toBe(403);
     }
+  });
+
+  it('keeps candidate evaluation stateless and public while rejecting malformed drafts', async () => {
+    const response = await request(app).post('/api/v1/decks/candidates/evaluate')
+      .send({ schemaVersion: 1, revision: 1, cards: [], candidates: [] }).expect(200);
+    expect(response.headers['cache-control']).toBe('no-store');
+    expect(response.body.data.candidates).toEqual([]);
+    await request(app).post('/api/v1/decks/candidates/evaluate').send({}).expect(400);
   });
 
   it('keeps unconfigured service issuance disabled even for a player session', async () => {

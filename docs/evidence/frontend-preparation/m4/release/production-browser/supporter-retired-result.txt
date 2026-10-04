@@ -1,0 +1,607 @@
+- banner:
+  - link "Excelsior home":
+    - /url: /home
+    - img "Excelsior"
+  - navigation "Primary":
+    - link "Home":
+      - /url: /home
+      - text: Home
+    - link "Database":
+      - /url: /data
+      - text: Database
+    - link "Decks":
+      - /url: /users/bf9460e0-6aaf-4601-9b80-397d8b169437/decks
+      - text: Decks
+    - link "Community":
+      - /url: /community
+      - text: Community
+    - link "Collection":
+      - /url: /users/bf9460e0-6aaf-4601-9b80-397d8b169437/collection
+      - text: Collection
+  - button "Guest":
+    - generic: G
+    - generic: Guest
+- main:
+  - heading "Welcome to Excelsior" [level=1]
+  - paragraph: OverPower deck building and collection tracking companion.
+  - paragraph: Build decks, explore cards, track your collection, and share your decks with the community.
+  - button "Explore Decks":
+    - text: Explore Decks
+  - heading "Recent Updates" [level=2]:
+    - text: Recent Updates
+  - link "View All":
+    - /url: /home/updates
+    - text: View All
+  - button "UPDATE The Seattle Weekend Breakdown Skybound is here, and Seattle's doubleheader is in the books! What decks did players come up with in the week from release? Come take a look! Sep 21, 2026":
+    - generic: UPDATE
+    - heading "The Seattle Weekend Breakdown" [level=3]
+    - paragraph: Skybound is here, and Seattle's doubleheader is in the books! What decks did players come up with in the week from release? Come take a look!
+    - generic: Sep 21, 2026
+  - button "UPDATE Preconstructed deck lists available The Community section now includes official preconstructed decks, plus featured Skybound precon upgrade recommendations from Andrew Taylor. Sep 11, 2026":
+    - generic: UPDATE
+    - heading "Preconstructed deck lists available" [level=3]
+    - paragraph: The Community section now includes official preconstructed decks, plus featured Skybound precon upgrade recommendations from Andrew Taylor.
+    - generic: Sep 11, 2026
+  - button "FEATURE Official errata, right on the card Cards with official errata now show the relevant ruling at the bottom of their detail panel, along with a direct link to LRG’s official source. Sep 4, 2026":
+    - generic: FEATURE
+    - heading "Official errata, right on the card" [level=3]
+    - paragraph: Cards with official errata now show the relevant ruling at the bottom of their detail panel, along with a direct link to LRG’s official source.
+    - generic: Sep 4, 2026
+  - heading "Seattle Weekend" [level=2]:
+    - text: Seattle Weekend
+  - link "View All":
+    - /url: /home/regionals?event=s1-seattle-weekend
+    - text: View All
+  - generic "Seattle event summary":
+    - button "Regional" [pressed]
+    - button "NAOL"
+  - heading "Seattle Regional" [level=1]
+  - heading "Season One Regional" [level=2]
+  - heading "Location" [level=3]
+  - paragraph: Seattle, WA
+  - heading "Date" [level=3]
+  - paragraph: September 5, 2026
+  - heading "Players" [level=3]
+  - paragraph: "32"
+  - heading "Winner Name" [level=3]
+  - paragraph: Andrew Taylor
+  - button "View Morgan le Fay":
+    - img "Morgan le Fay"
+  - heading "Highest Top 8 %" [level=3]
+  - paragraph: 5 of 7 (71.4%)
+  - paragraph: Morgan le Fay
+  - application:
+    - generic: WickedWitch
+    - generic: The Flaxans
+    - generic: Omni-Man
+    - generic: Glenn
+    - generic: Jane Porter
+  - heading "Character Appearances" [level=3]
+  - paragraph: Front line + reserve
+  - generic: +61 more characters
+  - button "View Alexandria":
+    - img "Alexandria"
+  - heading "Most plays w/o Top 8" [level=3]
+  - paragraph: "5"
+  - paragraph: Alexandria
+  - button "View Black Samson":
+    - img "Black Samson"
+    - generic: Black Samson
+    - generic: 1 / 3
+  - heading "New Winning Characters" [level=3]
+  - paragraph: 3 newcomers
+  - application:
+    - generic: The Flaxans
+    - generic: Morgan leFay
+    - generic: Omni-Man
+    - generic: WickedWitch
+    - generic: Glenn
+  - heading "Top 8 Characters" [level=3]
+  - paragraph: Finishing decks 1st–8th
+  - application:
+    - generic: The RoundTab…
+    - generic: TheCommonwea…
+    - generic: Asclepieion
+    - generic: 221-B BakerS…
+    - generic: The GreeneFa…
+  - heading "Top Homebases" [level=3]
+  - application:
+    - generic: GDA
+    - generic: ERB
+    - generic: Unreport…
+  - heading "Battlegrounds" [level=3]
+  - paragraph: Regional only · 32 of 68 decks
+  - application:
+    - generic: Glenn
+    - generic: Billy the Kid
+    - generic: TheGovernor …
+    - generic: Jane Porter
+    - generic: BlackSamson
+  - heading "Top Reservists" [level=3]
+  - application:
+    - generic: Green Gh…
+    - generic: War Woman
+    - generic: Red Rush
+    - generic: Fairy Pr…
+  - heading "Top Cataclysms" [level=3]
+  - paragraph: 16 of 68 decks reported
+  - button "View Allen The Alien":
+    - img "Allen The Alien"
+    - generic: Allen The Alien
+    - generic: 1 / 15
+  - heading "New Top 8 Characters" [level=3]
+  - paragraph: 15 newcomers
+  - heading "Community Decks" [level=2]:
+    - text: Community Decks
+  - link "View All":
+    - /url: /community#community
+    - text: View All
+  - button "More than a Zombie with a Gun Deck summary kyle Updated Oct 2, 2026 Legal":
+    - heading "More than a Zombie with a Gun" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "59"
+      - 'generic "Mission set: The Walking Dead: All Out War"':
+        - generic: "The Walking Dead: All Out War"
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - button "kyle"
+    - generic: Updated Oct 2, 2026
+    - generic: Legal
+  - button "Robotic Dracula Deck summary PaddyKrypto Updated Sep 27, 2026 Legal":
+    - heading "Robotic Dracula" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "52"
+      - 'generic "Mission set: The Chronicles of TFAC"':
+        - generic: The Chronicles of TFAC
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - button "PaddyKrypto"
+    - generic: Updated Sep 27, 2026
+    - generic: Legal
+  - button "Where is a good fight? Deck summary [public username redacted] Updated Sep 26, 2026 Legal":
+    - heading "Where is a good fight?" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "54"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - button "[public username redacted]"
+    - generic: Updated Sep 26, 2026
+    - generic: Legal
+  - button "Die Hard Deck summary [public username redacted] Updated Sep 26, 2026 Legal":
+    - heading "Die Hard" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "55"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - button "[public username redacted]"
+    - generic: Updated Sep 26, 2026
+    - generic: Legal
+  - button "Disaster deck Deck summary Rodamasio Updated Sep 26, 2026 Legal":
+    - heading "Disaster deck" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "52"
+      - 'generic "Mission set: King of the Jungle"':
+        - generic: King of the Jungle
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - button "Rodamasio"
+    - generic: Updated Sep 26, 2026
+    - generic: Legal
+  - button "Immortality Training Deck summary kyle Updated Sep 21, 2026 Legal":
+    - heading "Immortality Training" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "58"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - button "kyle"
+    - generic: Updated Sep 21, 2026
+    - generic: Legal
+  - button "Strong Women Deck summary gameplan.exe Updated Sep 21, 2026 Legal":
+    - heading "Strong Women" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "63"
+      - 'generic "Mission set: King of the Jungle"':
+        - generic: King of the Jungle
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - button "gameplan.exe"
+    - generic: Updated Sep 21, 2026
+    - generic: Legal
+  - button "Who to attack? Deck summary [public username redacted] Updated Sep 20, 2026 Legal":
+    - heading "Who to attack?" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "59"
+      - 'generic "Mission set: The Call of Cthulhu"':
+        - generic: The Call of Cthulhu
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - button "[public username redacted]"
+    - generic: Updated Sep 20, 2026
+    - generic: Legal
+  - button "Dr. Acula Deck summary gameplan.exe Updated Sep 19, 2026 Legal":
+    - heading "Dr. Acula" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "67"
+      - 'generic "Mission set: King of the Jungle"':
+        - generic: King of the Jungle
+      - 'generic "Threat: 75"':
+        - generic: "75"
+    - button "gameplan.exe"
+    - generic: Updated Sep 19, 2026
+    - generic: Legal
+  - button "Kingdom Come Deck summary gameplan.exe Updated Sep 19, 2026 Legal":
+    - heading "Kingdom Come" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "58"
+      - 'generic "Mission set: King of the Jungle"':
+        - generic: King of the Jungle
+      - 'generic "Threat: 71"':
+        - generic: "71"
+    - button "gameplan.exe"
+    - generic: Updated Sep 19, 2026
+    - generic: Legal
+  - button "Battle-ready Deck summary [public username redacted] Updated Sep 18, 2026 Legal":
+    - heading "Battle-ready" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "53"
+      - 'generic "Mission set: Time Wars: Rise of the Gods"':
+        - generic: "Time Wars: Rise of the Gods"
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - button "[public username redacted]"
+    - generic: Updated Sep 18, 2026
+    - generic: Legal
+  - button "Iconic Havok Deck summary [public username redacted] Updated Sep 16, 2026 Legal":
+    - heading "Iconic Havok" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "58"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - button "[public username redacted]"
+    - generic: Updated Sep 16, 2026
+    - generic: Legal
+  - heading "Tournament Winning Decks" [level=2]:
+    - text: Tournament Winning Decks
+  - link "View All":
+    - /url: /community#tournament
+    - text: View All
+  - button "S1 Regionals (Seattle 7th, Doug Taylor) Deck summary Updated Sep 30, 2026 Legal":
+    - heading "S1 Regionals (Seattle 7th, Doug Taylor)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "51"
+      - 'generic "Mission set: The Walking Dead: All Out War"':
+        - generic: "The Walking Dead: All Out War"
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 30, 2026
+    - generic: Legal
+  - button "S1 Regionals (Seattle 1st, Andrew Taylor) Deck summary Updated Sep 14, 2026 Legal":
+    - heading "S1 Regionals (Seattle 1st, Andrew Taylor)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "51"
+      - 'generic "Mission set: The Chronicles of TFAC"':
+        - generic: The Chronicles of TFAC
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 14, 2026
+    - generic: Legal
+  - button "S1 Regionals (Seattle 2nd, Charlie Hanford) Deck summary Updated Sep 14, 2026 Legal":
+    - heading "S1 Regionals (Seattle 2nd, Charlie Hanford)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "59"
+      - 'generic "Mission set: The Walking Dead: All Out War"':
+        - generic: "The Walking Dead: All Out War"
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 14, 2026
+    - generic: Legal
+  - button "S1 Regionals (Seattle 6th, Anthony Anzalone) Deck summary Updated Sep 14, 2026 Legal":
+    - heading "S1 Regionals (Seattle 6th, Anthony Anzalone)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "57"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 74"':
+        - generic: "74"
+    - generic: Updated Sep 14, 2026
+    - generic: Legal
+  - button "S1 NAOL Majors (Seattle 1st, Andrew Taylor) Deck summary Updated Sep 14, 2026 Legal":
+    - heading "S1 NAOL Majors (Seattle 1st, Andrew Taylor)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "51"
+      - 'generic "Mission set: The Walking Dead: All Out War"':
+        - generic: "The Walking Dead: All Out War"
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 14, 2026
+    - generic: Legal
+  - button "S1 NAOL Majors (Seattle 2nd, Josh Alexander) Deck summary Updated Sep 14, 2026 Legal":
+    - heading "S1 NAOL Majors (Seattle 2nd, Josh Alexander)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "58"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 14, 2026
+    - generic: Legal
+  - button "S1 NAOL Majors (Seattle 8th, Charlie Hanford) Deck summary Updated Sep 14, 2026 Legal":
+    - heading "S1 NAOL Majors (Seattle 8th, Charlie Hanford)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "56"
+      - 'generic "Mission set: Who Killed the Guardians of the Globe?"':
+        - generic: Who Killed the Guardians of the Globe?
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 14, 2026
+    - generic: Legal
+  - button "S0 Regionals (Thomas Kiene, 1st Toronto) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S0 Regionals (Thomas Kiene, 1st Toronto)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "51"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S0 Nationals (Joe Peters, 7th) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S0 Nationals (Joe Peters, 7th)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "53"
+      - 'generic "Mission set: King of the Jungle"':
+        - generic: King of the Jungle
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S0 Nationals (Jessica Simms, 5th) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S0 Nationals (Jessica Simms, 5th)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "51"
+      - 'generic "Mission set: The Call of Cthulhu"':
+        - generic: The Call of Cthulhu
+      - 'generic "Threat: 74"':
+        - generic: "74"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S1 Regionals (Columbus 2nd, Noor El-barrad Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S1 Regionals (Columbus 2nd, Noor El-barrad" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "51"
+      - 'generic "Mission set: The Chronicles of TFAC"':
+        - generic: The Chronicles of TFAC
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S1 Regionals (Columbus 3rd, Charlie Hanford) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S1 Regionals (Columbus 3rd, Charlie Hanford)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "58"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S0 Nationals (Felipe Cagno, 4th) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S0 Nationals (Felipe Cagno, 4th)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "51"
+      - 'generic "Mission set: The Crows of Mana''Olana"':
+        - generic: The Crows of Mana'Olana
+      - 'generic "Threat: 75"':
+        - generic: "75"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S1 Regionals (Columbus 5th, Cory Simms) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S1 Regionals (Columbus 5th, Cory Simms)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "57"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S0 Regionals (Phil Miller, 1st Seattle) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S0 Regionals (Phil Miller, 1st Seattle)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "56"
+      - 'generic "Mission set: The Call of Cthulhu"':
+        - generic: The Call of Cthulhu
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S1 Regionals (Columbus 7th, Brandon West) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S1 Regionals (Columbus 7th, Brandon West)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "57"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S1 Regionals (Niagara 1st, Jessica Simms) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S1 Regionals (Niagara 1st, Jessica Simms)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "51"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 75"':
+        - generic: "75"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S1 Regionals (Columbus 6th, Ray Tan) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S1 Regionals (Columbus 6th, Ray Tan)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "51"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 75"':
+        - generic: "75"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S0 Nationals - Ladies & the Law (Andrew Taylor, 1st) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S0 Nationals - Ladies & the Law (Andrew Taylor, 1st)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "52"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S1 Regionals (Niagara 2nd, Justin Sadaie) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S1 Regionals (Niagara 2nd, Justin Sadaie)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "56"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S1 Regionals (Columbus 1st, Justin Sadaie) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S1 Regionals (Columbus 1st, Justin Sadaie)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "56"
+      - 'generic "Mission set: The Call of Cthulhu"':
+        - generic: The Call of Cthulhu
+      - 'generic "Threat: 76"':
+        - generic: "76"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - button "S0 Regionals (Ricky Sauceda, 1st Philadelphia) Deck summary Updated Sep 8, 2026 Legal":
+    - heading "S0 Regionals (Ricky Sauceda, 1st Philadelphia)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "54"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 75"':
+        - generic: "75"
+    - generic: Updated Sep 8, 2026
+    - generic: Legal
+  - heading "Preconstructed Decks" [level=2]:
+    - text: Preconstructed Decks
+  - link "View All":
+    - /url: /community#preconstructed
+    - text: View All
+  - button "We Are Invincible Deck summary":
+    - heading "We Are Invincible" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "44"
+      - 'generic "Mission set: Who Killed the Guardians of the Globe?"':
+        - generic: Who Killed the Guardians of the Globe?
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "We are the Walking Dead Deck summary":
+    - heading "We are the Walking Dead" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "44"
+      - 'generic "Mission set: The Walking Dead: All Out War"':
+        - generic: "The Walking Dead: All Out War"
+      - 'generic "Threat: 75"':
+        - generic: "75"
+  - button "Limitless Possibilities Deck summary":
+    - heading "Limitless Possibilities" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "44"
+      - 'generic "Mission set: Who Killed the Guardians of the Globe?"':
+        - generic: Who Killed the Guardians of the Globe?
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "Worlds Collide Deck summary":
+    - heading "Worlds Collide" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "44"
+      - 'generic "Mission set: The Walking Dead: All Out War"':
+        - generic: "The Walking Dead: All Out War"
+      - 'generic "Threat: 74"':
+        - generic: "74"
+  - button "Horror Menagerie Deck summary":
+    - heading "Horror Menagerie" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "47"
+      - 'generic "Mission set: King of the Jungle"':
+        - generic: King of the Jungle
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "The Resistance Deck summary":
+    - heading "The Resistance" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "47"
+      - 'generic "Mission set: The Call of Cthulhu"':
+        - generic: The Call of Cthulhu
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "Ungodly Power Deck summary":
+    - heading "Ungodly Power" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "47"
+      - 'generic "Mission set: Time Wars: Rise of the Gods"':
+        - generic: "Time Wars: Rise of the Gods"
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "Time Detectives Deck summary":
+    - heading "Time Detectives" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "47"
+      - 'generic "Mission set: The Warlord of Mars"':
+        - generic: The Warlord of Mars
+      - 'generic "Threat: 73"':
+        - generic: "73"
+- generic: Samson

@@ -5,6 +5,8 @@ One line per change. Newest first. Keep this in sync with
 
 ## Unreleased — Phase 3 (scale + docs)
 
+- M4 adds public stateless `POST /api/v1/decks/candidates/evaluate`: server-resolved Add Cards usability/reasons, editor quantity ceilings and mission threshold. It is read-scoped, bounded and no-store; it grants no deck-write authority. Add Cards rejects stale responses and exposes retry on failure.
+
 - M4 adds thirteen read-only `/api/v1/catalog/presentation/<type>` paths carrying server-derived grouping, printing/default selection, aliases and character associations. Raw catalog contracts remain unchanged. Database Add to Deck now publishes the returned authoritative deck snapshot before normal navigation, preventing a cached editor from hiding the newly added card.
 
 - Added optional, disabled-by-default `POST /api/v1/service-auth/token` with private confidential-client configuration, separate application/player identity, explicit scopes, short TTL, revocation/rotation, client/IP limits and redacted audit. Added server adapters for Excelsior and the future host with local fixture mounts and configurable browser transport. Existing direct cookie/JWT API clients and login UX remain compatible; production credential provisioning is separate. See [SERVICE_ACCESS.md](SERVICE_ACCESS.md).

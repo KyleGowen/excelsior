@@ -1,0 +1,74 @@
+{
+  "status": "shipped and production browser verified",
+  "scope": "M4 first catalog slice and Database \u2192 Deck navigation freshness; full M4 remains in progress",
+  "revision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+  "candidateRun": "https://github.com/KyleGowen/excelsior/actions/runs/37228342456",
+  "deploymentRun": "https://github.com/KyleGowen/excelsior/actions/runs/37228766348",
+  "mainJobs": 29,
+  "securityGate": "passed exact SHA",
+  "localTests": {
+    "unitPassed": 3840,
+    "unitSkipped": 18,
+    "integrationPassed": 1017,
+    "integrationCleanup": "completed",
+    "soc2Passed": 45
+  },
+  "ciTests": {
+    "unitPassed": 3836,
+    "unitSkipped": 22,
+    "integrationPassed": 1017,
+    "soc2Passed": 45
+  },
+  "audits": "backend/frontend zero vulnerabilities; October4America/Los_Angeles",
+  "builds": "frontend and Storybook passed before Ship; reused unchanged coverage",
+  "productionHealth": {
+    "revision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+    "application": "OK",
+    "database": "OK",
+    "migration": "365"
+  },
+  "productionBrowser": {
+    "passed": 5,
+    "failed": 0,
+    "blocked": 0,
+    "errors": 0,
+    "environment": "desktop1280\u00d7720 fixed dark Guest",
+    "scenarios": [
+      "Home navigation/contextual menu",
+      "Database Lancelot search/detail/art",
+      "Guest Collection read",
+      "Public read-only deck draw/redraw/export",
+      "Supporter retirement"
+    ],
+    "cleanup": "test-owned tab13closed; decks/collections unchanged"
+  },
+  "productionApi": {
+    "presentationTypes": 13,
+    "rows": 1298,
+    "metadata": "valid",
+    "retiredSupporterStatus": 404
+  },
+  "localAccepted": "Kyle approved identified5177M4slice and said ship; fullM4acceptance not inferred",
+  "gaps": [
+    "Production Database add mutation was not run; locally automated and Kyle accepted",
+    "Production mobile/light/OAuth and independent module harness unverified",
+    "Full M4 candidate usability, simulations, atomic import/export and collection totals/capabilities remain",
+    "Branch protection API404; enforcement not confirmed; exact-SHA validation-first promotion used"
+  ],
+  "recoveryEvidence": [
+    "First parallel local integration run failed existing collection quantity removal; standalone recheck1017pass",
+    "Post-whitespace parallel integration failed existing background fixture; final standalone gate1017pass; CI also1017pass",
+    "Staged whitespace check removed only extra EOF blank lines from3newfiles; refreshed manifest and affected gates",
+    "Unmodified commit verifier exceeded default1MiB Git capture for1,075,748byte tree; private process-only128MiB setting retained all comparisons, exact74paths/parent/blobs/modes/deletions passed; no release helper changes",
+    "Initial tab13navigation deadline expired; same settled tab confirmed correct production Home/Guest and five browser cases passed; no product assertion failure"
+  ],
+  "scopePreserved": "74approvedpaths; unrelated primary edits and26priorM3evidencechanges excluded",
+  "records": "Post-release records retained locally without an additional deployment-triggering commit",
+  "productionAcceptance": {
+    "actor": "Kyle",
+    "date": "2026-10-04",
+    "statement": "i verified, M4 looks good",
+    "revision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
+    "scope": "Shipped first M4 slice; remaining M4 workflows pending"
+  }
+}

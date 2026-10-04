@@ -107,3 +107,7 @@ Token request schema failures use `VALIDATION_ERROR` (400); the endpoint's 15/IP
 | POST `/decks/evaluate` | 400 | `VALIDATION_ERROR`, `DRAFT_STRUCTURE_INVALID` | Malformed/unknown/ambiguous draft references; no record writes |
 | POST `/decks/evaluate` | 429 | `RATE_LIMITED` | Bounded stateless preview budget |
 | POST `/decks/evaluate` | 503 | `DRAFT_EVALUATION_UNAVAILABLE` | Catalog/rules unavailable; keep local draft, retry |
+
+| POST `/decks/candidates/evaluate` | 400 | `VALIDATION_ERROR`, `DRAFT_STRUCTURE_INVALID` | Bounded strict input, existing typed catalog identities and aggregated draft rows required |
+| POST `/decks/candidates/evaluate` | 429 | `RATE_LIMITED` | Independent stateless Add Cards preview budget |
+| POST `/decks/candidates/evaluate` | 503 | `DRAFT_EVALUATION_UNAVAILABLE` | No current usability claim; preserve draft and retry |
