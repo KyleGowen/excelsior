@@ -15,3 +15,8 @@ c573976ae805131a26217734c2b0ae82346c6e67:tests/integration/api-v1/v1-api.integra
 
 # Card-art .webp filenames misidentified as a generic API key.
 4fe867484677f079a8afa873d9c37e11c92af460:src/database/inMemoryDatabase.ts:generic-api-key:364
+
+# M3 disposable Guest integration-test password, replaced in the next commit.
+# Exact historical lines only; no path or rule exclusion.
+884e31c5c2c32bcc7c3aff198cbb47c213b9de2b:tests/integration/api-v1/deck-evaluation.integration.test.ts:generic-api-key:90
+884e31c5c2c32bcc7c3aff198cbb47c213b9de2b:tests/integration/api-v1/deck-evaluation.integration.test.ts:generic-api-key:91
