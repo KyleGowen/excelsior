@@ -87,8 +87,8 @@ describe('Deck response evaluation through real HTTP/service/repository wiring',
         await assertResponseEvaluation(await request(app).delete('/api/v1/decks/' + id + '/cards').set('Cookie', cookie).send({ ...row, quantity: 1 }).expect(200));
     });
     it('attaches exact stats to session-scoped Guest creation, read, metadata, replacement and addition', async () => {
-        const user = await integrationTestUtils.createTestUser({ name: 'M3ResponseGuest', email: 'm3-response-guest@example.test', role: 'GUEST', password: 'Fictional-guest-test-123' });
-        const login = await request(app).post('/api/auth/login').send({ username: user.username, password: 'Fictional-guest-test-123' }).expect(200);
+        const user = await integrationTestUtils.createTestUser({ name: 'M3ResponseGuest', email: 'm3-response-guest@example.test', role: 'GUEST', password: 'test-password' });
+        const login = await request(app).post('/api/auth/login').send({ username: user.username, password: 'test-password' }).expect(200);
         const cookie = (login.headers['set-cookie'] as unknown as string[]).map(v => v.split(';')[0]).join('; ');
         const path = '/api/v1/guest/decks';
         const created = await request(app).post(path).set('Cookie', cookie).send({ name: 'Session response fixture' }).expect(201);
