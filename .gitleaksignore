@@ -20,3 +20,6 @@ c573976ae805131a26217734c2b0ae82346c6e67:tests/integration/api-v1/v1-api.integra
 # Exact historical lines only; no path or rule exclusion.
 884e31c5c2c32bcc7c3aff198cbb47c213b9de2b:tests/integration/api-v1/deck-evaluation.integration.test.ts:generic-api-key:90
 884e31c5c2c32bcc7c3aff198cbb47c213b9de2b:tests/integration/api-v1/deck-evaluation.integration.test.ts:generic-api-key:91
+
+# Exact historical false positive: verified SHA256 of the candidate input source, not a credential.
+e07efc2a39dd044f20037a2cfa608302bc15972e:docs/evidence/frontend-preparation/m4/candidates/verification.json:generic-api-key:19

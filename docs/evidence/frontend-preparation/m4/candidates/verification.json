@@ -6,22 +6,64 @@
   "sourceRevision": "e8c929419dcf9809e1579dc15a4bcd98e09086f7",
   "uncommitted": true,
   "observedSourceFingerprint": "6b77e204e97ab7945c52828bc3018391bca6fe3fa78c30f3c2b5047c61747bc7",
-  "implementationHashes": {
-    "src/api/services/deckDraftEvaluationService.ts": "f458b075604a5bdad85f43812c44ce5ac241185f806700b7c2aaecba78b3173f",
-    "src/api/http/deck-evaluation.http.ts": "99e690c6510468c7d2a0b7ea4287ed9e1baaa6d86c309d70d20fe71e2d9d800b",
-    "src/api/access/serviceOperations.ts": "472d5b7ca7603a49ee8ca249e53ac9986a3eedd5c573d12a7322ce98d3ff7c40",
-    "frontend/src/features/deck-editor/AddCardsPanel.tsx": "6ba1dde9360477b6719fd6c2195587189b3a6ad3e7d252737cf9636c8af291e2",
-    "frontend/src/features/deck-editor/addCardsFilters.ts": "ac74c3102bf728e5116db43d9971a70edefc7e3918d0af36c370f01408884a9a",
-    "frontend/src/lib/decks/useCandidateEvaluation.ts": "9228d97fedb693a5d2170339c4e2651aac4152e01216726bc08eef8e592fa1d4",
-    "frontend/src/lib/api/deckCandidates.ts": "353a4f44e8d75cfe385eac26c3b5d6a1c92b15463122e8f03e962a2ca0527706",
-    "tests/browser/milestone4-candidates.mjs": "de875348fa555a473cd19327da75d9284631b3dfedc36443247ef03d04374465",
-    "src/services/deck-candidates/editorCopyCeiling.ts": "057dea2cd0ccda7e622dca919f87599833f0dec3712f71fadbf33785c290644a",
-    "src/services/deck-candidates/inputKey.ts": "48202fd9200c65525ac0c132f7bc058fb13628d190913885f9f13e2a792484f1",
-    "src/services/deck-candidates/isCatalogCardUsable.ts": "cf6330cbeeaae84bcf12e0e88b83ddbc045dcacbef53dba959326cb57cc63c0a",
-    "src/services/deck-candidates/context.ts": "92b07af9322e4642502507a2fb7472bf2e2d7ac41e640e0e151abaf0d99351e4",
-    "src/services/deck-candidates/types.ts": "cd6f1680ccbbfc92ab3e967950f1eb866becce16b29d4e7ecc41f148e0258ee1",
-    "src/services/deck-candidates/deckUsabilityUtils.ts": "d021372692da5c1ab3c0e2c60344f57583719547ba2a2a275619d1afbfc3441a"
-  },
+  "implementationHashes": [
+    {
+      "path": "src/api/services/deckDraftEvaluationService.ts",
+      "sha256": "f458b075604a5bdad85f43812c44ce5ac241185f806700b7c2aaecba78b3173f"
+    },
+    {
+      "path": "src/api/http/deck-evaluation.http.ts",
+      "sha256": "99e690c6510468c7d2a0b7ea4287ed9e1baaa6d86c309d70d20fe71e2d9d800b"
+    },
+    {
+      "path": "src/api/access/serviceOperations.ts",
+      "sha256": "472d5b7ca7603a49ee8ca249e53ac9986a3eedd5c573d12a7322ce98d3ff7c40"
+    },
+    {
+      "path": "frontend/src/features/deck-editor/AddCardsPanel.tsx",
+      "sha256": "6ba1dde9360477b6719fd6c2195587189b3a6ad3e7d252737cf9636c8af291e2"
+    },
+    {
+      "path": "frontend/src/features/deck-editor/addCardsFilters.ts",
+      "sha256": "ac74c3102bf728e5116db43d9971a70edefc7e3918d0af36c370f01408884a9a"
+    },
+    {
+      "path": "frontend/src/lib/decks/useCandidateEvaluation.ts",
+      "sha256": "9228d97fedb693a5d2170339c4e2651aac4152e01216726bc08eef8e592fa1d4"
+    },
+    {
+      "path": "frontend/src/lib/api/deckCandidates.ts",
+      "sha256": "353a4f44e8d75cfe385eac26c3b5d6a1c92b15463122e8f03e962a2ca0527706"
+    },
+    {
+      "path": "tests/browser/milestone4-candidates.mjs",
+      "sha256": "de875348fa555a473cd19327da75d9284631b3dfedc36443247ef03d04374465"
+    },
+    {
+      "path": "src/services/deck-candidates/editorCopyCeiling.ts",
+      "sha256": "057dea2cd0ccda7e622dca919f87599833f0dec3712f71fadbf33785c290644a"
+    },
+    {
+      "path": "src/services/deck-candidates/inputKey.ts",
+      "sha256": "48202fd9200c65525ac0c132f7bc058fb13628d190913885f9f13e2a792484f1"
+    },
+    {
+      "path": "src/services/deck-candidates/isCatalogCardUsable.ts",
+      "sha256": "cf6330cbeeaae84bcf12e0e88b83ddbc045dcacbef53dba959326cb57cc63c0a"
+    },
+    {
+      "path": "src/services/deck-candidates/context.ts",
+      "sha256": "92b07af9322e4642502507a2fb7472bf2e2d7ac41e640e0e151abaf0d99351e4"
+    },
+    {
+      "path": "src/services/deck-candidates/types.ts",
+      "sha256": "cd6f1680ccbbfc92ab3e967950f1eb866becce16b29d4e7ecc41f148e0258ee1"
+    },
+    {
+      "path": "src/services/deck-candidates/deckUsabilityUtils.ts",
+      "sha256": "d021372692da5c1ab3c0e2c60344f57583719547ba2a2a275619d1afbfc3441a"
+    }
+  ],
   "deployedRevision": null,
   "target": {
     "frontend": "http://127.0.0.1:5177",
