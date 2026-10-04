@@ -1,0 +1,38 @@
+import { createElement, createContext, useContext, useEffect, useMemo, useRef, type ReactNode } from 'react';
+import type { AppUser } from '../lib/api/types';
+import type { ModuleApi } from './api';
+import { createCardDetailHistoryController, CARD_DETAIL_STATE_KEY, type CardDetailNavigation } from '../lib/layout/cardDetailHistoryController';
+/** The host owns identity, routing and chrome; no authentication bootstrap happens here. */
+export interface ModuleHost {
+ api: ModuleApi;
+ identity: { user: AppUser | null; isGuest: boolean; isAdmin: boolean };
+ onOpenDeck: (deckId: string, options?: { replace?: boolean }) => void;
+ onBack: () => void;
+ onHome: () => void;
+ backLabel?: string;
+ history?: { navigate: CardDetailNavigation; state: object | null };
+ chrome?: { desktopRail?: ReactNode; mobileNavigation?: ReactNode };
+}
+const Context = createContext<ModuleHost | null>(null);
+export function ModuleHostProvider({ host, children }: { host: ModuleHost; children: ReactNode }) {
+ return createElement(Context.Provider, { value: host }, children);
+}
+export function useOptionalModuleHost() { return useContext(Context); }
+export function useModuleHost() {
+ const host = useOptionalModuleHost();
+ if (!host) throw new Error('ModuleHostProvider is required; supply a typed API client and host identity/callbacks.');
+ return host;
+}
+export function useModuleDetailHistory(open: boolean, onClose: () => void, stateKey = CARD_DETAIL_STATE_KEY) {
+ const host = useModuleHost(); const closeRef = useRef(onClose); closeRef.current = onClose;
+ const stateRef = useRef(host.history?.state); stateRef.current = host.history?.state;
+ const navigate = host.history?.navigate;
+ const controller = useMemo(() => navigate ? createCardDetailHistoryController(navigate, () => closeRef.current(), stateKey) : undefined, [navigate, stateKey]);
+ useEffect(() => {
+  if (!controller) return;
+  if (!open) { controller.reset(); return; }
+  controller.attach(stateRef.current ?? null);
+  return () => controller.detach();
+ }, [controller, open]);
+ return { close: () => controller ? controller.close() : closeRef.current() };
+}

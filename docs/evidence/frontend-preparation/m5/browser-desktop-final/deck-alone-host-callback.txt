@@ -1,0 +1,76 @@
+- banner:
+  - heading "Independent module harness" [level=1]
+  - paragraph: "Host identity: Guest. Local session and catalog. Decks start read-only; enable editing only for your disposable fixture."
+  - navigation "Module selection":
+    - button "Card Database module"
+    - button "Deck Builder module" [pressed]
+    - button "Collection module"
+    - button "All three modules"
+    - button "Unmount modules"
+  - text: Local deck ID
+  - textbox "Local deck ID": b4ec3a04-ab17-4a33-b813-df35f8195d75
+  - checkbox "Read-only deck" [checked]
+  - text: Read-only deck
+  - status "Host callback result": Host received Back
+- region "Independent Deck Builder":
+  - button "Back to host" [active]:
+  - heading "Milestone 3 Local Fixture" [level=1]
+  - generic: 8 cards
+  - generic: Limited
+  - generic: Unlisted
+  - 'generic "Threat: 18"':
+    - generic: "18"
+  - region "Character maximums":
+    - generic: Max
+    - 'generic "Character max — Energy: 2"':
+      - 'generic "Energy: 2"':
+        - generic: "2"
+    - 'generic "Character max — Combat: 7"':
+      - 'generic "Combat: 7"':
+        - generic: "7"
+    - 'generic "Character max — Brute Force: 5"':
+      - 'generic "Brute Force: 5"':
+        - generic: "5"
+    - 'generic "Character max — Intelligence: 4"':
+      - 'generic "Intelligence: 4"':
+        - generic: "4"
+  - region "Icon totals":
+    - generic: Total
+    - 'generic "Icon total — Energy: 0"':
+      - 'generic "Energy: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Combat: 5"':
+      - 'generic "Combat: 5"':
+        - generic: "5"
+    - 'generic "Icon total — Brute Force: 0"':
+      - 'generic "Brute Force: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Intelligence: 0"':
+      - 'generic "Intelligence: 0"':
+        - generic: "0"
+  - button "List View":
+    - text: List View
+  - button "Draw Hand":
+    - text: Draw Hand
+  - button "Export":
+    - text: Export
+  - generic: Read-only
+  - heading "Characters 1" [level=2]:
+    - text: Characters
+    - generic: "1"
+  - button "View Lancelot":
+  - 'button "KO character: Lancelot"': KO
+  - heading "Special Cards 3" [level=2]:
+    - text: Special Cards
+    - generic: "3"
+  - button "View Sword and Shield":
+  - button "View Sword and Shield":
+  - button "View Sword and Shield":
+  - heading "Power Cards 5" [level=2]:
+    - text: Power Cards
+    - generic: "5"
+  - button "View 5 - Combat":
+  - button "View 5 - Combat":
+  - button "View 5 - Combat":
+  - button "View 5 - Combat":
+  - button "View 5 - Combat":

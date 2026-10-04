@@ -1,12 +1,8 @@
-import { api } from '../../frontend/src/lib/api/client';
-import { createDeck, replaceDeckCards } from '../../frontend/src/lib/api/decks';
+import { fetchDeckFull, createDeck, replaceDeckCards } from '../../frontend/src/lib/api/decks';
 import { clonePreloadedGuestDeck } from '../../frontend/src/lib/decks/guestCloneOnOpen';
 
-jest.mock('../../frontend/src/lib/api/client', () => ({
-  api: { get: jest.fn() },
-}));
-
 jest.mock('../../frontend/src/lib/api/decks', () => ({
+  fetchDeckFull: jest.fn(),
   createDeck: jest.fn(),
   replaceDeckCards: jest.fn(),
   isGuestDeckId: (deckId: string) => deckId.startsWith('guest_'),
@@ -14,7 +10,7 @@ jest.mock('../../frontend/src/lib/api/decks', () => ({
 
 describe('clonePreloadedGuestDeck', () => {
   it('copies pre-placed flags into the guest session deck', async () => {
-    (api.get as jest.Mock).mockResolvedValue({
+    (fetchDeckFull as jest.Mock).mockResolvedValue({
       metadata: { name: 'Tournament deck', description: '' },
       cards: [
         { type: 'power', cardId: 'power-1', quantity: 2 },
@@ -26,6 +22,7 @@ describe('clonePreloadedGuestDeck', () => {
 
     await expect(clonePreloadedGuestDeck('source-deck')).resolves.toBe('guest-session-copy');
 
+    expect(fetchDeckFull).toHaveBeenCalledWith('source-deck', false);
     expect(replaceDeckCards).toHaveBeenCalledWith(
       'guest-session-copy',
       [

@@ -17,7 +17,7 @@ describe('mobile legality errors interaction contract', () => {
     'utf8',
   );
   const deckEditor = fs.readFileSync(
-    path.join(process.cwd(), 'frontend/src/features/deck-editor/DeckEditorPage.tsx'),
+    path.join(process.cwd(), 'frontend/src/features/deck-editor/DeckBuilderModule.tsx'),
     'utf8',
   );
 

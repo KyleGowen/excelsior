@@ -1,10 +1,12 @@
 import { evaluationInputKey } from '../../../../src/services/deck-evaluation/draftInput';
+
 /**
  * Deck APIs. Logged-in users use `/api/v1/decks/*`; GUEST sessions use the
  * in-memory `/api/v1/guest/decks/*` endpoints. Guest session deck ids are
  * prefixed `guest_`, which lets us route reads correctly even for shared links.
  */
-import { api, apiRequest, ApiError } from './client';
+import { api as defaultApi, apiRequest as defaultApiRequest, ApiError } from './client';
+
 import type {
   DeckListItem,
   DeckDetail,
@@ -12,35 +14,14 @@ import type {
   DeckValidationResult,
 } from './types';
 
+
 function isGuestDeckId(deckId: string): boolean {
   return deckId.startsWith('guest_');
 }
 
+
 export { isGuestDeckId };
 
-export function fetchUserDecks(): Promise<DeckListItem[]> {
-  return api.get<DeckListItem[]>('/api/v1/decks');
-}
-
-export function fetchGuestDecks(): Promise<DeckListItem[]> {
-  return api.get<DeckListItem[]>('/api/v1/guest/decks');
-}
-
-export function fetchDecksForUser(isGuest: boolean): Promise<DeckListItem[]> {
-  return isGuest ? fetchGuestDecks() : fetchUserDecks();
-}
-
-/** Tournament deck pool (backed by the tournament_decks account's saved decks). */
-export function fetchTournamentDecks(): Promise<DeckListItem[]> {
-  return api.get<DeckListItem[]>('/api/v1/decks/tournament');
-}
-
-export function fetchDeckFull(deckId: string, isGuest: boolean): Promise<DeckDetail> {
-  if (isGuest && isGuestDeckId(deckId)) {
-    return api.get<DeckDetail>(`/api/v1/guest/decks/${deckId}`);
-  }
-  return api.get<DeckDetail>(`/api/v1/decks/${deckId}/full`);
-}
 
 export interface CreateDeckInput {
   name: string;
@@ -49,28 +30,13 @@ export interface CreateDeckInput {
   is_private?: boolean;
 }
 
+
 /** Minimal reference needed to navigate to a freshly-created deck. */
 export interface CreatedDeckRef {
   id: string;
   userId: string;
 }
 
-/**
- * Create a deck. The owned (`/api/v1/decks`) endpoint returns a flat deck row
- * (`id`, `user_id`), while the guest endpoint returns the `{ metadata }`
- * envelope; normalise both to a single navigation reference.
- */
-export async function createDeck(
-  input: CreateDeckInput,
-  isGuest: boolean,
-): Promise<CreatedDeckRef> {
-  const path = isGuest ? '/api/v1/guest/decks' : '/api/v1/decks';
-  const raw = await api.post<Record<string, unknown>>(path, input);
-  const meta = (raw?.metadata ?? {}) as Record<string, unknown>;
-  const id = (raw?.id ?? meta.id ?? '') as string;
-  const userId = (raw?.user_id ?? meta.userId ?? '') as string;
-  return { id, userId };
-}
 
 export interface UpdateDeckMetaInput {
   name?: string;
@@ -82,7 +48,77 @@ export interface UpdateDeckMetaInput {
   background_image_path?: string | null;
 }
 
-export function updateDeckMeta(
+
+export interface DeckCardInput {
+  cardType: string;
+  cardId: string;
+  quantity: number;
+  displayOrder?: number;
+  exclude_from_draw?: boolean;
+}
+
+
+// Public stateless evaluation: no deck ID lookup or persistence. The server resolves all card values.
+export type { DeckDraftEvaluationDto as DraftEvaluation } from '../../../../src/api/dto/v1/DeckDraftEvaluationDto';
+
+export interface DraftEvaluationInput {
+  schemaVersion: 1; draftId: string; revision: number;
+  cards: Array<{ type: string; cardId: string; quantity: number; exclude_from_draw?: boolean }>;
+  reserveCharacterId: string | null; limited: boolean; format: 'venture'; koCharacterIds: string[];
+}
+
+/** Bind these existing operations to one host's transport; no global client mutation. */
+export function createDeckApi(api: typeof defaultApi = defaultApi, apiRequest: typeof defaultApiRequest = defaultApiRequest) {
+
+
+function fetchUserDecks(signal?: AbortSignal): Promise<DeckListItem[]> {
+  return api.get<DeckListItem[]>('/api/v1/decks', signal);
+}
+
+
+function fetchGuestDecks(): Promise<DeckListItem[]> {
+  return api.get<DeckListItem[]>('/api/v1/guest/decks');
+}
+
+
+function fetchDecksForUser(isGuest: boolean): Promise<DeckListItem[]> {
+  return isGuest ? fetchGuestDecks() : fetchUserDecks();
+}
+
+
+/** Tournament deck pool (backed by the tournament_decks account's saved decks). */
+function fetchTournamentDecks(): Promise<DeckListItem[]> {
+  return api.get<DeckListItem[]>('/api/v1/decks/tournament');
+}
+
+
+function fetchDeckFull(deckId: string, isGuest: boolean, signal?: AbortSignal): Promise<DeckDetail> {
+  if (isGuest && isGuestDeckId(deckId)) {
+    return api.get<DeckDetail>(`/api/v1/guest/decks/${deckId}`, signal);
+  }
+  return api.get<DeckDetail>(`/api/v1/decks/${deckId}/full`, signal);
+}
+
+
+/**
+ * Create a deck. The owned (`/api/v1/decks`) endpoint returns a flat deck row
+ * (`id`, `user_id`), while the guest endpoint returns the `{ metadata }`
+ * envelope; normalise both to a single navigation reference.
+ */
+async function createDeck(
+  input: CreateDeckInput,
+  isGuest: boolean,
+): Promise<CreatedDeckRef> {
+  const path = isGuest ? '/api/v1/guest/decks' : '/api/v1/decks';
+  const raw = await api.post<Record<string, unknown>>(path, input);
+  const meta = (raw?.metadata ?? {}) as Record<string, unknown>;
+  const id = (raw?.id ?? meta.id ?? '') as string;
+  const userId = (raw?.user_id ?? meta.userId ?? '') as string;
+  return { id, userId };
+}
+
+
+function updateDeckMeta(
   deckId: string,
   input: UpdateDeckMetaInput,
   isGuest: boolean,
@@ -93,16 +129,9 @@ export function updateDeckMeta(
   return api.put<DeckDetail>(path, input);
 }
 
-export interface DeckCardInput {
-  cardType: string;
-  cardId: string;
-  quantity: number;
-  displayOrder?: number;
-  exclude_from_draw?: boolean;
-}
 
 /** Replace the full card list for a deck. */
-export function replaceDeckCards(
+function replaceDeckCards(
   deckId: string,
   cards: DeckCardInput[],
   isGuest: boolean,
@@ -113,15 +142,17 @@ export function replaceDeckCards(
   return api.put<DeckDetail>(path, { cards });
 }
 
-export function deleteDeck(deckId: string, isGuest: boolean): Promise<unknown> {
+
+function deleteDeck(deckId: string, isGuest: boolean): Promise<unknown> {
   const path = isGuest && isGuestDeckId(deckId)
     ? `/api/v1/guest/decks/${deckId}`
     : `/api/v1/decks/${deckId}`;
   return api.del(path);
 }
 
+
 /** Add a single card to an existing (owned, DB-backed) deck. */
-export function addCardToDeck(
+function addCardToDeck(
   deckId: string,
   input: { cardType: string; cardId: string; quantity?: number },
 ): Promise<DeckDetail> {
@@ -132,7 +163,8 @@ export function addCardToDeck(
   });
 }
 
-export async function validateDeck(cards: DeckCardEntry[]): Promise<DeckValidationResult> {
+
+async function validateDeck(cards: DeckCardEntry[]): Promise<DeckValidationResult> {
   // The validate endpoint's rules read each card's `type` (not `cardType`, which
   // the deck *card* mutation endpoints use). Sending `cardType` here makes the
   // server-side rules see `type === undefined` and 500.
@@ -168,15 +200,12 @@ export async function validateDeck(cards: DeckCardEntry[]): Promise<DeckValidati
   }
 }
 
-// Public stateless evaluation: no deck ID lookup or persistence. The server resolves all card values.
-export type { DeckDraftEvaluationDto as DraftEvaluation } from '../../../../src/api/dto/v1/DeckDraftEvaluationDto';
-export interface DraftEvaluationInput {
-  schemaVersion: 1; draftId: string; revision: number;
-  cards: Array<{ type: string; cardId: string; quantity: number; exclude_from_draw?: boolean }>;
-  reserveCharacterId: string | null; limited: boolean; format: 'venture'; koCharacterIds: string[];
-}
-export async function evaluateDraft(input: DraftEvaluationInput, signal?: AbortSignal): Promise<import('../../../../src/api/dto/v1/DeckDraftEvaluationDto').DeckDraftEvaluationDto> {
+async function evaluateDraft(input: DraftEvaluationInput, signal?: AbortSignal): Promise<import('../../../../src/api/dto/v1/DeckDraftEvaluationDto').DeckDraftEvaluationDto> {
   const result = await apiRequest<import('../../../../src/api/dto/v1/DeckDraftEvaluationDto').DeckDraftEvaluationDto>('/api/v1/decks/evaluate', { method: 'POST', body: input, ...(signal ? { signal } : {}) });
   if (result.inputKey !== evaluationInputKey(input) || result.draftId !== input.draftId || result.revision !== input.revision) throw new Error('Evaluation revision does not match the current draft');
   return result;
 }
+return { fetchUserDecks, fetchGuestDecks, fetchDecksForUser, fetchTournamentDecks, fetchDeckFull, createDeck, updateDeckMeta, replaceDeckCards, deleteDeck, addCardToDeck, validateDeck, evaluateDraft };
+}
+
+export const { fetchUserDecks, fetchGuestDecks, fetchDecksForUser, fetchTournamentDecks, fetchDeckFull, createDeck, updateDeckMeta, replaceDeckCards, deleteDeck, addCardToDeck, validateDeck, evaluateDraft } = createDeckApi();

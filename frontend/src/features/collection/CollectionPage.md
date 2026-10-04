@@ -38,3 +38,7 @@ otherwise). So `setQuantity`:
 ## Notes
 - Per-type catalog is fetched per tab; **All** merges all 12 slugs client-side. Pagination
   is client-side (24 tiles per type tab, 48 list rows on All).
+
+## M5 implementation boundary
+
+The route page now adapts the Excelsior host to the single production module/controller/view implementation. See [module contract](../../modules/README.md) for providers, typed operations, navigation callbacks, independent fixture harness and retained M4/M6/M7 gaps. Existing behavior documentation above remains applicable.

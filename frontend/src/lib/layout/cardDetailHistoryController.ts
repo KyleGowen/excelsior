@@ -1,4 +1,7 @@
-import type { NavigateFunction } from 'react-router-dom';
+export interface CardDetailNavigation {
+  (delta: number): void;
+  (to: '.', options: { state: Record<string, unknown>; replace: boolean }): void;
+}
 
 export const CARD_DETAIL_STATE_KEY = 'cardDetailOpen';
 export const DECK_CARD_DETAIL_STATE_KEY = 'deckCardDetail';
@@ -14,7 +17,7 @@ export interface CardDetailHistoryController {
  * Imperative history controller for card detail overlays. Used by {@link useCardDetailHistory}.
  */
 export function createCardDetailHistoryController(
-  navigate: NavigateFunction,
+  navigate: CardDetailNavigation,
   onClose: () => void,
   stateKey: string,
 ): CardDetailHistoryController {

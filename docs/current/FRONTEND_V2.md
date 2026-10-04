@@ -204,3 +204,7 @@ Verified end-to-end against the local backend + DB (browser automation): login (
 Deck Selection create flow, Deck Editor add-card/save/stats, and Collection add/increment/
 remove. Two response-shape bugs were found and fixed (login `userId`, deck-create flat
 shape, collection POST-vs-PUT) — see the "Endpoint quirks" section.
+
+## M5 source module boundary
+
+Database, Deck Builder and Collection now use [the independent module source entry](../../frontend/src/modules/README.md). Existing page files adapt routes to the same controller/view implementation. `app/ExcelsiorModuleHost.tsx` supplies SPA identity, navigation, detail-history and chrome; independent modules use typed API operations and callbacks. `/module-harness.html` is a development entry outside AuthProvider/router/AppShell, not a production route or package. Global style/asset containment and packaging remain M6/M7.

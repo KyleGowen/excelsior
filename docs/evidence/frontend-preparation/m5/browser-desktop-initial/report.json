@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "sourceRevision": "e07efc2a39dd044f20037a2cfa608302bc15972e",
+  "deployedRevision": null,
+  "url": "http://127.0.0.1:5177/module-harness.html",
+  "status": "failed",
+  "scenarios": [
+    {
+      "id": "database-alone",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m5/browser-desktop-initial/database-alone.jpg",
+        "dom": "docs/evidence/frontend-preparation/m5/browser-desktop-initial/database-alone.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/module-harness.html"
+      }
+    },
+    {
+      "id": "collection-alone",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m5/browser-desktop-initial/collection-alone.jpg",
+        "dom": "docs/evidence/frontend-preparation/m5/browser-desktop-initial/collection-alone.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/module-harness.html"
+      }
+    },
+    {
+      "id": "deck-alone-host-callback",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m5/browser-desktop-initial/deck-alone-host-callback.jpg",
+        "dom": "docs/evidence/frontend-preparation/m5/browser-desktop-initial/deck-alone-host-callback.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/module-harness.html"
+      }
+    },
+    {
+      "id": "together",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m5/browser-desktop-initial/together.jpg",
+        "dom": "docs/evidence/frontend-preparation/m5/browser-desktop-initial/together.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/module-harness.html"
+      }
+    },
+    {
+      "id": "unmount-open-detail",
+      "status": "failed",
+      "reason": "Unmount must remove modules and their open overlays",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m5/browser-desktop-initial/unmount-open-detail-failed.jpg",
+        "dom": "docs/evidence/frontend-preparation/m5/browser-desktop-initial/unmount-open-detail-failed.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/module-harness.html"
+      }
+    },
+    {
+      "id": "remount",
+      "status": "failed",
+      "reason": "Remount must not retain a disposed local filter draft",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m5/browser-desktop-initial/remount-failed.jpg",
+        "dom": "docs/evidence/frontend-preparation/m5/browser-desktop-initial/remount-failed.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/module-harness.html"
+      }
+    }
+  ],
+  "counts": {
+    "passed": 4,
+    "failed": 2,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "cleanup": "Read-only browser actions; no Save, quantity changes or record writes. Modules unmounted and remounted.",
+  "acceptance": "Automated evidence only; Kyle acceptance pending",
+  "gaps": [
+    "Fixture component tests cover outage/retry/cancellation independently; no live API outage injected.",
+    "M6 style containment and M7 packaging remain future work."
+  ]
+}

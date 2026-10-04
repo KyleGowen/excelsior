@@ -1,0 +1,174 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "c46f25a82010ac40c2e3019ec5d8eff3137ad826",
+  "deployedRevision": null,
+  "inputFingerprint": "1e6b15733a13b11a0c70601b9737f48b0d33c879d66a1666f7d2c790ed99a817",
+  "selectedScenarios": [
+    "home-guest",
+    "database-search-detail",
+    "collection-guest-read",
+    "deck-readonly-draw-export",
+    "supporter-retired"
+  ],
+  "capturePolicy": "all",
+  "comparison": true,
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5177",
+    "apiUrl": "http://127.0.0.1:8090",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m4/cursored",
+    "sourceRevision": "c46f25a82010ac40c2e3019ec5d8eff3137ad826",
+    "sourceTreeFingerprint": "1e6b15733a13b11a0c70601b9737f48b0d33c879d66a1666f7d2c790ed99a817",
+    "expectedRevision": "c46f25a82010ac40c2e3019ec5d8eff3137ad826",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m5",
+    "verified": true,
+    "observedAt": "2026-10-04T20:54:21.776Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "c46f25a82010ac40c2e3019ec5d8eff3137ad826",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "c46f25a82010ac40c2e3019ec5d8eff3137ad826",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "actor": "guest",
+  "theme": "fixed dark",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "home-guest",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m5/normal-routes/home-guest-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m5/normal-routes/home-guest-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5177/home"
+        }
+      ],
+      "observed": {
+        "guestEntry": true,
+        "contextualAuthControls": true,
+        "actualOAuth": "not executed"
+      }
+    },
+    {
+      "id": "database-search-detail",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m5/normal-routes/database-search-detail-empty.jpg",
+          "dom": "docs/evidence/frontend-preparation/m5/normal-routes/database-search-detail-empty.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5177/data"
+        },
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m5/normal-routes/database-search-detail-detail.jpg",
+          "dom": "docs/evidence/frontend-preparation/m5/normal-routes/database-search-detail-detail.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5177/data"
+        },
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m5/normal-routes/database-search-detail-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m5/normal-routes/database-search-detail-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5177/data"
+        }
+      ],
+      "observed": {
+        "emptySearch": "passed",
+        "cardName": "Lancelot",
+        "artwork": {
+          "complete": true,
+          "naturalHeight": 744,
+          "naturalWidth": 1039
+        },
+        "detailsClosed": true
+      }
+    },
+    {
+      "id": "collection-guest-read",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m5/normal-routes/collection-guest-read-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m5/normal-routes/collection-guest-read-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5177/users/00000000-0000-0000-0000-000000000001/collection"
+        }
+      ],
+      "observed": {
+        "storage": "browser-local",
+        "emptyExpected": false,
+        "quantitiesChanged": false
+      }
+    },
+    {
+      "id": "deck-readonly-draw-export",
+      "status": "blocked",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m5/normal-routes/deck-readonly-draw-export-failure.jpg",
+          "dom": "docs/evidence/frontend-preparation/m5/normal-routes/deck-readonly-draw-export-failure.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5177/users/00000000-0000-0000-0000-000000000001/collection"
+        }
+      ],
+      "reason": "Select a current public read-only fixture and verified export/draw expectations"
+    },
+    {
+      "id": "supporter-retired",
+      "status": "blocked",
+      "reason": "Earlier scenario failed or was blocked"
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only scenarios",
+    "browser": "returned Home; close this test-owned tab or mark handoff explicitly"
+  },
+  "acceptance": "automated evidence only; Kyle acceptance not inferred",
+  "gaps": [
+    "light theme unavailable in M1",
+    "Google OAuth not exercised",
+    "independent module harness unavailable in M1"
+  ],
+  "browserErrorCount": 0,
+  "status": "needs review",
+  "durationSeconds": 6.434,
+  "counts": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 2
+  }
+}

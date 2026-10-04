@@ -1,0 +1,128 @@
+{
+  "environment": "local",
+  "sourceRevision": "c46f25a82010ac40c2e3019ec5d8eff3137ad826",
+  "branch": "codex/frontend-preparation-m5",
+  "uncommittedImplementation": true,
+  "status": "Kyle accepted local M5; release gates pending",
+  "checks": [
+    {
+      "name": "lint",
+      "status": "passed",
+      "counts": null,
+      "reused": false,
+      "durationSeconds": 6.439,
+      "inputFingerprint": "9cc3ea90a362cb79529622596be04cfcd172eebcdb97445704aef1c860c7f3c5",
+      "privateReceipt": "/private/tmp/excelsior-m5-final-gates/receipt.json"
+    },
+    {
+      "name": "knip",
+      "status": "passed",
+      "counts": null,
+      "reused": false,
+      "durationSeconds": 1.326,
+      "inputFingerprint": "9cc3ea90a362cb79529622596be04cfcd172eebcdb97445704aef1c860c7f3c5",
+      "privateReceipt": "/private/tmp/excelsior-m5-final-gates/receipt.json"
+    },
+    {
+      "name": "unit",
+      "status": "passed",
+      "counts": {
+        "suites": 333,
+        "tests": 3893,
+        "passed": 3875,
+        "failed": 0,
+        "skipped": 18,
+        "todo": 0
+      },
+      "reused": false,
+      "durationSeconds": 14.702,
+      "inputFingerprint": "5da348992fe949b028e461dcbe020298a71165c483dcbae12e8fbda682ec77fb",
+      "privateReceipt": "/private/tmp/excelsior-m5-last-gates/receipt.json"
+    },
+    {
+      "name": "modules",
+      "status": "passed",
+      "counts": {
+        "suites": 1,
+        "tests": 9,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "reused": false,
+      "durationSeconds": 14.166,
+      "inputFingerprint": "5da348992fe949b028e461dcbe020298a71165c483dcbae12e8fbda682ec77fb",
+      "privateReceipt": "/private/tmp/excelsior-m5-last-gates/receipt.json"
+    },
+    {
+      "name": "frontend",
+      "status": "passed",
+      "counts": null,
+      "reused": false,
+      "durationSeconds": 7.975,
+      "inputFingerprint": "8cb6337892670ab313a2f27551712f9954623619ac18f55034fe486de7b5c8fa",
+      "privateReceipt": "/private/tmp/excelsior-m5-story-type-gates/receipt.json"
+    },
+    {
+      "name": "storybook",
+      "status": "passed",
+      "counts": null,
+      "reused": false,
+      "durationSeconds": 9.229,
+      "inputFingerprint": "8cb6337892670ab313a2f27551712f9954623619ac18f55034fe486de7b5c8fa",
+      "privateReceipt": "/private/tmp/excelsior-m5-story-type-gates/receipt.json"
+    }
+  ],
+  "browser": {
+    "independentDesktop": 6,
+    "independentMobile": 6,
+    "ordinaryRoutes": 5,
+    "representativeContinuity": 2,
+    "status": "passed",
+    "method": "live CUA automation",
+    "errorsInFreshFinalTab": 0
+  },
+  "cleanup": "Isolated API resumed; unsaved edit discarded by reload; viewports reset; readonly scenarios made no record writes; test query clients/DOM/listeners disposed. Preview and pre-existing local Guest copy retained for Kyle.",
+  "acceptance": "Kyle confirmed port5177 preview looks good; startup proves intended M5 target. Standing milestone instruction authorizes Ship; production validation pending.",
+  "reuse": [
+    "Lint and Knip unchanged by subsequent Storybook/test-adapter updates.",
+    "Unit/module tests passed before removing a Storybook-only unsupported ByRole option; production/module/test inputs unchanged by that option removal. Frontend and Storybook builds rerun afterward.",
+    "M4 local API/SOC2/integration evidence belongs to the approved backend slice; M5 creates no backend endpoint or migration changes."
+  ],
+  "failuresRetained": [
+    "Initial browser modal/selector procedure failures and reruns",
+    "Wrong nested runner fixture options; blocked cases rerun with flat options",
+    "Startup selector label instead of container name; corrected without restart",
+    "Three test adapters updated after extraction",
+    "One unchanged rate-limit test returned a transient404 during a full run; focused12-test retry and subsequent complete3875-unit gate passed",
+    "Storybook-only unsupported ByRole exact option; frontend/Storybook rerun passed"
+  ],
+  "stories": {
+    "newComponents": {
+      "CardDatabaseModule and CardDatabaseView": "DatabaseAlone",
+      "DbDetailActions": "DatabaseDetailActions",
+      "DeckBuilderModule, DeckBuilderSession and DeckBuilderView": "DeckBuilderAlone",
+      "CollectionModule and CollectionView": "CollectionAlone",
+      "ModuleHostProvider": "All independent host examples",
+      "ModuleHarness": "DatabaseAlone and Together",
+      "LocalModuleHarness": "HostLoading, HostUnavailable, HostWithoutSession",
+      "ExcelsiorModuleHost": "Existing Screens/Card Database, Deck Editor and Collection examples"
+    },
+    "execution": "Build confirmed; Storybook play functions are named examples, not claimed as separately automated live tests."
+  },
+  "gaps": [
+    "M4 simulation/atomic import-export/Collection domain contracts and shared calculations remain backlog.",
+    "M6 global CSS/overlay/theme/asset/container isolation and native host remain unverified.",
+    "M7 distributable package and removal of backend source imports remain future.",
+    "No M5 production test; no light theme/Google OAuth; no live API outage test.",
+    "Continuity covers one desktop delayed unsaved edit and settled frames, not every animation frame."
+  ],
+  "handoff": {
+    "url": "http://127.0.0.1:5177/module-harness.html",
+    "evidence": "handoff/module-preview.jpg",
+    "identity": "Guest",
+    "deck": "isolated fictional fixture; prefilled and readonly",
+    "tabs": "Ready harness and existing editable Guest preview retained; duplicate harness and production test tabs closed."
+  }
+}

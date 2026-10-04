@@ -165,7 +165,7 @@ describe('CardImage session wiring', () => {
       'utf8',
     );
     const databasePage = fs.readFileSync(
-      path.join(__dirname, '../../../frontend/src/features/database/DatabasePage.tsx'),
+      path.join(__dirname, '../../../frontend/src/features/database/CardDatabaseModule.tsx'),
       'utf8',
     );
     expect(cardImage).toContain('isFullResRevealed');

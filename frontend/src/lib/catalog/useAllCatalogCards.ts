@@ -1,3 +1,4 @@
+import { useOptionalModuleHost } from '../../modules/ModuleHost';
 import { useMemo } from 'react';
 import { useQueries } from '@tanstack/react-query';
 import { fetchCatalog } from '../api/catalog';
@@ -17,12 +18,13 @@ interface UseAllCatalogCardsOptions {
 }
 
 export function useAllCatalogCards(options: UseAllCatalogCardsOptions = {}) {
+  const hostOperation = useOptionalModuleHost()?.api.fetchCatalog ?? fetchCatalog;
   const { enabled = true, foilToBase } = options;
 
   const queries = useQueries({
     queries: CATALOG_TYPES.map((meta) => ({
       queryKey: ['catalog', meta.type] as const,
-      queryFn: () => fetchCatalog(meta.type),
+      queryFn: ({ signal }: { signal: AbortSignal }) => hostOperation(meta.type, signal),
       staleTime: 30 * 60 * 1000,
       enabled,
     })),
@@ -44,5 +46,5 @@ export function useAllCatalogCards(options: UseAllCatalogCardsOptions = {}) {
     return items;
   }, [enabled, catalogDataSignature, foilToBase]);
 
-  return { cards, isLoading, isError };
+  return { cards, isLoading, isError, retry: () => { void Promise.all(queries.map(query => query.refetch())); } };
 }

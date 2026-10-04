@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 const databasePage = fs.readFileSync(
-  path.join(__dirname, '../../../frontend/src/features/database/DatabasePage.tsx'),
+  path.join(__dirname, '../../../frontend/src/features/database/CardDatabaseModule.tsx'),
   'utf8',
 );
 const filterRail = fs.readFileSync(

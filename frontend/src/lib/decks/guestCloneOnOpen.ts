@@ -3,14 +3,15 @@
  * session `guest_*` deck so edits never persist to the database.
  * See docs/current/GUEST_DECK_LESSONS_LEARNED.md.
  */
-import { api } from '../api/client';
+import type { ModuleApi } from '../../modules/api';
 import {
+  fetchDeckFull,
   createDeck,
   replaceDeckCards,
   isGuestDeckId,
   type DeckCardInput,
 } from '../api/decks';
-import type { DeckDetail } from '../api/types';
+
 
 export { isGuestDeckId };
 
@@ -28,10 +29,10 @@ export function guestNeedsCloneOnOpen(
 }
 
 /** Clone a DB deck into a new guest session deck; returns the new `guest_*` id. */
-export async function clonePreloadedGuestDeck(sourceDeckId: string): Promise<string> {
-  const source = await api.get<DeckDetail>(`/api/v1/decks/${sourceDeckId}/full`);
+export async function clonePreloadedGuestDeck(sourceDeckId: string, operations: Pick<ModuleApi, 'fetchDeckFull' | 'createDeck' | 'replaceDeckCards'> = { fetchDeckFull, createDeck, replaceDeckCards }): Promise<string> {
+  const source = await operations.fetchDeckFull(sourceDeckId, false);
   const description = source.metadata.description;
-  const created = await createDeck(
+  const created = await operations.createDeck(
     {
       name: source.metadata.name,
       ...(description !== undefined && description !== null ? { description } : {}),
@@ -45,7 +46,7 @@ export async function clonePreloadedGuestDeck(sourceDeckId: string): Promise<str
     exclude_from_draw: c.exclude_from_draw === true,
   }));
   if (cards.length > 0) {
-    await replaceDeckCards(created.id, cards, true);
+    await operations.replaceDeckCards(created.id, cards, true);
   }
   return created.id;
 }

@@ -774,3 +774,7 @@ Deck evaluation timing (M3): load/save responses carry exact-input server metric
 A successful Database Add to Deck must appear on normal navigation into that deck without requiring a page refresh. Publish the returned deck snapshot before showing success; preserve existing card art, controls, stats and layout. No new loading animation or evaluating placeholder is introduced by this flow.
 
 Add Cards uses server eligibility metadata and retains the draft on unavailable evaluation, with an explicit Retry card eligibility action. Existing card filtering and tile quantity ceiling meanings remain compatible. No new visual component or theme is introduced.
+
+## Independent module development host (M5)
+
+Existing page appearance and controls remain in the production modules. Excelsior supplies branded Deck Builder navigation as host slots; the standalone module omits those slots and uses a single-column layout (`deck-editor--module`). The development harness has a compact sticky wrapped selector/input area with explicit pressed selection states, module borders and an explicit identity/read-only indicator. It uses existing dark theme tokens and shared appStyles; it is not a production page. Per-host theme, overlay/container and CSS isolation remain M6. Catalog/deck load failures provide local Retry; an unavailable deck still offers the host's Home callback. Named standalone/together/Guest/host loading/error examples appear in Independent host stories.

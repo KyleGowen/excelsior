@@ -1,0 +1,95 @@
+- banner:
+  - heading "Independent module harness" [level=1]
+  - paragraph: "Host identity: Guest. Local session and catalog. Decks start read-only; enable editing only for your disposable fixture."
+  - navigation "Module selection":
+    - button "Card Database module" [pressed]
+    - button "Deck Builder module"
+    - button "Collection module"
+    - button "All three modules"
+    - button "Unmount modules"
+  - text: Local deck ID
+  - textbox "Local deck ID": b4ec3a04-ab17-4a33-b813-df35f8195d75
+  - checkbox "Read-only deck" [checked]
+  - text: Read-only deck
+  - status "Host callback result": Host received Back
+- region "Independent Card Database":
+  - heading "Card Database" [level=1]:
+    - text: Card Database
+  - searchbox "Search cards": Lancelot
+  - generic: Set
+  - combobox "Filter by set":
+    - option "All sets" [selected]
+    - option "Edgar Rice Burroughs and the World Legends"
+    - option "Edgar Rice Burroughs and the World Legends - Promos"
+    - option "The Few and the Cursed - Promos"
+    - option "Skybound"
+    - option "Skybound - Promos"
+  - tablist "Card types":
+    - tab "All"
+    - tab "Characters" [selected]
+    - tab "Special Cards"
+    - tab "Any Character"
+    - tab "Power Cards"
+    - tab "Locations"
+    - tab "Battlegrounds"
+    - tab "Missions"
+    - tab "Events"
+    - tab "Aspects"
+    - 'tab "Universe: Advanced"'
+    - 'tab "Universe: Teamwork"'
+    - 'tab "Universe: Ally"'
+    - 'tab "Universe: Training"'
+    - 'tab "Universe: Basic"'
+  - generic "Card filters":
+    - button "Collapse filters" [expanded]:
+    - group "Stat filters":
+      - generic "Energy":
+        - generic: Energy
+      - combobox "Energy comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Energy value"
+      - generic "Combat":
+        - generic: Combat
+      - combobox "Combat comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Combat value"
+      - generic "Brute Force":
+        - generic: Brute Force
+      - combobox "Brute Force comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Brute Force value"
+      - generic "Intelligence":
+        - generic: Intelligence
+      - combobox "Intelligence comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Intelligence value"
+      - generic "Threat":
+        - generic: Threat
+      - combobox "Threat comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Threat value"
+    - checkbox "Has Foil"
+    - generic: Has Foil
+    - checkbox "Hide Alts" [checked]
+    - generic: Hide Alts
+  - article:
+    - button "View Lancelot" [active]:
+    - generic "Lancelot"
+    - generic: ERB 132
+  - navigation "Pagination":
+    - button "First page" [disabled]:
+    - button "Previous page" [disabled]:
+    - button "1"
+    - button "Next page" [disabled]:
+    - button "Last page" [disabled]:
+  - generic: Showing 1-1 of 1

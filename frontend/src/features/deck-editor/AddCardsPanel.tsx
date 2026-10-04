@@ -1,3 +1,4 @@
+import { useOptionalModuleHost } from '../../modules/ModuleHost';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { fetchCatalog, fetchFoilCardMap, fetchSets } from '../../lib/api/catalog';
@@ -270,6 +271,11 @@ export function AddCardsPanel({
   deckCatalogIndex,
   reserveCharacterId,
 }: AddCardsPanelProps) {
+ const hostApi = useOptionalModuleHost()?.api;
+ const fetchCatalogForHost = hostApi?.fetchCatalog ?? fetchCatalog;
+ const fetchSetsForHost = hostApi?.fetchSets ?? fetchSets;
+ const fetchFoilCardMapForHost = hostApi?.fetchFoilCardMap ?? fetchFoilCardMap;
+
   const { isMobile } = useLayoutMode();
   const addCardsRef = useRef<HTMLDivElement>(null);
   const typeTabsRef = useRef<HTMLDivElement>(null);
@@ -328,14 +334,14 @@ export function AddCardsPanel({
 
   const foilMapQuery = useQuery({
     queryKey: ['foil-card-map'],
-    queryFn: () => fetchFoilCardMap(),
+    queryFn: () => fetchFoilCardMapForHost(),
     enabled: open,
     staleTime: 60 * 60 * 1000,
   });
 
   const setsQuery = useQuery({
     queryKey: ['sets'],
-    queryFn: () => fetchSets(),
+    queryFn: () => fetchSetsForHost(),
     enabled: open,
     staleTime: 60 * 60 * 1000,
   });
@@ -349,7 +355,7 @@ export function AddCardsPanel({
 
   const catalogQuery = useQuery({
     queryKey: ['catalog', activeType],
-    queryFn: () => fetchCatalog(activeType!),
+    queryFn: () => fetchCatalogForHost(activeType!),
     enabled: open && !isAllTab && !isStacksTab && activeType !== null,
     staleTime: 30 * 60 * 1000,
   });
@@ -357,7 +363,7 @@ export function AddCardsPanel({
   const stackCatalogQueries = useQueries({
     queries: STACK_CATALOG_TYPES.map((type) => ({
       queryKey: ['catalog', type] as const,
-      queryFn: () => fetchCatalog(type),
+      queryFn: () => fetchCatalogForHost(type),
       enabled: open && isStacksTab,
       staleTime: 30 * 60 * 1000,
     })),

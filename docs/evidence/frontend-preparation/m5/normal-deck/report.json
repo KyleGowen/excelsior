@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "c46f25a82010ac40c2e3019ec5d8eff3137ad826",
+  "deployedRevision": null,
+  "inputFingerprint": "1e6b15733a13b11a0c70601b9737f48b0d33c879d66a1666f7d2c790ed99a817",
+  "selectedScenarios": [
+    "deck-readonly-draw-export",
+    "supporter-retired"
+  ],
+  "capturePolicy": "all",
+  "comparison": true,
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5177",
+    "apiUrl": "http://127.0.0.1:8090",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m4/cursored",
+    "sourceRevision": "c46f25a82010ac40c2e3019ec5d8eff3137ad826",
+    "sourceTreeFingerprint": "1e6b15733a13b11a0c70601b9737f48b0d33c879d66a1666f7d2c790ed99a817",
+    "expectedRevision": "c46f25a82010ac40c2e3019ec5d8eff3137ad826",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m5",
+    "verified": true,
+    "observedAt": "2026-10-04T20:54:21.776Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "c46f25a82010ac40c2e3019ec5d8eff3137ad826",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "c46f25a82010ac40c2e3019ec5d8eff3137ad826",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "actor": "guest",
+  "theme": "fixed dark",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "deck-readonly-draw-export",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m5/normal-deck/deck-readonly-draw-export-draw.jpg",
+          "dom": "docs/evidence/frontend-preparation/m5/normal-deck/deck-readonly-draw-export-draw.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75?readonly=true"
+        },
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m5/normal-deck/deck-readonly-draw-export-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m5/normal-deck/deck-readonly-draw-export-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5177/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75?readonly=true"
+        }
+      ],
+      "observed": {
+        "drawCount": 8,
+        "exported": {
+          "legal": false,
+          "reserve_character": null,
+          "total_cards": 8,
+          "total_threat": 18
+        },
+        "recordsChanged": false
+      }
+    },
+    {
+      "id": "supporter-retired",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m5/normal-deck/supporter-retired-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m5/normal-deck/supporter-retired-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5177/home"
+        }
+      ],
+      "observed": {
+        "redirectedHome": true,
+        "supporterVisible": false,
+        "retiredApi": "separate API check required"
+      }
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only scenarios",
+    "browser": "returned Home; close this test-owned tab or mark handoff explicitly"
+  },
+  "acceptance": "automated evidence only; Kyle acceptance not inferred",
+  "gaps": [
+    "light theme unavailable in M1",
+    "Google OAuth not exercised",
+    "independent module harness unavailable in M1"
+  ],
+  "browserErrorCount": 0,
+  "status": "passed",
+  "durationSeconds": 3.39,
+  "counts": {
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  }
+}

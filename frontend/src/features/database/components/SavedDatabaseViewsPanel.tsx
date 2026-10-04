@@ -1,3 +1,4 @@
+import { useOptionalModuleHost } from '../../../modules/ModuleHost';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -145,6 +146,12 @@ export function SavedDatabaseViewsPanel({
   activeViewId,
   onRecall,
 }: SavedDatabaseViewsPanelProps) {
+ const hostApi = useOptionalModuleHost()?.api;
+ const bulkDeleteSavedDatabaseViewsForHost = hostApi?.bulkDeleteSavedDatabaseViews ?? bulkDeleteSavedDatabaseViews;
+ const createSavedDatabaseViewForHost = hostApi?.createSavedDatabaseView ?? createSavedDatabaseView;
+ const deleteSavedDatabaseViewForHost = hostApi?.deleteSavedDatabaseView ?? deleteSavedDatabaseView;
+ const updateSavedDatabaseViewForHost = hostApi?.updateSavedDatabaseView ?? updateSavedDatabaseView;
+
   const queryClient = useQueryClient();
   const panelRef = useRef<HTMLElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -192,16 +199,16 @@ export function SavedDatabaseViewsPanel({
 
   const createMutation = useMutation({
     mutationFn: ({ name, viewState }: { name: string; viewState: SavedDatabaseViewStateV1 }) =>
-      createSavedDatabaseView(name, viewState),
+      createSavedDatabaseViewForHost(name, viewState),
   });
   const renameMutation = useMutation({
-    mutationFn: ({ id, name }: { id: string; name: string }) => updateSavedDatabaseView(id, { name }),
+    mutationFn: ({ id, name }: { id: string; name: string }) => updateSavedDatabaseViewForHost(id, { name }),
   });
   const pinMutation = useMutation({
-    mutationFn: ({ id, isPinned }: { id: string; isPinned: boolean }) => updateSavedDatabaseView(id, { isPinned }),
+    mutationFn: ({ id, isPinned }: { id: string; isPinned: boolean }) => updateSavedDatabaseViewForHost(id, { isPinned }),
   });
-  const deleteMutation = useMutation({ mutationFn: deleteSavedDatabaseView });
-  const bulkDeleteMutation = useMutation({ mutationFn: bulkDeleteSavedDatabaseViews });
+  const deleteMutation = useMutation({ mutationFn: deleteSavedDatabaseViewForHost });
+  const bulkDeleteMutation = useMutation({ mutationFn: bulkDeleteSavedDatabaseViewsForHost });
   const isEditing = createMutation.isPending || renameMutation.isPending;
   const isDeleting = deleteMutation.isPending || bulkDeleteMutation.isPending;
 

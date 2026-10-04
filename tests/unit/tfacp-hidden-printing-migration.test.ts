@@ -7,7 +7,7 @@ describe('TFCP 7 - Intelligence face-down migration', () => {
     'utf8',
   );
   const databasePage = fs.readFileSync(
-    path.join(process.cwd(), 'frontend/src/features/database/DatabasePage.tsx'),
+    path.join(process.cwd(), 'frontend/src/features/database/CardDatabaseModule.tsx'),
     'utf8',
   );
   const catalogApi = fs.readFileSync(

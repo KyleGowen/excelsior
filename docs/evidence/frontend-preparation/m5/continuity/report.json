@@ -1,0 +1,190 @@
+{
+  "environment": "local",
+  "sourceRevision": "c46f25a82010ac40c2e3019ec5d8eff3137ad826",
+  "status": "passed",
+  "method": "Live CUA automation with verified isolated API paused/resumed",
+  "scenarios": [
+    {
+      "id": "pending-metric-and-controls-continuity",
+      "status": "passed",
+      "metrics": {
+        "observed": {
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "evaluatingPlaceholder": false,
+          "regions": [
+            {
+              "height": 45,
+              "icons": [
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/threat.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/energy.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/combat.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/brute_force.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/intelligence.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/energy.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/combat.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/brute_force.png"
+                },
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/intelligence.png"
+                }
+              ],
+              "selector": ".deck-editor__stats-panel",
+              "text": "18Max2754Total0500",
+              "width": 1176,
+              "x": 84,
+              "y": 61.5
+            },
+            {
+              "height": 23.5,
+              "icons": [],
+              "selector": ".deck-editor__chip",
+              "text": "8 cards",
+              "width": 90,
+              "x": 346,
+              "y": 20.5
+            },
+            {
+              "height": 36,
+              "icons": [
+                {
+                  "loaded": true,
+                  "source": "/src/resources/images/icons/threat.png"
+                }
+              ],
+              "selector": ".deck-editor__threat-stat",
+              "text": "18",
+              "width": 48,
+              "x": 351.9453125,
+              "y": 70.5
+            }
+          ]
+        },
+        "evidence": {
+          "screenshot": "docs/evidence/frontend-preparation/m5/continuity/pending-metrics.jpg",
+          "dom": "docs/evidence/frontend-preparation/m5/continuity/pending-metrics.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5177/users/00000000-0000-0000-0000-000000000001/decks/guest_66286926c35536003d57053436f7dcc7f8202c21e006db78fdd061288218b31d_1791145960840_7k64ori8l"
+        }
+      },
+      "controls": {
+        "observed": [
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgb(29, 44, 71)",
+            "busy": null,
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 23.5,
+            "opacity": "1",
+            "text": "8 cards",
+            "width": 90,
+            "x": 346,
+            "y": 20.5
+          },
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgba(239, 77, 90, 0.4)",
+            "busy": "true",
+            "color": "rgb(239, 77, 90)",
+            "disabled": false,
+            "height": 22.5,
+            "opacity": "1",
+            "text": "Not Legal",
+            "width": 70,
+            "x": 444,
+            "y": 21
+          },
+          {
+            "background": "rgb(20, 31, 53)",
+            "border": "rgb(29, 44, 71)",
+            "busy": null,
+            "color": "rgb(138, 160, 194)",
+            "disabled": false,
+            "height": 22.5,
+            "opacity": "1",
+            "text": "Unlisted",
+            "width": 63.5078125,
+            "x": 522,
+            "y": 21
+          },
+          {
+            "background": "rgba(0, 0, 0, 0)",
+            "border": "rgb(29, 44, 71)",
+            "busy": "true",
+            "color": "rgb(138, 160, 194)",
+            "disabled": true,
+            "height": 26.5,
+            "opacity": "1",
+            "text": " Draw Hand",
+            "width": 99.9296875,
+            "x": 872.9453125,
+            "y": 11
+          }
+        ],
+        "evidence": {
+          "screenshot": "docs/evidence/frontend-preparation/m5/continuity/pending-controls.jpg",
+          "dom": "docs/evidence/frontend-preparation/m5/continuity/pending-controls.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5177/users/00000000-0000-0000-0000-000000000001/decks/guest_66286926c35536003d57053436f7dcc7f8202c21e006db78fdd061288218b31d_1791145960840_7k64ori8l"
+        }
+      }
+    },
+    {
+      "id": "updated-result-and-reload",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m5/continuity/settled.jpg",
+        "dom": "docs/evidence/frontend-preparation/m5/continuity/settled.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5177/users/00000000-0000-0000-0000-000000000001/decks/guest_66286926c35536003d57053436f7dcc7f8202c21e006db78fdd061288218b31d_1791145960840_7k64ori8l"
+      },
+      "observed": {
+        "cards": 7,
+        "combatIcons": 4,
+        "reloadedCards": 8,
+        "reloadedCombatIcons": 5
+      }
+    }
+  ],
+  "cleanup": "API resumed; no Save clicked; original Guest fixture reloaded. Source PostgreSQL fixture unchanged.",
+  "acceptance": "Kyle acceptance pending",
+  "gaps": [
+    "One representative desktop unsaved edit; not an every-animation-frame proof."
+  ]
+}

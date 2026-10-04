@@ -135,3 +135,7 @@ Browse, search, filter, and sort the full modern OverPower catalog.
 Live catalog reads use `/api/v1/catalog/presentation/<type>` metadata for grouping, default add printing, aliases, foil identity and character associations. Legacy helpers remain for raw synthetic fixtures while other M4 workflows migrate. Static Storybook catalog response fixtures are generated from the fictional story cards; backend hashing is never imported into the browser gallery.
 
 After a successful Database Add to Deck, cancel any older full-deck read and publish the returned deck (including evaluated stats) into its exact query key before showing success. Navigating through Decks then initializes the editor from this authoritative snapshot. List invalidation still updates deck tiles. Failed additions do not publish changes. This avoids a second read and does not overwrite an editor's unsaved state. The local-only regression in `tests/browser/milestone4-database-deck.mjs` warms the cache, adds a previously absent card and returns through product links/buttons without reloading.
+
+## M5 implementation boundary
+
+The route page now adapts the Excelsior host to the single production module/controller/view implementation. See [module contract](../../modules/README.md) for providers, typed operations, navigation callbacks, independent fixture harness and retained M4/M6/M7 gaps. Existing behavior documentation above remains applicable.

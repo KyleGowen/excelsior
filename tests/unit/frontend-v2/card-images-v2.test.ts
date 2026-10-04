@@ -361,7 +361,7 @@ describe('CardTile database progressive wiring', () => {
 describe('per-screen foil effect wiring', () => {
   it('disables laminate in DBV grid and Add Cards browse contexts', () => {
     const dbvSource = fs.readFileSync(
-      path.join(__dirname, '../../../frontend/src/features/database/DatabasePage.tsx'),
+      path.join(__dirname, '../../../frontend/src/features/database/CardDatabaseModule.tsx'),
       'utf8',
     );
     expect(dbvSource).toContain('<CardTile');

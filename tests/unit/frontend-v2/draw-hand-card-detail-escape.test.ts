@@ -12,7 +12,7 @@ describe('Draw Hand card-detail Escape layering', () => {
   );
   const deckEditorPath = path.join(
     __dirname,
-    '../../../frontend/src/features/deck-editor/DeckEditorPage.tsx',
+    '../../../frontend/src/features/deck-editor/DeckBuilderModule.tsx',
   );
 
   it('lets a mounted parent panel yield Escape to a child overlay', () => {

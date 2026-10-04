@@ -1,0 +1,14 @@
+- banner:
+  - heading "Independent module harness" [level=1]
+  - paragraph: "Host identity: Guest. Local session and catalog. Decks start read-only; enable editing only for your disposable fixture."
+  - navigation "Module selection":
+    - button "Card Database module"
+    - button "Deck Builder module"
+    - button "Collection module"
+    - button "All three modules"
+    - button "Unmount modules" [active] [pressed]
+  - text: Local deck ID
+  - textbox "Local deck ID": b4ec3a04-ab17-4a33-b813-df35f8195d75
+  - checkbox "Read-only deck" [checked]
+  - text: Read-only deck
+  - status "Host callback result": Host received Back

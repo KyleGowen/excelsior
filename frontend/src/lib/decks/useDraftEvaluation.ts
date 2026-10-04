@@ -1,16 +1,18 @@
+import { useOptionalModuleHost } from '../../modules/ModuleHost';
 import { useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { evaluateDraft, type DraftEvaluationInput, type DraftEvaluation } from '../api/decks';
 import { evaluationInputKey } from '../../../../src/services/deck-evaluation/draftInput';
 /** Exact-input results control actions; the last settled display stays in place during refresh. */
 export function useDraftEvaluation(input: Omit<DraftEvaluationInput, 'revision'>, enabled: boolean, seed?: DraftEvaluation | null) {
+  const hostOperation = useOptionalModuleHost()?.api.evaluateDraft ?? evaluateDraft;
     const key = evaluationInputKey(input);
     const revision = useRef(0);
     const payload = useMemo(() => ({ ...JSON.parse(key) as Omit<DraftEvaluationInput, 'revision'>, revision: ++revision.current }), [key]);
     const matchingSeed = seed?.draftId === input.draftId && seed.inputKey === key ? seed : undefined;
     const query = useQuery({
         queryKey: ['draft-evaluation', input.draftId, payload.revision, key],
-        queryFn: ({ signal }) => evaluateDraft(payload, signal),
+        queryFn: ({ signal }) => hostOperation(payload, signal),
         enabled: enabled && !matchingSeed,
         staleTime: 0,
         gcTime: 0,

@@ -1,0 +1,6 @@
+.module-harness { padding: 16px; min-height: 100vh; }
+.module-harness__controls { position: sticky; top: 0; z-index: 10; background: var(--color-bg, #070d17); display: grid; gap: 10px; padding-bottom: 16px; }
+.module-harness__controls nav { display: flex; flex-wrap: wrap; gap: 8px; }
+.module-harness__controls button, .module-harness__controls input { padding: 6px 10px; }
+.module-harness section { border: 1px solid var(--border-color); margin-bottom: 16px; }
+.deck-editor--module { grid-template-columns: 1fr; }

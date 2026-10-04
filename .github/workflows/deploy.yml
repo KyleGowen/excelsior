@@ -131,6 +131,11 @@ jobs:
       run: npx jest --config tests/config/jest.ci.config.js --shard=${{ matrix.shard }}/8
       timeout-minutes: 10
 
+    - name: Test independent frontend modules (once)
+      if: matrix.shard == 1
+      run: npx jest --config tests/config/jest.frontend-modules.config.js --runInBand
+      timeout-minutes: 3
+
   unit-coverage:
     name: Unit Coverage
     runs-on: ubuntu-latest
