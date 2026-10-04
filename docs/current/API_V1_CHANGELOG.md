@@ -5,6 +5,8 @@ One line per change. Newest first. Keep this in sync with
 
 ## Unreleased — Phase 3 (scale + docs)
 
+- Added optional, disabled-by-default `POST /api/v1/service-auth/token` with private confidential-client configuration, separate application/player identity, explicit scopes, short TTL, revocation/rotation, client/IP limits and redacted audit. Added server adapters for Excelsior and the future host with local fixture mounts and configurable browser transport. Existing direct cookie/JWT API clients and login UX remain compatible; production credential provisioning is separate. See [SERVICE_ACCESS.md](SERVICE_ACCESS.md).
+
 - User Analytics deck averages now exclude the sample starter-deck copy automatically
   assigned during signup; total, legal, and Limited deck inventory counts remain unchanged.
 - Added `GET /api/v1/community/preconstructed-decks` and the Community page's

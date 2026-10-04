@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "f49b28138b424ccf58de231c8350ea00aa4df064",
+  "inputFingerprint": "cf417921659f625faf6b0314cdbfdbed04f886d1004de579567c5ad69acd55d3",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "mobile-guest-contextual-auth",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m2/browser-mobile-auth/guest-profile.jpg",
+        "dom": "docs/evidence/frontend-preparation/m2/browser-mobile-auth/guest-profile.txt",
+        "dimensions": {
+          "height": 844,
+          "width": 390
+        },
+        "url": "http://127.0.0.1:5175/home"
+      },
+      "observed": {
+        "guest": true,
+        "passwordEntry": true,
+        "accountCreationEntry": true,
+        "googleEntry": "disabled; OAuth not run"
+      }
+    }
+  ],
+  "status": "passed",
+  "counts": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "cleanup": {
+    "applicationRecords": "unchanged",
+    "browser": "Account panel closed; Guest Home"
+  },
+  "acceptance": "Kyle acceptance pending",
+  "gaps": [
+    "real Google OAuth unavailable",
+    "light theme unavailable"
+  ]
+}

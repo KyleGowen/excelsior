@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "f49b28138b424ccf58de231c8350ea00aa4df064",
+  "inputFingerprint": "cf417921659f625faf6b0314cdbfdbed04f886d1004de579567c5ad69acd55d3",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "password-login",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m2/browser-account/account-home.jpg",
+        "dom": "docs/evidence/frontend-preparation/m2/browser-account/account-home.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5175/home"
+      }
+    },
+    {
+      "id": "owned-deck-save-reload",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m2/browser-account/owned-deck-restored.jpg",
+        "dom": "docs/evidence/frontend-preparation/m2/browser-account/owned-deck-restored.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5175/users/d005c30a-5857-4581-b4c9-ba3569d283a3/decks/6b96cbc2-f3d3-4a20-8b29-9ed4d96e3137"
+      }
+    },
+    {
+      "id": "account-collection-read",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m2/browser-account/owned-collection.jpg",
+        "dom": "docs/evidence/frontend-preparation/m2/browser-account/owned-collection.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5175/users/d005c30a-5857-4581-b4c9-ba3569d283a3/collection"
+      },
+      "observed": {
+        "persistedFixtureCard": "Lancelot",
+        "quantitiesChanged": false
+      }
+    },
+    {
+      "id": "logout-guest-isolation",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "docs/evidence/frontend-preparation/m2/browser-account/guest-collection-after-logout.jpg",
+        "dom": "docs/evidence/frontend-preparation/m2/browser-account/guest-collection-after-logout.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://127.0.0.1:5175/users/00000000-0000-0000-0000-000000000001/collection"
+      },
+      "observed": {
+        "accountQuantitiesVisibleToGuest": false
+      }
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "owned fixture retained for Kyle; temporary deck name restored",
+    "browser": "Guest Home"
+  },
+  "acceptance": "automated only; Kyle acceptance pending",
+  "gaps": [
+    "real Google OAuth unavailable",
+    "light theme unavailable",
+    "future host/module UI unavailable"
+  ],
+  "status": "passed",
+  "counts": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "browserErrorCount": 0
+}

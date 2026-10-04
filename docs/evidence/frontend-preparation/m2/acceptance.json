@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-03",
+  "timezone": "America/Los_Angeles",
+  "status": "Kyle explicitly accepted Milestone 2 and authorized Ship",
+  "target": "Earlier isolated Milestone 2 preview, explicitly confirmed",
+  "automatedEvidence": "verification.json",
+  "insomniaDesktopExecution": "not independently evidenced",
+  "release": "pending exact-SHA CI, health and production browser verification"
+}

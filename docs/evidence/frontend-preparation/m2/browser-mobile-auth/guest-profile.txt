@@ -1,0 +1,271 @@
+- main:
+  - heading "Welcome to Excelsior" [level=1]
+  - paragraph: OverPower deck building and collection tracking companion.
+  - paragraph: Build decks, explore cards, track your collection, and share your decks with the community.
+  - button "Explore Decks":
+    - text: Explore Decks
+  - heading "Recent Updates" [level=2]:
+    - text: Recent Updates
+  - link "View All":
+    - /url: /home/updates
+    - text: View All
+  - button "UPDATE Preconstructed deck lists available The Community section now includes official preconstructed decks, plus featured Skybound precon upgrade recommendations from Andrew Taylor. Oct 3, 2026":
+    - generic: UPDATE
+    - heading "Preconstructed deck lists available" [level=3]
+    - paragraph: The Community section now includes official preconstructed decks, plus featured Skybound precon upgrade recommendations from Andrew Taylor.
+    - generic: Oct 3, 2026
+  - button "FEATURE Official errata, right on the card Cards with official errata now show the relevant ruling at the bottom of their detail panel, along with a direct link to LRG’s official source. Oct 3, 2026":
+    - generic: FEATURE
+    - heading "Official errata, right on the card" [level=3]
+    - paragraph: Cards with official errata now show the relevant ruling at the bottom of their detail panel, along with a direct link to LRG’s official source.
+    - generic: Oct 3, 2026
+  - 'button "NEW CARDS Skybound alternate art revealed! The Skybound alternate-art character cards are officially revealed. Open Skybound Characters in the card database and turn off \"Hide Alts\" to browse every alternate printing, including the two-sided Walkers: Herd. Oct 3, 2026"':
+    - generic: NEW CARDS
+    - heading "Skybound alternate art revealed!" [level=3]
+    - paragraph: "The Skybound alternate-art character cards are officially revealed. Open Skybound Characters in the card database and turn off \"Hide Alts\" to browse every alternate printing, including the two-sided Walkers: Herd."
+    - generic: Oct 3, 2026
+  - heading "Seattle Weekend" [level=2]:
+    - text: Seattle Weekend
+  - link "View All":
+    - /url: /home/regionals?event=s1-seattle-weekend
+    - text: View All
+  - generic "Seattle event summary":
+    - button "Regional" [pressed]
+    - button "NAOL"
+  - heading "Seattle Regional" [level=1]
+  - heading "Season One Regional" [level=2]
+  - heading "Location" [level=3]
+  - paragraph: Seattle, WA
+  - heading "Date" [level=3]
+  - paragraph: September 5, 2026
+  - heading "Players" [level=3]
+  - paragraph: "32"
+  - heading "Winner Name" [level=3]
+  - paragraph: Andrew Taylor
+  - button "View Morgan le Fay":
+    - img "Morgan le Fay"
+  - heading "Highest Top 8 %" [level=3]
+  - paragraph: 5 of 7 (71.4%)
+  - paragraph: Morgan le Fay
+  - application:
+    - generic: WickedWitch
+    - generic: The Flaxans
+    - generic: Omni-Man
+    - generic: Glenn
+    - generic: Jane Porter
+  - heading "Character Appearances" [level=3]
+  - paragraph: Front line + reserve
+  - generic: +61 more characters
+  - button "View Alexandria":
+    - img "Alexandria"
+  - heading "Most plays w/o Top 8" [level=3]
+  - paragraph: "5"
+  - paragraph: Alexandria
+  - button "View Black Samson":
+    - img "Black Samson"
+    - generic: Black Samson
+    - generic: 1 / 3
+  - heading "New Winning Characters" [level=3]
+  - paragraph: 3 newcomers
+  - application:
+    - generic: The Flaxans
+    - generic: Morgan leFay
+    - generic: Omni-Man
+    - generic: WickedWitch
+    - generic: Glenn
+  - heading "Top 8 Characters" [level=3]
+  - paragraph: Finishing decks 1st–8th
+  - application:
+    - generic: The RoundTab…
+    - generic: TheCommonwea…
+    - generic: Asclepieion
+    - generic: 221-B BakerS…
+    - generic: The GreeneFa…
+  - heading "Top Homebases" [level=3]
+  - application:
+    - generic: GDA
+    - generic: ERB
+    - generic: Unreport…
+  - heading "Battlegrounds" [level=3]
+  - paragraph: Regional only · 32 of 68 decks
+  - application:
+    - generic: Glenn
+    - generic: Billy the Kid
+    - generic: TheGovernor …
+    - generic: Jane Porter
+    - generic: BlackSamson
+  - heading "Top Reservists" [level=3]
+  - application:
+    - generic: Green Gh…
+    - generic: War Woman
+    - generic: Red Rush
+    - generic: Fairy Pr…
+  - heading "Top Cataclysms" [level=3]
+  - paragraph: 16 of 68 decks reported
+  - button "View Allen The Alien":
+    - img "Allen The Alien"
+    - generic: Allen The Alien
+    - generic: 1 / 15
+  - heading "New Top 8 Characters" [level=3]
+  - paragraph: 15 newcomers
+  - heading "Community Decks" [level=2]:
+    - text: Community Decks
+  - status:
+    - heading "Nothing here yet" [level=3]
+    - paragraph: Community decks will appear here as they are shared.
+  - heading "Tournament Winning Decks" [level=2]:
+    - text: Tournament Winning Decks
+  - link "View All":
+    - /url: /community#tournament
+    - text: View All
+  - button "S1 Regionals (Columbus 3rd, Charlie Hanford) Deck summary":
+    - heading "S1 Regionals (Columbus 3rd, Charlie Hanford)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "58"
+      - generic: Legal
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "Regionals (Phil Miller, Seattle) Deck summary":
+    - heading "Regionals (Phil Miller, Seattle)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "56"
+      - generic: Legal
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "S1 Regionals (Columbus 2nd, Noor El-barrad Deck summary":
+    - heading "S1 Regionals (Columbus 2nd, Noor El-barrad" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "51"
+      - generic: Legal
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "2026 Nationals (Andrew Taylor) Deck summary":
+    - heading "2026 Nationals (Andrew Taylor)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "55"
+      - generic: Legal
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "S1 Regionals (Columbus 1st, Justin Sadaie) Deck summary":
+    - heading "S1 Regionals (Columbus 1st, Justin Sadaie)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "56"
+      - generic: Legal
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "2026 Nationals (Jessica Simms) Deck summary":
+    - heading "2026 Nationals (Jessica Simms)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "51"
+      - generic: Legal
+      - 'generic "Threat: 74"':
+        - generic: "74"
+  - button "2025 Nationals 7th (Joe Peters) Deck summary":
+    - heading "2025 Nationals 7th (Joe Peters)" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "53"
+      - generic: Legal
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - heading "Preconstructed Decks" [level=2]:
+    - text: Preconstructed Decks
+  - link "View All":
+    - /url: /community#preconstructed
+    - text: View All
+  - button "We Are Invincible Deck summary":
+    - heading "We Are Invincible" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "44"
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "We are the Walking Dead Deck summary":
+    - heading "We are the Walking Dead" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "44"
+      - 'generic "Threat: 75"':
+        - generic: "75"
+  - button "Limitless Possibilities Deck summary":
+    - heading "Limitless Possibilities" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "44"
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "Worlds Collide Deck summary":
+    - heading "Worlds Collide" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "44"
+      - 'generic "Threat: 74"':
+        - generic: "74"
+  - button "Horror Menagerie Deck summary":
+    - heading "Horror Menagerie" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "47"
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "The Resistance Deck summary":
+    - heading "The Resistance" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "47"
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "Ungodly Power Deck summary":
+    - heading "Ungodly Power" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "47"
+      - 'generic "Threat: 76"':
+        - generic: "76"
+  - button "Time Detectives Deck summary":
+    - heading "Time Detectives" [level=3]
+    - generic "Deck summary":
+      - generic "Cards":
+        - text: "47"
+      - 'generic "Threat: 73"':
+        - generic: "73"
+- navigation "Primary":
+  - link "Database":
+    - /url: /data
+    - generic: Database
+  - link "Decks":
+    - /url: /users/00000000-0000-0000-0000-000000000001/decks
+    - generic: Decks
+  - link "Home":
+    - /url: /home
+    - generic: Home
+  - link "Collection":
+    - /url: /users/00000000-0000-0000-0000-000000000001/collection
+    - generic: Collection
+  - button "Profile":
+    - generic: Profile
+- dialog "Account" [active]:
+  - generic: Account
+  - button "Close panel":
+  - generic: Guest
+  - generic: 4 decks
+  - menu:
+    - menuitem "Create New Deck":
+      - text: Create New Deck
+    - menuitem "Log In":
+      - text: Log In
+    - menuitem "Create Account":
+      - text: Create Account
+    - menuitem "Sign in with Google" [disabled]:
+      - text: Sign in with Google
+    - menuitem "Help & Feedback":
+      - text: Help & Feedback
+  - generic: Use desktop layout
+  - checkbox "Use desktop layout"
+- generic: Samson

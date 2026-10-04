@@ -9,6 +9,8 @@ import { CatalogService } from '../services/catalogService';
 import { DbvSupportService } from '../services/dbvSupportService';
 import { RecentUpdatesService } from '../services/recentUpdatesService';
 import { registerAuthV1HttpRoutes } from './auth.http';
+import { registerServiceAuthV1HttpRoutes } from './service-auth.http';
+import { configuredServiceAccess } from '../access/configuredServiceAccess';
 import { registerDbvCatalogV1HttpRoutes } from './dbv-catalog.http';
 import { registerDbvSupportV1HttpRoutes, type DeckBackgroundListReader } from './dbv-support.http';
 import { createV1SessionOrBearerAuthMiddleware } from './middleware/v1SessionOrBearerAuth';
@@ -105,6 +107,8 @@ export function createApiV1Router(deps: RegisterApiV1Deps): IRouter {
   if (deps.pool) {
     router.use(createApiAccessLogMiddleware({ pool: deps.pool }));
   }
+
+  registerServiceAuthV1HttpRoutes(router, configuredServiceAccess);
 
   const getUserById = async (id: string) => {
     const u = await deps.userRepository.getUserById(id);

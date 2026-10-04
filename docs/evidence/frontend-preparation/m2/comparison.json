@@ -1,0 +1,16 @@
+{
+  "method": "same 1280x720 CUA captures plus observable-case comparison and visual review; no screenshot baselines replaced",
+  "home": {
+    "pixelsChangedOver12": 0
+  },
+  "cardDetails": {
+    "pixelsChangedOver12": 0
+  },
+  "guestCollection": {
+    "pixelsChangedOver12": 8,
+    "percentage": 0.001,
+    "visualReview": "same layout/content; minute capture/edge difference"
+  },
+  "mobile": "390x844 baseline and after Database/Guest Collection pass; after-only read-only deck and Guest Account controls pass",
+  "fixtureDifference": "M2 resolves current catalog UUIDs by card identity; M1 UUIDs are not portable between independently migrated databases. The M2 deck has 8 drawable cards; the M1 fixture with one marked Pre-Placed has 7. No domain/UI implementation changed."
+}

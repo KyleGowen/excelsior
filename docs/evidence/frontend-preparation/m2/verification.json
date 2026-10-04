@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "environment": "isolated local",
+  "sourceRevision": "f49b28138b424ccf58de231c8350ea00aa4df064",
+  "state": "uncommitted M2; ready for Kyle local spot check, not accepted/shipped",
+  "gates": {
+    "unit": {
+      "status": "passed",
+      "passed": 3779,
+      "skipped": 18,
+      "passedSuites": 323,
+      "skippedSuites": 2,
+      "exitCode": 0,
+      "terminalCommand": "jest --config tests/config/jest.unit.config.js --runInBand --detectOpenHandles --forceExit",
+      "limitation": "Eight existing GuestDeckPersistence cleanup timers remain open in older unit tests importing src/index.ts. Focused M2 units exited normally. Full assertions passed; forced terminal exit recorded explicitly."
+    },
+    "focusedM2Unit": {
+      "status": "passed",
+      "passed": 51,
+      "suites": 4,
+      "exitCode": 0
+    },
+    "integration": {
+      "status": "passed",
+      "passed": 1009,
+      "suites": 113,
+      "cleanup": "all runner containers removed",
+      "receipt": "integration-receipt.json"
+    },
+    "finalSecurityIntegration": {
+      "status": "passed",
+      "passed": 66,
+      "suites": 2
+    },
+    "typecheck": {
+      "status": "passed"
+    },
+    "lint": {
+      "status": "passed",
+      "errors": 0,
+      "warnings": 421,
+      "newM2Warnings": 0
+    },
+    "SOC2": {
+      "status": "passed",
+      "passed": 45,
+      "suites": 9
+    },
+    "frontendBuild": {
+      "status": "passed"
+    },
+    "storybookBuild": {
+      "status": "passed"
+    },
+    "dependencyAudit": {
+      "status": "passed",
+      "vulnerabilities": 0
+    },
+    "knipProductionDependenciesDuplicates": {
+      "status": "passed"
+    },
+    "fullKnip": {
+      "status": "baseline findings remain",
+      "newFindings": 0
+    },
+    "fixtureHelper": {
+      "status": "passed",
+      "nodeTests": 1,
+      "cases": "dry-run no writes, distinct credentials, private permissions, no raw secret stdout, no production/remote/existing/checkout destination"
+    }
+  },
+  "browser": {
+    "afterDistinctScenariosPassed": 13,
+    "beforeScenariosPassed": 6,
+    "finalFrozenSmokeRepeated": 2,
+    "desktop": "1280x720",
+    "mobile": "390x844",
+    "theme": "fixed dark",
+    "screenshotsCompared": "comparison.json",
+    "actualGoogleOAuth": "not run; disabled",
+    "lightTheme": "unavailable",
+    "futureHostModuleUI": "not yet implemented"
+  },
+  "cleanup": {
+    "integrationUsersRemaining": 0,
+    "testGuestDecks": "deleted in finally; per-test Guest sessions removed by exact token",
+    "preview": "retained for Kyle; owned Docker DB and private fixtures only",
+    "browser": "test baseline tab closed, viewport reset, signed-in owned deck handed off"
+  },
+  "gaps": [
+    "Kyle local and Insomnia/tunnel acceptance pending",
+    "production service credentials/flags not provisioned",
+    "production service-bearing CDN-origin/limiter design and real LRG host require future verification",
+    "no production tests or deployment in this milestone implementation",
+    "real Google OAuth/browser signup/light/module UI not validated as available"
+  ],
+  "evidence": "docs/evidence/frontend-preparation/m2/",
+  "acceptance": "automated readiness only; Kyle must accept before Ship"
+}

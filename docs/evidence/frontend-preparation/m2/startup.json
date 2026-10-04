@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "kind": "startup",
+  "environment": "local",
+  "status": "passed",
+  "sourceRevision": "f49b28138b424ccf58de231c8350ea00aa4df064",
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://localhost:5175",
+    "apiUrl": "http://localhost:8088",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m2/cursored",
+    "sourceRevision": "f49b28138b424ccf58de231c8350ea00aa4df064",
+    "sourceTreeFingerprint": "fd914c011867bfc9eb8a23dfebda19f95cf81b2c863a918564f216efaee8fdfb",
+    "expectedRevision": "f49b28138b424ccf58de231c8350ea00aa4df064",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m2",
+    "verified": true,
+    "observedAt": "2026-10-03T22:09:23.879Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "f49b28138b424ccf58de231c8350ea00aa4df064",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "f49b28138b424ccf58de231c8350ea00aa4df064",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "processes": {
+    "api": {
+      "port": 8088,
+      "processes": [
+        {
+          "pid": 15956,
+          "cwd": "/Users/kyle/.codex/worktrees/frontend-preparation-m2/cursored",
+          "matches": true
+        }
+      ],
+      "verified": true
+    },
+    "frontend": {
+      "port": 5175,
+      "processes": [
+        {
+          "pid": 12805,
+          "cwd": "/Users/kyle/.codex/worktrees/frontend-preparation-m2/cursored/frontend",
+          "matches": true
+        }
+      ],
+      "verified": true
+    }
+  },
+  "databaseBinding": {
+    "host": "127.0.0.1",
+    "port": 15439,
+    "database": "overpower",
+    "owner": "excelsior-frontend-preparation-m2",
+    "provenance": "listener launch settings plus checkout dotenv/defaults",
+    "verified": true
+  },
+  "durationSeconds": 1.5,
+  "cleanup": "existing servers preserved",
+  "gaps": []
+}

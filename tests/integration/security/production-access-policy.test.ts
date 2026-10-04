@@ -10,7 +10,7 @@ const publicReads = new Set([
   '/config/app', '/decks/:id', '/decks/:id/full', '/community/decks', '/community/preconstructed-decks',
   '/users/:userId/public-decks', '/recent-updates', '/dbv/sets', '/dbv/deck-backgrounds', '/supporter/status'
 ]);
-const publicMutations = new Set(['/auth/login', '/auth/refresh', '/auth/logout', '/supporter/webhook']);
+const publicMutations = new Set(['/auth/login', '/auth/refresh', '/auth/logout', '/service-auth/token', '/supporter/webhook']);
 const protectedRoutes = routes.filter(key => {
   const [method, path] = key.split(' ');
   const relative = path.replace('/api/v1', '');
@@ -57,6 +57,14 @@ describe('Production endpoint access policy', () => {
       const response = await call(key).set('Cookie', cookie).send({});
       expect(response.status).toBe(403);
     }
+  });
+
+  it('keeps unconfigured service issuance disabled even for a player session', async () => {
+    const body = { grant_type: 'client_credentials', client_id: 'excelsior-web', client_secret: 'fictional-policy-test-credential'.repeat(2) };
+    const response = await request(app).post('/api/v1/service-auth/token').set('Cookie', userCookie).send(body).expect(503);
+    expect(response.body.errors[0].code).toBe('SERVICE_ACCESS_UNAVAILABLE');
+    expect(response.headers['cache-control']).toBe('no-store');
+    await request(app).get('/api/v1/decks').set('x-excelsior-service-authorization', 'Bearer invalid').set('Cookie', userCookie).expect(503);
   });
 
   it('does not accept the test impersonation header in the production app', async () => {

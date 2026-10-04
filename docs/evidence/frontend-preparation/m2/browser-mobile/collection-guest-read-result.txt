@@ -1,0 +1,53 @@
+- main:
+  - heading "My Collection" [level=1]:
+    - text: My Collection
+  - strong: "0"
+  - text: cards owned
+  - strong: "0"
+  - text: unique
+  - generic: Stored on this device
+  - searchbox "Search collection"
+  - generic: Set
+  - combobox "Filter by set":
+    - option "All sets" [selected]
+    - option "Edgar Rice Burroughs and the World Legends"
+    - option "Edgar Rice Burroughs and the World Legends - Promos"
+    - option "The Few and the Cursed - Promos"
+    - option "Skybound"
+    - option "Skybound - Promos"
+  - checkbox "Owned only" [checked] [active]
+  - generic: Owned only
+  - tablist "Card types":
+    - tab "All" [selected]
+    - tab "Characters"
+    - tab "Special"
+    - tab "Power"
+    - tab "Locations"
+    - tab "Battlegrounds"
+    - tab "Missions"
+    - tab "Events"
+    - tab "Aspects"
+    - tab "Advanced"
+    - tab "Teamwork"
+    - tab "Ally"
+    - tab "Training"
+    - tab "Basic"
+  - status:
+    - heading "No cards owned here yet" [level=3]
+    - paragraph: Add cards to your collection to see them here.
+- navigation "Primary":
+  - link "Database":
+    - /url: /data
+    - generic: Database
+  - link "Decks":
+    - /url: /users/00000000-0000-0000-0000-000000000001/decks
+    - generic: Decks
+  - link "Home":
+    - /url: /home
+    - generic: Home
+  - link "Collection":
+    - /url: /users/00000000-0000-0000-0000-000000000001/collection
+    - generic: Collection
+  - button "Profile":
+    - generic: Profile
+- generic: Samson

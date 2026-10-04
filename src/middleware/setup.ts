@@ -5,6 +5,9 @@ import { createCorsMiddleware } from './corsAllowlist';
 import { createSecurityHeadersMiddleware } from './securityHeaders';
 import { createRequestLoggerMiddleware } from './logging';
 import { createCompressionMiddleware } from './compressionMiddleware';
+import { createServiceAccessMiddleware } from '../api/http/middleware/serviceAccess';
+import { configuredServiceAccess } from '../api/access/configuredServiceAccess';
+import { createApplicationAccessMiddleware, configuredApplicationAdapter } from '../api/http/middleware/applicationAccess';
 import { redirectStaticImagesToCdn, setStaticAssetCacheHeaders } from './staticAssetCache';
 
 /**
@@ -40,6 +43,15 @@ export function setupMiddleware(app: express.Application): void {
     }
     next();
   });
+
+  if (process.env.NODE_ENV !== 'production' && process.env.ENABLE_APPLICATION_ACCESS_FIXTURES === '1') {
+    app.use('/api/host-fixtures/excelsior', createApplicationAccessMiddleware(configuredApplicationAdapter('excelsior-web'), true));
+    app.use('/api/host-fixtures/lrg', createApplicationAccessMiddleware(configuredApplicationAdapter('lrg-web'), true));
+  }
+  if (process.env.ENABLE_EXCELSIOR_ACCESS_ADAPTER === '1') {
+    app.use('/api', createApplicationAccessMiddleware(configuredApplicationAdapter('excelsior-web')));
+  }
+  app.use('/api', createServiceAccessMiddleware(configuredServiceAccess));
 
   app.use('/src/resources/cards/images', express.static(path.join(process.cwd(), 'src/resources/cards/images'), {
     setHeaders: setStaticAssetCacheHeaders,

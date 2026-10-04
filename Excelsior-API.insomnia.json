@@ -10,9 +10,9 @@
       "_type": "workspace",
       "created": 1791053887950,
       "modified": 1791053887950,
-      "name": "Excelsior API — Local and Production",
+      "name": "Excelsior API \u2014 Local and Production",
       "scope": "collection",
-      "description": "Current Card Database, Deck Builder, and Collection APIs. See INSOMNIA_API.md. Credentials and tokens are intentionally blank. Use a private Insomnia environment for credentials. Existing user identities and ownership apply. Service-client authentication will be added in Milestone 2; it is not available yet."
+      "description": "Current Card Database, Deck Builder, Collection and player authentication contracts, with optional separately configured service-client requests. Credentials and tokens are blank. See INSOMNIA_API.md; production service access defaults off."
     },
     {
       "_id": "env_excelsior_preparation_local",
@@ -20,7 +20,7 @@
       "_type": "environment",
       "created": 1791053887950,
       "modified": 1791053887950,
-      "name": "Local — http://localhost:8085",
+      "name": "Local \u2014 http://localhost:8085",
       "data": {
         "base_url": "http://localhost:8085",
         "username": "",
@@ -33,7 +33,10 @@
         "card_type": "character",
         "image_path": "",
         "user_id": "",
-        "catalog_etag": ""
+        "catalog_etag": "",
+        "service_client_id": "",
+        "service_client_secret": "",
+        "service_access_token": ""
       },
       "dataPropertyOrder": null,
       "color": "#16a34a",
@@ -46,13 +49,16 @@
       "_type": "environment",
       "created": 1791053887950,
       "modified": 1791053887950,
-      "name": "Production — https://excelsior.cards",
+      "name": "Production \u2014 https://excelsior.cards",
       "data": {
         "base_url": "https://excelsior.cards",
         "username": "",
         "password": "",
         "access_token": "",
-        "refresh_token": ""
+        "refresh_token": "",
+        "service_client_id": "",
+        "service_client_secret": "",
+        "service_access_token": ""
       },
       "dataPropertyOrder": null,
       "color": "#dc2626",
@@ -65,13 +71,16 @@
       "_type": "environment",
       "created": 1791053887950,
       "modified": 1791053887950,
-      "name": "Isolated baseline — http://localhost:8086",
+      "name": "Isolated baseline \u2014 http://localhost:8086",
       "data": {
         "base_url": "http://localhost:8086",
         "username": "",
         "password": "",
         "access_token": "",
-        "refresh_token": ""
+        "refresh_token": "",
+        "service_client_id": "",
+        "service_client_secret": "",
+        "service_access_token": ""
       },
       "dataPropertyOrder": null,
       "color": "#2563eb",
@@ -1098,7 +1107,7 @@
       "_type": "request_group",
       "created": 1791053887950,
       "modified": 1791053887950,
-      "name": "04 Owned decks — cookie",
+      "name": "04 Owned decks \u2014 cookie",
       "description": "Run Cookie login first as USER or ADMIN. Deck writes require ownership; Guest cannot mutate persistent decks. Validate uses type, while mutations use cardType. Invalid drafts can be saved according to existing save semantics.",
       "environment": {},
       "environmentPropertyOrder": null,
@@ -1662,7 +1671,7 @@
       "_type": "request_group",
       "created": 1791053887950,
       "modified": 1791053887950,
-      "name": "05 Guest decks — cookie",
+      "name": "05 Guest decks \u2014 cookie",
       "description": "Run Guest cookie login first. These decks stay within this session and do not transfer after account sign-in. Guest collection is browser-local and has no saved collection API.",
       "environment": {},
       "environmentPropertyOrder": null,
@@ -1923,7 +1932,7 @@
       "_type": "request_group",
       "created": 1791053887950,
       "modified": 1791053887950,
-      "name": "06 Collection — cookie",
+      "name": "06 Collection \u2014 cookie",
       "description": "Run Cookie login first as USER or ADMIN. Add missing owned printings with POST before changing quantity using PUT. Use image_path returned by the catalog.",
       "environment": {},
       "environmentPropertyOrder": null,
@@ -2430,6 +2439,217 @@
       "settingEncodeUrl": true,
       "settingRebuildPath": true,
       "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_excelsior_preparation_local_service_access",
+      "_type": "request_group",
+      "parentId": "wrk_excelsior_preparation_local",
+      "name": "Service access \u2014 optional server client",
+      "description": "Production disabled until separately provisioned. Use private client variables. Service identity never grants player ownership. Existing direct folders remain unchanged."
+    },
+    {
+      "_id": "req_excelsior_preparation_local_service_issue",
+      "parentId": "fld_excelsior_preparation_local_service_access",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Issue service token",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/service-auth/token",
+      "description": "Service identity is separate from player credentials. No Origin header required.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"grant_type\": \"client_credentials\",\n  \"client_id\": \"{{ service_client_id }}\",\n  \"client_secret\": \"{{ service_client_secret }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 2,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_preparation_local_service_catalog",
+      "parentId": "fld_excelsior_preparation_local_service_access",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Service + catalog read",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/catalog/characters",
+      "description": "Service identity is separate from player credentials. No Origin header required.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "X-Excelsior-Service-Authorization",
+          "value": "Bearer {{ service_access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 2,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_preparation_local_service_decks_cookie",
+      "parentId": "fld_excelsior_preparation_local_service_access",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Service + cookie owned decks",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/decks",
+      "description": "Service identity is separate from player credentials. No Origin header required.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "X-Excelsior-Service-Authorization",
+          "value": "Bearer {{ service_access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 2,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_preparation_local_service_collection_bearer",
+      "parentId": "fld_excelsior_preparation_local_service_access",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Service + Bearer owned collection",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/collections/me/cards",
+      "description": "Service identity is separate from player credentials. No Origin header required.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "X-Excelsior-Service-Authorization",
+          "value": "Bearer {{ service_access_token }}"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": 2,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": false,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_preparation_local_service_refresh",
+      "parentId": "fld_excelsior_preparation_local_service_access",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Service + player refresh",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/auth/refresh",
+      "description": "Local fixture writes only; production mutations require separate explicit authorization.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"refreshToken\": \"{{ refresh_token }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "X-Excelsior-Service-Authorization",
+          "value": "Bearer {{ service_access_token }}"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": 2,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": false,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "env_excelsior_m2",
+      "_type": "environment",
+      "parentId": "env_excelsior_preparation_local",
+      "name": "Milestone 2 isolated local",
+      "data": {
+        "base_url": "http://127.0.0.1:8088",
+        "username": "",
+        "password": "",
+        "access_token": "",
+        "refresh_token": "",
+        "deck_id": "",
+        "guest_deck_id": "",
+        "card_id": "",
+        "card_type": "character",
+        "image_path": "",
+        "user_id": "",
+        "catalog_etag": "",
+        "service_client_id": "",
+        "service_client_secret": "",
+        "service_access_token": ""
+      },
+      "isPrivate": false
     }
   ]
 }

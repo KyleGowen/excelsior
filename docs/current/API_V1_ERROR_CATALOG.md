@@ -90,3 +90,16 @@ to [`docs/openapi.yaml`](../openapi.yaml)) in the same PR.**
   computed and which headers accompany it.
 - [`API_V1_AUTH_REFRESH.md`](API_V1_AUTH_REFRESH.md) — refresh token flow
   and the `REFRESH_*` codes.
+
+## Optional service access
+
+| Code | HTTP | Meaning | Remediation |
+| --- | --- | --- | --- |
+| `SERVICE_ACCESS_UNAVAILABLE` | 503 | Disabled or unavailable private API configuration. | Check authorized server configuration; no credential details are returned. |
+| `INVALID_SERVICE_CREDENTIALS` | 401 | Missing active client or mismatched secret. | Check private client configuration. |
+| `SERVICE_TOKEN_INVALID` | 401 | Invalid, expired or revoked application token. | Server adapter may reissue once. |
+| `SERVICE_SCOPE_DENIED` | 403 | Application scope does not allow the operation. | Select an explicitly permitted ordinary operation; admin is excluded. |
+| `SERVICE_CLIENT_RATE_LIMITED` | 429 | Process-local per-client minute budget reached. | Respect Retry-After; do not immediately reissue. |
+| `APPLICATION_ACCESS_UNAVAILABLE` | 503 | Server adapter could not authenticate or reach its fixed API origin. | Check private host credentials and backend availability. |
+
+Token request schema failures use `VALIDATION_ERROR` (400); the endpoint's 15/IP/minute limiter uses the existing `RATE_LIMITED` (429). Player auth/ownership errors retain existing codes.

@@ -14,6 +14,7 @@ export function isReportOnly(path) {
 export function testInputs(root, mode, environment = process.env) {
   if (!['unit', 'integration'].includes(mode)) throw new Error('Invalid test gate');
   const git = args => execFileSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024 });
+  const objectFormat = git(['rev-parse', '--show-object-format']).trim();
   const files = new Map(git(['ls-files', '--stage', '-z']).split('\0').filter(Boolean).map(line => {
     const [info, path] = line.split('\t'); const [mode, blob, stage] = info.split(' ');
     if (stage !== '0') throw new Error('Unmerged input');
@@ -25,7 +26,7 @@ export function testInputs(root, mode, environment = process.env) {
       const stat = lstatSync(resolve(root, path));
       if (!stat.isFile() && !stat.isSymbolicLink()) throw new Error('Unsupported input type');
       const content = stat.isSymbolicLink() ? Buffer.from(readlinkSync(resolve(root, path))) : readFileSync(resolve(root, path));
-      files.set(path, { mode: stat.isSymbolicLink() ? '120000' : stat.mode & 0o111 ? '100755' : '100644', blob: gitHash(root, content) });
+      files.set(path, { mode: stat.isSymbolicLink() ? '120000' : stat.mode & 0o111 ? '100755' : '100644', blob: gitBlobHash(content, objectFormat) });
     } catch (error) { if (error.code === 'ENOENT') files.delete(path); else throw error; }
   }
   const inputs = [...files].filter(([path]) => !isReportOnly(path)).sort(([a], [b]) => a.localeCompare(b));
@@ -69,6 +70,9 @@ export function sameTestInputs(before, after) {
   return before.baseFingerprint === after.baseFingerprint && before.docker === after.docker
     && before.imageIds.every((id, index) => !id || id === after.imageIds[index]);
 }
-function gitHash(root, input) {
-  return execFileSync('git', ['hash-object', '--stdin'], { cwd: root, input, encoding: 'utf8' }).trim();
+// Git hashes a blob header plus its exact bytes. Avoid synchronous stdin
+// subprocesses here: they stalled before/after real release runs on macOS.
+export function gitBlobHash(input, objectFormat = 'sha1') {
+  if (!Buffer.isBuffer(input) || !['sha1', 'sha256'].includes(objectFormat)) throw new Error('Unsupported Git blob input or object format');
+  return createHash(objectFormat).update(`blob ${input.length}\0`).update(input).digest('hex');
 }

@@ -1,0 +1,103 @@
+{
+  "sourceRevision": "f49b28138b424ccf58de231c8350ea00aa4df064",
+  "branch": "codex/frontend-preparation-m2",
+  "state": "uncommitted M2; implementation/tests frozen before final verification",
+  "files": [
+    {
+      "path": "frontend/src/lib/api/client.ts",
+      "sha256": "97e6036a324a82fb177ae9ecef8d0b65becd22d1be45688a48ec14f4f3411c6c"
+    },
+    {
+      "path": "scripts/create-service-access-fixtures.mjs",
+      "sha256": "c5b5de0ae5baf5cfb95a8b403535912b9040a98cdd00477a71aa82a66f733e5b"
+    },
+    {
+      "path": "src/api/access/applicationAccessAdapter.ts",
+      "sha256": "0ac17a07d77ff063c574b76127c514a32bd49cd795a7c47dc1a96b7b5d8c2ad9"
+    },
+    {
+      "path": "src/api/access/applicationClientCredentials.ts",
+      "sha256": "1a0f45fc6aa1e10a6f489ca7f190c91129c84483933cb2fb30d047c28cccdace"
+    },
+    {
+      "path": "src/api/access/configuredServiceAccess.ts",
+      "sha256": "00809ecb098caf417b4cdc567d484695932f06709f4c184d3c48cf0a3b799581"
+    },
+    {
+      "path": "src/api/access/serviceAccessConfig.ts",
+      "sha256": "69103238b5e8626f7888e8550fbfc73ab55192bdc7f7636fca16fea35c4321f8"
+    },
+    {
+      "path": "src/api/access/serviceAccessService.ts",
+      "sha256": "97185ff0390494056960190a82cdc7b624248721cd37ce65697c0abc86744661"
+    },
+    {
+      "path": "src/api/access/serviceOperations.ts",
+      "sha256": "6067a4d4db41e62f2f92f880a6fefc9304244043ed8a1f08d6220fe2c14f5c2d"
+    },
+    {
+      "path": "src/api/dto/v1/ServiceTokenDataDto.ts",
+      "sha256": "650c8517aa2c80752f340bac582daf467bd87d96d68b8fc47cca294011611e58"
+    },
+    {
+      "path": "src/api/http/middleware/applicationAccess.ts",
+      "sha256": "c450be9a1bb80a726611b74353a5a65812ee9b02d269f61459962b6b15d4b73b"
+    },
+    {
+      "path": "src/api/http/middleware/serviceAccess.ts",
+      "sha256": "05b8c93ecdaacac5daff4c8049fda49bf5890aafc9d26966b4864082c6d17f22"
+    },
+    {
+      "path": "src/api/http/models/service-auth/ServiceTokenRequestBody.ts",
+      "sha256": "da4bacc4d8aa61b8cd357abf1569befd2df81871eaaea40d53b49fc770934cad"
+    },
+    {
+      "path": "src/api/http/registerApiV1Routes.ts",
+      "sha256": "a8ba03f6eb9e830fca6a16556ad977fe17405737f9c32d124d1aded0fc3ec759"
+    },
+    {
+      "path": "src/api/http/service-auth.http.ts",
+      "sha256": "f0cb654749c9410dd12e8dd23e2fcae64bd11c80285b9280e1c5a9d6e37c1d09"
+    },
+    {
+      "path": "src/middleware/logging.ts",
+      "sha256": "39abd478448cf0ee87d2dc090c4244c49fcd5be558755e0f0d00715323b7a5e8"
+    },
+    {
+      "path": "src/middleware/setup.ts",
+      "sha256": "f218a52a58502b9c23b9f82d2581ffd4254ae18ed382803a59195333dceeba33"
+    },
+    {
+      "path": "src/types/express.d.ts",
+      "sha256": "26d036513d0a0d0158cf6c01fb346c7fd4961422c620889d5840985edbebd9e6"
+    },
+    {
+      "path": "tests/browser/milestone2-account.mjs",
+      "sha256": "223ab970bbf08b503bb990917ba07cf7791d20eff30cccd348aee8c7945ab14c"
+    },
+    {
+      "path": "tests/integration/security/production-access-policy.test.ts",
+      "sha256": "4e7c6f1cdf1a3bc80fad6f894747a181c24dd639223a1c4557803cdc0a308c0b"
+    },
+    {
+      "path": "tests/integration/service-auth-adapters.test.ts",
+      "sha256": "7f7a5ba113e3e7bcbf8983f088a96ee72862d801ba0b28e2bff52b7641940f81"
+    },
+    {
+      "path": "tests/unit/api/application-access-adapter.test.ts",
+      "sha256": "41939bbde595f0dc5a9421f7a7515db8b31e820d770c102a460f579ac45e5e76"
+    },
+    {
+      "path": "tests/unit/api/service-access.test.ts",
+      "sha256": "85a8bdc560ba041865e780723a340a0bcdd0184d45ddf92c137f0d4a5c9f5f4c"
+    },
+    {
+      "path": "tests/unit/frontend-v2/api-client-transport.test.ts",
+      "sha256": "0c562d557bee549c858636bdcb58d51de88fb3d3e6f23b0846c71d7fe69e44db"
+    },
+    {
+      "path": "tests/unit/service-access-fixtures.test.mjs",
+      "sha256": "26fb47a638db060ce212613da219c7b64d3e708135d3979c01455fd9ca0122d3"
+    }
+  ]
+}

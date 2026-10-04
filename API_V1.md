@@ -1595,3 +1595,7 @@ introduced side-by-side rather than as a mutation of v1.
 - The OpenAPI spec (`[docs/openapi.yaml](docs/openapi.yaml)`) is the
 machine-readable contract. Any breaking change must be reflected there
 before the deprecation window starts.
+
+## Optional confidential service access
+
+`POST /api/v1/service-auth/token` issues a short-lived application identity independently of player cookies/JWTs. JSON body: `grant_type: "client_credentials"`, `client_id`, `client_secret`, optional space-separated `scope`. It returns the v1 envelope with `accessToken`, `tokenType`, `expiresInSeconds`, `scopes`. All responses use `Cache-Control: no-store`. The endpoint returns 503 until private server configuration is enabled. An explicit `X-Excelsior-Service-Authorization: Bearer <token>` must validate and authorize the operation; it never supplies a player role, owner ID or admin access. Omit that header for existing direct user-token/session clients. See [SERVICE_ACCESS.md](docs/current/SERVICE_ACCESS.md) for scopes, separate server adapters, rotation, revocation, throttling, audit and deployment limits. Production defaults remain unchanged.

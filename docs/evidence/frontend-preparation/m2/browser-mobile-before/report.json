@@ -1,0 +1,130 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "9f8685c3eae7d9261d061055074216f45e073c72",
+  "deployedRevision": null,
+  "inputFingerprint": "79cfc79f8387c774c1a8ba8801ab6057304d7dfd8661e30ce203779847be2b12",
+  "selectedScenarios": [
+    "database-search-detail",
+    "collection-guest-read"
+  ],
+  "capturePolicy": "all",
+  "comparison": true,
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5174",
+    "apiUrl": "http://127.0.0.1:8086",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation/cursored",
+    "sourceRevision": "9f8685c3eae7d9261d061055074216f45e073c72",
+    "sourceTreeFingerprint": "79cfc79f8387c774c1a8ba8801ab6057304d7dfd8661e30ce203779847be2b12",
+    "expectedRevision": "9f8685c3eae7d9261d061055074216f45e073c72",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation",
+    "verified": true,
+    "observedAt": "2026-10-03T21:38:09.084Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "9f8685c3eae7d9261d061055074216f45e073c72",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "9f8685c3eae7d9261d061055074216f45e073c72",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "actor": "guest",
+  "theme": "fixed dark",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "database-search-detail",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m2/browser-mobile-before/database-search-detail-empty.jpg",
+          "dom": "docs/evidence/frontend-preparation/m2/browser-mobile-before/database-search-detail-empty.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5174/data"
+        },
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m2/browser-mobile-before/database-search-detail-detail.jpg",
+          "dom": "docs/evidence/frontend-preparation/m2/browser-mobile-before/database-search-detail-detail.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5174/data"
+        },
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m2/browser-mobile-before/database-search-detail-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m2/browser-mobile-before/database-search-detail-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5174/data"
+        }
+      ],
+      "observed": {
+        "emptySearch": "passed",
+        "cardName": "Lancelot",
+        "artwork": {
+          "complete": true,
+          "naturalHeight": 744,
+          "naturalWidth": 1039
+        },
+        "detailsClosed": true
+      }
+    },
+    {
+      "id": "collection-guest-read",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "docs/evidence/frontend-preparation/m2/browser-mobile-before/collection-guest-read-result.jpg",
+          "dom": "docs/evidence/frontend-preparation/m2/browser-mobile-before/collection-guest-read-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5174/users/00000000-0000-0000-0000-000000000001/collection"
+        }
+      ],
+      "observed": {
+        "storage": "browser-local",
+        "emptyExpected": true,
+        "quantitiesChanged": false
+      }
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only scenarios",
+    "browser": "returned Home; close this test-owned tab or mark handoff explicitly"
+  },
+  "acceptance": "automated evidence only; Kyle acceptance not inferred",
+  "gaps": [
+    "light theme unavailable in M1",
+    "Google OAuth not exercised",
+    "independent module harness unavailable in M1"
+  ],
+  "browserErrorCount": 0,
+  "status": "passed",
+  "durationSeconds": 7.173,
+  "counts": {
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  }
+}

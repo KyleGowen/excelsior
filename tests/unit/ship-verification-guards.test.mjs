@@ -4,7 +4,7 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve, join } from 'node:path';
-import { testInputs, sameTestInputs } from '../../scripts/ship-test-inputs.mjs';
+import { testInputs, sameTestInputs, gitBlobHash } from '../../scripts/ship-test-inputs.mjs';
 import { captureCandidate, verifyCandidateCommit } from '../../scripts/ship-candidate.mjs';
 import { jestCounts, nodeTestCounts } from '../../scripts/verification-receipt.mjs';
 import { runGateBatch } from '../../scripts/run-verification-gates.mjs';
@@ -161,4 +161,18 @@ else if(!process.env.MOCK_EMPTY_JEST) console.log('Test Suites: 1 passed, 1 tota
     encoding: 'utf8', env: { ...process.env, INTEGRATION_SHARD_JEST_BIN: jest },
   });
   assert.equal(omitted.status, 1); assert.match(omitted.stderr, /Integration tests omitted by Jest configuration/);
+});
+
+// Compare against Git itself, including non-text evidence and both object formats.
+test('in-process blob hashes match Git for empty, Unicode and large binary inputs', t => {
+  for (const objectFormat of ['sha1', 'sha256']) {
+    const dir = mkdtempSync(join(tmpdir(), 'excelsior-blob-test-'));
+    t.after(() => rmSync(dir, { recursive: true, force: true }));
+    git(dir, 'init', '-q', `--object-format=${objectFormat}`);
+    for (const input of [Buffer.alloc(0), Buffer.from('catalog \u00e9 \u2660\n'), Buffer.from([0, 255, 128, 10]), Buffer.alloc(256 * 1024, 173)]) {
+      const oracle = execFileSync('git', ['hash-object', '--stdin'], { cwd: dir, input, encoding: 'utf8', timeout: 5000 }).trim();
+      assert.equal(gitBlobHash(input, objectFormat), oracle);
+    }
+  }
+  assert.throws(() => gitBlobHash(Buffer.alloc(0), 'unsupported'), /Unsupported/);
 });

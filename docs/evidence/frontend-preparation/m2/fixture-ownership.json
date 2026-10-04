@@ -1,0 +1,26 @@
+{
+  "environment": "isolated local Docker database",
+  "databaseOwner": "excelsior-frontend-preparation-m2",
+  "userId": "d005c30a-5857-4581-b4c9-ba3569d283a3",
+  "deckId": "6b96cbc2-f3d3-4a20-8b29-9ed4d96e3137",
+  "deckName": "Milestone 2 Local Fixture",
+  "catalog": [
+    {
+      "id": "c90e4d06-f4d6-40ab-803c-662eac86ade3",
+      "name": "Lancelot"
+    },
+    {
+      "id": "ec16c169-4ee0-4e7f-aac0-a653cf7fbf6c",
+      "name": "Sword and Shield",
+      "value": null
+    },
+    {
+      "id": "f030416f-b95e-4b32-aef4-6d4541ad2146",
+      "name": "5 - Combat",
+      "value": 5,
+      "power_type": "Combat"
+    }
+  ],
+  "authority": "fictional local fixtures only",
+  "cleanup": "Integration fixtures cleaned. Spot-check account (including signup sample deck), owned fixture deck and collection retained until Kyle accepts/rejects the milestone. Delete by owned user/deck IDs, then stop only M2 processes/remove its container when the preview is no longer needed. Credentials remain private outside Git."
+}

@@ -7,8 +7,10 @@ imports the helpers here, and components consume them through TanStack Query.
 
 - `apiRequest<T>(path, opts)` and the `api.get/post/put/del` shorthands are the **only**
   place network requests originate.
-- **Always** sends `credentials: 'include'` so the session cookie from `/api/auth/*` login
-  flows to every `/api/v1` call. Do not add per-call credential handling.
+- The default sends `credentials: 'include'` so the session cookie from `/api/auth/*` login
+  flows to every `/api/v1` call. `createApiClient` gives a separate host an explicit API origin,
+  player header provider, credential policy, and single-flight renewal callback. Credentials
+  are configured per transport, not per call; service secrets remain in server adapters.
 - **Unwraps the v1 envelope** `{ data, success, errors, meta }` and returns `.data`. Pass
   `{ raw: true }` to get the whole envelope (used for legacy endpoints / when you need
   `meta`).

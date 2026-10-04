@@ -1,6 +1,6 @@
 # Excelsior Insomnia imports
 
-Import either JSON file using Insomnia's file import. Each is a native collection export with 67 requests for the current Card Database, Deck Builder, Collection, and authentication contracts.
+Import either JSON file using Insomnia's file import. Each is a native collection export with 72 requests for the current Card Database, Deck Builder, Collection, and authentication contracts.
 
 | File | Default HTTP base URL | Other environments |
 | --- | --- | --- |
@@ -15,7 +15,7 @@ Create a private Insomnia environment containing `username` and `password`. All 
 - **Bearer:** send `Bearer login`; copy `data.accessToken` and `data.refreshToken` into private `access_token` and `refresh_token` variables. Verify `Bearer current user`. The Bearer examples deliberately disable cookies. Refresh rotates both tokens; replace both stored values. JWT logout revokes the supplied refresh token; access tokens expire according to their issued TTL.
 - **Guest:** `Guest cookie login` uses the existing public Guest entry. Guest decks are session-specific. Guest collections are stored only in the browser and have no saved collection HTTP workflow.
 
-These are existing player sessions and tokens. Server/service identities are a later preparation milestone; the exports do not invent a service key or account migration.
+The optional Service access folder adds service issuance, catalog read, cookie-owned decks, Bearer-owned Collection and player refresh. In a private environment, set `service_client_id` and `service_client_secret`, send Issue service token, then copy `data.accessToken` into `service_access_token`. Keep player cookies/`access_token` separate. The local fixture generator supplies private environments for two distinct clients; [SERVICE_ACCESS.md](docs/current/SERVICE_ACCESS.md) explains their lifecycle. Production service access remains disabled/unconfigured until separately authorized; ordinary direct player requests continue working.
 
 ## First requests
 
@@ -34,3 +34,9 @@ The ordinary local API is `http://localhost:8085`; Vite is `http://localhost:517
 Kyle has no prior Insomnia environment or HTTP tunnel workflow. These files establish it. The documented AWS SSM tunnel forwards **PostgreSQL**, not HTTP. Never use that database port as `base_url`. Direct production HTTP uses `https://excelsior.cards` and needs no database tunnel. A local API using a production database would be a separate, explicitly configured operational workflow; it is not this preparation environment.
 
 Contracts: [`API_V1.md`](API_V1.md), [`API_DOCUMENTATION.md`](API_DOCUMENTATION.md), and [`docs/current/FRONTEND_PREPARATION.md`](docs/current/FRONTEND_PREPARATION.md).
+
+## Milestone 2 isolated local preview
+
+UI: `http://127.0.0.1:5175`; API: `http://127.0.0.1:8088`. Select the Milestone 2 local environment; the ordinary localhost:8085 and production base URLs remain intact. This exception uses a separate owned Docker database and never connects to the AWS tunnel. Private fixture environments are generated outside Git. The local-only host mounts can be selected by prefixing supported API paths with `/api/host-fixtures/excelsior` or `/api/host-fixtures/lrg`; those instances attach their own service identity server-side. Direct Service access requests demonstrate the explicit service-header option.
+
+Refresh tokens are rotated; replay revokes the whole family, including the successor. JWT logout revokes refresh only; access tokens retain their issued expiry. Importing these files sends no requests. Insomnia desktop/tunnel spot-check acceptance remains Kyle's check, separate from automated HTTP/browser results.
