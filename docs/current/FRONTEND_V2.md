@@ -222,3 +222,7 @@ Independent hosts can supply `ModuleHost.appearance` for reviewed color/typograp
 ### Optional host detail interactions (M6)
 
 The three independent modules accept `ModuleHost.cardActions` for host-supplied detail action nodes and an explicit authentication-request callback. Presentation context contains source/catalog identity and optional deck read-only state; no transport, credential or account object is exposed. Excelsior's adapter omits this port, so existing UI/auth defaults remain. The development harness receipts do not authenticate or write data. See [module contract](../../frontend/src/modules/README.md#m6-fourth-slice-host-owned-card-detail-actions) and [future integration checklist](FRONTEND_HOST_CHECKLIST.md). Complete brand/core-icon/save-feedback/route/CSS containment remains open.
+
+### Host-owned brand and decorative controls
+
+`ModuleHost.icons` uses `ModuleIconOptions`/`UIIconContext` from the modules entrypoint. `ModuleHost.chrome.brand` accepts host-owned accessible content. The provider scopes icon context per instance, including React portals; ordinary hosts omit it. The shared SVG controls keep their unchanged fallback markup. Host nodes replace decoration only, preserve surrounding control labels/policies and must remain inert. Card/stat and third-party assets are not part of this port. See the module README and named Independent host brand/icon stories. Save feedback, nested host routes and broad CSS isolation remain separate M6 work.

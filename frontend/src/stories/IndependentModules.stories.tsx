@@ -59,3 +59,9 @@ export const HostCardActions: Story = { args: { user: null, initialHostActions: 
 export const HostCollectionActions: Story = { args: { user: null, initialHostActions: true }, play: async ({ canvas }) => { (await canvas.findByRole('button', { name: 'Collection module' })).click(); (await canvas.findByRole('tab', { name: 'Characters' })).click(); (await canvas.findByRole('button', { name: 'View Billy the Kid' })).click(); await canvas.findByRole('button', { name: 'Host card action' }); } };
 export const HostDeckActions: Story = { args: { user: null, initialHostActions: true }, play: async ({ canvas }) => { (await canvas.findByRole('button', { name: 'Deck Builder module' })).click(); (await canvas.findByRole('button', { name: 'View Billy the Kid' })).click(); await canvas.findByRole('button', { name: 'Host card action' }); } };
 export const HostAccountActions: Story = { args: { user: exampleUser, initialHostActions: true }, ...DatabaseDetailActions };
+
+/** Per-host decorative icon context and host-owned brand; no Excelsior rebranding. */
+export const HostBrandIcons: Story = { args: { user: null, initialHostIcons: true, initialHostOverlay: true }, ...DatabaseDetailActions };
+export const HostCollectionIcons: Story = { args: { user: null, initialHostIcons: true }, ...CollectionAlone };
+export const HostDeckIcons: Story = { args: { user: null, initialHostIcons: true }, ...DeckBuilderAlone };
+export const IndependentHostIcons: Story = { render: () => <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}><ModuleHarness user={null} initialHostIcons initialContainerLayout /><ModuleHarness user={null} initialContainerLayout /></div> };

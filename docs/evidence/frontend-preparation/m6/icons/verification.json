@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "status": "Kyle accepted identified5181preview; release gates pending",
+  "sourceRevision": "7a9364c28f2f85d7597754ea6a058c682cc29fc6",
+  "sourceState": "uncommitted host brand/decorative icon preparation",
+  "frontendURL": "http://127.0.0.1:5181/module-harness.html",
+  "apiURL": "http://127.0.0.1:8090",
+  "proxyBackendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "database": "shared verified disposable Docker15442/V365; identical backend/migrations/manifests",
+  "baseline": {
+    "newDesktopDetailCases": 3,
+    "ordinaryRouteEvidence": "reused unchanged M6 action baseline from approved source; matching fixture/desktop dimensions"
+  },
+  "finalBrowser": {
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0,
+    "browserErrors": 0,
+    "groups": [
+      "verified-defaults",
+      "verified-host-icons-desktop",
+      "verified-host-icons-mobile",
+      "verified-update-desktop",
+      "verified-update-mobile",
+      "ordinary-routes"
+    ],
+    "dimensions": {
+      "desktop": [
+        1280,
+        720
+      ],
+      "mobile": [
+        390,
+        844
+      ]
+    },
+    "scenarios": "3default details +3host icons desktop +3host icons mobile +1update desktop +1update mobile +3ordinary Guest routes"
+  },
+  "componentTests": {
+    "passed": 49,
+    "suites": 4,
+    "newCases": 7,
+    "kind": "fictional jsdom; not live browser"
+  },
+  "gates": {
+    "initialBatch": "passed",
+    "unitPassed": 3875,
+    "unitSkipped": 18,
+    "lint": "passed",
+    "frontendBuild": "passed",
+    "storybookBuild": "passed; named examples compiled, play functions not independently executed",
+    "registeredKnipCI": "passed",
+    "reuse": "frontend/test implementation unchanged after batch; only browser readiness helpers corrected; changed unit inputs checked separately before handoff",
+    "finalUnit": {
+      "status": "passed",
+      "passed": 3875,
+      "skipped": 18,
+      "executedTests": 3875,
+      "reused": false,
+      "inputFingerprint": "3f10ceaf134aa59dbb9a550c8d53ea378a9d74a7e72a24568346508d0b2f7ebd",
+      "receipt": "/var/folders/lb/xr02_l594rlg4bv03hlppd840000gp/T/excelsior-test-gate-mu54lS/unit-1791215066880-80806.json"
+    }
+  },
+  "comparison": {
+    "pairs": 7,
+    "exactOrdinaryFrames": 3,
+    "foilVariationFrames": 1,
+    "harnessFrames": "3inspected, not full-frame pixel-equal; fixture controls/scroll/image-readiness differ; no silently accepted pixel baseline"
+  },
+  "retainedFailures": [
+    {
+      "evidence": "host-icons-mobile/report.json",
+      "cause": "Collection card existed before debounced search settled; measured target y2971 before click and y215 afterward, screenshot shows final3results",
+      "recovery": "wait for observed filtered count before clicking; same card opens with unchanged product source; corrected desktop/mobile cases pass"
+    },
+    {
+      "evidence": "update-desktop/report.json",
+      "cause": "Unmount click did not select Unmount; retained snapshot still shows Card Database pressed and focused local deck input",
+      "recovery": "keyboard activation plus explicit pressed/removed-module assertions; final desktop/mobile unmount checks pass"
+    },
+    {
+      "kind": "runner setup only",
+      "cause": "CUA module loader rejects query-suffixed filesystem imports; next call referenced a binding rolled back by that failed import",
+      "recovery": "fresh private byte-identical filename imported and explicitly declared; no browser assertions had executed in those setup attempts"
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "unchanged; no deck/collection writes or new fixture rows",
+    "temporaryTabs": "all automated run tabs closed; one identified5181preview retained for Kyle",
+    "viewport": "reset after automated runs; handoff capture separately recorded",
+    "servers": "only5181new; accepted5180/5179/5178/5177 and primary servers preserved"
+  },
+  "gaps": [
+    "no real host branding/assets/identity mapping or production customization tests",
+    "game/stat symbols and Google identity assets are separate M7 delivery inputs",
+    "save feedback/nested host routes/broad CSS containment and retainedM4domain backlog open",
+    "full-frame harness pixel parity unverified; ordinary default routes independently comparable"
+  ],
+  "authorization": "Standing milestone workflow and explicit5181acceptance authorize Ship for this bounded slice; production validation pending.",
+  "handoff": {
+    "preview": "http://127.0.0.1:5181/module-harness.html",
+    "captureDimensions": [
+      1440,
+      1000
+    ],
+    "capturePurpose": "spot-check presentation; automated assertions used1280x720and390x844",
+    "hostBrandVisible": true,
+    "customCloseIcons": 1,
+    "browserErrors": 0,
+    "viewport": "reset after capture",
+    "screenshot": "handoff.jpg",
+    "screenshotRecovery": "CUA could not write directly to this managed worktree; unchanged bytes saved to private temporary output then copied with authorized file permissions"
+  },
+  "acceptance": {
+    "actor": "Kyle",
+    "preview": "http://127.0.0.1:5181/module-harness.html",
+    "statement": "looks good on 5181",
+    "date": "2026-10-05",
+    "scope": "host branding/decorative icon preparation; existing Excelsior defaults"
+  }
+}

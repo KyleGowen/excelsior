@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "kind": "target-health",
+  "environment": "local",
+  "frontendUrl": "http://127.0.0.1:5181",
+  "apiUrl": "http://127.0.0.1:8090",
+  "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m4/cursored",
+  "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "sourceTreeFingerprint": "50fde696eb20a41abc3c7afcbf86c6b9fbd8d2b4959161f41245103fefd0a35a",
+  "expectedRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "expectedMigration": "365",
+  "branch": "codex/frontend-preparation-m5",
+  "verified": true,
+  "observedAt": "2026-10-05T15:20:31.881Z",
+  "health": {
+    "status": "OK",
+    "database": "OK",
+    "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "migration": "365"
+  },
+  "frontendProxyHealth": {
+    "status": "OK",
+    "database": "OK",
+    "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "migration": "365"
+  },
+  "frontendStatus": 200,
+  "status": "target health verified; browser still required",
+  "frontendSource": {
+    "root": "/Users/kyle/.codex/worktrees/m6-host-controls/cursored",
+    "revision": "7a9364c28f2f85d7597754ea6a058c682cc29fc6",
+    "branch": "codex/frontend-preparation-m6-host-controls",
+    "fingerprint": "478fc75246ea6aff9884abadd58bf5bc762449ff70fe04d2f70df1614a8b7ef3",
+    "listenerPid": 77832,
+    "proxyBackendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "sharedBackendInputs": "Identical committed and working backend/migrations/dependency manifests"
+  },
+  "databaseOwnershipReceipt": "/private/tmp/excelsior-m6-actions/startup-verified/startup.json"
+}

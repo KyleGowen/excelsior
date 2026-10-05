@@ -1,0 +1,120 @@
+[
+  {
+    "name": "default-database-card-actions.jpg",
+    "dimensions": [
+      1280,
+      720
+    ],
+    "differentPixels": 177706,
+    "pixelsAbove10": 40469,
+    "maxChannelDelta": 101,
+    "box": [
+      728,
+      4,
+      1280,
+      708
+    ],
+    "before": "./before-defaults/default-database-card-actions.jpg",
+    "after": "./verified-defaults/default-database-card-actions.jpg",
+    "review": "visually inspected: same labels/printing/actions; full-frame pixel parity is not claimed because fixture controls/scroll crop and image readiness differ. Ordinary-route evidence is separately comparable."
+  },
+  {
+    "name": "default-collection-card-actions.jpg",
+    "dimensions": [
+      1280,
+      720
+    ],
+    "differentPixels": 681549,
+    "pixelsAbove10": 281094,
+    "maxChannelDelta": 255,
+    "box": [
+      15,
+      0,
+      1280,
+      720
+    ],
+    "before": "./before-defaults/default-collection-card-actions.jpg",
+    "after": "./verified-defaults/default-collection-card-actions.jpg",
+    "review": "visually inspected: same labels/printing/actions; full-frame pixel parity is not claimed because fixture controls/scroll crop and image readiness differ. Ordinary-route evidence is separately comparable."
+  },
+  {
+    "name": "default-deck-card-actions.jpg",
+    "dimensions": [
+      1280,
+      720
+    ],
+    "differentPixels": 401268,
+    "pixelsAbove10": 55106,
+    "maxChannelDelta": 141,
+    "box": [
+      15,
+      0,
+      1280,
+      720
+    ],
+    "before": "./before-defaults/default-deck-card-actions.jpg",
+    "after": "./verified-defaults/default-deck-card-actions.jpg",
+    "review": "visually inspected: same labels/printing/actions; full-frame pixel parity is not claimed because fixture controls/scroll crop and image readiness differ. Ordinary-route evidence is separately comparable."
+  },
+  {
+    "name": "home-guest-result.jpg",
+    "dimensions": [
+      1280,
+      720
+    ],
+    "differentPixels": 0,
+    "pixelsAbove10": 0,
+    "maxChannelDelta": 0,
+    "box": null,
+    "before": "../actions/after-routes/home-guest-result.jpg",
+    "after": "./ordinary-routes/home-guest-result.jpg",
+    "review": "exact ordinary-route frame"
+  },
+  {
+    "name": "database-search-detail-detail.jpg",
+    "dimensions": [
+      1280,
+      720
+    ],
+    "differentPixels": 0,
+    "pixelsAbove10": 0,
+    "maxChannelDelta": 0,
+    "box": null,
+    "before": "../actions/after-routes/database-search-detail-detail.jpg",
+    "after": "./ordinary-routes/database-search-detail-detail.jpg",
+    "review": "exact ordinary-route frame"
+  },
+  {
+    "name": "database-search-detail-result.jpg",
+    "dimensions": [
+      1280,
+      720
+    ],
+    "differentPixels": 0,
+    "pixelsAbove10": 0,
+    "maxChannelDelta": 0,
+    "box": null,
+    "before": "../actions/after-routes/database-search-detail-result.jpg",
+    "after": "./ordinary-routes/database-search-detail-result.jpg",
+    "review": "exact ordinary-route frame"
+  },
+  {
+    "name": "deck-readonly-draw-export-result.jpg",
+    "dimensions": [
+      1280,
+      720
+    ],
+    "differentPixels": 665,
+    "pixelsAbove10": 0,
+    "maxChannelDelta": 6,
+    "box": [
+      640,
+      680,
+      760,
+      720
+    ],
+    "before": "../actions/after-routes/deck-readonly-draw-export-result.jpg",
+    "after": "./ordinary-routes/deck-readonly-draw-export-result.jpg",
+    "review": "small foil animation variation; max channel delta 6, no pixels above10"
+  }
+]

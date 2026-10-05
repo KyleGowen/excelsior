@@ -1,7 +1,8 @@
-import { createElement, createContext, useContext, useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { Fragment, createElement, createContext, useContext, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import type { AppUser } from '../lib/api/types';
 import type { ModuleApi } from './api';
 import type { ModuleCardActions } from './cardActions';
+import { UIIconOverridesContext, type ModuleIconOptions } from '../lib/icons/uiIconOverrides';
 import { ModuleAppearanceBoundary, type ModuleAppearanceOptions } from './ModuleAppearanceBoundary';
 import { ContainerLayoutModeProvider, type ContainerLayoutOptions } from '../lib/layout/ContainerLayoutModeProvider';
 import { OverlayHostProvider, type OverlayHostOptions } from '../lib/layout/OverlayHostProvider';
@@ -16,6 +17,8 @@ export interface ModuleHost {
  backLabel?: string;
  /** Opt-in replacement for the card-detail action area; ordinary hosts omit it. */
  cardActions?: ModuleCardActions;
+ /** Decorative UI controls only; omitted preserves ordinary Excelsior SVGs. */
+ icons?: ModuleIconOptions;
  /** Explicit portal placement; absent preserves existing inline overlays. */
  overlays?: OverlayHostOptions;
  /** Omit to retain the ordinary host's viewport layout. */
@@ -23,13 +26,14 @@ export interface ModuleHost {
  /** Opt-in visual tokens scoped to this module instance. Configure the boundary at mount. */
  appearance?: ModuleAppearanceOptions;
  history?: { navigate: CardDetailNavigation; state: object | null };
- chrome?: { desktopRail?: ReactNode; mobileNavigation?: ReactNode };
+ chrome?: { brand?: ReactNode; desktopRail?: ReactNode; mobileNavigation?: ReactNode };
 }
 const Context = createContext<ModuleHost | null>(null);
 export function ModuleHostProvider({ host, children }: { host: ModuleHost; children: ReactNode }) {
  const content = createElement(OverlayHostProvider, { ...(host.overlays ? { options: host.overlays } : {}), children });
  const themed = host.appearance ? createElement(ModuleAppearanceBoundary, { options: host.appearance, children: content }) : content;
- return createElement(Context.Provider, { value: host }, host.layout ? createElement(ContainerLayoutModeProvider, { options: host.layout, children: themed }) : themed);
+ const layout = host.layout ? createElement(ContainerLayoutModeProvider, { options: host.layout, children: themed }) : themed;
+ return createElement(Context.Provider, { value: host }, createElement(UIIconOverridesContext.Provider, { value: host.icons ?? null }, createElement(Fragment, null, host.chrome?.brand, layout)));
 }
 export function useOptionalModuleHost() { return useContext(Context); }
 export function useModuleHost() {

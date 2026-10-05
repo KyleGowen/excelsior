@@ -18,3 +18,11 @@
 
 .module-harness__width { display: flex; align-items: center; gap: 8px; }
 .module-harness__width select { width: auto; max-width: 100%; padding: 6px 10px; }
+
+.module-harness__brand {
+ padding: var(--space-3);
+ margin-bottom: var(--space-3);
+ border: 1px solid var(--color-border);
+ border-radius: var(--radius-md);
+ font-weight: var(--font-weight-bold);
+}

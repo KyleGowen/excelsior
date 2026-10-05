@@ -5,3 +5,5 @@ import './tailwind.css';
 import './global.css';
 
 import '../modules/ModuleHarness.css';
+
+import '../components/icons.css';

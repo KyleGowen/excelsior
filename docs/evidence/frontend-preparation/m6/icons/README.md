@@ -1,0 +1,13 @@
+# M6 host brand and decorative icon preparation
+
+Preview: http://127.0.0.1:5181/module-harness.html. Base7a9364c2plus uncommitted changes, shared verified local API345e4865/Docker15442/V365. Excelsior branding/defaults remain unchanged. The fictional host can opt into `chrome.brand` and a per-instance decorative icon renderer; card/stat/Google assets remain separate.
+
+Fourteen final live browser cases pass with zero errors;49 fictional component cases and lint/unit/frontend/Storybook/registered Knip checks pass. Three newly captured detail baselines are retained. Seven screenshot comparisons were inspected:3 ordinary frames are exact;1 ordinary foil frame has only small animation variation. Three harness frames have unmatched fixture control/scroll/image-ready frames, so full-frame pixel parity is not claimed. Labels, printing identities, zero quantities and permissions remain checked. No changed pixel baseline was silently accepted.
+
+Retained mobile and update failures precede successful readiness/keyboard/actual-unmount corrections. The first Collection click occurred while filtering moved its target; waiting for the visible result count resolves it without app edits. The first Unmount click did not activate the intended button; final keyboard checks assert selection and removed modules, avoiding an empty-closed-portal false positive. All original screenshots/reports remain available.
+
+Shared scenarios stay in normal `tests/browser/` locations. Private CUA copies preserve exact bytes; query-suffixed imports were rejected before browser execution, then corrected with a fresh filename. Storybook fixtures and jsdom are separate from live UI evidence, and compiled stories do not prove their play functions ran. The helper reports API source345e4865 separately from frontend source7a9364c2plus dirty changes.
+
+No record writes, fixture creation, real login or production tests occurred for this slice. Automated tabs are closed and viewport reset;5181 remains for Kyle. Toggle **Use host brand and icons**, view Database/Collection/read-only Deck, and remove/reapply it with a detail open. Labels/actions/search stay in place while decorative content changes; omitted options restore Excelsior controls.
+
+Kyle accepted the identified5181preview on October5,2026 with “looks good on 5181.” The standing milestone workflow authorizes Ship for this bounded slice. Automated success, Kyle's acceptance, and pending production validation remain separate. Save feedback, nested routes, broad CSS containment, real asset/identity integration and retained M4 domain work remain open; full M6 is not complete.

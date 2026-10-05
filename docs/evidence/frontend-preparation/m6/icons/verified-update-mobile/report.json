@@ -1,0 +1,98 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "7a9364c28f2f85d7597754ea6a058c682cc29fc6",
+  "backendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5181",
+    "apiUrl": "http://127.0.0.1:8090",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m4/cursored",
+    "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "sourceTreeFingerprint": "50fde696eb20a41abc3c7afcbf86c6b9fbd8d2b4959161f41245103fefd0a35a",
+    "expectedRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m5",
+    "verified": true,
+    "observedAt": "2026-10-05T15:36:18.717Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required",
+    "frontendSource": {
+      "root": "/Users/kyle/.codex/worktrees/m6-host-controls/cursored",
+      "revision": "7a9364c28f2f85d7597754ea6a058c682cc29fc6",
+      "branch": "codex/frontend-preparation-m6-host-controls",
+      "fingerprint": "31057f72b13b610fb39da1fe1e2ed0bc1ba37e61ef509e6d6d05a1ac0828c7d5",
+      "listenerPid": 77832,
+      "proxyBackendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "sharedBackendInputs": "Identical committed and working backend/migrations/dependency manifests"
+    },
+    "databaseOwnershipReceipt": "/private/tmp/excelsior-m6-actions/startup-verified/startup.json"
+  },
+  "viewport": "390x844",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "host-icons-update-preserves-state",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "./verified-update-mobile/icons-omitted-open-detail.jpg",
+          "dom": "./verified-update-mobile/icons-omitted-open-detail.txt",
+          "dimensions": {
+            "height": 844,
+            "width": 390
+          },
+          "url": "http://127.0.0.1:5181/module-harness.html"
+        },
+        {
+          "screenshot": "./verified-update-mobile/icons-restored-open-detail.jpg",
+          "dom": "./verified-update-mobile/icons-restored-open-detail.txt",
+          "dimensions": {
+            "height": 844,
+            "width": 390
+          },
+          "url": "http://127.0.0.1:5181/module-harness.html"
+        }
+      ],
+      "observed": {
+        "searchPreserved": true,
+        "detailPreserved": true,
+        "defaultSVGRestored": true,
+        "portalUpdated": true,
+        "focusRestored": true,
+        "unmountClean": true,
+        "recordsChanged": false
+      }
+    }
+  ],
+  "counts": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "browserErrors": 0,
+  "status": "passed",
+  "durationSeconds": 3.2,
+  "cleanup": "Read-only; caller closes test-owned tab and resets viewport",
+  "acceptance": "Automated only; Kyle acceptance separate",
+  "gaps": [
+    "Save feedback/full CSS containment/nested host routes remain open",
+    "Real host assets, account mappings and identity changes are not exercised"
+  ]
+}

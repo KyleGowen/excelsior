@@ -11,3 +11,5 @@ export type { ContainerLayoutOptions } from '../lib/layout/ContainerLayoutModePr
 export type { ModuleAppearanceOptions, ModuleThemeToken } from './ModuleAppearanceBoundary';
 
 export type { ModuleCardActions, ModuleCardActionContext, ModuleAuthenticationRequest, ModuleCardSource } from './cardActions';
+
+export type { ModuleIconOptions, UIIconName, UIIconContext } from '../lib/icons/uiIconOverrides';

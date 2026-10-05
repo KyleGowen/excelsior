@@ -7,6 +7,8 @@ import { LayoutModeProvider } from '../../../frontend/src/lib/layout/LayoutModeP
 import catalog from '../../../frontend/src/stories/catalogPresentation.json';
 import { sampleDeck } from '../../../frontend/src/stories/fixtures';
 import { evaluationInputKey } from '../../../src/services/deck-evaluation/draftInput';
+import { IconDatabase, IconSearch, IconHeart } from '../../../frontend/src/components/icons';
+import type { UIIconContext } from '../../../frontend/src/modules';
 import type { ModuleApi } from '../../../frontend/src/modules/api';
 
 let container: HTMLDivElement;
@@ -179,4 +181,76 @@ it('keeps Guest and account host action renderers and callbacks isolated across 
   expect(first.mock.calls[0][0].isGuest).toBe(true); expect(second.mock.calls[0][0].isGuest).toBe(false);
   expect(host.api.fetchCollectionCards).not.toHaveBeenCalled();
  } finally { await mount(null); secondClient.clear(); }
+});
+
+
+it.each(['database', 'collection', 'deck'] as const)('replaces decorative %s icons with explicit host branding while preserving controls and no writes', async source => {
+ const render = jest.fn((context: UIIconContext) => <span data-fictional-icon={context.name}>◇</span>);
+ host.icons = { render };
+ host.chrome = { brand: <aside aria-label="Fictional host brand">Fictional brand</aside> };
+ await mount(source === 'database' ? <CardDatabaseModule /> : source === 'collection' ? <CollectionModule /> : <DeckBuilderModule deckId="storybook-deck" readonly />);
+ expect(container.querySelector('[aria-label="Fictional host brand"]')?.textContent).toBe('Fictional brand');
+ expect(container.querySelector('[data-module-icon]')).not.toBeNull();
+ expect([...container.querySelectorAll('[data-module-icon]')].every(el => el.getAttribute('aria-hidden') === 'true')).toBe(true);
+ expect(render.mock.calls.every(([context]) => Object.keys(context).every(k => ['name', 'className', 'filled'].includes(k)))).toBe(true);
+ if (source === 'database') expect(container.querySelector('[aria-label="Search cards"]')).not.toBeNull();
+ if (source === 'collection') expect(container.textContent).toContain('Stored on this device');
+ if (source === 'deck') { expect(container.querySelector('[aria-label="Back"]')).not.toBeNull(); expect([...container.querySelectorAll('button')].some(b => b.textContent?.includes('Export'))).toBe(true); }
+ expect(unexpectedFetch).not.toHaveBeenCalled();
+});
+
+it('retains SVG fallback, caller classes/styles and heart state, and allows explicit decorative suppression', async () => {
+ const render = jest.fn((context: UIIconContext) => context.name === 'database' ? null : context.name === 'heart' ? <span>Host heart</span> : undefined);
+ host.icons = { render };
+ await mount(<><IconDatabase /><IconSearch className="fixture-search" style={{ color: 'red' }} /><IconHeart filled className="fixture-heart" style={{ color: 'blue' }} /></>);
+ expect(container.querySelector('ellipse')).toBeNull();
+ expect(container.querySelector('svg.fixture-search')?.getAttribute('style')).toContain('red');
+ expect(container.querySelector('.fixture-heart')?.getAttribute('style')).toContain('blue');
+ expect(render.mock.calls.find(([context]) => context.name === 'heart')?.[0]).toEqual({ name: 'heart', filled: true, className: 'fixture-heart' });
+ expect(container.querySelector('.fixture-heart')?.getAttribute('aria-hidden')).toBe('true');
+ host.icons = { render: () => undefined };
+ await mount(<IconDatabase />);
+ expect(container.querySelector('svg ellipse')).not.toBeNull();
+});
+
+it('updates the host renderer without remounting module state and restores all defaults when omitted', async () => {
+ host.icons = { render: context => <span data-first-icon={context.name}>First</span> };
+ await mount(<CardDatabaseModule />);
+ const input = container.querySelector('[aria-label="Search cards"]');
+ host.icons = { render: context => <span data-second-icon={context.name}>Second</span> };
+ await mount(<CardDatabaseModule />);
+ expect(container.querySelector('[aria-label="Search cards"]')).toBe(input);
+ expect(container.querySelector('[data-first-icon]')).toBeNull();
+ expect(container.querySelector('[data-second-icon]')).not.toBeNull();
+ delete host.icons;
+ await mount(<CardDatabaseModule />);
+ expect(container.querySelector('[aria-label="Search cards"]')).toBe(input);
+ expect(container.querySelector('[data-module-icon]')).toBeNull();
+ expect(container.querySelector('.db__title svg ellipse')).not.toBeNull();
+});
+
+it('isolates two icon/brand hosts and ordinary outer icons without global configuration', async () => {
+ const left = { ...host, icons: { render: () => <span data-left-icon>Left</span> }, chrome: { brand: <aside>Left brand</aside> } };
+ const right = { ...host, icons: { render: () => <span data-right-icon>Right</span> }, chrome: { brand: <aside>Right brand</aside> } };
+ await mount(<><section data-host="left"><ModuleHostProvider host={left}><IconDatabase /></ModuleHostProvider></section><section data-host="right"><ModuleHostProvider host={right}><IconDatabase /></ModuleHostProvider></section><IconDatabase data-testid="outer-icon" /><ModuleHostProvider host={host}><IconSearch data-testid="default-nested-icon" /></ModuleHostProvider></>);
+ expect(container.querySelector('[data-host="left"] [data-right-icon]')).toBeNull();
+ expect(container.querySelector('[data-host="right"] [data-left-icon]')).toBeNull();
+ expect(container.querySelector('svg[data-testid="outer-icon"] ellipse')).not.toBeNull();
+ expect(container.querySelector('svg[data-testid="default-nested-icon"]')).not.toBeNull();
+});
+
+it('carries host icon context to an external detail portal and removes owned nodes on unmount', async () => {
+ const portal = document.createElement('div'); document.body.appendChild(portal);
+ try {
+  host.icons = { render: context => <span data-portal-icon={context.name}>◇</span> };
+  host.overlays = { root: portal, position: 'absolute' };
+  await mount(<CardDatabaseModule />);
+  const card = container.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement;
+  await act(async () => card.click()); await wait();
+  expect(portal.querySelector('[role="dialog"]')).not.toBeNull();
+  expect(portal.querySelector('[data-module-icon="close"] [data-portal-icon="close"]')).not.toBeNull();
+  expect(container.querySelector('[role="dialog"]')).toBeNull();
+  await mount(null);
+  expect(portal.children).toHaveLength(0);
+ } finally { portal.remove(); }
 });
