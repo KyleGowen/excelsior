@@ -1,5 +1,8 @@
 /// <reference path="../../../frontend/src/vite-env.d.ts" />
 import { act, type ReactNode } from 'react';
+import { MemoryRouter } from 'react-router-dom';
+import { NativeRouteHarness } from '../../../frontend/src/modules/NativeRouteHarness';
+import { nativeDeckPath } from '../../../frontend/src/modules/nativeHostRoutes';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ModuleHostProvider, type ModuleHost, type ModuleCardActionContext, createModuleApi, CardDatabaseModule, CollectionModule, DeckBuilderModule } from '../../../frontend/src/modules';
@@ -37,7 +40,7 @@ beforeEach(() => {
   (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
   window.matchMedia = jest.fn(() => ({ matches: false, media: '', onchange: null, addListener: jest.fn(), removeListener: jest.fn(), addEventListener: jest.fn(), removeEventListener: jest.fn(), dispatchEvent: jest.fn() }));
   globalThis.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} } as unknown as typeof IntersectionObserver;
-  window.scrollTo = jest.fn(); Element.prototype.scrollIntoView = jest.fn();
+  window.scrollTo = jest.fn(); Element.prototype.scrollIntoView = jest.fn(); Element.prototype.scrollTo = jest.fn();
   container = document.createElement('div'); document.body.appendChild(container); root = createRoot(container);
   client = new QueryClient({ defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } } });
   host = { api: fixtureApi(), identity: { user: null, isGuest: true, isAdmin: false }, onOpenDeck: jest.fn(), onBack: jest.fn(), onHome: jest.fn() };
@@ -379,4 +382,46 @@ it('keeps save-result presentation and mutations isolated between independent ho
  expect(container.querySelector('[data-feedback="right"]')).toBeNull();
  expect((container.querySelector('[data-host="right"] [aria-label="Deck name"]') as HTMLInputElement).value).toBe(untouched);
  expect(right.api.updateDeckMeta).not.toHaveBeenCalled(); expect(right.api.replaceDeckCards).not.toHaveBeenCalled();
+});
+
+
+const mountNative = async (entry: string) => {
+ await act(async () => root.render(<QueryClientProvider client={client}><LayoutModeProvider><MemoryRouter initialEntries={[entry]}><NativeRouteHarness user={null} api={host.api} /></MemoryRouter></LayoutModeProvider></QueryClientProvider>)); await wait();
+};
+it('routes native host links under the host router and keeps unknown routes explicit', async () => {
+ await mountNative('/unknown'); expect(container.textContent).toContain('Unknown fictional host route');
+ const cards = [...container.querySelectorAll('a')].find(a => a.textContent === 'Host Cards')!;
+ await act(async () => cards.click()); await wait();
+ expect(container.querySelector('[aria-label="Host route"]')?.textContent).toBe('/tools/cards');
+ expect(container.textContent).toContain('Card Database');
+ const collection = [...container.querySelectorAll('a')].find(a => a.textContent === 'Host Collection')!;
+ await act(async () => collection.click()); await wait();
+ expect(container.querySelector('[aria-label="Host route"]')?.textContent).toBe('/tools/collection');
+ expect(container.textContent).toContain('My Collection');
+ expect(host.api.fetchDeckFull).not.toHaveBeenCalled();
+});
+it('opens a public native deck route readonly without creating Guest copies or writes', async () => {
+ host.api.createDeck = jest.fn(); host.api.updateDeckMeta = jest.fn(); host.api.replaceDeckCards = jest.fn();
+ const id = '00000000-0000-0000-0000-000000000004'; await mountNative('/tools/decks/' + id);
+ expect(host.api.fetchDeckFull).toHaveBeenCalledWith(id, true, expect.any(AbortSignal));
+ expect(container.textContent).toContain('Storybook Sample Deck');
+ expect(container.querySelector('[aria-label="Deck name"]')).toBeNull();
+ expect([...container.querySelectorAll('button')].some(b => b.textContent === 'Save')).toBe(false);
+ expect(host.api.createDeck).not.toHaveBeenCalled(); expect(host.api.updateDeckMeta).not.toHaveBeenCalled(); expect(host.api.replaceDeckCards).not.toHaveBeenCalled();
+});
+it.each(['guest_secret', 'https://elsewhere.invalid/deck', '../escape', '%2fescape', 'bad-id'])('rejects credential-bearing or non-UUID fixture route %s before reading it', async id => {
+ expect(nativeDeckPath(id)).toBeNull(); await mountNative('/tools/decks/' + id);
+ expect(host.api.fetchDeckFull).not.toHaveBeenCalled();
+ expect(container.textContent).toMatch(/Use a public fixture UUID|Unknown fictional host route/);
+});
+it('preserves the same nested browse path while detail history opens and closes', async () => {
+ await mountNative('/tools/cards');
+ const view = container.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement;
+ await act(async () => view.click()); await wait();
+ expect(container.querySelector('[role="dialog"]')).not.toBeNull();
+ expect(container.querySelector('[aria-label="Host route"]')?.textContent).toBe('/tools/cards');
+ const close = container.querySelector('[aria-label="Close panel"]') as HTMLButtonElement;
+ await act(async () => close.click()); await wait();
+ expect(container.querySelector('[role="dialog"]')).toBeNull();
+ expect(container.querySelector('[aria-label="Host route"]')?.textContent).toBe('/tools/cards');
 });

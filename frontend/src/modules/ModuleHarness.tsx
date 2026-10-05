@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { ModuleCardActions } from './cardActions';
 import type { ModuleSaveFeedback } from './saveFeedback';
 import type { ModuleIconOptions } from '../lib/icons/uiIconOverrides';
@@ -89,7 +89,7 @@ export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = f
 
 const defaultSession = async () => { const [user] = await Promise.all([fetchCurrentUser(), fetchAppConfig()]); return user; };
 /** Development host bootstrap; modules themselves never create or authenticate sessions. */
-export function LocalModuleHarness({ loadSession = defaultSession }: { loadSession?: () => Promise<AppUser | null> }) {
+export function LocalModuleHarness({ loadSession = defaultSession, renderHost }: { loadSession?: () => Promise<AppUser | null>; renderHost?: (user: AppUser | null) => ReactNode }) {
  const [user, setUser] = useState<AppUser | null>(null);
  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
  const active = useRef(false);
@@ -97,5 +97,5 @@ export function LocalModuleHarness({ loadSession = defaultSession }: { loadSessi
  useEffect(() => { active.current = true; void load(); return () => { active.current = false; }; }, [load]);
  if (status === 'loading') return <p>Loading local host…</p>;
  if (status === 'error') return <div role="alert">Local API unavailable. Start Excelsior and retry.<button onClick={() => void load()}>Retry</button></div>;
- return <ModuleHarness user={user} />;
+ return renderHost ? renderHost(user) : <ModuleHarness user={user} />;
 }

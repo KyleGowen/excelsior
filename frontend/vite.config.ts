@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { fileURLToPath, URL } from 'node:url';
@@ -7,10 +7,23 @@ import { fileURLToPath, URL } from 'node:url';
 // backend on :8085 so the SPA can run on :5173 during local development.
 // The backend default port is 8085 (process.env.PORT || 8085).
 const BACKEND = 'http://localhost:8085';
+// Development-only server fallback for the fictional host's native nested URLs.
+// Production routes/build inputs are unchanged; no fixture is exposed by Express.
+const nativeHostFixture: Plugin = {
+ name: 'native-host-fixture', apply: 'serve',
+ configureServer(server) {
+  server.middlewares.use((req, _res, next) => {
+   const path = req.url?.split('?')[0];
+   if (req.method === 'GET' && req.headers.accept?.includes('text/html') && (path === '/fictional-host' || path?.startsWith('/fictional-host/'))) req.url = '/native-route-harness.html';
+   next();
+  });
+ },
+};
 
 export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
+    nativeHostFixture,
     mode === 'analyze' &&
       visualizer({
         filename: 'dist/stats.html',

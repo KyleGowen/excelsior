@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "status": "Kyle accepted identified5183preview in Chrome; release pending",
+  "frontend": {
+    "revision": "9510f41505a393f9338340dcd32cd760ac529abf",
+    "state": "uncommitted native route fixture",
+    "url": "http://127.0.0.1:5183/fictional-host/tools/cards"
+  },
+  "backend": {
+    "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "api": "http://127.0.0.1:8090",
+    "database": "verified shared disposable Docker15442/V365",
+    "sourceInputs": "backend/migrations/dependencies identical; listener/CWD/proxy verified"
+  },
+  "browser": {
+    "freshNativeCases": 8,
+    "ordinaryRoutes": 2,
+    "oldHarnessCompatibility": 1,
+    "finalPassed": 11,
+    "finalFailed": 0,
+    "errors": 0,
+    "actor": "Guest",
+    "theme": "fixed dark",
+    "desktop": [
+      1280,
+      720
+    ],
+    "mobile": [
+      390,
+      844
+    ],
+    "scenarios": [
+      "nested links/Back/Forward/Collection deep reload",
+      "readonly deck deep reload/draw/hostBack",
+      "card artwork/detailBack/reopen/Close/Home",
+      "explicit unknown host route",
+      "unchanged old harness URL/Collection pixels",
+      "ordinary Database/deck draw/export"
+    ],
+    "method": "CUA live UI and real local HTTP reads"
+  },
+  "comparison": {
+    "dimensions": [
+      1280,
+      720
+    ],
+    "sameSize": true,
+    "differentPixels": 0,
+    "identical": true,
+    "baselineOverwrite": false
+  },
+  "component": {
+    "passed": 67,
+    "suites": 4,
+    "newCases": 8,
+    "kind": "fictional jsdom; not browser evidence"
+  },
+  "gates": {
+    "modules": "67 passed",
+    "lint": "passed",
+    "frontendBuild": "passed",
+    "storybook": "passed; all new components have named parent/examples; play functions not independently exercised",
+    "knipCI": "passed",
+    "unitInitial": {
+      "passed": 3875,
+      "skipped": 18
+    },
+    "finalUnitEvidence": "/private/tmp/excelsior-m6-host-routes/unit-handoff-final.log",
+    "rule": "Final unit receipt must be terminal passed before handoff; no missing/zero counts waiver"
+  },
+  "retainedFailures": {
+    "relativeHistoryBug": "live and component failure: provider-relative dot resolved to Home; stable current-path adapter fixes it",
+    "testSetup": [
+      "router type/module resolution",
+      "nonexistent clone assertion corrected to real createDeck",
+      "jsdom encoding and scroll globals"
+    ],
+    "oldEditedTab": [
+      "desktop-final",
+      "desktop-verified",
+      "desktop-history"
+    ],
+    "oldTabCause": "unconfirmed; hot reload is a hypothesis only",
+    "recovery": "observed history-state assertions plus fresh current-code tab; desktop/mobile passed; no ordinary production component logic changed"
+  },
+  "cleanup": {
+    "newApplicationFixtures": 0,
+    "writes": "none; quantities/decks unchanged",
+    "automatedTabs": "closed",
+    "viewport": "reset",
+    "handoff": "one fresh5183nativeCards tab retained, Lancelot filtered; no record mutation",
+    "earlierFixture": "one accepted5182Guest preview copy remains in earlier run private ownership manifest"
+  },
+  "handoff": {
+    "url": "http://127.0.0.1:5183/fictional-host/tools/cards",
+    "screenshot": "handoff.jpg",
+    "kind": "manual full-page presentation capture; distinct from automated fixed dimensions"
+  },
+  "gaps": [
+    "unsaved-edit/return/discard policy not implemented or verified",
+    "arbitrary host prefixes/production server rewrites not verified",
+    "production host/mobile/light/OAuth not tested",
+    "full CSS/other feature slots and retainedM4domain work open",
+    "M7/M8 not started",
+    "not committed/pushed/production tested"
+  ],
+  "acceptance": {
+    "date": "2026-10-05",
+    "preview": "5183 native routes",
+    "browser": "Chrome",
+    "authority": "Kyle confirmed he checked the new preview and approved continuation"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "status": "shipped and selected production browser verified",
+  "revision": "9510f41505a393f9338340dcd32cd760ac529abf",
+  "previousRelease": "b03ec65eca172f1d6aeabffc20dfe7e9c3084e61",
+  "approvedPreview": "http://127.0.0.1:5182/module-harness.html",
+  "paths": 54,
+  "manifest": "54582f8df89a83a62c97e25a0c6469650fe689f6ec0394f4dd5d8eae9d820951",
+  "candidateRun": 37349232045,
+  "mainRun": 37350088771,
+  "ci": {
+    "candidate": "24 required success;5 deployment-only skipped",
+    "main": "29 success",
+    "unitCoverage": {
+      "passed": 3871,
+      "skipped": 22
+    },
+    "integration": {
+      "passed": 1019,
+      "suites": 116
+    },
+    "soc2": 45,
+    "securityGate": "exact-SHA passed"
+  },
+  "health": {
+    "status": "OK",
+    "database": "OK",
+    "revision": "9510f41505a393f9338340dcd32cd760ac529abf",
+    "migration": "365"
+  },
+  "browser": {
+    "final": {
+      "passed": 5,
+      "errors": 0
+    },
+    "initialFailures": [
+      "public deck navigation waiting for Draw Hand; retained Loading deck state",
+      "Database destination heading timeout; retained old Home state"
+    ],
+    "recovery": "Observed both destinations finish without reload or source change; same five shared cases passed on one bounded rerun",
+    "mutations": "none; saves/authenticated writes not selected",
+    "cleanup": "owned production tab closed; viewport reset"
+  },
+  "verificationRecovery": "Canonical frozen verifier exceeded default ls-tree output buffer. Same script with private buffer-only preload passed exact base/paths/blobs/modes before and after each push.",
+  "gaps": [
+    "production save/ownership mutation not run",
+    "production mobile/light/host routes/OAuth not selected",
+    "fullM6/CSS/other feature slots and retainedM4 domain work remain open"
+  ],
+  "evidence": "/private/tmp/excelsior-m6-save-ship"
+}

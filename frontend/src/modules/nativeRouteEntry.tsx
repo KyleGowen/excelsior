@@ -1,0 +1,12 @@
+import { createRoot } from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter } from 'react-router-dom';
+import { LayoutModeProvider } from '../lib/layout/LayoutModeProvider';
+import { LocalModuleHarness } from './ModuleHarness';
+import { NativeRouteHarness } from './NativeRouteHarness';
+import { NATIVE_HOST_BASE } from './nativeHostRoutes';
+import '../styles/appStyles';
+const client = new QueryClient({ defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } } });
+const root = createRoot(document.getElementById('native-route-root')!);
+root.render(import.meta.env.DEV ? <QueryClientProvider client={client}><LayoutModeProvider><BrowserRouter basename={NATIVE_HOST_BASE}><LocalModuleHarness renderHost={user => <NativeRouteHarness user={user} />} /></BrowserRouter></LayoutModeProvider></QueryClientProvider> : <p>The fixture harness is development-only.</p>);
+if (import.meta.hot) import.meta.hot.dispose(() => { root.unmount(); client.clear(); });

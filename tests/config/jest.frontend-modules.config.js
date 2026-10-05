@@ -1,10 +1,13 @@
 module.exports = {
   rootDir: '../../',
   testEnvironment: 'jsdom',
+  setupFiles: ['<rootDir>/tests/helpers/textEncoding.cjs'],
   roots: ['<rootDir>/tests/unit/frontend-modules'],
   testMatch: ['**/*.test.tsx'],
-  transform: { '^.+\\.tsx?$': ['ts-jest', { tsconfig: { target: 'ES2022', module: 'CommonJS', jsx: 'react-jsx', esModuleInterop: true, resolveJsonModule: true, strict: true, skipLibCheck: true, exactOptionalPropertyTypes: false, noUncheckedIndexedAccess: false, baseUrl: '.', paths: { 'react': ['frontend/node_modules/@types/react'], 'react/jsx-runtime': ['frontend/node_modules/@types/react/jsx-runtime'], 'react-dom': ['frontend/node_modules/@types/react-dom'], 'react-dom/client': ['frontend/node_modules/@types/react-dom/client'], '@tanstack/react-query': ['frontend/node_modules/@tanstack/react-query'] } } }] },
+  transform: { '^.+\\.tsx?$': ['ts-jest', { tsconfig: { target: 'ES2022', module: 'CommonJS', jsx: 'react-jsx', esModuleInterop: true, resolveJsonModule: true, strict: true, skipLibCheck: true, exactOptionalPropertyTypes: false, noUncheckedIndexedAccess: false, baseUrl: '.', paths: { 'react': ['frontend/node_modules/@types/react'], 'react/jsx-runtime': ['frontend/node_modules/@types/react/jsx-runtime'], 'react-dom': ['frontend/node_modules/@types/react-dom'], 'react-dom/client': ['frontend/node_modules/@types/react-dom/client'], '@tanstack/react-query': ['frontend/node_modules/@tanstack/react-query'], 'react-router-dom': ['frontend/node_modules/react-router-dom'], 'react-router': ['frontend/node_modules/react-router'] } } }] },
   moduleNameMapper: {
+    '^react-router-dom$': '<rootDir>/frontend/node_modules/react-router-dom',
+    '^react-router$': '<rootDir>/frontend/node_modules/react-router',
     '^react$': '<rootDir>/frontend/node_modules/react',
     '^react/jsx-runtime$': '<rootDir>/frontend/node_modules/react/jsx-runtime',
     '^react-dom$': '<rootDir>/frontend/node_modules/react-dom',

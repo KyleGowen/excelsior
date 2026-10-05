@@ -78,3 +78,7 @@ The development harness **Use host brand and icons** uses a fictional diamond an
 ### Save-feedback preparation
 
 `saveFeedback.render` is an optional pure presentation slot with status/message/newer-edits context only. No record identifiers, identity, API or mutation callbacks are exposed. Omitted/undefined retains default results; null hides the configured feedback. Read-only modules gain no Save action. Existing multi-request persistence and failure semantics remain unchanged. The development harness supports real local, delayed and intentionally rejected save modes; injected rejection is not evidence of a backend outage. See [contract](saveFeedback.md). Nested host routes/full CSS and retained M4 domain work remain open.
+
+## Native route fixture
+
+The development-only [fictional native host](NativeRouteHarness.md) demonstrates nested BrowserRouter paths and detail-history adaptation outside modules. Open `/fictional-host/tools/cards` on the identified local preview; public decks remain read-only. Reload/Back/Forward evidence is for Vite development only. Unsaved-edit routing, real identity and production server fallbacks remain open.

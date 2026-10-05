@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "revision": "9510f41505a393f9338340dcd32cd760ac529abf",
+  "frontendFingerprint": "09a5e0f0e9ae261acc0ee8a27c43d312a0032d09f4951209597f228690fab0c5",
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5183",
+    "apiUrl": "http://127.0.0.1:8090",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m4/cursored",
+    "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "sourceTreeFingerprint": "50fde696eb20a41abc3c7afcbf86c6b9fbd8d2b4959161f41245103fefd0a35a",
+    "expectedRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m5",
+    "verified": true,
+    "observedAt": "2026-10-05T18:08:30.395Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required",
+    "frontendSource": {
+      "root": "/Users/kyle/.codex/worktrees/m6-host-routes/cursored",
+      "revision": "9510f41505a393f9338340dcd32cd760ac529abf",
+      "branch": "codex/frontend-preparation-m6-host-routes",
+      "fingerprint": "09a5e0f0e9ae261acc0ee8a27c43d312a0032d09f4951209597f228690fab0c5",
+      "listenerPid": 8721,
+      "proxyBackendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "sharedBackendInputs": "Identical committed and working backend/migrations/dependency manifests"
+    },
+    "databaseOwnershipReceipt": "/private/tmp/excelsior-m6-save-feedback/startup-verified/startup.json"
+  },
+  "dimensions": {
+    "width": 1280,
+    "height": 720
+  },
+  "actor": "Guest",
+  "theme": "fixed dark",
+  "method": "live CUA BrowserRouter plus real local HTTP reads",
+  "cases": [
+    {
+      "id": "nested-links-back-forward-deep-reload",
+      "status": "passed"
+    },
+    {
+      "id": "readonly-deck-draw-host-back",
+      "status": "passed"
+    },
+    {
+      "id": "detail-back-close-host-home",
+      "status": "passed"
+    },
+    {
+      "id": "unknown-route-explicit",
+      "status": "passed"
+    }
+  ],
+  "records": "unchanged",
+  "gaps": [
+    "unsaved edit navigation not selected; deck fixture is readonly",
+    "forward does not reconstruct a closed card detail; existing module contract",
+    "production native host routing not tested"
+  ],
+  "stage": "detail-close",
+  "errors": [],
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only selected actions",
+    "viewport": "reset",
+    "tab": "caller-owned; close or handoff"
+  },
+  "status": "passed"
+}
