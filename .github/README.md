@@ -264,3 +264,7 @@ This CI/CD setup follows best practices from:
 - [Node.js GitHub Actions](https://github.com/actions/setup-node)
 - [Docker Best Practices](https://docs.docker.com/develop/dev-best-practices/)
 - [AWS SSM Best Practices](https://docs.aws.amazon.com/systems-manager/latest/userguide/best-practices.html)
+
+## Optional coverage reporting
+
+In `deploy.yml`, running unit tests and generating coverage remain required. Only the **Upload coverage to Codecov** step is non-blocking (`continue-on-error: true`, alongside `fail_ci_if_error: false`), so a reporting-service outage cannot stop a validated release. Upload failures remain visible in Actions. The Unit Coverage job and all Security Gate prerequisites remain required; test failures still block deployment.

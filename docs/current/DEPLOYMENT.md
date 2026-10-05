@@ -587,6 +587,11 @@ to succeed. Failure, cancellation, and skipped prerequisites fail the gate.
 Production image publication and asset sync depend on that gate. Explicit Bash
 pipeline failure handling prevents log capture from hiding test failures.
 
+Unit coverage test execution and coverage generation are required. Only uploading
+that report to Codecov is non-blocking (`continue-on-error: true` on the upload
+step, plus `fail_ci_if_error: false`). An upload outage remains visible in
+Actions but does not bypass test, scanner, compliance, or Security Gate checks.
+
 Integration suites are discovered from all `tests/integration/**/*.test.ts` and
 `*.spec.ts` files. The shard planner compares discovery with the filesystem and
 verifies complete, non-overlapping assignments. Each CI shard has its own fresh
