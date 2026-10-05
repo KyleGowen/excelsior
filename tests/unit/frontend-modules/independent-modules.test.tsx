@@ -2,7 +2,7 @@
 import { act, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ModuleHostProvider, type ModuleHost, createModuleApi, CardDatabaseModule, CollectionModule, DeckBuilderModule } from '../../../frontend/src/modules';
+import { ModuleHostProvider, type ModuleHost, type ModuleCardActionContext, createModuleApi, CardDatabaseModule, CollectionModule, DeckBuilderModule } from '../../../frontend/src/modules';
 import { LayoutModeProvider } from '../../../frontend/src/lib/layout/LayoutModeProvider';
 import catalog from '../../../frontend/src/stories/catalogPresentation.json';
 import { sampleDeck } from '../../../frontend/src/stories/fixtures';
@@ -113,4 +113,70 @@ it('mounts account Collection using the supplied collection operation without re
  expect(host.api.fetchCollectionCards).toHaveBeenCalledTimes(1);
  expect(host.api.fetchDeckFull).not.toHaveBeenCalled();
  expect(container.textContent).not.toContain('Stored on this device');
+});
+
+
+it.each(['database', 'collection', 'deck'] as const)('routes %s card actions and auth requests to the supplied host without writes or navigation', async source => {
+ const request = jest.fn(); const action = jest.fn(); const render = jest.fn((context: ModuleCardActionContext) => <><button onClick={() => action(context)}>Fictional host action</button><button onClick={context.requestAuthentication}>Fictional host sign in</button><button onClick={context.close}>Fictional host close</button></>);
+ host.cardActions = { render, requestAuthentication: request };
+ await mount(source === 'database' ? <CardDatabaseModule /> : source === 'collection' ? <CollectionModule /> : <DeckBuilderModule deckId="storybook-deck" readonly />);
+ if (source === 'collection') { const tab = [...container.querySelectorAll<HTMLButtonElement>('[role="tab"]')].find(t => t.textContent?.includes('Characters'))!; await act(async () => tab.click()); await wait(); }
+ const card = container.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement;
+ expect(card).not.toBeNull();
+ await act(async () => card.click()); await wait();
+ const click = async (label: string) => { const b = [...container.querySelectorAll('button')].find(b => b.textContent === label)!; await act(async () => b.click()); };
+ const context = render.mock.calls.at(-1)![0];
+ expect(context).toMatchObject({ source, catalogType: 'characters', isGuest: true });
+ expect(context.card.name).toBe('Billy the Kid');
+ if (source === 'deck') expect(context.deck).toEqual({ id: 'storybook-deck', readOnly: true });
+ else expect(context.deck).toBeUndefined();
+ expect(context).not.toHaveProperty('api'); expect(context).not.toHaveProperty('user');
+ await click('Fictional host action'); expect(action).toHaveBeenCalledTimes(1);
+ await click('Fictional host sign in');
+ expect(request).toHaveBeenCalledWith({ source, catalogType: 'characters', cardId: context.card.id, ...(source === 'deck' ? { deckId: 'storybook-deck' } : {}) });
+ expect(host.onOpenDeck).not.toHaveBeenCalled(); expect(host.onHome).not.toHaveBeenCalled();
+ expect(host.api.fetchCollectionCards).not.toHaveBeenCalled();
+ expect(container.querySelector('.db__detail-actions')).toBeNull();
+ expect(container.querySelector('.col__detail-qty')).toBeNull();
+ await click('Fictional host close'); expect(container.querySelector('[role="dialog"]')).toBeNull();
+});
+it('deliberately suppresses defaults when the renderer returns null, then restores default actions without losing search', async () => {
+ host.cardActions = { render: () => null };
+ await mount(<CardDatabaseModule />);
+ const search = container.querySelector('[aria-label="Search cards"]') as HTMLInputElement;
+ await act(async () => (container.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement).click()); await wait();
+ expect(container.textContent).not.toContain('Log in to add to decks');
+ expect(container.querySelector('.db__add-collection')).toBeNull();
+ delete host.cardActions; await mount(<CardDatabaseModule />);
+ expect(container.querySelector('[aria-label="Search cards"]')).toBe(search);
+ expect((container.querySelector('.db__add-deck') as HTMLButtonElement).disabled).toBe(true);
+ expect(container.querySelector('.db__add-collection')).not.toBeNull();
+});
+it('updates host renderers without remounting a detail and supplies no sign-in entry when none is configured', async () => {
+ let oldContext: ModuleCardActionContext | undefined; let newContext: ModuleCardActionContext | undefined;
+ host.cardActions = { render: context => { oldContext=context; return <button>First fictional action</button>; } };
+ await mount(<CardDatabaseModule />);
+ await act(async () => (container.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement).click()); await wait();
+ const dialog=container.querySelector('[role="dialog"]');
+ expect(oldContext!.requestAuthentication).toBeUndefined();
+ host.cardActions = { render: context => { newContext=context; return <button>Second fictional action</button>; } };
+ await mount(<CardDatabaseModule />);
+ expect(container.querySelector('[role="dialog"]')).toBe(dialog);
+ expect(container.textContent).toContain('Second fictional action');
+ expect(newContext!.card.id).toBe(oldContext!.card.id);
+});
+
+it('keeps Guest and account host action renderers and callbacks isolated across two instances', async () => {
+ const first = jest.fn(); const second = jest.fn();
+ const secondClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+ host.cardActions = { render: c => <button onClick={() => first(c)}>First host action</button> };
+ const otherHost: ModuleHost = { ...host, identity: { user: { id: 'fictional-other-host', username: 'Fictional Host Player', email: null, role: 'USER' }, isGuest: false, isAdmin: false }, cardActions: { render: c => <button onClick={() => second(c)}>Second host action</button> } };
+ try {
+  await mount(<><section aria-label="First fixture"><CardDatabaseModule /></section><QueryClientProvider client={secondClient}><ModuleHostProvider host={otherHost}><section aria-label="Second fixture"><CardDatabaseModule /></section></ModuleHostProvider></QueryClientProvider></>);
+  for (const name of ['First fixture','Second fixture']) { const surface=container.querySelector(`[aria-label="${name}"]`)!; await act(async () => (surface.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement).click()); await wait(); }
+  for (const name of ['First host action','Second host action']) { const button=[...container.querySelectorAll('button')].find(b=>b.textContent===name)!;await act(async()=>button.click()); }
+  expect(first).toHaveBeenCalledTimes(1); expect(second).toHaveBeenCalledTimes(1);
+  expect(first.mock.calls[0][0].isGuest).toBe(true); expect(second.mock.calls[0][0].isGuest).toBe(false);
+  expect(host.api.fetchCollectionCards).not.toHaveBeenCalled();
+ } finally { await mount(null); secondClient.clear(); }
 });

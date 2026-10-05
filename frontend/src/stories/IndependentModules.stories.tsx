@@ -53,3 +53,9 @@ export const ResizableContainer: Story = { args: { initialContainerLayout: true,
 export const PaperHostAppearance: Story = { args: { initialAppearance: 'paper', initialContainerLayout: true, initialContainerWidth: '720', initialHostOverlay: true }, ...DatabaseDetailActions };
 export const ContrastHostAppearance: Story = { args: { initialAppearance: 'contrast', initialContainerLayout: true, initialContainerWidth: '390', initialHostOverlay: true } };
 export const IndependentHostAppearances: Story = { render: () => <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}><ModuleHarness user={null} initialAppearance="paper" initialContainerLayout initialHostOverlay /><ModuleHarness user={null} initialAppearance="contrast" initialContainerLayout initialHostOverlay /></div> };
+
+/** Host-owned card actions and auth entry are fictional callbacks; no login or writes. */
+export const HostCardActions: Story = { args: { user: null, initialHostActions: true, initialHostOverlay: true }, ...DatabaseDetailActions };
+export const HostCollectionActions: Story = { args: { user: null, initialHostActions: true }, play: async ({ canvas }) => { (await canvas.findByRole('button', { name: 'Collection module' })).click(); (await canvas.findByRole('tab', { name: 'Characters' })).click(); (await canvas.findByRole('button', { name: 'View Billy the Kid' })).click(); await canvas.findByRole('button', { name: 'Host card action' }); } };
+export const HostDeckActions: Story = { args: { user: null, initialHostActions: true }, play: async ({ canvas }) => { (await canvas.findByRole('button', { name: 'Deck Builder module' })).click(); (await canvas.findByRole('button', { name: 'View Billy the Kid' })).click(); await canvas.findByRole('button', { name: 'Host card action' }); } };
+export const HostAccountActions: Story = { args: { user: exampleUser, initialHostActions: true }, ...DatabaseDetailActions };

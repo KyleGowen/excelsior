@@ -1,0 +1,143 @@
+{
+  "schema": 1,
+  "slice": "M6 host-owned card-detail actions/authentication request entry",
+  "status": "Kyle accepted local preview; release pending",
+  "environment": "isolated local preview",
+  "frontend": "http://127.0.0.1:5180/module-harness.html",
+  "defaultFrontendPreserved": "http://localhost:5173",
+  "previousPreviewPreserved": "http://127.0.0.1:5179/module-harness.html",
+  "sourceRevision": "20500a779fca1a75ae8ebd0951f590faa357d639 plus uncommitted slice",
+  "runtimeBackendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "migration": "365",
+  "database": "verified existing disposable Docker excelsior-frontend-preparation-m4 on loopback15442; no tunnel",
+  "selectedFinalBrowserCases": 12,
+  "afterChangeExecutionCountIncludingThreeRepeatedAfterBuild": 15,
+  "browser": [
+    {
+      "run": "before-routes",
+      "status": "passed",
+      "counts": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "browserErrorCount": 0,
+      "report": "before-routes/report.json"
+    },
+    {
+      "run": "before-defaults",
+      "status": "passed",
+      "counts": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "browserErrorCount": 0,
+      "report": "before-defaults/report.json"
+    },
+    {
+      "run": "after-defaults",
+      "status": "passed",
+      "counts": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "browserErrorCount": 0,
+      "report": "after-defaults/report.json"
+    },
+    {
+      "run": "host-actions-desktop",
+      "status": "passed",
+      "counts": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "browserErrorCount": 0,
+      "report": "host-actions-desktop/report.json"
+    },
+    {
+      "run": "host-actions-mobile",
+      "status": "passed",
+      "counts": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "browserErrorCount": 0,
+      "report": "host-actions-mobile/report.json"
+    },
+    {
+      "run": "after-routes",
+      "status": "passed",
+      "counts": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "browserErrorCount": 0,
+      "report": "after-routes/report.json"
+    },
+    {
+      "run": "final-host-actions-desktop",
+      "status": "passed",
+      "counts": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "browserErrorCount": 0,
+      "report": "final-host-actions-desktop/report.json"
+    }
+  ],
+  "componentTests": {
+    "passed": 42,
+    "suites": 4,
+    "method": "mocked jsdom; not live browser",
+    "newCases": 6
+  },
+  "gates": {
+    "lint": "passed",
+    "unit": {
+      "passed": 3875,
+      "skipped": 18,
+      "suites": 333,
+      "freshExecution": true
+    },
+    "frontendBuild": "passed",
+    "storybookBuild": "passed; named examples built, story play functions not separately executed",
+    "requiredKnipCI": "passed: npm run find:unused:ci",
+    "broaderKnip": "failed with byte-identical output to approved baseline; no unrelated removals"
+  },
+  "troubleshooting": [
+    "First startup verification lacked Node in PATH; supplied installed runtime and ownership/health verification passed; servers preserved",
+    "First Collection component case selected the default All tab; corrected to Characters. Correction initially inserted into the wrong test and failed compilation; fixed, all42 passed",
+    "Storybook generated index/iframe HTML caused recorded Vite full reloads, resetting harness toggles. Handoff preparation failed to find custom action; retained screenshot. An open inline panel blocked the next configuration click; later fresh state had no panel. A fresh tab then passed all three host cases after builds. No product-code fix or baseline overwrite",
+    "Broader Knip output equals approved baseline; actual registered CI subset passes"
+  ],
+  "cleanup": {
+    "records": "unchanged; only Guest/read-only fixture navigation, search, panel open/close, and in-memory receipt callbacks",
+    "newRows": 0,
+    "temporaryBrowserTabs": "closed; final5180handoff retained",
+    "viewport": "reset",
+    "processes": "5180and shared API8090 retained for handoff; accepted5179/5178/5177and primary servers preserved"
+  },
+  "sourceEvidence": "Separate listener, proxy health and final fingerprint recorded in target-final.json; initial reports predate docs/test finalization, but application implementation did not change after browser execution",
+  "runnerSHA256": "aaf33a0f7a7507612f8e9d9bd4cb71aa4052acbf7464146a01c00117097fa1a9",
+  "copiedRunnerSHA256": "aaf33a0f7a7507612f8e9d9bd4cb71aa4052acbf7464146a01c00117097fa1a9",
+  "gaps": [
+    "Real host login, identity mapping, authenticated mutations and cleanup were not performed",
+    "No production testing, commit, push or deployment in this slice",
+    "Full CSS/brand/core-icon/save-feedback/nested-route/other action-slot contracts remain open",
+    "M4 remaining simulation/import/export/Collection authoritative domain contracts remain open"
+  ],
+  "acceptance": "Kyle approved identified5180preview with looks good to me on October5,2026; production acceptance remains separate"
+}

@@ -1,6 +1,7 @@
 import { createElement, createContext, useContext, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import type { AppUser } from '../lib/api/types';
 import type { ModuleApi } from './api';
+import type { ModuleCardActions } from './cardActions';
 import { ModuleAppearanceBoundary, type ModuleAppearanceOptions } from './ModuleAppearanceBoundary';
 import { ContainerLayoutModeProvider, type ContainerLayoutOptions } from '../lib/layout/ContainerLayoutModeProvider';
 import { OverlayHostProvider, type OverlayHostOptions } from '../lib/layout/OverlayHostProvider';
@@ -13,6 +14,8 @@ export interface ModuleHost {
  onBack: () => void;
  onHome: () => void;
  backLabel?: string;
+ /** Opt-in replacement for the card-detail action area; ordinary hosts omit it. */
+ cardActions?: ModuleCardActions;
  /** Explicit portal placement; absent preserves existing inline overlays. */
  overlays?: OverlayHostOptions;
  /** Omit to retain the ordinary host's viewport layout. */

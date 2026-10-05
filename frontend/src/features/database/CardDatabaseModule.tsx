@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useModuleHost, useModuleDetailHistory } from '../../modules/ModuleHost';
+import { renderModuleCardActions } from '../../modules/cardActions';
 
 import {
   buildFoilCardMapLookup,
@@ -75,7 +76,8 @@ function useDebounced<T>(value: T, delay = 250): T {
 
 export function useCardDatabaseController() {
   const { isMobile } = useLayoutMode();
-  const { isAdmin } = useModuleHost().identity;
+  const host = useModuleHost();
+  const { isAdmin } = host.identity;
   const { fetchCatalog, fetchCatalogFresh, fetchFoilCardMap, fetchSets, fetchSavedDatabaseViews } = useModuleHost().api;
   const queryClient = useQueryClient();
   const dbRef = useRef<HTMLDivElement>(null);
@@ -368,11 +370,11 @@ export function useCardDatabaseController() {
   const catalogError = (isAllTab ? allCatalogQuery.isError : catalogQuery.isError);
   const retryCatalog = () => { if (isAllTab) allCatalogQuery.retry(); else void catalogQuery.refetch(); };
 
-  return { catalogError, retryCatalog, isMobile, isAdmin, dbRef, typeTabsRef, tab, setTab, search, setSearch, setFilter, setSetFilter, page, setPage, selected, setSelectedCatalogType, filterRailCollapsed, setFilterRailCollapsed, mobileFilterPaneExpanded, setMobileFilterPaneExpanded, hasFoilFilter, setHasFoilFilter, hideAltsFilter, setHideAltsFilter, savedViewsOpen, setSavedViewsOpen, savedViewCreateRequest, activeSavedViewId, recallNotice, closeCardDetail, isAllTab, pageSize, activeCatalogType, detailCatalogType, dbvFilters, savedViews: { data: savedViewsQuery.data, isLoading: savedViewsQuery.isLoading, isError: savedViewsQuery.isError }, sets: setsQuery.data ?? [], foilLookup, setNameLookup, detailTypeCatalogCards, detailPrintingRows, viewPrintingInDetail, perTypeCards, filtered, pageGridCards, pageAllItems, isLoading, isError, detailCollectionType, selectCard, startSavedViewDraft, recallSavedView, savedViewsAtLimit, savedViewsTooltipId };
+  return { cardActions: host.cardActions, isGuest: host.identity.isGuest, catalogError, retryCatalog, isMobile, isAdmin, dbRef, typeTabsRef, tab, setTab, search, setSearch, setFilter, setSetFilter, page, setPage, selected, setSelectedCatalogType, filterRailCollapsed, setFilterRailCollapsed, mobileFilterPaneExpanded, setMobileFilterPaneExpanded, hasFoilFilter, setHasFoilFilter, hideAltsFilter, setHideAltsFilter, savedViewsOpen, setSavedViewsOpen, savedViewCreateRequest, activeSavedViewId, recallNotice, closeCardDetail, isAllTab, pageSize, activeCatalogType, detailCatalogType, dbvFilters, savedViews: { data: savedViewsQuery.data, isLoading: savedViewsQuery.isLoading, isError: savedViewsQuery.isError }, sets: setsQuery.data ?? [], foilLookup, setNameLookup, detailTypeCatalogCards, detailPrintingRows, viewPrintingInDetail, perTypeCards, filtered, pageGridCards, pageAllItems, isLoading, isError, detailCollectionType, selectCard, startSavedViewDraft, recallSavedView, savedViewsAtLimit, savedViewsTooltipId };
 }
 
 export function CardDatabaseView({ model }: { model: ReturnType<typeof useCardDatabaseController> }) {
- const { catalogError, retryCatalog, isMobile, isAdmin, dbRef, typeTabsRef, tab, setTab, search, setSearch, setFilter, setSetFilter, page, setPage, selected, setSelectedCatalogType, filterRailCollapsed, setFilterRailCollapsed, mobileFilterPaneExpanded, setMobileFilterPaneExpanded, hasFoilFilter, setHasFoilFilter, hideAltsFilter, setHideAltsFilter, savedViewsOpen, setSavedViewsOpen, savedViewCreateRequest, activeSavedViewId, recallNotice, closeCardDetail, isAllTab, pageSize, activeCatalogType, detailCatalogType, dbvFilters, savedViews, sets, foilLookup, setNameLookup, detailTypeCatalogCards, detailPrintingRows, viewPrintingInDetail, perTypeCards, filtered, pageGridCards, pageAllItems, isLoading, isError, detailCollectionType, selectCard, startSavedViewDraft, recallSavedView, savedViewsAtLimit, savedViewsTooltipId } = model;
+ const { cardActions, isGuest, catalogError, retryCatalog, isMobile, isAdmin, dbRef, typeTabsRef, tab, setTab, search, setSearch, setFilter, setSetFilter, page, setPage, selected, setSelectedCatalogType, filterRailCollapsed, setFilterRailCollapsed, mobileFilterPaneExpanded, setMobileFilterPaneExpanded, hasFoilFilter, setHasFoilFilter, hideAltsFilter, setHideAltsFilter, savedViewsOpen, setSavedViewsOpen, savedViewCreateRequest, activeSavedViewId, recallNotice, closeCardDetail, isAllTab, pageSize, activeCatalogType, detailCatalogType, dbvFilters, savedViews, sets, foilLookup, setNameLookup, detailTypeCatalogCards, detailPrintingRows, viewPrintingInDetail, perTypeCards, filtered, pageGridCards, pageAllItems, isLoading, isError, detailCollectionType, selectCard, startSavedViewDraft, recallSavedView, savedViewsAtLimit, savedViewsTooltipId } = model;
 
 
   return (
@@ -553,7 +555,7 @@ export function CardDatabaseView({ model }: { model: ReturnType<typeof useCardDa
         printings={detailPrintingRows}
         onApplyPrinting={viewPrintingInDetail}
         actions={
-          selected ? (
+          selected ? renderModuleCardActions(cardActions, { source: 'database', card: selected, catalogType: detailCatalogType, isGuest, close: closeCardDetail }, (
             <DbDetailActions
               card={selected}
               type={detailCatalogType}
@@ -561,7 +563,7 @@ export function CardDatabaseView({ model }: { model: ReturnType<typeof useCardDa
               catalogCards={detailTypeCatalogCards}
               foilLookup={foilLookup}
             />
-          ) : null
+          )) : null
         }
       />
 

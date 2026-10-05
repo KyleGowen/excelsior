@@ -1,0 +1,120 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "20500a779fca1a75ae8ebd0951f590faa357d639",
+  "backendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5179",
+    "apiUrl": "http://127.0.0.1:8090",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m4/cursored",
+    "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "sourceTreeFingerprint": "50fde696eb20a41abc3c7afcbf86c6b9fbd8d2b4959161f41245103fefd0a35a",
+    "expectedRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m5",
+    "verified": true,
+    "observedAt": "2026-10-05T14:25:13.789Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required",
+    "frontendSource": {
+      "root": "/Users/kyle/.codex/worktrees/m6-container-release/cursored",
+      "revision": "20500a779fca1a75ae8ebd0951f590faa357d639",
+      "branch": "codex/frontend-preparation-m6-theme",
+      "fingerprint": "588210f573d74890a470b5a1f2cfcfd075fde1e9404e4e5aa6dc547aa5e46c0d",
+      "listenerPid": 52314,
+      "sharedBackendInputs": "Identical committed and working backend/migrations/dependency manifests",
+      "proxyBackendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046"
+    },
+    "databaseOwnershipReceipt": "/private/tmp/excelsior-m6-theme/startup-shared/startup.json"
+  },
+  "viewport": "1280x720",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "default-database-card-actions",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "default-database-card-actions.jpg",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        }
+      ],
+      "observed": {
+        "defaultsPreserved": true,
+        "recordWrites": false
+      }
+    },
+    {
+      "id": "default-collection-card-actions",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "default-collection-card-actions.jpg",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        }
+      ],
+      "observed": {
+        "defaultsPreserved": true,
+        "recordWrites": false
+      }
+    },
+    {
+      "id": "default-deck-card-actions",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "default-deck-card-actions.jpg",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        }
+      ],
+      "observed": {
+        "defaultsPreserved": true,
+        "recordWrites": false
+      }
+    }
+  ],
+  "counts": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "browserErrors": 0,
+  "durationSeconds": 3.165,
+  "status": "passed",
+  "cleanup": "No application record writes; caller closes tab and resets viewport",
+  "acceptance": "Automated only; Kyle acceptance separate",
+  "gaps": [
+    "Real host login/identity mapping and mutation actions are not executed",
+    "Brand/icon/save feedback/full CSS containment remain open",
+    "Account and multiple-instance action isolation covered by fictional component tests"
+  ]
+}

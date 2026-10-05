@@ -1,0 +1,126 @@
+{
+  "frames": [
+    {
+      "name": "default-collection-card-actions.jpg",
+      "before": "before-defaults/default-collection-card-actions.jpg",
+      "after": "after-defaults/default-collection-card-actions.jpg",
+      "size": [
+        1280,
+        720
+      ],
+      "changedPixels": 0,
+      "above10": 0,
+      "bounds": null,
+      "maxChannel": 0
+    },
+    {
+      "name": "default-database-card-actions.jpg",
+      "before": "before-defaults/default-database-card-actions.jpg",
+      "after": "after-defaults/default-database-card-actions.jpg",
+      "size": [
+        1280,
+        720
+      ],
+      "changedPixels": 107,
+      "above10": 0,
+      "bounds": [
+        304,
+        64,
+        320,
+        88
+      ],
+      "maxChannel": 2
+    },
+    {
+      "name": "default-deck-card-actions.jpg",
+      "before": "before-defaults/default-deck-card-actions.jpg",
+      "after": "after-defaults/default-deck-card-actions.jpg",
+      "size": [
+        1280,
+        720
+      ],
+      "changedPixels": 0,
+      "above10": 0,
+      "bounds": null,
+      "maxChannel": 0
+    },
+    {
+      "name": "database-search-detail-detail.jpg",
+      "before": "before-routes/database-search-detail-detail.jpg",
+      "after": "after-routes/database-search-detail-detail.jpg",
+      "size": [
+        1280,
+        720
+      ],
+      "changedPixels": 0,
+      "above10": 0,
+      "bounds": null,
+      "maxChannel": 0
+    },
+    {
+      "name": "database-search-detail-empty.jpg",
+      "before": "before-routes/database-search-detail-empty.jpg",
+      "after": "after-routes/database-search-detail-empty.jpg",
+      "size": [
+        1280,
+        720
+      ],
+      "changedPixels": 291,
+      "above10": 73,
+      "bounds": [
+        511,
+        96,
+        528,
+        120
+      ],
+      "maxChannel": 119
+    },
+    {
+      "name": "database-search-detail-result.jpg",
+      "before": "before-routes/database-search-detail-result.jpg",
+      "after": "after-routes/database-search-detail-result.jpg",
+      "size": [
+        1280,
+        720
+      ],
+      "changedPixels": 0,
+      "above10": 0,
+      "bounds": null,
+      "maxChannel": 0
+    },
+    {
+      "name": "home-guest-result.jpg",
+      "before": "before-routes/home-guest-result.jpg",
+      "after": "after-routes/home-guest-result.jpg",
+      "size": [
+        1280,
+        720
+      ],
+      "changedPixels": 362,
+      "above10": 0,
+      "bounds": [
+        1224,
+        672,
+        1249,
+        705
+      ],
+      "maxChannel": 9
+    },
+    {
+      "name": "deck-readonly-draw-export-result.jpg",
+      "before": "before-routes/deck-readonly-draw-export-result.jpg",
+      "after": "after-routes/deck-readonly-draw-export-result.jpg",
+      "changedPixels": 817,
+      "above10": 0,
+      "bounds": [
+        608,
+        472,
+        760,
+        720
+      ],
+      "maxChannel": 6
+    }
+  ],
+  "review": "Four frames match exactly. Empty-search difference is the blinking caret at its text end. Other differences are small render/animation frames (max channels2/9/6) outside changed action content; no changed geometry, labels, card identity or derived values. Originals retained; random draw compositions are asserted by count, not screenshot identity.",
+  "automaticBaselineReplacement": false
+}

@@ -795,3 +795,8 @@ Native container mode uses the measured host width and local mobile/desktop clas
 The development harness exposes Excelsior defaults, Paper fixture (warm pale surfaces, dark text, Georgia,16px base,20px spacing token) and High contrast fixture (charcoal surfaces, white text, yellow accent, Arial,18px base,24px spacing token). These are fictional host fixtures, not a production light switch, accessibility certification or exact LRG match. Named Independent host stories cover each and two differently styled instances. Hard-coded component colors, global reset/ancestor selectors and root-relative sizing remain explicit M6 work; this visual port does not claim complete style isolation.
 
 The fixture control header stays in normal document flow and is capped at40vh (45vh on mobile) with its own vertical scrolling. Keeping it nonsticky prevents host configuration controls from covering centered Database/Collection click targets after page scrolling. This affects only the development harness.
+
+
+### M6 host-action fixture
+
+The local harness optionally replaces the card-detail action row with **Host card action**, **Sign in through host** (Guest only), and **Close through host**. These use existing ghost-button/row styling and demonstrate callbacks without signing in, navigating or changing records. Ordinary Excelsior omits this configuration and keeps its current detail buttons, labels, quantity controls, printing/pre-placement controls and branding. No new component, global style import, production sign-in screen or live rebrand is introduced. Named Independent host stories show Database Guest/account, Collection and read-only Deck states.

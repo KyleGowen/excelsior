@@ -1,4 +1,5 @@
 import { useModuleHost, useModuleDetailHistory } from '../../modules/ModuleHost';
+import { renderModuleCardActions } from '../../modules/cardActions';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
@@ -47,7 +48,8 @@ function useDebounced<T>(value: T, delay = 250): T {
 }
 
 export function useCollectionController() {
-  const { fetchCatalog, fetchSets } = useModuleHost().api;
+  const host = useModuleHost();
+  const { fetchCatalog, fetchSets } = host.api;
   const { isMobile } = useLayoutMode();
   const colRef = useRef<HTMLDivElement>(null);
   const typeTabsRef = useRef<HTMLDivElement>(null);
@@ -170,11 +172,11 @@ export function useCollectionController() {
   const catalogError = (isAllTab ? allCatalogQuery.isError : catalogQuery.isError) || collection.isError;
   const retryCatalog = () => { if (isAllTab) allCatalogQuery.retry(); else void catalogQuery.refetch(); collection.retry(); };
 
-  return { catalogError, retryCatalog, isMobile, colRef, typeTabsRef, collection, tab, setTab, search, setSearch, setFilter, setSetFilter, ownedOnly, setOwnedOnly, page, setPage, selected, setSelectedCatalogType, closeCardDetail, isAllTab, pageSize, activeCatalogType, activeCollectionType, sets: setsQuery.data ?? [], setNameLookup, filtered, pageGridCards, pageAllItems, isLoading, selectCard, quantityForItem };
+  return { cardActions: host.cardActions, isGuest: host.identity.isGuest, catalogError, retryCatalog, isMobile, colRef, typeTabsRef, collection, tab, setTab, search, setSearch, setFilter, setSetFilter, ownedOnly, setOwnedOnly, page, setPage, selected, setSelectedCatalogType, closeCardDetail, isAllTab, pageSize, activeCatalogType, activeCollectionType, sets: setsQuery.data ?? [], setNameLookup, filtered, pageGridCards, pageAllItems, isLoading, selectCard, quantityForItem };
 }
 
 export function CollectionView({ model }: { model: ReturnType<typeof useCollectionController> }) {
- const { catalogError, retryCatalog, isMobile, colRef, typeTabsRef, collection, tab, setTab, search, setSearch, setFilter, setSetFilter, ownedOnly, setOwnedOnly, page, setPage, selected, setSelectedCatalogType, closeCardDetail, isAllTab, pageSize, activeCatalogType, activeCollectionType, sets, setNameLookup, filtered, pageGridCards, pageAllItems, isLoading, selectCard, quantityForItem } = model;
+ const { cardActions, isGuest, catalogError, retryCatalog, isMobile, colRef, typeTabsRef, collection, tab, setTab, search, setSearch, setFilter, setSetFilter, ownedOnly, setOwnedOnly, page, setPage, selected, setSelectedCatalogType, closeCardDetail, isAllTab, pageSize, activeCatalogType, activeCollectionType, sets, setNameLookup, filtered, pageGridCards, pageAllItems, isLoading, selectCard, quantityForItem } = model;
 
 
   return (
@@ -333,7 +335,7 @@ export function CollectionView({ model }: { model: ReturnType<typeof useCollecti
         onClose={closeCardDetail}
         isFoil={selected ? isFoilCard(selected) : undefined}
         actions={
-          selected ? (
+          selected ? renderModuleCardActions(cardActions, { source: 'collection', card: selected, catalogType: activeCatalogType, isGuest, close: closeCardDetail }, (
             <div className="col__detail-qty">
               <span>In your collection</span>
               <QuantityStepper
@@ -342,7 +344,7 @@ export function CollectionView({ model }: { model: ReturnType<typeof useCollecti
                 onChange={(next) => void collection.setQuantity(selected, activeCollectionType, next)}
               />
             </div>
-          ) : null
+          )) : null
         }
       />
     </div>
