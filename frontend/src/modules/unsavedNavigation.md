@@ -1,0 +1,11 @@
+# Host-owned unsaved navigation preparation
+
+`ModuleHost.editing` is an optional lifecycle signal. Deck Builder registers only an editable dirty or saving state, before paint, and disposes it on state changes, readonly permissions or unmount. It sends no deck/session/player identifiers. Each registration has its own identity; multiple editors do not clear each other's state. The signal neither saves nor grants edit permission. Omitting it preserves ordinary Excelsior behavior.
+
+`createUnsavedNavigation` is a headless host fixture utility for explicit destinations. Clean navigation runs immediately; dirty/pending editors retain a destination until Stay cancels it or Discard continues. A pending save cannot be discarded. A newer edit after a save snapshot remains dirty; an actual current successful save clears it. A failed save retains the draft. Independent hosts have independent registries, snapshots and subscriptions.
+
+The local `ModuleHarness` opts in with **Use host unsaved policy**. It guards module selections, Back/Home/open-deck callbacks, deck/readonly controls, disabling the policy, and configuration changes that introduce/remove layout/appearance wrappers. It resets the editor on explicit discard so returning reads persisted data. The prompt reuses `SlideOutPanel` in its own host root, with focus/Escape/Tab behavior and existing button styles. The `UnsavedHostReturn` Storybook example uses fictional MSW data; its play function has not been separately run.
+
+Hosts must protect *every* destination that can remove an editor, and keep identity/cache lifetimes separate. This port does not intercept a host's router, native popstate/Back, reload, tab close or external links. Those require a host-specific adapter and future browser verification. The native-route fixture remains readonly. Do not claim a global navigation guarantee, whole M6 completion, real account persistence or external-host integration from this slice. No automatic save or production mutation is authorized.
+
+Live tests are in `tests/browser/milestone6-unsaved.mjs`: real disposable local Guest copies, desktop/mobile, Stay/Escape/discard/remount, delayed real save/clean return, injected rejection and exact cleanup. Component tests separately cover pending/newer edits, lifecycle, readonly and independent registries.

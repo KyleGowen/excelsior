@@ -23,3 +23,6 @@ c573976ae805131a26217734c2b0ae82346c6e67:tests/integration/api-v1/v1-api.integra
 
 # Exact historical false positive: verified SHA256 of the candidate input source, not a credential.
 e07efc2a39dd044f20037a2cfa608302bc15972e:docs/evidence/frontend-preparation/m4/candidates/verification.json:generic-api-key:19
+
+# Exact historical false positive: apiRevision is the verified backend Git commit SHA.
+9408cfe7cc2a19c9dfb28ad05c8ad779e5deb441:docs/evidence/frontend-preparation/m6/container/verification.json:generic-api-key:8

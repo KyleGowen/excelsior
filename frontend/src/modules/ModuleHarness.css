@@ -30,3 +30,6 @@
 .module-harness__save-feedback { padding: 0.25rem 0.5rem; border: 1px solid currentColor; border-radius: 0.375rem; font-size: 0.875rem; }
 
 .module-route-harness nav a { display: inline-block; padding: 6px 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+
+.module-harness__unsaved-root { position: relative; z-index: var(--z-modal); }
+.module-harness__unsaved-root .slideout__body button { margin-right: var(--space-3); }

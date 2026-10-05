@@ -808,3 +808,5 @@ Independent module hosts may supply `chrome.brand` and `icons.render`. The brand
 Host save-feedback preparation: optional trusted presentation follows the existing mobile save group and desktop result location. Omission retains Excelsior labels, controls and the 2.5-second saved-result lifetime; configured host pending/error/success decoration is fictional and does not change persistence or permissions. See `frontend/src/modules/saveFeedback.md`.
 
 M6 native route preparation adds development-only fictional host links, current-path and detail-history feedback. Reuses module styles and fixed dark appearance; ordinary Excelsior navigation/branding/styles stay the compatibility baseline. Native-route fixture styles are scoped under `.module-route-harness`; broader CSS containment remains open.
+
+The fictional module host may opt into an unsaved-return prompt. Reuse SlideOutPanel, existing secondary/danger buttons and its separate host overlay root; Stay/Escape retains edits, discard requires a completed save. Ordinary Excelsior host styling and behavior remain the baseline.

@@ -230,3 +230,5 @@ The three independent modules accept `ModuleHost.cardActions` for host-supplied 
 The next M6 save-feedback slice adds optional pure host result presentation; it does not provide persistence callbacks or change authorization. Guest mutation metadata merges preserve full-read ownership fields unless explicitly replaced by server evidence. Development-only delayed/rejected modes test presentation; ordinary hosts retain current feedback. See `frontend/src/modules/saveFeedback.md`.
 
 The development-only native route fixture under `/fictional-host` reuses independent modules through host-owned BrowserRouter links/history. See `frontend/src/modules/NativeRouteHarness.md`; ordinary Excelsior routes/build entry remain unchanged.
+
+The fictional local module harness offers opt-in unsaved-return protection using the host editing lifecycle port. See `frontend/src/modules/unsavedNavigation.md`; ordinary hosts omit the port and retain their defaults. Browser history/reload/external destinations require future host adapters.

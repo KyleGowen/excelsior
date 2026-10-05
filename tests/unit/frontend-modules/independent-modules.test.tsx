@@ -2,6 +2,7 @@
 import { act, type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { NativeRouteHarness } from '../../../frontend/src/modules/NativeRouteHarness';
+import { createUnsavedNavigation } from '../../../frontend/src/modules/unsavedNavigation';
 import { nativeDeckPath } from '../../../frontend/src/modules/nativeHostRoutes';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -424,4 +425,17 @@ it('preserves the same nested browse path while detail history opens and closes'
  await act(async () => close.click()); await wait();
  expect(container.querySelector('[role="dialog"]')).toBeNull();
  expect(container.querySelector('[aria-label="Host route"]')?.textContent).toBe('/tools/cards');
+});
+
+it('publishes editable dirty state to its host and disposes the signal on unmount', async () => {
+ installSaveFixture(); const guard=createUnsavedNavigation();host.editing={register:guard.register};await mount(<DeckBuilderModule deckId="guest_fictional" />);expect(guard.getSnapshot().dirty).toBe(0);await changeDeckName('Fictional draft');expect(guard.getSnapshot().dirty).toBe(1);await mount(null);expect(guard.getSnapshot()).toMatchObject({dirty:0,saving:0});expect(host.api.updateDeckMeta).not.toHaveBeenCalled();
+});
+it('keeps newer edits dirty after a pending save completes and clears only a current successful save', async () => {
+ const mutation=installSaveFixture();const guard=createUnsavedNavigation();host.editing={register:guard.register};let finish!:(value:any)=>void;host.api.updateDeckMeta=jest.fn(()=>new Promise(resolve=>{finish=resolve;}));await mount(<DeckBuilderModule deckId="guest_fictional" />);await changeDeckName('Captured draft');await clickSave();expect(guard.getSnapshot()).toMatchObject({dirty:1,saving:1});await changeDeckName('Newer draft');await act(async()=>finish(mutation()));await wait();expect(guard.getSnapshot()).toMatchObject({dirty:1,saving:0});await clickSave();await act(async()=>finish(mutation()));await wait();expect(guard.getSnapshot()).toMatchObject({dirty:0,saving:0});
+});
+it('keeps failed saves dirty and removes editing signals when permission becomes readonly', async () => {
+ installSaveFixture();const guard=createUnsavedNavigation();host.editing={register:guard.register};host.api.updateDeckMeta=jest.fn(async()=>{throw Error('Fictional failure');});await mount(<DeckBuilderModule deckId="guest_fictional" />);await changeDeckName('Retained draft');await clickSave();expect(guard.getSnapshot()).toMatchObject({dirty:1,saving:0});await mount(<DeckBuilderModule deckId="guest_fictional" readonly />);expect(guard.getSnapshot()).toMatchObject({dirty:0,saving:0});
+});
+it('never registers editing for readonly views or creates persistence through the edit-state port', async () => {
+ installSaveFixture();const register=jest.fn(()=>jest.fn());host.editing={register};await mount(<DeckBuilderModule deckId="guest_fictional" readonly />);expect(register).not.toHaveBeenCalled();expect(host.api.updateDeckMeta).not.toHaveBeenCalled();expect(host.api.replaceDeckCards).not.toHaveBeenCalled();
 });

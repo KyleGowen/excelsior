@@ -82,3 +82,5 @@ The development harness **Use host brand and icons** uses a fictional diamond an
 ## Native route fixture
 
 The development-only [fictional native host](NativeRouteHarness.md) demonstrates nested BrowserRouter paths and detail-history adaptation outside modules. Open `/fictional-host/tools/cards` on the identified local preview; public decks remain read-only. Reload/Back/Forward evidence is for Vite development only. Unsaved-edit routing, real identity and production server fallbacks remain open.
+
+Optional `editing` lifecycle and the fictional explicit-navigation policy are documented in [unsavedNavigation.md](unsavedNavigation.md). Router popstate/reload/external navigation guards remain a host-specific requirement; this preparation does not supply them.

@@ -1,0 +1,32 @@
+{
+  "initial": {
+    "status": "failed",
+    "test": "Stateless candidate evaluation HTTP limits candidate requests separately",
+    "file": "tests/unit/api/http/deck-evaluation.http.test.ts",
+    "expected": 200,
+    "actual": 404,
+    "passed": 3874,
+    "failed": 1,
+    "skipped": 18
+  },
+  "source": "test and backend source unchanged in this slice",
+  "isolatedRetry": {
+    "status": "passed",
+    "passed": 12,
+    "suites": 1
+  },
+  "sameInputBroadRetry": {
+    "status": "passed",
+    "counts": {
+      "suites": 333,
+      "tests": 3893,
+      "passed": 3875,
+      "failed": 0,
+      "skipped": 18,
+      "todo": 0
+    },
+    "inputFingerprint": "59d268bc75944438eba21a3c1b1d42cb5996d1b1ec968e95e6f238d4b7264053",
+    "logSha256": "469270fc5cbbaef7814e70c36ee7e4abeecc09ae4133c3450e14e76c674b3067"
+  },
+  "cause": "unconfirmed; raw failed and retry logs retained privately; no production code changed for recovery"
+}

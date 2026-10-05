@@ -1,0 +1,81 @@
+{
+  "status": "Kyle accepted identified5184preview; release verification pending",
+  "frontend": {
+    "revision": "9647031e4ff7bb140a534c2ace582ddd7a406f0a",
+    "state": "uncommitted unsaved host policy",
+    "url": "http://127.0.0.1:5184/module-harness.html"
+  },
+  "backend": {
+    "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "api": "8090",
+    "database": "Docker15442/V365; startup ownership verified"
+  },
+  "browser": {
+    "passed": 9,
+    "errors": 0,
+    "desktop": 3,
+    "mobile": 3,
+    "backFocusGuardBypass": 1,
+    "ordinary": 2,
+    "actor": "Guest",
+    "theme": "fixed dark",
+    "writes": "only run-owned disposable copies; source and existing inventory preserved"
+  },
+  "component": {
+    "passed": 78,
+    "suites": 5,
+    "kind": "fictional jsdom; not live browser"
+  },
+  "gates": {
+    "build": "passed",
+    "storybook": "passed; named UnsavedHostReturn; play not independently run",
+    "lint": "passed",
+    "knip": "passed",
+    "finalUnit": {
+      "status": "passed",
+      "passed": 3875,
+      "skipped": 18,
+      "failed": 0,
+      "suites": 333,
+      "sourceRevision": "9647031e4ff7bb140a534c2ace582ddd7a406f0a",
+      "inputFingerprint": "59d268bc75944438eba21a3c1b1d42cb5996d1b1ec968e95e6f238d4b7264053",
+      "evidence": "unit-recovery.json"
+    }
+  },
+  "cleanup": {
+    "automatedCopiesDeleted": 5,
+    "reads": "404 for every owned copy; exact existing inventory preserved",
+    "handoffCopiesRetained": 1,
+    "ownership": "private exact manifest; no session identifiers in repository",
+    "viewport": "reset",
+    "production": "unchanged"
+  },
+  "gaps": [
+    "native popstate/reload/tab-close/external links not guarded or verified",
+    "real account/host/full CSS open",
+    "M7/M8 not started",
+    "no commit/push/production tests of this slice",
+    "commit/deployment/production verification pending"
+  ],
+  "retainedFailures": [
+    "startup runtime PATH missing; same verification passed with configured installed paths",
+    "deferred component fixture corrected;78passed",
+    "first mobile run1280x720 excluded",
+    "retained injected rejection blocked clone setup; readonly/API setup reset; fresh actual mobile passed",
+    "unchanged backend candidate rate-limit unit expected200 received404 once; isolated12cases and same-input broad3875cases passed; initial cause unconfirmed"
+  ],
+  "comparison": "detail0pixels; artwork-only result996/deck152differences; cause unconfirmed; no baseline overwrite",
+  "finalStyleVerification": "desktop Stay plus actual390x844mobile controls/Stay/discard/remount passed after button styles; same handoff copy reused",
+  "handoff": {
+    "url": "http://127.0.0.1:5184/module-harness.html",
+    "screenshot": "handoff.jpg",
+    "kind": "manual presentation plus automated Stay/discard assertions; owned Guest copy retained",
+    "ChromeSetup": "Enter public fictional fixture b4ec3a04-ab17-4a33-b813-df35f8195d75, select Deck Builder, enable host unsaved policy, uncheck readonly; creates only a local Guest copy"
+  },
+  "acceptance": {
+    "date": "2026-10-05",
+    "preview": "5184",
+    "statement": "5184 looks good to me",
+    "authority": "standing milestone Ship workflow"
+  }
+}

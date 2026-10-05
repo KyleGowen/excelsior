@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "desktopStay": true,
+  "mobileStayDiscardRemount": true,
+  "actualMobile": {
+    "buttons": [
+      {
+        "label": "Close panel",
+        "left": 336,
+        "right": 370
+      },
+      {
+        "label": "Stay",
+        "left": 20,
+        "right": 90.28125
+      },
+      {
+        "label": "Discard and continue",
+        "left": 102.28125,
+        "right": 278.125
+      }
+    ],
+    "height": 844,
+    "width": 390
+  },
+  "recordsChanged": false
+}

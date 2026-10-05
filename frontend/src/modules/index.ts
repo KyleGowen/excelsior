@@ -15,3 +15,6 @@ export type { ModuleCardActions, ModuleCardActionContext, ModuleAuthenticationRe
 export type { ModuleIconOptions, UIIconName, UIIconContext } from '../lib/icons/uiIconOverrides';
 
 export type { ModuleSaveFeedback, ModuleSaveFeedbackContext } from './saveFeedback';
+
+export type { ModuleDeckEditState, ModuleEditingPort } from './unsavedNavigation';
+export { createUnsavedNavigation } from './unsavedNavigation';

@@ -1,0 +1,5 @@
+# M6 explicit unsaved host preparation evidence
+
+Original behavior, final desktop/mobile, Back/focus, ordinary-route compatibility and exact cleanup are separate. No private Guest IDs, cookies or raw DOM are copied here. The mislabeled first mobile report stays private with its limitation; it used1280×720 and is not mobile proof. `mobile-verified` retains the rejected-save clone setup failure; `mobile-final` uses a fresh reset fixture at actual390×844. Private full logs retain startup PATH and deferred-test-fixture failures.
+
+The ordinary detail screenshot is pixel-identical to5183. Two other captures differ only within artwork (996/152pixels); controls/layout/metrics were reviewed, cause unconfirmed, baselines retained. New prompt visuals have no prior counterpart; the behavioral baseline is an actual lost draft. Fictional component/MSW tests are not live browser runs. Storybook build passed; play execution is unverified. Kyle5184acceptance, shipping, production mutation/account/history/reload/full CSS verification remain outside this evidence.

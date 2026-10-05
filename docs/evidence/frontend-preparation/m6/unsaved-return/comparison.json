@@ -1,0 +1,23 @@
+[
+  {
+    "case": "database detail",
+    "sameDimensions": true,
+    "changedPixels": 0,
+    "identical": true,
+    "baselineOverwrite": false
+  },
+  {
+    "case": "database results",
+    "sameDimensions": true,
+    "changedPixels": 996,
+    "identical": false,
+    "baselineOverwrite": false
+  },
+  {
+    "case": "readonly deck",
+    "sameDimensions": true,
+    "changedPixels": 152,
+    "identical": false,
+    "baselineOverwrite": false
+  }
+]

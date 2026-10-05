@@ -1,8 +1,9 @@
-import { Fragment, createElement, createContext, useContext, useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { Fragment, createElement, createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
 import type { AppUser } from '../lib/api/types';
 import type { ModuleApi } from './api';
 import type { ModuleCardActions } from './cardActions';
 import type { ModuleSaveFeedback } from './saveFeedback';
+import type { ModuleEditingPort } from './unsavedNavigation';
 import { UIIconOverridesContext, type ModuleIconOptions } from '../lib/icons/uiIconOverrides';
 import { ModuleAppearanceBoundary, type ModuleAppearanceOptions } from './ModuleAppearanceBoundary';
 import { ContainerLayoutModeProvider, type ContainerLayoutOptions } from '../lib/layout/ContainerLayoutModeProvider';
@@ -20,6 +21,8 @@ export interface ModuleHost {
  cardActions?: ModuleCardActions;
  /** Optional result/pending presentation; never controls persistence or permissions. */
  saveFeedback?: ModuleSaveFeedback;
+ /** Optional lifecycle signal. The host guards every navigation path and owns discard UI. */
+ editing?: ModuleEditingPort;
  /** Decorative UI controls only; omitted preserves ordinary Excelsior SVGs. */
  icons?: ModuleIconOptions;
  /** Explicit portal placement; absent preserves existing inline overlays. */
@@ -56,4 +59,12 @@ export function useModuleDetailHistory(open: boolean, onClose: () => void, state
   return () => controller.detach();
  }, [controller, open]);
  return { close: () => controller ? controller.close() : closeRef.current() };
+}
+
+/** Publish only editable dirty/pending state; independent mounts register and dispose independently. */
+export function useModuleEditingState(editable: boolean, dirty: boolean, saving: boolean) {
+ const register = useModuleHost().editing?.register;
+ useLayoutEffect(() => {
+  if (register && editable && (dirty || saving)) return register({ dirty, saving });
+ }, [register, editable, dirty, saving]);
 }
