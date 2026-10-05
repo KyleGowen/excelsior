@@ -1,5 +1,6 @@
 import { http, HttpResponse, delay } from 'msw';
 import { useState } from 'react';
+import { userEvent } from 'storybook/test';
 import { OverlayHostProvider } from '../lib/layout/OverlayHostProvider';
 import { SlideOutPanel } from '../components/SlideOutPanel';
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -65,3 +66,9 @@ export const HostBrandIcons: Story = { args: { user: null, initialHostIcons: tru
 export const HostCollectionIcons: Story = { args: { user: null, initialHostIcons: true }, ...CollectionAlone };
 export const HostDeckIcons: Story = { args: { user: null, initialHostIcons: true }, ...DeckBuilderAlone };
 export const IndependentHostIcons: Story = { render: () => <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}><ModuleHarness user={null} initialHostIcons initialContainerLayout /><ModuleHarness user={null} initialContainerLayout /></div> };
+
+
+/** Fictional host presentation uses the actual save controller; network handlers remain mocked. */
+export const HostSaveFeedbackSaved: Story = { args: { initialReadonly: false, initialHostSaveFeedback: true }, play: async ({ canvas }) => { (await canvas.findByRole('button', { name: 'Deck Builder module' })).click(); const input = await canvas.findByRole('textbox', { name: 'Deck name' }); await userEvent.clear(input); await userEvent.type(input, 'Fictional saved deck'); await userEvent.click(await canvas.findByRole('button', { name: 'Save' })); await canvas.findByRole('status', { name: 'Host save feedback' }); } };
+export const HostSaveFeedbackPending: Story = { ...HostSaveFeedbackSaved, args: { initialReadonly: false, initialHostSaveFeedback: true, initialSaveFixtureMode: 'delayed' } };
+export const HostSaveFeedbackRejected: Story = { ...HostSaveFeedbackSaved, args: { initialReadonly: false, initialHostSaveFeedback: true, initialSaveFixtureMode: 'rejected' }, play: async ({ canvas }) => { (await canvas.findByRole('button', { name: 'Deck Builder module' })).click(); const input = await canvas.findByRole('textbox', { name: 'Deck name' }); await userEvent.clear(input); await userEvent.type(input, 'Fictional rejected deck'); await userEvent.click(await canvas.findByRole('button', { name: 'Save' })); await canvas.findByRole('alert', { name: 'Host save feedback' }); } };

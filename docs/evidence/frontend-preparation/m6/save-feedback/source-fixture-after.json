@@ -1,0 +1,15 @@
+{
+  "name": "Milestone 3 Local Fixture",
+  "counts": {
+    "physicalPlayable": 8,
+    "drawPile": 8,
+    "prePlaced": 0,
+    "exportCards": 8
+  },
+  "threat": {
+    "editor": 18,
+    "legality": 18
+  },
+  "limited": true,
+  "ownership": "original local DB fixture untouched; only owned Guest session copies saved"
+}

@@ -1,0 +1,27 @@
+{
+  "environment": "local",
+  "frontendRevision": "b03ec65eca172f1d6aeabffc20dfe7e9c3084e61",
+  "actor": "Guest",
+  "ownedFixture": "new session-only Guest copy of fictional local deck",
+  "scenarios": [
+    {
+      "id": "default-save-success",
+      "status": "passed",
+      "savedText": "Saved"
+    },
+    {
+      "id": "repeated-guest-save-keeps-owner-controls",
+      "status": "failed",
+      "reason": "successful name save replaces full cached metadata; Deck name and Save removed, Read-only appears"
+    }
+  ],
+  "viewport": "1280x720",
+  "screenshot": "owner-controls-lost-module.jpg",
+  "crop": {
+    "height": 416,
+    "width": 1248,
+    "x": 16,
+    "y": 304
+  },
+  "privacy": "module-only capture excludes session-derived Guest identifier; raw capture/IDs remain private"
+}

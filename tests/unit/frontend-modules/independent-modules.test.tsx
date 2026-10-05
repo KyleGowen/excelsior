@@ -10,6 +10,7 @@ import { evaluationInputKey } from '../../../src/services/deck-evaluation/draftI
 import { IconDatabase, IconSearch, IconHeart } from '../../../frontend/src/components/icons';
 import type { UIIconContext } from '../../../frontend/src/modules';
 import type { ModuleApi } from '../../../frontend/src/modules/api';
+import { renderModuleSaveFeedback, type ModuleSaveFeedbackContext } from '../../../frontend/src/modules/saveFeedback';
 
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
@@ -253,4 +254,129 @@ it('carries host icon context to an external detail portal and removes owned nod
   await mount(null);
   expect(portal.children).toHaveLength(0);
  } finally { portal.remove(); }
+});
+
+
+const changeDeckName = async (name: string) => {
+ const input = container.querySelector('[aria-label="Deck name"]') as HTMLInputElement;
+ expect(input).not.toBeNull();
+ await act(async () => { Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, name); input.dispatchEvent(new Event('input', { bubbles: true })); });
+};
+const clickSave = async () => {
+ const button = [...container.querySelectorAll('button')].find(b => b.textContent?.trim() === 'Save')!;
+ expect(button).toBeDefined(); expect(button.disabled).toBe(false);
+ await act(async () => button.click()); await wait();
+};
+const installSaveFixture = () => {
+ const source = JSON.parse(JSON.stringify(sampleDeck));
+ host.api.fetchDeckFull = jest.fn(async () => source);
+ const mutation = () => { const value = JSON.parse(JSON.stringify(source)); delete value.metadata.isOwner; return value; };
+ host.api.updateDeckMeta = jest.fn(async (_id, input) => ({ ...mutation(), metadata: { ...mutation().metadata, ...input } }));
+ host.api.replaceDeckCards = jest.fn(async () => mutation());
+ return mutation;
+};
+it('keeps default/undefined feedback and permits null without exposing additional fields', () => {
+ const context = { status: 'saved' as const, message: 'Saved', newerEditsPending: false, privateIdentity: 'fictional' };
+ const render = jest.fn(() => undefined);
+ expect(renderModuleSaveFeedback(undefined, context, 'default')).toBe('default');
+ expect(renderModuleSaveFeedback({ render }, context, 'default')).toBe('default');
+ expect(render.mock.calls[0]).toEqual([{ status: 'saved', message: 'Saved', newerEditsPending: false }]);
+ expect(renderModuleSaveFeedback({ render: () => null }, context, 'default')).toBeNull();
+ expect(renderModuleSaveFeedback({ render }, null, 'default')).toBe('default');
+});
+it('preserves full-read ownership after Guest metadata mutations and supports repeated saves', async () => {
+ installSaveFixture(); await mount(<DeckBuilderModule deckId="guest_fictional" />);
+ await changeDeckName('Fictional saved name'); await clickSave();
+ expect(container.querySelector('[aria-label="Deck name"]')).not.toBeNull();
+ expect(container.textContent).toContain('Saved');
+ expect(client.getQueryData<any>(['deck', 'guest_fictional']).metadata.isOwner).toBe(true);
+ await changeDeckName('Fictional second save'); await clickSave();
+ expect(host.api.updateDeckMeta).toHaveBeenCalledTimes(2);
+ expect(host.api.replaceDeckCards).toHaveBeenCalledTimes(2);
+ expect(container.querySelector('[aria-label="Deck name"]')).not.toBeNull();
+});
+it('honors an explicit ownership field rather than inferring it from a Guest identifier', async () => {
+ const mutation = installSaveFixture();
+ host.api.updateDeckMeta = jest.fn(async () => ({ ...mutation(), metadata: { ...mutation().metadata, isOwner: false } }));
+ await mount(<DeckBuilderModule deckId="guest_fictional" />); await changeDeckName('Fictional ownership update'); await clickSave();
+ expect(client.getQueryData<any>(['deck', 'guest_fictional']).metadata.isOwner).toBe(false);
+ expect(container.querySelector('[aria-label="Deck name"]')).toBeNull();
+});
+it('renders actual pending/saved state and retains edits newer than the save snapshot', async () => {
+ const mutation = installSaveFixture(); let finish!: (value: any) => void;
+ host.api.updateDeckMeta = jest.fn(() => new Promise(resolve => { finish = resolve; }));
+ const states: ModuleSaveFeedbackContext[] = [];
+ host.saveFeedback = { render: context => { states.push(context); return <span data-feedback={context.status}>{context.message}</span>; } };
+ await mount(<DeckBuilderModule deckId="guest_fictional" />); await changeDeckName('Captured name'); await clickSave();
+ expect(container.querySelector('[data-feedback="saving"]')).not.toBeNull();
+ expect([...container.querySelectorAll('button')].find(b => b.textContent?.trim() === 'Saving...')?.disabled).toBe(true);
+ await changeDeckName('Newer name'); expect(states.at(-1)?.newerEditsPending).toBe(true);
+ await act(async () => finish({ ...mutation(), metadata: { ...mutation().metadata, name: 'Captured name' } })); await wait();
+ expect(container.querySelector('[data-feedback="saved"]')?.textContent).toBe('Saved; newer edits pending');
+ expect((container.querySelector('[aria-label="Deck name"]') as HTMLInputElement).value).toBe('Newer name');
+ expect([...container.querySelectorAll('button')].find(b => b.textContent?.trim() === 'Save')?.disabled).toBe(false);
+});
+it('renders a rejection while preserving unsaved edits and the ordinary retry control', async () => {
+ installSaveFixture(); host.api.updateDeckMeta = jest.fn(async () => { throw new Error('Fictional failure'); });
+ host.saveFeedback = { render: context => <span role="alert" data-feedback={context.status}>{context.message}</span> };
+ await mount(<DeckBuilderModule deckId="guest_fictional" />); await changeDeckName('Unsaved name'); await clickSave();
+ expect(container.querySelector('[data-feedback="error"]')?.textContent).toBe('Fictional failure');
+ expect((container.querySelector('[aria-label="Deck name"]') as HTMLInputElement).value).toBe('Unsaved name');
+ expect([...container.querySelectorAll('button')].find(b => b.textContent?.trim() === 'Save')?.disabled).toBe(false);
+ expect(host.api.replaceDeckCards).not.toHaveBeenCalled();
+});
+it('changes feedback presentation without remounting the editor or repeating save operations', async () => {
+ installSaveFixture(); host.saveFeedback = { render: c => <span data-feedback="first">{c.message}</span> };
+ await mount(<DeckBuilderModule deckId="guest_fictional" />); await changeDeckName('Saved name'); await clickSave();
+ const input = container.querySelector('[aria-label="Deck name"]');
+ host = { ...host, saveFeedback: { render: c => <span data-feedback="second">{c.message}</span> } };
+ await mount(<DeckBuilderModule deckId="guest_fictional" />);
+ expect(container.querySelector('[aria-label="Deck name"]')).toBe(input);
+ expect(container.querySelector('[data-feedback="second"]')).not.toBeNull();
+ expect(host.api.updateDeckMeta).toHaveBeenCalledTimes(1); expect(host.api.replaceDeckCards).toHaveBeenCalledTimes(1);
+});
+it('never grants read-only modules Save through host feedback configuration', async () => {
+ installSaveFixture(); const render = jest.fn(() => <button>Unauthorized save fixture</button>); host.saveFeedback = { render };
+ await mount(<DeckBuilderModule deckId="guest_fictional" readonly />);
+ expect(container.querySelector('[aria-label="Deck name"]')).toBeNull(); expect(render).not.toHaveBeenCalled();
+ expect(host.api.updateDeckMeta).not.toHaveBeenCalled(); expect(host.api.replaceDeckCards).not.toHaveBeenCalled();
+});
+it('does not create a feedback-expiration timer after an in-flight module unmount', async () => {
+ const mutation = installSaveFixture(); let finish!: (value: any) => void;
+ host.api.updateDeckMeta = jest.fn(() => new Promise(resolve => { finish = resolve; }));
+ await mount(<DeckBuilderModule deckId="guest_fictional" />); await changeDeckName('Captured name'); await clickSave();
+ await mount(null); const timers = jest.spyOn(globalThis, 'setTimeout');
+ await act(async () => finish(mutation())); await wait();
+ expect(timers.mock.calls.some(call => call[1] === 2500)).toBe(false); timers.mockRestore();
+});
+
+
+it('never exposes preloaded source ownership while a Guest clone is pending', async () => {
+ installSaveFixture(); host.identity = { user: { id: 'fictional-guest', username: 'Fictional Guest', email: null, role: 'GUEST' }, isGuest: true, isAdmin: false };
+ host.api.createDeck = jest.fn(() => new Promise(() => {}));
+ await mount(<DeckBuilderModule deckId="fictional-source" readonly />);
+ let exposedOwnerInput = false;
+ const observer = new MutationObserver(records => { for (const record of records) for (const node of record.addedNodes) {
+  if (node instanceof Element && (node.matches('[aria-label="Deck name"]') || node.querySelector('[aria-label="Deck name"]'))) exposedOwnerInput = true;
+ } });
+ observer.observe(container, { childList: true, subtree: true });
+ await mount(<DeckBuilderModule deckId="fictional-source" />); await wait(); observer.disconnect();
+ expect(exposedOwnerInput).toBe(false);
+ expect(container.querySelector('[aria-label="Deck name"]')).toBeNull();
+ expect(container.textContent).toContain('Preparing deck...');
+ expect(host.api.updateDeckMeta).not.toHaveBeenCalled();
+ expect(host.api.replaceDeckCards).not.toHaveBeenCalled();
+});
+
+
+it('keeps save-result presentation and mutations isolated between independent hosts', async () => {
+ installSaveFixture(); const left = { ...host, saveFeedback: { render: (c: ModuleSaveFeedbackContext) => <span data-feedback="left">{c.message}</span> } };
+ const right = { ...host, api: { ...host.api, updateDeckMeta: jest.fn(host.api.updateDeckMeta), replaceDeckCards: jest.fn(host.api.replaceDeckCards) }, saveFeedback: { render: (c: ModuleSaveFeedbackContext) => <span data-feedback="right">{c.message}</span> } };
+ await mount(<><section data-host="left"><ModuleHostProvider host={left}><DeckBuilderModule deckId="guest_left" /></ModuleHostProvider></section><section data-host="right"><ModuleHostProvider host={right}><DeckBuilderModule deckId="guest_right" /></ModuleHostProvider></section></>);
+ const untouched = (container.querySelector('[data-host="right"] [aria-label="Deck name"]') as HTMLInputElement).value;
+ await changeDeckName('Independent left saved'); await clickSave();
+ expect(container.querySelector('[data-feedback="left"]')?.textContent).toBe('Saved');
+ expect(container.querySelector('[data-feedback="right"]')).toBeNull();
+ expect((container.querySelector('[data-host="right"] [aria-label="Deck name"]') as HTMLInputElement).value).toBe(untouched);
+ expect(right.api.updateDeckMeta).not.toHaveBeenCalled(); expect(right.api.replaceDeckCards).not.toHaveBeenCalled();
 });

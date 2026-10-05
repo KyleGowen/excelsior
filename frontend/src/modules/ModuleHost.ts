@@ -2,6 +2,7 @@ import { Fragment, createElement, createContext, useContext, useEffect, useMemo,
 import type { AppUser } from '../lib/api/types';
 import type { ModuleApi } from './api';
 import type { ModuleCardActions } from './cardActions';
+import type { ModuleSaveFeedback } from './saveFeedback';
 import { UIIconOverridesContext, type ModuleIconOptions } from '../lib/icons/uiIconOverrides';
 import { ModuleAppearanceBoundary, type ModuleAppearanceOptions } from './ModuleAppearanceBoundary';
 import { ContainerLayoutModeProvider, type ContainerLayoutOptions } from '../lib/layout/ContainerLayoutModeProvider';
@@ -17,6 +18,8 @@ export interface ModuleHost {
  backLabel?: string;
  /** Opt-in replacement for the card-detail action area; ordinary hosts omit it. */
  cardActions?: ModuleCardActions;
+ /** Optional result/pending presentation; never controls persistence or permissions. */
+ saveFeedback?: ModuleSaveFeedback;
  /** Decorative UI controls only; omitted preserves ordinary Excelsior SVGs. */
  icons?: ModuleIconOptions;
  /** Explicit portal placement; absent preserves existing inline overlays. */

@@ -13,3 +13,5 @@ export type { ModuleAppearanceOptions, ModuleThemeToken } from './ModuleAppearan
 export type { ModuleCardActions, ModuleCardActionContext, ModuleAuthenticationRequest, ModuleCardSource } from './cardActions';
 
 export type { ModuleIconOptions, UIIconName, UIIconContext } from '../lib/icons/uiIconOverrides';
+
+export type { ModuleSaveFeedback, ModuleSaveFeedbackContext } from './saveFeedback';

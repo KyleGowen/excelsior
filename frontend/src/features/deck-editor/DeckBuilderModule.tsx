@@ -3,6 +3,7 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState, lazy, Susp
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useModuleHost, useModuleDetailHistory } from '../../modules/ModuleHost';
 import { renderModuleCardActions } from '../../modules/cardActions';
+import { renderModuleSaveFeedback, type ModuleSaveFeedbackContext } from '../../modules/saveFeedback';
 import { type DeckCardInput, type UpdateDeckMetaInput } from '../../lib/api/decks';
 
 
@@ -294,7 +295,7 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
   });
 
   const deck = deckQuery.data;
-  const isOwner = Boolean(deck?.metadata.isOwner) && !forceReadonly;
+  const isOwner = Boolean(deck?.metadata.isOwner) && !forceReadonly && !needsGuestClone && !guestCloning;
   // A real (non-guest) user can favorite any deck that isn't their own.
   const canFavorite =
     Boolean(user) && !isGuest && Boolean(deck) && deck?.metadata.userId !== user?.id;
@@ -314,6 +315,11 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
+  const [saveResult, setSaveResult] = useState<{ status: 'saved' | 'error'; newerEditsPending: boolean } | null>(null);
+  const saveMessageTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const feedbackMounted = useRef(true);
+  const activeSaveKey = useRef<string | null>(null);
+  useEffect(() => { feedbackMounted.current = true; return () => { feedbackMounted.current = false; if (saveMessageTimer.current !== null) clearTimeout(saveMessageTimer.current); }; }, []);
   const [privacyBusy, setPrivacyBusy] = useState(false);
   const [limitedBusy, setLimitedBusy] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
@@ -862,8 +868,11 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
   const handleSave = async () => {
     if (!isOwner || saving) return;
     const savingKey = currentSaveKey;
+    activeSaveKey.current = savingKey;
+    if (saveMessageTimer.current !== null) { clearTimeout(saveMessageTimer.current); saveMessageTimer.current = null; }
     setSaving(true);
     setSaveMsg(null);
+    setSaveResult(null);
     try {
       const metaPatch: UpdateDeckMetaInput = {};
       if (name.trim() && name.trim() !== deck?.metadata.name) {
@@ -875,7 +884,11 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
       if (Object.keys(metaPatch).length > 0) {
         const updated = await updateDeckMeta(deckId, metaPatch, isGuest);
         savedReserveRef.current = reserveCharacterId;
-        queryClient.setQueryData(['deck', deckId], updated);
+        // Guest metadata mutations omit full-read ownership fields. Merge only
+        // supplied fields, preserving them until an authoritative read changes them.
+        queryClient.setQueryData<DeckDetail>(['deck', deckId], prev => prev ? {
+          ...prev, ...updated, metadata: { ...prev.metadata, ...updated.metadata },
+        } : updated);
       }
       const payload: DeckCardInput[] = aggregateInstancesForSave(cards).map((c, displayOrder) => ({
         cardType: c.type,
@@ -900,13 +913,19 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
       });
       const unchanged = latestSaveKey.current === savingKey;
       if (unchanged) setDirty(false);
-      setSaveMsg(unchanged ? 'Saved' : 'Saved; newer edits pending');
-      setTimeout(() => setSaveMsg(null), 2500);
+      if (feedbackMounted.current) {
+        setSaveMsg(unchanged ? 'Saved' : 'Saved; newer edits pending');
+        setSaveResult({ status: 'saved', newerEditsPending: !unchanged });
+        saveMessageTimer.current = setTimeout(() => { setSaveMsg(null); setSaveResult(null); saveMessageTimer.current = null; }, 2500);
+      }
       // Card changes recompute decks.is_valid server-side; refresh the deck lists
       // (My Decks, community feed, favorites, tournament) so tile legality matches.
       void queryClient.invalidateQueries({ queryKey: ['decks', 'mine', user?.id] });
     } catch (err) {
-      setSaveMsg((err as Error)?.message || 'Save failed');
+      if (feedbackMounted.current) {
+        setSaveMsg((err as Error)?.message || 'Save failed');
+        setSaveResult({ status: 'error', newerEditsPending: latestSaveKey.current !== savingKey });
+      }
     } finally {
       setSaving(false);
     }
@@ -976,11 +995,12 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
       },
     );
   };
-  return { cardActions: host.cardActions, isGuest, chrome: host.chrome, onHome: host.onHome, deckLoading: deckQuery.isLoading, deckError: deckQuery.isError, retryDeck: () => void deckQuery.refetch(), user, isMobile, backAriaLabel, guestCloning, deck, isOwner, canFavorite, favoritePending: favoriteToggle.isPending, isFavorited, cards, name, setName, dirty, setDirty, saving, saveMsg, privacyBusy, limitedBusy, addOpen, setAddOpen, addCardsMounted, selected, reserveCharacterId, koCharacterIds, setKoCharacterIds, drawHandOpen, exportOpen, setExportOpen, exportDeckInput, exportLoading, drawnCards, mobileDeckTypeTab, setMobileDeckTypeTab, deckViewMode, activeCharacterReorderId, setActiveCharacterReorderId, draggedCharacterId, setDraggedCharacterId, dragOverCharacterId, setDragOverCharacterId, mainRef, contentRef, typeTabsRef, suppressCharacterOpenRef, canSimulateKo, closeCardDetail, evaluation, displayMetrics, cardIndex, foilLookup, setNameLookup, totalCards, koCtx, drawHandKoCtx, canDraw, keepDrawAppearance, drawHandAnalysis, maxStats, iconTotals, totalThreat, characterEntries, immersiveOpen, deckTypeTabs, visibleGroups, removeDeckInstance, reorderCharacter, startCharacterHold, moveCharacterHold, finishCharacterHold, dropCharacterOn, selectReserveCharacter, deselectReserveCharacter, selectDeckCard, closeDrawHand, handleBackToDecks, handleDrawHandToggle, handleViewModeToggle, handleDrawHandRedraw, handleDrawHandReorder, selectedDeckEntry, printingRows, applyPrinting, togglePrePlaced, selectedPrePlacedEligible, addCard, addStack, handleSave, handleTogglePrivacy, handleToggleLimited, handleToggleFavorite, deckId };
+  const saveFeedbackContext: ModuleSaveFeedbackContext | null = saving ? { status: 'saving', message: 'Saving deck…', newerEditsPending: latestSaveKey.current !== activeSaveKey.current } : saveMsg && saveResult ? { ...saveResult, message: saveMsg } : null;
+  return { saveFeedback: host.saveFeedback, saveFeedbackContext, cardActions: host.cardActions, isGuest, chrome: host.chrome, onHome: host.onHome, deckLoading: deckQuery.isLoading, deckError: deckQuery.isError, retryDeck: () => void deckQuery.refetch(), user, isMobile, backAriaLabel, guestCloning: needsGuestClone || guestCloning, deck, isOwner, canFavorite, favoritePending: favoriteToggle.isPending, isFavorited, cards, name, setName, dirty, setDirty, saving, saveMsg, privacyBusy, limitedBusy, addOpen, setAddOpen, addCardsMounted, selected, reserveCharacterId, koCharacterIds, setKoCharacterIds, drawHandOpen, exportOpen, setExportOpen, exportDeckInput, exportLoading, drawnCards, mobileDeckTypeTab, setMobileDeckTypeTab, deckViewMode, activeCharacterReorderId, setActiveCharacterReorderId, draggedCharacterId, setDraggedCharacterId, dragOverCharacterId, setDragOverCharacterId, mainRef, contentRef, typeTabsRef, suppressCharacterOpenRef, canSimulateKo, closeCardDetail, evaluation, displayMetrics, cardIndex, foilLookup, setNameLookup, totalCards, koCtx, drawHandKoCtx, canDraw, keepDrawAppearance, drawHandAnalysis, maxStats, iconTotals, totalThreat, characterEntries, immersiveOpen, deckTypeTabs, visibleGroups, removeDeckInstance, reorderCharacter, startCharacterHold, moveCharacterHold, finishCharacterHold, dropCharacterOn, selectReserveCharacter, deselectReserveCharacter, selectDeckCard, closeDrawHand, handleBackToDecks, handleDrawHandToggle, handleViewModeToggle, handleDrawHandRedraw, handleDrawHandReorder, selectedDeckEntry, printingRows, applyPrinting, togglePrePlaced, selectedPrePlacedEligible, addCard, addStack, handleSave, handleTogglePrivacy, handleToggleLimited, handleToggleFavorite, deckId };
 }
 
 export function DeckBuilderView({ model }: { model: ReturnType<typeof useDeckBuilderController> }) {
- const { cardActions, isGuest, chrome, onHome, deckLoading, deckError, retryDeck, user, isMobile, backAriaLabel, guestCloning, deck, isOwner, canFavorite, favoritePending, isFavorited, cards, name, setName, dirty, setDirty, saving, saveMsg, privacyBusy, limitedBusy, addOpen, setAddOpen, addCardsMounted, selected, reserveCharacterId, koCharacterIds, setKoCharacterIds, drawHandOpen, exportOpen, setExportOpen, exportDeckInput, exportLoading, drawnCards, mobileDeckTypeTab, setMobileDeckTypeTab, deckViewMode, activeCharacterReorderId, setActiveCharacterReorderId, draggedCharacterId, setDraggedCharacterId, dragOverCharacterId, setDragOverCharacterId, mainRef, contentRef, typeTabsRef, suppressCharacterOpenRef, canSimulateKo, closeCardDetail, evaluation, displayMetrics, cardIndex, foilLookup, setNameLookup, totalCards, koCtx, drawHandKoCtx, canDraw, keepDrawAppearance, drawHandAnalysis, maxStats, iconTotals, totalThreat, characterEntries, immersiveOpen, deckTypeTabs, visibleGroups, removeDeckInstance, reorderCharacter, startCharacterHold, moveCharacterHold, finishCharacterHold, dropCharacterOn, selectReserveCharacter, deselectReserveCharacter, selectDeckCard, closeDrawHand, handleBackToDecks, handleDrawHandToggle, handleViewModeToggle, handleDrawHandRedraw, handleDrawHandReorder, selectedDeckEntry, printingRows, applyPrinting, togglePrePlaced, selectedPrePlacedEligible, addCard, addStack, handleSave, handleTogglePrivacy, handleToggleLimited, handleToggleFavorite, deckId } = model;
+ const { saveFeedback, saveFeedbackContext, cardActions, isGuest, chrome, onHome, deckLoading, deckError, retryDeck, user, isMobile, backAriaLabel, guestCloning, deck, isOwner, canFavorite, favoritePending, isFavorited, cards, name, setName, dirty, setDirty, saving, saveMsg, privacyBusy, limitedBusy, addOpen, setAddOpen, addCardsMounted, selected, reserveCharacterId, koCharacterIds, setKoCharacterIds, drawHandOpen, exportOpen, setExportOpen, exportDeckInput, exportLoading, drawnCards, mobileDeckTypeTab, setMobileDeckTypeTab, deckViewMode, activeCharacterReorderId, setActiveCharacterReorderId, draggedCharacterId, setDraggedCharacterId, dragOverCharacterId, setDragOverCharacterId, mainRef, contentRef, typeTabsRef, suppressCharacterOpenRef, canSimulateKo, closeCardDetail, evaluation, displayMetrics, cardIndex, foilLookup, setNameLookup, totalCards, koCtx, drawHandKoCtx, canDraw, keepDrawAppearance, drawHandAnalysis, maxStats, iconTotals, totalThreat, characterEntries, immersiveOpen, deckTypeTabs, visibleGroups, removeDeckInstance, reorderCharacter, startCharacterHold, moveCharacterHold, finishCharacterHold, dropCharacterOn, selectReserveCharacter, deselectReserveCharacter, selectDeckCard, closeDrawHand, handleBackToDecks, handleDrawHandToggle, handleViewModeToggle, handleDrawHandRedraw, handleDrawHandReorder, selectedDeckEntry, printingRows, applyPrinting, togglePrePlaced, selectedPrePlacedEligible, addCard, addStack, handleSave, handleTogglePrivacy, handleToggleLimited, handleToggleFavorite, deckId } = model;
 
 
   if (guestCloning) {
@@ -1054,7 +1074,7 @@ export function DeckBuilderView({ model }: { model: ReturnType<typeof useDeckBui
 
                 {isMobile && isOwner ? (
                   <div className="deck-editor__save-group">
-                    {saveMsg ? <span className="deck-editor__save-msg">{saveMsg}</span> : null}
+                    {renderModuleSaveFeedback(saveFeedback, saveFeedbackContext, saveMsg ? <span className="deck-editor__save-msg">{saveMsg}</span> : null)}
                     <DeckSaveButton dirty={dirty} saving={saving} onSave={handleSave} />
                   </div>
                 ) : null}
@@ -1188,7 +1208,7 @@ export function DeckBuilderView({ model }: { model: ReturnType<typeof useDeckBui
                   <span className="deck-editor__readonly-tag">Read-only</span>
                 </>
               )}
-              {saveMsg && !isMobile ? <span className="deck-editor__save-msg">{saveMsg}</span> : null}
+              {!isMobile ? renderModuleSaveFeedback(isOwner ? saveFeedback : undefined, saveFeedbackContext, saveMsg ? <span className="deck-editor__save-msg">{saveMsg}</span> : null) : null}
             </div>
           </div>
         </header>

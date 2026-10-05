@@ -26,3 +26,5 @@
  border-radius: var(--radius-md);
  font-weight: var(--font-weight-bold);
 }
+
+.module-harness__save-feedback { padding: 0.25rem 0.5rem; border: 1px solid currentColor; border-radius: 0.375rem; font-size: 0.875rem; }

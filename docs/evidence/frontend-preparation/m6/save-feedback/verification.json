@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "status": "Kyle accepted5182; bounded release verification pending",
+  "frontendRevision": "b03ec65eca172f1d6aeabffc20dfe7e9c3084e61",
+  "frontendState": "uncommitted save-feedback plus Guest ownership/cache/startup guard",
+  "frontendURL": "http://127.0.0.1:5182/module-harness.html",
+  "backendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "apiURL": "http://127.0.0.1:8090",
+  "database": "verified shared disposable Docker15442/V365; unchanged backend inputs",
+  "baseline": {
+    "defaultSaveSuccess": "actual local HTTP and Saved text observed",
+    "ownerControls": "actual successful name save then owner editor disappeared before fix",
+    "capture": "module-only crop; raw Guest/session IDs not included"
+  },
+  "finalBrowser": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0,
+    "browserErrors": 0,
+    "cases": [
+      "default repeated saves desktop",
+      "host saving/saved/newer edits/injected rejection/retry/reset desktop",
+      "default repeated saves mobile",
+      "host save states mobile",
+      "ordinary navigation/repeated saves/reload",
+      "unchanged readonly draw/redraw/export"
+    ],
+    "dimensions": {
+      "desktop": [
+        1280,
+        720
+      ],
+      "mobile": [
+        390,
+        844
+      ]
+    },
+    "methods": "live CUA and real local HTTP saves; explicit host fixture rejects before mutation, not a backend outage"
+  },
+  "componentTests": {
+    "passed": 59,
+    "suites": 4,
+    "newCases": 10,
+    "kind": "fictional jsdom; actual execution confirmed"
+  },
+  "cloneStartGuard": {
+    "source": "source inspection plus DOM mutation regression test",
+    "negativeControl": "original rendering fails the new assertion; corrected source restored",
+    "liveBaseline": "not claimed as measured before/after browser flicker"
+  },
+  "retainedHelperFailures": {
+    "runs": [
+      "desktop-default",
+      "verified-desktop-default"
+    ],
+    "reason": "browser tools redact password field values; helper treated redaction as invalid Guest ID",
+    "recovery": "check masked-copy state and current Host callback; caller tracks before/after local API inventory privately",
+    "partialCopies": "both partial run copies tracked by narrow report windows and cleaned"
+  },
+  "comparison": {
+    "readonlyExport": "pixel-identical1280x720",
+    "savedEditor": "intentional owner-control repair; changed fixture names/controls prevent full-frame parity claim",
+    "baselineOverwrite": false
+  },
+  "cleanup": {
+    "removedOwnedGuestCopies": 7,
+    "originalDatabaseFixture": "unchanged",
+    "unrelatedGuestDecks": "untouched",
+    "sessions": "retained; no logout or storage reset"
+  },
+  "privacy": "Guest identifiers encode session identity; masked in harness, private inventory used for cleanup, raw IDs/routes/baseline DOM never copied into this evidence",
+  "gaps": [
+    "actual account saves/backend outage/OAuth/light not selected",
+    "production evidence belongs to earlier b03ec65e branding/icon release, not this unapproved slice",
+    "nested host routes/full CSS/other feature slots and retained M4 domain work remain open"
+  ],
+  "gates": {
+    "modules": "59passed/4suites",
+    "unit": {
+      "passed": 3875,
+      "skipped": 18,
+      "reused": false,
+      "inputFingerprint": "efdfa6d0c49e0b867632e9a7a52a13b17931c1582f1328ba4005a3ef4b973acf",
+      "receipt": "/var/folders/lb/xr02_l594rlg4bv03hlppd840000gp/T/excelsior-test-gate-JeyVyE/unit-1791219132359-96809.json"
+    },
+    "lint": "passed",
+    "frontendBuild": "passed",
+    "storybookBuild": "passed; named states compiled, play functions not independently executed",
+    "registeredKnipCI": "passed",
+    "retainedUnitFailure": {
+      "case": "unchanged Collection HTTP zero-quantity case received404 rather than200",
+      "recovery": "focused22case suite passed, then same-input full unit gate passed; no backend/source correction",
+      "cause": "unconfirmed",
+      "initialReceipt": "/private/tmp/excelsior-m6-save-feedback/gates-final/receipt.json"
+    },
+    "initialCoverageCorrections": "Saving... label and Storybook Testing Library options corrected; original failed logs retained privately"
+  },
+  "handoff": {
+    "preview": "http://127.0.0.1:5182/module-harness.html",
+    "captureDimensions": [
+      1440,
+      1000
+    ],
+    "capturePurpose": "manual spot-check preparation, separate from automated1280x720and390x844",
+    "fixture": "one new owned Guest copy retained for Kyle; raw ID remains private",
+    "name": "M6 Save Feedback Preview",
+    "defaultFixtureMode": "real local API",
+    "saveFeedbackEnabled": true,
+    "errors": 0,
+    "viewport": "reset",
+    "screenshot": "handoff.jpg",
+    "cleanupLifetime": "automated7copies removed; delete only retained exact preview copy after acceptance/rejection"
+  },
+  "acceptance": {
+    "date": "2026-10-05",
+    "preview": "http://127.0.0.1:5182/module-harness.html",
+    "instruction": "5182 looks good, continue"
+  }
+}

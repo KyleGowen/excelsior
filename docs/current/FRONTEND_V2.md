@@ -226,3 +226,5 @@ The three independent modules accept `ModuleHost.cardActions` for host-supplied 
 ### Host-owned brand and decorative controls
 
 `ModuleHost.icons` uses `ModuleIconOptions`/`UIIconContext` from the modules entrypoint. `ModuleHost.chrome.brand` accepts host-owned accessible content. The provider scopes icon context per instance, including React portals; ordinary hosts omit it. The shared SVG controls keep their unchanged fallback markup. Host nodes replace decoration only, preserve surrounding control labels/policies and must remain inert. Card/stat and third-party assets are not part of this port. See the module README and named Independent host brand/icon stories. Save feedback, nested host routes and broad CSS isolation remain separate M6 work.
+
+The next M6 save-feedback slice adds optional pure host result presentation; it does not provide persistence callbacks or change authorization. Guest mutation metadata merges preserve full-read ownership fields unless explicitly replaced by server evidence. Development-only delayed/rejected modes test presentation; ordinary hosts retain current feedback. See `frontend/src/modules/saveFeedback.md`.

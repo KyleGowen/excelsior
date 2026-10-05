@@ -1,0 +1,13 @@
+{
+  "case": "ordinary read-only export",
+  "before": "/Users/kyle/.codex/worktrees/m6-host-controls/cursored/docs/evidence/frontend-preparation/m6/icons/ordinary-routes/deck-readonly-draw-export-result.jpg",
+  "after": "/private/tmp/excelsior-m6-save-feedback/readonly-default/deck-readonly-draw-export-result.jpg",
+  "dimensions": [
+    1280,
+    720
+  ],
+  "differentPixels": 0,
+  "overTolerance10": 0,
+  "maximumChannelDelta": 0,
+  "acceptance": "Ordinary read-only export frame is pixel-identical; saved owner controls intentionally repaired, no full-frame save/harness parity claimed."
+}

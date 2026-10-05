@@ -138,3 +138,7 @@ M4 Add Cards now requests server candidate decisions for the exact current aggre
 ## M5 implementation boundary
 
 The route page now adapts the Excelsior host to the single production module/controller/view implementation. See [module contract](../../modules/README.md) for providers, typed operations, navigation callbacks, independent fixture harness and retained M4/M6/M7 gaps. Existing behavior documentation above remains applicable.
+
+### Host save-feedback preparation
+
+Optional `ModuleHost.saveFeedback` renders current pending/saved/error results in existing desktop/mobile locations. Omission preserves ordinary feedback; no host callback starts persistence. Newer edits stay dirty. Guest metadata responses merge into full-read cache fields so repeated name saves retain the owner editor; explicit server ownership fields still win. See [save feedback](../../modules/saveFeedback.md).

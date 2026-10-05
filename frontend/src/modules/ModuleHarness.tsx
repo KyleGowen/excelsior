@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ModuleCardActions } from './cardActions';
+import type { ModuleSaveFeedback } from './saveFeedback';
 import type { ModuleIconOptions } from '../lib/icons/uiIconOverrides';
 import type { AppUser } from '../lib/api/types';
 import { CardDatabaseModule, DeckBuilderModule, CollectionModule, ModuleHostProvider, createModuleApi } from './index';
@@ -7,19 +8,23 @@ import './ModuleHarness.css';
 import { harnessAppearance, type HarnessAppearance } from './harnessAppearance';
 import { fetchCurrentUser, fetchAppConfig } from '../lib/api/auth';
 import { useLayoutMode } from '../lib/layout/LayoutModeProvider';
+type SaveFixtureMode = 'api' | 'delayed' | 'rejected';
 type Selection = 'database' | 'deck' | 'collection' | 'together' | 'unmounted';
 /** Local fixture host: neither Excelsior's router nor AuthProvider is mounted. */
-export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = false, initialContainerLayout = false, initialContainerWidth = 'available', initialAppearance = 'default', initialHostActions = false, initialHostIcons = false }: { user: AppUser | null; initialDeckId?: string; initialHostOverlay?: boolean; initialContainerLayout?: boolean; initialContainerWidth?: string; initialAppearance?: HarnessAppearance; initialHostActions?: boolean; initialHostIcons?: boolean }) {
+export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = false, initialContainerLayout = false, initialContainerWidth = 'available', initialAppearance = 'default', initialHostActions = false, initialHostIcons = false, initialHostSaveFeedback = false, initialReadonly = true, initialSaveFixtureMode = 'api' }: { user: AppUser | null; initialDeckId?: string; initialHostOverlay?: boolean; initialContainerLayout?: boolean; initialContainerWidth?: string; initialAppearance?: HarnessAppearance; initialHostActions?: boolean; initialHostIcons?: boolean; initialHostSaveFeedback?: boolean; initialReadonly?: boolean; initialSaveFixtureMode?: SaveFixtureMode }) {
  const { isMobile } = useLayoutMode();
  const [useContainerLayout, setUseContainerLayout] = useState(initialContainerLayout);
  const [containerWidth, setContainerWidth] = useState(initialContainerWidth);
  const [appearance, setAppearance] = useState(initialAppearance);
  const [selection, setSelection] = useState<Selection>('database');
  const [deckId, setDeckId] = useState(initialDeckId);
- const [readonly, setReadonly] = useState(true);
+ const [readonly, setReadonly] = useState(initialReadonly);
  const [feedback, setFeedback] = useState('');
  const [useHostActions, setUseHostActions] = useState(initialHostActions);
  const [useHostIcons, setUseHostIcons] = useState(initialHostIcons);
+ const [useHostSaveFeedback, setUseHostSaveFeedback] = useState(initialHostSaveFeedback);
+ const [saveFixtureMode, setSaveFixtureMode] = useState<SaveFixtureMode>(initialSaveFixtureMode);
+ const saveFeedback = useMemo<ModuleSaveFeedback>(() => ({ render: context => <span className="module-harness__save-feedback" role={context.status === 'error' ? 'alert' : 'status'} aria-label="Host save feedback" data-save-status={context.status}>Fictional host: {context.message}</span> }), []);
  const icons = useMemo<ModuleIconOptions>(() => ({ render: context => <span data-fixture-icon={context.name}>◇</span> }), []);
  const cardActions = useMemo<ModuleCardActions>(() => ({
   render: context => <div className="db__detail-actions-row" aria-label="Host card actions">
@@ -31,11 +36,23 @@ export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = f
  }), []);
  const [useHostOverlay, setUseHostOverlay] = useState(initialHostOverlay);
  const [overlayRoot, setOverlayRoot] = useState<HTMLDivElement | null>(null);
- const api = useMemo(() => createModuleApi(), []);
+ const baseApi = useMemo(() => createModuleApi(), []);
+ // Explicit local fixture behavior; never changes the shared client or production host.
+ const api = useMemo(() => ({ ...baseApi,
+  updateDeckMeta: async (...args: Parameters<typeof baseApi.updateDeckMeta>) => {
+   if (saveFixtureMode === 'rejected') throw new Error('Fictional host save failure');
+   if (saveFixtureMode === 'delayed') await new Promise(resolve => setTimeout(resolve, 1500));
+   return baseApi.updateDeckMeta(...args);
+  },
+  replaceDeckCards: async (...args: Parameters<typeof baseApi.replaceDeckCards>) => {
+   if (saveFixtureMode === 'rejected') throw new Error('Fictional host save failure');
+   return baseApi.replaceDeckCards(...args);
+  },
+ }), [baseApi, saveFixtureMode]);
  const onOpenDeck = useCallback((id: string) => { setDeckId(id); setSelection('deck'); setFeedback('Host opened deck'); }, []);
  const onBack = useCallback(() => setFeedback('Host received Back'), []);
  const onHome = useCallback(() => setFeedback('Host received Home'), []);
- const host = useMemo(() => ({ api, identity: { user, isGuest: !user || user.role === 'GUEST', isAdmin: user?.role === 'ADMIN' }, onOpenDeck, onBack, onHome, backLabel: 'Back to host', ...(useHostActions ? { cardActions } : {}), ...(useHostIcons ? { icons, chrome: { brand: <div className="module-harness__brand" role="note" aria-label="Fictional host brand">◇ Fictional host</div> } } : {}), appearance: harnessAppearance[appearance], ...(useContainerLayout ? { layout: { mode: 'container' as const } } : {}), ...(useHostOverlay && overlayRoot ? { overlays: { root: overlayRoot, position: 'absolute' as const } } : {}) }), [api, user, onOpenDeck, onBack, onHome, useHostOverlay, overlayRoot, useContainerLayout, appearance, useHostActions, cardActions, useHostIcons, icons]);
+ const host = useMemo(() => ({ api, identity: { user, isGuest: !user || user.role === 'GUEST', isAdmin: user?.role === 'ADMIN' }, onOpenDeck, onBack, onHome, backLabel: 'Back to host', ...(useHostActions ? { cardActions } : {}), ...(useHostSaveFeedback ? { saveFeedback } : {}), ...(useHostIcons ? { icons, chrome: { brand: <div className="module-harness__brand" role="note" aria-label="Fictional host brand">◇ Fictional host</div> } } : {}), appearance: harnessAppearance[appearance], ...(useContainerLayout ? { layout: { mode: 'container' as const } } : {}), ...(useHostOverlay && overlayRoot ? { overlays: { root: overlayRoot, position: 'absolute' as const } } : {}) }), [api, user, onOpenDeck, onBack, onHome, useHostOverlay, overlayRoot, useContainerLayout, appearance, useHostActions, cardActions, useHostIcons, icons, useHostSaveFeedback, saveFeedback]);
  return <div className={`module-harness${useContainerLayout ? '' : isMobile ? ' layout-mobile' : ' layout-desktop'}`}>
   <header className="module-harness__controls">
    <h1>Independent module harness</h1>
@@ -47,7 +64,7 @@ export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = f
     <button aria-pressed={selection === 'together'} onClick={() => setSelection('together')}>All three modules</button>
     <button aria-pressed={selection === 'unmounted'} onClick={() => setSelection('unmounted')}>Unmount modules</button>
    </nav>
-   <label>Local deck ID <input value={deckId} onChange={e => setDeckId(e.target.value)} /></label>
+   <label>Local deck ID <input type={deckId.startsWith('guest_') ? 'password' : 'text'} value={deckId} onChange={e => setDeckId(e.target.value)} /></label>
    <label><input type="checkbox" checked={readonly} onChange={e => setReadonly(e.target.checked)} />Read-only deck</label>
    <label><input type="checkbox" checked={useHostOverlay} onChange={e => setUseHostOverlay(e.target.checked)} />Use host overlay root</label>
    <label><input type="checkbox" checked={useContainerLayout} onChange={e => setUseContainerLayout(e.target.checked)} />Use container layout</label>
@@ -55,6 +72,8 @@ export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = f
    <label className="module-harness__width">Host appearance <select aria-label="Host appearance" value={appearance} onChange={e => setAppearance(e.target.value as HarnessAppearance)}><option value="default">Excelsior defaults</option><option value="paper">Paper fixture</option><option value="contrast">High contrast fixture</option></select></label>
    <label><input type="checkbox" checked={useHostActions} onChange={e => setUseHostActions(e.target.checked)} />Use host card actions</label>
    <label><input type="checkbox" checked={useHostIcons} onChange={e => setUseHostIcons(e.target.checked)} />Use host brand and icons</label>
+   <label><input type="checkbox" checked={useHostSaveFeedback} onChange={e => setUseHostSaveFeedback(e.target.checked)} />Use host save feedback</label>
+   <label className="module-harness__width">Save fixture mode <select aria-label="Save fixture mode" value={saveFixtureMode} onChange={e => setSaveFixtureMode(e.target.value as SaveFixtureMode)}><option value="api">Real local API</option><option value="delayed">Delay metadata save by 1.5 seconds</option><option value="rejected">Reject save locally</option></select></label>
    <output aria-label="Host callback result">{feedback}</output>
   </header>
   <div className={`module-harness__surface${useHostOverlay ? ' module-harness__surface--host-overlay' : ''}`} style={{ width: containerWidth === 'available' ? '100%' : `${containerWidth}px`, maxWidth: '100%' }}>

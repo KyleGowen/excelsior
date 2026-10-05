@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "sourceRevision": "b03ec65eca172f1d6aeabffc20dfe7e9c3084e61",
+  "backendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "scenarios": [
+    {
+      "id": "ordinary-guest-repeated-save",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m6-save-feedback/ordinary-save/ordinary-first-save.jpg",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "page": "ordinary run-owned Guest deck; route withheld"
+        },
+        {
+          "screenshot": "/private/tmp/excelsior-m6-save-feedback/ordinary-save/ordinary-reloaded-save.jpg",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "page": "ordinary run-owned Guest deck; route withheld"
+        }
+      ],
+      "observed": {
+        "normalNavigation": true,
+        "realSaves": 2,
+        "reloadConfirmed": true,
+        "ownerControlsRetained": true,
+        "hostFeedbackAbsent": true
+      }
+    }
+  ],
+  "counts": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "browserErrors": 0,
+  "status": "passed",
+  "cleanup": "Caller removes the already-tracked Guest copy; original local DB deck unchanged",
+  "acceptance": "Automated only; Kyle acceptance separate",
+  "gaps": [
+    "Guest-only; account persistence remains separate",
+    "No production validation of this unapproved slice"
+  ]
+}
