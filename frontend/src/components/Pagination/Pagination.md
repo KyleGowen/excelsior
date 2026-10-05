@@ -24,3 +24,7 @@ paginated in the browser, so this drives a local `page` state.
 - `buildPages(current, total)` — ellipsis collapse algorithm.
 - `normalizePageSlots(current, totalPages)` — pads to 7 slots when collapsed.
 - `MAX_COLLAPSED_PAGE_SLOTS` — `7`.
+
+## Native narrow host
+
+Inside an explicit `.module-layout-container.layout-mobile`, control/page groups wrap within the measured host width. All page and navigation actions remain available in DOM order. This prevents the unfiltered Collection controls from extending a390px host to413px. The existing Excelsior control widths and collapsed-slot behavior outside that boundary remain unchanged. Named example: NarrowHostPagination.

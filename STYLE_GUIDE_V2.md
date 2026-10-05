@@ -782,3 +782,7 @@ Existing page appearance and controls remain in the production modules. Excelsio
 ### M6 host overlay fixture
 
 Default Excelsior panel styling/placement is preserved. An explicit module host overlay root receives the same panels with host-bounded geometry; this is a fixture configuration, not a site reskin. Development-harness checkbox labels use compact inline controls and the mobile sticky control area is capped at45vh to prevent covering centered module targets. Production layout/theme defaults are unchanged. Global CSS/container/theme/brand isolation remains open M6 work.
+
+### M6 container-layout fixture
+
+Native container mode uses the measured host width and local mobile/desktop classes; ordinary Excelsior viewport defaults retain their current DOM/styles. The harness adds a compact width selector and explicit container checkbox.390px native fixtures use existing mobile arrangements even in a1280px browser. Host mobile Draw Hand panels stay bounded; pagination wraps inside configured narrow surfaces to prevent overflow while preserving every action. This is local responsive preparation; global reset/theme/ancestor CSS containment and branding remain open.

@@ -6,7 +6,10 @@ import { fetchCurrentUser, fetchAppConfig } from '../lib/api/auth';
 import { useLayoutMode } from '../lib/layout/LayoutModeProvider';
 type Selection = 'database' | 'deck' | 'collection' | 'together' | 'unmounted';
 /** Local fixture host: neither Excelsior's router nor AuthProvider is mounted. */
-export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = false }: { user: AppUser | null; initialDeckId?: string; initialHostOverlay?: boolean }) {
+export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = false, initialContainerLayout = false, initialContainerWidth = 'available' }: { user: AppUser | null; initialDeckId?: string; initialHostOverlay?: boolean; initialContainerLayout?: boolean; initialContainerWidth?: string }) {
+ const { isMobile } = useLayoutMode();
+ const [useContainerLayout, setUseContainerLayout] = useState(initialContainerLayout);
+ const [containerWidth, setContainerWidth] = useState(initialContainerWidth);
  const [selection, setSelection] = useState<Selection>('database');
  const [deckId, setDeckId] = useState(initialDeckId);
  const [readonly, setReadonly] = useState(true);
@@ -17,8 +20,8 @@ export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = f
  const onOpenDeck = useCallback((id: string) => { setDeckId(id); setSelection('deck'); setFeedback('Host opened deck'); }, []);
  const onBack = useCallback(() => setFeedback('Host received Back'), []);
  const onHome = useCallback(() => setFeedback('Host received Home'), []);
- const host = useMemo(() => ({ api, identity: { user, isGuest: !user || user.role === 'GUEST', isAdmin: user?.role === 'ADMIN' }, onOpenDeck, onBack, onHome, backLabel: 'Back to host', ...(useHostOverlay && overlayRoot ? { overlays: { root: overlayRoot, position: 'absolute' as const } } : {}) }), [api, user, onOpenDeck, onBack, onHome, useHostOverlay, overlayRoot]);
- return <div className="module-harness">
+ const host = useMemo(() => ({ api, identity: { user, isGuest: !user || user.role === 'GUEST', isAdmin: user?.role === 'ADMIN' }, onOpenDeck, onBack, onHome, backLabel: 'Back to host', ...(useContainerLayout ? { layout: { mode: 'container' as const } } : {}), ...(useHostOverlay && overlayRoot ? { overlays: { root: overlayRoot, position: 'absolute' as const } } : {}) }), [api, user, onOpenDeck, onBack, onHome, useHostOverlay, overlayRoot, useContainerLayout]);
+ return <div className={`module-harness${useContainerLayout ? '' : isMobile ? ' layout-mobile' : ' layout-desktop'}`}>
   <header className="module-harness__controls">
    <h1>Independent module harness</h1>
    <p>Host identity: {host.identity.isGuest ? 'Guest' : 'Account'}. Local session and catalog. Decks start read-only; enable editing only for your disposable fixture.</p>
@@ -32,11 +35,13 @@ export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = f
    <label>Local deck ID <input value={deckId} onChange={e => setDeckId(e.target.value)} /></label>
    <label><input type="checkbox" checked={readonly} onChange={e => setReadonly(e.target.checked)} />Read-only deck</label>
    <label><input type="checkbox" checked={useHostOverlay} onChange={e => setUseHostOverlay(e.target.checked)} />Use host overlay root</label>
+   <label><input type="checkbox" checked={useContainerLayout} onChange={e => setUseContainerLayout(e.target.checked)} />Use container layout</label>
+   <label className="module-harness__width">Host container width <select aria-label="Host container width" value={containerWidth} onChange={e => setContainerWidth(e.target.value)}><option value="available">Available space</option><option value="390">390 pixels</option><option value="720">720 pixels</option><option value="1120">1120 pixels</option></select></label>
    <output aria-label="Host callback result">{feedback}</output>
   </header>
-  <div className={`module-harness__surface${useHostOverlay ? ' module-harness__surface--host-overlay' : ''}`}>
-  <div ref={setOverlayRoot} className="module-harness__overlay-root" role="region" aria-label="Host overlay root" />
+  <div className={`module-harness__surface${useHostOverlay ? ' module-harness__surface--host-overlay' : ''}`} style={{ width: containerWidth === 'available' ? '100%' : `${containerWidth}px`, maxWidth: '100%' }}>
   <ModuleHostProvider host={host}>
+  <div ref={setOverlayRoot} className="module-harness__overlay-root" role="region" aria-label="Host overlay root" />
    {(selection === 'database' || selection === 'together') && <section aria-label="Independent Card Database"><CardDatabaseModule /></section>}
    {(selection === 'deck' || selection === 'together') && <section aria-label="Independent Deck Builder">{deckId ? <DeckBuilderModule deckId={deckId} readonly={readonly} /> : <p>Supply a valid local fixture deck ID.</p>}</section>}
    {(selection === 'collection' || selection === 'together') && <section aria-label="Independent Collection"><CollectionModule /></section>}
@@ -51,8 +56,6 @@ export function LocalModuleHarness({ loadSession = defaultSession }: { loadSessi
  const [user, setUser] = useState<AppUser | null>(null);
  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
  const active = useRef(false);
- const { isMobile } = useLayoutMode();
- useEffect(() => { document.documentElement.classList.toggle('layout-mobile', isMobile); document.documentElement.classList.toggle('layout-desktop', !isMobile); }, [isMobile]);
  const load = useCallback(async () => { setStatus('loading'); try { const current = await loadSession(); if (active.current) { setUser(current); setStatus('ready'); } } catch { if (active.current) setStatus('error'); } }, [loadSession]);
  useEffect(() => { active.current = true; void load(); return () => { active.current = false; }; }, [load]);
  if (status === 'loading') return <p>Loading local host…</p>;

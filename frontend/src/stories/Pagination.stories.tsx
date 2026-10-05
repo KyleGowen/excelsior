@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { ContainerLayoutModeProvider } from '../lib/layout/ContainerLayoutModeProvider';
 import { Pagination } from '../components/Pagination/Pagination';
 
 const meta = {
@@ -17,3 +18,5 @@ type Story = StoryObj<typeof meta>;
 export const FirstPage: Story = {};
 export const MiddlePage: Story = { args: { page: 6 } };
 export const Empty: Story = { args: { totalItems: 0 } };
+
+export const NarrowHostPagination: Story = { decorators: [Story => <div style={{ width: 390 }}><ContainerLayoutModeProvider options={{ mode: 'container' }}><Story /></ContainerLayoutModeProvider></div>] };

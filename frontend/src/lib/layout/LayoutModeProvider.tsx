@@ -5,7 +5,6 @@
  * user-agent. Components read this via `useLayoutMode()`.
  */
 import {
-  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -14,14 +13,9 @@ import {
   type ReactNode,
 } from 'react';
 
-const MOBILE_MAX_PX = 900;
+import { LayoutModeContext, type LayoutModeValue } from './layoutModeContext';
 
-interface LayoutModeValue {
-  isMobile: boolean;
-  isDesktop: boolean;
-  preferDesktop: boolean;
-  setPreferDesktop: (on: boolean) => void;
-}
+const MOBILE_MAX_PX = 900;
 
 function computeIsMobile(): boolean {
   if (typeof window === 'undefined') return false;
@@ -37,7 +31,8 @@ function computePreferDesktop(): boolean {
   }
 }
 
-const LayoutModeContext = createContext<LayoutModeValue | null>(null);
+// The container host and ordinary viewport host share only the typed context.
+
 
 export function LayoutModeProvider({ children }: { children: ReactNode }) {
   const [isMobile, setIsMobile] = useState<boolean>(computeIsMobile);

@@ -1,6 +1,7 @@
 import { createElement, createContext, useContext, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import type { AppUser } from '../lib/api/types';
 import type { ModuleApi } from './api';
+import { ContainerLayoutModeProvider, type ContainerLayoutOptions } from '../lib/layout/ContainerLayoutModeProvider';
 import { OverlayHostProvider, type OverlayHostOptions } from '../lib/layout/OverlayHostProvider';
 import { createCardDetailHistoryController, CARD_DETAIL_STATE_KEY, type CardDetailNavigation } from '../lib/layout/cardDetailHistoryController';
 /** The host owns identity, routing and chrome; no authentication bootstrap happens here. */
@@ -13,12 +14,15 @@ export interface ModuleHost {
  backLabel?: string;
  /** Explicit portal placement; absent preserves existing inline overlays. */
  overlays?: OverlayHostOptions;
+ /** Omit to retain the ordinary host's viewport layout. */
+ layout?: ContainerLayoutOptions;
  history?: { navigate: CardDetailNavigation; state: object | null };
  chrome?: { desktopRail?: ReactNode; mobileNavigation?: ReactNode };
 }
 const Context = createContext<ModuleHost | null>(null);
 export function ModuleHostProvider({ host, children }: { host: ModuleHost; children: ReactNode }) {
- return createElement(Context.Provider, { value: host }, createElement(OverlayHostProvider, { ...(host.overlays ? { options: host.overlays } : {}), children }));
+ const content = createElement(OverlayHostProvider, { ...(host.overlays ? { options: host.overlays } : {}), children });
+ return createElement(Context.Provider, { value: host }, host.layout ? createElement(ContainerLayoutModeProvider, { options: host.layout, children: content }) : content);
 }
 export function useOptionalModuleHost() { return useContext(Context); }
 export function useModuleHost() {

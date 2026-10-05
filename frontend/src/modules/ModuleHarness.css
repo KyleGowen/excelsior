@@ -15,3 +15,6 @@
 @media (max-width: 900px) {
   .module-harness__controls { max-height: 45vh; overflow-y: auto; }
 }
+
+.module-harness__width { display: flex; align-items: center; gap: 8px; }
+.module-harness__width select { width: auto; max-width: 100%; padding: 6px 10px; }

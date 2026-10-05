@@ -1,0 +1,154 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "status": "ready for Kyle local verification",
+  "sourceRevision": "366b23af1fd4cdde23802451333e3c91ca893e9a",
+  "sourceState": "uncommitted container slice on approved overlay release",
+  "sourceTreeFingerprint": "58bcf327dbb4a5042a68671e6980f313bb8828620a42fae8e66eff760f9a059a",
+  "apiRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "migration": 365,
+  "target": "http://127.0.0.1:5178/module-harness.html",
+  "gates": [
+    {
+      "name": "lint",
+      "status": "passed",
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 10.742
+    },
+    {
+      "name": "unit",
+      "status": "passed",
+      "counts": {
+        "suites": 333,
+        "tests": 3893,
+        "passed": 3875,
+        "failed": 0,
+        "skipped": 18,
+        "todo": 0
+      },
+      "executedTests": 3875,
+      "reused": false,
+      "durationSeconds": 13.076
+    },
+    {
+      "name": "modules",
+      "status": "passed",
+      "counts": {
+        "suites": 3,
+        "tests": 26,
+        "passed": 26,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "executedTests": 26,
+      "reused": false,
+      "durationSeconds": 27.179
+    },
+    {
+      "name": "frontend",
+      "status": "passed",
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 30.304
+    },
+    {
+      "name": "storybook",
+      "status": "passed",
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 31.175
+    },
+    {
+      "name": "knip",
+      "status": "passed",
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 4.153
+    }
+  ],
+  "browser": {
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0,
+    "errors": 0,
+    "groups": {
+      "desktopContainer": 5,
+      "actualMobileHostOverlays": 4,
+      "ordinaryGuestRoutes": 5
+    },
+    "suite": "tests/browser/milestone6-containers.mjs",
+    "suiteSha256": "65792f7b5766652677944f6db8ef77c46332396aa5ad510d5a165195f744b3b8",
+    "method": "CUA live browser automation; component fixtures and Storybook builds are separate",
+    "fixture": "Isolated local fictional read-only deck, 8 cards and 18 threat; Guest catalog/Collection reads"
+  },
+  "comparison": {
+    "beforeCollectionContainerWidth": 390,
+    "beforeCollectionScrollWidth": 413,
+    "afterCollectionContainerWidth": 390,
+    "afterCollectionScrollWidth": 390,
+    "searchPreservedOnResize": true,
+    "windowSizeUnchangedDuringContainerResize": true,
+    "defaultRouteCasesPassed": 5,
+    "screenshots": "Fresh before/after evidence retained; no full pixel identity or baseline replacement claimed"
+  },
+  "troubleshooting": [
+    {
+      "issue": "Unfiltered Collection pagination overflow",
+      "resolution": "Host-mobile-only wrapping; Next/First round trip and bounds passed"
+    },
+    {
+      "issue": "Three Lancelot printings matched cleanup locator",
+      "resolution": "Selected observed ERB132 printing explicitly"
+    },
+    {
+      "issue": "Container component test lacked frontend global declaration",
+      "resolution": "Added existing frontend vite-env declaration reference; 26 dedicated tests passed"
+    },
+    {
+      "issue": "Broad unit mocked API alternate-images test returned 404 once",
+      "resolution": "No source change. All 29 tests in that file passed independently; full same-input unit rerun passed 3875/18 skips. Original failure preserved; cause unconfirmed."
+    }
+  ],
+  "initialUnitFailure": {
+    "status": "failed",
+    "counts": {
+      "suites": 333,
+      "tests": 3893,
+      "passed": 3874,
+      "failed": 1,
+      "skipped": 18,
+      "todo": 0
+    },
+    "case": "API Endpoints - Simplified / existing character alternate images",
+    "expectedStatus": 200,
+    "observedStatus": 404,
+    "standaloneRecheck": {
+      "passed": 29,
+      "failed": 0
+    }
+  },
+  "cleanup": {
+    "applicationRecords": "Unchanged; no Save/quantity writes, no new fixture records",
+    "panels": "Closed and unmount cleanup verified",
+    "viewport": "Temporary override reset; retained preview uses natural 390x844 panel",
+    "tabs": "Six owned temporary tabs closed; one new preview retained for Kyle; existing user/M5/M3 previews preserved",
+    "servers": "Existing API8090/isolated Docker reused; UI5178 retained for spot check; no production/container teardown"
+  },
+  "acceptance": "Pending for this container slice; Kyle accepted only the prior overlay release",
+  "release": "No commit, push, deploy or production test for this slice",
+  "gaps": [
+    "Full CSS reset/token/media-query containment and theme/brand/icon/auth/action/native LRG integration remain open",
+    "Multiple independent width instances and observer/local-preference cleanup covered by mocked component tests, not live browser subset",
+    "No local light theme, real OAuth, account-write, production container or production mobile test",
+    "Ordinary runner historical harness-unavailable wording describes M1; current harness coverage is recorded separately here",
+    "Mobile overlay runner historical container-backlog wording predates this slice; this report covers only the demonstrated cases",
+    "Shared API is unchanged M5 backend; its health revision is not the uncommitted UI revision"
+  ]
+}
