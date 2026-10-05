@@ -7,7 +7,6 @@ import {
 } from '../../lib/catalog/catalogTypeMap';
 import { isFoilCard } from '../../lib/catalog/foilCatalog';
 import { resolveSetDisplayName } from '../../lib/catalog/setNames';
-import './CatalogAllList.css';
 
 export interface CatalogAllListItem {
   card: CatalogCard;

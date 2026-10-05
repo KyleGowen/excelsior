@@ -1,20 +1,5 @@
+import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
 import { useLayoutEffect, useState, type RefObject } from 'react';
-
-const MOBILE_LAYOUT_MQ = '(max-width: 900px)';
-
-function isMobileLayout(): boolean {
-  if (typeof window === 'undefined') return false;
-  return document.documentElement.classList.contains('layout-mobile');
-}
-
-function readPortraitColWidth(): number {
-  if (typeof window === 'undefined') return 210;
-  const raw = getComputedStyle(document.documentElement)
-    .getPropertyValue('--deck-editor-portrait-col')
-    .trim();
-  const parsed = parseFloat(raw);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 210;
-}
 
 /**
  * Uniform scale so the full drawn hand fits in the panel width (desktop/tablet only).
@@ -24,6 +9,7 @@ export function useDrawHandScale(
   rowRef: RefObject<HTMLElement | null>,
   cardCount: number,
 ): number {
+  const { isMobile } = useLayoutMode();
   const [scale, setScale] = useState(1);
 
   useLayoutEffect(() => {
@@ -34,11 +20,12 @@ export function useDrawHandScale(
     }
 
     const update = () => {
-      if (isMobileLayout()) {
+      if (isMobile) {
         setScale(1);
         return;
       }
-      const baseWidth = readPortraitColWidth();
+      const parsed = parseFloat(getComputedStyle(el).getPropertyValue('--deck-editor-portrait-col'));
+      const baseWidth = Number.isFinite(parsed) && parsed > 0 ? parsed : 210;
       const inner = el.firstElementChild;
       const gapSource = inner instanceof HTMLElement ? inner : el;
       const gap =
@@ -53,15 +40,12 @@ export function useDrawHandScale(
     const ro = new ResizeObserver(update);
     ro.observe(el);
 
-    const mq = window.matchMedia(MOBILE_LAYOUT_MQ);
-    mq.addEventListener('change', update);
     update();
 
     return () => {
       ro.disconnect();
-      mq.removeEventListener('change', update);
     };
-  }, [cardCount, rowRef]);
+  }, [cardCount, rowRef, isMobile]);
 
   return scale;
 }

@@ -1,4 +1,3 @@
-import './LoadingState.css';
 
 interface LoadingStateProps {
   label?: string;

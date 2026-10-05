@@ -18,3 +18,5 @@ export type { ModuleSaveFeedback, ModuleSaveFeedbackContext } from './saveFeedba
 
 export type { ModuleDeckEditState, ModuleEditingPort } from './unsavedNavigation';
 export { createUnsavedNavigation } from './unsavedNavigation';
+
+export type { ModuleStyleOptions } from './ModuleStyleBoundary';

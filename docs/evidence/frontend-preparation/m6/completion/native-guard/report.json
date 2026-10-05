@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "7ddb972ea1a3165e6d17b4a17925ce00aa19be78",
+  "sourceFingerprint": "95f75489f05e4cf37fd8253aa79ab5745bc7084cd47b63502304e098c16f97ba",
+  "backendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "actor": "Guest",
+  "method": "CUA actual local deck edits; delayed/rejected save explicitly injected by shared fixture helper",
+  "scenarios": [
+    {
+      "id": "native-link-and-popstate-back-stay",
+      "status": "passed"
+    },
+    {
+      "id": "native-forward-stay-discard-return",
+      "status": "passed"
+    },
+    {
+      "id": "pending-save-blocked-clean-success",
+      "status": "passed"
+    },
+    {
+      "id": "failed-save-and-external-destination-stay",
+      "status": "passed"
+    },
+    {
+      "id": "clean-owned-handoff-save",
+      "status": "passed"
+    }
+  ],
+  "evidence": [
+    {
+      "screenshot": "private-run-evidence/guard-final-verified/back-stay-retained.jpg",
+      "dom": "private-run-evidence/guard-final-verified/back-stay-retained.txt",
+      "dimensions": {
+        "height": 808,
+        "width": 428
+      },
+      "url": "http://127.0.0.1:5185/prepared-host/tools/decks/local-copy"
+    },
+    {
+      "screenshot": "private-run-evidence/guard-final-verified/save-pending-blocked.jpg",
+      "dom": "private-run-evidence/guard-final-verified/save-pending-blocked.txt",
+      "dimensions": {
+        "height": 808,
+        "width": 428
+      },
+      "url": "http://127.0.0.1:5185/prepared-host/tools/decks/local-copy"
+    },
+    {
+      "screenshot": "private-run-evidence/guard-final-verified/failed-save-external-stay.jpg",
+      "dom": "private-run-evidence/guard-final-verified/failed-save-external-stay.txt",
+      "dimensions": {
+        "height": 808,
+        "width": 428
+      },
+      "url": "http://127.0.0.1:5185/prepared-host/tools/decks/local-copy"
+    }
+  ],
+  "acceptance": "Automated only; Kyle acceptance separate",
+  "gaps": [
+    "Browser reload/tab-close confirmation is separately checked; browsers may suppress native prompts",
+    "Real account/host identity and production native route fallback are future inputs"
+  ],
+  "browserErrorCount": 0,
+  "counts": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "status": "passed",
+  "cleanup": "Caller deletes automated clones; handoff copy may remain only with an explicit private manifest/lifetime"
+}

@@ -11,7 +11,6 @@ import {
 import { isMoreCardDetailField, shouldShowCardDetailField } from './cardDetailFields';
 import type { CatalogCard, CatalogType } from '../../lib/api/types';
 import { imagePathFromCard } from '../../lib/images/cardImages';
-import './CardDetailPanel.css';
 
 /** Default slide-out width for catalog card detail (20% wider than the original 420px). */
 export const CARD_DETAIL_PANEL_WIDTH = 504;

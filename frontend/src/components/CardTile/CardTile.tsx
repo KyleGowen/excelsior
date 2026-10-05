@@ -4,7 +4,6 @@ import { cardDisplayName } from '../../lib/catalog/catalogTypeMap';
 import { isFoilCard } from '../../lib/catalog/foilCatalog';
 import { imagePathFromCard } from '../../lib/images/cardImages';
 import type { CatalogCard, CatalogType } from '../../lib/api/types';
-import './CardTile.css';
 
 interface CardTileProps {
   card: CatalogCard;

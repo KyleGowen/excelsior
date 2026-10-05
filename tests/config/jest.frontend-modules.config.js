@@ -1,6 +1,6 @@
 module.exports = {
   rootDir: '../../',
-  testEnvironment: 'jsdom',
+  testEnvironment: '<rootDir>/tests/helpers/browserTestEnvironment.cjs',
   setupFiles: ['<rootDir>/tests/helpers/textEncoding.cjs'],
   roots: ['<rootDir>/tests/unit/frontend-modules'],
   testMatch: ['**/*.test.tsx'],
@@ -13,6 +13,7 @@ module.exports = {
     '^react-dom$': '<rootDir>/frontend/node_modules/react-dom',
     '^react-dom/client$': '<rootDir>/frontend/node_modules/react-dom/client',
     '^@tanstack/react-query$': '<rootDir>/frontend/node_modules/@tanstack/react-query/build/modern/index.cjs',
+    '\\.css\\?inline$': '<rootDir>/tests/helpers/inlineStyles.cjs',
     '\\.(css)$': '<rootDir>/tests/helpers/emptyStyles.cjs',
   },
   testTimeout: 15000,

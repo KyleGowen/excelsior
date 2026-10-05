@@ -1,6 +1,6 @@
 /// <reference path="../../../frontend/src/vite-env.d.ts" />
 import { act, type ReactNode } from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { NativeRouteHarness } from '../../../frontend/src/modules/NativeRouteHarness';
 import { createUnsavedNavigation } from '../../../frontend/src/modules/unsavedNavigation';
 import { nativeDeckPath } from '../../../frontend/src/modules/nativeHostRoutes';
@@ -387,7 +387,7 @@ it('keeps save-result presentation and mutations isolated between independent ho
 
 
 const mountNative = async (entry: string) => {
- await act(async () => root.render(<QueryClientProvider client={client}><LayoutModeProvider><MemoryRouter initialEntries={[entry]}><NativeRouteHarness user={null} api={host.api} /></MemoryRouter></LayoutModeProvider></QueryClientProvider>)); await wait();
+ await act(async () => root.render(<QueryClientProvider client={client}><LayoutModeProvider><RouterProvider router={createMemoryRouter([{path:'*',element:<NativeRouteHarness user={null} api={host.api} />}],{initialEntries:[entry]})} /></LayoutModeProvider></QueryClientProvider>)); await wait();
 };
 it('routes native host links under the host router and keeps unknown routes explicit', async () => {
  await mountNative('/unknown'); expect(container.textContent).toContain('Unknown fictional host route');
@@ -438,4 +438,48 @@ it('keeps failed saves dirty and removes editing signals when permission becomes
 });
 it('never registers editing for readonly views or creates persistence through the edit-state port', async () => {
  installSaveFixture();const register=jest.fn(()=>jest.fn());host.editing={register};await mount(<DeckBuilderModule deckId="guest_fictional" readonly />);expect(register).not.toHaveBeenCalled();expect(host.api.updateDeckMeta).not.toHaveBeenCalled();expect(host.api.replaceDeckCards).not.toHaveBeenCalled();
+});
+
+
+it('applies host feature restrictions without granting readonly deck write actions', async () => {
+ host.api.updateDeckMeta=jest.fn();
+ host.features={drawHand:false,exportDeck:false,simulateKo:false,addCards:false};
+ await mount(<DeckBuilderModule deckId="storybook-deck" readonly />);
+ expect(container.querySelector('.deck-editor__draw-hand')?.hasAttribute('hidden')).toBe(true);
+ expect(container.querySelector('[title="Export deck"]')?.hasAttribute('hidden')).toBe(true);
+ expect(container.querySelector('[aria-label="Deck name"]')).toBeNull();
+ expect(host.api.updateDeckMeta).not.toHaveBeenCalled();
+ host.features={drawHand:true,exportDeck:true,addCards:true};await mount(<DeckBuilderModule deckId="storybook-deck" readonly />);
+ expect(container.querySelector('.deck-editor__draw-hand')?.hasAttribute('hidden')).toBe(false);
+ expect(container.querySelector('[aria-label="Deck name"]')).toBeNull();
+});
+it('blocks native route links and Back while dirty, keeps Stay, and discards only explicitly', async () => {
+ installSaveFixture();const user={id:'fixture-user',username:'Fictional Owner',email:null,role:'USER' as const};
+ const router=createMemoryRouter([{path:'*',element:<NativeRouteHarness user={user} api={host.api} initialReadonly={false} />}],{initialEntries:['/tools/cards','/tools/decks/00000000-0000-0000-0000-000000000004'],initialIndex:1});
+ await act(async()=>root.render(<QueryClientProvider client={client}><RouterProvider router={router}/></QueryClientProvider>));await wait();
+ await changeDeckName('Guarded fictional draft');
+ await act(async()=>{void router.navigate(-1);});await wait();
+ expect(container.querySelector('[aria-label="Unsaved deck changes"]')).not.toBeNull();
+ const stay=[...container.querySelectorAll('button')].find(b=>b.textContent==='Stay')!;
+ await act(async()=>stay.click());await wait();
+ expect((container.querySelector('[aria-label="Deck name"]') as HTMLInputElement).value).toBe('Guarded fictional draft');
+ const unload=new Event('beforeunload',{cancelable:true});window.dispatchEvent(unload);expect(unload.defaultPrevented).toBe(true);
+ const collection=[...container.querySelectorAll('a')].find(a=>a.textContent==='Host Collection')!;
+ await act(async()=>collection.click());await wait();
+ const discard=[...container.querySelectorAll('button')].find(b=>b.textContent==='Discard and continue')!;
+ await act(async()=>discard.click());await wait();expect(container.textContent).toContain('My Collection');
+ expect(host.api.updateDeckMeta).not.toHaveBeenCalled();
+ const clean=new Event('beforeunload',{cancelable:true});window.dispatchEvent(clean);expect(clean.defaultPrevented).toBe(false);
+ router.dispose();
+});
+
+it('disposes a discarded native editor before applying a guarded host configuration change', async () => {
+ installSaveFixture();const user={id:'fixture-user',username:'Fictional Owner',email:null,role:'USER' as const};
+ const router=createMemoryRouter([{path:'*',element:<NativeRouteHarness user={user} api={host.api} initialReadonly={false} />}],{initialEntries:['/tools/decks/00000000-0000-0000-0000-000000000004']});
+ await act(async()=>root.render(<QueryClientProvider client={client}><RouterProvider router={router}/></QueryClientProvider>));await wait();await changeDeckName('Disposable draft');
+ const readonly=[...container.querySelectorAll('input[type="checkbox"]')][0] as HTMLInputElement;
+ await act(async()=>readonly.click());await wait();expect(container.querySelector('[aria-label="Unsaved deck changes"]')).not.toBeNull();
+ const discard=[...container.querySelectorAll('button')].find(b=>b.textContent==='Discard and continue')!;
+ await act(async()=>discard.click());await wait();expect(container.querySelector('[aria-label="Deck name"]')).toBeNull();expect(container.querySelector('[aria-label="Unsaved deck changes"]')).toBeNull();
+ const unload=new Event('beforeunload',{cancelable:true});window.dispatchEvent(unload);expect(unload.defaultPrevented).toBe(false);expect(host.api.updateDeckMeta).not.toHaveBeenCalled();router.dispose();
 });

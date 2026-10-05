@@ -34,12 +34,12 @@ describe('mobile legality errors interaction contract', () => {
   it('renders the mobile errors in a bounded dismissible sheet', () => {
     expect(component).toContain("role={pressAndHold ? 'dialog' : 'tooltip'}");
     expect(component).toContain('Close deck validation errors');
-    expect(component).toContain('createPortal(panel, document.body)');
-    expect(component).toContain('const top = anchor.bottom + gap;');
+    expect(component).toContain('createPortal(panel, overlay?.root ?? document.body)');
+    expect(component).toContain('const top = anchor.bottom - (bounds?.top ?? 0) + gap;');
     expect(styles).toMatch(
       /\.legality-errors-popover__panel--press-and-hold\s*\{[^}]*position:\s*fixed;/s,
     );
-    expect(component).toContain('maxHeight: `min(50dvh, calc(100dvh - ${top}px');
+    expect(component).toContain(': `min(50dvh, calc(100dvh - ${top}px');
     expect(styles).not.toContain('.legality-errors-popover--inline');
   });
 });

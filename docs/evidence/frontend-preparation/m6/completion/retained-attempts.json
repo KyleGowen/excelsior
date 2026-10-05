@@ -1,0 +1,104 @@
+[
+  {
+    "attempt": "desktop",
+    "counts": {
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 5
+    },
+    "failedScenarios": [
+      {
+        "id": "native-integration",
+        "status": "failed",
+        "reason": "Error: Native detail escaped the host surface"
+      }
+    ],
+    "browserErrorCount": 0
+  },
+  {
+    "attempt": "desktop-settled",
+    "counts": {
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 5
+    },
+    "failedScenarios": [
+      {
+        "id": "native-integration",
+        "status": "failed",
+        "reason": "Error: Modal Tab failed to wrap in shadow root"
+      }
+    ],
+    "browserErrorCount": 0
+  },
+  {
+    "attempt": "final-native-unsaved",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 5
+    },
+    "failedScenarios": [
+      {
+        "id": "native-unsaved",
+        "status": "failed",
+        "reason": "Error: Error: Playwright selector deadline exceeded\nlocator.fill failed for selector internal:role=textbox[name=\"Deck name\"s]\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"fill\",\"locator\":\"internal:role=textbox[name=\\\"Deck name\\\"s]\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}"
+      }
+    ],
+    "browserErrorCount": 0
+  },
+  {
+    "attempt": "final-guard-fresh",
+    "counts": {
+      "passed": 3,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 2
+    },
+    "failedScenarios": [
+      {
+        "id": "native-unsaved",
+        "status": "failed",
+        "reason": "Error: Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector internal:role=dialog[name=\"Unsaved deck changes\"s]\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"internal:role=dialog[name=\\\"Unsaved deck changes\\\"s]\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}"
+      }
+    ],
+    "browserErrorCount": 0
+  },
+  {
+    "attempt": "guard-corrected",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 5
+    },
+    "failedScenarios": [
+      {
+        "id": "native-unsaved",
+        "status": "failed",
+        "reason": "Error: Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector internal:role=dialog[name=\"Unsaved deck changes\"s]\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"internal:role=dialog[name=\\\"Unsaved deck changes\\\"s]\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}"
+      }
+    ],
+    "browserErrorCount": 3
+  },
+  {
+    "attempt": "guard-handoff",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 5
+    },
+    "failedScenarios": [
+      {
+        "id": "native-unsaved",
+        "status": "failed",
+        "reason": "Error: Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector internal:role=textbox[name=\"Deck name\"s]\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"internal:role=textbox[name=\\\"Deck name\\\"s]\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}"
+      }
+    ],
+    "browserErrorCount": 0
+  }
+]

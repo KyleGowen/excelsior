@@ -2050,3 +2050,7 @@
   text-align: center;
   font-variant-numeric: tabular-nums;
 }
+
+.deck-editor--module { grid-template-columns: 1fr; }
+
+.deck-editor [hidden] { display: none !important; }

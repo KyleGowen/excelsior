@@ -7,7 +7,6 @@ import { DbvFunctionIconStrip } from '../database/components/DbvFunctionIconStri
 import { DbvMissionSetSelect } from '../database/components/DbvMissionSetSelect';
 import { DbvNumericStatInline } from '../database/components/DbvNumericStatInline';
 import { DbvPowerTypeStrip } from '../database/components/DbvPowerTypeStrip';
-import '../database/components/DbvFilterRail.css';
 import { collectMissionSetOptions } from '../database/filters/dbvFilterPredicates';
 import { getDbvFilterConfig } from '../database/filters/dbvFilterConfig';
 import type { UseDbvFiltersReturn } from '../database/filters/useDbvFilters';

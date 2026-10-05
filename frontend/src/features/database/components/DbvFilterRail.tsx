@@ -10,7 +10,6 @@ import { DbvMissionSetSelect } from './DbvMissionSetSelect';
 import { DbvNumericStatInline } from './DbvNumericStatInline';
 import { DbvPowerTypeStrip } from './DbvPowerTypeStrip';
 import { CatalogFilterRail } from './CatalogFilterRail';
-import './DbvFilterRail.css';
 
 const MAX_VISIBLE_CHIPS = 4;
 

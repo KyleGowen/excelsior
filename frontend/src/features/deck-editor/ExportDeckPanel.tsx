@@ -6,7 +6,6 @@ import {
   buildDeckExportJson,
   type BuildDeckExportJsonInput,
 } from '../../lib/decks/buildDeckExportJson';
-import './ExportDeckPanel.css';
 
 export interface ExportDeckPanelProps {
   open: boolean;

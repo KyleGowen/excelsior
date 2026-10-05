@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import './EmptyState.css';
 
 interface EmptyStateProps {
   title: string;

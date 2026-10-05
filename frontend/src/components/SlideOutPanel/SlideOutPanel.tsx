@@ -1,8 +1,8 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { IconClose } from '../icons';
 import { createPortal } from 'react-dom';
+import { activeElement } from '../../lib/layout/activeElement';
 import { useOverlayHost } from '../../lib/layout/OverlayHostProvider';
-import './SlideOutPanel.css';
 
 interface SlideOutPanelProps {
   open: boolean;
@@ -55,11 +55,11 @@ export function SlideOutPanel({
   useEffect(() => {
     if (!open) return;
     const owner = portalRoot?.ownerDocument ?? document;
-    previouslyFocused.current = owner.activeElement as HTMLElement | null;
+    previouslyFocused.current = activeElement(owner) as HTMLElement | null;
     const onKey = (e: KeyboardEvent) => {
       const panel = panelRef.current;
       // Independent host panels must not dismiss an unrelated module's panel.
-      if (portalRoot && (!panel || !panel.contains(owner.activeElement))) return;
+      if (portalRoot && (!panel || !panel.contains(activeElement(owner)))) return;
       if (e.key === 'Escape' && closeOnEscapeRef.current) onCloseRef.current();
       if (portalRoot && modal && panel && e.key === 'Tab') {
         const controls = Array.from(panel.querySelectorAll<HTMLElement>('button, a[href], input, select, textarea, [tabindex]')).filter(element =>
@@ -67,8 +67,8 @@ export function SlideOutPanel({
           getComputedStyle(element).display !== 'none' && getComputedStyle(element).visibility !== 'hidden');
         const first = controls[0]; const last = controls.at(-1);
         if (!first || !last) { e.preventDefault(); panel.focus(); }
-        else if (e.shiftKey && (owner.activeElement === first || owner.activeElement === panel)) { e.preventDefault(); last.focus(); }
-        else if (!e.shiftKey && (owner.activeElement === last || owner.activeElement === panel)) { e.preventDefault(); first.focus(); }
+        else if (e.shiftKey && (activeElement(owner) === first || activeElement(owner) === panel)) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && (activeElement(owner) === last || activeElement(owner) === panel)) { e.preventDefault(); first.focus(); }
       }
     };
     owner.addEventListener('keydown', onKey);

@@ -1,0 +1,162 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "7ddb972ea1a3165e6d17b4a17925ce00aa19be78",
+  "sourceFingerprint": "318043c846377c693c0c42205f0c7be25ebccb8e00d4b26bb3c8d600615e1fd7",
+  "backendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5185",
+    "apiUrl": "http://127.0.0.1:8090",
+    "sourceRoot": "M6 completion checkout",
+    "sourceRevision": "7ddb972ea1a3165e6d17b4a17925ce00aa19be78",
+    "sourceTreeFingerprint": "318043c846377c693c0c42205f0c7be25ebccb8e00d4b26bb3c8d600615e1fd7",
+    "expectedRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m5",
+    "verified": true,
+    "observedAt": "2026-10-05T22:44:18.165Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required",
+    "frontendSource": {
+      "root": "M6 completion checkout",
+      "revision": "7ddb972ea1a3165e6d17b4a17925ce00aa19be78",
+      "branch": "",
+      "fingerprint": "318043c846377c693c0c42205f0c7be25ebccb8e00d4b26bb3c8d600615e1fd7",
+      "proxyBackendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "sharedBackendInputs": "Identical committed and working backend/migrations/dependency manifests"
+    },
+    "backendSource": {
+      "root": "verified local backend checkout",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046"
+    },
+    "databaseOwnershipReceipt": "private-run-evidence/startup-current/startup.json"
+  },
+  "actor": "Guest",
+  "method": "CUA live browser; real local API reads; no record writes",
+  "scenarios": [
+    {
+      "id": "two-way-styles-root-font-container-layout",
+      "status": "passed"
+    },
+    {
+      "id": "host-card-auth-callbacks-overlay-bounds-focus-keyboard",
+      "status": "passed"
+    },
+    {
+      "id": "independent-appearance-input-and-disposal",
+      "status": "passed"
+    },
+    {
+      "id": "nested-links-reload-back-forward",
+      "status": "passed"
+    },
+    {
+      "id": "readonly-draw-and-subtractive-feature-controls",
+      "status": "passed"
+    },
+    {
+      "id": "route-module-overlay-cleanup",
+      "status": "passed"
+    }
+  ],
+  "evidence": [
+    {
+      "screenshot": "private-run-evidence/native-final-desktop/isolated-style-stress.jpg",
+      "dom": "private-run-evidence/native-final-desktop/isolated-style-stress.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://127.0.0.1:5185/prepared-host/tools/cards"
+    },
+    {
+      "screenshot": "private-run-evidence/native-final-desktop/independent-surfaces.jpg",
+      "dom": "private-run-evidence/native-final-desktop/independent-surfaces.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://127.0.0.1:5185/prepared-host/tools/cards"
+    },
+    {
+      "screenshot": "private-run-evidence/native-final-desktop/native-draw.jpg",
+      "dom": "private-run-evidence/native-final-desktop/native-draw.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://127.0.0.1:5185/prepared-host/tools/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+    },
+    {
+      "screenshot": "private-run-evidence/native-final-desktop/host-home-clean.jpg",
+      "dom": "private-run-evidence/native-final-desktop/host-home-clean.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://127.0.0.1:5185/prepared-host"
+    }
+  ],
+  "theme": "default / fictional paper / fictional contrast",
+  "gaps": [
+    "Real LRG assets, OAuth/account identity, production host fallback and M7 packaging remain later work"
+  ],
+  "acceptance": "Automated evidence only; Kyle acceptance separate",
+  "dimensions": {
+    "height": 720,
+    "width": 1280
+  },
+  "styleMetrics": {
+    "before": {
+      "bodyFont": "Georgia, serif",
+      "documentSheets": 1,
+      "hostFont": "13.3333px",
+      "hostPadding": "1px 6px",
+      "inputFont": "15px",
+      "layout": "mobile",
+      "moduleBackground": "rgb(20, 31, 53)",
+      "moduleFont": "Inter, \"Segoe UI\", system-ui, -apple-system, sans-serif",
+      "rootFont": "24px"
+    },
+    "stress": {
+      "bodyFont": "Georgia, serif",
+      "documentSheets": 1,
+      "hostFont": "13.3333px",
+      "hostPadding": "1px 6px",
+      "inputFont": "15px",
+      "layout": "mobile",
+      "moduleBackground": "rgb(20, 31, 53)",
+      "moduleFont": "Inter, \"Segoe UI\", system-ui, -apple-system, sans-serif",
+      "rootFont": "32px"
+    }
+  },
+  "browserErrorCount": 0,
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only selected actions",
+    "viewport": "reset",
+    "tab": "test-owned; caller closes or explicitly hands off"
+  },
+  "counts": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "status": "passed"
+}

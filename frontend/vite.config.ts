@@ -15,6 +15,7 @@ const nativeHostFixture: Plugin = {
   server.middlewares.use((req, _res, next) => {
    const path = req.url?.split('?')[0];
    if (req.method === 'GET' && req.headers.accept?.includes('text/html') && (path === '/fictional-host' || path?.startsWith('/fictional-host/'))) req.url = '/native-route-harness.html';
+   if (req.method === 'GET' && req.headers.accept?.includes('text/html') && (path === '/prepared-host' || path?.startsWith('/prepared-host/'))) req.url = '/native-integration-harness.html';
    next();
   });
  },

@@ -1,3 +1,4 @@
+import { scopeNativeStyles } from './nativeStyles';
 import { createElement, type CSSProperties, type ReactNode } from 'react';
 
 /** Reviewed visual tokens only. Layout, motion and stacking remain host contracts. */
@@ -85,18 +86,18 @@ export interface ModuleAppearanceOptions {
  colorScheme?: 'light' | 'dark';
 }
 const allowed = new Set<string>(themeTokens);
-function appearanceStyle(options: ModuleAppearanceOptions): CSSProperties {
+function appearanceStyle(options: ModuleAppearanceOptions, native: boolean): CSSProperties {
  if (options.colorScheme !== undefined && options.colorScheme !== 'light' && options.colorScheme !== 'dark') throw new Error('Module colorScheme must be light or dark');
  if (options.tokens !== undefined && (typeof options.tokens !== 'object' || options.tokens === null || Array.isArray(options.tokens))) throw new Error('Module tokens must be a visual-token map');
  const variables: Record<string, string> = {};
  for (const [name, value] of Object.entries(options.tokens ?? {})) {
   if (!allowed.has(name)) throw new Error(`Unsupported module visual token: ${name}`);
   if (typeof value !== 'string' || !value.trim() || value.length > 512) throw new Error(`Module token requires a nonempty CSS value: ${name}`);
-  variables[name] = value;
+  variables[name] = native ? scopeNativeStyles(value) : value;
  }
  return { ...variables, minWidth: 0, minHeight: 'inherit', fontFamily: 'var(--font-sans)', fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-normal)', color: 'var(--color-text)', backgroundColor: 'var(--color-bg-base)', ...(options.colorScheme ? { colorScheme: options.colorScheme } : {}) };
 }
 /** Stable per-instance boundary: no document, storage or stylesheet writes. */
-export function ModuleAppearanceBoundary({ options, children }: { options: ModuleAppearanceOptions; children: ReactNode }) {
- return createElement('div', { className: 'module-appearance', style: appearanceStyle(options) }, children);
+export function ModuleAppearanceBoundary({ options, children, native = false }: { options: ModuleAppearanceOptions; children: ReactNode; native?: boolean }) {
+ return createElement('div', { className: 'module-appearance', style: appearanceStyle(options, native) }, children);
 }
