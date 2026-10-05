@@ -92,3 +92,16 @@
   width: 100%;
   text-align: center;
 }
+
+/* Native narrow hosts may be smaller than the browser viewport. */
+.module-layout-container.layout-mobile .pagination__controls {
+  max-width: 100%;
+  flex-shrink: 1;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.module-layout-container.layout-mobile .pagination__pages {
+  max-width: 100%;
+  flex-shrink: 1;
+  flex-wrap: wrap;
+}

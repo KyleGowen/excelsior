@@ -412,3 +412,12 @@
   width: calc(100% * 7 / 5);
   height: calc(100% * 5 / 7);
 }
+
+/* Explicit native host roots keep mobile draw panels inside the declared surface. */
+.layout-mobile .slideout--host.slideout--absolute:has(.draw-hand-slideout) {
+  position: absolute;
+}
+.layout-mobile .slideout--host .draw-hand-slideout.slideout__panel--top {
+  height: 100%;
+  max-height: 100%;
+}

@@ -44,3 +44,7 @@ function HostOverlayExample({ modal = true, pair = false }: { modal?: boolean; p
 }
 export const NonmodalHostPanel: Story = { render: () => <HostOverlayExample modal={false} /> };
 export const IndependentOverlayRoots: Story = { render: () => <HostOverlayExample pair /> };
+
+/** Named example for the container provider through the real module host. */
+export const NarrowContainerOnDesktop: Story = { args: { initialContainerLayout: true, initialContainerWidth: '390', initialHostOverlay: true } };
+export const ResizableContainer: Story = { args: { initialContainerLayout: true, initialContainerWidth: '1120', initialHostOverlay: true } };

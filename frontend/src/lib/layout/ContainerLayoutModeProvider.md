@@ -1,0 +1,3 @@
+# ContainerLayoutModeProvider
+
+Opt-in ModuleHost layout wrapper. See [module contract](../../modules/README.md#m6-second-slice-container-owned-layout-context) for ownership, measured width, local preference, lifecycle, unsupported ResizeObserver fallback and remaining CSS limits. It shares only the typed layoutModeContext with the ordinary viewport provider. It uses createElement so non-JSX pure-unit imports of ModuleHost remain compatible. Named examples are NarrowContainerOnDesktop, ResizableContainer and NarrowHostPagination. No API, authentication, storage write or document class mutation occurs here.

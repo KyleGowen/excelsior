@@ -1,0 +1,87 @@
+- banner:
+  - heading "Independent module harness" [level=1]
+  - paragraph: "Host identity: Guest. Local session and catalog. Decks start read-only; enable editing only for your disposable fixture."
+  - navigation "Module selection":
+    - button "Card Database module"
+    - button "Deck Builder module"
+    - button "Collection module" [pressed]
+    - button "All three modules"
+    - button "Unmount modules"
+  - text: Local deck ID
+  - textbox "Local deck ID": b4ec3a04-ab17-4a33-b813-df35f8195d75
+  - checkbox "Read-only deck" [checked]
+  - text: Read-only deck
+  - checkbox "Use host overlay root" [checked]
+  - text: Use host overlay root
+  - checkbox "Use container layout" [checked]
+  - text: Use container layout
+  - text: Host container width
+  - combobox "Host container width":
+    - option "Available space"
+    - option "390 pixels" [selected]
+    - option "720 pixels"
+    - option "1120 pixels"
+  - status "Host callback result"
+- region "Host overlay root"
+- region "Independent Collection":
+  - heading "My Collection" [level=1]:
+    - text: My Collection
+  - strong: "0"
+  - text: cards owned
+  - strong: "0"
+  - text: unique
+  - generic: Stored on this device
+  - searchbox "Search collection" [active]: Lancelot
+  - generic: Set
+  - combobox "Filter by set":
+    - option "All sets" [selected]
+    - option "Edgar Rice Burroughs and the World Legends"
+    - option "Edgar Rice Burroughs and the World Legends - Promos"
+    - option "The Few and the Cursed - Promos"
+    - option "Skybound"
+    - option "Skybound - Promos"
+  - checkbox "Owned only"
+  - generic: Owned only
+  - tablist "Card types":
+    - tab "All"
+    - tab "Characters" [selected]
+    - tab "Special"
+    - tab "Power"
+    - tab "Locations"
+    - tab "Battlegrounds"
+    - tab "Missions"
+    - tab "Events"
+    - tab "Aspects"
+    - tab "Advanced"
+    - tab "Teamwork"
+    - tab "Ally"
+    - tab "Training"
+    - tab "Basic"
+  - article:
+    - button "View Lancelot":
+    - generic "Lancelot"
+    - generic: ERB 132
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Lancelot":
+    - generic "Lancelot"
+    - generic: ERB 507
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Lancelot":
+    - generic "Lancelot"
+    - generic: ERB 507F
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - navigation "Pagination":
+    - button "First page" [disabled]:
+    - button "Previous page" [disabled]:
+    - button "1"
+    - button "Next page" [disabled]:
+    - button "Last page" [disabled]:
+  - generic: Showing 1-3 of 3

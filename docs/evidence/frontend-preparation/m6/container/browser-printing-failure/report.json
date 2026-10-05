@@ -1,0 +1,244 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "366b23af1fd4cdde23802451333e3c91ca893e9a",
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5178",
+    "apiUrl": "http://localhost:8090",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/m4-release-repair/cursored",
+    "sourceRevision": "366b23af1fd4cdde23802451333e3c91ca893e9a",
+    "sourceTreeFingerprint": "f7ac3ccbee53544ecb1ae17449f4e616b926da2e61b58a60db1d09535cc916ed",
+    "expectedRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m6",
+    "verified": true,
+    "observedAt": "2026-10-04T22:53:31.296Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required",
+    "sharedBackend": {
+      "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m4/cursored",
+      "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "unchangedBackendFiles": true
+    },
+    "sourceState": "uncommitted M6 container slice",
+    "revisionContract": "UI366b23af plus uncommitted container work; API intentionally retained identical M5 backend345e4865; each source and proxy verified separately"
+  },
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "container-only-resize",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "browser-printing-failure/container-only-resize-result.jpg",
+          "dom": "browser-printing-failure/container-only-resize-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        }
+      ],
+      "observed": {
+        "narrow": {
+          "scrollWidth": 390,
+          "width": 390
+        },
+        "wide": 1120,
+        "viewportUnchanged": true,
+        "searchPreserved": true
+      }
+    },
+    {
+      "id": "container-detail-keyboard",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "browser-printing-failure/container-detail-keyboard-panel.jpg",
+          "dom": "browser-printing-failure/container-detail-keyboard-panel.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        },
+        {
+          "screenshot": "browser-printing-failure/container-detail-keyboard-result.jpg",
+          "dom": "browser-printing-failure/container-detail-keyboard-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        }
+      ],
+      "observed": {
+        "geometry": {
+          "contained": true,
+          "panel": {
+            "bottom": 719.8203125,
+            "left": 16,
+            "right": 406,
+            "top": -18
+          },
+          "root": {
+            "bottom": 719.8203125,
+            "left": 16,
+            "right": 406,
+            "top": -18
+          }
+        },
+        "focusWrapped": true,
+        "focusRestored": true
+      }
+    },
+    {
+      "id": "container-readonly-deck",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "browser-printing-failure/container-readonly-deck-draw-panel.jpg",
+          "dom": "browser-printing-failure/container-readonly-deck-draw-panel.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        },
+        {
+          "screenshot": "browser-printing-failure/container-readonly-deck-export-panel.jpg",
+          "dom": "browser-printing-failure/container-readonly-deck-export-panel.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        },
+        {
+          "screenshot": "browser-printing-failure/container-readonly-deck-result.jpg",
+          "dom": "browser-printing-failure/container-readonly-deck-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        }
+      ],
+      "observed": {
+        "geometry": {
+          "contained": true,
+          "panel": {
+            "bottom": 1067,
+            "left": 16,
+            "right": 406,
+            "top": 347
+          },
+          "root": {
+            "bottom": 1067,
+            "left": 16,
+            "right": 406,
+            "top": 347
+          }
+        },
+        "drawCount": 8,
+        "exported": {
+          "cards": 8,
+          "threat": 18
+        },
+        "recordsChanged": false
+      }
+    },
+    {
+      "id": "container-collection-read",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "browser-printing-failure/container-collection-read-unfiltered.jpg",
+          "dom": "browser-printing-failure/container-collection-read-unfiltered.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        },
+        {
+          "screenshot": "browser-printing-failure/container-collection-read-settled.jpg",
+          "dom": "browser-printing-failure/container-collection-read-settled.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        },
+        {
+          "screenshot": "browser-printing-failure/container-collection-read-result.jpg",
+          "dom": "browser-printing-failure/container-collection-read-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        }
+      ],
+      "observed": {
+        "full": {
+          "scrollWidth": 390,
+          "width": 390
+        },
+        "bounds": {
+          "scrollWidth": 390,
+          "width": 390
+        },
+        "paginationRoundTrip": true,
+        "recordsChanged": false
+      }
+    },
+    {
+      "id": "container-disposal",
+      "status": "failed",
+      "evidence": [
+        {
+          "screenshot": "browser-printing-failure/container-disposal-failure.jpg",
+          "dom": "browser-printing-failure/container-disposal-failure.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5178/module-harness.html"
+        }
+      ],
+      "reason": "Error: Browser Use encountered an error interacting with this webpage: Error: strict mode violation: getByRole('button', { name: 'View Lancelot', exact: true }) resolved to 3 elements:\n    1) <div tabindex=\"0\" role=\"button\" aria-label=\"View Lancelot\" class=\"card-tile__art card-tile__art--clickable\">…</div> aka getByRole('article').filter({ hasText: 'LancelotERB 132' }).getByLabel('View Lancelot')\n    2) <div tabindex=\"0\" role=\"button\" aria-label=\"View Lancelot\" class=\"card-tile__art card-tile__art--clickable\">…</div> aka getByRole('button', { name: 'View Lancelot' }).nth(1)\n    3) <div tabindex=\"0\" role=\"button\" aria-label=\"View Lancelot\" class=\"card-tile__art card-tile__art--clickable\">…</div> aka getByRole('article').filter({ hasText: 'LancelotERB 507F' }).getByLabel('View Lancelot')\n\nwaiting on click for selector internal:role=button[name=\"View Lancelot\"s]\nLocator diagnostics: {\"kind\":\"multiple_matches\",\"action\":\"click\",\"locator\":\"internal:role=button[name=\\\"View Lancelot\\\"s]\",\"matchCount\":3,\"matches\":[{\"ariaLabel\":\"View Lancelot\",\"disabled\":false,\"role\":\"button\",\"tag\":\"div\",\"text\":\"\",\"type\":null,\"visible\":true},{\"ariaLabel\":\"View Lancelot\",\"disabled\":false,\"role\":\"button\",\"tag\":\"div\",\"text\":\"\",\"type\":null,\"visible\":true},{\"ariaLabel\":\"View Lancelot\",\"disabled\":false,\"role\":\"button\",\"tag\":\"div\",\"text\":\"\",\"type\":null,\"visible\":true}],\"visibleCount\":3,\"truncated\":false}"
+    }
+  ],
+  "counts": {
+    "passed": 4,
+    "failed": 1,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "browserErrors": 0,
+  "status": "needs review",
+  "cleanup": "Read-only fictional fixture; no Save/quantity writes. Viewport unchanged; panels cleared on unmount; preview retained.",
+  "acceptance": "Kyle acceptance pending for container slice",
+  "gaps": [
+    "No full CSS containment/global reset or theme/brand/auth/action isolation claimed.",
+    "Multiple independent width instances, observer cleanup and local preference isolation covered by component tests, not this live subset.",
+    "No production container/OAuth/light theme/account writes tested."
+  ]
+}

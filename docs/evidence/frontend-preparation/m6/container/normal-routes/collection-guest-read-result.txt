@@ -1,0 +1,61 @@
+- banner:
+  - link "Excelsior home":
+    - /url: /home
+    - img "Excelsior"
+  - navigation "Primary":
+    - link "Home":
+      - /url: /home
+      - text: Home
+    - link "Database":
+      - /url: /data
+      - text: Database
+    - link "Decks":
+      - /url: /users/00000000-0000-0000-0000-000000000001/decks
+      - text: Decks
+    - link "Community":
+      - /url: /community
+      - text: Community
+    - link "Collection":
+      - /url: /users/00000000-0000-0000-0000-000000000001/collection
+      - text: Collection
+  - button "Guest":
+    - generic: G
+    - generic: Guest
+- main:
+  - heading "My Collection" [level=1]:
+    - text: My Collection
+  - strong: "0"
+  - text: cards owned
+  - strong: "0"
+  - text: unique
+  - generic: Stored on this device
+  - searchbox "Search collection"
+  - generic: Set
+  - combobox "Filter by set":
+    - option "All sets" [selected]
+    - option "Edgar Rice Burroughs and the World Legends"
+    - option "Edgar Rice Burroughs and the World Legends - Promos"
+    - option "The Few and the Cursed - Promos"
+    - option "Skybound"
+    - option "Skybound - Promos"
+  - checkbox "Owned only" [checked] [active]
+  - generic: Owned only
+  - tablist "Card types":
+    - tab "All" [selected]
+    - tab "Characters"
+    - tab "Special Cards"
+    - tab "Power Cards"
+    - tab "Locations"
+    - tab "Battlegrounds"
+    - tab "Missions"
+    - tab "Events"
+    - tab "Aspects"
+    - 'tab "Universe: Advanced"'
+    - 'tab "Universe: Teamwork"'
+    - 'tab "Universe: Ally"'
+    - 'tab "Universe: Training"'
+    - 'tab "Universe: Basic"'
+  - status:
+    - heading "No cards owned here yet" [level=3]
+    - paragraph: Add cards to your collection to see them here.
+- generic: Samson
