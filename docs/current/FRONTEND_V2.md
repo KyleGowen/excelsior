@@ -212,3 +212,8 @@ Database, Deck Builder and Collection now use [the independent module source ent
 M6's first local slice adds a typed `ModuleHost.overlays` root/position/modality contract. Shared SlideOutPanel portals only when explicitly configured; the ordinary Excelsior adapter omits it, retaining current placement. Configured keyboard/focus/cleanup is host-scoped. See the module guide. Global style containment, container responsiveness and remaining host configuration are not complete.
 
 The opt-in module `layout:{mode:'container'}` port uses per-instance ResizeObserver context and local layout classes. Normal Excelsior routes omit the option and retain viewport behavior. It does not yet remove global reset/token/media-query dependencies; see the module README and M6 implementation ledger.
+
+
+### Opt-in native-host appearance (M6)
+
+Independent hosts can supply `ModuleHost.appearance` for reviewed color/typography/spacing/radius/shadow variables and local native-control color scheme. The ordinary Excelsior host omits it. Keep boundary presence stable over unsaved drafts; token changes and empty-map reset retain children, while adding/removing the boundary remounts them. Keep overlay roots inside the themed wrapper for inheritance. See [module host contract](../../frontend/src/modules/README.md#m6-third-slice-per-instance-appearance); source packaging, broad CSS containment and brand/icon/auth/action configuration remain separate open milestones.

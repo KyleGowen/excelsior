@@ -1,0 +1,87 @@
+{
+  "results": [
+    {
+      "name": "home-guest-result.jpg",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "differentPixels": 55,
+      "bounds": [
+        832,
+        24,
+        840,
+        32
+      ],
+      "maxChannelDifference": 7,
+      "pixelsAbove10": 0
+    },
+    {
+      "name": "database-search-detail-empty.jpg",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "differentPixels": 178,
+      "bounds": [
+        512,
+        96,
+        520,
+        120
+      ],
+      "maxChannelDifference": 53,
+      "pixelsAbove10": 59
+    },
+    {
+      "name": "database-search-detail-detail.jpg",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "differentPixels": 0,
+      "bounds": null,
+      "maxChannelDifference": 0,
+      "pixelsAbove10": 0
+    },
+    {
+      "name": "database-search-detail-result.jpg",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "differentPixels": 31763,
+      "bounds": [
+        15,
+        271,
+        321,
+        561
+      ],
+      "maxChannelDifference": 20,
+      "pixelsAbove10": 216
+    },
+    {
+      "name": "deck-readonly-draw-export-result.jpg",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "differentPixels": 817,
+      "bounds": [
+        608,
+        472,
+        760,
+        720
+      ],
+      "maxChannelDifference": 6,
+      "pixelsAbove10": 0
+    }
+  ],
+  "randomDrawImages": "not pixel-compared; draw count/export behavior asserted independently",
+  "baselinePolicy": "Original screenshots retained; no overwritten or silently accepted baseline",
+  "review": {
+    "databaseDetail": "Identical screenshot: zero differing pixels",
+    "remainingFrames": "Original and final retained and visually reviewed. Same layout/identities/values; small frame differences around chevron/caret, card focus transition and foil shimmer. No full pixel identity claimed.",
+    "supportingCss": "CardTile border/transform transition and 2.8s foil shimmer remain unchanged",
+    "baselineApproval": "No baseline overwritten or accepted as a new reference; behavioral assertions independently passed"
+  }
+}

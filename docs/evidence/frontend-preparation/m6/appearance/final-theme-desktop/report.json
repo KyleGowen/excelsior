@@ -1,0 +1,263 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "275446909777ab3031f7e57070b93b90f07c5546",
+  "backendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5179",
+    "apiUrl": "http://127.0.0.1:8090",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m4/cursored",
+    "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "sourceTreeFingerprint": "50fde696eb20a41abc3c7afcbf86c6b9fbd8d2b4959161f41245103fefd0a35a",
+    "expectedRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m5",
+    "verified": true,
+    "observedAt": "2026-10-05T03:17:56.678Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required",
+    "frontendSource": {
+      "root": "/Users/kyle/.codex/worktrees/m6-container-release/cursored",
+      "revision": "275446909777ab3031f7e57070b93b90f07c5546",
+      "branch": "codex/frontend-preparation-m6-theme",
+      "fingerprint": "760b32d0f296d21487209e53dae03efbb547658033bb5e67537f9ef583ecd62c",
+      "listenerPid": 52314,
+      "proxyBackendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "sharedBackendInputs": "Identical committed and working backend/migrations/dependency manifests"
+    },
+    "databaseOwnershipReceipt": "/private/tmp/excelsior-m6-theme/startup-shared/startup.json"
+  },
+  "method": "CUA live browser automation",
+  "viewport": "1280x720",
+  "scenarios": [
+    {
+      "id": "theme-default-and-update",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-default-and-update-default.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-default-and-update-default.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        },
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-default-and-update-result.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-default-and-update-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        }
+      ],
+      "observed": {
+        "background": "rgb(247, 244, 237)",
+        "color": "rgb(32, 37, 47)",
+        "font": "Georgia, serif",
+        "size": "16px",
+        "searchPreserved": true,
+        "outerHostUnchanged": true
+      }
+    },
+    {
+      "id": "theme-paper-detail",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-paper-detail-settled.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-paper-detail-settled.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        },
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-paper-detail-result.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-paper-detail-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        }
+      ],
+      "observed": {
+        "background": "rgb(255, 253, 248)",
+        "contained": true,
+        "font": "Georgia, serif",
+        "inBoundary": true,
+        "padding": "20px",
+        "imageLoaded": true,
+        "focusRestored": true
+      }
+    },
+    {
+      "id": "theme-contrast-and-reset",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-contrast-and-reset-settled.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-contrast-and-reset-settled.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        },
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-contrast-and-reset-result.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-contrast-and-reset-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        }
+      ],
+      "observed": {
+        "contrast": {
+          "background": "rgb(25, 25, 25)",
+          "contained": true,
+          "font": "Arial, sans-serif",
+          "inBoundary": true,
+          "padding": "24px"
+        },
+        "overridesRemoved": true,
+        "searchPreserved": true
+      }
+    },
+    {
+      "id": "theme-readonly-deck",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-readonly-deck-draw.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-readonly-deck-draw.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        },
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-readonly-deck-export.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-readonly-deck-export.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        },
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-readonly-deck-result.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-readonly-deck-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        }
+      ],
+      "observed": {
+        "draw": 8,
+        "exported": {
+          "cards": 8,
+          "threat": 18
+        },
+        "panel": {
+          "background": "rgb(255, 253, 248)",
+          "contained": true,
+          "font": "Georgia, serif",
+          "inBoundary": true,
+          "padding": "20px"
+        },
+        "recordsChanged": false
+      }
+    },
+    {
+      "id": "theme-collection-read",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-collection-read-paper.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-collection-read-paper.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        },
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-collection-read-result.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-collection-read-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        }
+      ],
+      "observed": {
+        "searchPreserved": true,
+        "quantitiesChanged": false
+      }
+    },
+    {
+      "id": "theme-disposal",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-disposal-result.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/final-theme-desktop/theme-disposal-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/module-harness.html"
+        }
+      ],
+      "observed": {
+        "portalCleared": true,
+        "remounted": true,
+        "documentUnchanged": true
+      }
+    }
+  ],
+  "counts": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "browserErrors": 0,
+  "status": "passed",
+  "cleanup": "Read-only local fixture; no application record writes; panels cleared; caller resets viewport/closes temporary tabs.",
+  "acceptance": "Automated evidence; Kyle acceptance recorded separately",
+  "gaps": [
+    "Global CSS/reset/ancestor selectors and viewport media queries are not isolated",
+    "External portal roots need host styling",
+    "Multiple appearance instances and unsaved state/focus continuity covered by component tests",
+    "Fictional host presets are not an exact LRG match or a certified contrast audit",
+    "No production theme, OAuth, authenticated writes or fixture mutations tested"
+  ]
+}

@@ -2,14 +2,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { AppUser } from '../lib/api/types';
 import { CardDatabaseModule, DeckBuilderModule, CollectionModule, ModuleHostProvider, createModuleApi } from './index';
 import './ModuleHarness.css';
+import { harnessAppearance, type HarnessAppearance } from './harnessAppearance';
 import { fetchCurrentUser, fetchAppConfig } from '../lib/api/auth';
 import { useLayoutMode } from '../lib/layout/LayoutModeProvider';
 type Selection = 'database' | 'deck' | 'collection' | 'together' | 'unmounted';
 /** Local fixture host: neither Excelsior's router nor AuthProvider is mounted. */
-export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = false, initialContainerLayout = false, initialContainerWidth = 'available' }: { user: AppUser | null; initialDeckId?: string; initialHostOverlay?: boolean; initialContainerLayout?: boolean; initialContainerWidth?: string }) {
+export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = false, initialContainerLayout = false, initialContainerWidth = 'available', initialAppearance = 'default' }: { user: AppUser | null; initialDeckId?: string; initialHostOverlay?: boolean; initialContainerLayout?: boolean; initialContainerWidth?: string; initialAppearance?: HarnessAppearance }) {
  const { isMobile } = useLayoutMode();
  const [useContainerLayout, setUseContainerLayout] = useState(initialContainerLayout);
  const [containerWidth, setContainerWidth] = useState(initialContainerWidth);
+ const [appearance, setAppearance] = useState(initialAppearance);
  const [selection, setSelection] = useState<Selection>('database');
  const [deckId, setDeckId] = useState(initialDeckId);
  const [readonly, setReadonly] = useState(true);
@@ -20,7 +22,7 @@ export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = f
  const onOpenDeck = useCallback((id: string) => { setDeckId(id); setSelection('deck'); setFeedback('Host opened deck'); }, []);
  const onBack = useCallback(() => setFeedback('Host received Back'), []);
  const onHome = useCallback(() => setFeedback('Host received Home'), []);
- const host = useMemo(() => ({ api, identity: { user, isGuest: !user || user.role === 'GUEST', isAdmin: user?.role === 'ADMIN' }, onOpenDeck, onBack, onHome, backLabel: 'Back to host', ...(useContainerLayout ? { layout: { mode: 'container' as const } } : {}), ...(useHostOverlay && overlayRoot ? { overlays: { root: overlayRoot, position: 'absolute' as const } } : {}) }), [api, user, onOpenDeck, onBack, onHome, useHostOverlay, overlayRoot, useContainerLayout]);
+ const host = useMemo(() => ({ api, identity: { user, isGuest: !user || user.role === 'GUEST', isAdmin: user?.role === 'ADMIN' }, onOpenDeck, onBack, onHome, backLabel: 'Back to host', appearance: harnessAppearance[appearance], ...(useContainerLayout ? { layout: { mode: 'container' as const } } : {}), ...(useHostOverlay && overlayRoot ? { overlays: { root: overlayRoot, position: 'absolute' as const } } : {}) }), [api, user, onOpenDeck, onBack, onHome, useHostOverlay, overlayRoot, useContainerLayout, appearance]);
  return <div className={`module-harness${useContainerLayout ? '' : isMobile ? ' layout-mobile' : ' layout-desktop'}`}>
   <header className="module-harness__controls">
    <h1>Independent module harness</h1>
@@ -37,6 +39,7 @@ export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = f
    <label><input type="checkbox" checked={useHostOverlay} onChange={e => setUseHostOverlay(e.target.checked)} />Use host overlay root</label>
    <label><input type="checkbox" checked={useContainerLayout} onChange={e => setUseContainerLayout(e.target.checked)} />Use container layout</label>
    <label className="module-harness__width">Host container width <select aria-label="Host container width" value={containerWidth} onChange={e => setContainerWidth(e.target.value)}><option value="available">Available space</option><option value="390">390 pixels</option><option value="720">720 pixels</option><option value="1120">1120 pixels</option></select></label>
+   <label className="module-harness__width">Host appearance <select aria-label="Host appearance" value={appearance} onChange={e => setAppearance(e.target.value as HarnessAppearance)}><option value="default">Excelsior defaults</option><option value="paper">Paper fixture</option><option value="contrast">High contrast fixture</option></select></label>
    <output aria-label="Host callback result">{feedback}</output>
   </header>
   <div className={`module-harness__surface${useHostOverlay ? ' module-harness__surface--host-overlay' : ''}`} style={{ width: containerWidth === 'available' ? '100%' : `${containerWidth}px`, maxWidth: '100%' }}>

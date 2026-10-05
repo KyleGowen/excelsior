@@ -1,0 +1,141 @@
+- banner:
+  - heading "Independent module harness" [level=1]
+  - paragraph: "Host identity: Guest. Local session and catalog. Decks start read-only; enable editing only for your disposable fixture."
+  - navigation "Module selection":
+    - button "Card Database module" [pressed]
+    - button "Deck Builder module"
+    - button "Collection module"
+    - button "All three modules"
+    - button "Unmount modules"
+  - text: Local deck ID
+  - textbox "Local deck ID": b4ec3a04-ab17-4a33-b813-df35f8195d75
+  - checkbox "Read-only deck" [checked]
+  - text: Read-only deck
+  - checkbox "Use host overlay root" [checked]
+  - text: Use host overlay root
+  - checkbox "Use container layout" [checked]
+  - text: Use container layout
+  - text: Host container width
+  - combobox "Host container width":
+    - option "Available space"
+    - option "390 pixels" [selected]
+    - option "720 pixels"
+    - option "1120 pixels"
+  - text: Host appearance
+  - combobox "Host appearance":
+    - option "Excelsior defaults" [selected]
+    - option "Paper fixture"
+    - option "High contrast fixture"
+  - status "Host callback result"
+- region "Host overlay root":
+  - dialog "Lancelot details" [active]:
+    - generic: Lancelot
+    - button "Close panel":
+    - img "Lancelot"
+    - generic: Characters
+    - generic: ERB
+    - generic: "#132"
+    - button "Log in to add to decks" [disabled]:
+      - text: Log in to add to decks
+    - button "Collection":
+      - text: Collection
+    - heading "Ability" [level=4]
+    - paragraph: Start the game with "Sword and Shield" placed; does not take up placing slot.
+    - heading "Printings" [level=4]
+    - list:
+      - generic: "Edgar Rice Burroughs and the World Legends · #132"
+      - button "Applied" [disabled]
+      - generic: "Edgar Rice Burroughs and the World Legends · #507"
+      - button "Apply"
+      - generic: "Edgar Rice Burroughs and the World Legends · #507F"
+      - button "Apply"
+    - heading "Details" [level=4]
+    - term: Set
+    - definition: Edgar Rice Burroughs and the World Legends
+    - term: Is Foil
+    - definition: "No"
+    - term: Has Foil
+    - definition: "No"
+    - term: Set Number
+    - definition: "132"
+- region "Independent Card Database":
+  - heading "Card Database" [level=1]:
+    - text: Card Database
+  - searchbox "Search cards": Lancelot
+  - generic: Set
+  - combobox "Filter by set":
+    - option "All sets" [selected]
+    - option "Edgar Rice Burroughs and the World Legends"
+    - option "Edgar Rice Burroughs and the World Legends - Promos"
+    - option "The Few and the Cursed - Promos"
+    - option "Skybound"
+    - option "Skybound - Promos"
+  - tablist "Card types":
+    - tab "All"
+    - tab "Characters" [selected]
+    - tab "Special"
+    - tab "Any Char"
+    - tab "Power"
+    - tab "Locations"
+    - tab "Battlegrounds"
+    - tab "Missions"
+    - tab "Events"
+    - tab "Aspects"
+    - tab "Advanced"
+    - tab "Teamwork"
+    - tab "Ally"
+    - tab "Training"
+    - tab "Basic"
+  - generic "Card filters":
+    - button "Expand filters":
+    - group "Stat filters":
+      - generic "Energy":
+        - generic: Energy
+      - combobox "Energy comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Energy value"
+      - generic "Combat":
+        - generic: Combat
+      - combobox "Combat comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Combat value"
+      - generic "Brute Force":
+        - generic: Brute Force
+      - combobox "Brute Force comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Brute Force value"
+      - generic "Intelligence":
+        - generic: Intelligence
+      - combobox "Intelligence comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Intelligence value"
+      - generic "Threat":
+        - generic: Threat
+      - combobox "Threat comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Threat value"
+    - checkbox "Has Foil"
+    - generic: Has Foil
+    - checkbox "Hide Alts" [checked]
+    - generic: Hide Alts
+  - article:
+    - button "View Lancelot":
+    - generic "Lancelot"
+    - generic: ERB 132
+  - navigation "Pagination":
+    - button "First page" [disabled]:
+    - button "Previous page" [disabled]:
+    - button "1"
+    - button "Next page" [disabled]:
+    - button "Last page" [disabled]:
+  - generic: Showing 1-1 of 1

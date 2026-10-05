@@ -1,0 +1,93 @@
+- banner:
+  - heading "Independent module harness" [level=1]
+  - paragraph: "Host identity: Guest. Local session and catalog. Decks start read-only; enable editing only for your disposable fixture."
+  - navigation "Module selection":
+    - button "Card Database module"
+    - button "Deck Builder module" [pressed]
+    - button "Collection module"
+    - button "All three modules"
+    - button "Unmount modules"
+  - text: Local deck ID
+  - textbox "Local deck ID": b4ec3a04-ab17-4a33-b813-df35f8195d75
+  - checkbox "Read-only deck" [checked]
+  - text: Read-only deck
+  - checkbox "Use host overlay root" [checked]
+  - text: Use host overlay root
+  - checkbox "Use container layout" [checked]
+  - text: Use container layout
+  - text: Host container width
+  - combobox "Host container width":
+    - option "Available space"
+    - option "390 pixels" [selected]
+    - option "720 pixels"
+    - option "1120 pixels"
+  - text: Host appearance
+  - combobox "Host appearance":
+    - option "Excelsior defaults" [selected]
+    - option "Paper fixture"
+    - option "High contrast fixture"
+  - status "Host callback result"
+- region "Host overlay root":
+  - dialog "Export deck JSON" [active]:
+    - generic: Export deck
+    - button "Close panel":
+    - paragraph: Copy this JSON to import the deck elsewhere.
+    - generic: "{ \"name\": \"Milestone 3 Local Fixture\", \"description\": \"\", \"total_cards\": 8, \"max_energy\": 2, \"max_combat\": 7, \"max_brute_force\": 5, \"max_intelligence\": 4, \"total_energy_icons\": 0, \"total_combat_icons\": 5, \"total_brute_force_icons\": 0, \"total_intelligence_icons\": 0, \"total_threat\": 18, \"legal\": false, \"limited\": true, \"export_timestamp\": \"2026-10-05T03:22:09.398Z\", \"exported_by\": \"guest\", \"reserve_character\": null, \"cataclysm_special\": null, \"assist_special\": null, \"ambush_special\": null, \"cards\": { \"characters\": [ \"Lancelot\" ], \"special_cards\": { \"Lancelot\": [ \"Sword and Shield\", \"Sword and Shield\", \"Sword and Shield\" ] }, \"locations\": [], \"battlegrounds\": [], \"missions\": {}, \"events\": {}, \"aspects\": [], \"advanced_universe\": {}, \"teamwork\": [], \"allies\": [], \"training\": [], \"basic_universe\": [], \"power_cards\": [ \"5 - Combat\", \"5 - Combat\", \"5 - Combat\", \"5 - Combat\", \"5 - Combat\" ] } }"
+    - button "Copy to clipboard":
+      - text: Copy to clipboard
+- region "Independent Deck Builder":
+  - button "Back to host":
+  - heading "Milestone 3 Local Fixture" [level=1]
+  - generic: 8 cards
+  - generic "Deck is not legal. Press and hold to view validation errors.":
+    - generic: Limited
+  - generic: Unlisted
+  - 'generic "Threat: 18"':
+    - generic: "18"
+  - region "Character maximums":
+    - generic: Max
+    - 'generic "Character max — Energy: 2"':
+      - 'generic "Energy: 2"':
+        - generic: "2"
+    - 'generic "Character max — Combat: 7"':
+      - 'generic "Combat: 7"':
+        - generic: "7"
+    - 'generic "Character max — Brute Force: 5"':
+      - 'generic "Brute Force: 5"':
+        - generic: "5"
+    - 'generic "Character max — Intelligence: 4"':
+      - 'generic "Intelligence: 4"':
+        - generic: "4"
+  - region "Icon totals":
+    - generic: Total
+    - 'generic "Icon total — Energy: 0"':
+      - 'generic "Energy: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Combat: 5"':
+      - 'generic "Combat: 5"':
+        - generic: "5"
+    - 'generic "Icon total — Brute Force: 0"':
+      - 'generic "Brute Force: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Intelligence: 0"':
+      - 'generic "Intelligence: 0"':
+        - generic: "0"
+  - button "List View":
+    - text: List View
+  - button "Draw Hand":
+    - text: Draw Hand
+  - button "Export":
+    - text: Export
+  - generic: Read-only
+  - tablist "Deck card types":
+    - tab "Characters 1" [selected]:
+      - text: Characters
+      - generic: "1"
+    - tab "Special 3":
+      - text: Special
+      - generic: "3"
+    - tab "Power 5":
+      - text: Power
+      - generic: "5"
+  - button "View Lancelot":
+  - 'button "KO character: Lancelot"': KO

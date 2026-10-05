@@ -48,3 +48,8 @@ export const IndependentOverlayRoots: Story = { render: () => <HostOverlayExampl
 /** Named example for the container provider through the real module host. */
 export const NarrowContainerOnDesktop: Story = { args: { initialContainerLayout: true, initialContainerWidth: '390', initialHostOverlay: true } };
 export const ResizableContainer: Story = { args: { initialContainerLayout: true, initialContainerWidth: '1120', initialHostOverlay: true } };
+
+/** ModuleAppearanceBoundary is exercised through the production module host. */
+export const PaperHostAppearance: Story = { args: { initialAppearance: 'paper', initialContainerLayout: true, initialContainerWidth: '720', initialHostOverlay: true }, ...DatabaseDetailActions };
+export const ContrastHostAppearance: Story = { args: { initialAppearance: 'contrast', initialContainerLayout: true, initialContainerWidth: '390', initialHostOverlay: true } };
+export const IndependentHostAppearances: Story = { render: () => <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}><ModuleHarness user={null} initialAppearance="paper" initialContainerLayout initialHostOverlay /><ModuleHarness user={null} initialAppearance="contrast" initialContainerLayout initialHostOverlay /></div> };

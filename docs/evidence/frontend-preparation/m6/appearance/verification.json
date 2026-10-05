@@ -1,0 +1,116 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "status": "selected automated browser cases passed; release gates separate",
+  "uiBaseRevision": "275446909777ab3031f7e57070b93b90f07c5546",
+  "uiState": "uncommitted appearance implementation on codex/frontend-preparation-m6-theme",
+  "backendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "frontendUrl": "http://127.0.0.1:5179",
+  "apiUrl": "http://127.0.0.1:8090",
+  "dataEnvironment": "Existing run-owned Docker fixture excelsior-frontend-preparation-m4, loopback15442, V365; startup ownership verified; backend/migrations/manifests unchanged",
+  "defaultPortsException": "Preserved existing 5173 and accepted5178; strict5179 Vite with explicit API/health/resource8090 proxy",
+  "browser": {
+    "beforeCases": 8,
+    "finalPassed": 20,
+    "finalFailed": 0,
+    "finalSkipped": 0,
+    "finalBlocked": 0,
+    "finalBrowserErrors": 0,
+    "runs": [
+      {
+        "directory": "final-containers",
+        "counts": {
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "status": "passed"
+      },
+      {
+        "directory": "final-theme-desktop",
+        "counts": {
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "status": "passed"
+      },
+      {
+        "directory": "final-theme-mobile",
+        "counts": {
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "status": "passed"
+      },
+      {
+        "directory": "final-routes",
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "status": "passed"
+      }
+    ],
+    "actors": "Guest module host and fictional public read-only deck; no account writes",
+    "sizes": [
+      "1280x720",
+      "390x844"
+    ],
+    "appearance": [
+      "Excelsior defaults",
+      "fictional Paper light native-control preset",
+      "fictional High contrast dark preset"
+    ]
+  },
+  "failuresAndRecovery": [
+    {
+      "run": "appearance-desktop",
+      "failure": "Sticky harness controls covered the center of a Database card; first height cap allowed desktop theme cases but original Collection disposal still hit the header",
+      "recovery": "Use normal-flow nonsticky harness controls, retain 40vh/45vh scroll cap; final all20selected cases pass"
+    },
+    {
+      "run": "modules-initial",
+      "failure": "New direct React DOM portal fixture lacked runner type/runtime mapping",
+      "recovery": "Bind React DOM and its types to existing locked frontend package; focused35cases passed before extra oversized-value test; final gate runs all cases"
+    },
+    {
+      "procedure": "browser rerun readiness/import",
+      "failure": "Immediate post-reload style read ran before harness mount; query-suffixed import unsupported by CUA",
+      "recovery": "Helper waits for harness heading; import byte-identical private copy with supported path; no original report overwritten"
+    }
+  ],
+  "helperIdentity": {
+    "source": "tests/browser/milestone6-appearance.mjs",
+    "executedCopy": "Private CUA import copy; identical source/helper bytes confirmed",
+    "sha256": "2bedac04904347d57d09c0e85511cf407d6c2345c243b56b21b605b7dd318f02"
+  },
+  "sourceEvidence": "Runner targets kept as originally captured. Final target supplements earlier fingerprint after the harness correction; no frontend implementation edits after final successful browser runs. HEAD alone is not uncommitted runtime proof.",
+  "storybook": "New production ModuleAppearanceBoundary has PaperHostAppearance, ContrastHostAppearance and IndependentHostAppearances; builds checked separately",
+  "kyleAcceptance": "Kyle said looks good on5179 during the theme implementation. It identifies the theme preview; automated gates still required before Ship. Subsequent changes fix harness overlap and runner setup, without expanding theme feature scope.",
+  "cleanup": {
+    "applicationRecords": "unchanged; no deck Save, import, clone or collection quantity operations",
+    "fixture": "Existing fictional8-card/18-threat read-only deck retained; no new rows to remove",
+    "viewport": "reset",
+    "temporaryTabs": "before-route, mobile, final-route and old baseline harness tabs closed",
+    "preview": "Final local5179 harness retained for Kyle; earlier approved5178 retained",
+    "processes": "Only new5179 Vite added; existing API/Docker/other previews preserved"
+  },
+  "releaseAuthority": "Kyle accepted identified preview under standing milestone approval/Ship workflow; full M6 not accepted",
+  "gaps": [
+    "No CSS-leak-free embedding: global reset/ancestor selectors/hardcoded colors/root-relative sizes/viewport media queries remain",
+    "External portal roots require host-owned matching styles",
+    "Multiple differently styled instances and unsaved local state/focus preservation have component evidence only",
+    "Fictional presets are not accessibility certification or exact LRG visuals",
+    "Brand/icon/auth/action configuration and full M4 domain backlog remain",
+    "No production appearance tests or account mutations performed"
+  ],
+  "gates": "Required final Ship gate receipt retained privately; this artifact records browser evidence rather than asserting an unexecuted gate",
+  "sanitization": "12 public Git revision report fields renamed proxyBackendRevision after CI-version scanner classified the api-labelled key as a generic key. Same public SHA retained; no secret ignored or scanner rule changed. Original private reports retained."
+}

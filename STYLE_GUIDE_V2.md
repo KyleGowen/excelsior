@@ -786,3 +786,12 @@ Default Excelsior panel styling/placement is preserved. An explicit module host 
 ### M6 container-layout fixture
 
 Native container mode uses the measured host width and local mobile/desktop classes; ordinary Excelsior viewport defaults retain their current DOM/styles. The harness adds a compact width selector and explicit container checkbox.390px native fixtures use existing mobile arrangements even in a1280px browser. Host mobile Draw Hand panels stay bounded; pagination wraps inside configured narrow surfaces to prevent overflow while preserving every action. This is local responsive preparation; global reset/theme/ancestor CSS containment and branding remain open.
+
+
+### M6 opt-in host appearance fixture
+
+`ModuleHost.appearance` scopes reviewed visual tokens to a module wrapper and explicitly applies its font, base text size, line-height, foreground and background. Ordinary Excelsior omits this option and keeps the existing dark visual defaults and DOM. Updating an existing appearance map preserves module state; resetting to an empty map removes overrides. Portal roots placed inside that surface inherit the same appearance.
+
+The development harness exposes Excelsior defaults, Paper fixture (warm pale surfaces, dark text, Georgia,16px base,20px spacing token) and High contrast fixture (charcoal surfaces, white text, yellow accent, Arial,18px base,24px spacing token). These are fictional host fixtures, not a production light switch, accessibility certification or exact LRG match. Named Independent host stories cover each and two differently styled instances. Hard-coded component colors, global reset/ancestor selectors and root-relative sizing remain explicit M6 work; this visual port does not claim complete style isolation.
+
+The fixture control header stays in normal document flow and is capped at40vh (45vh on mobile) with its own vertical scrolling. Keeping it nonsticky prevents host configuration controls from covering centered Database/Collection click targets after page scrolling. This affects only the development harness.

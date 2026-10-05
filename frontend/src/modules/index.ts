@@ -7,3 +7,5 @@ export { createModuleApi, type ModuleApi } from './api';
 export type { OverlayHostOptions } from '../lib/layout/OverlayHostProvider';
 
 export type { ContainerLayoutOptions } from '../lib/layout/ContainerLayoutModeProvider';
+
+export type { ModuleAppearanceOptions, ModuleThemeToken } from './ModuleAppearanceBoundary';

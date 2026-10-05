@@ -1,6 +1,7 @@
 import { createElement, createContext, useContext, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import type { AppUser } from '../lib/api/types';
 import type { ModuleApi } from './api';
+import { ModuleAppearanceBoundary, type ModuleAppearanceOptions } from './ModuleAppearanceBoundary';
 import { ContainerLayoutModeProvider, type ContainerLayoutOptions } from '../lib/layout/ContainerLayoutModeProvider';
 import { OverlayHostProvider, type OverlayHostOptions } from '../lib/layout/OverlayHostProvider';
 import { createCardDetailHistoryController, CARD_DETAIL_STATE_KEY, type CardDetailNavigation } from '../lib/layout/cardDetailHistoryController';
@@ -16,13 +17,16 @@ export interface ModuleHost {
  overlays?: OverlayHostOptions;
  /** Omit to retain the ordinary host's viewport layout. */
  layout?: ContainerLayoutOptions;
+ /** Opt-in visual tokens scoped to this module instance. Configure the boundary at mount. */
+ appearance?: ModuleAppearanceOptions;
  history?: { navigate: CardDetailNavigation; state: object | null };
  chrome?: { desktopRail?: ReactNode; mobileNavigation?: ReactNode };
 }
 const Context = createContext<ModuleHost | null>(null);
 export function ModuleHostProvider({ host, children }: { host: ModuleHost; children: ReactNode }) {
  const content = createElement(OverlayHostProvider, { ...(host.overlays ? { options: host.overlays } : {}), children });
- return createElement(Context.Provider, { value: host }, host.layout ? createElement(ContainerLayoutModeProvider, { options: host.layout, children: content }) : content);
+ const themed = host.appearance ? createElement(ModuleAppearanceBoundary, { options: host.appearance, children: content }) : content;
+ return createElement(Context.Provider, { value: host }, host.layout ? createElement(ContainerLayoutModeProvider, { options: host.layout, children: themed }) : themed);
 }
 export function useOptionalModuleHost() { return useContext(Context); }
 export function useModuleHost() {

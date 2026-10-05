@@ -1,0 +1,180 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "deployedRevision": null,
+  "inputFingerprint": "50fde696eb20a41abc3c7afcbf86c6b9fbd8d2b4959161f41245103fefd0a35a",
+  "selectedScenarios": [
+    "home-guest",
+    "database-search-detail",
+    "deck-readonly-draw-export"
+  ],
+  "capturePolicy": "all",
+  "comparison": true,
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5179",
+    "apiUrl": "http://127.0.0.1:8090",
+    "sourceRoot": "/Users/kyle/.codex/worktrees/frontend-preparation-m4/cursored",
+    "sourceRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "sourceTreeFingerprint": "50fde696eb20a41abc3c7afcbf86c6b9fbd8d2b4959161f41245103fefd0a35a",
+    "expectedRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m5",
+    "verified": true,
+    "observedAt": "2026-10-05T03:12:33.783Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required",
+    "frontendSource": {
+      "root": "/Users/kyle/.codex/worktrees/m6-container-release/cursored",
+      "revision": "275446909777ab3031f7e57070b93b90f07c5546",
+      "branch": "codex/frontend-preparation-m6-theme",
+      "fingerprint": "de1fb71aefc1c650b6dea47faf48fe9f3544e28b65920f2f33cbfb65fa7d6581",
+      "listenerPid": 52314,
+      "proxyBackendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+      "sharedBackendInputs": "Identical committed and working backend/migrations/dependency manifests"
+    },
+    "databaseOwnershipReceipt": "/private/tmp/excelsior-m6-theme/startup-shared/startup.json"
+  },
+  "actor": "guest",
+  "theme": "fixed dark",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "home-guest",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/before-routes/home-guest-result.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/before-routes/home-guest-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/home"
+        }
+      ],
+      "observed": {
+        "guestEntry": true,
+        "contextualAuthControls": true,
+        "actualOAuth": "not executed"
+      }
+    },
+    {
+      "id": "database-search-detail",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/before-routes/database-search-detail-empty.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/before-routes/database-search-detail-empty.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/data"
+        },
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/before-routes/database-search-detail-detail.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/before-routes/database-search-detail-detail.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/data"
+        },
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/before-routes/database-search-detail-result.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/before-routes/database-search-detail-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/data"
+        }
+      ],
+      "observed": {
+        "emptySearch": "passed",
+        "cardName": "Lancelot",
+        "artwork": {
+          "complete": true,
+          "naturalHeight": 744,
+          "naturalWidth": 1039
+        },
+        "detailsClosed": true
+      }
+    },
+    {
+      "id": "deck-readonly-draw-export",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/before-routes/deck-readonly-draw-export-draw.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/before-routes/deck-readonly-draw-export-draw.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75?readonly=true"
+        },
+        {
+          "screenshot": "/private/tmp/excelsior-m6-theme/before-routes/deck-readonly-draw-export-result.jpg",
+          "dom": "/private/tmp/excelsior-m6-theme/before-routes/deck-readonly-draw-export-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5179/users/764cf0a4-35ef-4e5a-8170-ee56cadc9c63/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75?readonly=true"
+        }
+      ],
+      "observed": {
+        "drawCount": 8,
+        "exported": {
+          "legal": false,
+          "reserve_character": null,
+          "total_cards": 8,
+          "total_threat": 18
+        },
+        "recordsChanged": false
+      }
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only scenarios",
+    "browser": "returned Home; close this test-owned tab or mark handoff explicitly",
+    "viewport": "reset"
+  },
+  "acceptance": "automated evidence only; Kyle acceptance not inferred",
+  "gaps": [
+    "light theme unavailable in M1",
+    "Google OAuth not exercised",
+    "independent module harness unavailable in M1"
+  ],
+  "viewport": {
+    "height": 720,
+    "width": 1280
+  },
+  "browserErrorCount": 0,
+  "status": "passed",
+  "durationSeconds": 6.459,
+  "counts": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  }
+}
