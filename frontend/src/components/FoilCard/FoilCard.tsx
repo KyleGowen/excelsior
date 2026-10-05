@@ -5,7 +5,6 @@ import {
   hasFoilIntroPlayed,
   markFoilIntroPlayed,
 } from '../../lib/visual/foilEffect';
-import './FoilCard.css';
 
 export type FoilCardSize = 'thumb' | 'hero';
 

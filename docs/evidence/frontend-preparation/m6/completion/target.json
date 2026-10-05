@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "kind": "target-health",
+  "environment": "local",
+  "frontendUrl": "http://127.0.0.1:5185",
+  "apiUrl": "http://127.0.0.1:8090",
+  "sourceRoot": "M6 completion checkout",
+  "sourceRevision": "7ddb972ea1a3165e6d17b4a17925ce00aa19be78",
+  "sourceTreeFingerprint": "95f75489f05e4cf37fd8253aa79ab5745bc7084cd47b63502304e098c16f97ba",
+  "expectedRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "expectedMigration": "365",
+  "branch": "codex/frontend-preparation-m5",
+  "verified": true,
+  "observedAt": "2026-10-05T22:48:02.709Z",
+  "health": {
+    "status": "OK",
+    "database": "OK",
+    "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "migration": "365"
+  },
+  "frontendProxyHealth": {
+    "status": "OK",
+    "database": "OK",
+    "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "migration": "365"
+  },
+  "frontendStatus": 200,
+  "status": "target health verified; browser still required",
+  "frontendSource": {
+    "root": "M6 completion checkout",
+    "revision": "7ddb972ea1a3165e6d17b4a17925ce00aa19be78",
+    "branch": "",
+    "fingerprint": "95f75489f05e4cf37fd8253aa79ab5745bc7084cd47b63502304e098c16f97ba",
+    "proxyBackendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+    "sharedBackendInputs": "Identical committed and working backend/migrations/dependency manifests"
+  },
+  "backendSource": {
+    "root": "verified local backend checkout",
+    "revision": "345e486514ad8cc9b0f6a04fa3e849222bdda046"
+  },
+  "databaseOwnershipReceipt": "private-run-evidence/startup-current/startup.json"
+}

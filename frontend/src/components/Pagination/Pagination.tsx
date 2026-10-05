@@ -1,7 +1,6 @@
 import type { CSSProperties } from 'react';
 import { IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight } from '../icons';
 import { MAX_COLLAPSED_PAGE_SLOTS, normalizePageSlots, type PageSlot } from './paginationUtils';
-import './Pagination.css';
 
 interface PaginationProps {
   page: number; // 1-based

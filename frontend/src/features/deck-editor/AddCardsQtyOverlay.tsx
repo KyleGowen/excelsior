@@ -1,6 +1,5 @@
 import type { MouseEvent } from 'react';
 import { IconMinus, IconPlus } from '../../components/icons';
-import './AddCardsQtyOverlay.css';
 
 export interface AddCardsQtyOverlayProps {
   value: number;

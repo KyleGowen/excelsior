@@ -60,7 +60,6 @@ import {
   captureSavedDatabaseViewState,
   normalizeSavedDatabaseViewState,
 } from './savedDatabaseViewState';
-import './DatabasePage.css';
 
 const PAGE_SIZE_GRID = 24;
 const PAGE_SIZE_ALL = 48;
@@ -284,7 +283,7 @@ export function useCardDatabaseController() {
 
   useEffect(() => {
     if (!isMobile) return;
-    window.scrollTo({ top: 0 });
+    if (host.layout || host.styles) dbRef.current?.scrollTo?.({ top: 0 }); else window.scrollTo({ top: 0 });
   }, [tab, isMobile]);
 
   useEffect(() => {

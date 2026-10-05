@@ -1,0 +1,12 @@
+{
+  "environment": "local",
+  "ownedClonesCreated": 5,
+  "ownedClonesDeleted": 5,
+  "deletedGetStatus": 404,
+  "originalSessionRecordsPreserved": 4,
+  "handoffClonesRetained": 0,
+  "handoffName": "M6 Completion Handoff",
+  "cleanupRemaining": "None; final handoff copy deleted after Kyle approval, GET 404 and exact prior inventory confirmed",
+  "sourcePublicFixture": "Original name and 8 cards verified unchanged",
+  "production": "untouched"
+}

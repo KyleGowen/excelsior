@@ -1,0 +1,77 @@
+[
+  {
+    "case": "home-guest-result",
+    "beforeSize": [
+      1280,
+      720
+    ],
+    "afterSize": [
+      1280,
+      720
+    ],
+    "differenceBox": [
+      656,
+      24,
+      1265,
+      705
+    ],
+    "changedPixels": 46
+  },
+  {
+    "case": "database-search-detail-result",
+    "beforeSize": [
+      1280,
+      720
+    ],
+    "afterSize": [
+      1280,
+      720
+    ],
+    "differenceBox": null,
+    "changedPixels": 0
+  },
+  {
+    "case": "database-search-detail-detail",
+    "beforeSize": [
+      1280,
+      720
+    ],
+    "afterSize": [
+      1280,
+      720
+    ],
+    "differenceBox": null,
+    "changedPixels": 0
+  },
+  {
+    "case": "collection-guest-read-result",
+    "beforeSize": [
+      1280,
+      720
+    ],
+    "afterSize": [
+      1280,
+      720
+    ],
+    "differenceBox": null,
+    "changedPixels": 0
+  },
+  {
+    "case": "deck-readonly-draw-export-result",
+    "beforeSize": [
+      1280,
+      720
+    ],
+    "afterSize": [
+      1280,
+      720
+    ],
+    "differenceBox": [
+      360,
+      63,
+      977,
+      97
+    ],
+    "changedPixels": 979
+  }
+]

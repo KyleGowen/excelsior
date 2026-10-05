@@ -19,7 +19,6 @@ import {
   shouldSkipFullResUpgrade,
   type ProgressiveImageSessionScope,
 } from '../../lib/images/progressiveImageLoad';
-import './CardImage.css';
 
 interface CardImageProps {
   /** Raw card path (card.image_path / card.image). */

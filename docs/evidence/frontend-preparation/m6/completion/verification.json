@@ -1,0 +1,76 @@
+{
+  "environment": "local",
+  "preview": "http://127.0.0.1:5185/prepared-host/tools/cards",
+  "sourceRevision": "7ddb972ea1a3165e6d17b4a17925ce00aa19be78",
+  "sourceState": "Uncommitted M6 completion candidate; exact runtime input hashes attached",
+  "backendRevision": "345e486514ad8cc9b0f6a04fa3e849222bdda046",
+  "apiPort": 8090,
+  "database": "Docker excelsior-frontend-preparation-m4, loopback 15442, overpower, Flyway V365",
+  "browser": {
+    "passed": 21,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0,
+    "selected": [
+      "6 readonly native desktop scenarios at 1280x720",
+      "same 6 readonly native scenarios at 390x844",
+      "5 owned Guest native navigation/save cases at default 428x808",
+      "4 ordinary Guest/readonly baseline scenarios at 1280x720"
+    ],
+    "browserErrors": 0,
+    "saveFixtures": "Actual local Guest persistence; delayed/rejected operations explicitly injected by shared fixture helper",
+    "reuse": "Final readonly/ordinary evidence predates only the last development-host discard-continuation correction. Their stylesheet, production modules, routes and selected readonly actions are unchanged. The guard suite was replayed after that correction and all builds."
+  },
+  "gates": {
+    "unit": {
+      "command": "npm run test:unit -- --runInBand --forceExit",
+      "exitCode": 0,
+      "passed": 3875,
+      "skipped": 18,
+      "suitesPassed": 331,
+      "suitesSkipped": 2,
+      "limitation": "Existing Jest open handles require the declared forceExit; no tests are counted from an unfinished process"
+    },
+    "modules": {
+      "command": "node node_modules/jest/bin/jest.js --config tests/config/jest.frontend-modules.config.js --runInBand",
+      "exitCode": 0,
+      "passed": 85,
+      "suites": 6
+    },
+    "lint": {
+      "command": "npm run lint",
+      "exitCode": 0
+    },
+    "frontend": {
+      "command": "npm --prefix frontend run build",
+      "exitCode": 0
+    },
+    "storybook": {
+      "command": "npm --prefix frontend run build:storybook",
+      "exitCode": 0
+    },
+    "unusedDependencies": {
+      "command": "npm run find:unused:ci",
+      "exitCode": 0
+    }
+  },
+  "cleanup": {
+    "environment": "local",
+    "ownedClonesCreated": 5,
+    "ownedClonesDeleted": 5,
+    "deletedGetStatus": 404,
+    "originalSessionRecordsPreserved": 4,
+    "handoffClonesRetained": 0,
+    "handoffName": "M6 Completion Handoff",
+    "cleanupRemaining": "None; final handoff copy deleted after Kyle approval, GET 404 and exact prior inventory confirmed",
+    "sourcePublicFixture": "Original name and 8 cards verified unchanged",
+    "production": "untouched"
+  },
+  "acceptance": "Kyle approved the final 5185 spot check on October 5, 2026: spot check approved proceed",
+  "release": "Ship authorized under the standing roadmap; release gates/CI/production confirmation pending",
+  "remainingGaps": [
+    "Native Chrome reload/tab-close prompt presentation is manual acceptance; tool-driven reload was not a pass",
+    "Real OAuth/account host identity, approved LRG assets, cross-browser/assistive technology acceptance and production host fallback need their real target",
+    "M7 packaging/assets/backend-source import removal and M8; retained M4 domain migration backlog remain separate"
+  ]
+}

@@ -33,7 +33,6 @@ import { Checkbox } from '../../components/Checkbox';
 import { IconSearch, IconCollection } from '../../components/icons';
 import type { CatalogCard, CatalogType, CollectionCardType } from '../../lib/api/types';
 import { COLLECTION_DEFAULT_TAB } from './collectionDefaults';
-import './CollectionPage.css';
 
 const PAGE_SIZE_GRID = 24;
 const PAGE_SIZE_ALL = 48;
@@ -143,7 +142,7 @@ export function useCollectionController() {
 
   useEffect(() => {
     if (!isMobile) return;
-    window.scrollTo({ top: 0 });
+    if (host.layout || host.styles) colRef.current?.scrollTo?.({ top: 0 }); else window.scrollTo({ top: 0 });
   }, [tab, isMobile]);
 
   useEffect(() => {

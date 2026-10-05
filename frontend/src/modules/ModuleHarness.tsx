@@ -4,14 +4,13 @@ import type { ModuleSaveFeedback } from './saveFeedback';
 import type { ModuleIconOptions } from '../lib/icons/uiIconOverrides';
 import type { AppUser } from '../lib/api/types';
 import { CardDatabaseModule, DeckBuilderModule, CollectionModule, ModuleHostProvider, createModuleApi } from './index';
-import './ModuleHarness.css';
 import { SlideOutPanel } from '../components/SlideOutPanel';
 import { OverlayHostProvider } from '../lib/layout/OverlayHostProvider';
 import { createUnsavedNavigation } from './unsavedNavigation';
 import { harnessAppearance, type HarnessAppearance } from './harnessAppearance';
 import { fetchCurrentUser, fetchAppConfig } from '../lib/api/auth';
 import { useLayoutMode } from '../lib/layout/LayoutModeProvider';
-type SaveFixtureMode = 'api' | 'delayed' | 'rejected';
+import { saveFixtureApi, type SaveFixtureMode } from './saveFixtureApi';
 type Selection = 'database' | 'deck' | 'collection' | 'together' | 'unmounted';
 /** Local fixture host: neither Excelsior's router nor AuthProvider is mounted. */
 export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = false, initialContainerLayout = false, initialContainerWidth = 'available', initialAppearance = 'default', initialHostActions = false, initialHostIcons = false, initialHostSaveFeedback = false, initialReadonly = true, initialSaveFixtureMode = 'api', initialUnsavedPolicy = false }: { user: AppUser | null; initialDeckId?: string; initialHostOverlay?: boolean; initialContainerLayout?: boolean; initialContainerWidth?: string; initialAppearance?: HarnessAppearance; initialHostActions?: boolean; initialHostIcons?: boolean; initialHostSaveFeedback?: boolean; initialReadonly?: boolean; initialSaveFixtureMode?: SaveFixtureMode; initialUnsavedPolicy?: boolean }) {
@@ -48,18 +47,7 @@ export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = f
  const [useHostOverlay, setUseHostOverlay] = useState(initialHostOverlay);
  const [overlayRoot, setOverlayRoot] = useState<HTMLDivElement | null>(null);
  const baseApi = useMemo(() => createModuleApi(), []);
- // Explicit local fixture behavior; never changes the shared client or production host.
- const api = useMemo(() => ({ ...baseApi,
-  updateDeckMeta: async (...args: Parameters<typeof baseApi.updateDeckMeta>) => {
-   if (saveFixtureMode === 'rejected') throw new Error('Fictional host save failure');
-   if (saveFixtureMode === 'delayed') await new Promise(resolve => setTimeout(resolve, 1500));
-   return baseApi.updateDeckMeta(...args);
-  },
-  replaceDeckCards: async (...args: Parameters<typeof baseApi.replaceDeckCards>) => {
-   if (saveFixtureMode === 'rejected') throw new Error('Fictional host save failure');
-   return baseApi.replaceDeckCards(...args);
-  },
- }), [baseApi, saveFixtureMode]);
+ const api = useMemo(() => saveFixtureApi(baseApi, saveFixtureMode), [baseApi, saveFixtureMode]);
  const onOpenDeck = useCallback((id: string) => request(() => { setDeckId(id); setSelection('deck'); setFeedback('Host opened deck'); }), [request]);
  const onBack = useCallback(() => request(() => { setFeedback('Host received Back'); if (useUnsavedPolicy) setSelection('database'); }), [request, useUnsavedPolicy]);
  const onHome = useCallback(() => request(() => { setFeedback('Host received Home'); if (useUnsavedPolicy) setSelection('unmounted'); }), [request, useUnsavedPolicy]);

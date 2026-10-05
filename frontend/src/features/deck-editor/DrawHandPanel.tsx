@@ -19,7 +19,6 @@ import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
 import { useDrawHandScale } from './useDrawHandScale';
 import { deckEditorCardImageLoadingProps } from './deckEditorCardImage';
 import type { DrawHandAnalysis } from '../../lib/decks/drawHandAnalysis';
-import './DrawHandPanel.css';
 
 function resolveDrawHandImagePath(
   entry: DeckCardEntry,

@@ -7,8 +7,9 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react';
+import { useOverlayHost } from '../../lib/layout/OverlayHostProvider';
+import { activeElement } from '../../lib/layout/activeElement';
 import { createPortal } from 'react-dom';
-import './LegalityErrorsPopover.css';
 
 const LONG_PRESS_DURATION_MS = 500;
 const LONG_PRESS_MOVE_TOLERANCE_PX = 10;
@@ -25,6 +26,7 @@ export function LegalityErrorsPopover({
   pressAndHold = false,
   children,
 }: LegalityErrorsPopoverProps) {
+  const overlay = useOverlayHost();
   const listId = useId();
   const panelId = useId();
   const [open, setOpen] = useState(false);
@@ -53,15 +55,19 @@ export function LegalityErrorsPopover({
     const anchor = root.getBoundingClientRect();
     const gutter = 12;
     const gap = 6;
-    const width = Math.min(420, window.innerWidth - gutter * 2);
-    const left = Math.min(Math.max(anchor.left, gutter), window.innerWidth - width - gutter);
-    const top = anchor.bottom + gap;
+    const bounds = overlay?.root.getBoundingClientRect();
+    const available = bounds?.width ?? window.innerWidth;
+    const width = Math.min(420, Math.max(0, available - gutter * 2));
+    const left = Math.min(Math.max(anchor.left - (bounds?.left ?? 0), gutter), available - width - gutter);
+    const top = anchor.bottom - (bounds?.top ?? 0) + gap;
 
     setPressAndHoldPanelStyle({
+      position: overlay ? 'absolute' : 'fixed',
+      pointerEvents: 'auto',
       top,
       left,
       width,
-      maxHeight: `min(50dvh, calc(100dvh - ${top}px - var(--bottom-nav-height) - env(safe-area-inset-bottom, 0px) - var(--space-3)))`,
+      maxHeight: overlay ? Math.max(40, (bounds?.height ?? 0) - top - gutter) : `min(50dvh, calc(100dvh - ${top}px - var(--bottom-nav-height) - env(safe-area-inset-bottom, 0px) - var(--space-3)))`,
     });
   };
 
@@ -69,13 +75,13 @@ export function LegalityErrorsPopover({
     if (!pressAndHold || !open) return;
 
     const handleOutsidePointerDown = (event: PointerEvent) => {
-      const target = event.target as Node;
+      const target = (event.composedPath()[0] ?? event.target) as Node;
       if (!rootRef.current?.contains(target) && !panelRef.current?.contains(target)) {
         setOpen(false);
       }
     };
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' && (!overlay || rootRef.current?.contains(activeElement()) || panelRef.current?.contains(activeElement()))) {
         setOpen(false);
         rootRef.current?.focus();
       }
@@ -92,7 +98,7 @@ export function LegalityErrorsPopover({
       window.removeEventListener('resize', positionPressAndHoldPanel);
       window.removeEventListener('scroll', positionPressAndHoldPanel, true);
     };
-  }, [open, pressAndHold]);
+  }, [open, pressAndHold, overlay]);
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLSpanElement>) => {
     if (
@@ -226,7 +232,7 @@ export function LegalityErrorsPopover({
         {children}
         {pressAndHold ? null : panel}
       </span>
-      {pressAndHold ? createPortal(panel, document.body) : null}
+      {pressAndHold ? createPortal(panel, overlay?.root ?? document.body) : null}
     </>
   );
 }

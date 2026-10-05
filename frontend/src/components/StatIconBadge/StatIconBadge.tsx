@@ -1,11 +1,9 @@
-import '@fontsource/poppins/800.css';
 import { assetUrl } from '../../lib/images/cardImages';
 import {
   STAT_ICON_PATHS,
   buildStatIconBadgeLabel,
   type StatIconType,
 } from '../../lib/icons/statIconTypes';
-import './StatIconBadge.css';
 
 export { buildStatIconBadgeLabel } from '../../lib/icons/statIconTypes';
 

@@ -5,7 +5,6 @@ import { DbvFunctionIconStrip } from '../features/database/components/DbvFunctio
 import { DbvPowerTypeStrip } from '../features/database/components/DbvPowerTypeStrip';
 import { DbvMissionSetSelect } from '../features/database/components/DbvMissionSetSelect';
 import { useDbvFilters } from '../features/database/filters/useDbvFilters';
-import '../features/database/components/DbvFilterRail.css';
 
 function DatabaseFiltersExample() {
   const [collapsed, setCollapsed] = useState(false);

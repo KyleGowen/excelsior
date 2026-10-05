@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { IconMinus, IconPlus } from '../icons';
-import './QuantityStepper.css';
 
 interface QuantityStepperProps {
   value: number;

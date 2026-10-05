@@ -3,7 +3,6 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { KoToggleButton } from '../features/deck-editor/KoToggleButton';
 import { ReserveCharacterButton } from '../features/deck-editor/ReserveCharacterButton';
 import { AddCardsQtyOverlay } from '../features/deck-editor/AddCardsQtyOverlay';
-import '../features/deck-editor/DeckEditorPage.css';
 
 function DeckEditorControlsExample() {
   const [ko, setKo] = useState(false);

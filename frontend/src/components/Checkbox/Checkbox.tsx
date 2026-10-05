@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import { IconCheck } from '../icons';
-import './Checkbox.css';
 
 export interface CheckboxProps {
   checked: boolean;

@@ -1,3 +1,4 @@
+import { activeElement } from '../../../lib/layout/activeElement';
 import { useOptionalModuleHost } from '../../../modules/ModuleHost';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -25,7 +26,6 @@ import {
   IconTrash,
 } from '../../../components/icons';
 import { Checkbox } from '../../../components/Checkbox';
-import './SavedDatabaseViewsPanel.css';
 
 export const SAVED_DATABASE_VIEWS_QUERY_KEY = ['saved-database-views'] as const;
 
@@ -88,19 +88,20 @@ function ConfirmDialog({
   onCancelRef.current = onCancel;
 
   useEffect(() => {
-    const previous = document.activeElement as HTMLElement | null;
+    const previous = activeElement() as HTMLElement | null;
     cancelRef.current?.focus();
     const onKey = (event: KeyboardEvent) => {
+      if (!dialogRef.current?.contains(activeElement())) return;
       if (event.key === 'Escape' && !busyRef.current) onCancelRef.current();
       if (event.key !== 'Tab' || !dialogRef.current) return;
       const focusable = [...dialogRef.current.querySelectorAll<HTMLElement>('button:not(:disabled)')];
       if (!focusable.length) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
+      if (event.shiftKey && activeElement() === first) {
         event.preventDefault();
         last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
+      } else if (!event.shiftKey && activeElement() === last) {
         event.preventDefault();
         first.focus();
       }
@@ -214,9 +215,11 @@ export function SavedDatabaseViewsPanel({
 
   useEffect(() => {
     if (!open) return;
-    previousFocusRef.current = document.activeElement as HTMLElement | null;
+    previousFocusRef.current = activeElement() as HTMLElement | null;
     const onKey = (event: KeyboardEvent) => {
       if (confirmRef.current) return;
+      const surface = panelRef.current?.getRootNode();
+      if (surface instanceof ShadowRoot && !surface.contains(activeElement())) return;
       if (event.key === 'Escape' && !editorRef.current && !confirmRef.current && !menuOpenIdRef.current) {
         onCloseRef.current();
       }
@@ -227,10 +230,10 @@ export function SavedDatabaseViewsPanel({
       if (!focusable.length) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
+      if (event.shiftKey && activeElement() === first) {
         event.preventDefault();
         last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
+      } else if (!event.shiftKey && activeElement() === last) {
         event.preventDefault();
         first.focus();
       }
@@ -263,7 +266,7 @@ export function SavedDatabaseViewsPanel({
   useEffect(() => {
     if (!menuOpenId) return;
     const close = (event: MouseEvent) => {
-      if (!(event.target as HTMLElement).closest(`[data-saved-view-menu="${menuOpenId}"]`)) setMenuOpenId(null);
+      if (!((event.composedPath()[0] ?? event.target) as HTMLElement).closest(`[data-saved-view-menu="${menuOpenId}"]`)) setMenuOpenId(null);
     };
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setMenuOpenId(null);

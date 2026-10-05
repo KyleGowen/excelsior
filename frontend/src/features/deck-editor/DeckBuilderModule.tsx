@@ -115,7 +115,6 @@ import {
   moveCharacterBy,
   reorderCharacterTo,
 } from '../../lib/decks/characterOrder';
-import './DeckEditorPage.css';
 
 const AddCardsPanel = lazy(() =>
   import('./AddCardsPanel').then((m) => ({ default: m.AddCardsPanel })),
@@ -356,7 +355,7 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
     y: number;
   } | null>(null);
   const suppressCharacterOpenRef = useRef(false);
-  const canSimulateKo = Boolean(user);
+  const canSimulateKo = Boolean(user) && host.features?.simulateKo !== false;
 
   const { close: closeCardDetail } = useModuleDetailHistory(Boolean(selected), () => setSelected(null), 'deckCardDetail');
 
@@ -472,7 +471,7 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
     [cards, cardIndex, koCharacterIds],
   );
 
-  const canDraw = metrics?.capabilities.drawHand ?? false;
+  const canDraw = (metrics?.capabilities.drawHand ?? false) && host.features?.drawHand !== false;
   // Keep the settled button appearance while its current eligibility is checked.
   const keepDrawAppearance = evaluation.pending && displayMetrics?.capabilities.drawHand === true;
   const drawHandAnalysis = useMemo(
@@ -997,11 +996,11 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
   };
   useModuleEditingState(isOwner, dirty, saving);
   const saveFeedbackContext: ModuleSaveFeedbackContext | null = saving ? { status: 'saving', message: 'Saving deck…', newerEditsPending: latestSaveKey.current !== activeSaveKey.current } : saveMsg && saveResult ? { ...saveResult, message: saveMsg } : null;
-  return { saveFeedback: host.saveFeedback, saveFeedbackContext, cardActions: host.cardActions, isGuest, chrome: host.chrome, onHome: host.onHome, deckLoading: deckQuery.isLoading, deckError: deckQuery.isError, retryDeck: () => void deckQuery.refetch(), user, isMobile, backAriaLabel, guestCloning: needsGuestClone || guestCloning, deck, isOwner, canFavorite, favoritePending: favoriteToggle.isPending, isFavorited, cards, name, setName, dirty, setDirty, saving, saveMsg, privacyBusy, limitedBusy, addOpen, setAddOpen, addCardsMounted, selected, reserveCharacterId, koCharacterIds, setKoCharacterIds, drawHandOpen, exportOpen, setExportOpen, exportDeckInput, exportLoading, drawnCards, mobileDeckTypeTab, setMobileDeckTypeTab, deckViewMode, activeCharacterReorderId, setActiveCharacterReorderId, draggedCharacterId, setDraggedCharacterId, dragOverCharacterId, setDragOverCharacterId, mainRef, contentRef, typeTabsRef, suppressCharacterOpenRef, canSimulateKo, closeCardDetail, evaluation, displayMetrics, cardIndex, foilLookup, setNameLookup, totalCards, koCtx, drawHandKoCtx, canDraw, keepDrawAppearance, drawHandAnalysis, maxStats, iconTotals, totalThreat, characterEntries, immersiveOpen, deckTypeTabs, visibleGroups, removeDeckInstance, reorderCharacter, startCharacterHold, moveCharacterHold, finishCharacterHold, dropCharacterOn, selectReserveCharacter, deselectReserveCharacter, selectDeckCard, closeDrawHand, handleBackToDecks, handleDrawHandToggle, handleViewModeToggle, handleDrawHandRedraw, handleDrawHandReorder, selectedDeckEntry, printingRows, applyPrinting, togglePrePlaced, selectedPrePlacedEligible, addCard, addStack, handleSave, handleTogglePrivacy, handleToggleLimited, handleToggleFavorite, deckId };
+  return { features: host.features, saveFeedback: host.saveFeedback, saveFeedbackContext, cardActions: host.cardActions, isGuest, chrome: host.chrome, onHome: host.onHome, deckLoading: deckQuery.isLoading, deckError: deckQuery.isError, retryDeck: () => void deckQuery.refetch(), user, isMobile, backAriaLabel, guestCloning: needsGuestClone || guestCloning, deck, isOwner, canFavorite, favoritePending: favoriteToggle.isPending, isFavorited, cards, name, setName, dirty, setDirty, saving, saveMsg, privacyBusy, limitedBusy, addOpen, setAddOpen, addCardsMounted, selected, reserveCharacterId, koCharacterIds, setKoCharacterIds, drawHandOpen, exportOpen, setExportOpen, exportDeckInput, exportLoading, drawnCards, mobileDeckTypeTab, setMobileDeckTypeTab, deckViewMode, activeCharacterReorderId, setActiveCharacterReorderId, draggedCharacterId, setDraggedCharacterId, dragOverCharacterId, setDragOverCharacterId, mainRef, contentRef, typeTabsRef, suppressCharacterOpenRef, canSimulateKo, closeCardDetail, evaluation, displayMetrics, cardIndex, foilLookup, setNameLookup, totalCards, koCtx, drawHandKoCtx, canDraw, keepDrawAppearance, drawHandAnalysis, maxStats, iconTotals, totalThreat, characterEntries, immersiveOpen, deckTypeTabs, visibleGroups, removeDeckInstance, reorderCharacter, startCharacterHold, moveCharacterHold, finishCharacterHold, dropCharacterOn, selectReserveCharacter, deselectReserveCharacter, selectDeckCard, closeDrawHand, handleBackToDecks, handleDrawHandToggle, handleViewModeToggle, handleDrawHandRedraw, handleDrawHandReorder, selectedDeckEntry, printingRows, applyPrinting, togglePrePlaced, selectedPrePlacedEligible, addCard, addStack, handleSave, handleTogglePrivacy, handleToggleLimited, handleToggleFavorite, deckId };
 }
 
 export function DeckBuilderView({ model }: { model: ReturnType<typeof useDeckBuilderController> }) {
- const { saveFeedback, saveFeedbackContext, cardActions, isGuest, chrome, onHome, deckLoading, deckError, retryDeck, user, isMobile, backAriaLabel, guestCloning, deck, isOwner, canFavorite, favoritePending, isFavorited, cards, name, setName, dirty, setDirty, saving, saveMsg, privacyBusy, limitedBusy, addOpen, setAddOpen, addCardsMounted, selected, reserveCharacterId, koCharacterIds, setKoCharacterIds, drawHandOpen, exportOpen, setExportOpen, exportDeckInput, exportLoading, drawnCards, mobileDeckTypeTab, setMobileDeckTypeTab, deckViewMode, activeCharacterReorderId, setActiveCharacterReorderId, draggedCharacterId, setDraggedCharacterId, dragOverCharacterId, setDragOverCharacterId, mainRef, contentRef, typeTabsRef, suppressCharacterOpenRef, canSimulateKo, closeCardDetail, evaluation, displayMetrics, cardIndex, foilLookup, setNameLookup, totalCards, koCtx, drawHandKoCtx, canDraw, keepDrawAppearance, drawHandAnalysis, maxStats, iconTotals, totalThreat, characterEntries, immersiveOpen, deckTypeTabs, visibleGroups, removeDeckInstance, reorderCharacter, startCharacterHold, moveCharacterHold, finishCharacterHold, dropCharacterOn, selectReserveCharacter, deselectReserveCharacter, selectDeckCard, closeDrawHand, handleBackToDecks, handleDrawHandToggle, handleViewModeToggle, handleDrawHandRedraw, handleDrawHandReorder, selectedDeckEntry, printingRows, applyPrinting, togglePrePlaced, selectedPrePlacedEligible, addCard, addStack, handleSave, handleTogglePrivacy, handleToggleLimited, handleToggleFavorite, deckId } = model;
+ const { features, saveFeedback, saveFeedbackContext, cardActions, isGuest, chrome, onHome, deckLoading, deckError, retryDeck, user, isMobile, backAriaLabel, guestCloning, deck, isOwner, canFavorite, favoritePending, isFavorited, cards, name, setName, dirty, setDirty, saving, saveMsg, privacyBusy, limitedBusy, addOpen, setAddOpen, addCardsMounted, selected, reserveCharacterId, koCharacterIds, setKoCharacterIds, drawHandOpen, exportOpen, setExportOpen, exportDeckInput, exportLoading, drawnCards, mobileDeckTypeTab, setMobileDeckTypeTab, deckViewMode, activeCharacterReorderId, setActiveCharacterReorderId, draggedCharacterId, setDraggedCharacterId, dragOverCharacterId, setDragOverCharacterId, mainRef, contentRef, typeTabsRef, suppressCharacterOpenRef, canSimulateKo, closeCardDetail, evaluation, displayMetrics, cardIndex, foilLookup, setNameLookup, totalCards, koCtx, drawHandKoCtx, canDraw, keepDrawAppearance, drawHandAnalysis, maxStats, iconTotals, totalThreat, characterEntries, immersiveOpen, deckTypeTabs, visibleGroups, removeDeckInstance, reorderCharacter, startCharacterHold, moveCharacterHold, finishCharacterHold, dropCharacterOn, selectReserveCharacter, deselectReserveCharacter, selectDeckCard, closeDrawHand, handleBackToDecks, handleDrawHandToggle, handleViewModeToggle, handleDrawHandRedraw, handleDrawHandReorder, selectedDeckEntry, printingRows, applyPrinting, togglePrePlaced, selectedPrePlacedEligible, addCard, addStack, handleSave, handleTogglePrivacy, handleToggleLimited, handleToggleFavorite, deckId } = model;
 
 
   if (guestCloning) {
@@ -1163,6 +1162,7 @@ export function DeckBuilderView({ model }: { model: ReturnType<typeof useDeckBui
               </button>
               <button
                 type="button"
+                hidden={features?.drawHand === false}
                 className={`btn btn-ghost deck-editor__draw-hand${drawHandOpen ? ' is-active' : ''}${keepDrawAppearance ? ' deck-editor__draw-hand--refreshing' : ''}`}
                 disabled={!canDraw}
                 aria-busy={keepDrawAppearance}
@@ -1178,14 +1178,15 @@ export function DeckBuilderView({ model }: { model: ReturnType<typeof useDeckBui
               <button
                 type="button"
                 className="btn btn-ghost"
-                onClick={() => setExportOpen(true)}
+                hidden={features?.exportDeck === false}
+                onClick={() => { if (features?.exportDeck !== false) setExportOpen(true); }}
                 title="Export deck"
               >
                 <IconExport /> Export
               </button>
               {isOwner ? (
                 <>
-                  <button type="button" className="btn btn-secondary" onClick={() => setAddOpen(true)}>
+                  <button type="button" hidden={features?.addCards === false} className="btn btn-secondary" onClick={() => { if (features?.addCards !== false) setAddOpen(true); }}>
                     <IconPlus /> Add Cards
                   </button>
                   {!isMobile ? (
@@ -1250,7 +1251,8 @@ export function DeckBuilderView({ model }: { model: ReturnType<typeof useDeckBui
                   <button
                     type="button"
                     className="btn btn-primary deck-editor__empty-add"
-                    onClick={() => setAddOpen(true)}
+                    hidden={features?.addCards === false}
+                    onClick={() => { if (features?.addCards !== false) setAddOpen(true); }}
                   >
                     <IconPlus /> Add Cards
                   </button>
@@ -1553,7 +1555,7 @@ export function DeckBuilderView({ model }: { model: ReturnType<typeof useDeckBui
       </div>
 
       {/* Add cards panel */}
-      {isOwner && (addOpen || addCardsMounted) ? (
+      {isOwner && features?.addCards !== false && (addOpen || addCardsMounted) ? (
         <Suspense fallback={<LoadingState label="Loading..." />}>
           <AddCardsPanel
             key={deckId}
@@ -1596,7 +1598,7 @@ export function DeckBuilderView({ model }: { model: ReturnType<typeof useDeckBui
             : undefined
         }
       />
-      {exportOpen ? (
+      {exportOpen && features?.exportDeck !== false ? (
         <ExportDeckPanel
           open
           input={exportDeckInput ?? createStubDeckExportInput(user?.username ?? 'Guest')}
