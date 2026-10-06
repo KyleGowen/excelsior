@@ -5,7 +5,7 @@ const root = realpathSync(resolve(import.meta.dirname,'../src'));
 const entry = resolve(process.argv[2] ?? resolve(root,'modules/index.ts'));
 const seen = new Set(), externals = new Set();
 const banned = /(?:^|\/)(?:app|stories|deck-usability\/(?:deckUsabilityUtils|isCatalogCardUsable|buildDeckUsabilityContext)|decks\/(?:extractCardsFromImportJson|resolveImportCardIds|importDeckFromJson|deckMaxStats))(?:\/|\.)/;
-const retiredRules = new Set(['drawRandomHand','buildDrawPile','analyzeDrawnHand','drawHandVentureValue','buildKoDimmingContext','calculateDeckTotalThreat','calculateDeckIconTotals','effectiveCharacterStats','effectiveTeamCharacterStats','isCatalogCardUsable','resolveImportCardIds','computePrePlacedFlags','reconcilePrePlaced','isPrePlacedEligible','normalizeAngryMobVariant','normalizeTeamworkMechanic','normalizeTeamworkFollowups','cardSearchAliases','missingSkyboundFoilPrinting']);
+const retiredRules = new Set(['guestCollectionTotals','evaluateCollection','drawRandomHand','buildDrawPile','analyzeDrawnHand','drawHandVentureValue','buildKoDimmingContext','calculateDeckTotalThreat','calculateDeckIconTotals','effectiveCharacterStats','effectiveTeamCharacterStats','isCatalogCardUsable','resolveImportCardIds','computePrePlacedFlags','reconcilePrePlaced','isPrePlacedEligible','normalizeAngryMobVariant','normalizeTeamworkMechanic','normalizeTeamworkFollowups','cardSearchAliases','missingSkyboundFoilPrinting']);
 function visitFile(file) {
  file = realpathSync(file);
  if (!file.startsWith(root + sep) || banned.test(file)) throw new Error(`Forbidden module dependency: ${file}`);

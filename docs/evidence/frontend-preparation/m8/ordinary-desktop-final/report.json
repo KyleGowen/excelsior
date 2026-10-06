@@ -1,0 +1,217 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "deployedRevision": null,
+  "inputFingerprint": "a9fffe6181ee08b3b948583c59e3f129dcec47fa400197ee4ddbab4ecdf260c8",
+  "selectedScenarios": [
+    "home-guest",
+    "database-search-detail",
+    "collection-guest-read",
+    "deck-readonly-draw-export",
+    "supporter-retired"
+  ],
+  "capturePolicy": "all",
+  "comparison": false,
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://localhost:5188",
+    "apiUrl": "http://localhost:8092",
+    "sourceRoot": "M8 isolated checkout",
+    "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+    "sourceTreeFingerprint": "a9fffe6181ee08b3b948583c59e3f129dcec47fa400197ee4ddbab4ecdf260c8",
+    "expectedRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m8",
+    "verified": true,
+    "observedAt": "2026-10-06T02:40:11.340Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "ca6d811fd0872859c01e575295a79678442b76b0",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "ca6d811fd0872859c01e575295a79678442b76b0",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required",
+    "frontendSource": {
+      "revision": "ca6d811fd0872859c01e575295a79678442b76b0",
+      "fingerprint": "a9fffe6181ee08b3b948583c59e3f129dcec47fa400197ee4ddbab4ecdf260c8",
+      "binding": "verified checkout, local listeners and proxy"
+    }
+  },
+  "actor": "guest",
+  "theme": "fixed dark",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "home-guest",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "ordinary-desktop-final/home-guest-result.jpg",
+          "dom": "ordinary-desktop-final/home-guest-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://localhost:5188/home"
+        }
+      ],
+      "observed": {
+        "guestEntry": true,
+        "contextualAuthControls": true,
+        "actualOAuth": "not executed"
+      }
+    },
+    {
+      "id": "database-search-detail",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "ordinary-desktop-final/database-search-detail-empty.jpg",
+          "dom": "ordinary-desktop-final/database-search-detail-empty.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://localhost:5188/data"
+        },
+        {
+          "screenshot": "ordinary-desktop-final/database-search-detail-detail.jpg",
+          "dom": "ordinary-desktop-final/database-search-detail-detail.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://localhost:5188/data"
+        },
+        {
+          "screenshot": "ordinary-desktop-final/database-search-detail-result.jpg",
+          "dom": "ordinary-desktop-final/database-search-detail-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://localhost:5188/data"
+        }
+      ],
+      "observed": {
+        "emptySearch": "passed",
+        "cardName": "Lancelot",
+        "artwork": {
+          "complete": true,
+          "naturalHeight": 744,
+          "naturalWidth": 1039
+        },
+        "detailsClosed": true
+      }
+    },
+    {
+      "id": "collection-guest-read",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "ordinary-desktop-final/collection-guest-read-result.jpg",
+          "dom": "ordinary-desktop-final/collection-guest-read-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://localhost:5188/users/00000000-0000-0000-0000-000000000001/collection"
+        }
+      ],
+      "observed": {
+        "storage": "browser-local",
+        "emptyExpected": true,
+        "quantitiesChanged": false
+      }
+    },
+    {
+      "id": "deck-readonly-draw-export",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "ordinary-desktop-final/deck-readonly-draw-export-draw.jpg",
+          "dom": "ordinary-desktop-final/deck-readonly-draw-export-draw.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://localhost:5188/users/d005c30a-5857-4581-b4c9-ba3569d283a3/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75?readonly=true"
+        },
+        {
+          "screenshot": "ordinary-desktop-final/deck-readonly-draw-export-result.jpg",
+          "dom": "ordinary-desktop-final/deck-readonly-draw-export-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://localhost:5188/users/d005c30a-5857-4581-b4c9-ba3569d283a3/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75?readonly=true"
+        }
+      ],
+      "observed": {
+        "drawCount": 8,
+        "exported": {
+          "legal": false,
+          "reserve_character": null,
+          "total_cards": 8,
+          "total_threat": 18
+        },
+        "recordsChanged": false
+      }
+    },
+    {
+      "id": "supporter-retired",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "ordinary-desktop-final/supporter-retired-result.jpg",
+          "dom": "ordinary-desktop-final/supporter-retired-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://localhost:5188/home"
+        }
+      ],
+      "observed": {
+        "redirectedHome": true,
+        "supporterVisible": false,
+        "retiredApi": "separate API check required"
+      }
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only scenarios",
+    "browser": "returned Home; close this test-owned tab or mark handoff explicitly",
+    "viewport": "reset"
+  },
+  "acceptance": "automated evidence only; Kyle acceptance not inferred",
+  "gaps": [
+    "light theme unavailable in M1",
+    "Google OAuth not exercised",
+    "independent module harness unavailable in M1"
+  ],
+  "viewport": {
+    "height": 720,
+    "width": 1280
+  },
+  "browserErrorCount": 0,
+  "status": "passed",
+  "durationSeconds": 8.457,
+  "counts": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  }
+}

@@ -1,3 +1,4 @@
+import { noRequestEvidence, noRequestSubscription, type LocalRequestEvidence, type LocalRequestMode } from './localRequestEvidence';
 import * as legacyImageAssets from '../app/legacyImageAssets';
 import { useCallback, useEffect, useMemo, useState, useRef, useSyncExternalStore } from 'react';
 import { Link, Route, Routes, useLocation, useNavigate, useParams, useBlocker } from 'react-router-dom';
@@ -13,7 +14,8 @@ import { SlideOutPanel } from '../components/SlideOutPanel';
 import { harnessAppearance, type HarnessAppearance } from './harnessAppearance';
 
 /** Fictional development host. Every navigation/discard/auth decision belongs here. */
-export function NativeRouteHarness({ user, api: suppliedApi, initialDeckId = PUBLIC_FIXTURE_DECK, isolated = false, initialReadonly = true }: { user: AppUser | null; api?: ModuleApi; initialDeckId?: string; isolated?: boolean; initialReadonly?: boolean }) {
+export function NativeRouteHarness({ user, api: suppliedApi, requestEvidence, initialDeckId = PUBLIC_FIXTURE_DECK, isolated = false, initialReadonly = true }: { user: AppUser | null; api?: ModuleApi; requestEvidence?: LocalRequestEvidence; initialDeckId?: string; isolated?: boolean; initialReadonly?: boolean }) {
+ const requestSnapshot = useSyncExternalStore(requestEvidence?.subscribe ?? noRequestSubscription, requestEvidence?.getSnapshot ?? noRequestEvidence, noRequestEvidence);
  const baseApi = useMemo(() => suppliedApi ?? createModuleApi(), [suppliedApi]);
  const [saveMode, setSaveMode] = useState<SaveFixtureMode>('api');
  const api = useMemo(() => saveFixtureApi(baseApi, saveMode), [baseApi, saveMode]);
@@ -72,6 +74,7 @@ export function NativeRouteHarness({ user, api: suppliedApi, initialDeckId = PUB
  const configure = (action:()=>void) => { if (blocker.state !== 'blocked') guard.request(action); };
  return <div className={isolated ? 'native-integration-fixture host-font-' + rootFont : 'module-harness module-route-harness'}>
   <header className={isolated ? 'fixture-chrome' : 'module-harness__controls'}>
+   {requestEvidence && requestSnapshot ? <><label>Local Collection request mode <select aria-label="Local Collection request mode" value={requestSnapshot.mode} onChange={e=>requestEvidence.setMode(e.target.value as LocalRequestMode)}><option value="online">Real local API</option><option value="slow-collection">Delay Collection requests by 750 ms</option><option value="offline-collection">Reject Collection requests locally</option></select></label><output aria-label="Local request evidence" data-request-evidence={JSON.stringify(requestSnapshot)}>{requestSnapshot.requests.length} recent API requests; bodies and identities are not recorded</output></> : null}
    <h1>{isolated ? 'Native integration preparation' : 'Fictional nested host'}</h1>
    <p>Host identity: {host.identity.isGuest ? 'Guest' : 'Account'}. Local data. Editing creates a disposable Guest copy; Collection quantities stay unchanged.</p>
    <nav aria-label="Fictional host navigation"><Link to="/">Host Home</Link><Link to="/tools/cards">Host Cards</Link><Link to="/tools/collection">Host Collection</Link>{deckPath ? <Link to={privateDeckId ? '/tools/decks/local-copy' : deckPath}>Host Deck</Link> : <span role="status">Use a public fixture UUID.</span>}</nav>

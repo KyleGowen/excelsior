@@ -34,9 +34,9 @@ function normaliseUser(raw: RawMe | null | undefined): AppUser | null {
   };
 }
 
-export async function fetchCurrentUser(): Promise<AppUser | null> {
+export async function fetchCurrentUser(request: typeof apiRequest = apiRequest): Promise<AppUser | null> {
   try {
-    const raw = await apiRequest<RawMe>('/api/auth/me', { raw: false });
+    const raw = await request<RawMe>('/api/auth/me', { raw: false });
     const user = normaliseUser(raw);
     if (!user) throw new Error('Invalid session response. Please try again.');
     return user;
@@ -87,9 +87,9 @@ export async function logout(): Promise<void> {
   await api.post('/api/auth/logout');
 }
 
-export async function fetchAppConfig(): Promise<AppConfig> {
+export async function fetchAppConfig(client: typeof api = api): Promise<AppConfig> {
   try {
-    const cfg = await api.get<AppConfig>('/api/v1/config/app');
+    const cfg = await client.get<AppConfig>('/api/v1/config/app');
     setCdnBase(cfg?.cdnBase);
     return {
       cdnBase: cfg?.cdnBase ?? '',

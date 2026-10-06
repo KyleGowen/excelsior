@@ -16,6 +16,8 @@ try {
   ['rule',"const drawRandomHand = () => [];",'Retired domain rule'],
   ['named-alias',"function cardSearchAliases() { return []; }",'Retired domain rule'],
   ['named-foil',"const missingSkyboundFoilPrinting = () => null;",'Retired domain rule'],
+  ['collection-totals',"const guestCollectionTotals = () => ({totalOwned:0});",'Retired domain rule'],
+  ['collection-evaluation',"function evaluateCollection() { return {}; }",'Retired domain rule'],
   ['resource',"const url='/src/resources/cards/images/a.webp';",'Excelsior resource URL'],
   ['dependency',"import something from 'undeclared-package';",'Undeclared browser package'],
  ]) test(`rejects ${name}`,()=>{

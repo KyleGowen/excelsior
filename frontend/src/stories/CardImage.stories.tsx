@@ -14,3 +14,6 @@ export const Thumbnail: Story = {};
 export const FullArt: Story = { args: { useThumbnail: false } };
 export const Foil: Story = { args: { isFoil: true, foilSeed: 'storybook-billy' } };
 export const Missing: Story = { args: { imagePath: null, alt: 'No card art' } };
+
+/** A fictional missing URL exercises the image error fallback, beyond absent input. */
+export const BrokenUrlFallback: Story = { args: { imagePath: 'fictional-m8-missing.webp', alt: 'Unavailable fictional art', useThumbnail: false } };

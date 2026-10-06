@@ -1,159 +1,91 @@
-/**
- * Unified collection access for guest (localStorage) and logged-in (server)
- * users. Exposes owned quantities keyed by `${collectionType}:${cardId}` plus
- * a `setQuantity` mutator and aggregate totals.
- */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+/** Device-local input/persistence and presentation; derived totals/capabilities come from the API. */
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useOptionalModuleHost } from '../../modules/ModuleHost';
-import { fetchCollectionCards, setCollectionQuantity, addCollectionCard } from '../api/collection';
-import {
-  getGuestCollection,
-  setGuestQuantity,
-} from './guestCollection';
+import { fetchCollectionView, evaluateGuestCollection, setCollectionQuantity, addCollectionCard } from '../api/collection';
+import { getGuestCollection, setGuestQuantity } from './guestCollection';
 import { cardDisplayName } from '../catalog/catalogTypeMap';
 import type { CatalogCard, CollectionCardType } from '../api/types';
-
-interface OwnedEntry {
-  cardId: string;
-  cardType: string;
-  quantity: number;
-  imagePath: string;
-}
 
 export interface UseCollectionResult {
   isGuest: boolean;
   isLoading: boolean;
   isError: boolean;
+  isUpdating: boolean;
+  canSetQuantity: boolean;
   retry: () => void;
   quantityFor: (cardId: string, collectionType: CollectionCardType) => number;
   setQuantity: (card: CatalogCard, collectionType: CollectionCardType, quantity: number) => Promise<void>;
-  totalOwned: number;
-  uniqueCards: number;
+  totalOwned: number | null;
+  uniqueCards: number | null;
 }
-
-export interface UseCollectionOptions {
-  /** When false, skips the server collection fetch (guest localStorage still works). */
-  enabled?: boolean;
-}
+export interface UseCollectionOptions { enabled?: boolean }
 
 export function useCollectionController(isGuest: boolean, options: UseCollectionOptions = {}): UseCollectionResult {
   const { enabled = true } = options;
   const hostApi = useOptionalModuleHost()?.api;
-  const fetchCards = hostApi?.fetchCollectionCards ?? fetchCollectionCards;
+  const fetchView = hostApi?.fetchCollectionView ?? fetchCollectionView;
+  const evaluateGuest = hostApi?.evaluateGuestCollection ?? evaluateGuestCollection;
   const addCard = hostApi?.addCollectionCard ?? addCollectionCard;
   const setQty = hostApi?.setCollectionQuantity ?? setCollectionQuantity;
   const queryClient = useQueryClient();
   const [guestTick, setGuestTick] = useState(0);
-
-  const serverQuery = useQuery({
-    queryKey: ['collection', 'me'],
-    queryFn: ({ signal }) => fetchCards(signal),
-    enabled: enabled && !isGuest,
-    staleTime: 60 * 1000,
-  });
-
+  const [pending, setPending] = useState(0);
+  const [mutationError, setMutationError] = useState(false);
+  const queue = useRef<Promise<void>>(Promise.resolve());
+  const guestEntries = useMemo(() => { void guestTick; return isGuest ? getGuestCollection().map(({cardId, cardType, imagePath, quantity}) => ({cardId, cardType, imagePath, quantity})) : []; }, [isGuest, guestTick]);
+  const savedKey = ['collection', 'view'] as const;
+  const saved = useQuery({ queryKey: savedKey, queryFn: ({signal}) => fetchView(signal), enabled: enabled && !isGuest, staleTime: 0 });
+  const guest = useQuery({ queryKey: ['collection', 'device-evaluation', guestEntries], queryFn: ({signal}) => evaluateGuest(guestEntries, signal), enabled: isGuest, staleTime: 0 });
   useEffect(() => {
     if (!isGuest) return;
-    const handler = () => setGuestTick((t) => t + 1);
+    const handler = () => setGuestTick(t => t + 1);
     window.addEventListener('guest-collection-change', handler);
     return () => window.removeEventListener('guest-collection-change', handler);
   }, [isGuest]);
-
-  const entries: OwnedEntry[] = useMemo(() => {
+  const query = isGuest ? guest : saved;
+  const evaluation = isGuest ? guest.data : saved.data?.evaluation;
+  const hasGuestEvaluation = useRef(false);
+  if (isGuest && guest.data) hasGuestEvaluation.current = true;
+  const entries = useMemo(() => isGuest ? guestEntries : (saved.data?.cards ?? []).map(row => ({cardId: row.card_id, cardType: row.card_type, quantity: row.quantity, imagePath: row.image_path})), [isGuest, guestEntries, saved.data]);
+  // A presentation lookup retains the previous printing display convention, not totals/rules.
+  const map = useMemo(() => new Map(entries.map(row => [`${row.cardType}:${row.cardId}`, row.quantity])), [entries]);
+  const mapRef = useRef(map); mapRef.current = map;
+  const quantityFor = useCallback((cardId: string, type: CollectionCardType) => map.get(`${type}:${cardId}`) ?? 0, [map]);
+  const setQuantity = useCallback((card: CatalogCard, cardType: CollectionCardType, quantity: number) => {
+    const imagePath = String(card.image_path || card.image || '');
+    const next = Math.max(0, quantity); // Local input normalization; server validates persisted requests.
     if (isGuest) {
-      void guestTick; // re-read localStorage when guest collection changes
-      return getGuestCollection().map((e) => ({
-        cardId: e.cardId,
-        cardType: e.cardType,
-        quantity: e.quantity,
-        imagePath: e.imagePath,
-      }));
+      setGuestQuantity({cardId:card.id, cardType, imagePath, quantity:next, cardName:cardDisplayName(card), set:card.set});
+      return Promise.resolve();
     }
-    return (serverQuery.data ?? []).map((c) => ({
-      cardId: c.card_id,
-      cardType: c.card_type,
-      quantity: c.quantity,
-      imagePath: c.image_path,
-    }));
-  }, [isGuest, guestTick, serverQuery.data]);
-
-  const map = useMemo(() => {
-    const m = new Map<string, number>();
-    entries.forEach((e) => m.set(`${e.cardType}:${e.cardId}`, e.quantity));
-    return m;
-  }, [entries]);
-
-  const quantityFor = useCallback(
-    (cardId: string, collectionType: CollectionCardType) => map.get(`${collectionType}:${cardId}`) ?? 0,
-    [map],
-  );
-
-  const setQuantity = useCallback(
-    async (card: CatalogCard, collectionType: CollectionCardType, quantity: number) => {
-      const imagePath = (card.image_path as string) || (card.image as string) || '';
-      const next = Math.max(0, quantity);
-      if (isGuest) {
-        setGuestQuantity({
-          cardId: card.id,
-          cardType: collectionType,
-          imagePath,
-          quantity: next,
-          cardName: cardDisplayName(card),
-          set: card.set,
-        });
-        return;
-      }
-      // The PUT endpoint only updates cards already in the collection; a brand
-      // new card must be POSTed first. Choose based on the currently-owned qty.
-      const current = map.get(`${collectionType}:${card.id}`) ?? 0;
-      if (current <= 0) {
-        if (next <= 0) return;
-        await addCard({ cardId: card.id, cardType: collectionType, quantity: next, imagePath });
-      } else {
-        await setQty({ cardId: card.id, cardType: collectionType, quantity: next, imagePath });
-      }
-      queryClient.setQueryData<Array<{ card_id: string; card_type: string; quantity: number; image_path: string }>>(
-        ['collection', 'me'],
-        (prev) => {
-          const list = prev ?? [];
-          const idx = list.findIndex((c) => c.card_id === card.id && c.card_type === collectionType);
-          if (next <= 0) {
-            if (idx < 0) return list;
-            return list.filter((_, i) => i !== idx);
-          }
-          if (idx < 0) {
-            return [
-              ...list,
-              {
-                card_id: card.id,
-                card_type: collectionType,
-                quantity: next,
-                image_path: imagePath,
-              },
-            ];
-          }
-          return list.map((c, i) => (i === idx ? { ...c, quantity: next } : c));
-        },
-      );
-    },
-    [isGuest, queryClient, map, addCard, setQty],
-  );
-
-  const totalOwned = useMemo(() => entries.reduce((s, e) => s + e.quantity, 0), [entries]);
-  const uniqueCards = useMemo(() => entries.filter((e) => e.quantity > 0).length, [entries]);
-
-  return useMemo(
-    () => ({
-      isGuest,
-      isLoading: !isGuest && serverQuery.isLoading,
-      isError: !isGuest && serverQuery.isError,
-      retry: () => { void serverQuery.refetch(); },
-      quantityFor,
-      setQuantity,
-      totalOwned,
-      uniqueCards,
-    }),
-    [isGuest, serverQuery.isLoading, serverQuery.isError, serverQuery.refetch, quantityFor, setQuantity, totalOwned, uniqueCards],
-  );
+    setPending(n => n + 1); setMutationError(false);
+    const work = queue.current.catch(() => {}).then(async () => {
+      await queryClient.cancelQueries({queryKey:['collection', 'view']});
+      const current = mapRef.current.get(`${cardType}:${card.id}`) ?? 0;
+      if (current <= 0) { if (next <= 0) return; await addCard({cardId:card.id,cardType,quantity:next,imagePath}); }
+      else await setQty({cardId:card.id,cardType,quantity:next,imagePath});
+      // A focus/reconnect read may have started during the write. It cannot
+      // supply the post-write snapshot, even when fetchQuery would deduplicate it.
+      await queryClient.cancelQueries({queryKey:['collection', 'view']});
+      const fresh = await queryClient.fetchQuery({queryKey:['collection','view'],queryFn:({signal}) => fetchView(signal),staleTime:0});
+      // Keep queued absolute requests ordered even before React commits the fresh view.
+      mapRef.current = new Map(fresh.cards.map(row => [`${row.card_type}:${row.card_id}`,row.quantity]));
+      await queryClient.invalidateQueries({queryKey:['collection','me']});
+    });
+    queue.current = work;
+    return work.catch(error => {setMutationError(true); throw error;}).finally(() => setPending(n => n - 1));
+  }, [isGuest,queryClient,addCard,setQty,fetchView]);
+  const isUpdating = pending > 0 || query.isFetching;
+  return {
+    isGuest, isLoading: enabled && query.isPending && !(isGuest && hasGuestEvaluation.current),
+    isError: query.isError || mutationError,
+    isUpdating,
+    canSetQuantity: evaluation?.capabilities.canSetQuantity === true && pending === 0 && !query.isError && !mutationError,
+    retry: () => {void query.refetch().then(result => {if(result.isSuccess)setMutationError(false);});},
+    quantityFor, setQuantity,
+    // Never invent totals or display a saved snapshot as current while a write is in flight.
+    totalOwned: pending > 0 || query.isError || mutationError ? null : evaluation?.totalOwned ?? null,
+    uniqueCards: pending > 0 || query.isError || mutationError ? null : evaluation?.uniqueCards ?? null,
+  };
 }

@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname,'../..');
 const pairs = {
+ 'src/api/dto/v1/CollectionEvaluationDto.ts':'CollectionEvaluationDto.ts',
  'src/api/dto/v1/DeckExportDto.ts':'DeckExportDto.ts',
  'src/api/dto/v1/DrawDraftDto.ts':'DrawDraftDto.ts',
  'src/api/dto/v1/HandAnalysisDto.ts':'HandAnalysisDto.ts',

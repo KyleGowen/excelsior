@@ -35,3 +35,23 @@ export async function runBuiltDelivery({tab,target,evidenceDir,viewport,dimensio
  } catch(error) {report.scenarios.push({id:'built-delivery',status:'failed',reason:String(error)});try{await capture('failure');}catch{}}
  report.browserErrors=await tab.dev.logs({levels:['error'],limit:20});await viewport.reset();report.cleanup={applicationRecords:'unchanged; selected operations read-only/stateless',viewport:'reset',tab:'caller closes or retains identified preview'};report.counts={passed:report.scenarios.filter(s=>s.status==='passed').length,failed:report.scenarios.filter(s=>s.status==='failed').length,blocked:Math.max(0,4-report.scenarios.filter(s=>s.status==='passed').length),skipped:0};report.status=report.counts.passed===4&&report.counts.failed===0&&report.browserErrors.length===0?'passed':'needs review';report.reportPath=await writeBrowserReport(evidenceDir,report);return report;
 }
+
+/** Actual missing local asset, not a mocked component event or absent image input. */
+export async function runMissingImageFallback({tab,target,evidenceDir}) {
+ check(target?.verified&&target.environment==='local','Verified loopback target required');
+ const origin=new URL(await tab.url());check(['localhost','127.0.0.1'].includes(origin.hostname)&&origin.pathname==='/delivery-proof/','Select the local compiled consumer');
+ const report={schema:1,kind:'browser',environment:'local',sourceRevision:target.sourceRevision,inputFingerprint:target.sourceTreeFingerprint,actor:'Guest',method:'CUA compiled module; real missing local URL and emitted placeholder fallback',scenarios:[],evidence:[],acceptance:'Automated only; Kyle acceptance separate',cleanup:{applicationRecords:'unchanged'},gaps:['No production asset or external host proof']};
+ try {
+  await tab.reload();await wait(role(tab,'heading','Card Database'));const first=role(tab,'region','Built module');
+  await first.getByRole('searchbox',{name:'Search cards',exact:true}).fill('Lancelot');await wait(first.getByRole('button',{name:'View Lancelot',exact:true}));
+  await role(tab,'checkbox','Second built module').check();await wait(role(tab,'region','Second built module').getByRole('heading',{name:'Card Database',exact:true}));
+  await role(tab,'checkbox','Missing first-module art').check();
+  await tab.getAXState({emit:false});
+  const state=await tab.playwright.evaluate(()=>[...document.querySelectorAll('.module-style-boundary')].map(node=>[...node.shadowRoot.querySelectorAll('.card-tile__art img')].map(img=>({src:img.currentSrc||img.src,loaded:img.complete&&img.naturalWidth>0}))));
+  check(state[0].some(img=>img.src.startsWith('data:image/webp')&&img.loaded),'Missing first-module art did not load the emitted placeholder');check(state[1].some(img=>!img.src.startsWith('data:')&&img.loaded),'Missing asset override leaked into the second module');
+  report.evidence.push(await captureBrowserEvidence(tab,evidenceDir,'missing-art-fallback'));report.scenarios.push({id:'real-missing-image-fallback-and-isolation',status:'passed'});
+ }catch(error){report.scenarios.push({id:'real-missing-image-fallback-and-isolation',status:'failed',reason:error.message});}
+ finally{try{await role(tab,'checkbox','Missing first-module art').uncheck();await role(tab,'checkbox','Second built module').uncheck();report.cleanup.fixture='missing-image injection and second module disabled';}catch{report.cleanup.fixture='BLOCKED: restore fixture controls';}}
+ const errors=await tab.dev.logs({levels:['error'],limit:50});report.expectedMissingAssetErrors=errors.filter(e=>String(e.message).includes('fictional-m8-missing.webp'));report.unexpectedErrors=errors.filter(e=>!String(e.message).includes('fictional-m8-missing.webp'));
+ report.counts={passed:report.scenarios.filter(s=>s.status==='passed').length,failed:report.scenarios.filter(s=>s.status==='failed').length,skipped:0,blocked:0};report.status=report.counts.passed===1&&report.unexpectedErrors.length===0&&!String(report.cleanup.fixture).startsWith('BLOCKED')?'passed':'needs review';report.reportPath=await writeBrowserReport(evidenceDir,report);return report;
+}

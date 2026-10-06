@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "environment": "local",
+  "consumerUrl": "http://127.0.0.1:5189/delivery-proof/",
+  "consumerProcessCheckout": "M8 isolated checkout/frontend",
+  "apiOrigin": "http://127.0.0.1:8092",
+  "health": {
+    "status": "OK",
+    "database": "OK",
+    "revision": "ca6d811fd0872859c01e575295a79678442b76b0",
+    "migration": "365"
+  },
+  "processCwdMatched": true,
+  "fixtureMissingAssetStatus": 404,
+  "method": "read-only HTTP/process binding evidence; browser results recorded separately"
+}

@@ -260,3 +260,8 @@ Thirteen `/api/v1/catalog/presentation/<type>` reads use the existing catalog se
 - [x] M4 Add Cards stateless candidate decisions: bounded strict `/api/v1/decks/candidates/evaluate`, server catalog usability/reasons and tile ceilings; no legacy candidate route. Bulk/pre-placement and other M4 workflows remain pending.
 
 M7 preparation additions: deck-preview.http.ts and deck-import.http.ts have dedicated request models/DTOs, main-router happy/error/rate/role tests and real database integration. Owned import includes late-failure transaction rollback; Guest import verifies session access and cleanup. API_V1, OpenAPI, error catalog and changelog are updated. Legacy routes remain supported; no existing migration checkbox is inferred complete from these additive routes.
+
+
+## M8 Collection contracts
+
+[x] Added current-user Collection view and public stateless device evaluation. No existing published endpoint removed; ordinary UI now uses one saved snapshot and server totals. Guest persistence stays local.

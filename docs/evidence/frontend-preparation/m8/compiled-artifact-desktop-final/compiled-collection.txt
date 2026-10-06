@@ -1,0 +1,450 @@
+- banner:
+  - heading "Built module delivery proof" [level=1]
+  - paragraph: Fictional host · private same-repository preparation
+  - navigation "Delivery host navigation":
+    - button "Card Database"
+    - button "Deck Builder"
+    - button "Collection" [active]
+  - text: Consumer surface width
+  - combobox "Consumer surface width":
+    - option "390"
+    - option "720" [selected]
+    - option "1120"
+  - checkbox "Second built module"
+  - text: Second built module
+  - checkbox "Alternate asset contract"
+  - text: Alternate asset contract
+  - checkbox "Missing first-module art"
+  - text: Missing first-module art
+  - status "Host callback receipt": Ready
+- main:
+  - region "Built module":
+    - region "Native module overlay root"
+    - heading "My Collection" [level=1]:
+      - text: My Collection
+    - strong: "0"
+    - text: cards owned
+    - strong: "0"
+    - text: unique
+    - generic: Stored on this device
+    - searchbox "Search collection"
+    - generic: Set
+    - combobox "Filter by set":
+      - option "All sets" [selected]
+      - option "Edgar Rice Burroughs and the World Legends"
+      - option "Edgar Rice Burroughs and the World Legends - Promos"
+      - option "The Few and the Cursed - Promos"
+      - option "Skybound"
+      - option "Skybound - Promos"
+    - checkbox "Owned only"
+    - generic: Owned only
+    - tablist "Card types":
+      - tab "All" [selected]
+      - tab "Characters"
+      - tab "Special"
+      - tab "Power"
+      - tab "Locations"
+      - tab "Battlegrounds"
+      - tab "Missions"
+      - tab "Events"
+      - tab "Aspects"
+      - tab "Advanced"
+      - tab "Teamwork"
+      - tab "Ally"
+      - tab "Training"
+      - tab "Basic"
+    - list:
+      - button "Chr Angry Mob (Middle Ages)":
+        - generic: ERB
+        - generic: "001"
+        - generic "Characters": Chr
+        - generic "Angry Mob (Middle Ages)"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Don't Let it Get Away!":
+        - generic: ERB
+        - generic: "002"
+        - generic "Special": Spc
+        - generic "Don't Let it Get Away!"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Mob Mentality":
+        - generic: ERB
+        - generic: "003"
+        - generic "Special": Spc
+        - generic "Mob Mentality"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Strength in Numbers":
+        - generic: ERB
+        - generic: "004"
+        - generic "Special": Spc
+        - generic "Strength in Numbers"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Swarm Them!":
+        - generic: ERB
+        - generic: "005"
+        - generic "Special": Spc
+        - generic "Swarm Them!"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Pitchforks and Torches":
+        - generic: ERB
+        - generic: "006"
+        - generic "Special": Spc
+        - generic "Pitchforks and Torches"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Regent of the Crown":
+        - generic: ERB
+        - generic: "007"
+        - generic "Special": Spc
+        - generic "Regent of the Crown"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Chr Angry Mob (Industrial Age)":
+        - generic: ERB
+        - generic: "008"
+        - generic "Characters": Chr
+        - generic "Angry Mob (Industrial Age)"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Disrupting Supply Lines":
+        - generic: ERB
+        - generic: "009"
+        - generic "Special": Spc
+        - generic "Disrupting Supply Lines"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Union Power":
+        - generic: ERB
+        - generic: "010"
+        - generic "Special": Spc
+        - generic "Union Power"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Chr Angry Mob (Modern Age)":
+        - generic: ERB
+        - generic: "011"
+        - generic "Characters": Chr
+        - generic "Angry Mob (Modern Age)"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Online Cyber Attack":
+        - generic: ERB
+        - generic: "012"
+        - generic "Special": Spc
+        - generic "Online Cyber Attack"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Ransom Your Secrets":
+        - generic: ERB
+        - generic: "013"
+        - generic "Special": Spc
+        - generic "Ransom Your Secrets"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Chr Anubis":
+        - generic: ERB
+        - generic: "014"
+        - generic "Characters": Chr
+        - generic "Anubis"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Book of the Dead":
+        - generic: ERB
+        - generic: "015"
+        - generic "Special": Spc
+        - generic "Book of the Dead"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Lord of the Sacred Land":
+        - generic: ERB
+        - generic: "016"
+        - generic "Special": Spc
+        - generic "Lord of the Sacred Land"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Shepherd of the Damned":
+        - generic: ERB
+        - generic: "017"
+        - generic "Special": Spc
+        - generic "Shepherd of the Damned"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Siphon Strike":
+        - generic: ERB
+        - generic: "018"
+        - generic "Special": Spc
+        - generic "Siphon Strike"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Weighing of the Heart":
+        - generic: ERB
+        - generic: "019"
+        - generic "Special": Spc
+        - generic "Weighing of the Heart"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Wither":
+        - generic: ERB
+        - generic: "020"
+        - generic "Special": Spc
+        - generic "Wither"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Chr Billy the Kid":
+        - generic: ERB
+        - generic: "021"
+        - generic "Characters": Chr
+        - generic "Billy the Kid"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Head for Mexico":
+        - generic: ERB
+        - generic: "022"
+        - generic "Special": Spc
+        - generic "Head for Mexico"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc I'll Make You Famous":
+        - generic: ERB
+        - generic: "023"
+        - generic "Special": Spc
+        - generic "I'll Make You Famous"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Pals":
+        - generic: ERB
+        - generic: "024"
+        - generic "Special": Spc
+        - generic "Pals"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Quick Draw":
+        - generic: ERB
+        - generic: "025"
+        - generic "Special": Spc
+        - generic "Quick Draw"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Reap the Whirlwind":
+        - generic: ERB
+        - generic: "026"
+        - generic "Special": Spc
+        - generic "Reap the Whirlwind"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Regulators":
+        - generic: ERB
+        - generic: "027"
+        - generic "Special": Spc
+        - generic "Regulators"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Chr Captain Nemo":
+        - generic: ERB
+        - generic: "028"
+        - generic "Characters": Chr
+        - generic "Captain Nemo"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Ethnologist":
+        - generic: ERB
+        - generic: "029"
+        - generic "Special": Spc
+        - generic "Ethnologist"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Never Set Foot on Dry Land":
+        - generic: ERB
+        - generic: "030"
+        - generic "Special": Spc
+        - generic "Never Set Foot on Dry Land"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Silent Running":
+        - generic: ERB
+        - generic: "031"
+        - generic "Special": Spc
+        - generic "Silent Running"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Ruthless Plunderer":
+        - generic: ERB
+        - generic: "032"
+        - generic "Special": Spc
+        - generic "Ruthless Plunderer"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc The Nautilus":
+        - generic: ERB
+        - generic: "033"
+        - generic "Special": Spc
+        - generic "The Nautilus"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Weapons of Wrath and Hatred":
+        - generic: ERB
+        - generic: "034"
+        - generic "Special": Spc
+        - generic "Weapons of Wrath and Hatred"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Chr Carson of Venus":
+        - generic: ERB
+        - generic: "035"
+        - generic "Characters": Chr
+        - generic "Carson of Venus"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Janjong Duare Mintep":
+        - generic: ERB
+        - generic: "036"
+        - generic "Special": Spc
+        - generic "Janjong Duare Mintep"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc On the Razor's Edge":
+        - generic: ERB
+        - generic: "037"
+        - generic "Special": Spc
+        - generic "On the Razor's Edge"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Telepathic Resistance":
+        - generic: ERB
+        - generic: "038"
+        - generic "Special": Spc
+        - generic "Telepathic Resistance"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Sometimes Piracy is the Best Option":
+        - generic: ERB
+        - generic: "039"
+        - generic "Special": Spc
+        - generic "Sometimes Piracy is the Best Option"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc T-Ray Gun":
+        - generic: ERB
+        - generic: "040"
+        - generic "Special": Spc
+        - generic "T-Ray Gun"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Telepathic Training":
+        - generic: ERB
+        - generic: "041"
+        - generic "Special": Spc
+        - generic "Telepathic Training"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Chr Count of Monte Cristo":
+        - generic: ERB
+        - generic: "042"
+        - generic "Characters": Chr
+        - generic "Count of Monte Cristo"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Friend to Foe":
+        - generic: ERB
+        - generic: "043"
+        - generic "Special": Spc
+        - generic "Friend to Foe"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Jacopo":
+        - generic: ERB
+        - generic: "044"
+        - generic "Special": Spc
+        - generic "Jacopo"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Network of Thieves":
+        - generic: ERB
+        - generic: "045"
+        - generic "Special": Spc
+        - generic "Network of Thieves"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Surprise Swordsman":
+        - generic: ERB
+        - generic: "046"
+        - generic "Special": Spc
+        - generic "Surprise Swordsman"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Spc Unlimited Resources":
+        - generic: ERB
+        - generic: "047"
+        - generic "Special": Spc
+        - generic "Unlimited Resources"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+      - button "Chr Cthulhu":
+        - generic: ERB
+        - generic: "048"
+        - generic "Characters": Chr
+        - generic "Cthulhu"
+      - button "Decrease" [disabled]:
+      - textbox "Quantity": "0"
+      - button "Increase":
+    - navigation "Pagination":
+      - button "First page" [disabled]:
+      - button "Previous page" [disabled]:
+      - button "1"
+      - button "2"
+      - generic: ...
+      - button "28"
+      - button "Next page":
+      - button "Last page":
+    - generic: Showing 1-48 of 1,298

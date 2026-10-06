@@ -23,6 +23,8 @@ export class GuestDeckPersistenceService {
     this.cleanupInterval = setInterval(() => {
       this.cleanupExpiredDecks();
     }, 30000); // Run every 30 seconds
+    // The HTTP listener owns the server lifetime; cleanup must not keep tools alive.
+    this.cleanupInterval.unref?.();
   }
 
   private cleanupExpiredDecks(): void {

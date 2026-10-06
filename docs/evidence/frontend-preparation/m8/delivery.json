@@ -1,0 +1,43 @@
+{
+  "status": "passed",
+  "kind": "frontend-only-delivery",
+  "sourceInputs": [
+    "src",
+    "scripts",
+    "examples",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.app.json",
+    "tsconfig.modules.json",
+    "tsconfig.delivery.json",
+    "vite.modules.config.ts",
+    "vite.delivery.config.ts"
+  ],
+  "backendSourcePresent": false,
+  "cardResourceTreePresent": false,
+  "dependencySource": "installed frontend dependencies; no second installation",
+  "steps": [
+    {
+      "command": "npm run build:modules",
+      "status": "passed"
+    },
+    {
+      "command": "npm run build:delivery-proof",
+      "status": "passed"
+    },
+    {
+      "command": "node_modules/.bin/tsc -p tsconfig.delivery.json --noEmit",
+      "status": "passed"
+    }
+  ],
+  "exports": {
+    "./modules": {
+      "types": "./dist/modules/types/modules/index.d.ts",
+      "import": "./dist/modules/index.js"
+    },
+    "./modules/fonts": "./dist/modules/fonts.css"
+  },
+  "cleanup": "temporary proof sources and outputs removed",
+  "artifacts": 287,
+  "hashEvidence": "individual emitted artifact hashes retained privately"
+}

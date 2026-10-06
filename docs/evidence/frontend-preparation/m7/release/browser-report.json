@@ -1,0 +1,198 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "production",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "deployedRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "selectedScenarios": [
+    "home-guest",
+    "database-search-detail",
+    "collection-guest-read",
+    "deck-readonly-draw-export",
+    "supporter-retired"
+  ],
+  "capturePolicy": "all",
+  "comparison": false,
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "production",
+    "frontendUrl": "https://excelsior.cards",
+    "apiUrl": "https://excelsior.cards",
+    "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+    "expectedRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m7",
+    "verified": true,
+    "observedAt": "2026-10-06T01:57:08.084Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "ca6d811fd0872859c01e575295a79678442b76b0",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "actor": "guest",
+  "theme": "fixed dark",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "home-guest",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "Retained privately; account/session context excluded",
+          "dom": "Retained privately; route/session identifiers excluded",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/home"
+        }
+      ],
+      "observed": {
+        "guestEntry": true,
+        "contextualAuthControls": true,
+        "actualOAuth": "not executed"
+      }
+    },
+    {
+      "id": "database-search-detail",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "database-search-detail-detail.jpg",
+          "dom": "Retained privately; route/session identifiers excluded",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/data"
+        },
+        {
+          "screenshot": "database-search-detail-result.jpg",
+          "dom": "Retained privately; route/session identifiers excluded",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/data"
+        }
+      ],
+      "observed": {
+        "emptySearch": "skipped by selection",
+        "cardName": "Lancelot",
+        "artwork": {
+          "complete": true,
+          "naturalHeight": 744,
+          "naturalWidth": 1039
+        },
+        "detailsClosed": true
+      }
+    },
+    {
+      "id": "collection-guest-read",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "Retained privately; account/session context excluded",
+          "dom": "Retained privately; route/session identifiers excluded",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/users/<guest>/collection"
+        }
+      ],
+      "observed": {
+        "storage": "browser-local",
+        "emptyExpected": false,
+        "quantitiesChanged": false
+      }
+    },
+    {
+      "id": "deck-readonly-draw-export",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "deck-readonly-draw-export-draw.jpg",
+          "dom": "Retained privately; route/session identifiers excluded",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/users/00000000-0000-0000-0000-000000000003/decks/b58df5a3-db59-4599-a51b-2834e61f3e00?readonly=true"
+        },
+        {
+          "screenshot": "deck-readonly-draw-export-result.jpg",
+          "dom": "Retained privately; route/session identifiers excluded",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/users/00000000-0000-0000-0000-000000000003/decks/b58df5a3-db59-4599-a51b-2834e61f3e00?readonly=true"
+        }
+      ],
+      "observed": {
+        "drawCount": 8,
+        "exported": {
+          "legal": true,
+          "reserve_character": "Black Samson",
+          "total_cards": 51,
+          "total_threat": 76
+        },
+        "recordsChanged": false
+      }
+    },
+    {
+      "id": "supporter-retired",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "Retained privately; account/session context excluded",
+          "dom": "Retained privately; route/session identifiers excluded",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/home"
+        }
+      ],
+      "observed": {
+        "redirectedHome": true,
+        "supporterVisible": false,
+        "retiredApi": "separate API check required"
+      }
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only scenarios",
+    "browser": "test-owned production tab closed",
+    "viewport": "no override used"
+  },
+  "acceptance": "automated evidence only; Kyle acceptance not inferred",
+  "gaps": [
+    "light theme unavailable in M1",
+    "Google OAuth not exercised",
+    "Compiled/native independent modules verified locally in M7; no production host integration selected",
+    "Authenticated writes, mobile, real OAuth, light theme and native Chrome unload prompt excluded from this production subset"
+  ],
+  "browserErrorCount": 0,
+  "status": "passed",
+  "durationSeconds": 8.303,
+  "counts": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "reportPath": "browser-report.json",
+  "priorAttempt": {
+    "status": "failed",
+    "phase": "public fixture navigation readiness",
+    "reason": "Opening route timed out before Export became observable; subsequent evidence showed the correct readonly deck rendered. User authorized one retry, and all five shared scenarios passed.",
+    "evidenceDir": "Retained privately under production-setup; no account/Guest identifiers published"
+  }
+}

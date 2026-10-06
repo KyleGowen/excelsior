@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "inputFingerprint": "a9fffe6181ee08b3b948583c59e3f129dcec47fa400197ee4ddbab4ecdf260c8",
+  "actor": "fictional account",
+  "method": "CUA live browser; saved Collection writes and fresh server reads",
+  "scenarios": [
+    {
+      "id": "saved-view-current-input",
+      "status": "passed"
+    },
+    {
+      "id": "saved-quantity-reload",
+      "status": "passed"
+    },
+    {
+      "id": "saved-navigation-current-view",
+      "status": "passed"
+    },
+    {
+      "id": "saved-scoped-cleanup",
+      "status": "passed"
+    }
+  ],
+  "evidence": [
+    {
+      "screenshot": "saved-collection-corrected/saved-current-three.jpg",
+      "dom": "saved-collection-corrected/saved-current-three.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/users/b6f03bec-16fa-4599-b282-47717c96b532/collection"
+    },
+    {
+      "screenshot": "saved-collection-corrected/saved-restored-one.jpg",
+      "dom": "saved-collection-corrected/saved-restored-one.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/users/b6f03bec-16fa-4599-b282-47717c96b532/collection"
+    }
+  ],
+  "acceptance": "Automated only; Kyle acceptance separate",
+  "cleanup": {
+    "applicationRecords": "owned saved printing restored to initial quantity one",
+    "browser": "Guest Home"
+  },
+  "gaps": [
+    "No production validation or real OAuth"
+  ],
+  "browserErrorCount": 0,
+  "counts": {
+    "passed": 4,
+    "failed": 0,
+    "blocked": 0,
+    "skipped": 0
+  },
+  "status": "passed"
+}

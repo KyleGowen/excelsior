@@ -1,0 +1,280 @@
+- banner:
+  - text: Local Collection request mode
+  - combobox "Local Collection request mode":
+    - option "Real local API" [selected]
+    - option "Delay Collection requests by 750 ms"
+    - option "Reject Collection requests locally"
+  - status "Local request evidence": 18 recent API requests; bodies and identities are not recorded
+  - heading "Independent module harness" [level=1]
+  - paragraph: "Host identity: Guest. Local session and catalog. Decks start read-only; enable editing only for your disposable fixture."
+  - navigation "Module selection":
+    - button "Card Database module"
+    - button "Deck Builder module"
+    - button "Collection module" [pressed]
+    - button "All three modules"
+    - button "Unmount modules"
+  - text: Local deck ID
+  - textbox "Local deck ID"
+  - checkbox "Read-only deck" [checked]
+  - text: Read-only deck
+  - checkbox "Use host overlay root"
+  - text: Use host overlay root
+  - checkbox "Use container layout"
+  - text: Use container layout
+  - text: Host container width
+  - combobox "Host container width":
+    - option "Available space" [selected]
+    - option "390 pixels"
+    - option "720 pixels"
+    - option "1120 pixels"
+  - text: Host appearance
+  - combobox "Host appearance":
+    - option "Excelsior defaults" [selected]
+    - option "Paper fixture"
+    - option "High contrast fixture"
+  - checkbox "Use host card actions"
+  - text: Use host card actions
+  - checkbox "Use host brand and icons"
+  - text: Use host brand and icons
+  - checkbox "Use host save feedback"
+  - text: Use host save feedback
+  - text: Save fixture mode
+  - combobox "Save fixture mode":
+    - option "Real local API" [selected]
+    - option "Delay metadata save by 1.5 seconds"
+    - option "Reject save locally"
+  - checkbox "Use host unsaved policy"
+  - text: Use host unsaved policy
+  - status "Host edit state": Host unsaved policy off
+  - status "Host callback result"
+- region "Host overlay root"
+- region "Independent Collection":
+  - heading "My Collection" [level=1]:
+    - text: My Collection
+  - strong: "0"
+  - text: cards owned
+  - strong: "0"
+  - text: unique
+  - generic: Stored on this device
+  - searchbox "Search collection" [active]: Lancelot
+  - generic: Set
+  - combobox "Filter by set":
+    - option "All sets" [selected]
+    - option "Edgar Rice Burroughs and the World Legends"
+    - option "Edgar Rice Burroughs and the World Legends - Promos"
+    - option "The Few and the Cursed - Promos"
+    - option "Skybound"
+    - option "Skybound - Promos"
+  - checkbox "Owned only"
+  - generic: Owned only
+  - tablist "Card types":
+    - tab "All"
+    - tab "Characters" [selected]
+    - tab "Special Cards"
+    - tab "Power Cards"
+    - tab "Locations"
+    - tab "Battlegrounds"
+    - tab "Missions"
+    - tab "Events"
+    - tab "Aspects"
+    - 'tab "Universe: Advanced"'
+    - 'tab "Universe: Teamwork"'
+    - 'tab "Universe: Ally"'
+    - 'tab "Universe: Training"'
+    - 'tab "Universe: Basic"'
+  - article:
+    - button "View Angry Mob (Middle Ages)":
+    - generic "Angry Mob (Middle Ages)"
+    - generic: ERB 001
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Angry Mob (Industrial Age)":
+    - generic "Angry Mob (Industrial Age)"
+    - generic: ERB 008
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Angry Mob (Modern Age)":
+    - generic "Angry Mob (Modern Age)"
+    - generic: ERB 011
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Anubis":
+    - generic "Anubis"
+    - generic: ERB 014
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Billy the Kid":
+    - generic "Billy the Kid"
+    - generic: ERB 021
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Captain Nemo":
+    - generic "Captain Nemo"
+    - generic: ERB 028
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Carson of Venus":
+      - img "Carson of Venus"
+    - generic "Carson of Venus"
+    - generic: ERB 035
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Count of Monte Cristo":
+      - img "Count of Monte Cristo"
+    - generic "Count of Monte Cristo"
+    - generic: ERB 042
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Cthulhu":
+      - img "Cthulhu"
+    - generic "Cthulhu"
+    - generic: ERB 048
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Dejah Thoris":
+      - img "Dejah Thoris"
+    - generic "Dejah Thoris"
+    - generic: ERB 055
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Dr. Watson":
+      - img "Dr. Watson"
+    - generic "Dr. Watson"
+    - generic: ERB 062
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Dracula":
+      - img "Dracula"
+    - generic "Dracula"
+    - generic: ERB 069
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Headless Horseman":
+      - img "Headless Horseman"
+    - generic "Headless Horseman"
+    - generic: ERB 076
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Hercules":
+      - img "Hercules"
+    - generic "Hercules"
+    - generic: ERB 083
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Invisible Man":
+      - img "Invisible Man"
+    - generic "Invisible Man"
+    - generic: ERB 090
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Jane Porter":
+      - img "Jane Porter"
+    - generic "Jane Porter"
+    - generic: ERB 097
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Joan of Arc":
+      - img "Joan of Arc"
+    - generic "Joan of Arc"
+    - generic: ERB 104
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View John Carter of Mars":
+      - img "John Carter of Mars"
+    - generic "John Carter of Mars"
+    - generic: ERB 111
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View King Arthur":
+      - img "King Arthur"
+    - generic "King Arthur"
+    - generic: ERB 118
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Korak":
+      - img "Korak"
+    - generic "Korak"
+    - generic: ERB 125
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Lancelot":
+      - img "Lancelot"
+    - generic "Lancelot"
+    - generic: ERB 132
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Leonidas":
+      - img "Leonidas"
+    - generic "Leonidas"
+    - generic: ERB 139
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Merlin":
+      - img "Merlin"
+    - generic "Merlin"
+    - generic: ERB 146
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Mina Harker":
+      - img "Mina Harker"
+    - generic "Mina Harker"
+    - generic: ERB 153
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - navigation "Pagination":
+    - button "First page" [disabled]:
+    - button "Previous page" [disabled]:
+    - button "1"
+    - button "2"
+    - generic: ...
+    - button "14"
+    - button "Next page":
+    - button "Last page":
+  - generic: Showing 1-24 of 328

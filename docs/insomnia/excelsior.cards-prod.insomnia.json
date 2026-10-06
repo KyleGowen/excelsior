@@ -2612,6 +2612,76 @@
       "settingRebuildPath": true,
       "settingFollowRedirects": "global",
       "_type": "request"
+    },
+    {
+      "_id": "req_v1_coll_view",
+      "parentId": "fld_v1_collections",
+      "modified": 1776402508304,
+      "created": 1776402508304,
+      "url": "{{ base_url }}/api/v1/collections/me/view",
+      "name": "GET /api/v1/collections/me/view",
+      "description": "Current owned cards, derived totals and capabilities in one no-store snapshot. USER/ADMIN only.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": -1776402508344,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_v1_coll_evaluate",
+      "parentId": "fld_v1_collections",
+      "modified": 1776402508304,
+      "created": 1776402508304,
+      "url": "{{ base_url }}/api/v1/collections/evaluate",
+      "name": "POST /api/v1/collections/evaluate",
+      "description": "Public stateless device snapshot; no saved-record writes. Identity/role/storage input is rejected.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"entries\":[]}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": -1776402508344,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": false,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
     }
   ]
 }

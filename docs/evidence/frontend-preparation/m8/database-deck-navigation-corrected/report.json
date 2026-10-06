@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "method": "CUA live browser automation",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "inputFingerprint": "a9fffe6181ee08b3b948583c59e3f129dcec47fa400197ee4ddbab4ecdf260c8",
+  "theme": "fixed dark",
+  "scenarios": [
+    {
+      "id": "warm-deck-cache",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "database-deck-navigation-corrected/warm-deck-cache.jpg",
+        "dom": "database-deck-navigation-corrected/warm-deck-cache.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/users/b6f03bec-16fa-4599-b282-47717c96b532/decks/9a8bdb67-3689-4481-a234-70d9fbd6bec2"
+      }
+    },
+    {
+      "id": "database-add-normal-navigation",
+      "status": "passed",
+      "observed": {
+        "addedCard": "1 - Energy",
+        "total": 1,
+        "reloadAfterAdd": false
+      },
+      "evidence": {
+        "screenshot": "database-deck-navigation-corrected/database-add-normal-navigation.jpg",
+        "dom": "database-deck-navigation-corrected/database-add-normal-navigation.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/users/b6f03bec-16fa-4599-b282-47717c96b532/decks/9a8bdb67-3689-4481-a234-70d9fbd6bec2"
+      }
+    }
+  ],
+  "acceptance": "automated only; Kyle acceptance pending",
+  "cleanup": {
+    "applicationRecords": "caller must restore owned fixture",
+    "browser": "test-owned tab"
+  },
+  "gaps": [
+    "desktop account flow only; mobile and Guest not executed by this case"
+  ],
+  "dimensions": {
+    "height": 720,
+    "width": 1280
+  },
+  "status": "passed",
+  "counts": {
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  }
+}

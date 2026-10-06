@@ -1,0 +1,88 @@
+- banner:
+  - text: Local Collection request mode
+  - combobox "Local Collection request mode":
+    - option "Real local API"
+    - option "Delay Collection requests by 750 ms"
+    - option "Reject Collection requests locally" [selected]
+  - status "Local request evidence": 21 recent API requests; bodies and identities are not recorded
+  - heading "Independent module harness" [level=1]
+  - paragraph: "Host identity: Guest. Local session and catalog. Decks start read-only; enable editing only for your disposable fixture."
+  - navigation "Module selection":
+    - button "Card Database module"
+    - button "Deck Builder module"
+    - button "Collection module" [pressed]
+    - button "All three modules"
+    - button "Unmount modules"
+  - text: Local deck ID
+  - textbox "Local deck ID"
+  - checkbox "Read-only deck" [checked]
+  - text: Read-only deck
+  - checkbox "Use host overlay root"
+  - text: Use host overlay root
+  - checkbox "Use container layout"
+  - text: Use container layout
+  - text: Host container width
+  - combobox "Host container width":
+    - option "Available space" [selected]
+    - option "390 pixels"
+    - option "720 pixels"
+    - option "1120 pixels"
+  - text: Host appearance
+  - combobox "Host appearance":
+    - option "Excelsior defaults" [selected]
+    - option "Paper fixture"
+    - option "High contrast fixture"
+  - checkbox "Use host card actions"
+  - text: Use host card actions
+  - checkbox "Use host brand and icons"
+  - text: Use host brand and icons
+  - checkbox "Use host save feedback"
+  - text: Use host save feedback
+  - text: Save fixture mode
+  - combobox "Save fixture mode":
+    - option "Real local API" [selected]
+    - option "Delay metadata save by 1.5 seconds"
+    - option "Reject save locally"
+  - checkbox "Use host unsaved policy"
+  - text: Use host unsaved policy
+  - status "Host edit state": Host unsaved policy off
+  - status "Host callback result"
+- region "Host overlay root"
+- region "Independent Collection":
+  - heading "My Collection" [level=1]:
+    - text: My Collection
+  - strong: —
+  - text: cards owned
+  - strong: —
+  - text: unique
+  - generic: Stored on this device
+  - searchbox "Search collection": Lancelot
+  - generic: Set
+  - combobox "Filter by set":
+    - option "All sets" [selected]
+    - option "Edgar Rice Burroughs and the World Legends"
+    - option "Edgar Rice Burroughs and the World Legends - Promos"
+    - option "The Few and the Cursed - Promos"
+    - option "Skybound"
+    - option "Skybound - Promos"
+  - checkbox "Owned only"
+  - generic: Owned only
+  - tablist "Card types":
+    - tab "All"
+    - tab "Characters" [selected]
+    - tab "Special Cards"
+    - tab "Power Cards"
+    - tab "Locations"
+    - tab "Battlegrounds"
+    - tab "Missions"
+    - tab "Events"
+    - tab "Aspects"
+    - 'tab "Universe: Advanced"'
+    - 'tab "Universe: Teamwork"'
+    - 'tab "Universe: Ally"'
+    - 'tab "Universe: Training"'
+    - 'tab "Universe: Basic"'
+  - status:
+    - heading "Collection unavailable" [level=3]
+    - paragraph: Your saved or device-local quantities have been retained.
+    - button "Retry collection"

@@ -1,0 +1,242 @@
+- complementary:
+  - button "Home":
+    - img "Excelsior"
+  - navigation:
+    - button "Home":
+    - button "Card Database":
+    - button "Decks":
+    - button "Collection":
+    - button "Community":
+- banner:
+  - button "Back to decks":
+  - textbox "Deck name": M7 Atomic Import
+  - generic: 6 cards
+  - button "Limited" [pressed]
+  - button "Unlisted"
+  - 'generic "Threat: 18"':
+    - generic: "18"
+  - region "Character maximums":
+    - generic: Max
+    - 'generic "Character max — Energy: 2"':
+      - 'generic "Energy: 2"':
+        - generic: "2"
+    - 'generic "Character max — Combat: 7"':
+      - 'generic "Combat: 7"':
+        - generic: "7"
+    - 'generic "Character max — Brute Force: 5"':
+      - 'generic "Brute Force: 5"':
+        - generic: "5"
+    - 'generic "Character max — Intelligence: 4"':
+      - 'generic "Intelligence: 4"':
+        - generic: "4"
+  - region "Icon totals":
+    - generic: Total
+    - 'generic "Icon total — Energy: 0"':
+      - 'generic "Energy: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Combat: 3"':
+      - 'generic "Combat: 3"':
+        - generic: "3"
+    - 'generic "Icon total — Brute Force: 0"':
+      - 'generic "Brute Force: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Intelligence: 0"':
+      - 'generic "Intelligence: 0"':
+        - generic: "0"
+  - button "List View":
+    - text: List View
+  - button "Draw Hand" [disabled]:
+    - text: Draw Hand
+  - button "Export":
+    - text: Export
+  - button "Add Cards":
+    - text: Add Cards
+  - button "Save":
+    - text: Save
+- heading "Characters 1" [level=2]:
+  - text: Characters
+  - generic: "1"
+- button "View Lancelot":
+- button "Select Lancelot as reserve": Select Reserve
+- 'button "KO character: Lancelot"': KO
+- button "Remove Lancelot":
+- heading "Special Cards 3" [level=2]:
+  - text: Special Cards
+  - generic: "3"
+- button "View Sword and Shield":
+- button "Remove Sword and Shield":
+- button "View Sword and Shield":
+- button "Remove Sword and Shield":
+- button "View Sword and Shield":
+- button "Remove Sword and Shield":
+- heading "Power Cards 3" [level=2]:
+  - text: Power Cards
+  - generic: "3"
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- dialog "Add cards" [active]:
+  - generic: Add Cards
+  - button "Close panel":
+  - complementary "Add cards context":
+    - region "Team character stats":
+      - generic: Team
+      - generic: "Threat: 18"
+      - generic: Lancelot
+      - generic "Lancelot Energy":
+        - generic: "2"
+      - generic "Lancelot Combat":
+        - generic: "7"
+      - generic "Lancelot Brute Force":
+        - generic: "5"
+      - generic "Lancelot Intelligence":
+        - generic: "4"
+      - generic "Lancelot Threat Value":
+        - generic: "18"
+      - generic: Character 2
+      - generic "Empty slot Energy":
+        - generic: "0"
+      - generic "Empty slot Combat":
+        - generic: "0"
+      - generic "Empty slot Brute Force":
+        - generic: "0"
+      - generic "Empty slot Intelligence":
+        - generic: "0"
+      - generic "Empty slot Threat Value":
+        - generic: "0"
+      - generic: Character 3
+      - generic "Empty slot Energy":
+        - generic: "0"
+      - generic "Empty slot Combat":
+        - generic: "0"
+      - generic "Empty slot Brute Force":
+        - generic: "0"
+      - generic "Empty slot Intelligence":
+        - generic: "0"
+      - generic "Empty slot Threat Value":
+        - generic: "0"
+      - generic: Character 4
+      - generic "Empty slot Energy":
+        - generic: "0"
+      - generic "Empty slot Combat":
+        - generic: "0"
+      - generic "Empty slot Brute Force":
+        - generic: "0"
+      - generic "Empty slot Intelligence":
+        - generic: "0"
+      - generic "Empty slot Threat Value":
+        - generic: "0"
+      - generic: No Location or Battleground Set
+    - generic "Add cards filters":
+      - generic: Set
+      - combobox "Filter by set":
+        - option "All sets" [selected]
+        - option "Edgar Rice Burroughs and the World Legends"
+        - option "Edgar Rice Burroughs and the World Legends - Promos"
+        - option "The Few and the Cursed - Promos"
+        - option "Skybound"
+        - option "Skybound - Promos"
+      - checkbox "Hide Unusables"
+      - generic: Hide Unusables
+    - region "Hovered card preview":
+      - generic: Hover for full image.
+  - searchbox "Search cards to add"
+  - tablist "Card types":
+    - tab "All" [selected]
+    - tab "Stacks"
+    - tab "Characters"
+    - tab "Special"
+    - tab "Any-Char"
+    - tab "Power"
+    - tab "Locations"
+    - tab "Battlegrounds"
+    - tab "Missions"
+    - tab "Events"
+    - tab "Aspects"
+    - tab "Advanced"
+    - tab "Teamwork"
+    - tab "Ally"
+    - tab "Training"
+    - tab "Basic"
+  - heading "Characters 16" [level=3]:
+    - text: Characters
+    - generic: "16"
+  - article:
+    - button "View Abraham, Rosita And Eugene":
+      - img "Abraham, Rosita And Eugene"
+      - button "Add to deck":
+  - article:
+    - button "View Alexandria":
+      - img "Alexandria"
+      - button "Add to deck":
+  - article:
+    - button "View Allen The Alien":
+      - img "Allen The Alien"
+      - button "Add to deck":
+  - article:
+    - button "View Alpha and the Whisperers":
+      - img "Alpha and the Whisperers"
+      - button "Add to deck":
+  - article:
+    - button "View Andrea":
+      - img "Andrea"
+      - button "Add to deck":
+  - article:
+    - button "View Angry Mob (Industrial Age)":
+      - img "Angry Mob (Industrial Age)"
+      - button "Add to deck":
+  - article:
+    - button "View Angry Mob (Middle Ages)":
+      - img "Angry Mob (Middle Ages)"
+      - button "Add to deck":
+  - article:
+    - button "View Angry Mob (Modern Age)":
+      - img "Angry Mob (Modern Age)"
+      - button "Add to deck":
+  - article:
+    - button "View Angstrom Levy":
+      - img "Angstrom Levy"
+      - button "Add to deck":
+  - article:
+    - button "View Anubis":
+      - img "Anubis"
+      - button "Add to deck":
+  - article:
+    - button "View Atom Eve":
+      - img "Atom Eve"
+      - button "Add to deck":
+  - article:
+    - button "View Battle Beast":
+      - img "Battle Beast"
+      - button "Add to deck":
+  - article:
+    - button "View Billy the Kid":
+      - img "Billy the Kid"
+      - button "Add to deck":
+  - article:
+    - button "View Black Samson":
+      - img "Black Samson"
+      - button "Add to deck":
+  - article:
+    - button "View Captain Nemo":
+      - img "Captain Nemo"
+      - button "Add to deck":
+  - article:
+    - button "View Carson of Venus":
+      - img "Carson of Venus"
+      - button "Add to deck":
+  - navigation "Pagination":
+    - button "First page" [disabled]:
+    - button "Previous page" [disabled]:
+    - button "1"
+    - button "2"
+    - generic: ...
+    - button "51"
+    - button "Next page":
+    - button "Last page":
+  - generic: Showing 1-16 of 811
+  - button "Done":
+    - text: Done

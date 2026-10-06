@@ -10,7 +10,7 @@ const publicReads = new Set([
   '/config/app', '/decks/:id', '/decks/:id/full', '/community/decks', '/community/preconstructed-decks',
   '/users/:userId/public-decks', '/recent-updates', '/dbv/sets', '/dbv/deck-backgrounds', '/supporter/status'
 ]);
-const publicMutations = new Set(['/auth/login', '/auth/refresh', '/auth/logout', '/service-auth/token', '/decks/evaluate', '/decks/candidates/evaluate', '/decks/draw', '/decks/export', '/decks/summaries', '/supporter/webhook']);
+const publicMutations = new Set(['/auth/login', '/auth/refresh', '/auth/logout', '/service-auth/token', '/decks/evaluate', '/decks/candidates/evaluate', '/decks/draw', '/decks/export', '/decks/summaries', '/collections/evaluate', '/supporter/webhook']);
 const protectedRoutes = routes.filter(key => {
   const [method, path] = key.split(' ');
   const relative = path.replace('/api/v1', '');

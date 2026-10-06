@@ -69,11 +69,3 @@ export function adjustGuestQuantity(entry: Omit<GuestCollectionEntry, 'quantity'
   setGuestQuantity({ ...entry, quantity: next });
   return next;
 }
-
-export function guestCollectionTotals(): { totalOwned: number; uniqueCards: number } {
-  const entries = getGuestCollection();
-  return {
-    totalOwned: entries.reduce((sum, e) => sum + e.quantity, 0),
-    uniqueCards: entries.length,
-  };
-}

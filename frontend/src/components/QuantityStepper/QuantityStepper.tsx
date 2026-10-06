@@ -8,6 +8,7 @@ interface QuantityStepperProps {
   max?: number;
   size?: 'sm' | 'md';
   ariaLabel?: string;
+  disabled?: boolean;
 }
 
 export function QuantityStepper({
@@ -17,6 +18,7 @@ export function QuantityStepper({
   max = 99,
   size = 'md',
   ariaLabel = 'Quantity',
+  disabled = false,
 }: QuantityStepperProps) {
   const clamp = (n: number) => Math.min(max, Math.max(min, n));
   const inputRef = useRef<HTMLInputElement>(null);
@@ -66,12 +68,13 @@ export function QuantityStepper({
           focusedRef.current = false;
           onChange(clamp(value - 1));
         }}
-        disabled={value <= min}
+        disabled={disabled || value <= min}
         aria-label="Decrease"
       >
         <IconMinus />
       </button>
       <input
+        disabled={disabled}
         ref={inputRef}
         type="text"
         inputMode="numeric"
@@ -109,7 +112,7 @@ export function QuantityStepper({
           focusedRef.current = false;
           onChange(clamp(value + 1));
         }}
-        disabled={value >= max}
+        disabled={disabled || value >= max}
         aria-label="Increase"
       >
         <IconPlus />

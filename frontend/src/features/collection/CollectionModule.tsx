@@ -184,9 +184,9 @@ export function CollectionView({ model }: { model: ReturnType<typeof useCollecti
         <header className="col__header">
           <div className="col__heading">
             <h1 className="col__title"><IconCollection /> My Collection</h1>
-            <div className="col__stats">
-              <span className="col__stat"><strong>{collection.totalOwned}</strong> cards owned</span>
-              <span className="col__stat"><strong>{collection.uniqueCards}</strong> unique</span>
+            <div className="col__stats" aria-busy={collection.isUpdating}>
+              <span className="col__stat"><strong>{collection.totalOwned ?? '—'}</strong> cards owned</span>
+              <span className="col__stat"><strong>{collection.uniqueCards ?? '—'}</strong> unique</span>
               {collection.isGuest ? <span className="col__guest-note">Stored on this device</span> : null}
             </div>
           </div>
@@ -253,7 +253,7 @@ export function CollectionView({ model }: { model: ReturnType<typeof useCollecti
           ))}
         </div>
 
-        {catalogError ? (<EmptyState variant="error" title="Cards unavailable" message="Retry without losing your filters." action={<button type="button" onClick={retryCatalog}>Retry cards</button>} />) : isLoading ? (
+        {collection.isError ? (<EmptyState variant="error" title="Collection unavailable" message="Your saved or device-local quantities have been retained." action={<button type="button" onClick={collection.retry}>Retry collection</button>} />) : catalogError ? (<EmptyState variant="error" title="Cards unavailable" message="Retry without losing your filters." action={<button type="button" onClick={retryCatalog}>Retry cards</button>} />) : isLoading ? (
           <LoadingState label="Loading collection..." />
         ) : filtered.length === 0 ? (
           <EmptyState
@@ -286,10 +286,10 @@ export function CollectionView({ model }: { model: ReturnType<typeof useCollecti
                 const ct = CATALOG_TYPE_BY_SLUG[item.catalogType].collectionType;
                 const qty = quantityForItem(item.card.id, ct);
                 return (
-                  <QuantityStepper
+                  <QuantityStepper disabled={!collection.canSetQuantity}
                     value={qty}
                     size="sm"
-                    onChange={(next) => void collection.setQuantity(item.card, ct, next)}
+                    onChange={(next) => { void collection.setQuantity(item.card, ct, next).catch(() => {}); }}
                   />
                 );
               }}
@@ -312,10 +312,10 @@ export function CollectionView({ model }: { model: ReturnType<typeof useCollecti
                     dimmed={qty <= 0}
                     onClick={() => selectCard(card, activeCatalogType)}
                     footer={
-                      <QuantityStepper
+                      <QuantityStepper disabled={!collection.canSetQuantity}
                         value={qty}
                         size="sm"
-                        onChange={(next) => void collection.setQuantity(card, collectionType, next)}
+                        onChange={(next) => { void collection.setQuantity(card, collectionType, next).catch(() => {}); }}
                       />
                     }
                   />
@@ -337,10 +337,10 @@ export function CollectionView({ model }: { model: ReturnType<typeof useCollecti
           selected ? renderModuleCardActions(cardActions, { source: 'collection', card: selected, catalogType: activeCatalogType, isGuest, close: closeCardDetail }, (
             <div className="col__detail-qty">
               <span>In your collection</span>
-              <QuantityStepper
+              <QuantityStepper disabled={!collection.canSetQuantity}
                 value={collection.quantityFor(selected.id, activeCollectionType)}
                 size="sm"
-                onChange={(next) => void collection.setQuantity(selected, activeCollectionType, next)}
+                onChange={(next) => { void collection.setQuantity(selected, activeCollectionType, next).catch(() => {}); }}
               />
             </div>
           )) : null

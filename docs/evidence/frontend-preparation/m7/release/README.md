@@ -1,0 +1,16 @@
+# M7 verified release
+
+M7 shipped as ca6d811fd0872859c01e575295a79678442b76b0 after Kyle’s explicit local acceptance. [Candidate validation](https://github.com/KyleGowen/excelsior/actions/runs/37400321928) passed all 24 validation jobs and [main deployment](https://github.com/KyleGowen/excelsior/actions/runs/37400876329) passed all 29 jobs, including the exact-SHA Security Gate. Both actually ran 3,917 unit cases (22 existing/environment skips), 87 independent module cases, 1,028 integration cases across eight nonempty shards and 45 SOC 2 cases. Local final units were 3,921 with 18 skips; the four additional CI skips require the omitted local artwork tree. See [verification](verification.json).
+
+Cache-bypassed [production health](health.json) confirmed the full SHA, application/database OK and V365. The [shared browser runner](browser-report.json) passed all five selected live Guest desktop cases: Home/menu, Database search/Lancelot details/art, browser-local Collection read, current public readonly deck draw/redraw/export, and retired Supporter redirect/absence. There were zero browser errors. Fresh independent public fixture reads supplied 51 cards, 76 threat, Black Samson reserve and legal=true; draw/redraw produced eight cards. Deck metadata/cards stayed unchanged. No production application records were mutated; the test-owned tab was closed, with no viewport override used.
+
+An initial public-deck navigation readiness wait timed out. The captured page subsequently showed the correct readonly route and Export control. Kyle authorized one retry, and all five shared scenarios passed. The initial failure remains private evidence; it was disclosed with a scoped rollback option. A confirmed application defect was not established, and the cause of the initial delay remains unverified. The previous candidate’s unit/coverage failures were corrected by retaining the inherited image transformer in CI configuration; scanner policy and workflows were unchanged.
+
+Public Database/deck screenshots are adjacent. Home/Collection captures, route/session identifiers and raw logs remain private. Existing local fixture cleanup and the 32 selected local browser cases remain separate from this production subset. Real external host integration, production host asset fallback, mobile/light-theme production coverage, authenticated writes, OAuth, native Chrome unload prompts and the full M8 matrix remain unverified here. This is preparation, with no rebrand or external host launch. Kyle’s production manual acceptance is not inferred.
+
+This post-release evidence and ledger update remain uncommitted to avoid an extra deployment for bookkeeping.
+
+
+## Explicit later retry and manual sign-off
+
+Kyle signed off on M7 production and requested M8. His later explicit “try again” reply was fulfilled with a fresh Guest tab and current cache-bypassed health at the same deployed revision/V365. [Retry](retry/report.json) passed the public-deck draw/redraw/export case in3.479 seconds with zero browser errors: eight-card hands,51 exported cards,76 threat,Black Samson reserve and legal=true. [Cleanup](retry/cleanup.json) records independently unchanged fixture metadata/cards and no record writes; the test tab closed. The earlier timeout remains retained. This is predecessor M7 verification, not M8 production validation.

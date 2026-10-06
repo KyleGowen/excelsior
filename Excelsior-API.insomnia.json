@@ -3123,6 +3123,68 @@
       "settingEncodeUrl": true,
       "settingRebuildPath": true,
       "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_local_61_m8_view",
+      "parentId": "fld_excelsior_local_59",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Authoritative Collection view",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/collections/me/view",
+      "description": "M8 server-derived Collection contract. Evaluation is stateless; account view uses only the authenticated player. No production record mutation.",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "metaSortKey": 61,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_excelsior_local_61_m8_evaluate",
+      "parentId": "fld_excelsior_local_59",
+      "_type": "request",
+      "created": 1791053887950,
+      "modified": 1791053887950,
+      "name": "Stateless device Collection evaluation",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/collections/evaluate",
+      "description": "M8 server-derived Collection contract. Evaluation is stateless; account view uses only the authenticated player. No production record mutation.",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{ \"entries\": [] }"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 61,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestUrl": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
     }
   ]
 }

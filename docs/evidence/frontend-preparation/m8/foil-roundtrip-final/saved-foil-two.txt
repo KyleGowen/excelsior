@@ -1,0 +1,91 @@
+- banner:
+  - link "Excelsior home":
+    - /url: /home
+    - img "Excelsior"
+  - navigation "Primary":
+    - link "Home":
+      - /url: /home
+      - text: Home
+    - link "Database":
+      - /url: /data
+      - text: Database
+    - link "Decks":
+      - /url: /users/b6f03bec-16fa-4599-b282-47717c96b532/decks
+      - text: Decks
+    - link "Community":
+      - /url: /community
+      - text: Community
+    - link "Collection":
+      - /url: /users/b6f03bec-16fa-4599-b282-47717c96b532/collection
+      - text: Collection
+  - button "M8Browsera6015786":
+    - generic: M
+    - generic: M8Browsera6015786
+- main:
+  - heading "My Collection" [level=1]:
+    - text: My Collection
+  - strong: "3"
+  - text: cards owned
+  - strong: "2"
+  - text: unique
+  - searchbox "Search collection": Carson of Venus
+  - generic: Set
+  - combobox "Filter by set":
+    - option "All sets" [selected]
+    - option "Edgar Rice Burroughs and the World Legends"
+    - option "Edgar Rice Burroughs and the World Legends - Promos"
+    - option "The Few and the Cursed - Promos"
+    - option "Skybound"
+    - option "Skybound - Promos"
+  - checkbox "Owned only"
+  - generic: Owned only
+  - tablist "Card types":
+    - tab "All"
+    - tab "Characters" [selected]
+    - tab "Special Cards"
+    - tab "Power Cards"
+    - tab "Locations"
+    - tab "Battlegrounds"
+    - tab "Missions"
+    - tab "Events"
+    - tab "Aspects"
+    - 'tab "Universe: Advanced"'
+    - 'tab "Universe: Teamwork"'
+    - 'tab "Universe: Ally"'
+    - 'tab "Universe: Training"'
+    - 'tab "Universe: Basic"'
+  - article:
+    - button "View Carson of Venus":
+    - generic "Carson of Venus"
+    - generic: ERB 035
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Carson of Venus":
+    - generic "Carson of Venus"
+    - generic: ERB 487
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - article:
+    - button "View Carson of Venus":
+    - generic "Carson of Venus"
+    - generic: ERB 035F
+    - button "Decrease":
+    - textbox "Quantity": "2"
+    - button "Increase":
+  - article:
+    - button "View Carson of Venus":
+    - generic "Carson of Venus"
+    - generic: ERB 487F
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - navigation "Pagination":
+    - button "First page" [disabled]:
+    - button "Previous page" [disabled]:
+    - button "1"
+    - button "Next page" [disabled]:
+    - button "Last page" [disabled]:
+  - generic: Showing 1-4 of 4

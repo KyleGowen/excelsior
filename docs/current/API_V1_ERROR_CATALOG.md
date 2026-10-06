@@ -13,6 +13,10 @@ to [`docs/openapi.yaml`](../openapi.yaml)) in the same PR.**
 - `field` is set only for `VALIDATION_ERROR` on body validation failures.
 - `meta.requestId` is always present; include it when reporting issues.
 
+## Collection evaluation
+
+`GET /api/v1/collections/me/view`: `UNAUTHORIZED` (401), `GUEST_FORBIDDEN` (403), `COLLECTION_VIEW_UNAVAILABLE` (503; retain quantities and retry). `POST /api/v1/collections/evaluate`: `VALIDATION_ERROR` (400) and `RATE_LIMITED` (429). Both are no-store; no failed evaluation result should be presented as zero.
+
 ## Table
 
 | Code                          | HTTP | Meaning                                                                 | Typical remediation                                                                 |

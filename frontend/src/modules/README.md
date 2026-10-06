@@ -78,3 +78,8 @@ The separately built consumer under `examples/module-delivery/` imports the emit
 `check:modules` walks imports and CSS/assets, rejects backend/Node/repository resources, undeclared global configuration, computed imports, undeclared externals and retired rule functions. `check:contracts` compares eleven frontend transport copies with server sources. Negative boundary tests exercise these stops. Tests remain in `tests/unit/`, `tests/integration/` and `tests/browser/`; no rules are copied into consumer fixtures.
 
 Remaining real-host acceptance: production nested-route fallback, real account/OAuth/service identity, host-specific accessibility/browser behavior, non-Latin font coverage and package installation/publication. The demonstration is not an LRG integration or rebrand. The compiled consumer currently emits a size warning; no optimized package size target is claimed.
+
+
+## Collection and local access fixtures (M8)
+
+`ModuleApi` supplies `fetchCollectionView` and `evaluateGuestCollection`; cards/totals/capabilities are server-derived. Guest input persistence stays device-local and evaluation is stateless. Scope a QueryClient to identity and API origin, and clear it on identity transitions. The development-only `/prepared-host/lrg/*` and `/prepared-host/excelsior/*` basenames route through separately configured server fixture mounts; links and deep reload retain the adapter. `/module-harness.html?adapter=lrg` or `?adapter=excelsior` selects that same transport for independent/all-three cases. Browser code receives only public mount prefixes; service secrets remain private to the server. Real host credentials and deployment remain separate.

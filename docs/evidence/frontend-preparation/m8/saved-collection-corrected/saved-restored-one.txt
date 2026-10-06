@@ -1,0 +1,72 @@
+- banner:
+  - link "Excelsior home":
+    - /url: /home
+    - img "Excelsior"
+  - navigation "Primary":
+    - link "Home":
+      - /url: /home
+      - text: Home
+    - link "Database":
+      - /url: /data
+      - text: Database
+    - link "Decks":
+      - /url: /users/b6f03bec-16fa-4599-b282-47717c96b532/decks
+      - text: Decks
+    - link "Community":
+      - /url: /community
+      - text: Community
+    - link "Collection":
+      - /url: /users/b6f03bec-16fa-4599-b282-47717c96b532/collection
+      - text: Collection
+  - button "M8Browsera6015786":
+    - generic: M
+    - generic: M8Browsera6015786
+- main:
+  - heading "My Collection" [level=1]:
+    - text: My Collection
+  - strong: "1"
+  - text: cards owned
+  - strong: "1"
+  - text: unique
+  - searchbox "Search collection"
+  - generic: Set
+  - combobox "Filter by set":
+    - option "All sets" [selected]
+    - option "Edgar Rice Burroughs and the World Legends"
+    - option "Edgar Rice Burroughs and the World Legends - Promos"
+    - option "The Few and the Cursed - Promos"
+    - option "Skybound"
+    - option "Skybound - Promos"
+  - checkbox "Owned only" [checked]
+  - generic: Owned only
+  - tablist "Card types":
+    - tab "All" [selected]
+    - tab "Characters"
+    - tab "Special Cards"
+    - tab "Power Cards"
+    - tab "Locations"
+    - tab "Battlegrounds"
+    - tab "Missions"
+    - tab "Events"
+    - tab "Aspects"
+    - 'tab "Universe: Advanced"'
+    - 'tab "Universe: Teamwork"'
+    - 'tab "Universe: Ally"'
+    - 'tab "Universe: Training"'
+    - 'tab "Universe: Basic"'
+  - list:
+    - button "Characters Lancelot Edgar Rice Burroughs and the World Legends":
+      - generic: "#507"
+      - generic: Characters
+      - generic "Lancelot"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease":
+    - textbox "Quantity": "1"
+    - button "Increase":
+  - navigation "Pagination":
+    - button "First page" [disabled]:
+    - button "Previous page" [disabled]:
+    - button "1"
+    - button "Next page" [disabled]:
+    - button "Last page" [disabled]:
+  - generic: Showing 1-1 of 1

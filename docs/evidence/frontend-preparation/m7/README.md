@@ -55,3 +55,7 @@ Actual external host identity/OAuth, ADMIN analysis in a live browser, non-Latin
 ## Approved release attempt
 
 Kyle approved M7. Initial Ship gate collection failed with local ENOSPC and strict lint found one unused type import. Regenerable Jest cache was removed; the import was removed and all 284 emitted backend JavaScript files match the browser-tested build. Strict lint, backend types, SOC2, root/frontend zero-vulnerability audits, contract parity and ten architecture negatives pass in the corrected batch. Required conditional unit/integration gates remain pending: local Docker availability probes timed out and its documented normal restart failed. Force-quit recovery awaits specific local approval; no M7 commit or push occurred. Original failed private logs and frozen candidates remain retained.
+
+## Release outcome
+
+The historical candidate evidence above is superseded for release status by [M7 verified release](release/README.md). Kyle approved the local candidate; ca6d811fd0872859c01e575295a79678442b76b0 passed exact CI/deployment/health and all five selected production browser cases. Post-release bookkeeping remains uncommitted.

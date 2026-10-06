@@ -87,6 +87,8 @@ export function pageHandlers({
     }),
     http.get('/api/v1/users/:userId/public-decks', () => respond(decks)),
     http.get('/api/v1/recent-updates', () => respond(updates)),
+    http.get('/api/v1/collections/me/view', () => respond({cards:collection,evaluation:{totalOwned:collection.reduce((sum,row)=>sum+row.quantity,0),uniqueCards:collection.filter(row=>row.quantity>0).length,quantities:Object.fromEntries(collection.filter(row=>row.quantity>0).map(row=>[row.card_type+':'+row.card_id,row.quantity])),capabilities:{canSetQuantity:true,storage:'account',minimumQuantity:0,maximumQuantity:99}}})),
+    http.post('/api/v1/collections/evaluate', async ({request}) => {const {entries}=await request.json() as {entries:Array<{cardId:string;cardType:string;quantity:number}>};return respond({totalOwned:entries.reduce((sum,row)=>sum+row.quantity,0),uniqueCards:entries.filter(row=>row.quantity>0).length,quantities:Object.fromEntries(entries.filter(row=>row.quantity>0).map(row=>[row.cardType+':'+row.cardId,row.quantity])),capabilities:{canSetQuantity:true,storage:'device',minimumQuantity:0,maximumQuantity:99}});}),
     http.get('/api/v1/collections/me/cards', () => respond(collection)),
     http.get('/api/v1/dbv/sets', () => respond([{ code: 'ERB', name: 'Example release' }])),
     http.get('/api/v1/catalog/foil-card-map', () => respond([])),

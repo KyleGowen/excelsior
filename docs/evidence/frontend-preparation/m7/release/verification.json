@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "milestone": "M7",
+  "status": "shipped and selected production browser checks passed",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "deployedRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "acceptance": {
+    "local": "Kyle explicitly approved M7 and Ship on October 5, 2026",
+    "production": "Kyle explicitly signed off on M7 production before requesting M8"
+  },
+  "candidate": {
+    "run": 37400321928,
+    "url": "https://github.com/KyleGowen/excelsior/actions/runs/37400321928",
+    "validationJobsPassed": 24,
+    "securityGate": "passed"
+  },
+  "main": {
+    "run": 37400876329,
+    "url": "https://github.com/KyleGowen/excelsior/actions/runs/37400876329",
+    "jobsPassed": 29,
+    "securityGate": "passed",
+    "actualExecution": {
+      "unitPassed": 3917,
+      "unitSkipped": 22,
+      "modulePassed": 87,
+      "integrationPassed": 1028,
+      "integrationSuites": 118,
+      "integrationNonemptyShards": 8,
+      "soc2Passed": 45
+    }
+  },
+  "localReleaseGates": {
+    "unitPassed": 3921,
+    "unitSkipped": 18,
+    "integrationPassed": 1028,
+    "integrationSuites": 118,
+    "unitRunner": "terminal success without forceExit",
+    "integrationCleanup": "completed",
+    "lint": "passed",
+    "backendTypes": "passed",
+    "soc2": "45 cases passed",
+    "rootAndFrontendAudit": "zero vulnerabilities; October 5 America/Los_Angeles; unchanged lockfiles",
+    "frontendContracts": "11 parity and 10 negative boundary cases passed",
+    "unchangedInputsReused": [
+      "87 independent module cases",
+      "frontend typecheck",
+      "frontend/module/consumer/Storybook builds",
+      "registered Knip",
+      "32 selected local browser cases and Kyle acceptance"
+    ],
+    "ciSkipDifference": "Four existing local artwork-tree checks skip when CI omits that tree; no skip policy changed"
+  },
+  "health": {
+    "status": "OK",
+    "database": "OK",
+    "revision": "ca6d811fd0872859c01e575295a79678442b76b0",
+    "migration": "365"
+  },
+  "browser": {
+    "selectedPassed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0,
+    "errorCount": 0,
+    "report": "browser-report.json",
+    "initialNavigationTimeout": "preserved; user authorized retry; subsequent route evidence and all shared scenarios passed"
+  },
+  "cleanup": {
+    "metadataUnchanged": true,
+    "cardsUnchanged": true,
+    "applicationRecordMutations": "none performed",
+    "cleanup": "test-owned browser tab closed; no viewport override used",
+    "remainingProductionGaps": [
+      "Authenticated record mutation/OAuth",
+      "Mobile/light theme",
+      "Actual external host integration and production asset fallback",
+      "Native Chrome unload dialogs"
+    ]
+  },
+  "recoveryHistory": [
+    "Docker engine hung after normal restart; Kyle force-quit and authorized recovery. Verified Docker processes restarted, volumes preserved.",
+    "Initial ENOSPC resolved by removing only proved-unused dependencies and regenerable test caches. No application sources or user data removed.",
+    "Fresh migration setup failed once before test execution; a bounded fresh retry passed. Specific cause remains unconfirmed.",
+    "CI correction restores inherited PNG asset transforms in tests/config/jest.ci.config.js; failing suites then passed. No workflow or scanner rules changed.",
+    "One local integration setup returned unexpected 404; retained failure, one same-input integration retry passed all 1028 cases. Specific cause remains unconfirmed.",
+    "Required Git verifier used a private transport buffer increase for a large tree, with its HEAD/parent/path/blob/mode/deletion checks unchanged."
+  ],
+  "scope": "Frozen M7 implementation plus owned M6 release bookkeeping; no rebrand, package publication or external host launch",
+  "bookkeeping": "This release report and ledger remain uncommitted to avoid another deployment",
+  "laterExplicitRetry": {
+    "status": "passed",
+    "scenarios": 1,
+    "durationSeconds": 3.479,
+    "browserErrors": 0,
+    "fixtureRecords": "unchanged by independent before/after reads",
+    "evidence": "retry/report.json",
+    "cleanup": "retry/cleanup.json"
+  }
+}

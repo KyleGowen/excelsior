@@ -1,0 +1,754 @@
+- banner:
+  - text: Local Collection request mode
+  - combobox "Local Collection request mode":
+    - option "Real local API" [selected]
+    - option "Delay Collection requests by 750 ms"
+    - option "Reject Collection requests locally"
+  - status "Local request evidence": 22 recent API requests; bodies and identities are not recorded
+  - heading "Independent module harness" [level=1]
+  - paragraph: "Host identity: Guest. Local session and catalog. Decks start read-only; enable editing only for your disposable fixture."
+  - navigation "Module selection":
+    - button "Card Database module"
+    - button "Deck Builder module"
+    - button "Collection module"
+    - button "All three modules" [active] [pressed]
+    - button "Unmount modules"
+  - text: Local deck ID
+  - textbox "Local deck ID": b4ec3a04-ab17-4a33-b813-df35f8195d75
+  - checkbox "Read-only deck" [checked]
+  - text: Read-only deck
+  - checkbox "Use host overlay root"
+  - text: Use host overlay root
+  - checkbox "Use container layout"
+  - text: Use container layout
+  - text: Host container width
+  - combobox "Host container width":
+    - option "Available space" [selected]
+    - option "390 pixels"
+    - option "720 pixels"
+    - option "1120 pixels"
+  - text: Host appearance
+  - combobox "Host appearance":
+    - option "Excelsior defaults" [selected]
+    - option "Paper fixture"
+    - option "High contrast fixture"
+  - checkbox "Use host card actions"
+  - text: Use host card actions
+  - checkbox "Use host brand and icons"
+  - text: Use host brand and icons
+  - checkbox "Use host save feedback"
+  - text: Use host save feedback
+  - text: Save fixture mode
+  - combobox "Save fixture mode":
+    - option "Real local API" [selected]
+    - option "Delay metadata save by 1.5 seconds"
+    - option "Reject save locally"
+  - checkbox "Use host unsaved policy"
+  - text: Use host unsaved policy
+  - status "Host edit state": Host unsaved policy off
+  - status "Host callback result": Host received Back
+- region "Host overlay root"
+- region "Independent Card Database":
+  - heading "Card Database" [level=1]:
+    - text: Card Database
+  - searchbox "Search cards"
+  - generic: Set
+  - combobox "Filter by set":
+    - option "All sets" [selected]
+    - option "Edgar Rice Burroughs and the World Legends"
+    - option "Edgar Rice Burroughs and the World Legends - Promos"
+    - option "The Few and the Cursed - Promos"
+    - option "Skybound"
+    - option "Skybound - Promos"
+  - tablist "Card types":
+    - tab "All"
+    - tab "Characters" [selected]
+    - tab "Special Cards"
+    - tab "Any Character"
+    - tab "Power Cards"
+    - tab "Locations"
+    - tab "Battlegrounds"
+    - tab "Missions"
+    - tab "Events"
+    - tab "Aspects"
+    - 'tab "Universe: Advanced"'
+    - 'tab "Universe: Teamwork"'
+    - 'tab "Universe: Ally"'
+    - 'tab "Universe: Training"'
+    - 'tab "Universe: Basic"'
+  - generic "Card filters":
+    - button "Collapse filters" [expanded]:
+    - group "Stat filters":
+      - generic "Energy":
+        - generic: Energy
+      - combobox "Energy comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Energy value"
+      - generic "Combat":
+        - generic: Combat
+      - combobox "Combat comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Combat value"
+      - generic "Brute Force":
+        - generic: Brute Force
+      - combobox "Brute Force comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Brute Force value"
+      - generic "Intelligence":
+        - generic: Intelligence
+      - combobox "Intelligence comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Intelligence value"
+      - generic "Threat":
+        - generic: Threat
+      - combobox "Threat comparison":
+        - option "=" [selected]
+        - option "≥"
+        - option "≤"
+      - spinbutton "Threat value"
+    - checkbox "Has Foil"
+    - generic: Has Foil
+    - checkbox "Hide Alts" [checked]
+    - generic: Hide Alts
+  - article:
+    - button "View Abraham, Rosita And Eugene":
+    - generic "Abraham, Rosita And Eugene"
+    - generic: SKY 219
+    - generic: Common
+  - article:
+    - button "View Alexandria":
+    - generic "Alexandria"
+    - generic: SKY 198
+    - generic: Common
+  - article:
+    - button "View Allen The Alien":
+    - generic "Allen The Alien"
+    - generic: SKY 043
+    - generic: Common
+  - article:
+    - button "View Alpha and the Whisperers":
+    - generic "Alpha and the Whisperers"
+    - generic: SKY 184
+    - generic: Common
+  - article:
+    - button "View Andrea":
+    - generic "Andrea"
+    - generic: SKY 135
+    - generic: Common
+  - article:
+    - button "View Angry Mob (Industrial Age)":
+    - generic "Angry Mob (Industrial Age)"
+    - generic: ERB 008
+  - article:
+    - button "View Angry Mob (Middle Ages)":
+    - generic "Angry Mob (Middle Ages)"
+    - generic: ERB 001
+  - article:
+    - button "View Angry Mob (Modern Age)":
+    - generic "Angry Mob (Modern Age)"
+    - generic: ERB 011
+  - article:
+    - button "View Angstrom Levy":
+      - img "Angstrom Levy"
+    - generic "Angstrom Levy"
+    - generic: SKY 086
+    - generic: Common
+  - article:
+    - button "View Anubis":
+    - generic "Anubis"
+    - generic: ERB 014
+  - article:
+    - button "View Atom Eve":
+      - img "Atom Eve"
+    - generic "Atom Eve"
+    - generic: SKY 029
+    - generic: Common
+  - article:
+    - button "View Battle Beast":
+      - img "Battle Beast"
+    - generic "Battle Beast"
+    - generic: SKY 079
+    - generic: Common
+  - article:
+    - button "View Billy the Kid":
+    - generic "Billy the Kid"
+    - generic: ERB 021
+  - article:
+    - button "View Black Samson":
+      - img "Black Samson"
+    - generic "Black Samson"
+    - generic: SKY 121
+    - generic: Common
+  - article:
+    - button "View Captain Nemo":
+    - generic "Captain Nemo"
+    - generic: ERB 028
+  - article:
+    - button "View Carson of Venus":
+      - img "Carson of Venus"
+    - generic "Carson of Venus"
+    - generic "has foil":
+      - generic: ✦
+      - generic: has foil
+    - generic: ERB 035
+  - article:
+    - button "View Cecil And The G.D.A.":
+      - img "Cecil And The G.D.A."
+    - generic "Cecil And The G.D.A."
+    - generic: SKY 107
+    - generic: Common
+  - article:
+    - button "View Count of Monte Cristo":
+      - img "Count of Monte Cristo"
+    - generic "Count of Monte Cristo"
+    - generic "has foil":
+      - generic: ✦
+      - generic: has foil
+    - generic: ERB 042
+  - article:
+    - button "View Cthulhu":
+      - img "Cthulhu"
+    - generic "Cthulhu"
+    - generic "has foil":
+      - generic: ✦
+      - generic: has foil
+    - generic: ERB 048
+  - article:
+    - button "View Dejah Thoris":
+      - img "Dejah Thoris"
+    - generic "Dejah Thoris"
+    - generic "has foil":
+      - generic: ✦
+      - generic: has foil
+    - generic: ERB 055
+  - article:
+    - button "View Doc Seismic":
+      - img "Doc Seismic"
+    - generic "Doc Seismic"
+    - generic: SKY 093
+    - generic: Common
+  - article:
+    - button "View Dr. Watson":
+      - img "Dr. Watson"
+    - generic "Dr. Watson"
+    - generic: ERB 062
+  - article:
+    - button "View Dracula":
+      - img "Dracula"
+    - generic "Dracula"
+    - generic: ERB 069
+  - article:
+    - button "View Dupli-Kate":
+      - img "Dupli-Kate"
+    - generic "Dupli-Kate"
+    - generic: SKY 036
+    - generic: Common
+  - navigation "Pagination":
+    - button "First page" [disabled]:
+    - button "Previous page" [disabled]:
+    - button "1"
+    - button "2"
+    - button "3"
+    - button "4"
+    - button "Next page":
+    - button "Last page":
+  - generic: Showing 1-24 of 79
+- region "Independent Deck Builder":
+  - button "Back to host":
+  - heading "Milestone 3 Local Fixture" [level=1]
+  - generic: 8 cards
+  - generic: Limited
+  - generic: Unlisted
+  - 'generic "Threat: 18"':
+    - generic: "18"
+  - region "Character maximums":
+    - generic: Max
+    - 'generic "Character max — Energy: 2"':
+      - 'generic "Energy: 2"':
+        - generic: "2"
+    - 'generic "Character max — Combat: 7"':
+      - 'generic "Combat: 7"':
+        - generic: "7"
+    - 'generic "Character max — Brute Force: 5"':
+      - 'generic "Brute Force: 5"':
+        - generic: "5"
+    - 'generic "Character max — Intelligence: 4"':
+      - 'generic "Intelligence: 4"':
+        - generic: "4"
+  - region "Icon totals":
+    - generic: Total
+    - 'generic "Icon total — Energy: 0"':
+      - 'generic "Energy: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Combat: 5"':
+      - 'generic "Combat: 5"':
+        - generic: "5"
+    - 'generic "Icon total — Brute Force: 0"':
+      - 'generic "Brute Force: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Intelligence: 0"':
+      - 'generic "Intelligence: 0"':
+        - generic: "0"
+  - button "List View":
+    - text: List View
+  - button "Draw Hand":
+    - text: Draw Hand
+  - button "Export":
+    - text: Export
+  - generic: Read-only
+  - heading "Characters 1" [level=2]:
+    - text: Characters
+    - generic: "1"
+  - button "View Lancelot":
+  - 'button "KO character: Lancelot"': KO
+  - heading "Special Cards 3" [level=2]:
+    - text: Special Cards
+    - generic: "3"
+  - button "View Sword and Shield":
+  - button "View Sword and Shield":
+  - button "View Sword and Shield":
+  - heading "Power Cards 5" [level=2]:
+    - text: Power Cards
+    - generic: "5"
+  - button "View 5 - Combat":
+  - button "View 5 - Combat":
+  - button "View 5 - Combat":
+  - button "View 5 - Combat":
+  - button "View 5 - Combat":
+- region "Independent Collection":
+  - heading "My Collection" [level=1]:
+    - text: My Collection
+  - strong: "0"
+  - text: cards owned
+  - strong: "0"
+  - text: unique
+  - generic: Stored on this device
+  - searchbox "Search collection"
+  - generic: Set
+  - combobox "Filter by set":
+    - option "All sets" [selected]
+    - option "Edgar Rice Burroughs and the World Legends"
+    - option "Edgar Rice Burroughs and the World Legends - Promos"
+    - option "The Few and the Cursed - Promos"
+    - option "Skybound"
+    - option "Skybound - Promos"
+  - checkbox "Owned only"
+  - generic: Owned only
+  - tablist "Card types":
+    - tab "All" [selected]
+    - tab "Characters"
+    - tab "Special Cards"
+    - tab "Power Cards"
+    - tab "Locations"
+    - tab "Battlegrounds"
+    - tab "Missions"
+    - tab "Events"
+    - tab "Aspects"
+    - 'tab "Universe: Advanced"'
+    - 'tab "Universe: Teamwork"'
+    - 'tab "Universe: Ally"'
+    - 'tab "Universe: Training"'
+    - 'tab "Universe: Basic"'
+  - list:
+    - button "Characters Angry Mob (Middle Ages) Edgar Rice Burroughs and the World Legends":
+      - generic: "#001"
+      - generic: Characters
+      - generic "Angry Mob (Middle Ages)"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Angry Mob - Don't Let it Get Away! Edgar Rice Burroughs and the World Legends":
+      - generic: "#002"
+      - generic: Special
+      - generic "Angry Mob - Don't Let it Get Away!"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Angry Mob - Mob Mentality Edgar Rice Burroughs and the World Legends":
+      - generic: "#003"
+      - generic: Special
+      - generic "Angry Mob - Mob Mentality"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Angry Mob - Strength in Numbers Edgar Rice Burroughs and the World Legends":
+      - generic: "#004"
+      - generic: Special
+      - generic "Angry Mob - Strength in Numbers"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Angry Mob - Swarm Them! Edgar Rice Burroughs and the World Legends":
+      - generic: "#005"
+      - generic: Special
+      - generic "Angry Mob - Swarm Them!"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - 'button "Special Angry Mob: Middle Ages - Pitchforks and Torches Edgar Rice Burroughs and the World Legends"':
+      - generic: "#006"
+      - generic: Special
+      - 'generic "Angry Mob: Middle Ages - Pitchforks and Torches"'
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - 'button "Special Angry Mob: Middle Ages - Regent of the Crown Edgar Rice Burroughs and the World Legends"':
+      - generic: "#007"
+      - generic: Special
+      - 'generic "Angry Mob: Middle Ages - Regent of the Crown"'
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Characters Angry Mob (Industrial Age) Edgar Rice Burroughs and the World Legends":
+      - generic: "#008"
+      - generic: Characters
+      - generic "Angry Mob (Industrial Age)"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - 'button "Special Angry Mob: Industrial Age - Disrupting Supply Lines Edgar Rice Burroughs and the World Legends"':
+      - generic: "#009"
+      - generic: Special
+      - 'generic "Angry Mob: Industrial Age - Disrupting Supply Lines"'
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - 'button "Special Angry Mob: Industrial Age - Union Power Edgar Rice Burroughs and the World Legends"':
+      - generic: "#010"
+      - generic: Special
+      - 'generic "Angry Mob: Industrial Age - Union Power"'
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Characters Angry Mob (Modern Age) Edgar Rice Burroughs and the World Legends":
+      - generic: "#011"
+      - generic: Characters
+      - generic "Angry Mob (Modern Age)"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - 'button "Special Angry Mob: Modern Age - Online Cyber Attack Edgar Rice Burroughs and the World Legends"':
+      - generic: "#012"
+      - generic: Special
+      - 'generic "Angry Mob: Modern Age - Online Cyber Attack"'
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - 'button "Special Angry Mob: Modern Age - Ransom Your Secrets Edgar Rice Burroughs and the World Legends"':
+      - generic: "#013"
+      - generic: Special
+      - 'generic "Angry Mob: Modern Age - Ransom Your Secrets"'
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Characters Anubis Edgar Rice Burroughs and the World Legends":
+      - generic: "#014"
+      - generic: Characters
+      - generic "Anubis"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Anubis - Book of the Dead Edgar Rice Burroughs and the World Legends":
+      - generic: "#015"
+      - generic: Special
+      - generic "Anubis - Book of the Dead"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Anubis - Lord of the Sacred Land Edgar Rice Burroughs and the World Legends":
+      - generic: "#016"
+      - generic: Special
+      - generic "Anubis - Lord of the Sacred Land"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Anubis - Shepherd of the Damned Edgar Rice Burroughs and the World Legends":
+      - generic: "#017"
+      - generic: Special
+      - generic "Anubis - Shepherd of the Damned"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Anubis - Siphon Strike Edgar Rice Burroughs and the World Legends":
+      - generic: "#018"
+      - generic: Special
+      - generic "Anubis - Siphon Strike"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Anubis - Weighing of the Heart Edgar Rice Burroughs and the World Legends":
+      - generic: "#019"
+      - generic: Special
+      - generic "Anubis - Weighing of the Heart"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Anubis - Wither Edgar Rice Burroughs and the World Legends":
+      - generic: "#020"
+      - generic: Special
+      - generic "Anubis - Wither"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Characters Billy the Kid Edgar Rice Burroughs and the World Legends":
+      - generic: "#021"
+      - generic: Characters
+      - generic "Billy the Kid"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Billy the Kid - Head for Mexico Edgar Rice Burroughs and the World Legends":
+      - generic: "#022"
+      - generic: Special
+      - generic "Billy the Kid - Head for Mexico"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Billy the Kid - I'll Make You Famous Edgar Rice Burroughs and the World Legends":
+      - generic: "#023"
+      - generic: Special
+      - generic "Billy the Kid - I'll Make You Famous"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Billy the Kid - Pals Edgar Rice Burroughs and the World Legends":
+      - generic: "#024"
+      - generic: Special
+      - generic "Billy the Kid - Pals"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Billy the Kid - Quick Draw Edgar Rice Burroughs and the World Legends":
+      - generic: "#025"
+      - generic: Special
+      - generic "Billy the Kid - Quick Draw"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Billy the Kid - Reap the Whirlwind Edgar Rice Burroughs and the World Legends":
+      - generic: "#026"
+      - generic: Special
+      - generic "Billy the Kid - Reap the Whirlwind"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Billy the Kid - Regulators Edgar Rice Burroughs and the World Legends":
+      - generic: "#027"
+      - generic: Special
+      - generic "Billy the Kid - Regulators"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Characters Captain Nemo Edgar Rice Burroughs and the World Legends":
+      - generic: "#028"
+      - generic: Characters
+      - generic "Captain Nemo"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Captain Nemo - Ethnologist Edgar Rice Burroughs and the World Legends":
+      - generic: "#029"
+      - generic: Special
+      - generic "Captain Nemo - Ethnologist"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Captain Nemo - Never Set Foot on Dry Land Edgar Rice Burroughs and the World Legends":
+      - generic: "#030"
+      - generic: Special
+      - generic "Captain Nemo - Never Set Foot on Dry Land"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Captain Nemo - Silent Running Edgar Rice Burroughs and the World Legends":
+      - generic: "#031"
+      - generic: Special
+      - generic "Captain Nemo - Silent Running"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Captain Nemo - Ruthless Plunderer Edgar Rice Burroughs and the World Legends":
+      - generic: "#032"
+      - generic: Special
+      - generic "Captain Nemo - Ruthless Plunderer"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Captain Nemo - The Nautilus Edgar Rice Burroughs and the World Legends":
+      - generic: "#033"
+      - generic: Special
+      - generic "Captain Nemo - The Nautilus"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Captain Nemo - Weapons of Wrath and Hatred Edgar Rice Burroughs and the World Legends":
+      - generic: "#034"
+      - generic: Special
+      - generic "Captain Nemo - Weapons of Wrath and Hatred"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Characters Carson of Venus Edgar Rice Burroughs and the World Legends":
+      - generic: "#035"
+      - generic: Characters
+      - generic "Carson of Venus"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Carson of Venus - Janjong Duare Mintep Edgar Rice Burroughs and the World Legends":
+      - generic: "#036"
+      - generic: Special
+      - generic "Carson of Venus - Janjong Duare Mintep"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Carson of Venus - On the Razor's Edge Edgar Rice Burroughs and the World Legends":
+      - generic: "#037"
+      - generic: Special
+      - generic "Carson of Venus - On the Razor's Edge"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Carson of Venus - Telepathic Resistance Edgar Rice Burroughs and the World Legends":
+      - generic: "#038"
+      - generic: Special
+      - generic "Carson of Venus - Telepathic Resistance"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Carson of Venus - Sometimes Piracy is the Best Option Edgar Rice Burroughs and the World Legends":
+      - generic: "#039"
+      - generic: Special
+      - generic "Carson of Venus - Sometimes Piracy is the Best Option"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Carson of Venus - T-Ray Gun Edgar Rice Burroughs and the World Legends":
+      - generic: "#040"
+      - generic: Special
+      - generic "Carson of Venus - T-Ray Gun"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Carson of Venus - Telepathic Training Edgar Rice Burroughs and the World Legends":
+      - generic: "#041"
+      - generic: Special
+      - generic "Carson of Venus - Telepathic Training"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Characters Count of Monte Cristo Edgar Rice Burroughs and the World Legends":
+      - generic: "#042"
+      - generic: Characters
+      - generic "Count of Monte Cristo"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Count of Monte Cristo - Friend to Foe Edgar Rice Burroughs and the World Legends":
+      - generic: "#043"
+      - generic: Special
+      - generic "Count of Monte Cristo - Friend to Foe"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Count of Monte Cristo - Jacopo Edgar Rice Burroughs and the World Legends":
+      - generic: "#044"
+      - generic: Special
+      - generic "Count of Monte Cristo - Jacopo"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Count of Monte Cristo - Network of Thieves Edgar Rice Burroughs and the World Legends":
+      - generic: "#045"
+      - generic: Special
+      - generic "Count of Monte Cristo - Network of Thieves"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Count of Monte Cristo - Surprise Swordsman Edgar Rice Burroughs and the World Legends":
+      - generic: "#046"
+      - generic: Special
+      - generic "Count of Monte Cristo - Surprise Swordsman"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Special Count of Monte Cristo - Unlimited Resources Edgar Rice Burroughs and the World Legends":
+      - generic: "#047"
+      - generic: Special
+      - generic "Count of Monte Cristo - Unlimited Resources"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+    - button "Characters Cthulhu Edgar Rice Burroughs and the World Legends":
+      - generic: "#048"
+      - generic: Characters
+      - generic "Cthulhu"
+      - generic "Edgar Rice Burroughs and the World Legends"
+    - button "Decrease" [disabled]:
+    - textbox "Quantity": "0"
+    - button "Increase":
+  - navigation "Pagination":
+    - button "First page" [disabled]:
+    - button "Previous page" [disabled]:
+    - button "1"
+    - button "2"
+    - generic: ...
+    - button "28"
+    - button "Next page":
+    - button "Last page":
+  - generic: Showing 1-48 of 1,298

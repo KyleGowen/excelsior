@@ -73,3 +73,8 @@ Registration: `registerApiV1Routes(app, deps)` in [`src/api/http/registerApiV1Ro
 ## Optional standalone API process
 
 To run **only** the JSON API on another port, compose the same **`RegisterApiV1Deps`** as [`src/index.ts`](src/index.ts), create an `express()` app with `express.json()` (and any shared security middleware you need), then `app.use('/api/v1', createApiV1Router(deps))` and `listen(process.env.API_STANDALONE_PORT)`. **`createApiV1Router`** is exported from [`src/api/http/registerApiV1Routes.ts`](src/api/http/registerApiV1Routes.ts) alongside **`registerApiV1Routes`**. No default npm script is required; document the port in ops runbooks when used.
+
+
+## M8 Collection calculation boundary
+
+Collection evaluation lives in `src/services/collection-evaluation/`; HTTP validates bounded snapshots and verified player identity. Saved data uses `CollectionService.getCollectionView`; frontend controller owns input/persistence, request ordering and presentation only.

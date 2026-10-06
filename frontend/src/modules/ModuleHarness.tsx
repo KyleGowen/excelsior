@@ -1,3 +1,4 @@
+import { noRequestEvidence, noRequestSubscription, type LocalRequestEvidence, type LocalRequestMode } from './localRequestEvidence';
 import * as legacyImageAssets from '../app/legacyImageAssets';
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import type { ModuleCardActions } from './cardActions';
@@ -12,9 +13,11 @@ import { harnessAppearance, type HarnessAppearance } from './harnessAppearance';
 import { fetchCurrentUser, fetchAppConfig } from '../lib/api/auth';
 import { useLayoutMode } from '../lib/layout/useLayoutMode';
 import { saveFixtureApi, type SaveFixtureMode } from './saveFixtureApi';
+import type { ModuleApi } from './api';
 type Selection = 'database' | 'deck' | 'collection' | 'together' | 'unmounted';
 /** Local fixture host: neither Excelsior's router nor AuthProvider is mounted. */
-export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = false, initialContainerLayout = false, initialContainerWidth = 'available', initialAppearance = 'default', initialHostActions = false, initialHostIcons = false, initialHostSaveFeedback = false, initialReadonly = true, initialSaveFixtureMode = 'api', initialUnsavedPolicy = false }: { user: AppUser | null; initialDeckId?: string; initialHostOverlay?: boolean; initialContainerLayout?: boolean; initialContainerWidth?: string; initialAppearance?: HarnessAppearance; initialHostActions?: boolean; initialHostIcons?: boolean; initialHostSaveFeedback?: boolean; initialReadonly?: boolean; initialSaveFixtureMode?: SaveFixtureMode; initialUnsavedPolicy?: boolean }) {
+export function ModuleHarness({ user, api: suppliedApi, requestEvidence, initialDeckId = '', initialHostOverlay = false, initialContainerLayout = false, initialContainerWidth = 'available', initialAppearance = 'default', initialHostActions = false, initialHostIcons = false, initialHostSaveFeedback = false, initialReadonly = true, initialSaveFixtureMode = 'api', initialUnsavedPolicy = false }: { user: AppUser | null; api?: ModuleApi; requestEvidence?: LocalRequestEvidence; initialDeckId?: string; initialHostOverlay?: boolean; initialContainerLayout?: boolean; initialContainerWidth?: string; initialAppearance?: HarnessAppearance; initialHostActions?: boolean; initialHostIcons?: boolean; initialHostSaveFeedback?: boolean; initialReadonly?: boolean; initialSaveFixtureMode?: SaveFixtureMode; initialUnsavedPolicy?: boolean }) {
+ const requestSnapshot = useSyncExternalStore(requestEvidence?.subscribe ?? noRequestSubscription, requestEvidence?.getSnapshot ?? noRequestEvidence, noRequestEvidence);
  const { isMobile } = useLayoutMode();
  const [useContainerLayout, setUseContainerLayout] = useState(initialContainerLayout);
  const [containerWidth, setContainerWidth] = useState(initialContainerWidth);
@@ -47,7 +50,7 @@ export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = f
  }), []);
  const [useHostOverlay, setUseHostOverlay] = useState(initialHostOverlay);
  const [overlayRoot, setOverlayRoot] = useState<HTMLDivElement | null>(null);
- const baseApi = useMemo(() => createModuleApi(), []);
+ const baseApi = useMemo(() => suppliedApi ?? createModuleApi(), [suppliedApi]);
  const api = useMemo(() => saveFixtureApi(baseApi, saveFixtureMode), [baseApi, saveFixtureMode]);
  const onOpenDeck = useCallback((id: string) => request(() => { setDeckId(id); setSelection('deck'); setFeedback('Host opened deck'); }), [request]);
  const onBack = useCallback(() => request(() => { setFeedback('Host received Back'); if (useUnsavedPolicy) setSelection('database'); }), [request, useUnsavedPolicy]);
@@ -57,6 +60,7 @@ export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = f
   <div ref={setUnsavedRoot} className="module-harness__unsaved-root" />
   {unsavedRoot && <OverlayHostProvider options={{ root: unsavedRoot, position: 'fixed' }}><SlideOutPanel open={navigation.pending} onClose={guard.stay} ariaLabel="Unsaved deck changes" title="Unsaved deck changes"><p>{navigation.saving ? 'A save is still running. Stay here until it finishes.' : 'Leaving will discard your unsaved deck edits.'}</p><button type="button" className="btn btn-secondary" onClick={guard.stay}>Stay</button><button type="button" className="btn btn-danger" disabled={navigation.saving > 0} onClick={discard}>Discard and continue</button></SlideOutPanel></OverlayHostProvider>}
   <header className="module-harness__controls">
+   {requestEvidence && requestSnapshot ? <><label>Local Collection request mode <select aria-label="Local Collection request mode" value={requestSnapshot.mode} onChange={e=>requestEvidence.setMode(e.target.value as LocalRequestMode)}><option value="online">Real local API</option><option value="slow-collection">Delay Collection requests by 750 ms</option><option value="offline-collection">Reject Collection requests locally</option></select></label><output aria-label="Local request evidence" data-request-evidence={JSON.stringify(requestSnapshot)}>{requestSnapshot.requests.length} recent API requests; bodies and identities are not recorded</output></> : null}
    <h1>Independent module harness</h1>
    <p>Host identity: {host.identity.isGuest ? 'Guest' : 'Account'}. Local session and catalog. Decks start read-only; enable editing only for your disposable fixture.</p>
    <nav aria-label="Module selection">

@@ -649,11 +649,11 @@ function useDbDetailController({
   };
 
   const showPanel = deckMenuOpen || status !== null;
-  return { isGuest, deckMenuOpen, status, showPanel, toggleDeckMenu, addToCollection, addToDeck, decksLoading: decksQuery.isLoading, decks: decksQuery.data ?? [], decksError: decksQuery.isError, retryDecks: () => void decksQuery.refetch() };
+  return { isGuest, collectionReady:collection.canSetQuantity, deckMenuOpen, status, showPanel, toggleDeckMenu, addToCollection, addToDeck, decksLoading: decksQuery.isLoading, decks: decksQuery.data ?? [], decksError: decksQuery.isError, retryDecks: () => void decksQuery.refetch() };
 }
 
 function DbDetailActions(props: Parameters<typeof useDbDetailController>[0]) {
-  const { isGuest, deckMenuOpen, status, showPanel, toggleDeckMenu, addToCollection, addToDeck, decksLoading, decks, decksError, retryDecks } = useDbDetailController(props);
+  const { isGuest, collectionReady, deckMenuOpen, status, showPanel, toggleDeckMenu, addToCollection, addToDeck, decksLoading, decks, decksError, retryDecks } = useDbDetailController(props);
 
   return (
     <div className="db__detail-actions">
@@ -667,7 +667,7 @@ function DbDetailActions(props: Parameters<typeof useDbDetailController>[0]) {
             <IconPlus /> Add to Deck
           </button>
         )}
-        <button type="button" className="btn btn-ghost db__add-collection" onClick={() => void addToCollection()}>
+        <button type="button" className="btn btn-ghost db__add-collection" disabled={!collectionReady} onClick={() => void addToCollection()}>
           <IconPlus /> Collection
         </button>
       </div>

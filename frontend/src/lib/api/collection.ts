@@ -1,3 +1,5 @@
+import type { CollectionEvaluationDto, CollectionEvaluationEntry } from '../../contracts/CollectionEvaluationDto';
+export interface CollectionView { cards: CollectionCard[]; evaluation: CollectionEvaluationDto }
 /** Collection APIs (logged-in users). GUEST collections are localStorage-only. */
 import { api as defaultApi } from './client';
 
@@ -40,7 +42,13 @@ function setCollectionQuantity(
   const { cardId, ...body } = input;
   return api.put<CollectionCard | null>(`/api/v1/collections/me/cards/${cardId}`, body);
 }
-return { fetchCollectionCards, addCollectionCard, setCollectionQuantity };
+function fetchCollectionView(signal?: AbortSignal): Promise<CollectionView> {
+  return api.get<CollectionView>('/api/v1/collections/me/view', signal);
+}
+function evaluateGuestCollection(entries: CollectionEvaluationEntry[], signal?: AbortSignal): Promise<CollectionEvaluationDto> {
+  return api.post<CollectionEvaluationDto>('/api/v1/collections/evaluate', { entries }, signal);
+}
+return { fetchCollectionCards, fetchCollectionView, evaluateGuestCollection, addCollectionCard, setCollectionQuantity };
 }
 
-export const { fetchCollectionCards, addCollectionCard, setCollectionQuantity } = createCollectionApi();
+export const { fetchCollectionCards, fetchCollectionView, evaluateGuestCollection, addCollectionCard, setCollectionQuantity } = createCollectionApi();

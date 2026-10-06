@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "openapi": "parsed with139 local references resolved",
+  "insomnia": {
+    "rootRequestsEach": 89,
+    "files": [
+      "Excelsior-API.insomnia.json",
+      "Excelsior-API-production.insomnia.json",
+      "docs/insomnia/excelsior.cards-prod.insomnia.json"
+    ],
+    "generatorResources": 85,
+    "addedCollectionRequests": 2,
+    "credentials": "blank",
+    "actualUiImport": "unverified"
+  },
+  "method": "structure/generator checks only; no API request or production mutation"
+}

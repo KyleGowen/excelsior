@@ -471,7 +471,7 @@ describe('Collection End-to-End Workflow Integration Tests', () => {
           cardType: 'special',
           quantity: 1,
           imagePath: '/images/special1.webp'
-        });
+        }).expect(200);
 
       // Retrieve again
       const updatedResponse = await request(app)

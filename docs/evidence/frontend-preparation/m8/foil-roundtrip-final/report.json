@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "inputFingerprint": "a9fffe6181ee08b3b948583c59e3f129dcec47fa400197ee4ddbab4ecdf260c8",
+  "actor": "fictional account",
+  "status": "passed",
+  "method": "CUA real saved Collection writes, reload and selected foil detail",
+  "scenarios": [
+    {
+      "id": "foil-quantity-save-reload",
+      "status": "passed"
+    },
+    {
+      "id": "foil-identity-loaded-image",
+      "status": "passed",
+      "observed": {
+        "printing": "ERB 035F",
+        "totalOwned": 3,
+        "uniquePrintings": 2,
+        "imageLoaded": true
+      }
+    },
+    {
+      "id": "foil-scoped-cleanup",
+      "status": "passed"
+    }
+  ],
+  "counts": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "browserErrorCount": 0,
+  "evidence": [
+    {
+      "screenshot": "foil-roundtrip-final/saved-foil-two.jpg",
+      "dom": "foil-roundtrip-final/saved-foil-two.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/users/b6f03bec-16fa-4599-b282-47717c96b532/collection"
+    },
+    {
+      "screenshot": "foil-roundtrip-final/foil-detail.jpg",
+      "dom": "foil-roundtrip-final/foil-detail.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/users/b6f03bec-16fa-4599-b282-47717c96b532/collection"
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "only owned Carson foil restored to zero; initial Lancelot quantity one preserved"
+  },
+  "acceptance": "Automated only; Kyle acceptance separate",
+  "gaps": [
+    "No production validation"
+  ]
+}

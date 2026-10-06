@@ -33,6 +33,8 @@ function fixtureApi(): ModuleApi {
     fetchSets: jest.fn(async () => [{ code: 'ERB', name: 'Fictional release' }]),
     fetchFoilCardMap: jest.fn(async () => []),
     fetchCollectionCards: jest.fn(async () => []),
+    fetchCollectionView: jest.fn(async () => ({cards:[],evaluation:{totalOwned:0,uniqueCards:0,quantities:{},capabilities:{canSetQuantity:true,storage:'account' as const,minimumQuantity:0,maximumQuantity:99}}})),
+    evaluateGuestCollection: jest.fn(async () => ({totalOwned:0,uniqueCards:0,quantities:{},capabilities:{canSetQuantity:true,storage:'device' as const,minimumQuantity:0,maximumQuantity:99}})),
     fetchDeckFull: jest.fn(async () => JSON.parse(JSON.stringify(sampleDeck))),
     fetchFavoriteDecks: jest.fn(async () => []),
   };
@@ -119,7 +121,7 @@ it('keeps a failed deck request local and retries through the supplied client', 
 it('mounts account Collection using the supplied collection operation without requiring Deck Builder', async () => {
  host.identity = { user: { id: 'fictional-user', username: 'Fictional Player', email: null, role: 'USER' }, isGuest: false, isAdmin: false };
  await mount(<CollectionModule />);
- expect(host.api.fetchCollectionCards).toHaveBeenCalledTimes(1);
+ expect(host.api.fetchCollectionView).toHaveBeenCalledTimes(1);
  expect(host.api.fetchDeckFull).not.toHaveBeenCalled();
  expect(container.textContent).not.toContain('Stored on this device');
 });

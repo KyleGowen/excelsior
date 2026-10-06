@@ -62,6 +62,9 @@ describe('both service clients through real application adapters', () => {
     const adapter = new ApplicationAccessAdapter(origin, () => ({ clientId, clientSecret: secrets.get(clientId)! }));
     const host = express(); host.use(express.json()); host.use('/api/host', createApplicationAccessMiddleware(adapter, true));
     await request(host).get('/api/host/api/v1/catalog/characters').expect(200);
+    const presentation = await request(host).get('/api/host/api/v1/catalog/presentation/characters').expect(200); expect(presentation.body.data).toBeTruthy();
+    const device = await request(host).post('/api/host/api/v1/collections/evaluate').send({entries:[]}).expect(200); expect(device.body.data).toMatchObject({totalOwned:0,uniqueCards:0,capabilities:{storage:'device'}});
+    await request(host).get('/api/host/api/v1/collections/me/view').expect(401);
     await request(host).get('/api/host/api/v1/decks').expect(401);
     const me = await request(host).get('/api/host/api/auth/me').set('Cookie', sessionOne).expect(200); expect(me.body.data.id ?? me.body.data.userId).toBe(userOne.id);
     const created = await request(host).post('/api/host/api/v1/decks').set('Authorization', 'Bearer ' + playerOne).send({ name: 'M2 isolated ' + clientId, is_private: true }).expect(201);
@@ -71,6 +74,9 @@ describe('both service clients through real application adapters', () => {
     const owned = await request(host).get('/api/host/api/v1/decks/' + deckId).set('Cookie', sessionOne).expect(200); expect(owned.body.data.name ?? owned.body.data.metadata?.name).toBe('M2 isolated ' + clientId);
     const pool = DataSourceConfig.getInstance().getPool(); const card = await pool.query('SELECT id FROM characters ORDER BY id LIMIT 1');
     await request(host).post('/api/host/api/v1/collections/me/cards').set('Authorization', 'Bearer ' + playerOne).send({ cardId: card.rows[0].id, cardType: 'character', quantity: 1 }).expect(200);
+    const view = await request(host).get('/api/host/api/v1/collections/me/view').set('Authorization', 'Bearer ' + playerOne).expect(200); expect(view.body.data.evaluation.totalOwned).toBeGreaterThanOrEqual(1);
+    const otherView = await request(host).get('/api/host/api/v1/collections/me/view').set('Authorization', 'Bearer ' + playerTwo).expect(200); expect(otherView.body.data).toMatchObject({cards:[],evaluation:{totalOwned:0}});
+    await request(host).get('/api/host/api/v1/collections/me/view').set('Cookie', guestOne).expect(403);
     const other = await request(host).get('/api/host/api/v1/collections/me/cards').set('Authorization', 'Bearer ' + playerTwo).expect(200); expect(other.body.data).toEqual([]);
     const guestDeck = await request(host).post('/api/host/api/v1/guest/decks').set('Cookie', guestOne).send({ name: 'Isolated Guest ' + clientId }).expect(201);
     const guestId = guestDeck.body.data.id;

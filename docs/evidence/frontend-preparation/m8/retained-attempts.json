@@ -1,0 +1,206 @@
+[
+  {
+    "evidence": "browser-collection-recovery/report.json (private original retained)",
+    "status": "needs review",
+    "counts": {
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 0
+    },
+    "failed": [
+      {
+        "id": "collection-recovery",
+        "status": "failed",
+        "reason": "Browser Use encountered an error interacting with this webpage: Error: strict mode violation: locator('.card-tile').filter({ has: getByRole('button', { name: 'View Lancelot', exact: true }) }).getByRole('textbox', { name: 'Quantity', exact: true }) resolved to 3 elements:\n    1) <input value=\"2\" type=\"text\" pattern=\"[0-9]*\" inputmode=\"numeric\" aria-label=\"Quantity\" class=\"qty-stepper__input\"/> aka getByRole('article').filter({ hasText: 'LancelotERB 132' }).getByLabel('Quantity')\n    2) <input value=\"0\" type=\"text\" pattern=\"[0-9]*\" inputmode=\"numeric\" aria-label=\"Quantity\" class=\"qty-stepper__input\"/> aka getByRole('textbox', { name: 'Quantity' }).nth(1)\n    3) <input value=\"0\" type=\"text\" pattern=\"[0-9]*\" inputmode=\"numeric\" aria-label=\"Quantity\" class=\"qty-stepper__input\"/> aka getByRole('article').filter({ hasText: 'LancelotERB 507F' }).getByLabel('Quantity')\n"
+      }
+    ]
+  },
+  {
+    "evidence": "saved-collection-final/report.json (private original retained)",
+    "status": "needs review",
+    "counts": {
+      "passed": 2,
+      "failed": 1,
+      "blocked": 1,
+      "skipped": 0
+    },
+    "failed": [
+      {
+        "id": "saved-collection",
+        "status": "failed",
+        "reason": "Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector internal:role=heading[name=\"Card Database\"s]\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"internal:role=heading[name=\\\"Card Database\\\"s]\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}"
+      }
+    ]
+  },
+  {
+    "evidence": "native-excelsior-mobile-final/report.json (private original retained)",
+    "status": "needs review",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 6
+    },
+    "failed": [
+      {
+        "id": "native-integration",
+        "status": "failed",
+        "reason": "Error: Actual viewport differs"
+      }
+    ]
+  },
+  {
+    "evidence": "native-excelsior-mobile-corrected/report.json (private original retained)",
+    "status": "needs review",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 6
+    },
+    "failed": [
+      {
+        "id": "native-integration",
+        "status": "failed",
+        "reason": "Error: Actual viewport differs"
+      }
+    ]
+  },
+  {
+    "evidence": "independent-together-final/report.json (private original retained)",
+    "status": "failed",
+    "counts": {
+      "passed": 4,
+      "failed": 2,
+      "skipped": 0,
+      "blocked": 0
+    },
+    "failed": [
+      {
+        "id": "deck-alone-host-callback",
+        "status": "failed",
+        "reason": "Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector internal:role=region[name=\"Independent Deck Builder\"s] >> internal:role=heading[name=\"M1 Fictional Limited\"s]\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"internal:role=region[name=\\\"Independent Deck Builder\\\"s] >> internal:role=heading[name=\\\"M1 Fictional Limited\\\"s]\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+        "evidence": {
+          "screenshot": "independent-together-final/deck-alone-host-callback-failed.jpg",
+          "dom": "independent-together-final/deck-alone-host-callback-failed.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://localhost:5188/module-harness.html?adapter=lrg"
+        }
+      },
+      {
+        "id": "together",
+        "status": "failed",
+        "reason": "Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector internal:role=region[name=\"Independent Deck Builder\"s] >> internal:role=heading[name=\"M1 Fictional Limited\"s]\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"internal:role=region[name=\\\"Independent Deck Builder\\\"s] >> internal:role=heading[name=\\\"M1 Fictional Limited\\\"s]\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+        "evidence": {
+          "screenshot": "independent-together-final/together-failed.jpg",
+          "dom": "independent-together-final/together-failed.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://localhost:5188/module-harness.html?adapter=lrg"
+        }
+      }
+    ]
+  },
+  {
+    "evidence": "database-deck-navigation-final/report.json (private original retained)",
+    "status": "failed",
+    "counts": {
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 0
+    },
+    "failed": [
+      {
+        "id": "database-add-normal-navigation",
+        "status": "failed",
+        "reason": "Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector internal:text=\"Added to M8 Account Fixture\"s\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"internal:text=\\\"Added to M8 Account Fixture\\\"s\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}",
+        "evidence": {
+          "screenshot": "database-deck-navigation-final/failure.jpg",
+          "dom": "database-deck-navigation-final/failure.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://localhost:5188/data"
+        }
+      }
+    ]
+  },
+  {
+    "evidence": "missing-image-final/report.json (private original retained)",
+    "status": "needs review",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 0
+    },
+    "failed": [
+      {
+        "id": "real-missing-image-fallback-and-isolation",
+        "status": "failed",
+        "reason": "Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector internal:role=region[name=\"Built module\"s] >> img[src*=\"placeholder\"] >> nth=0\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"internal:role=region[name=\\\"Built module\\\"s] >> img[src*=\\\"placeholder\\\"] >> nth=0\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}"
+      }
+    ]
+  },
+  {
+    "evidence": "missing-image-corrected/report.json (private original retained)",
+    "status": "needs review",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 0
+    },
+    "failed": [
+      {
+        "id": "real-missing-image-fallback-and-isolation",
+        "status": "failed",
+        "reason": "Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector internal:role=region[name=\"Built module\"s] >> .card-tile__art img[src^=\"data:image/webp\"] >> nth=0\nLocator diagnostics: {\"kind\":\"action_failed\",\"action\":\"waitFor\",\"locator\":\"internal:role=region[name=\\\"Built module\\\"s] >> .card-tile__art img[src^=\\\"data:image/webp\\\"] >> nth=0\",\"matchCount\":1,\"matches\":[{\"ariaLabel\":null,\"disabled\":false,\"role\":null,\"tag\":\"img\",\"text\":\"\",\"type\":null,\"visible\":true}],\"visibleCount\":1,\"truncated\":false}"
+      }
+    ]
+  },
+  {
+    "stage": "initial focused lifecycle regression",
+    "result": "real child process timed out before cleanup timer unref; 44 focused cases passed after fix"
+  },
+  {
+    "stage": "first full unit batch",
+    "result": "3937 assertions passed but process exceeded deadline; detectOpenHandles found eight Guest cleanup timers; final3938 unit gate exits naturally"
+  },
+  {
+    "stage": "sandbox unit/SOC2 and Vite build",
+    "result": "local listener/build-cache EPERM; authorized local access reruns pass"
+  },
+  {
+    "stage": "boundary reporter",
+    "result": "12 tests passed under default spec reporter but wrapper lacked TAP counts; explicit TAP confirms12"
+  },
+  {
+    "stage": "initial integration",
+    "result": "two failures: public-route matrix omission corrected; Collection test failed with unconfirmed initial write outcome, now requires successful write"
+  },
+  {
+    "stage": "final integration first attempt",
+    "result": "1031passed/1failed: unchanged role restriction case connect ETIMEDOUT on local HTTP port; full repeat1032passed without product change"
+  },
+  {
+    "stage": "delivery build ordering",
+    "result": "ordinary build clears frontend/dist/modules; rebuilt modules then consumer and types sequentially"
+  },
+  {
+    "stage": "filter clicks",
+    "result": "scrolled foil detail remained open after close-button click; screenshot confirmed it. Escape and an explicit hidden wait cleared it; initial click cause unconfirmed"
+  },
+  {
+    "stage": "account cleanup",
+    "result": "transaction rolled back on Collection history trigger; child-first exact-owned cleanup passed"
+  }
+]

@@ -1,3 +1,4 @@
+import { harnessAccess } from '../modules/harnessAccess';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { NativeRouteHarness } from '../modules/NativeRouteHarness';
@@ -17,3 +18,6 @@ export const LocalSessionHost: Story = { render: () => <RouterProvider router={c
 export const IsolatedNativeSurface: Story = { ...NestedCards, args:{ isolated:true } };
 export const IsolatedReadonlyDeck: Story = { ...NestedReadonlyDeck, args:{ isolated:true } };
 export const IsolatedCollection: Story = { ...NestedCollection, args:{ isolated:true } };
+
+/** Optional local request evidence controls use fictional MSW responses. */
+export const LocalRequestObservations: Story = { ...NestedCards, render:()=> {const access=harnessAccess('?adapter=direct');return <NativeRouteHarness user={null} api={access.api} requestEvidence={access.evidence} />;} };

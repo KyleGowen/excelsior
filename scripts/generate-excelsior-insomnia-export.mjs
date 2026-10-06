@@ -569,11 +569,19 @@ const resources = [
     F_V1_COLL,
     WS,
     '08 — v1 Collections',
-    '**Session cookie** required. Paths under /api/v1/collections/me.',
+    'Saved views require a USER/ADMIN session or Bearer token. Device snapshot evaluation is public and stateless.',
     sort--
   ),
   req('req_v1_coll_me', F_V1_COLL, 'GET /api/v1/collections/me', 'GET', `${B}/api/v1/collections/me`, {
     sortKey: sort--
+  }),
+  req('req_v1_coll_view', F_V1_COLL, 'GET /api/v1/collections/me/view', 'GET', `${B}/api/v1/collections/me/view`, {
+    description: 'Current owned cards, derived totals and capabilities in one no-store snapshot. USER/ADMIN only.',
+    sortKey: sort--
+  }),
+  req('req_v1_coll_evaluate', F_V1_COLL, 'POST /api/v1/collections/evaluate', 'POST', `${B}/api/v1/collections/evaluate`, {
+    description: 'Public stateless device snapshot; no saved-record writes. Identity/role/storage input is rejected.',
+    headers: hdrContentJson(), body: jsonBody('{"entries":[]}'), sendCookies: false, sortKey: sort--
   }),
   req(
     'req_v1_coll_cards',

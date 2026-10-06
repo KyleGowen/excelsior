@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "actor": "tracked fictional local account",
+  "deletedUsers": 1,
+  "deletedDecks": 1,
+  "remainingOwnedUsers": 0,
+  "remainingOwnedDecks": 0,
+  "remainingOwnedCollections": 0,
+  "scope": "exact private fixture IDs only; production unchanged"
+}

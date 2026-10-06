@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "environment": "local",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "deployedRevision": null,
+  "url": "http://localhost:5188/module-harness.html?adapter=lrg",
+  "status": "passed",
+  "scenarios": [
+    {
+      "id": "database-alone",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "independent-together-corrected/database-alone.jpg",
+        "dom": "independent-together-corrected/database-alone.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/module-harness.html?adapter=lrg"
+      }
+    },
+    {
+      "id": "collection-alone",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "independent-together-corrected/collection-alone.jpg",
+        "dom": "independent-together-corrected/collection-alone.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/module-harness.html?adapter=lrg"
+      }
+    },
+    {
+      "id": "deck-alone-host-callback",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "independent-together-corrected/deck-alone-host-callback.jpg",
+        "dom": "independent-together-corrected/deck-alone-host-callback.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/module-harness.html?adapter=lrg"
+      }
+    },
+    {
+      "id": "together",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "independent-together-corrected/together.jpg",
+        "dom": "independent-together-corrected/together.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/module-harness.html?adapter=lrg"
+      }
+    },
+    {
+      "id": "close-detail-and-unmount",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "independent-together-corrected/close-detail-and-unmount.jpg",
+        "dom": "independent-together-corrected/close-detail-and-unmount.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/module-harness.html?adapter=lrg"
+      }
+    },
+    {
+      "id": "remount",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "independent-together-corrected/remount.jpg",
+        "dom": "independent-together-corrected/remount.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/module-harness.html?adapter=lrg"
+      }
+    }
+  ],
+  "counts": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "cleanup": "Read-only browser actions; no Save, quantity changes or record writes. Detail closed before host controls; modules unmounted and remounted.",
+  "acceptance": "Automated evidence only; Kyle acceptance pending",
+  "gaps": [
+    "Fixture component tests cover outage/retry/cancellation independently; no live API outage injected.",
+    "M6 style containment and M7 packaging remain future work."
+  ]
+}

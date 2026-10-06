@@ -1,0 +1,129 @@
+{
+  "environment": "local",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "databaseMigration": "365",
+  "sampling": "One controlled sequential HTTP GET per M1 endpoint; Accept-Encoding identity; not a browser waterfall or production latency",
+  "requestCount": 16,
+  "totalBodyBytes": 774381,
+  "requests": [
+    {
+      "path": "/api/v1/config/app",
+      "status": 200,
+      "bodyBytes": 139,
+      "elapsedMs": 22.17,
+      "etag": "W/\"8b-l17wDR5sc0YT+GGpmNRWQOJjCv4\""
+    },
+    {
+      "path": "/api/v1/dbv/sets",
+      "status": 200,
+      "bodyBytes": 394,
+      "elapsedMs": 12.91,
+      "etag": "\"1-2c7ead1de49af94e5e5ddf9c4b70df37e761c9bd\""
+    },
+    {
+      "path": "/api/v1/catalog/characters",
+      "status": 200,
+      "bodyBytes": 132931,
+      "elapsedMs": 3.47,
+      "etag": "\"1-994ab5dcbc92326fa52c5a20317a50a6d0b2654f\""
+    },
+    {
+      "path": "/api/v1/catalog/locations",
+      "status": 200,
+      "bodyBytes": 13528,
+      "elapsedMs": 2.02,
+      "etag": "\"1-86b214bcc8b3f3e2b4621c0705bac41177eb58c8\""
+    },
+    {
+      "path": "/api/v1/catalog/battlegrounds",
+      "status": 200,
+      "bodyBytes": 506,
+      "elapsedMs": 2.4,
+      "etag": "\"1-bce9ee07bc23f44bd3537a604e8a86495dc10680\""
+    },
+    {
+      "path": "/api/v1/catalog/special-cards",
+      "status": 200,
+      "bodyBytes": 467013,
+      "elapsedMs": 13.32,
+      "etag": "\"1-888e225408ff585399ab18a5e934f174061de06c\""
+    },
+    {
+      "path": "/api/v1/catalog/missions",
+      "status": 200,
+      "bodyBytes": 18380,
+      "elapsedMs": 3.64,
+      "etag": "\"1-05ceee2da6e4af8377ddc32ba69ddf364590a5f3\""
+    },
+    {
+      "path": "/api/v1/catalog/events",
+      "status": 200,
+      "bodyBytes": 20300,
+      "elapsedMs": 2.2,
+      "etag": "\"1-6b7bc45478aab4dbf9064a6e775fddfd1af51c2a\""
+    },
+    {
+      "path": "/api/v1/catalog/aspects",
+      "status": 200,
+      "bodyBytes": 4121,
+      "elapsedMs": 2.28,
+      "etag": "\"1-9d846b0f40bc33446b2e0f93063a7b0e3f5de94c\""
+    },
+    {
+      "path": "/api/v1/catalog/advanced-universe",
+      "status": 200,
+      "bodyBytes": 4837,
+      "elapsedMs": 3.89,
+      "etag": "\"1-4d435678a02479eb17eb8a680949224d7cafbad5\""
+    },
+    {
+      "path": "/api/v1/catalog/teamwork",
+      "status": 200,
+      "bodyBytes": 28091,
+      "elapsedMs": 2.25,
+      "etag": "\"1-50e5cf5d3380282d8608239058b816c03b271e5e\""
+    },
+    {
+      "path": "/api/v1/catalog/ally-universe",
+      "status": 200,
+      "bodyBytes": 7574,
+      "elapsedMs": 1.34,
+      "etag": "\"1-359838cb1473f8fe8ffc8e51f53d3ae6ecad9e68\""
+    },
+    {
+      "path": "/api/v1/catalog/training",
+      "status": 200,
+      "bodyBytes": 5589,
+      "elapsedMs": 1.44,
+      "etag": "\"1-91fa28aa9214f794ee919f140631aea1f16445f0\""
+    },
+    {
+      "path": "/api/v1/catalog/basic-universe",
+      "status": 200,
+      "bodyBytes": 7455,
+      "elapsedMs": 1.62,
+      "etag": "\"1-ba6b30223d73f98af5f42ed860cdbf96349f101a\""
+    },
+    {
+      "path": "/api/v1/catalog/power-cards",
+      "status": 200,
+      "bodyBytes": 33578,
+      "elapsedMs": 4.89,
+      "etag": "\"1-3cf2e3743cbeeb75e76f68eb0aef4e55a79add7e\""
+    },
+    {
+      "path": "/api/v1/catalog/foil-card-map",
+      "status": 200,
+      "bodyBytes": 29945,
+      "elapsedMs": 1.69,
+      "etag": "\"1-4b0c5313222ddd405068494527d266f534c8bb11\""
+    }
+  ],
+  "comparison": {
+    "baselineRequests": 16,
+    "baselineBodyBytes": 774417,
+    "bodyBytesDelta": -36,
+    "latency": "Single samples from different local processes; timing differences are observations, not a statistical budget"
+  },
+  "status": "passed"
+}

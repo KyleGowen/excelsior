@@ -1,3 +1,4 @@
+import { registerCollectionEvaluationV1HttpRoutes } from './collection-evaluation.http';
 import { registerDeckImportV1HttpRoutes } from './deck-import.http';
 import type { DeckImportService } from '../services/deckImportService';
 import { registerDeckPreviewV1HttpRoutes } from './deck-preview.http';
@@ -205,6 +206,8 @@ export function createApiV1Router(deps: RegisterApiV1Deps): IRouter {
     communityDecksUserId: COMMUNITY_DECKS_USER_ID,
     tournamentDecksUserId: TOURNAMENT_DECKS_USER_ID
   });
+
+  registerCollectionEvaluationV1HttpRoutes(router, deps.collectionService, ownedAuth);
 
   registerCollectionsV1HttpRoutes(router, {
     collectionService: deps.collectionService,

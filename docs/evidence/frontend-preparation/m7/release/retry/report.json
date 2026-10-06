@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "production",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "deployedRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "inputFingerprint": "1ed1c52266685ad047da302555e61bfcb1f6e8797492aa515f802bff1ed2173f",
+  "selectedScenarios": [
+    "deck-readonly-draw-export"
+  ],
+  "capturePolicy": "all",
+  "comparison": false,
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "production",
+    "frontendUrl": "https://excelsior.cards",
+    "apiUrl": "https://excelsior.cards",
+    "sourceRoot": "M7/M8 isolated checkout",
+    "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+    "sourceTreeFingerprint": "1ed1c52266685ad047da302555e61bfcb1f6e8797492aa515f802bff1ed2173f",
+    "expectedRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m8",
+    "verified": true,
+    "observedAt": "2026-10-06T02:13:59.250Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "ca6d811fd0872859c01e575295a79678442b76b0",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "actor": "guest",
+  "theme": "fixed dark",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "deck-readonly-draw-export",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "retry/deck-readonly-draw-export-draw.jpg",
+          "dom": "retry/deck-readonly-draw-export-draw.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/users/00000000-0000-0000-0000-000000000003/decks/b58df5a3-db59-4599-a51b-2834e61f3e00?readonly=true"
+        },
+        {
+          "screenshot": "retry/deck-readonly-draw-export-result.jpg",
+          "dom": "retry/deck-readonly-draw-export-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "https://excelsior.cards/users/00000000-0000-0000-0000-000000000003/decks/b58df5a3-db59-4599-a51b-2834e61f3e00?readonly=true"
+        }
+      ],
+      "observed": {
+        "drawCount": 8,
+        "exported": {
+          "legal": true,
+          "reserve_character": "Black Samson",
+          "total_cards": 51,
+          "total_threat": 76
+        },
+        "recordsChanged": false
+      }
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only scenarios",
+    "browser": "returned Home; close this test-owned tab or mark handoff explicitly"
+  },
+  "acceptance": "automated evidence only; Kyle acceptance not inferred",
+  "gaps": [
+    "light theme unavailable in M1",
+    "Google OAuth not exercised",
+    "independent module harness unavailable in M1"
+  ],
+  "browserErrorCount": 0,
+  "status": "passed",
+  "durationSeconds": 3.479,
+  "counts": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  }
+}

@@ -1,0 +1,325 @@
+- banner:
+  - heading "Built module delivery proof" [level=1]
+  - paragraph: Fictional host · private same-repository preparation
+  - navigation "Delivery host navigation":
+    - button "Card Database"
+    - button "Deck Builder"
+    - button "Collection"
+  - text: Consumer surface width
+  - combobox "Consumer surface width":
+    - option "390" [selected]
+    - option "720"
+    - option "1120"
+  - checkbox "Second built module" [checked]
+  - text: Second built module
+  - checkbox "Alternate asset contract" [checked] [active]
+  - text: Alternate asset contract
+  - checkbox "Missing first-module art"
+  - text: Missing first-module art
+  - status "Host callback receipt": Ready
+- main:
+  - region "Built module":
+    - region "Native module overlay root"
+    - heading "Card Database" [level=1]:
+      - text: Card Database
+    - searchbox "Search cards": Lancelot
+    - generic: Set
+    - combobox "Filter by set":
+      - option "All sets" [selected]
+      - option "Edgar Rice Burroughs and the World Legends"
+      - option "Edgar Rice Burroughs and the World Legends - Promos"
+      - option "The Few and the Cursed - Promos"
+      - option "Skybound"
+      - option "Skybound - Promos"
+    - tablist "Card types":
+      - tab "All"
+      - tab "Characters" [selected]
+      - tab "Special"
+      - tab "Any Char"
+      - tab "Power"
+      - tab "Locations"
+      - tab "Battlegrounds"
+      - tab "Missions"
+      - tab "Events"
+      - tab "Aspects"
+      - tab "Advanced"
+      - tab "Teamwork"
+      - tab "Ally"
+      - tab "Training"
+      - tab "Basic"
+    - generic "Card filters":
+      - button "Expand filters":
+      - group "Stat filters":
+        - generic "Energy":
+          - generic: Energy
+        - combobox "Energy comparison":
+          - option "=" [selected]
+          - option "≥"
+          - option "≤"
+        - spinbutton "Energy value"
+        - generic "Combat":
+          - generic: Combat
+        - combobox "Combat comparison":
+          - option "=" [selected]
+          - option "≥"
+          - option "≤"
+        - spinbutton "Combat value"
+        - generic "Brute Force":
+          - generic: Brute Force
+        - combobox "Brute Force comparison":
+          - option "=" [selected]
+          - option "≥"
+          - option "≤"
+        - spinbutton "Brute Force value"
+        - generic "Intelligence":
+          - generic: Intelligence
+        - combobox "Intelligence comparison":
+          - option "=" [selected]
+          - option "≥"
+          - option "≤"
+        - spinbutton "Intelligence value"
+        - generic "Threat":
+          - generic: Threat
+        - combobox "Threat comparison":
+          - option "=" [selected]
+          - option "≥"
+          - option "≤"
+        - spinbutton "Threat value"
+      - checkbox "Has Foil"
+      - generic: Has Foil
+      - checkbox "Hide Alts" [checked]
+      - generic: Hide Alts
+    - article:
+      - button "View Lancelot":
+      - generic "Lancelot"
+      - generic: ERB 132
+    - navigation "Pagination":
+      - button "First page" [disabled]:
+      - button "Previous page" [disabled]:
+      - button "1"
+      - button "Next page" [disabled]:
+      - button "Last page" [disabled]:
+    - generic: Showing 1-1 of 1
+  - region "Second built module":
+    - region "Native module overlay root"
+    - heading "Card Database" [level=1]:
+      - text: Card Database
+    - searchbox "Search cards"
+    - generic: Set
+    - combobox "Filter by set":
+      - option "All sets" [selected]
+      - option "Edgar Rice Burroughs and the World Legends"
+      - option "Edgar Rice Burroughs and the World Legends - Promos"
+      - option "The Few and the Cursed - Promos"
+      - option "Skybound"
+      - option "Skybound - Promos"
+    - tablist "Card types":
+      - tab "All"
+      - tab "Characters" [selected]
+      - tab "Special"
+      - tab "Any Char"
+      - tab "Power"
+      - tab "Locations"
+      - tab "Battlegrounds"
+      - tab "Missions"
+      - tab "Events"
+      - tab "Aspects"
+      - tab "Advanced"
+      - tab "Teamwork"
+      - tab "Ally"
+      - tab "Training"
+      - tab "Basic"
+    - generic "Card filters":
+      - button "Expand filters":
+      - group "Stat filters":
+        - generic "Energy":
+          - generic: Energy
+        - combobox "Energy comparison":
+          - option "=" [selected]
+          - option "≥"
+          - option "≤"
+        - spinbutton "Energy value"
+        - generic "Combat":
+          - generic: Combat
+        - combobox "Combat comparison":
+          - option "=" [selected]
+          - option "≥"
+          - option "≤"
+        - spinbutton "Combat value"
+        - generic "Brute Force":
+          - generic: Brute Force
+        - combobox "Brute Force comparison":
+          - option "=" [selected]
+          - option "≥"
+          - option "≤"
+        - spinbutton "Brute Force value"
+        - generic "Intelligence":
+          - generic: Intelligence
+        - combobox "Intelligence comparison":
+          - option "=" [selected]
+          - option "≥"
+          - option "≤"
+        - spinbutton "Intelligence value"
+        - generic "Threat":
+          - generic: Threat
+        - combobox "Threat comparison":
+          - option "=" [selected]
+          - option "≥"
+          - option "≤"
+        - spinbutton "Threat value"
+      - checkbox "Has Foil"
+      - generic: Has Foil
+      - checkbox "Hide Alts" [checked]
+      - generic: Hide Alts
+    - article:
+      - button "View Abraham, Rosita And Eugene":
+      - generic "Abraham, Rosita And Eugene"
+      - generic: SKY 219
+      - generic: Common
+    - article:
+      - button "View Alexandria":
+      - generic "Alexandria"
+      - generic: SKY 198
+      - generic: Common
+    - article:
+      - button "View Allen The Alien":
+        - img "Allen The Alien"
+      - generic "Allen The Alien"
+      - generic: SKY 043
+      - generic: Common
+    - article:
+      - button "View Alpha and the Whisperers":
+        - img "Alpha and the Whisperers"
+      - generic "Alpha and the Whisperers"
+      - generic: SKY 184
+      - generic: Common
+    - article:
+      - button "View Andrea":
+        - img "Andrea"
+      - generic "Andrea"
+      - generic: SKY 135
+      - generic: Common
+    - article:
+      - button "View Angry Mob (Industrial Age)":
+        - img "Angry Mob (Industrial Age)"
+      - generic "Angry Mob (Industrial Age)"
+      - generic: ERB 008
+    - article:
+      - button "View Angry Mob (Middle Ages)":
+        - img "Angry Mob (Middle Ages)"
+      - generic "Angry Mob (Middle Ages)"
+      - generic: ERB 001
+    - article:
+      - button "View Angry Mob (Modern Age)":
+        - img "Angry Mob (Modern Age)"
+      - generic "Angry Mob (Modern Age)"
+      - generic: ERB 011
+    - article:
+      - button "View Angstrom Levy":
+        - img "Angstrom Levy"
+      - generic "Angstrom Levy"
+      - generic: SKY 086
+      - generic: Common
+    - article:
+      - button "View Anubis":
+        - img "Anubis"
+      - generic "Anubis"
+      - generic: ERB 014
+    - article:
+      - button "View Atom Eve":
+        - img "Atom Eve"
+      - generic "Atom Eve"
+      - generic: SKY 029
+      - generic: Common
+    - article:
+      - button "View Battle Beast":
+        - img "Battle Beast"
+      - generic "Battle Beast"
+      - generic: SKY 079
+      - generic: Common
+    - article:
+      - button "View Billy the Kid":
+        - img "Billy the Kid"
+      - generic "Billy the Kid"
+      - generic: ERB 021
+    - article:
+      - button "View Black Samson":
+        - img "Black Samson"
+      - generic "Black Samson"
+      - generic: SKY 121
+      - generic: Common
+    - article:
+      - button "View Captain Nemo":
+        - img "Captain Nemo"
+      - generic "Captain Nemo"
+      - generic: ERB 028
+    - article:
+      - button "View Carson of Venus":
+        - img "Carson of Venus"
+      - generic "Carson of Venus"
+      - generic "has foil":
+        - generic: ✦
+        - generic: has foil
+      - generic: ERB 035
+    - article:
+      - button "View Cecil And The G.D.A.":
+        - img "Cecil And The G.D.A."
+      - generic "Cecil And The G.D.A."
+      - generic: SKY 107
+      - generic: Common
+    - article:
+      - button "View Count of Monte Cristo":
+        - img "Count of Monte Cristo"
+      - generic "Count of Monte Cristo"
+      - generic "has foil":
+        - generic: ✦
+        - generic: has foil
+      - generic: ERB 042
+    - article:
+      - button "View Cthulhu":
+        - img "Cthulhu"
+      - generic "Cthulhu"
+      - generic "has foil":
+        - generic: ✦
+        - generic: has foil
+      - generic: ERB 048
+    - article:
+      - button "View Dejah Thoris":
+        - img "Dejah Thoris"
+      - generic "Dejah Thoris"
+      - generic "has foil":
+        - generic: ✦
+        - generic: has foil
+      - generic: ERB 055
+    - article:
+      - button "View Doc Seismic":
+        - img "Doc Seismic"
+      - generic "Doc Seismic"
+      - generic: SKY 093
+      - generic: Common
+    - article:
+      - button "View Dr. Watson":
+        - img "Dr. Watson"
+      - generic "Dr. Watson"
+      - generic: ERB 062
+    - article:
+      - button "View Dracula":
+        - img "Dracula"
+      - generic "Dracula"
+      - generic: ERB 069
+    - article:
+      - button "View Dupli-Kate":
+        - img "Dupli-Kate"
+      - generic "Dupli-Kate"
+      - generic: SKY 036
+      - generic: Common
+    - navigation "Pagination":
+      - button "First page" [disabled]:
+      - button "Previous page" [disabled]:
+      - button "1"
+      - button "2"
+      - button "3"
+      - button "4"
+      - button "Next page":
+      - button "Last page":
+    - generic: Showing 1-24 of 79

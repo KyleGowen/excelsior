@@ -1,7 +1,15 @@
+import { evaluateCollection } from './collection-evaluation/evaluateCollection';
+import type { CollectionViewDto } from '../api/dto/v1/CollectionViewDto';
 import { CollectionsRepository, CollectionCardWithDetails, CollectionHistory } from '../database/collectionsRepository';
 
 export class CollectionService {
   constructor(private collectionsRepository: CollectionsRepository) {}
+
+  async getCollectionView(userId: string): Promise<CollectionViewDto> {
+    const collectionId = await this.getOrCreateCollection(userId);
+    const cards = await this.getCollectionCards(collectionId);
+    return { cards, evaluation: evaluateCollection(cards.map(card => ({ cardId: card.card_id, cardType: card.card_type, imagePath: card.image_path, quantity: card.quantity })), 'account', true) };
+  }
 
   /**
    * Translate set code to display name

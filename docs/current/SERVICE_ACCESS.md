@@ -46,3 +46,8 @@ Unit tests cover scope/credential denial, token confusion, expiry, revocation/ro
 The selected M1 CUA browser cases are rerun against the ordinary UI with its local Excelsior adapter enabled. Browser evidence is stored under `docs/evidence/frontend-preparation/m2/`. Unit and HTTP integration tests do not prove browser behavior or production validation. The implementation ledger records executed cases, revisions, cleanup and gaps. Kyle's spot-check acceptance must be recorded separately before shipping. No production tests are part of M2 implementation.
 
 Design references: [OAuth confidential client credentials](https://www.rfc-editor.org/rfc/rfc6749.html#section-4.4), [JWT validation guidance](https://www.rfc-editor.org/rfc/rfc8725.html). This API uses its existing camelCase v1 envelope; it does not claim to be a complete interoperable OAuth authorization server.
+
+
+## Prepared module access (M8)
+
+Catalog presentation GETs are explicitly `catalog:read`; public Collection snapshot evaluation is `collections:read`. Authenticated Collection views remain player-owned. The development harness can select the existing server fixtures through `/prepared-host/lrg/*`, `/prepared-host/excelsior/*` and the independent harness adapter query. Selection does not enable any production switch or provision a real LRG identity. See the M8 ledger for live local browser evidence separately from API integration and production proof.

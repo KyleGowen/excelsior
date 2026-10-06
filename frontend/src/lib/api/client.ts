@@ -128,7 +128,7 @@ function createApiMethods(request: <T>(path: string, options?: RequestOptions) =
   return {
     get: <T>(path: string, signal?: AbortSignal) => request<T>(path, signal ? { method: 'GET', signal } : { method: 'GET' }),
     getFresh: <T>(path: string, signal?: AbortSignal) => request<T>(path, signal ? { method: 'GET', signal, cache: 'no-store' } : { method: 'GET', cache: 'no-store' }),
-    post: <T>(path: string, body?: unknown) => request<T>(path, { method: 'POST', body }),
+    post: <T>(path: string, body?: unknown, signal?: AbortSignal) => request<T>(path, { method: 'POST', body, ...(signal ? { signal } : {}) }),
     put: <T>(path: string, body?: unknown) => request<T>(path, { method: 'PUT', body }),
     patch: <T>(path: string, body?: unknown) => request<T>(path, { method: 'PATCH', body }),
     del: <T>(path: string, body?: unknown) => request<T>(path, { method: 'DELETE', body }),

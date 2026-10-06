@@ -1,0 +1,125 @@
+- banner:
+  - text: Local Collection request mode
+  - combobox "Local Collection request mode":
+    - option "Real local API" [selected]
+    - option "Delay Collection requests by 750 ms"
+    - option "Reject Collection requests locally"
+  - status "Local request evidence": 42 recent API requests; bodies and identities are not recorded
+  - heading "Native integration preparation" [level=1]
+  - paragraph: "Host identity: Guest. Local data. Editing creates a disposable Guest copy; Collection quantities stay unchanged."
+  - navigation "Fictional host navigation":
+    - link "Host Home":
+      - /url: /prepared-host/excelsior
+    - link "Host Cards":
+      - /url: /prepared-host/excelsior/tools/cards
+    - link "Host Collection":
+      - /url: /prepared-host/excelsior/tools/collection
+    - link "Host Deck":
+      - /url: /prepared-host/excelsior/tools/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75
+  - text: Public fixture deck ID
+  - textbox "Public fixture deck ID": b4ec3a04-ab17-4a33-b813-df35f8195d75
+  - checkbox "Read-only routed deck" [checked]
+  - text: Read-only routed deck
+  - button "Host sentinel button"
+  - text: Host root font
+  - combobox "Host root font":
+    - option "16 pixels"
+    - option "24 pixels" [selected]
+    - option "32 pixels"
+  - text: Host surface width
+  - combobox "Host surface width":
+    - option "Available space" [selected]
+    - option "390 pixels"
+    - option "720 pixels"
+    - option "1120 pixels"
+  - text: Native appearance
+  - combobox "Native appearance":
+    - option "Excelsior defaults" [selected]
+    - option "Paper fixture"
+    - option "High contrast fixture"
+  - text: Native save fixture
+  - combobox "Native save fixture":
+    - option "Real local API" [selected]
+    - option "Delay metadata save by 1.5 seconds"
+    - option "Reject save locally"
+  - checkbox "Restrict host deck features"
+  - text: Restrict host deck features
+  - checkbox "Use native host callbacks"
+  - text: Use native host callbacks
+  - checkbox "Second independent module"
+  - text: Second independent module
+  - link "Leave fixture through host":
+    - /url: /home
+  - status "Host route": /tools/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75
+  - status "Host detail history": Route entry
+  - status "Host edit state": 0 dirty editor(s); 0 save(s) pending
+  - status "Host callback result"
+- region "Native module overlay root":
+  - dialog "Drawn Hand":
+    - generic: Drawn Hand
+    - button "Draw again"
+    - button "Close panel":
+    - button "Sword and Shield":
+    - button "Sword and Shield":
+    - button "Sword and Shield":
+    - button "5 - Combat":
+    - button "5 - Combat":
+    - button "5 - Combat":
+    - button "5 - Combat":
+    - button "5 - Combat":
+- region "Nested Deck Builder":
+  - button "Back to fictional host":
+  - heading "Milestone 3 Local Fixture" [level=1]
+  - generic: 8 cards
+  - generic "Deck is not legal. Press and hold to view validation errors.":
+    - generic: Limited
+  - generic: Unlisted
+  - 'generic "Threat: 18"':
+    - generic: "18"
+  - region "Character maximums":
+    - generic: Max
+    - 'generic "Character max — Energy: 2"':
+      - 'generic "Energy: 2"':
+        - generic: "2"
+    - 'generic "Character max — Combat: 7"':
+      - 'generic "Combat: 7"':
+        - generic: "7"
+    - 'generic "Character max — Brute Force: 5"':
+      - 'generic "Brute Force: 5"':
+        - generic: "5"
+    - 'generic "Character max — Intelligence: 4"':
+      - 'generic "Intelligence: 4"':
+        - generic: "4"
+  - region "Icon totals":
+    - generic: Total
+    - 'generic "Icon total — Energy: 0"':
+      - 'generic "Energy: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Combat: 5"':
+      - 'generic "Combat: 5"':
+        - generic: "5"
+    - 'generic "Icon total — Brute Force: 0"':
+      - 'generic "Brute Force: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Intelligence: 0"':
+      - 'generic "Intelligence: 0"':
+        - generic: "0"
+  - button "List View":
+    - text: List View
+  - button "Draw Hand":
+    - text: Draw Hand
+  - button "Export":
+    - text: Export
+  - generic: Read-only
+  - tablist "Deck card types":
+    - tab "Characters 1" [selected]:
+      - text: Characters
+      - generic: "1"
+    - tab "Special 3":
+      - text: Special
+      - generic: "3"
+    - tab "Power 5":
+      - text: Power
+      - generic: "5"
+  - button "View Lancelot":
+  - 'button "KO character: Lancelot"': KO

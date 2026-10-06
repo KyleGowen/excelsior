@@ -1187,9 +1187,23 @@ Add one card; same validation rules as DB deck add (one-per-deck, cataclysm, etc
 
 > **GUEST users have no server-side collection.** The GUEST role (`POST /api/auth/login` with username `guest` and no password) is denied by `authenticateUser` on all `/api/v1/collections/*` endpoints (**401**). The web app tracks the guest collection entirely in **`localStorage`** (key: `guestCollection`) on the client — no collection API calls are made for GUEST sessions. A new frontend must replicate this localStorage read/write when the user role is `GUEST`.
 
-**Caching (all collection GETs):** `Cache-Control: private, max-age=0, must-revalidate`
+**Caching (legacy collection GETs):** `Cache-Control: private, max-age=0, must-revalidate`
 and `Vary: Cookie`. Collection responses are mutable and user-specific, so CloudFront
 must not reuse an older response after a card mutation or share one between sessions.
+
+### `GET /api/v1/collections/me/view`
+
+Authenticated USER/ADMIN session or player Bearer only; Guest is `403 GUEST_FORBIDDEN`, anonymous is `401 UNAUTHORIZED`. Identity comes only from verified authentication. Client actor selectors cannot alter the authenticated identity. Returns `{ data: { cards, evaluation }, meta, errors }`; `cards` retains the existing collection printing-row contract. Both cards and evaluation come from one current-user read snapshot. This read gets or creates that user's empty collection. `Cache-Control: no-store`. Unavailable reads return `503 COLLECTION_VIEW_UNAVAILABLE` without inventing totals.
+
+`evaluation` contains `totalOwned`, `uniqueCards`, `quantities` keyed by `cardType:cardId`, and `capabilities: { canSetQuantity, storage: "account", minimumQuantity: 0, maximumQuantity: 99 }`. Totals sum positive printing-row quantities; unique counts positive printing rows. The display quantity retains the last positive printing row per type/id, preserving the existing foil/alternate display convention. These values do not collapse printing variants into logical cards. The 99 ceiling is the existing UI input range, not a new persistence rule.
+
+Implementation: [CollectionViewDto](src/api/dto/v1/CollectionViewDto.ts), [CollectionEvaluationDto](src/api/dto/v1/CollectionEvaluationDto.ts), [collection-evaluation.http.ts](src/api/http/collection-evaluation.http.ts).
+
+### `POST /api/v1/collections/evaluate`
+
+Public, stateless device-local snapshot evaluation. Strict body `{ "entries": [{ "cardId": "fictional-card", "cardType": "character", "imagePath": "fictional.webp", "quantity": 2 }] }`; an empty array is valid. At most 10,000 entries; IDs 1–200 characters, image paths at most 2,048 characters, existing Collection card types, nonnegative safe-integer quantities and a safe total sum. HTTP JSON body limits also apply. Identity, role, storage and other extra properties are rejected. Entries are supplied quantities, not catalog identities validated for saving.
+
+Returns `{ data: evaluation, meta, errors }` with the same printing semantics and device storage capability. It reads/writes no application records, adopts no player identity and grants no account write permission. `Cache-Control: no-store`; 120 requests/IP/minute. `400 VALIDATION_ERROR` for malformed/oversized/unsafe snapshots; `429 RATE_LIMITED` on exhausted budget. Service-bearing requests require `collections:read`. Inputs remain in device storage; there is no server fallback for unavailable evaluation.
 
 ### `GET /api/v1/collections/me`
 

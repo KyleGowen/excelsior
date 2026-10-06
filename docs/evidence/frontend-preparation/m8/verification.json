@@ -1,0 +1,252 @@
+{
+  "schema": 1,
+  "milestone": "M8",
+  "status": "Kyle accepted local M8; release pending",
+  "environment": "isolated local checkout and owned Docker V365",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "sourceState": "uncommitted M8 on codex/frontend-preparation-m8; not deployed",
+  "browser": {
+    "method": "CUA live browser; actual local API; read/write scopes explicitly selected",
+    "selectedReports": {
+      "ordinary-desktop-final": {
+        "status": "passed",
+        "counts": {
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "evidence": "ordinary-desktop-final/report.json"
+      },
+      "ordinary-mobile-final": {
+        "status": "passed",
+        "counts": {
+          "passed": 4,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "evidence": "ordinary-mobile-final/report.json"
+      },
+      "account-final": {
+        "status": "passed",
+        "counts": {
+          "passed": 4,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "evidence": "account-final/report.json"
+      },
+      "saved-collection-corrected": {
+        "status": "passed",
+        "counts": {
+          "passed": 4,
+          "failed": 0,
+          "blocked": 0,
+          "skipped": 0
+        },
+        "evidence": "saved-collection-corrected/report.json"
+      },
+      "native-lrg-desktop-final": {
+        "status": "passed",
+        "counts": {
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "evidence": "native-lrg-desktop-final/report.json"
+      },
+      "native-mobile-owned-tab-final": {
+        "status": "passed",
+        "counts": {
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "evidence": "native-mobile-owned-tab-final/report.json"
+      },
+      "independent-together-corrected": {
+        "status": "passed",
+        "counts": {
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "evidence": "independent-together-corrected/report.json"
+      },
+      "compiled-artifact-desktop-final": {
+        "status": "passed",
+        "counts": {
+          "passed": 4,
+          "failed": 0,
+          "blocked": 0,
+          "skipped": 0
+        },
+        "evidence": "compiled-artifact-desktop-final/report.json"
+      },
+      "compiled-artifact-mobile-final": {
+        "status": "passed",
+        "counts": {
+          "passed": 4,
+          "failed": 0,
+          "blocked": 0,
+          "skipped": 0
+        },
+        "evidence": "compiled-artifact-mobile-final/report.json"
+      },
+      "collection-recovery-final": {
+        "status": "passed",
+        "counts": {
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "evidence": "collection-recovery-final/report.json"
+      },
+      "import-editor-final": {
+        "status": "passed",
+        "counts": {
+          "passed": 6,
+          "failed": 0,
+          "blocked": 0,
+          "skipped": 0
+        },
+        "evidence": "import-editor-final/report.json"
+      },
+      "native-unsaved-final": {
+        "status": "passed",
+        "counts": {
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "evidence": "native-unsaved-final/report.json"
+      },
+      "saved-editor-baseline-final": {
+        "status": "passed",
+        "counts": {
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "evidence": "saved-editor-baseline-final/report.json"
+      },
+      "database-deck-navigation-corrected": {
+        "status": "passed",
+        "counts": {
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "evidence": "database-deck-navigation-corrected/report.json"
+      },
+      "foil-roundtrip-final": {
+        "status": "passed",
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "evidence": "foil-roundtrip-final/report.json"
+      },
+      "database-filters-corrected": {
+        "status": "passed",
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "blocked": 0,
+          "skipped": 0
+        },
+        "evidence": "database-filters-corrected/report.json"
+      },
+      "missing-image-dom-confirmed": {
+        "status": "passed",
+        "counts": {
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0,
+          "blocked": 0
+        },
+        "evidence": "missing-image-dom-confirmed/report.json"
+      }
+    },
+    "counts": {
+      "passed": 74,
+      "failed": 0,
+      "blocked": 0,
+      "skipped": 0
+    },
+    "errors": "zero unexpected errors in final selections",
+    "historicalRunnerGaps": "references to unavailable M5/M6/M7 capabilities in reused runners are historical; the aggregate and audit identify what M8 actually exercised"
+  },
+  "checks": {
+    "unit": {
+      "passed": 3938,
+      "skipped": 18,
+      "passedSuites": 337,
+      "skippedSuites": 2,
+      "exitCode": 0,
+      "forceExit": false,
+      "seconds": 24.661
+    },
+    "modules": {
+      "passed": 94,
+      "suites": 7,
+      "method": "mocked/deferred component tests; not browser evidence"
+    },
+    "integration": {
+      "passed": 1032,
+      "suites": 119,
+      "shards": 2,
+      "cleanup": "completed",
+      "forceExit": "existing integration configuration; no natural-exit claim"
+    },
+    "soc2": {
+      "passed": 45,
+      "suites": 9
+    },
+    "lint": "zero errors;422 existing warnings",
+    "backendTypesAndEmittingBuild": "passed",
+    "frontendTypesAndBuild": "passed; ordinary runtime inputs unchanged by later gallery/example fixture additions",
+    "moduleBuild": "passed",
+    "consumerBuildAndTypes": "passed; sequential after module output",
+    "storybookBuild": "passed; includes named request/Collection/stepper/broken-image states",
+    "contracts": 12,
+    "boundaryNegativeCases": 12,
+    "knipRegistered": "passed",
+    "knipFull": "reviewed; existing root/test/declaration findings retained",
+    "frontendOnlyDelivery": "passed; installed dependencies reused; no clean install claim",
+    "openapi": "parsed;139 local references resolved",
+    "insomnia": "root imports89 requests each; IDs/JSON bodies/additive contracts pass; generator executed in isolated output directory"
+  },
+  "cleanup": {
+    "ownedGuestCopies": "2deleted;404 and exact prior inventory preserved",
+    "fictionalAccount": "1user/1deck/owned Collection/history removed; no owned records remain",
+    "guestCollection": "exact run-owned printing restored to zero",
+    "production": "unchanged; no M8 production tests or writes",
+    "browser": "temporary overrides reset; only explicitly identified handoff tabs retained"
+  },
+  "acceptance": {
+    "automated": "selected local cases passed",
+    "kyleLocal": "Kyle explicitly approved the identified M8 previews and requested Ship on October 5, 2026 (America/Los_Angeles)",
+    "release": "no M8 commit/push/deployment",
+    "production": "not validated for M8; predecessor M7 retry is separate"
+  },
+  "gaps": [
+    "Actual Insomnia UI import and SSM coexistence unverified",
+    "Real external host identity/OAuth, credentials, assets and production fallback unverified",
+    "Full accessibility/non-Latin fonts/clean host installation unverified",
+    "Native Chrome reload/tab-close prompt presentation requires manual check; forced close/crash recovery not guaranteed",
+    "M1 has no browser waterfall baseline; local request timings are not a production performance budget",
+    "Real live network reordering/disconnect was not injected; deferred tests/local injection are labeled"
+  ]
+}

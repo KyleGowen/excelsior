@@ -25,9 +25,9 @@ per-card quantity steppers and an "Owned only" toggle.
 
 ## Data flow (`useCollection`)
 Unifies two backends:
-- **Logged-in**: server collection (`GET /api/v1/collections/me/cards`, Query-cached).
+- **Logged-in**: server snapshot (`GET /api/v1/collections/me/view`) with cards, derived totals and capabilities from one read.
 - **Guest**: `localStorage` via `guestCollection.ts` (re-renders on
-  `guest-collection-change`).
+  `guest-collection-change`); bounded stateless `POST /api/v1/collections/evaluate` supplies derived totals/capabilities without persisting the device snapshot.
 
 ### Add vs update (important)
 The PUT endpoint (`/…/:cardId`) only updates a card **already** in the collection (404
@@ -42,3 +42,5 @@ otherwise). So `setQuantity`:
 ## M5 implementation boundary
 
 The route page now adapts the Excelsior host to the single production module/controller/view implementation. See [module contract](../../modules/README.md) for providers, typed operations, navigation callbacks, independent fixture harness and retained M4/M6/M7 gaps. Existing behavior documentation above remains applicable.
+
+Saved absolute writes are serialized, older reads cancelled, and the authoritative view fetched after each write. Guest evaluation keys include the exact local entries, so an older response cannot replace a newer snapshot. Failures retain quantities, show unavailable totals rather than zero and offer explicit retry. The settled Guest grid remains mounted during reevaluation.

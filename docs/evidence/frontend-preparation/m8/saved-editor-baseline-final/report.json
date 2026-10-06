@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "inputFingerprint": "a9fffe6181ee08b3b948583c59e3f129dcec47fa400197ee4ddbab4ecdf260c8",
+  "method": "CUA live browser automation",
+  "theme": "fixed dark",
+  "scenarios": [
+    {
+      "id": "server-metrics-baseline",
+      "status": "passed",
+      "observed": {
+        "drawPile": 8,
+        "threat": 18,
+        "maximumCombat": 7,
+        "combatIcons": 5,
+        "limited": true
+      },
+      "evidence": {
+        "screenshot": "saved-editor-baseline-final/server-metrics-baseline.jpg",
+        "dom": "saved-editor-baseline-final/server-metrics-baseline.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/users/b6f03bec-16fa-4599-b282-47717c96b532/decks/9a8bdb67-3689-4481-a234-70d9fbd6bec2"
+      }
+    },
+    {
+      "id": "limited-raw-legality",
+      "status": "passed",
+      "observed": {
+        "limited": false,
+        "rawLegality": false
+      },
+      "evidence": {
+        "screenshot": "saved-editor-baseline-final/limited-raw-legality.jpg",
+        "dom": "saved-editor-baseline-final/limited-raw-legality.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/users/b6f03bec-16fa-4599-b282-47717c96b532/decks/9a8bdb67-3689-4481-a234-70d9fbd6bec2"
+      }
+    },
+    {
+      "id": "reserve-and-ko",
+      "status": "passed",
+      "observed": {
+        "onlyCharacterKO": true,
+        "maximumCombat": 0,
+        "threat": 18
+      },
+      "evidence": {
+        "screenshot": "saved-editor-baseline-final/reserve-and-ko.jpg",
+        "dom": "saved-editor-baseline-final/reserve-and-ko.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/users/b6f03bec-16fa-4599-b282-47717c96b532/decks/9a8bdb67-3689-4481-a234-70d9fbd6bec2"
+      }
+    },
+    {
+      "id": "preplacement-save-reload",
+      "status": "passed",
+      "observed": {
+        "drawPile": 7,
+        "physicalPlayable": 8,
+        "combatIcons": 5,
+        "savedAndReloaded": true
+      },
+      "evidence": {
+        "screenshot": "saved-editor-baseline-final/preplacement-save-reload.jpg",
+        "dom": "saved-editor-baseline-final/preplacement-save-reload.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/users/b6f03bec-16fa-4599-b282-47717c96b532/decks/9a8bdb67-3689-4481-a234-70d9fbd6bec2"
+      }
+    },
+    {
+      "id": "rapid-unsaved-edits",
+      "status": "passed",
+      "observed": {
+        "drawPile": 6,
+        "combatIcons": 3,
+        "unsaved": true
+      },
+      "evidence": {
+        "screenshot": "saved-editor-baseline-final/rapid-unsaved-edits.jpg",
+        "dom": "saved-editor-baseline-final/rapid-unsaved-edits.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/users/b6f03bec-16fa-4599-b282-47717c96b532/decks/9a8bdb67-3689-4481-a234-70d9fbd6bec2"
+      }
+    }
+  ],
+  "acceptance": "automated only; Kyle acceptance pending",
+  "cleanup": {
+    "applicationRecords": "Original cards, pre-placement, reserve and Limited restored; fictional account/deck retained for Kyle",
+    "browser": "owned fixture with original saved data"
+  },
+  "gaps": [
+    "light theme unavailable",
+    "real Google OAuth unavailable",
+    "independent module harness not yet available"
+  ],
+  "dimensions": {
+    "height": 720,
+    "width": 1280
+  },
+  "status": "passed",
+  "counts": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "browserErrorCount": 0
+}

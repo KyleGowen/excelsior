@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "inputFingerprint": "a9fffe6181ee08b3b948583c59e3f129dcec47fa400197ee4ddbab4ecdf260c8",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "password-login",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "account-final/account-home.jpg",
+        "dom": "account-final/account-home.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/home"
+      }
+    },
+    {
+      "id": "owned-deck-save-reload",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "account-final/owned-deck-restored.jpg",
+        "dom": "account-final/owned-deck-restored.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/users/b6f03bec-16fa-4599-b282-47717c96b532/decks/9a8bdb67-3689-4481-a234-70d9fbd6bec2"
+      }
+    },
+    {
+      "id": "account-collection-read",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "account-final/owned-collection.jpg",
+        "dom": "account-final/owned-collection.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/users/b6f03bec-16fa-4599-b282-47717c96b532/collection"
+      },
+      "observed": {
+        "persistedFixtureCard": "Lancelot",
+        "quantitiesChanged": false
+      }
+    },
+    {
+      "id": "logout-guest-isolation",
+      "status": "passed",
+      "evidence": {
+        "screenshot": "account-final/guest-collection-after-logout.jpg",
+        "dom": "account-final/guest-collection-after-logout.txt",
+        "dimensions": {
+          "height": 720,
+          "width": 1280
+        },
+        "url": "http://localhost:5188/users/00000000-0000-0000-0000-000000000001/collection"
+      },
+      "observed": {
+        "accountQuantitiesVisibleToGuest": false
+      }
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "owned fixture retained for Kyle; temporary deck name restored",
+    "browser": "Guest Home"
+  },
+  "acceptance": "automated only; Kyle acceptance pending",
+  "gaps": [
+    "real Google OAuth unavailable",
+    "light theme unavailable",
+    "future host/module UI unavailable"
+  ],
+  "status": "passed",
+  "counts": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "browserErrorCount": 0
+}

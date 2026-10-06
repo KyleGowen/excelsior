@@ -5,6 +5,8 @@ One line per change. Newest first. Keep this in sync with
 
 ## Unreleased — Phase 3 (scale + docs)
 
+- M8 adds authoritative Collection cards/totals/capabilities in authenticated `GET /api/v1/collections/me/view` and bounded public stateless `POST /api/v1/collections/evaluate`. Guest persistence stays device-local; failures retain inputs and never fabricate totals. Catalog presentation is explicitly read-scoped through both service adapters. Development harness adapter basenames survive native links and deep reloads; no production service activation.
+
 - M7 adds server-only random draw, export, bounded grid summaries and ADMIN hand analysis; retires browser rule kernels and backend source imports from module delivery. Preview results bind exact input/revision; cancellation protects newer input. Adds atomic owned/Guest JSON import with pre-resolution, transactional rollback and explicit uncertain-acknowledgement errors. Catalog presentation declares missing foil projections; public previews remain read-scoped. Private frontend ESM/types/fonts/asset delivery and an independent compiled consumer are preparation, with no package publication or rebrand.
 
 - M4 adds public stateless `POST /api/v1/decks/candidates/evaluate`: server-resolved Add Cards usability/reasons, editor quantity ceilings and mission threshold. It is read-scoped, bounded and no-store; it grants no deck-write authority. Add Cards rejects stale responses and exposes retry on failure.

@@ -1,9 +1,11 @@
+import { harnessAccess } from '../modules/harnessAccess';
 import { http, HttpResponse, delay } from 'msw';
 import { useState } from 'react';
 import { userEvent } from 'storybook/test';
 import { OverlayHostProvider } from '../lib/layout/OverlayHostProvider';
 import { SlideOutPanel } from '../components/SlideOutPanel';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { createModuleApi } from '../modules/api';
 import { ModuleHarness, LocalModuleHarness } from '../modules/ModuleHarness';
 import { pageHandlers } from './pageMocks';
 import { exampleUser } from './StorybookAuthProvider';
@@ -25,7 +27,7 @@ export const DatabaseUnavailable: Story = { parameters: { msw: [http.get('/api/v
 export const DatabaseLoading: Story = { parameters: { msw: [http.get('/api/v1/catalog/presentation/:type', async () => { await delay('infinite'); return HttpResponse.json({ data: [] }); }), ...pageHandlers()] } };
 export const DatabaseEmpty: Story = { parameters: { msw: [http.get('/api/v1/catalog/presentation/:type', () => HttpResponse.json({ data: [] })), ...pageHandlers()] } };
 export const DeckUnavailable: Story = { ...DeckBuilderAlone, parameters: { msw: [http.get('/api/v1/decks/:deckId/full', () => HttpResponse.json({ errors: [{ message: 'Fictional deck outage' }] }, { status: 503 })), ...pageHandlers()] }, play: async ({ canvas }) => { (await canvas.findByRole('button', { name: 'Deck Builder module' })).click(); await canvas.findByRole('button', { name: 'Retry deck' }); } };
-export const CollectionUnavailable: Story = { ...CollectionAlone, parameters: { msw: [http.get('/api/v1/collections/me/cards', () => HttpResponse.json({ errors: [{ message: 'Fictional collection outage' }] }, { status: 503 })), ...pageHandlers()] } };
+export const CollectionUnavailable: Story = { ...CollectionAlone, parameters: { msw: [http.get('/api/v1/collections/me/view', () => HttpResponse.json({ errors: [{ message: 'Fictional collection outage' }] }, { status: 503 })), ...pageHandlers()] } };
 
 /** Named example for OverlayHostProvider through the declared module host. */
 export const HostOwnedOverlay: Story = { args: { initialHostOverlay: true }, ...DatabaseDetailActions };
@@ -75,3 +77,9 @@ export const HostSaveFeedbackRejected: Story = { ...HostSaveFeedbackSaved, args:
 
 /** Opt-in host prompt uses the existing SlideOutPanel; all data stays fictional/MSW. */
 export const UnsavedHostReturn: Story = { args: { initialReadonly: false, initialUnsavedPolicy: true }, play: async ({ canvas }) => { await userEvent.click(await canvas.findByRole('button', { name: 'Deck Builder module' })); const input = await canvas.findByRole('textbox', { name: 'Deck name' }); await userEvent.clear(input); await userEvent.type(input, 'Fictional unsaved draft'); await userEvent.click(await canvas.findByRole('button', { name: 'Collection module' })); await canvas.findByRole('dialog', { name: 'Unsaved deck changes' }); } };
+
+/** Demonstrates a host-supplied client; MSW is presentation evidence, not live service access. */
+export const HostSuppliedApi: Story = { args: { api:createModuleApi() } };
+
+/** Local diagnostic controls with fictional MSW responses; no service credentials or real account. */
+export const LocalRequestObservations: Story = { render:()=> {const access=harnessAccess('?adapter=direct');return <ModuleHarness user={null} api={access.api} requestEvidence={access.evidence} initialDeckId="storybook-deck" />;} };

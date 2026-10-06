@@ -1,0 +1,271 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "inputFingerprint": "a9fffe6181ee08b3b948583c59e3f129dcec47fa400197ee4ddbab4ecdf260c8",
+  "actor": "isolated Guest",
+  "method": "CUA live browser; real API with explicitly selected local delay/outage injection",
+  "scenarios": [
+    {
+      "id": "empty-server-evaluation",
+      "status": "passed"
+    },
+    {
+      "id": "slow-current-totals-preserved-grid",
+      "status": "passed"
+    },
+    {
+      "id": "failed-evaluation-explicit-unavailable",
+      "status": "passed"
+    },
+    {
+      "id": "reconnect-retry-retained-quantities",
+      "status": "passed"
+    },
+    {
+      "id": "repeated-mount-current-evaluation",
+      "status": "passed"
+    },
+    {
+      "id": "scoped-guest-cleanup",
+      "status": "passed"
+    }
+  ],
+  "evidence": [
+    {
+      "screenshot": "collection-recovery-final/empty-before.jpg",
+      "dom": "collection-recovery-final/empty-before.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/module-harness.html?adapter=lrg"
+    },
+    {
+      "screenshot": "collection-recovery-final/slow-current-input.jpg",
+      "dom": "collection-recovery-final/slow-current-input.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/module-harness.html?adapter=lrg"
+    },
+    {
+      "screenshot": "collection-recovery-final/outage-retained-input.jpg",
+      "dom": "collection-recovery-final/outage-retained-input.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/module-harness.html?adapter=lrg"
+    },
+    {
+      "screenshot": "collection-recovery-final/reconnected-current-totals.jpg",
+      "dom": "collection-recovery-final/reconnected-current-totals.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/module-harness.html?adapter=lrg"
+    },
+    {
+      "screenshot": "collection-recovery-final/restored-empty.jpg",
+      "dom": "collection-recovery-final/restored-empty.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/module-harness.html?adapter=lrg"
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "run-owned device printing restored to zero; no saved deck/collection writes"
+  },
+  "acceptance": "Automated only; Kyle acceptance pending",
+  "gaps": [
+    "Device outage injection is not a real network disconnect",
+    "No production writes or production validation"
+  ],
+  "requestEvidence": {
+    "mode": "online",
+    "requests": [
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/config/app",
+        "status": 200,
+        "durationMs": 12.400000005960464,
+        "decodedBytes": 139,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/auth/me",
+        "status": 200,
+        "durationMs": 16.299999997019768,
+        "decodedBytes": 213,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/dbv/sets",
+        "status": 200,
+        "durationMs": 43.70000000298023,
+        "decodedBytes": 394,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/foil-card-map",
+        "status": 200,
+        "durationMs": 51.599999994039536,
+        "decodedBytes": 29945,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/presentation/characters",
+        "status": 200,
+        "durationMs": 57.5,
+        "decodedBytes": 421764,
+        "outcome": "response"
+      },
+      {
+        "operation": "POST /api/host-fixtures/lrg/api/v1/collections/evaluate",
+        "status": 200,
+        "durationMs": 10.299999997019768,
+        "decodedBytes": 193,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/presentation/battlegrounds",
+        "status": 200,
+        "durationMs": 92.59999999403954,
+        "decodedBytes": 1307,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/presentation/locations",
+        "status": 200,
+        "durationMs": 101.29999999701977,
+        "decodedBytes": 30643,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/presentation/power-cards",
+        "status": 200,
+        "durationMs": 103.70000000298023,
+        "decodedBytes": 113629,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/presentation/missions",
+        "status": 200,
+        "durationMs": 115.70000000298023,
+        "decodedBytes": 59522,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/presentation/events",
+        "status": 200,
+        "durationMs": 118.70000000298023,
+        "decodedBytes": 46927,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/presentation/special-cards",
+        "status": 200,
+        "durationMs": 141.1000000089407,
+        "decodedBytes": 993601,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/presentation/aspects",
+        "status": 200,
+        "durationMs": 145.40000000596046,
+        "decodedBytes": 10814,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/presentation/advanced-universe",
+        "status": 200,
+        "durationMs": 164.40000000596046,
+        "decodedBytes": 11368,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/presentation/teamwork",
+        "status": 200,
+        "durationMs": 182.20000000298023,
+        "decodedBytes": 83708,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/presentation/ally-universe",
+        "status": 200,
+        "durationMs": 199.3999999910593,
+        "decodedBytes": 23622,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/presentation/training",
+        "status": 200,
+        "durationMs": 201.29999999701977,
+        "decodedBytes": 16902,
+        "outcome": "response"
+      },
+      {
+        "operation": "GET /api/host-fixtures/lrg/api/v1/catalog/presentation/basic-universe",
+        "status": 200,
+        "durationMs": 203.19999998807907,
+        "decodedBytes": 24819,
+        "outcome": "response"
+      },
+      {
+        "operation": "POST /api/host-fixtures/lrg/api/v1/collections/evaluate",
+        "status": 200,
+        "durationMs": 757.9000000059605,
+        "decodedBytes": 243,
+        "outcome": "response"
+      },
+      {
+        "operation": "POST /api/host-fixtures/lrg/api/v1/collections/evaluate",
+        "status": 0,
+        "durationMs": 0,
+        "decodedBytes": 0,
+        "outcome": "failed"
+      },
+      {
+        "operation": "POST /api/host-fixtures/lrg/api/v1/collections/evaluate",
+        "status": 0,
+        "durationMs": 0,
+        "decodedBytes": 0,
+        "outcome": "failed"
+      },
+      {
+        "operation": "POST /api/host-fixtures/lrg/api/v1/collections/evaluate",
+        "status": 200,
+        "durationMs": 7.4000000059604645,
+        "decodedBytes": 243,
+        "outcome": "response"
+      },
+      {
+        "operation": "POST /api/host-fixtures/lrg/api/v1/collections/evaluate",
+        "status": 200,
+        "durationMs": 12.200000002980232,
+        "decodedBytes": 243,
+        "outcome": "response"
+      },
+      {
+        "operation": "POST /api/host-fixtures/lrg/api/v1/collections/evaluate",
+        "status": 200,
+        "durationMs": 8.099999994039536,
+        "decodedBytes": 193,
+        "outcome": "response"
+      }
+    ]
+  },
+  "browserErrorCount": 0,
+  "counts": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "status": "passed"
+}

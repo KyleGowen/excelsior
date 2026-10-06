@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "sourceFingerprint": "a9fffe6181ee08b3b948583c59e3f129dcec47fa400197ee4ddbab4ecdf260c8",
+  "method": "CUA live UI; real local API; caller-created fictional Guest import",
+  "scenarios": [
+    {
+      "id": "atomic-import-complete-visible-cards-metrics",
+      "status": "passed"
+    },
+    {
+      "id": "server-preplacement-count-icons-save-reload",
+      "status": "passed"
+    },
+    {
+      "id": "server-ko-dimming-and-restore",
+      "status": "passed"
+    },
+    {
+      "id": "rapid-unsaved-edits-fresh-metrics",
+      "status": "passed"
+    },
+    {
+      "id": "server-add-cards-candidates-available",
+      "status": "passed"
+    },
+    {
+      "id": "edited-save-server-draw-capability-export",
+      "status": "passed"
+    }
+  ],
+  "evidence": [
+    {
+      "screenshot": "import-editor-final/atomic-import-complete.jpg",
+      "dom": "import-editor-final/atomic-import-complete.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/users/872e5095955c1a9fc3396c634f32e91d0135afb05d6ec960ae38213760f04552/decks/[owned local fixture]"
+    },
+    {
+      "screenshot": "import-editor-final/server-preplacement-save-reload.jpg",
+      "dom": "import-editor-final/server-preplacement-save-reload.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/users/872e5095955c1a9fc3396c634f32e91d0135afb05d6ec960ae38213760f04552/decks/[owned local fixture]"
+    },
+    {
+      "screenshot": "import-editor-final/server-ko-dimming.jpg",
+      "dom": "import-editor-final/server-ko-dimming.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/users/872e5095955c1a9fc3396c634f32e91d0135afb05d6ec960ae38213760f04552/decks/[owned local fixture]"
+    },
+    {
+      "screenshot": "import-editor-final/rapid-edits-fresh-metrics.jpg",
+      "dom": "import-editor-final/rapid-edits-fresh-metrics.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/users/872e5095955c1a9fc3396c634f32e91d0135afb05d6ec960ae38213760f04552/decks/[owned local fixture]"
+    },
+    {
+      "screenshot": "import-editor-final/server-candidate-panel.jpg",
+      "dom": "import-editor-final/server-candidate-panel.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/users/872e5095955c1a9fc3396c634f32e91d0135afb05d6ec960ae38213760f04552/decks/[owned local fixture]"
+    },
+    {
+      "screenshot": "import-editor-final/edited-server-export.jpg",
+      "dom": "import-editor-final/edited-server-export.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/users/872e5095955c1a9fc3396c634f32e91d0135afb05d6ec960ae38213760f04552/decks/[owned local fixture]"
+    }
+  ],
+  "acceptance": "Automated only; Kyle acceptance separate",
+  "cleanup": {
+    "applicationRecords": "Caller must delete this exact owned import; preexisting inventory unchanged"
+  },
+  "browserErrorCount": 0,
+  "counts": {
+    "passed": 6,
+    "failed": 0,
+    "blocked": 0,
+    "skipped": 0
+  },
+  "status": "passed"
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "surface": "database",
+    "beforeDimensions": [
+      1280,
+      720
+    ],
+    "afterDimensions": [
+      1280,
+      720
+    ],
+    "comparable": true,
+    "changedPixels": 84245,
+    "pixelsAbove20": 0
+  },
+  {
+    "surface": "detail",
+    "beforeDimensions": [
+      1280,
+      720
+    ],
+    "afterDimensions": [
+      1280,
+      720
+    ],
+    "comparable": true,
+    "changedPixels": 11259,
+    "pixelsAbove20": 0
+  },
+  {
+    "surface": "collection",
+    "beforeDimensions": [
+      1280,
+      720
+    ],
+    "afterDimensions": [
+      1280,
+      720
+    ],
+    "comparable": true,
+    "changedPixels": 0,
+    "pixelsAbove20": 0
+  },
+  {
+    "surface": "deck",
+    "beforeDimensions": [
+      1280,
+      720
+    ],
+    "afterDimensions": [
+      1280,
+      720
+    ],
+    "comparable": true,
+    "changedPixels": 0,
+    "pixelsAbove20": 0
+  },
+  {
+    "surface": "home",
+    "beforeDimensions": [
+      1280,
+      720
+    ],
+    "afterDimensions": [
+      1280,
+      720
+    ],
+    "comparable": true,
+    "changedPixels": 103389,
+    "pixelsAbove20": 8
+  }
+]

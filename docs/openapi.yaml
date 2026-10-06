@@ -65,6 +65,45 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    CollectionEvaluation:
+      type: object
+      required: [totalOwned, uniqueCards, quantities, capabilities]
+      properties:
+        totalOwned: { type: integer, minimum: 0 }
+        uniqueCards: { type: integer, minimum: 0 }
+        quantities: { type: object, additionalProperties: { type: integer, minimum: 0 } }
+        capabilities:
+          type: object
+          required: [canSetQuantity, storage, minimumQuantity, maximumQuantity]
+          properties:
+            canSetQuantity: { type: boolean }
+            storage: { type: string, enum: [device, account] }
+            minimumQuantity: { type: integer, enum: [0] }
+            maximumQuantity: { type: integer, enum: [99] }
+    CollectionEvaluationRequest:
+      type: object
+      additionalProperties: false
+      required: [entries]
+      properties:
+        entries:
+          type: array
+          maxItems: 10000
+          items:
+            type: object
+            additionalProperties: false
+            required: [cardId, cardType, imagePath, quantity]
+            properties:
+              cardId: { type: string, minLength: 1, maxLength: 200 }
+              cardType: { type: string, enum: [character, special, power, location, battleground, mission, event, aspect, advanced_universe, teamwork, ally_universe, training, basic_universe] }
+              imagePath: { type: string, maxLength: 2048 }
+              quantity: { type: integer, minimum: 0, maximum: 9007199254740991 }
+      description: Sum must remain a safe integer; HTTP body-size limits also apply. No actor fields or persistence.
+    CollectionView:
+      type: object
+      required: [cards, evaluation]
+      properties:
+        cards: { type: array, items: { type: object, additionalProperties: true } }
+        evaluation: { $ref: '#/components/schemas/CollectionEvaluation' }
     Envelope:
       type: object
       properties:
@@ -2091,6 +2130,49 @@ paths:
       tags: [Decks]
       summary: Update UI preferences for a deck.
       responses: { '200': { description: OK } }
+  /api/v1/collections/evaluate:
+    post:
+      tags: [Collections]
+      security: []
+      summary: Stateless device-local Collection snapshot evaluation.
+      description: No records read/written; no-store; 120 requests per IP/minute; service-bearing requests need collections:read.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CollectionEvaluationRequest' }
+      responses:
+        '200':
+          description: V1 envelope with device evaluation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/CollectionEvaluation' }
+                  meta: { $ref: '#/components/schemas/Meta' }
+                  errors: { type: array, items: { $ref: '#/components/schemas/ErrorBody' } }
+        '400': { description: VALIDATION_ERROR }
+        '429': { description: RATE_LIMITED }
+  /api/v1/collections/me/view:
+    get:
+      tags: [Collections]
+      summary: Current authenticated player's cards and authoritative derived totals.
+      description: USER/ADMIN only, no-store. Gets or creates that player's empty Collection; cards/totals share one read snapshot. Guest is never adopted.
+      responses:
+        '200':
+          description: V1 envelope with current-user view.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/CollectionView' }
+                  meta: { $ref: '#/components/schemas/Meta' }
+                  errors: { type: array, items: { $ref: '#/components/schemas/ErrorBody' } }
+        '401': { description: UNAUTHORIZED }
+        '403': { description: GUEST_FORBIDDEN }
+        '503': { description: COLLECTION_VIEW_UNAVAILABLE }
   /api/v1/collections/me:
     get:
       tags: [Collections]

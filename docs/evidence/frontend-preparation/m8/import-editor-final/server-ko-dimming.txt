@@ -1,0 +1,84 @@
+- complementary:
+  - button "Home":
+    - img "Excelsior"
+  - navigation:
+    - button "Home":
+    - button "Card Database":
+    - button "Decks":
+    - button "Collection":
+    - button "Community":
+- banner:
+  - button "Back to decks":
+  - textbox "Deck name": M7 Atomic Import
+  - generic: 8 cards
+  - button "Limited" [pressed]
+  - button "Unlisted"
+  - 'generic "Threat: 18"':
+    - generic: "18"
+  - region "Character maximums":
+    - generic: Max
+    - 'generic "Character max — Energy: 0"':
+      - 'generic "Energy: 0"':
+        - generic: "0"
+    - 'generic "Character max — Combat: 0"':
+      - 'generic "Combat: 0"':
+        - generic: "0"
+    - 'generic "Character max — Brute Force: 0"':
+      - 'generic "Brute Force: 0"':
+        - generic: "0"
+    - 'generic "Character max — Intelligence: 0"':
+      - 'generic "Intelligence: 0"':
+        - generic: "0"
+  - region "Icon totals":
+    - generic: Total
+    - 'generic "Icon total — Energy: 0"':
+      - 'generic "Energy: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Combat: 5"':
+      - 'generic "Combat: 5"':
+        - generic: "5"
+    - 'generic "Icon total — Brute Force: 0"':
+      - 'generic "Brute Force: 0"':
+        - generic: "0"
+    - 'generic "Icon total — Intelligence: 0"':
+      - 'generic "Intelligence: 0"':
+        - generic: "0"
+  - button "List View":
+    - text: List View
+  - button "Draw Hand":
+    - text: Draw Hand
+  - button "Export":
+    - text: Export
+  - button "Add Cards":
+    - text: Add Cards
+  - button "Save":
+    - text: Save
+- heading "Characters 1" [level=2]:
+  - text: Characters
+  - generic: "1"
+- button "View Lancelot":
+- button "Select Lancelot as reserve": Select Reserve
+- 'button "Un-KO character: Lancelot" [active] [pressed]': KO
+- button "Remove Lancelot":
+- heading "Special Cards 3" [level=2]:
+  - text: Special Cards
+  - generic: "3"
+- button "View Sword and Shield":
+- button "Remove Sword and Shield":
+- button "View Sword and Shield":
+- button "Remove Sword and Shield":
+- button "View Sword and Shield":
+- button "Remove Sword and Shield":
+- heading "Power Cards 5" [level=2]:
+  - text: Power Cards
+  - generic: "5"
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":
+- button "View 5 - Combat":
+- button "Remove 5 - Combat":

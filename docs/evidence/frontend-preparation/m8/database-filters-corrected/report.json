@@ -1,0 +1,56 @@
+{
+  "kind": "browser",
+  "schema": 1,
+  "environment": "local",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "inputFingerprint": "a9fffe6181ee08b3b948583c59e3f129dcec47fa400197ee4ddbab4ecdf260c8",
+  "status": "passed",
+  "actor": "Guest",
+  "method": "CUA real local catalog search/set/stat/foil filters and printing selection",
+  "scenarios": [
+    {
+      "id": "foil-filter-selected-printing",
+      "status": "passed"
+    },
+    {
+      "id": "set-filter-empty-and-restore",
+      "status": "passed"
+    },
+    {
+      "id": "stat-filter-match-empty-and-restore",
+      "status": "passed"
+    }
+  ],
+  "counts": {
+    "passed": 3,
+    "failed": 0,
+    "blocked": 0,
+    "skipped": 0
+  },
+  "browserErrorCount": 0,
+  "evidence": [
+    {
+      "screenshot": "database-filters-final/selected-foil.jpg",
+      "dom": "database-filters-final/selected-foil.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/data"
+    },
+    {
+      "screenshot": "database-filters-corrected/combat-filter-restored.jpg",
+      "dom": "database-filters-corrected/combat-filter-restored.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/data"
+    }
+  ],
+  "retainedAttempt": "A close-button click left the scrolled detail panel visible and subsequent checkbox clicks failed. Screenshot confirmed the open panel; Escape plus an explicit hidden wait cleared it before retry. Initial click cause is unconfirmed.",
+  "cleanup": {
+    "applicationRecords": "unchanged; only local UI filters"
+  },
+  "acceptance": "Automated only; Kyle acceptance separate"
+}

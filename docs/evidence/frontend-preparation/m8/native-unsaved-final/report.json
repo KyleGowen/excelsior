@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "sourceFingerprint": "a9fffe6181ee08b3b948583c59e3f129dcec47fa400197ee4ddbab4ecdf260c8",
+  "backendRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "actor": "Guest",
+  "method": "CUA actual local deck edits; delayed/rejected save explicitly injected by shared fixture helper",
+  "scenarios": [
+    {
+      "id": "native-link-and-popstate-back-stay",
+      "status": "passed"
+    },
+    {
+      "id": "native-forward-stay-discard-return",
+      "status": "passed"
+    },
+    {
+      "id": "pending-save-blocked-clean-success",
+      "status": "passed"
+    },
+    {
+      "id": "failed-save-and-external-destination-stay",
+      "status": "passed"
+    },
+    {
+      "id": "clean-owned-handoff-save",
+      "status": "passed"
+    }
+  ],
+  "evidence": [
+    {
+      "screenshot": "native-unsaved-final/back-stay-retained.jpg",
+      "dom": "native-unsaved-final/back-stay-retained.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/prepared-host/tools/decks/local-copy"
+    },
+    {
+      "screenshot": "native-unsaved-final/save-pending-blocked.jpg",
+      "dom": "native-unsaved-final/save-pending-blocked.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/prepared-host/tools/decks/local-copy"
+    },
+    {
+      "screenshot": "native-unsaved-final/failed-save-external-stay.jpg",
+      "dom": "native-unsaved-final/failed-save-external-stay.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://localhost:5188/prepared-host/tools/decks/local-copy"
+    }
+  ],
+  "acceptance": "Automated only; Kyle acceptance separate",
+  "gaps": [
+    "Browser reload/tab-close confirmation is separately checked; browsers may suppress native prompts",
+    "Real account/host identity and production native route fallback are future inputs"
+  ],
+  "browserErrorCount": 0,
+  "counts": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "status": "passed",
+  "cleanup": "Caller deletes automated clones; handoff copy may remain only with an explicit private manifest/lifetime"
+}

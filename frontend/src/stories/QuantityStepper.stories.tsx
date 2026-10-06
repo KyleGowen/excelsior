@@ -18,3 +18,5 @@ export const Default: Story = {};
 export const Small: Story = { args: { size: 'sm' } };
 export const AtMinimum: Story = { args: { value: 0 } };
 export const AtMaximum: Story = { args: { value: 5, max: 5 } };
+
+export const AwaitingServerCapability: Story = {args:{disabled:true}};

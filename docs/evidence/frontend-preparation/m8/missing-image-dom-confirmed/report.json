@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "ca6d811fd0872859c01e575295a79678442b76b0",
+  "inputFingerprint": "a9fffe6181ee08b3b948583c59e3f129dcec47fa400197ee4ddbab4ecdf260c8",
+  "actor": "Guest",
+  "method": "CUA compiled module; real missing local URL and emitted placeholder fallback",
+  "scenarios": [
+    {
+      "id": "real-missing-image-fallback-and-isolation",
+      "status": "passed"
+    }
+  ],
+  "evidence": [
+    {
+      "screenshot": "missing-image-dom-confirmed/missing-art-fallback.jpg",
+      "dom": "missing-image-dom-confirmed/missing-art-fallback.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://127.0.0.1:5189/delivery-proof/"
+    }
+  ],
+  "acceptance": "Automated only; Kyle acceptance separate",
+  "cleanup": {
+    "applicationRecords": "unchanged",
+    "fixture": "missing-image injection and second module disabled"
+  },
+  "gaps": [
+    "No production asset or external host proof"
+  ],
+  "expectedMissingAssetErrors": [],
+  "unexpectedErrors": [],
+  "counts": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "status": "passed"
+}
