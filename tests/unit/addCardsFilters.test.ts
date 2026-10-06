@@ -1,10 +1,11 @@
 import type { CatalogCard } from '../../frontend/src/lib/api/types';
-import { buildCharacterStacks } from '../../frontend/src/lib/catalog/characterStacks';
+import { buildCharacterStacks } from '../../tests/helpers/presentedCatalogCharacterization';
 import {
   buildDeckUsabilityContext,
   deckCatalogIndexKey,
+  isCatalogCardUsable,
   effectiveHideUnusablesForTab,
-} from '../../frontend/src/lib/deck-usability';
+} from '../../tests/helpers/serverCandidateCharacterization';
 import {
   filterAndSortTypeCardsWithOptions,
   filterCharacterStacksWithOptions,
@@ -40,7 +41,7 @@ describe('addCardsFilters hide unusables', () => {
       searchQuery: '',
       setFilter: '',
       hideUnusables: true,
-      usabilityCtx: ctx,
+      usableByIdentity: new Map(powerCards.map(c => [`power-cards:${c.id}`,isCatalogCardUsable(c,'power-cards',ctx)])),
     };
 
     const filtered = filterAndSortTypeCardsWithOptions(powerCards, 'power-cards', options);
@@ -85,7 +86,7 @@ describe('addCardsFilters hide unusables', () => {
       searchQuery: '',
       setFilter: '',
       hideUnusables: effectiveHideUnusablesForTab('stacks', true),
-      usabilityCtx: ctx,
+      usableByIdentity: new Map([[`special-cards:${unusableSpecial.id}`,false]]),
     };
 
     const filtered = filterCharacterStacksWithOptions(stacks, stacksOptions, {
@@ -102,7 +103,6 @@ describe('addCardsFilters special scopes', () => {
     searchQuery: '',
     setFilter: '',
     hideUnusables: false,
-    usabilityCtx: buildDeckUsabilityContext([], {}),
   };
 
   it('detects true Any Character specials from linked character fields only', () => {

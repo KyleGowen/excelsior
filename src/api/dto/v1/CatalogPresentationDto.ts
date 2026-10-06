@@ -13,6 +13,8 @@ export interface CatalogPresentationDto {
   addDefaultPrintingId: string;
   basePrintingId: string | null;
   foilPrintingId: string | null;
+  /** Server-declared display projection for a mapped foil missing from the catalog rows. */
+  missingFoilPrinting?: { printingId: string; setNumber: string } | null;
   /** Printing-picker row IDs preserving current mapped-foil and foil-only promo behavior. */
   printingIds: string[];
   searchText: string;

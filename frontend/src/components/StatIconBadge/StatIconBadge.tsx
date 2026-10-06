@@ -1,4 +1,4 @@
-import { assetUrl } from '../../lib/images/cardImages';
+import { useImageAssets } from '../../lib/images/useImageAssets';
 import {
   STAT_ICON_PATHS,
   buildStatIconBadgeLabel,
@@ -28,6 +28,7 @@ export function StatIconBadge({
   title,
   className,
 }: StatIconBadgeProps) {
+  const { assetUrl } = useImageAssets();
   const displayValue = String(value);
   const defaultLabel = buildStatIconBadgeLabel(type, value);
   const ariaLabel = title ?? defaultLabel;

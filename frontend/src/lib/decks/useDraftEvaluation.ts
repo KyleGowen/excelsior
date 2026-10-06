@@ -2,7 +2,7 @@ import { useOptionalModuleHost } from '../../modules/ModuleHost';
 import { useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { evaluateDraft, type DraftEvaluationInput, type DraftEvaluation } from '../api/decks';
-import { evaluationInputKey } from '../../../../src/services/deck-evaluation/draftInput';
+import { evaluationInputKey } from '../../contracts/draftInput';
 /** Exact-input results control actions; the last settled display stays in place during refresh. */
 export function useDraftEvaluation(input: Omit<DraftEvaluationInput, 'revision'>, enabled: boolean, seed?: DraftEvaluation | null) {
   const hostOperation = useOptionalModuleHost()?.api.evaluateDraft ?? evaluateDraft;

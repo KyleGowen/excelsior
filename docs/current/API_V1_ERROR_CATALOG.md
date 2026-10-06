@@ -1,7 +1,7 @@
 # API v1 — error catalog
 
 Every `/api/v1` response uses the envelope `{ data, meta, errors }`. On any
-non-2xx, `data` is `null` and `errors` is a non-empty array of
+non-2xx, `data` is normally `null` and `errors` is a non-empty array of
 `{ code, message, field? }`. This table is authoritative for the stable
 `code` values. **Any new `/api/v1` route MUST add its error codes here (and
 to [`docs/openapi.yaml`](../openapi.yaml)) in the same PR.**
@@ -111,3 +111,13 @@ Token request schema failures use `VALIDATION_ERROR` (400); the endpoint's 15/IP
 | POST `/decks/candidates/evaluate` | 400 | `VALIDATION_ERROR`, `DRAFT_STRUCTURE_INVALID` | Bounded strict input, existing typed catalog identities and aggregated draft rows required |
 | POST `/decks/candidates/evaluate` | 429 | `RATE_LIMITED` | Independent stateless Add Cards preview budget |
 | POST `/decks/candidates/evaluate` | 503 | `DRAFT_EVALUATION_UNAVAILABLE` | No current usability claim; preserve draft and retry |
+
+## M7 preview/import additions
+
+| Code | HTTP | Meaning | Action |
+| --- | --- | --- | --- |
+| `DRAFT_PREVIEW_UNAVAILABLE` | 503 | Server draw/export/grid/hand analysis could not complete. | Retain draft; explicitly retry. Never substitute browser game calculations. |
+| `IMPORT_UNRESOLVED` | 400 | Names could not resolve before insertion. | Correct structured unresolved names; no deck was inserted. |
+| `DECK_IMPORT_UNAVAILABLE` | 503 | Import acknowledgement unavailable; insertion may have committed. | Inspect inventory before retrying to avoid duplicates. |
+
+`IMPORT_UNRESOLVED` deliberately carries its typed failure in `data` alongside `errors`. Existing deck validation failures also have documented structured data; this is not permission to put arbitrary payloads in other error envelopes. Preview/import reuse `VALIDATION_ERROR`, `DRAFT_STRUCTURE_INVALID`, `UNAUTHORIZED`, `SESSION_REQUIRED`, `FORBIDDEN`, `READ_ONLY_MODE` and `RATE_LIMITED` under their existing meanings.

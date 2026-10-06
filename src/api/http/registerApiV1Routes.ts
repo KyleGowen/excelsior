@@ -1,3 +1,6 @@
+import { registerDeckImportV1HttpRoutes } from './deck-import.http';
+import type { DeckImportService } from '../services/deckImportService';
+import { registerDeckPreviewV1HttpRoutes } from './deck-preview.http';
 import type { Application, IRouter, RequestHandler } from 'express';
 import express from 'express';
 import type { AuthenticationService } from '../../services/AuthenticationService';
@@ -75,6 +78,7 @@ export interface RegisterApiV1Deps {
   deckStatsService: DeckStatsService;
   deckWriteService: DeckWriteService;
   deckDraftEvaluationService?: DeckDraftEvaluationService;
+  deckImportService?:DeckImportService;
   deckDetailService: DeckDetailService;
   deckCardsService: DeckCardsService;
   deckUIPreferencesService: DeckUIPreferencesService;
@@ -186,6 +190,8 @@ export function createApiV1Router(deps: RegisterApiV1Deps): IRouter {
     optionalAuth: optionalOwnedAuth
   });
 
+  if (deps.deckImportService) registerDeckImportV1HttpRoutes(router,deps.deckImportService,ownedAuth);
+  if (deps.deckDraftEvaluationService) registerDeckPreviewV1HttpRoutes(router, deps.deckDraftEvaluationService, ownedAuth);
   registerDecksV1HttpRoutes(router, {
     deckListService: deps.deckListService,
     deckStatsService: deps.deckStatsService,

@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "browserTestedRuntimeArtifacts": 22,
+  "finalRuntimeArtifacts": 22,
+  "changedRuntimeArtifacts": [],
+  "declarationOutputs": "Rebuilt and independently typechecked after unused exports were removed",
+  "browserEvidenceReuse": "Permitted only for byte-identical runtime assets",
+  "backendEmittedJavaScriptFiles": 284,
+  "changedBackendJavaScriptFiles": 0,
+  "backendChange": "Unused type-only import removed for strict release lint; emitting compile is byte-identical to browser-tested backend."
+}

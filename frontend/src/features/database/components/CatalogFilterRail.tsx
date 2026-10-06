@@ -1,6 +1,6 @@
 import { useEffect, useId, type ReactNode } from 'react';
 import { IconChevronDown } from '../../../components/icons';
-import { useLayoutMode } from '../../../lib/layout/LayoutModeProvider';
+import { useLayoutMode } from '../../../lib/layout/useLayoutMode';
 
 interface CatalogFilterRailProps {
   ariaLabel: string;

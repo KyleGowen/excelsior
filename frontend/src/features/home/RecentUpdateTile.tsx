@@ -1,4 +1,4 @@
-import { resolveThumbUrl } from '../../lib/images/cardImages';
+import { useImageAssets } from '../../lib/images/useImageAssets';
 import { IconSparkles } from '../../components/icons';
 import type { RecentUpdate } from '../../lib/api/types';
 import { formatUpdateTypeLabel } from './recentUpdatesUtils';
@@ -11,6 +11,7 @@ interface RecentUpdateTileProps {
 }
 
 export function RecentUpdateTile({ item, isOpen, onToggle }: RecentUpdateTileProps) {
+  const { resolveThumbUrl } = useImageAssets();
   const typeLabel = formatUpdateTypeLabel(item.type);
   const typeClass = item.type.replace(/_/g, '-');
   const isSkyboundLaunch = item.id === 'a1000001-0000-4000-8000-000000000007';

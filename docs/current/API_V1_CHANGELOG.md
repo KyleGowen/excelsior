@@ -5,6 +5,8 @@ One line per change. Newest first. Keep this in sync with
 
 ## Unreleased — Phase 3 (scale + docs)
 
+- M7 adds server-only random draw, export, bounded grid summaries and ADMIN hand analysis; retires browser rule kernels and backend source imports from module delivery. Preview results bind exact input/revision; cancellation protects newer input. Adds atomic owned/Guest JSON import with pre-resolution, transactional rollback and explicit uncertain-acknowledgement errors. Catalog presentation declares missing foil projections; public previews remain read-scoped. Private frontend ESM/types/fonts/asset delivery and an independent compiled consumer are preparation, with no package publication or rebrand.
+
 - M4 adds public stateless `POST /api/v1/decks/candidates/evaluate`: server-resolved Add Cards usability/reasons, editor quantity ceilings and mission threshold. It is read-scoped, bounded and no-store; it grants no deck-write authority. Add Cards rejects stale responses and exposes retry on failure.
 
 - M4 adds thirteen read-only `/api/v1/catalog/presentation/<type>` paths carrying server-derived grouping, printing/default selection, aliases and character associations. Raw catalog contracts remain unchanged. Database Add to Deck now publishes the returned authoritative deck snapshot before normal navigation, preventing a cached editor from hiding the newly added card.
@@ -133,3 +135,5 @@ One line per change. Newest first. Keep this in sync with
 - Milestone 3: added public stateless `POST /decks/evaluate`, compatibility metrics, echoed revision/catalog/rule versions, explicit unavailable state, and server-owned Guest/save validity. No persistence or new format policy.
 
 - M3: attach exact-input evaluation to single-deck loads and saved/Guest creation/edit responses; metadata updates return actual cards; unavailable stats leave readable decks unchecked; immediate unsaved preview replaces the one-second delay.
+
+M7 local regression also corrects Guest list serialization: retain the persisted Limited flag and calculate session-deck threat through the authoritative evaluator. Summary evaluation failure returns an explicit list failure rather than a fresh incorrect threat value.

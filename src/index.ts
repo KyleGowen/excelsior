@@ -1,3 +1,4 @@
+import { DeckImportService } from './api/services/deckImportService';
 import { DeckDraftEvaluationService } from './api/services/deckDraftEvaluationService';
 import 'dotenv/config';
 import express from 'express';
@@ -98,6 +99,7 @@ const deckBackgroundService = new DeckBackgroundService();
 
 // Initialize guest deck persistence (session-scoped, in-memory; not persisted to DB)
 const guestDeckPersistence = new GuestDeckPersistenceService();
+const deckImportService = new DeckImportService(deckDraftEvaluationService,deckRepository,guestDeckPersistence);
 
 // Exported for test server bootstrap (M2) so test app can reuse same DB init and guest deck cleanup
 export { databaseInit, guestDeckPersistence };
@@ -325,6 +327,7 @@ registerApiV1Routes(app, {
   deckStatsService,
   deckWriteService,
   deckDraftEvaluationService,
+  deckImportService,
   deckDetailService,
   deckCardsService,
   deckUIPreferencesService,

@@ -1,3 +1,4 @@
+import { DeckImportService } from '../api/services/deckImportService';
 import { DeckDraftEvaluationService } from '../api/services/deckDraftEvaluationService';
 /**
  * Test app bootstrap: builds Express app with test deps and shared route registration.
@@ -248,6 +249,7 @@ registerApiV1Routes(app, {
   deckStatsService,
   deckWriteService,
   deckDraftEvaluationService,
+  deckImportService:new DeckImportService(deckDraftEvaluationService,deckRepository,guestDeckPersistence),
   deckDetailService,
   deckCardsService,
   deckUIPreferencesService,

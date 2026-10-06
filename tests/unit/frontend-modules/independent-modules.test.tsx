@@ -40,11 +40,12 @@ function fixtureApi(): ModuleApi {
 beforeEach(() => {
   (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
   window.matchMedia = jest.fn(() => ({ matches: false, media: '', onchange: null, addListener: jest.fn(), removeListener: jest.fn(), addEventListener: jest.fn(), removeEventListener: jest.fn(), dispatchEvent: jest.fn() }));
+  globalThis.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} } as unknown as typeof ResizeObserver;
   globalThis.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} } as unknown as typeof IntersectionObserver;
   window.scrollTo = jest.fn(); Element.prototype.scrollIntoView = jest.fn(); Element.prototype.scrollTo = jest.fn();
   container = document.createElement('div'); document.body.appendChild(container); root = createRoot(container);
   client = new QueryClient({ defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } } });
-  host = { api: fixtureApi(), identity: { user: null, isGuest: true, isAdmin: false }, onOpenDeck: jest.fn(), onBack: jest.fn(), onHome: jest.fn() };
+  host = { assets:{resolveImageUrl:raw=>raw ? '/fictional-art/'+raw : '/fictional-placeholder.webp',resolveThumbUrl:raw=>raw ? '/fictional-art/'+raw : '/fictional-placeholder.webp',placeholderImageUrl:()=>'/fictional-placeholder.webp',assetUrl:url=>url}, api: fixtureApi(), identity: { user: null, isGuest: true, isAdmin: false }, onOpenDeck: jest.fn(), onBack: jest.fn(), onHome: jest.fn() };
 });
 afterEach(async () => { await act(async () => root.unmount()); client.clear(); container.remove(); expect(unexpectedFetch).not.toHaveBeenCalled(); });
 
@@ -97,6 +98,7 @@ it('cancels a catalog read when its last module is unmounted', async () => {
 it('disposes open card detail and Guest collection listeners when the host removes a module', async () => {
  const remove = jest.spyOn(window, 'removeEventListener');
  await mount(<CardDatabaseModule />);
+ for(let i=0;i<20&&!container.querySelector('[aria-label="View Billy the Kid"]');i++)await wait();
  const card = container.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement;
  await act(async () => card.click()); await wait();
  expect(container.querySelector('[role="dialog"]')).not.toBeNull();
@@ -128,6 +130,7 @@ it.each(['database', 'collection', 'deck'] as const)('routes %s card actions and
  host.cardActions = { render, requestAuthentication: request };
  await mount(source === 'database' ? <CardDatabaseModule /> : source === 'collection' ? <CollectionModule /> : <DeckBuilderModule deckId="storybook-deck" readonly />);
  if (source === 'collection') { const tab = [...container.querySelectorAll<HTMLButtonElement>('[role="tab"]')].find(t => t.textContent?.includes('Characters'))!; await act(async () => tab.click()); await wait(); }
+ for(let i=0;i<20&&!container.querySelector('[aria-label="View Billy the Kid"]');i++)await wait();
  const card = container.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement;
  expect(card).not.toBeNull();
  await act(async () => card.click()); await wait();
@@ -250,7 +253,8 @@ it('carries host icon context to an external detail portal and removes owned nod
   host.icons = { render: context => <span data-portal-icon={context.name}>◇</span> };
   host.overlays = { root: portal, position: 'absolute' };
   await mount(<CardDatabaseModule />);
-  const card = container.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement;
+  for(let i=0;i<20&&!container.querySelector('[aria-label="View Billy the Kid"]');i++)await wait();
+ const card = container.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement;
   await act(async () => card.click()); await wait();
   expect(portal.querySelector('[role="dialog"]')).not.toBeNull();
   expect(portal.querySelector('[data-module-icon="close"] [data-portal-icon="close"]')).not.toBeNull();
@@ -482,4 +486,25 @@ it('disposes a discarded native editor before applying a guarded host configurat
  const discard=[...container.querySelectorAll('button')].find(b=>b.textContent==='Discard and continue')!;
  await act(async()=>discard.click());await wait();expect(container.querySelector('[aria-label="Deck name"]')).toBeNull();expect(container.querySelector('[aria-label="Unsaved deck changes"]')).toBeNull();
  const unload=new Event('beforeunload',{cancelable:true});window.dispatchEvent(unload);expect(unload.defaultPrevented).toBe(false);expect(host.api.updateDeckMeta).not.toHaveBeenCalled();router.dispose();
+});
+
+it('aborts a pending server draw on disposal and ignores its late result', async () => {
+ let signal:AbortSignal|undefined;let resolve:((v:Awaited<ReturnType<ModuleApi['drawDraft']>>) => void)|undefined;
+ let draft:Parameters<ModuleApi['drawDraft']>[0]|undefined;
+ host.api.drawDraft=jest.fn((input,supplied)=>{signal=supplied;draft=input;return new Promise(done=>{resolve=done;});});
+ await mount(<DeckBuilderModule deckId="storybook-deck" readonly />);
+ let draw:HTMLButtonElement|undefined;for(let i=0;i<30&&!draw;i++){await wait();draw=[...container.querySelectorAll('button')].find(b=>b.textContent?.includes('Draw Hand')&&!b.disabled);}expect(draw).toBeDefined();
+ await act(async()=>draw!.click());expect(host.api.drawDraft).toHaveBeenCalledTimes(1);
+ await mount(null);expect(signal?.aborted).toBe(true);
+ await act(async()=>resolve!({cards:[]}));
+ expect(document.querySelector('[aria-label="Drawn Hand"]')).toBeNull();
+});
+it('keeps a rejected draw closed and allows an explicit retry without changing the deck', async () => {
+ host.api.drawDraft=jest.fn().mockRejectedValueOnce(new Error('Fictional draw failure')).mockImplementation(async(input:Parameters<ModuleApi['drawDraft']>[0])=>({schemaVersion:1,inputKey:evaluationInputKey(input),revision:input.revision,cards:[{type:'power',cardId:'fictional',quantity:1}]}));
+ await mount(<DeckBuilderModule deckId="storybook-deck" readonly />);
+ let draw:HTMLButtonElement|undefined;for(let i=0;i<30&&!draw;i++){await wait();draw=[...container.querySelectorAll('button')].find(b=>b.textContent?.includes('Draw Hand')&&!b.disabled);}expect(draw).toBeDefined();
+ await act(async()=>draw!.click());await wait();expect(container.textContent).toContain('Fictional draw failure');
+ expect(document.querySelector('[aria-label="Drawn Hand"]')).toBeNull();
+ await act(async()=>draw!.click());await wait();expect(document.querySelector('[aria-label="Drawn Hand"]')).not.toBeNull();
+ expect(host.api.drawDraft).toHaveBeenCalledTimes(2);
 });

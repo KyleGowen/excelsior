@@ -8,6 +8,7 @@ module.exports = {
     '**/tests/unit/**/*.spec.ts'
   ],
   transform: {
+    '\\.(png|webp)$': '<rootDir>/tests/helpers/browserAssetTransform.cjs',
     '^.+\\.ts$': 'ts-jest',
   },
   collectCoverageFrom: [

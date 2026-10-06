@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Checkbox } from '../../components/Checkbox';
 import type { CatalogCard, CatalogType, SetInfo } from '../../lib/api/types';
-import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
+import { useLayoutMode } from '../../lib/layout/useLayoutMode';
 import { CatalogFilterRail } from '../database/components/CatalogFilterRail';
 import { DbvFunctionIconStrip } from '../database/components/DbvFunctionIconStrip';
 import { DbvMissionSetSelect } from '../database/components/DbvMissionSetSelect';

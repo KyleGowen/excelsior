@@ -1,5 +1,5 @@
+import { useImageAssets } from '../../../lib/images/useImageAssets';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { assetUrl } from '../../../lib/images/cardImages';
 import type { CompareOp, NumericFieldDef } from '../filters/dbvFilterTypes';
 import { OP_LABELS, STAT_ICON_PATHS } from '../filters/dbvFilterTypes';
 import type { UseDbvFiltersReturn } from '../filters/useDbvFilters';
@@ -17,6 +17,7 @@ function StatCell({
   field: NumericFieldDef;
   filters: UseDbvFiltersReturn;
 }) {
+  const { assetUrl } = useImageAssets();
   const existing = filters.getNumericConstraint(field.key);
   const [op, setOp] = useState<CompareOp>(existing?.op ?? 'eq');
   const [value, setValue] = useState(existing?.value?.toString() ?? '');

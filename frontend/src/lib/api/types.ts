@@ -86,7 +86,7 @@ export interface CatalogErrataEntry {
 
 export interface CatalogCard {
   /** Domain metadata supplied by the presentation catalog contract. Raw fixture rows may omit it. */
-  presentation?: import('../../../../src/api/dto/v1/CatalogPresentationDto').CatalogPresentationDto;
+  presentation?: import('../../contracts/CatalogPresentationDto').CatalogPresentationDto;
   id: string;
   /** Characters/specials/power/missions/events use `name`. */
   name?: string;
@@ -172,7 +172,7 @@ export interface DeckMetadata {
 }
 
 export interface DeckDetail {
-  evaluation?: import('../../../../src/api/dto/v1/DeckDraftEvaluationDto').DeckDraftEvaluationDto | null;
+  evaluation?: import('../../contracts/DeckDraftEvaluationDto').DeckDraftEvaluationDto | null;
   evaluationError?: 'DRAFT_EVALUATION_UNAVAILABLE';
   metadata: DeckMetadata;
   cards: DeckCardEntry[];

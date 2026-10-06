@@ -1,3 +1,4 @@
+import { presentCatalog } from '../../src/services/catalog-presentation/presentCatalog';
 import type { CatalogCard } from '../../frontend/src/lib/api/types';
 import {
   ADD_CARDS_ANY_CHARACTER_SPECIALS_TAB,
@@ -67,6 +68,7 @@ describe('cardMatchesSearchQuery foil keyword', () => {
 });
 
 describe('cardMatchesSearchQuery printed card typo', () => {
+  const matches = (card:CatalogCard, query:string) => cardMatchesSearchQuery(presentCatalog([card], 'aspects', [], [])[0] as CatalogCard, query);
   const hiddenDanger: CatalogCard = {
     id: 'hidden-danger',
     card_name: 'Hidden Danger',
@@ -79,14 +81,14 @@ describe('cardMatchesSearchQuery printed card typo', () => {
   it.each(['Green', 'Greene', 'The Green Farm', 'The Greene Farm'])(
     'finds Hidden Danger using %s',
     (query) => {
-      expect(cardMatchesSearchQuery(hiddenDanger, query)).toBe(true);
+      expect(matches(hiddenDanger, query)).toBe(true);
     },
   );
 
   it('keeps the alias specific to the Skybound Hidden Danger printing', () => {
-    expect(cardMatchesSearchQuery({ ...hiddenDanger, card_name: 'Hershel Greene' }, 'The Green Farm')).toBe(false);
-    expect(cardMatchesSearchQuery({ ...hiddenDanger, set_number: '380' }, 'The Green Farm')).toBe(false);
-    expect(cardMatchesSearchQuery(hiddenDanger, 'Hidden Danger')).toBe(true);
+    expect(matches({ ...hiddenDanger, card_name: 'Hershel Greene' }, 'The Green Farm')).toBe(false);
+    expect(matches({ ...hiddenDanger, set_number: '380' }, 'The Green Farm')).toBe(false);
+    expect(matches(hiddenDanger, 'Hidden Danger')).toBe(true);
   });
 });
 

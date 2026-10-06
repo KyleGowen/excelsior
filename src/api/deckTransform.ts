@@ -45,7 +45,7 @@ export function transformGuestDeckToListItem(deckData: DeckData) {
       is_valid: deckData.metadata.is_valid ?? false,
       userId: deckData.metadata.userId,
       uiPreferences: deckData.metadata.uiPreferences,
-      is_limited: false,
+      is_limited: deckData.metadata.is_limited ?? false,
       reserve_character: deckData.metadata.reserve_character ?? null,
       background_image_path: null
     },
@@ -107,4 +107,3 @@ export function transformDeckAfterMetadataUpdate(deck: Deck, viewerUserId: strin
     cards: deck.cards ?? []
   };
 }
-

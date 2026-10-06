@@ -2,7 +2,7 @@ import type { CatalogCard } from '../../frontend/src/lib/api/types';
 import {
   collectPrintingsForCard,
   hasMultiplePrintings,
-} from '../../frontend/src/lib/catalog/cardPrintings';
+} from '../../tests/helpers/presentedCatalogCharacterization';
 import { buildFoilCardMapLookup } from '../../frontend/src/lib/catalog/foilCatalog';
 
 function card(id: string, extra: Partial<CatalogCard> = {}): CatalogCard {

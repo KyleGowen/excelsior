@@ -1,4 +1,4 @@
-import { assetUrl } from '../../../lib/images/cardImages';
+import { useImageAssets } from '../../../lib/images/useImageAssets';
 import { FUNCTION_ICON_DEFS } from '../filters/dbvFilterTypes';
 import type { UseDbvFiltersReturn } from '../filters/useDbvFilters';
 
@@ -11,6 +11,7 @@ export function DbvFunctionIconStrip({
   filters,
   ariaLabel = 'Filter by function icon',
 }: DbvFunctionIconStripProps) {
+  const { assetUrl } = useImageAssets();
   return (
     <div className="dbv-func-strip" role="group" aria-label={ariaLabel}>
       {FUNCTION_ICON_DEFS.map((def) => {

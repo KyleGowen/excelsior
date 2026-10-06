@@ -13,12 +13,12 @@ import { useFavoriteToggle } from '../../lib/decks/useFavoriteToggle';
 import { favoritesQueryKey } from '../../lib/decks/favoritesQueryKey';
 import { fetchCatalog } from '../../lib/api/catalog';
 import { buildMissionSetByCardId, deckMissionSetName } from '../../lib/decks/missionSetLabel';
-import { buildCharStatsById, deckMaxStats as computeDeckMaxStats } from '../../lib/decks/deckMaxStats';
+import { useDeckGridStats } from '../../lib/decks/deckMaxStats';
 import {
   buildDeckPreviewCatalogImages,
   enrichDeckListPreviewImages,
 } from '../../lib/decks/deckPreviewImages';
-import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
+import { useLayoutMode } from '../../lib/layout/useLayoutMode';
 import { stepCyclicalIndex } from '../../lib/layout/cyclicalIndex';
 import { DECK_SELECTION_SWIPE_BLOCK_SELECTOR, useHorizontalSwipe } from '../../lib/layout/useHorizontalSwipe';
 import {
@@ -226,16 +226,13 @@ export default function DeckSelectionPage() {
     setCreateOpen(true);
   };
 
-  const { input: exportDeckInput, loading: exportLoading } = useDeckExportInput(
+  const { input: exportDeckInput, loading: exportLoading, error: exportError, retry: retryExport } = useDeckExportInput(
     exportDeckId,
     isGuest,
     Boolean(exportDeckId),
   );
 
-  const charStatsById = useMemo(
-    () => buildCharStatsById(charactersQuery.data),
-    [charactersQuery.data],
-  );
+  const gridStats = useDeckGridStats(decksQuery.data ?? []);
 
   const previewCatalogImages = useMemo(
     () => buildDeckPreviewCatalogImages(
@@ -255,7 +252,7 @@ export default function DeckSelectionPage() {
     deckMissionSetName(deck, missionSetByCardId);
 
   const deckMaxStats = (deck: DeckListItem): DeckStatLine | null =>
-    computeDeckMaxStats(deck, charStatsById);
+    gridStats.get(deck.metadata.id) ?? null;
 
   const decks = decksQuery.data ?? [];
   const filtered = useMemo(() => {
@@ -780,6 +777,8 @@ export default function DeckSelectionPage() {
           open
           input={exportDeckInput ?? createStubDeckExportInput(user?.username ?? 'Guest')}
           loading={exportLoading || !exportDeckInput}
+          error={exportError}
+          onRetry={retryExport}
           onClose={() => setExportDeckId(null)}
         />
       ) : null}

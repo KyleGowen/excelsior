@@ -1,0 +1,158 @@
+{
+  "schema": 1,
+  "milestone": "M7",
+  "environment": "local isolated checkout and Docker",
+  "sourceRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+  "sourceState": "uncommitted M7 candidate; runtime inputs in runtime-inputs.json",
+  "status": "local verification passed; Kyle M7 acceptance pending",
+  "browser": {
+    "selectedReports": {
+      "built-final-desktop": {
+        "passed": 4,
+        "failed": 0,
+        "blocked": 0,
+        "skipped": 0
+      },
+      "built-final-mobile": {
+        "passed": 4,
+        "failed": 0,
+        "blocked": 0,
+        "skipped": 0
+      },
+      "native-desktop-final": {
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "native-mobile-final": {
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "atomic-editor-capability-final": {
+        "passed": 6,
+        "failed": 0,
+        "blocked": 0,
+        "skipped": 0
+      },
+      "ordinary-final": {
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "guest-summary-final": {
+        "passed": 1,
+        "failed": 0,
+        "blocked": 0,
+        "skipped": 0
+      }
+    },
+    "passed": 32,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0,
+    "evidence": "selected report directories; screenshots adjacent"
+  },
+  "gates": {
+    "unit": {
+      "passed": 3921,
+      "skipped": 18,
+      "passedSuites": 334,
+      "skippedSuites": 2,
+      "exitCode": 0,
+      "forceExit": true,
+      "logSha256": "e916c9ad2d1edf01079274f993fcca55e4108268fbc42f2637b61f556de965b2"
+    },
+    "modules": {
+      "passed": 87,
+      "suites": 6
+    },
+    "integration": {
+      "passed": 1028,
+      "suites": 118,
+      "cleanup": "completed",
+      "receipt": "integration.json"
+    },
+    "architecture": {
+      "passed": 10,
+      "receipt": "architecture.json"
+    },
+    "contractParity": 11,
+    "lint": {
+      "errors": 0,
+      "existingWarnings": 423
+    },
+    "dependencyAudits": {
+      "rootVulnerabilities": 0,
+      "frontendVulnerabilities": 0
+    },
+    "passed": [
+      "backend types",
+      "frontend types",
+      "ordinary frontend build",
+      "module build",
+      "compiled consumer build and types",
+      "Storybook build",
+      "SOC2 (45 cases, 9 suites)",
+      "registered Knip",
+      "OpenAPI parse and 131 references"
+    ],
+    "backendBuild": {
+      "status": "passed",
+      "receipt": "backend-build.json"
+    }
+  },
+  "delivery": {
+    "receipt": "delivery.json",
+    "hashedArtifacts": 285,
+    "backendSourcePresent": false,
+    "cardResourceTreePresent": false,
+    "dependencyLimit": "reuses installed frontend dependencies; no second clean installation"
+  },
+  "evidenceReuse": {
+    "runtimeArtifacts": 22,
+    "changedRuntimeArtifacts": 0,
+    "receipt": "artifact-browser-binding.json",
+    "note": "Compiled browser evidence reused after byte-identical final runtime output; declarations rebuilt and typechecked. Integration reused after unused private export cleanup, without HTTP behavior changes.",
+    "backendRuntimeArtifacts": 284,
+    "changedBackendRuntimeArtifacts": 0
+  },
+  "priorFailures": {
+    "index": "retained-attempts.json",
+    "parallelReceipt": "parallel-gates.json",
+    "note": "Original batch status failed because default Node reporter lacked TAP counts. Explicit TAP final architecture receipt passes; original receipt preserved."
+  },
+  "cleanup": {
+    "runOwnedImports": 2,
+    "deletedAnd404Verified": 2,
+    "originalInventoryPreserved": true,
+    "receipts": [
+      "cleanup-import.json",
+      "cleanup-summary.json"
+    ],
+    "productionMutations": 0
+  },
+  "release": {
+    "kyleM7Acceptance": "approved by Kyle: m7 approved, ship",
+    "committed": false,
+    "pushed": false,
+    "deployed": false,
+    "productionBrowser": "not run",
+    "authorization": "Ship authorized; candidate/main validation and production confirmation pending",
+    "status": "approved; release gate blocked by unresponsive local Docker; not pushed"
+  },
+  "gaps": [
+    "real external host identity/OAuth integration",
+    "ADMIN analysis live browser coverage",
+    "non-Latin font coverage",
+    "complete accessibility audit",
+    "native Chrome unload prompt presentation",
+    "production host fallback behavior",
+    "package size optimization",
+    "second clean dependency installation"
+  ],
+  "completionAudit": "completion-audit.md"
+}

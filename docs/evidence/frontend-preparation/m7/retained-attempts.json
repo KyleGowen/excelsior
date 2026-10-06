@@ -1,0 +1,82 @@
+{
+  "browser": [
+    {
+      "attempt": "native-final-desktop",
+      "counts": {
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "blocked": 6
+      },
+      "failed": [
+        {
+          "id": "native-integration",
+          "status": "failed",
+          "reason": "Error: Actual viewport differs"
+        }
+      ]
+    },
+    {
+      "attempt": "native-desktop-bound",
+      "counts": {
+        "passed": 5,
+        "failed": 1,
+        "skipped": 0,
+        "blocked": 1
+      },
+      "failed": [
+        {
+          "id": "native-integration",
+          "status": "failed",
+          "reason": "Error: Home retained deck"
+        }
+      ]
+    },
+    {
+      "attempt": "atomic-editor",
+      "counts": {
+        "passed": 2,
+        "failed": 1,
+        "blocked": 4,
+        "skipped": 0
+      },
+      "failed": [
+        {
+          "id": "imported-editor",
+          "status": "failed",
+          "reason": "Error: Error: Playwright selector deadline exceeded\nlocator.waitFor(visible) timed out for selector internal:text=\"3 cards\"s\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"waitFor\",\"locator\":\"internal:text=\\\"3 cards\\\"s\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}"
+        }
+      ]
+    },
+    {
+      "attempt": "atomic-editor-final",
+      "counts": {
+        "passed": 5,
+        "failed": 1,
+        "blocked": 1,
+        "skipped": 0
+      },
+      "failed": [
+        {
+          "id": "imported-editor",
+          "status": "failed",
+          "reason": "Error: Error: Playwright selector deadline exceeded\nwaiting on click for selector internal:role=button[name=\"Draw Hand\"s]\nLocator diagnostics: {\"kind\":\"action_failed\",\"action\":\"click\",\"locator\":\"internal:role=button[name=\\\"Draw Hand\\\"s]\",\"matchCount\":1,\"matches\":[{\"ariaLabel\":null,\"disabled\":true,\"role\":null,\"tag\":\"button\",\"text\":\"Draw Hand\",\"type\":\"button\",\"visible\":true}],\"visibleCount\":1,\"truncated\":false}"
+        }
+      ]
+    }
+  ],
+  "otherFailures": [
+    "ENOSPC checkout artwork copy: isolated checkout repaired using APFS clones",
+    "Startup first launched from wrong cwd and one selector was not the full Docker name; corrected ownership receipt passes",
+    "Ordinary build imported generated consumer through a story; replaced by a link so clean builds remain independent",
+    "Initial integration HTML 503 overlapped removal of dist/index.html during a build; rerun after build passed; new preview public-route policy allowlist added",
+    "Broad units retained an existing handle; focused new routes exit cleanly; declared forceExit used for broad terminal gate",
+    "New test fixtures needed matching transport return types, settled controls and ResizeObserver; fixed without game behavior changes",
+    "New 120-request HTTP rate case timed out under full suite; one explicit ephemeral listener with finally cleanup now passes broad suite",
+    "Node test receipt expected TAP but Node default was spec; explicit TAP yields 10 measured passing negative cases",
+    "Local delete click stalled IAB; exact privately tracked run-owned API deletion succeeded with 404 and original inventory confirmation",
+    "Two incorrect new browser assertions assumed KO changes playable count and six cards can draw eight; existing characterized rules corrected assertions",
+    "OpenAPI additive schema placement initially under parameters; moved to schemas and all 131 internal references resolve",
+    "One unit rerun was interrupted by sandbox listen EPERM; same gate passed with required local-network access"
+  ]
+}

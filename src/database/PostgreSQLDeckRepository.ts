@@ -52,6 +52,8 @@ export class PostgreSQLDeckRepository implements DeckRepository {
     );
   }
 
+  async createImportedDeck(userId:string,input:Parameters<typeof deckCrud.createImportedDeck>[2]):Promise<Deck> { return deckCrud.createImportedDeck(this.getContext(),userId,input); }
+
   async getDeckById(id: string): Promise<Deck | undefined> {
     return deckCrud.getDeckById(this.getContext(), id);
   }

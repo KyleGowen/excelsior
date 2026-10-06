@@ -1,0 +1,153 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+  "sourceFingerprint": "bbcefe3aa017f355fb2be3cc07609f71854a6233c3202da62a36a0e1639b81b8",
+  "backendRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://localhost:5186",
+    "apiUrl": "http://localhost:8091",
+    "sourceRoot": "M7 isolated checkout",
+    "sourceRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+    "sourceTreeFingerprint": "bbcefe3aa017f355fb2be3cc07609f71854a6233c3202da62a36a0e1639b81b8",
+    "expectedRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m7",
+    "verified": true,
+    "observedAt": "2026-10-06T00:18:14.847Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required",
+    "frontendSource": {
+      "revision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+      "fingerprint": "bbcefe3aa017f355fb2be3cc07609f71854a6233c3202da62a36a0e1639b81b8"
+    }
+  },
+  "actor": "Guest",
+  "method": "CUA live browser; real local API reads; no record writes",
+  "scenarios": [
+    {
+      "id": "two-way-styles-root-font-container-layout",
+      "status": "passed"
+    },
+    {
+      "id": "host-card-auth-callbacks-overlay-bounds-focus-keyboard",
+      "status": "passed"
+    },
+    {
+      "id": "independent-appearance-input-and-disposal",
+      "status": "passed"
+    },
+    {
+      "id": "nested-links-reload-back-forward",
+      "status": "passed"
+    },
+    {
+      "id": "readonly-draw-and-subtractive-feature-controls",
+      "status": "passed"
+    },
+    {
+      "id": "route-module-overlay-cleanup",
+      "status": "passed"
+    }
+  ],
+  "evidence": [
+    {
+      "screenshot": "private-run-evidence/native-mobile-final/isolated-style-stress.jpg",
+      "dom": "private-run-evidence/native-mobile-final/isolated-style-stress.txt",
+      "dimensions": {
+        "height": 844,
+        "width": 390
+      },
+      "url": "http://localhost:5186/prepared-host/tools/cards"
+    },
+    {
+      "screenshot": "private-run-evidence/native-mobile-final/independent-surfaces.jpg",
+      "dom": "private-run-evidence/native-mobile-final/independent-surfaces.txt",
+      "dimensions": {
+        "height": 844,
+        "width": 390
+      },
+      "url": "http://localhost:5186/prepared-host/tools/cards"
+    },
+    {
+      "screenshot": "private-run-evidence/native-mobile-final/native-draw.jpg",
+      "dom": "private-run-evidence/native-mobile-final/native-draw.txt",
+      "dimensions": {
+        "height": 844,
+        "width": 390
+      },
+      "url": "http://localhost:5186/prepared-host/tools/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75"
+    },
+    {
+      "screenshot": "private-run-evidence/native-mobile-final/host-home-clean.jpg",
+      "dom": "private-run-evidence/native-mobile-final/host-home-clean.txt",
+      "dimensions": {
+        "height": 844,
+        "width": 390
+      },
+      "url": "http://localhost:5186/prepared-host"
+    }
+  ],
+  "theme": "default / fictional paper / fictional contrast",
+  "gaps": [
+    "Real LRG assets, OAuth/account identity, production host fallback and M7 packaging remain later work"
+  ],
+  "acceptance": "Automated evidence only; Kyle acceptance separate",
+  "dimensions": {
+    "height": 844,
+    "width": 390
+  },
+  "styleMetrics": {
+    "before": {
+      "bodyFont": "Georgia, serif",
+      "documentSheets": 1,
+      "hostFont": "13.3333px",
+      "hostPadding": "1px 6px",
+      "inputFont": "15px",
+      "layout": "mobile",
+      "moduleBackground": "rgb(20, 31, 53)",
+      "moduleFont": "Inter, \"Segoe UI\", system-ui, -apple-system, sans-serif",
+      "rootFont": "24px"
+    },
+    "stress": {
+      "bodyFont": "Georgia, serif",
+      "documentSheets": 1,
+      "hostFont": "13.3333px",
+      "hostPadding": "1px 6px",
+      "inputFont": "15px",
+      "layout": "mobile",
+      "moduleBackground": "rgb(20, 31, 53)",
+      "moduleFont": "Inter, \"Segoe UI\", system-ui, -apple-system, sans-serif",
+      "rootFont": "32px"
+    }
+  },
+  "browserErrorCount": 0,
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only selected actions",
+    "viewport": "reset",
+    "tab": "test-owned; caller closes or explicitly hands off"
+  },
+  "counts": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  },
+  "status": "passed"
+}

@@ -1,6 +1,8 @@
 import type { CatalogCard } from '../../../../frontend/src/lib/api/types';
 import { resolveTournamentCard } from '../../../../frontend/src/lib/tournaments/resolveTournamentCard';
 
+import {presentCatalog} from '../../../../src/services/catalog-presentation/presentCatalog';
+
 function mockCard(name: string, id: string, extras: Partial<CatalogCard> = {}): CatalogCard {
   return { id, name, image_path: `characters/${id}.webp`, set: 'ERB', ...extras };
 }
@@ -43,7 +45,8 @@ describe('resolveTournamentCard', () => {
       },
     ];
 
-    const hit = resolveTournamentCard(withFoil, 'Wicked Witch', 'characters', {
+    const presented=presentCatalog(withFoil.map(c=>c.card),'characters',[{foilCardId:'witch-foil',baseCardId:'witch-base',cardType:'character'}],[]) as CatalogCard[];
+    const hit = resolveTournamentCard(withFoil.map((c,i)=>({...c,card:presented[i]})), 'Wicked Witch', 'characters', {
       foilLookup: {
         foilToBase: new Map([['witch-foil', 'witch-base']]),
         baseToFoil: new Map([['witch-base', 'witch-foil']]),

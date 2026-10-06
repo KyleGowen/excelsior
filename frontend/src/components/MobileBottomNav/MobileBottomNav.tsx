@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../app/AuthProvider';
-import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
+import { useLayoutMode } from '../../lib/layout/useLayoutMode';
 import { Checkbox } from '../Checkbox';
 import { SlideOutPanel } from '../SlideOutPanel';
 import { ProfileMenuContent } from '../ProfileMenu/ProfileMenuContent';

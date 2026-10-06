@@ -1,3 +1,4 @@
+import { useImageAssets } from '../../lib/images/useImageAssets';
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import type { CatalogType } from '../../lib/api/types';
 import { FoilCard, type FoilCardSize } from '../FoilCard';
@@ -8,10 +9,6 @@ import {
 import {
   canProgressiveLoad,
   imageElementMatchesUrl,
-  resolveImageUrl,
-  resolveThumbUrl,
-  placeholderImageUrl,
-  reverseImagePathForImagePath,
 } from '../../lib/images/cardImages';
 import {
   isFullResRevealed,
@@ -129,8 +126,9 @@ export function CardImage({
   foilSize,
   foilEagerIntro,
 }: CardImageProps) {
+  const assets = useImageAssets();
   const [showReverse, setShowReverse] = useState(false);
-  const effectiveReverseImagePath = reverseImagePath ?? reverseImagePathForImagePath(imagePath);
+  const effectiveReverseImagePath = reverseImagePath ?? (assets.reverseImagePathForImagePath?.(imagePath) ?? null);
   const activeImagePath = showReverse && effectiveReverseImagePath
     ? effectiveReverseImagePath
     : imagePath;
@@ -158,7 +156,7 @@ export function CardImage({
   ) : null;
 
   const useProgressive =
-    progressive && canProgressiveLoad(activeImagePath, catalogType) && !shouldSkipFullResUpgrade();
+    progressive && canProgressiveLoad(activeImagePath) && !shouldSkipFullResUpgrade();
   const progressiveThumb = catalogTypeSupportsProgressiveThumb(catalogType);
   const foilWrap = (node: ReactNode) =>
     wrapWithFoil(node, {
@@ -224,6 +222,7 @@ function SingleLayerCardImage({
   onImageFailed?: () => void;
   flipControl?: ReactNode;
 }) {
+  const { resolveImageUrl, resolveThumbUrl, placeholderImageUrl } = useImageAssets();
   const imgRef = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -301,6 +300,7 @@ function ProgressiveCardImage({
   progressiveSessionScope: ProgressiveImageSessionScope;
   flipControl?: ReactNode;
 }) {
+  const { resolveImageUrl, resolveThumbUrl, placeholderImageUrl } = useImageAssets();
   const [wrapperRef, inView] = useInView('200px', loading === 'eager');
   const thumbRef = useRef<HTMLImageElement>(null);
   const fullImgRef = useRef<HTMLImageElement>(null);

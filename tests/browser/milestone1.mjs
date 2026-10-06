@@ -101,6 +101,7 @@ const cases = {
     await role(tab, 'button', 'Export').click();
     const exported = role(tab, 'dialog', 'Export deck JSON');
     await wait(exported);
+    await wait(exported.getByRole('button', { name: 'Copy to clipboard', exact: true }).and(tab.playwright.locator(':enabled')));
     const values = await exported.evaluate(el => {
       const value = JSON.parse(el.querySelector('pre').textContent);
       return { total_cards: value.total_cards, total_threat: value.total_threat, reserve_character: value.reserve_character, legal: value.legal };

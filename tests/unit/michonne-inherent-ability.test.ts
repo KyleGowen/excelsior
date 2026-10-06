@@ -1,4 +1,4 @@
-import { buildDeckUsabilityContext, isCatalogCardUsable } from '../../frontend/src/lib/deck-usability';
+import { buildDeckUsabilityContext, isCatalogCardUsable } from '../../tests/helpers/serverCandidateCharacterization';
 import type {
   CatalogCard,
   DeckCardEntry,
@@ -7,12 +7,12 @@ import type {
 import {
   buildCharStatsById,
   deckMaxStats,
-} from '../../frontend/src/lib/decks/deckMaxStats';
+} from '../../tests/helpers/serverGridCharacterization';
 import {
   buildKoDimmingContext,
   calculateActiveTeamStats,
-} from '../../frontend/src/lib/decks/simulateKo';
-import { buildAddCardsEffectiveCharacterStats } from '../../frontend/src/features/deck-editor/addCardsTeamStats';
+} from '../../src/services/deck-preview/simulateKo';
+import { buildAddCardsEffectiveCharacterStats } from '../../tests/helpers/serverGridCharacterization';
 import { buildDeckValidationContext } from '../../src/services/deck-validation/deck-validation-context';
 import { deckCardMapKey } from '../../src/services/deck-validation/deck-validation-utils';
 import { UnusablePowerRule } from '../../src/services/deck-validation/rules/unusable-power.rule';

@@ -11,7 +11,7 @@ import {
   normalizeRawImagePath,
   resolveImageUrl,
   resolveThumbUrl,
-} from '../../../frontend/src/lib/images/cardImages';
+} from '../../../frontend/src/app/legacyImageAssets';
 import {
   clearProgressiveImageSession,
   preloadAndRevealFullRes,

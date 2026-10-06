@@ -1,12 +1,13 @@
+import { api } from '../../../frontend/src/lib/api/client';
 import type { CatalogCard, DeckCardEntry, DeckListItem } from '../../../frontend/src/lib/api/types';
 import { buildDeckCardIndex } from '../../../frontend/src/lib/decks/deckCardCatalog';
-import { calculateDeckTotalThreat } from '../../../frontend/src/lib/decks/deckThreat';
-import { buildCharStatsById, deckMaxStats } from '../../../frontend/src/lib/decks/deckMaxStats';
-import { buildKoDimmingContext, calculateActiveTeamStats } from '../../../frontend/src/lib/decks/simulateKo';
-import { countCardsInDeck, countPlayableCards, canDrawHand, buildDrawPile, drawRandomHand } from '../../../frontend/src/lib/decks/drawHand';
+import { calculateDeckTotalThreat } from '../../../src/services/deck-preview/../deck-evaluation/deckThreat';
+import { buildCharStatsById, deckMaxStats } from '../../../tests/helpers/serverGridCharacterization';
+import { buildKoDimmingContext, calculateActiveTeamStats } from '../../../src/services/deck-preview/simulateKo';
+import { countCardsInDeck, countPlayableCards, canDrawHand, buildDrawPile, drawRandomHand } from '../../../src/services/deck-preview/drawHand';
 import { aggregateInstancesForSave, expandDeckToInstances } from '../../../frontend/src/lib/decks/deckInstances';
-import { calculateDeckIconTotals } from '../../../frontend/src/lib/decks/iconTotals';
-import { buildDeckExportJson } from '../../../frontend/src/lib/decks/buildDeckExportJson';
+import { calculateDeckIconTotals } from '../../../src/services/deck-preview/../deck-evaluation/iconTotals';
+import { buildDeckExportJson } from '../../../src/services/deck-preview/buildDeckExportJson';
 import { buildDeckValidationContext } from '../../../src/services/deck-validation/deck-validation-context';
 import { ThreatLevelRule } from '../../../src/services/deck-validation/rules/threat-level.rule';
 import { importDeckFromJson } from '../../../frontend/src/lib/decks/importDeckFromJson';
@@ -83,14 +84,11 @@ describe('Frontend preparation compatibility baseline', () => {
     expect(drawRandomHand([{ type: 'power', cardId: power.id, quantity: 9 }], { random: (() => { let i = 0; return () => i++ / 9; })() })).toHaveLength(8);
   });
 
-  it('characterizes the current non-atomic import failure without silently repairing it', async () => {
-    const create = jest.fn().mockResolvedValue({ id: 'baseline-created', userId: 'baseline-owner' });
-    const replace = jest.fn().mockRejectedValue(new Error('Fixture save failed'));
-    const update = jest.fn();
-    const result = await importDeckFromJson({ exportData: { name: 'Fixture import', cards: { characters: ['Victory Harben'] } }, deckName: 'Fixture import', isGuest: false, catalogMap: new Map(characters.map(c => [c.id, { ...c, cardType: 'character' }])), createDeckFn: create, replaceDeckCardsFn: replace, updateDeckMetaFn: update });
-    expect(result).toEqual({ ok: false, code: 'api', message: 'Fixture save failed' });
-    expect(create).toHaveBeenCalledTimes(1);
-    expect(replace).toHaveBeenCalledWith('baseline-created', [{ cardType: 'character', cardId: 'baseline-victory', quantity: 1 }], false);
-    expect(update).not.toHaveBeenCalled();
+  it('reports an atomic import rejection without starting another write', async () => {
+    const post=jest.spyOn(api,'post').mockRejectedValue(new Error('Fixture save failed'));
+    const result=await importDeckFromJson({exportData:{name:'Fixture import',cards:{characters:['Victory Harben']}},deckName:'Fixture import',isGuest:false});
+    expect(result).toEqual({ok:false,code:'api',message:'Fixture save failed'});
+    expect(post).toHaveBeenCalledTimes(1);
+    post.mockRestore();
   });
 });

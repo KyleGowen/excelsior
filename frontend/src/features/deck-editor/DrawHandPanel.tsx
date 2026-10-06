@@ -15,7 +15,7 @@ import {
   resolveDeckCatalogCard,
   type DeckCardIndex,
 } from '../../lib/decks/deckCardCatalog';
-import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
+import { useLayoutMode } from '../../lib/layout/useLayoutMode';
 import { useDrawHandScale } from './useDrawHandScale';
 import { deckEditorCardImageLoadingProps } from './deckEditorCardImage';
 import type { DrawHandAnalysis } from '../../lib/decks/drawHandAnalysis';

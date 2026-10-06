@@ -73,6 +73,8 @@ export function presentCatalog(cards: CatalogCard[], type: CatalogType, foilEntr
       defaultRank: ranked.findIndex(row => row.id === card.id),
       addDefaultPrintingId: resolveDefaultCardForDeckAdd(card, type, cards, lookup).id,
       basePrintingId: lookup.foilToBase.get(card.id) ?? null, foilPrintingId: lookup.baseToFoil.get(card.id) ?? null,
+      missingFoilPrinting: lookup.baseToFoil.has(card.id) && !byId.has(lookup.baseToFoil.get(card.id)!) && card.set === 'SKY' && /^\d+F$/i.test(String(card.set_number_foil ?? '').trim())
+        ? { printingId: lookup.baseToFoil.get(card.id)!, setNumber: String(card.set_number_foil).trim() } : null,
       printingIds: printingIdsFor(card, groupKey), searchText: cardSearchHaystack(card), searchAliases: cardSearchAliases(card), characterNames: names,
     };
     return { ...card, presentation };

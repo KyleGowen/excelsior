@@ -7,7 +7,7 @@ import {
   formatThreatDisplay,
   formatThreatTooltip,
   MAX_TOTAL_THREAT,
-} from '../../frontend/src/lib/decks/deckThreat';
+} from '../../src/services/deck-preview/../deck-evaluation/deckThreat';
 import type { CatalogCard, DeckCardEntry } from '../../frontend/src/lib/api/types';
 
 const chars = [

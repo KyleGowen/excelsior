@@ -1,7 +1,7 @@
 import { useOptionalModuleHost } from '../../modules/ModuleHost';
 import { useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { candidateInputKey, type CandidateEvaluationInput } from '../../../../src/services/deck-candidates/inputKey';
+import { candidateInputKey, type CandidateEvaluationInput } from '../../contracts/inputKey';
 import { evaluateCandidates } from '../api/deckCandidates';
 export function useCandidateEvaluation(input: CandidateEvaluationInput, enabled: boolean) {
   const hostOperation = useOptionalModuleHost()?.api.evaluateCandidates ?? evaluateCandidates;

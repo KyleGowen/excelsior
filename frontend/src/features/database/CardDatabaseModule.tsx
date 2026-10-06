@@ -40,7 +40,7 @@ import { CatalogAllList } from '../../components/CatalogAllList';
 import { Pagination } from '../../components/Pagination';
 import { LoadingState } from '../../components/LoadingState';
 import { EmptyState } from '../../components/EmptyState';
-import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
+import { useLayoutMode } from '../../lib/layout/useLayoutMode';
 import { stepCyclicalIndex } from '../../lib/layout/cyclicalIndex';
 import { DBV_SWIPE_BLOCK_SELECTOR, useHorizontalSwipe } from '../../lib/layout/useHorizontalSwipe';
 

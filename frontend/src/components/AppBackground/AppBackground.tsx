@@ -1,4 +1,4 @@
-import { assetUrl } from '../../lib/images/cardImages';
+import { useImageAssets } from '../../lib/images/useImageAssets';
 import './AppBackground.css';
 
 export type AppBackgroundVariant = 'hero' | 'subtle';
@@ -9,6 +9,7 @@ interface AppBackgroundProps {
 }
 
 export function AppBackground({ variant = 'subtle', className }: AppBackgroundProps) {
+  const { assetUrl } = useImageAssets();
   const classes = ['app-bg', `app-bg--${variant}`, className].filter(Boolean).join(' ');
 
   return (

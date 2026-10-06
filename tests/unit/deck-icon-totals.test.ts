@@ -10,7 +10,7 @@
  * - Power Cards
  */
 
-import { calculateDeckIconTotals } from '../../frontend/src/lib/decks/iconTotals';
+import { calculateDeckIconTotals } from '../../src/services/deck-preview/../deck-evaluation/iconTotals';
 
 // Type definitions
 interface MockDeckCard {

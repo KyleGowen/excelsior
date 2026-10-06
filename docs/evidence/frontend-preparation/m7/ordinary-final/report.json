@@ -1,0 +1,212 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+  "deployedRevision": null,
+  "inputFingerprint": "e9c52f1851f9492c6a7f976e2eca31e0c6dff3bc8f216a2b45af5733a3ab8b83",
+  "selectedScenarios": [
+    "home-guest",
+    "database-search-detail",
+    "collection-guest-read",
+    "deck-readonly-draw-export",
+    "supporter-retired"
+  ],
+  "capturePolicy": "all",
+  "comparison": false,
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://127.0.0.1:5186",
+    "apiUrl": "http://localhost:8091",
+    "sourceRoot": "M7 isolated checkout",
+    "sourceRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+    "sourceTreeFingerprint": "e9c52f1851f9492c6a7f976e2eca31e0c6dff3bc8f216a2b45af5733a3ab8b83",
+    "expectedRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m7",
+    "verified": true,
+    "observedAt": "2026-10-06T00:37:04.722Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "actor": "guest",
+  "theme": "fixed dark",
+  "method": "CUA live browser automation",
+  "scenarios": [
+    {
+      "id": "home-guest",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "private-run-evidence/ordinary-final/home-guest-result.jpg",
+          "dom": "private-run-evidence/ordinary-final/home-guest-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5186/home"
+        }
+      ],
+      "observed": {
+        "guestEntry": true,
+        "contextualAuthControls": true,
+        "actualOAuth": "not executed"
+      }
+    },
+    {
+      "id": "database-search-detail",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "private-run-evidence/ordinary-final/database-search-detail-empty.jpg",
+          "dom": "private-run-evidence/ordinary-final/database-search-detail-empty.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5186/data"
+        },
+        {
+          "screenshot": "private-run-evidence/ordinary-final/database-search-detail-detail.jpg",
+          "dom": "private-run-evidence/ordinary-final/database-search-detail-detail.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5186/data"
+        },
+        {
+          "screenshot": "private-run-evidence/ordinary-final/database-search-detail-result.jpg",
+          "dom": "private-run-evidence/ordinary-final/database-search-detail-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5186/data"
+        }
+      ],
+      "observed": {
+        "emptySearch": "passed",
+        "cardName": "Lancelot",
+        "artwork": {
+          "complete": true,
+          "naturalHeight": 744,
+          "naturalWidth": 1039
+        },
+        "detailsClosed": true
+      }
+    },
+    {
+      "id": "collection-guest-read",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "private-run-evidence/ordinary-final/collection-guest-read-result.jpg",
+          "dom": "private-run-evidence/ordinary-final/collection-guest-read-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5186/users/[fictional-local-id]/collection"
+        }
+      ],
+      "observed": {
+        "storage": "browser-local",
+        "emptyExpected": false,
+        "quantitiesChanged": false
+      }
+    },
+    {
+      "id": "deck-readonly-draw-export",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "private-run-evidence/ordinary-final/deck-readonly-draw-export-draw.jpg",
+          "dom": "private-run-evidence/ordinary-final/deck-readonly-draw-export-draw.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5186/users/[fictional-local-id]/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75?readonly=true"
+        },
+        {
+          "screenshot": "private-run-evidence/ordinary-final/deck-readonly-draw-export-result.jpg",
+          "dom": "private-run-evidence/ordinary-final/deck-readonly-draw-export-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5186/users/[fictional-local-id]/decks/b4ec3a04-ab17-4a33-b813-df35f8195d75?readonly=true"
+        }
+      ],
+      "observed": {
+        "drawCount": 8,
+        "exported": {
+          "legal": false,
+          "reserve_character": null,
+          "total_cards": 8,
+          "total_threat": 18
+        },
+        "recordsChanged": false
+      }
+    },
+    {
+      "id": "supporter-retired",
+      "status": "passed",
+      "evidence": [
+        {
+          "screenshot": "private-run-evidence/ordinary-final/supporter-retired-result.jpg",
+          "dom": "private-run-evidence/ordinary-final/supporter-retired-result.txt",
+          "dimensions": {
+            "height": 720,
+            "width": 1280
+          },
+          "url": "http://127.0.0.1:5186/home"
+        }
+      ],
+      "observed": {
+        "redirectedHome": true,
+        "supporterVisible": false,
+        "retiredApi": "separate API check required"
+      }
+    }
+  ],
+  "cleanup": {
+    "applicationRecords": "unchanged; read-only scenarios",
+    "browser": "returned Home; close this test-owned tab or mark handoff explicitly",
+    "viewport": "reset"
+  },
+  "acceptance": "automated evidence only; Kyle acceptance not inferred",
+  "gaps": [
+    "light theme unavailable in M1",
+    "Google OAuth not exercised",
+    "independent module harness unavailable in M1"
+  ],
+  "viewport": {
+    "height": 720,
+    "width": 1280
+  },
+  "browserErrorCount": 0,
+  "status": "passed",
+  "durationSeconds": 13.733,
+  "counts": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "blocked": 0
+  }
+}

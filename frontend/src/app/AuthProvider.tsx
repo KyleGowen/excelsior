@@ -1,3 +1,5 @@
+import { ImageAssetsContext } from '../lib/images/useImageAssets';
+import * as legacyAssets from './legacyImageAssets';
 /**
  * Auth context. Session-cookie based; loads the current user and app config
  * (CDN base + pool user ids) via TanStack Query. Exposes login, signup,
@@ -220,7 +222,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ],
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <ImageAssetsContext.Provider value={legacyAssets}><AuthContext.Provider value={value}>{children}</AuthContext.Provider></ImageAssetsContext.Provider>;
 }
 
 export function useAuth(): AuthContextValue {

@@ -1,3 +1,4 @@
+import * as legacyImageAssets from '../app/legacyImageAssets';
 import { useCallback, useEffect, useMemo, useState, useRef, useSyncExternalStore } from 'react';
 import { Link, Route, Routes, useLocation, useNavigate, useParams, useBlocker } from 'react-router-dom';
 import type { AppUser } from '../lib/api/types';
@@ -47,7 +48,7 @@ export function NativeRouteHarness({ user, api: suppliedApi, initialDeckId = PUB
  }, [navigate]);
  const onBack = useCallback(() => navigate(-1), [navigate]);
  const onHome = useCallback(() => navigate('/'), [navigate]);
- const host = useMemo<ModuleHost>(() => ({ api, identity: { user, isGuest: !user || user.role === 'GUEST', isAdmin: user?.role === 'ADMIN' },
+ const host = useMemo<ModuleHost>(() => ({ api, assets:legacyImageAssets, identity: { user, isGuest: !user || user.role === 'GUEST', isAdmin: user?.role === 'ADMIN' },
   onOpenDeck, onBack, onHome, backLabel: 'Back to fictional host', layout: { mode:'container' }, editing: { register:guard.register },
   ...(isolated ? { styles: { mode:'isolated', height:680 }, appearance: harnessAppearance[appearance] ?? {} } : {}),
   ...(restrictions ? { features: { drawHand:false, simulateKo:false, exportDeck:false, addCards:false } } : {}),

@@ -1,3 +1,5 @@
+import { ImageAssetsContext } from '../src/lib/images/useImageAssets';
+import * as legacyAssets from '../src/app/legacyImageAssets';
 import { useEffect, useState, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
@@ -35,7 +37,7 @@ function StoryProviders({ children, route, user, withoutRouter, withoutAuth, int
   const content = <LayoutClasses>{children}</LayoutClasses>;
   const identityContent = withoutAuth ? content : <StorybookAuthProvider user={user} interactiveAuth={interactiveAuth}>{content}</StorybookAuthProvider>;
   return (
-    <QueryClientProvider client={queryClient}>
+    <ImageAssetsContext.Provider value={legacyAssets}><QueryClientProvider client={queryClient}>
       {withoutRouter ? (
         <LayoutModeProvider>
           {identityContent}
@@ -47,7 +49,7 @@ function StoryProviders({ children, route, user, withoutRouter, withoutAuth, int
           </LayoutModeProvider>
         </MemoryRouter>
       )}
-    </QueryClientProvider>
+    </QueryClientProvider></ImageAssetsContext.Provider>
   );
 }
 

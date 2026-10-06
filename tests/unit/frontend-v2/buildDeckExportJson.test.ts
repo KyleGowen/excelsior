@@ -6,7 +6,7 @@ import {
 import {
   buildDeckExportJson,
   type BuildDeckExportJsonInput,
-} from '../../../frontend/src/lib/decks/buildDeckExportJson';
+} from '../../../src/services/deck-preview/buildDeckExportJson';
 
 function makeIndex(
   deckType: string,

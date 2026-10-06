@@ -1,3 +1,4 @@
+import * as characterized from '../../helpers/presentedCatalogCharacterization';
 import { presentCatalog } from '../../../src/services/catalog-presentation/presentCatalog';
 import type { CatalogCard, CatalogType } from '../../../frontend/src/lib/api/types';
 import { buildFoilCardMapLookup } from '../../../frontend/src/lib/catalog/foilCatalog';
@@ -23,16 +24,16 @@ describe('M4 catalog presentation compatibility', () => {
     expect(new Set(rows.slice(0, 4).map(row => row.presentation!.logicalCardId)).size).toBe(1);
     expect(rows[0].presentation!.addDefaultPrintingId).toBe('base');
     expect(resolveDefaultCardForDeckAdd(rows[2], 'power-cards', rows, lookup).id).toBe('base');
-    expect(ids(prepareAddCardsCatalogList(rows, 'power-cards', lookup.foilToBase).cards)).toEqual(ids(prepareAddCardsCatalogList(powers, 'power-cards', lookup.foilToBase).cards));
+    expect(ids(prepareAddCardsCatalogList(rows, 'power-cards', lookup.foilToBase).cards)).toEqual(ids(characterized.prepareAddCardsCatalogList(powers, 'power-cards', lookup.foilToBase).cards));
   });
   it.each([undefined, 'ERB', 'TFCP', 'SKY'])('preserves default results in filtered subsets and preferred set %s', preferred => {
     const raw = preferred ? powers.filter(card => card.set === preferred) : powers;
     const enriched = present(powers, 'power-cards').filter(card => raw.some(row => row.id === card.id));
-    expect(ids(dedupeToDefaultCatalogCards(enriched, 'power-cards', preferred).cards)).toEqual(ids(dedupeToDefaultCatalogCards(raw, 'power-cards', preferred).cards));
+    expect(ids(dedupeToDefaultCatalogCards(enriched, 'power-cards', preferred).cards)).toEqual(ids(characterized.dedupeToDefaultCatalogCards(raw, 'power-cards', preferred).cards));
   });
   it('preserves printing-picker results including cross-set foil promos', () => {
     const rows = present(powers, 'power-cards');
-    expect(ids(collectPrintingsForCard(rows[0], 'power-cards', rows, lookup))).toEqual(ids(collectPrintingsForCard(powers[0], 'power-cards', powers, lookup)));
+    expect(ids(collectPrintingsForCard(rows[0], 'power-cards', rows, lookup))).toEqual(ids(characterized.collectPrintingsForCard(powers[0], 'power-cards', powers, lookup)));
   });
   it('does not merge distinct Teamwork mechanics sharing a display name', () => {
     const rows = present([{ id: 'a', name: '6 Combat', to_use: '6 Combat', followup_attack_types: 'Energy + Intelligence' }, { id: 'b', name: '6 Combat', to_use: '6 Combat', followup_attack_types: 'Brute Force + Intelligence' }], 'teamwork');
@@ -49,7 +50,7 @@ describe('M4 catalog presentation compatibility', () => {
     const chars: CatalogCard[] = [{ id: 'a', name: 'Angry Mob (Farmers)' }, { id: 'b', name: 'Angry Mob (Mercenaries)' }];
     const raw: CatalogCard[] = [{ id: 'all', name: 'Any mob', character: 'Angry Mob' }, { id: 'farm', name: 'Farm only', character: 'Angry Mob: Farmer' }, { id: 'any', name: 'Any character', character: 'Any Character' }];
     const rows = present(raw, 'special-cards', chars);
-    for (let i = 0; i < rows.length; i++) for (const character of chars) expect(specialCardMatchesCharacter(rows[i], character.name!)).toBe(specialCardMatchesCharacter(raw[i], character.name!));
+    for (let i = 0; i < rows.length; i++) for (const character of chars) expect(specialCardMatchesCharacter(rows[i], character.name!)).toBe(characterized.specialCardMatchesCharacter(raw[i], character.name!));
   });
   it('repeats identities/version for unchanged inputs and changes version when catalog inputs change', () => {
     expect(present(powers, 'power-cards')).toEqual(present(powers, 'power-cards'));

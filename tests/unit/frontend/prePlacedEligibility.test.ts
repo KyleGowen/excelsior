@@ -1,7 +1,7 @@
 import {
   computePrePlacedFlags,
   isPrePlacedEligible,
-} from '../../../frontend/src/lib/decks/prePlaced';
+} from '../../../src/services/deck-preview/prePlaced';
 import type { DeckCardIndex } from '../../../frontend/src/lib/decks/deckCardCatalog';
 import type { CatalogCard, DeckCardEntry } from '../../../frontend/src/lib/api/types';
 

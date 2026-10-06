@@ -1,3 +1,5 @@
+import { canAccessDrawHandAnalysis } from '../../frontend/src/lib/decks/drawHandAnalysis';
+import { sortDrawnHandCards } from '../../frontend/src/lib/decks/drawHand';
 import type { CatalogCard, DeckCardEntry } from '../../frontend/src/lib/api/types';
 import {
   buildDrawPile,
@@ -5,13 +7,11 @@ import {
   countCardsInDeck,
   countPlayableCards,
   drawRandomHand,
-  sortDrawnHandCards,
-} from '../../frontend/src/lib/decks/drawHand';
+} from '../../src/services/deck-preview/drawHand';
 import {
   analyzeDrawnHand,
-  canAccessDrawHandAnalysis,
   drawHandVentureValue,
-} from '../../frontend/src/lib/decks/drawHandAnalysis';
+} from '../../src/services/deck-preview/drawHandAnalysis';
 import { buildDeckCardIndex } from '../../frontend/src/lib/decks/deckCardCatalog';
 
 function entry(

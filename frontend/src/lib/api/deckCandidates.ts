@@ -1,8 +1,8 @@
 import { apiRequest as defaultApiRequest } from './client';
 
-import { candidateInputKey, type CandidateEvaluationInput } from '../../../../src/services/deck-candidates/inputKey';
+import { candidateInputKey, type CandidateEvaluationInput } from '../../contracts/inputKey';
 
-import type { DeckCandidatesEvaluationDto } from '../../../../src/api/dto/v1/DeckCandidatesEvaluationDto';
+import type { DeckCandidatesEvaluationDto } from '../../contracts/DeckCandidatesEvaluationDto';
 
 /** Bind these existing operations to one host's transport; no global client mutation. */
 export function createCandidateApi(apiRequest: typeof defaultApiRequest = defaultApiRequest) {

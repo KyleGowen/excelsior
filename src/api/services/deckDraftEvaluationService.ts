@@ -1,3 +1,17 @@
+import type { DeckExportDto } from '../dto/v1/DeckExportDto';
+import type { DrawDraftDto } from '../dto/v1/DrawDraftDto';
+import type { HandAnalysisDto } from '../dto/v1/HandAnalysisDto';
+import type { DeckSummaryDto } from '../dto/v1/DeckSummaryDto';
+import { maximumGrid as maximum } from '../../services/deck-preview/teamGrid';
+import { computePrePlacedFlags, isPrePlacedEligible } from '../../services/deck-preview/prePlaced';
+import { extractCardsFromImportJson } from '../../services/deck-preview/extractCardsFromImportJson';
+import { findCharacterIdByName, resolveImportCardIds } from '../../services/deck-preview/resolveImportCardIds';
+import type { ImportDeckJson } from '../../services/deck-preview/importTypes';
+import { buildKoDimmingContext, shouldDimDeckCard } from '../../services/deck-preview/simulateKo';
+import { drawRandomHand } from '../../services/deck-preview/drawHand';
+import { analyzeDrawnHand } from '../../services/deck-preview/drawHandAnalysis';
+import { buildDeckExportJson } from '../../services/deck-preview/buildDeckExportJson';
+import type { DeckCardEntry } from '../../services/deck-preview/types';
 import crypto from 'crypto';
 import { maxCopiesForAddCards } from '../../services/deck-candidates/editorCopyCeiling';
 import { candidateContext, candidateCatalogKey } from '../../services/deck-candidates/context';
@@ -27,9 +41,6 @@ type CharacterGrid = {
     intelligence: number;
 };
 const grid = (c: CharacterGrid): DeckMetricGrid => ({ energy: c.energy, combat: c.combat, bruteForce: c.brute_force, intelligence: c.intelligence });
-function maximum(rows: CharacterGrid[]): DeckMetricGrid {
-    return rows.reduce((acc, c) => ({ energy: Math.max(acc.energy, c.energy), combat: Math.max(acc.combat, c.combat), bruteForce: Math.max(acc.bruteForce, c.brute_force), intelligence: Math.max(acc.intelligence, c.intelligence) }), { energy: 0, combat: 0, bruteForce: 0, intelligence: 0 });
-}
 /** Stateless: no player/deck lookup, persistence, session changes, or client catalog fields. */
 export class DeckDraftEvaluationService {
     constructor(private readonly validator: Validator) { }
@@ -100,8 +111,8 @@ export class DeckDraftEvaluationService {
         return { schemaVersion: 1, revision: input.revision, inputKey: candidateInputKey(input), versions: { catalog: crypto.createHash('sha256').update(JSON.stringify([...catalog])).digest('hex'), rules: 'add-cards-compatibility-v1' }, candidates,
             missionLimitReached: input.cards.filter(c => c.type === 'mission').reduce((n, c) => n + c.quantity, 0) >= 7 };
     }
-    async evaluate(input: EvaluateDraftInput): Promise<DeckDraftEvaluationDto> {
-        const catalog = await this.validator.resolveCatalog();
+    async evaluate(input: EvaluateDraftInput, resolvedCatalog?: Awaited<ReturnType<Validator['resolveCatalog']>>): Promise<DeckDraftEvaluationDto> {
+        const catalog = resolvedCatalog ?? await this.validator.resolveCatalog();
         const cards: DeckCard[] = input.cards.map((card, i) => ({ id: `draft-${i}`, type: card.type.replace(/_/g, '-') as DeckCard['type'], cardId: card.cardId, quantity: card.quantity, exclude_from_draw: card.exclude_from_draw === true }));
         const keys = new Set<string>();
         for (const card of cards) {
@@ -133,7 +144,15 @@ export class DeckDraftEvaluationService {
         const physical = countPlayableCards(cards);
         const drawPile = countCardsInDeck(cards);
         const legalityThreat = cards.filter(c => c.type === 'character' || c.type === 'location').reduce((sum, c) => sum + characterThreatValue(catalog.get(deckCardMapKey(c))!) * c.quantity, 0);
+        const previewCards = cards.flatMap(c => Array.from({ length:c.quantity }, (_, i) => ({ ...c, quantity:1, exclude_from_draw:c.exclude_from_draw === true && i === 0 })));
+        const previewCatalog = new Map([...catalog].map(([key,c]) => { const type=key.slice(0,-String(c.id).length-1).replace(/_/g,'-'); return [`${type}:${c.id}`, { ...c, id:String(c.id), type:type === 'basic-universe' ? c.basic_skill_type ?? c.type : c.type ?? type } as CatalogCard] as const; }));
+        const koContext = buildKoDimmingContext(previewCards, previewCatalog, ko);
+        const prePlacedFlags = computePrePlacedFlags(previewCards,previewCatalog);
+        const addTeam = effectiveTeamCharacterStats(printed.slice(0,4));
         return {
+            prePlacedEligible: Object.fromEntries(cards.map(c => [`${c.type}:${c.cardId}`,isPrePlacedEligible(c,prePlacedFlags,previewCatalog)])),
+            koDimming: Object.fromEntries(cards.map(c => [`${c.type}:${c.cardId}`, shouldDimDeckCard(c, previewCatalog.get(`${c.type}:${c.cardId}`), koContext)])),
+            addCardsTeam: addTeam.map((c,i) => ({ cardId:characterCards[i].cardId, energy:c.energy, combat:c.combat, brute_force:c.brute_force, intelligence:c.intelligence })),
             schemaVersion: 1, draftId: input.draftId, revision: input.revision, inputKey: evaluationInputKey(input),
             versions: { catalog: crypto.createHash('sha256').update(JSON.stringify([...catalog])).digest('hex'), rules: 'venture-editor-compatibility-v1' },
             policy: { format: input.format, limited: input.limited },
@@ -145,4 +164,58 @@ export class DeckDraftEvaluationService {
             capabilities: { drawHand: canDrawHand(cards) }
         };
     }
+    async prepareImport(data:ImportDeckJson, name:string) {
+        const catalog = await this.validator.resolveCatalog();
+        const entries = extractCardsFromImportJson(data.cards);
+        if (!entries.length) throw new DraftStructureError('No cards found in import data');
+        if (entries.length > 1000) throw new DraftStructureError('Import exceeds 1000 card copies');
+        const { resolved, unresolved } = resolveImportCardIds(catalog,entries);
+        if (unresolved.length) return { ok:false as const, code:'unresolved' as const, message:'Could not resolve all cards in the import JSON', unresolved:unresolved.map(c => ({name:c.name,type:c.type})) };
+        const reserve = data.reserve_character ? findCharacterIdByName(catalog,data.reserve_character) : null;
+        const cards = resolved.map(c => ({type:c.cardType.replace(/_/g,'-') as DeckCardEntry['type'], cardId:c.cardId,quantity:c.quantity}));
+        const evaluation = await this.evaluate({schemaVersion:1,draftId:'import-preview',revision:0,cards,reserveCharacterId:reserve,limited:data.limited ?? false,format:'venture',koCharacterIds:[]},catalog);
+        return {ok:true as const, name:name.trim() || data.name?.trim() || 'Imported Deck', description:data.description?.trim() || '', cards, reserveCharacterId:reserve, limited:data.limited ?? false, evaluation};
+    }
+    async summaries(inputs: EvaluateDraftInput[]):Promise<DeckSummaryDto[]> {
+        const catalog = await this.validator.resolveCatalog();
+        return Promise.all(inputs.map(async input => {
+            const evaluation = await this.evaluate(input,catalog);
+            return { draftId:input.draftId, inputKey:evaluation.inputKey, grid:evaluation.grids.characters.length ? evaluation.grids.editorMaximums : null };
+        }));
+    }
+    private async preview(input: EvaluateDraftInput) {
+        const catalog = await this.validator.resolveCatalog();
+        const evaluation = await this.evaluate(input, catalog);
+        const cards: DeckCardEntry[] = input.cards.map(c => ({ ...c, exclude_from_draw:c.exclude_from_draw === true, type:c.type.replace(/_/g,'-') as DeckCardEntry['type'] }));
+        const cardIndex = new Map([...catalog].map(([key,c]) => { const type=key.slice(0,-String(c.id).length-1).replace(/_/g,'-'); return [`${type}:${c.id}`, { ...c, id:String(c.id), type:type === 'basic-universe' ? c.basic_skill_type ?? c.type : c.type ?? type } as CatalogCard] as const; }));
+        return { evaluation, cards, cardIndex };
+    }
+    async draw(input: EvaluateDraftInput):Promise<DrawDraftDto> {
+        const { evaluation, cards } = await this.preview(input);
+        if (!evaluation.capabilities.drawHand) throw new DraftStructureError('The draft is not eligible for drawing a hand');
+        const hand = drawRandomHand(cards).map((c,i) => ({ ...c, quantity:1, exclude_from_draw:false, instanceId:`draw-${i}` }));
+        return { schemaVersion:1 as const, inputKey:evaluation.inputKey, revision:input.revision, cards:hand };
+    }
+    async analyzeHand(input: EvaluateDraftInput, hand: Array<{ type:string; cardId:string }>):Promise<HandAnalysisDto> {
+        const { evaluation, cards, cardIndex } = await this.preview(input);
+        const available = new Map(cards.map(c => [`${c.type}:${c.cardId}`, c.quantity - (c.exclude_from_draw ? 1 : 0)]));
+        const drawn = hand.map(c => {
+            const type = c.type.replace(/_/g,'-') as DeckCardEntry['type'];
+            const key = `${type}:${c.cardId}`;
+            const remaining = available.get(key) ?? 0;
+            if (remaining < 1 || ['character','location','battleground','mission'].includes(type)) throw new DraftStructureError('Hand must contain available draw-pile copies from the draft');
+            available.set(key, remaining - 1);
+            return { type, cardId:c.cardId, quantity:1 };
+        });
+        const result = analyzeDrawnHand(drawn, cards, cardIndex);
+        return { schemaVersion:1 as const, inputKey:evaluation.inputKey, revision:input.revision, ventureTotal:result.ventureTotal, duplicateCount:result.duplicateCount, duplicateCardIndexes:[...result.duplicateCardIndexes] };
+    }
+    async exportDraft(input: EvaluateDraftInput, display: { name:string; description:string; exportedBy:string; surface:'editor'|'selection' }):Promise<DeckExportDto> {
+        const { evaluation, cards, cardIndex } = await this.preview(input);
+        return { schemaVersion:1 as const, inputKey:evaluation.inputKey, revision:input.revision, deck:buildDeckExportJson({ ...display, cards, cardIndex,
+            reserveCharacterId:input.reserveCharacterId, limited:input.limited, legal:evaluation.legality.rawValid,
+            maxStats:display.surface === 'selection' ? evaluation.grids.printedMaximums : evaluation.grids.editorMaximums,
+            iconTotals:evaluation.icons, totalThreat:evaluation.threat.editor, totalCards:evaluation.counts.exportCards }) };
+    }
+
 }

@@ -193,3 +193,5 @@ Deck has fewer than **8 playable** cards (characters/locations/missions do not c
 ---
 
 *Last updated: 2026-09-14*
+
+M7 preparation moves random pile selection and ADMIN hand analysis behind bounded no-store API preview routes. The frontend still orders displayed cards and controls panels; it does not reproduce game rules. A pending draw is cancelled on input change/unmount and a late result cannot open an obsolete panel. Rejected draws preserve the deck and allow explicit retry. ADMIN analysis requires verified player role and available hand copies, independently of host presentation flags.

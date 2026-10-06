@@ -1,3 +1,4 @@
+import { useImageAssets } from '../../lib/images/useImageAssets';
 import { useMemo, useState } from 'react';
 import { STAT_ICON_PATHS } from '../database/filters/dbvFilterTypes';
 import { catalogSlugForDeckType } from '../../lib/decks/deckCardCatalog';
@@ -23,7 +24,6 @@ import {
 import type { CatalogCard, CatalogType, DeckCardEntry } from '../../lib/api/types';
 import type { CatalogTypeMeta } from '../../lib/catalog/catalogTypeMap';
 import type { DeckCardIndex } from '../../lib/decks/deckCardCatalog';
-import { assetUrl } from '../../lib/images/cardImages';
 import { IconTrash } from '../../components/icons';
 import { KoToggleButton } from './KoToggleButton';
 import { ReserveCharacterButton } from './ReserveCharacterButton';
@@ -84,6 +84,7 @@ function attackIconPath(iconType: AttackIconType): string {
 }
 
 function DeckListAttackIcons({ iconTypes }: { iconTypes: AttackIconType[] }) {
+  const { assetUrl } = useImageAssets();
   if (iconTypes.length === 0) return null;
   return (
     <span className="deck-editor__list-icons" aria-hidden="true">

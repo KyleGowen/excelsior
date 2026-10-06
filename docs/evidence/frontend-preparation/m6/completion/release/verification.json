@@ -1,0 +1,92 @@
+{
+  "environment": "production",
+  "revision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+  "localAcceptance": "Kyle approved the identified final 5185 preview: spot check approved proceed",
+  "candidate": {
+    "runId": 37387235978,
+    "url": "https://github.com/KyleGowen/excelsior/actions/runs/37387235978",
+    "status": "passed",
+    "successfulValidationJobs": 24,
+    "unit": {
+      "passed": 3871,
+      "skipped": 22,
+      "failed": 0
+    },
+    "moduleTests": 85,
+    "integration": {
+      "passed": 1019,
+      "skipped": 0,
+      "failed": 0
+    }
+  },
+  "deployment": {
+    "runId": 37387916086,
+    "url": "https://github.com/KyleGowen/excelsior/actions/runs/37387916086",
+    "status": "passed",
+    "successfulJobs": 29,
+    "unit": {
+      "passed": 3871,
+      "skipped": 22,
+      "failed": 0
+    },
+    "moduleTests": 85,
+    "integration": {
+      "passed": 1019,
+      "skipped": 0,
+      "failed": 0
+    }
+  },
+  "health": {
+    "cacheBypassed": true,
+    "status": "OK",
+    "database": "OK",
+    "revision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+    "migration": "365"
+  },
+  "browser": {
+    "report": "browser-report.json",
+    "counts": {
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "blocked": 0
+    },
+    "newErrors": 0,
+    "viewport": {
+      "height": 720,
+      "width": 1280
+    },
+    "method": "CUA live browser automation",
+    "emptySearch": "explicitly skipped",
+    "accountWrites": "not selected"
+  },
+  "cleanup": {
+    "environment": "production",
+    "revision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+    "status": "passed",
+    "applicationRecords": "No record-write scenarios executed; public deck metadata and cards unchanged across smoke",
+    "testOwnedBrowserTab": "closed",
+    "viewport": "reset",
+    "productionCleanupMutations": 0,
+    "fixtureContentDigest": "9fc786de6319f5cdf36b573da2c9e2caa4c3d9e5a942fdce5d8a80a3e8b9f3bb"
+  },
+  "retainedFailures": [
+    {
+      "revision": "2a9120aec71f13fa9a6a58ab86a54cc4aea33093",
+      "runId": 37386512490,
+      "reason": "15 false-positive secret findings in source SHA-256 checksum map; all verified against actual source files",
+      "correction": "Only evidence packaging changed; offline Gitleaks scan passed; corrected candidate rescanned and passed"
+    },
+    {
+      "phase": "public fixture setup",
+      "reason": "An undocumented per-character URL returned 404; corrected to documented catalog/characters endpoint before any browser run"
+    }
+  ],
+  "gaps": [
+    "Production smoke covers the ordinary application, not the development-only prepared-host integration fixture",
+    "No production record mutations, OAuth, mobile/light-theme or real external host integration executed",
+    "Native Chrome reload/tab-close prompt observations remain unverified; component-level listener lifecycle is covered",
+    "M7/M8 and retained M4 domain contracts remain separate"
+  ],
+  "documentation": "Post-release ledger and this evidence are local uncommitted records; no extra deployment commit created"
+}

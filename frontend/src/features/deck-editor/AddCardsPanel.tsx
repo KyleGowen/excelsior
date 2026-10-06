@@ -47,7 +47,7 @@ import {
   missionSetCardsInAddOrder,
   type MissionSet,
 } from '../../lib/catalog/missionSets';
-import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
+import { useLayoutMode } from '../../lib/layout/useLayoutMode';
 import { stepCyclicalIndex } from '../../lib/layout/cyclicalIndex';
 import {
   ADD_CARDS_SWIPE_BLOCK_SELECTOR,
@@ -72,8 +72,8 @@ import {
 import { AddCardsFilterBar } from './AddCardsFilterBar';
 import { effectiveHideUnusablesForTab, tabSupportsHideUnusables } from '../../lib/deck-usability';
 import { useDbvFilters } from '../database/filters/useDbvFilters';
-import { calculateDeckTotalThreat, MAX_TOTAL_THREAT } from '../../lib/decks/deckThreat';
-import { buildAddCardsEffectiveCharacterStats } from './addCardsTeamStats';
+import { MAX_TOTAL_THREAT } from '../../lib/decks/deckThreat';
+import { useDraftEvaluation } from '../../lib/decks/useDraftEvaluation';
 
 const STACK_CATALOG_TYPES = ['characters', 'special-cards', 'advanced-universe'] as const;
 
@@ -148,7 +148,18 @@ function AddCardsTeamStats({
     ...characterCards,
     ...Array.from({ length: Math.max(0, EMPTY_CHARACTER_SLOT_COUNT - characterCards.length) }, () => null),
   ];
-  const effectiveCharacterStats = buildAddCardsEffectiveCharacterStats(cards, deckCatalogIndex);
+  const request = useMemo(() => {
+    const groups = new Map<string, {type:string;cardId:string;quantity:number;exclude_from_draw:boolean}>();
+    for (const card of cards) {
+      const key = `${card.type}:${card.cardId}`; const previous = groups.get(key);
+      if (previous) { previous.quantity += card.quantity; previous.exclude_from_draw ||= card.exclude_from_draw === true; }
+      else groups.set(key,{type:card.type,cardId:card.cardId,quantity:card.quantity,exclude_from_draw:card.exclude_from_draw === true});
+    }
+    return {schemaVersion:1 as const,draftId:'add-cards-team',cards:[...groups.values()],reserveCharacterId:reserveCharacterId ?? null,limited:false,format:'venture' as const,koCharacterIds:[]};
+  }, [cards,reserveCharacterId]);
+  const evaluation = useDraftEvaluation(request,true);
+  const metrics = evaluation.displayResult;
+  const effectiveCharacterStats = new Map(metrics?.addCardsTeam?.map(c => [c.cardId,c]) ?? []);
   const locationCard =
     cards
       .filter((entry) => entry.type === 'location')
@@ -165,11 +176,7 @@ function AddCardsTeamStats({
     .filter((card): card is CatalogCard => Boolean(card))
     .map(cardDisplayName)
     .join(' & ');
-  const totalThreat = calculateDeckTotalThreat(
-    cards,
-    reserveCharacterId,
-    (deckType, cardId) => deckCatalogIndex?.get(`${deckType}:${cardId}`),
-  );
+  const totalThreat = metrics?.threat.editor ?? 0;
   const isOverThreat = totalThreat > MAX_TOTAL_THREAT;
 
   return (

@@ -1,0 +1,23 @@
+import express, {type RequestHandler} from 'express';
+import request from 'supertest';
+import {registerDeckImportV1HttpRoutes} from '../../../../src/api/http/deck-import.http';
+import type {DeckImportService} from '../../../../src/api/services/deckImportService';
+import {DraftStructureError} from '../../../../src/api/services/deckDraftEvaluationService';
+import {resetV1RateLimitBucketsForTests} from '../../../../src/api/http/middleware/v1RateLimit';
+const body={name:'Fixture import',exportData:{cards:{characters:['Lancelot']}}};
+describe('Atomic import HTTP',()=>{
+ const importDeck=jest.fn();let role='USER';let session=true;let readOnly=false;
+ const auth:RequestHandler=(req,_res,next)=>{if(role!=='NONE')req.user={id:'fictional-actor',username:'fictional',name:'Fictional',email:'fixture@example.invalid',role} as NonNullable<typeof req.user>;req.cookies=session?{sessionId:'fictional-session'}:{};if(readOnly)req.headers['x-readonly-mode']='true';next();};
+ const app=express();app.use(express.json());registerDeckImportV1HttpRoutes(app,{import:importDeck} as unknown as DeckImportService,auth);
+ beforeEach(()=>{role='USER';session=true;readOnly=false;importDeck.mockReset();resetV1RateLimitBucketsForTests();});
+ it.each(['/decks/import','/guest/decks/import'])('writes once through %s',async(path)=>{if(path.includes('guest'))role='GUEST';importDeck.mockResolvedValue({ok:true,deckId:'fixture',cardsAdded:1});const r=await request(app).post(path).send(body).expect(201);expect(r.headers['cache-control']).toBe('no-store');expect(importDeck).toHaveBeenCalledWith(body,role==='GUEST'?{userId:'fictional-actor',guestSessionId:'fictional-session'}:{userId:'fictional-actor'});});
+ it('requires authentication',async()=>{role='NONE';await request(app).post('/decks/import').send(body).expect(401);expect(importDeck).not.toHaveBeenCalled();});
+ it.each(['/decks/import','/guest/decks/import'])('rejects the wrong identity for %s',async(path)=>{role=path.includes('guest')?'USER':'GUEST';await request(app).post(path).send(body).expect(403);expect(importDeck).not.toHaveBeenCalled();});
+ it('requires a verified Guest cookie',async()=>{role='GUEST';session=false;await request(app).post('/guest/decks/import').send(body).expect(401);expect(importDeck).not.toHaveBeenCalled();});
+ it('blocks owned writes in read-only mode',async()=>{readOnly=true;await request(app).post('/decks/import').send(body).expect(403);expect(importDeck).not.toHaveBeenCalled();});
+ it('rejects malformed input before any write',async()=>{await request(app).post('/decks/import').send({...body,actor:'spoofed'}).expect(400);expect(importDeck).not.toHaveBeenCalled();});
+ it('returns unresolved identities as structured 400',async()=>{importDeck.mockResolvedValue({ok:false,code:'unresolved',message:'Missing',unresolved:[{name:'Unknown',type:'character'}]});const r=await request(app).post('/decks/import').send(body).expect(400);expect(r.body.errors[0].code).toBe('IMPORT_UNRESOLVED');expect(r.body.data.unresolved).toHaveLength(1);});
+ it('returns structure failure',async()=>{importDeck.mockRejectedValue(new DraftStructureError('Bad reserve'));await request(app).post('/decks/import').send(body).expect(400);});
+ it('sanitizes persistence failures without falsely promising a rollback',async()=>{importDeck.mockRejectedValue(new Error('private detail'));const r=await request(app).post('/decks/import').send(body).expect(503);expect(r.body.errors[0].code).toBe('DECK_IMPORT_UNAVAILABLE');expect(JSON.stringify(r.body)).not.toContain('private detail');});
+ it('bounds repeated writes',async()=>{importDeck.mockResolvedValue({ok:true});for(let i=0;i<20;i++)await request(app).post('/decks/import').send(body).expect(201);await request(app).post('/decks/import').send(body).expect(429);expect(importDeck).toHaveBeenCalledTimes(20);});
+});

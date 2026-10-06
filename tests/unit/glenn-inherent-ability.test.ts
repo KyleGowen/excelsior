@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import { calculateDeckTotalThreat } from '../../frontend/src/lib/decks/deckThreat';
-import { isCatalogCardUsable } from '../../frontend/src/lib/deck-usability';
+import { calculateDeckTotalThreat } from '../../src/services/deck-preview/../deck-evaluation/deckThreat';
+import { isCatalogCardUsable } from '../../tests/helpers/serverCandidateCharacterization';
 import type { CatalogCard, DeckCardEntry } from '../../frontend/src/lib/api/types';
-import type { DeckUsabilityContext } from '../../frontend/src/lib/deck-usability/types';
+import type { DeckUsabilityContext } from '../../tests/helpers/serverCandidateCharacterization';
 
 describe('Glenn inherent ability', () => {
     const glenn: CatalogCard = {

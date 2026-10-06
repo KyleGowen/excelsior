@@ -1,4 +1,4 @@
-import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
+import { useLayoutMode } from '../../lib/layout/useLayoutMode';
 import { useLayoutEffect, useState, type RefObject } from 'react';
 
 /**

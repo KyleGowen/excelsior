@@ -1,4 +1,4 @@
-import { evaluationInputKey } from '../../../../src/services/deck-evaluation/draftInput';
+import { evaluationInputKey } from '../../contracts/draftInput';
 
 /**
  * Deck APIs. Logged-in users use `/api/v1/decks/*`; GUEST sessions use the
@@ -59,7 +59,7 @@ export interface DeckCardInput {
 
 
 // Public stateless evaluation: no deck ID lookup or persistence. The server resolves all card values.
-export type { DeckDraftEvaluationDto as DraftEvaluation } from '../../../../src/api/dto/v1/DeckDraftEvaluationDto';
+export type { DeckDraftEvaluationDto as DraftEvaluation } from '../../contracts/DeckDraftEvaluationDto';
 
 export interface DraftEvaluationInput {
   schemaVersion: 1; draftId: string; revision: number;
@@ -200,12 +200,27 @@ async function validateDeck(cards: DeckCardEntry[]): Promise<DeckValidationResul
   }
 }
 
-async function evaluateDraft(input: DraftEvaluationInput, signal?: AbortSignal): Promise<import('../../../../src/api/dto/v1/DeckDraftEvaluationDto').DeckDraftEvaluationDto> {
-  const result = await apiRequest<import('../../../../src/api/dto/v1/DeckDraftEvaluationDto').DeckDraftEvaluationDto>('/api/v1/decks/evaluate', { method: 'POST', body: input, ...(signal ? { signal } : {}) });
+async function evaluateDraft(input: DraftEvaluationInput, signal?: AbortSignal): Promise<import('../../contracts/DeckDraftEvaluationDto').DeckDraftEvaluationDto> {
+  const result = await apiRequest<import('../../contracts/DeckDraftEvaluationDto').DeckDraftEvaluationDto>('/api/v1/decks/evaluate', { method: 'POST', body: input, ...(signal ? { signal } : {}) });
   if (result.inputKey !== evaluationInputKey(input) || result.draftId !== input.draftId || result.revision !== input.revision) throw new Error('Evaluation revision does not match the current draft');
   return result;
 }
-return { fetchUserDecks, fetchGuestDecks, fetchDecksForUser, fetchTournamentDecks, fetchDeckFull, createDeck, updateDeckMeta, replaceDeckCards, deleteDeck, addCardToDeck, validateDeck, evaluateDraft };
+async function drawDraft(input:DraftEvaluationInput, signal?:AbortSignal):Promise<{ cards:DeckCardEntry[] }> {
+ const result = await apiRequest<import('../../contracts/DrawDraftDto').DrawDraftDto>('/api/v1/decks/draw', { method:'POST', body:{draft:input}, ...(signal ? {signal} : {}) });
+ if (result.inputKey !== evaluationInputKey(input) || result.revision !== input.revision) throw new Error('Draw revision does not match the current draft');
+ return result;
+}
+async function analyzeHand(input:DraftEvaluationInput, hand:DeckCardEntry[], signal?:AbortSignal) {
+ const result = await apiRequest<import('../../contracts/HandAnalysisDto').HandAnalysisDto>('/api/v1/admin/decks/hand-analysis', {method:'POST', body:{draft:input,hand:hand.map(c => ({type:c.type,cardId:c.cardId}))}, ...(signal ? {signal} : {})});
+ if (result.inputKey !== evaluationInputKey(input) || result.revision !== input.revision) throw new Error('Hand analysis revision does not match the current draft');
+ return result;
+}
+async function exportDraft(input:DraftEvaluationInput, display:{ name:string; description:string; exportedBy:string; surface:'editor'|'selection' }, signal?:AbortSignal) {
+ const result = await apiRequest<import('../../contracts/DeckExportDto').DeckExportDto>('/api/v1/decks/export',{method:'POST',body:{draft:input,display},...(signal ? {signal} : {})});
+ if (result.inputKey !== evaluationInputKey(input) || result.revision !== input.revision) throw new Error('Export revision does not match the current draft');
+ return result;
+}
+return { fetchUserDecks, fetchGuestDecks, fetchDecksForUser, fetchTournamentDecks, fetchDeckFull, createDeck, updateDeckMeta, replaceDeckCards, deleteDeck, addCardToDeck, validateDeck, evaluateDraft, drawDraft, analyzeHand, exportDraft };
 }
 
-export const { fetchUserDecks, fetchGuestDecks, fetchDecksForUser, fetchTournamentDecks, fetchDeckFull, createDeck, updateDeckMeta, replaceDeckCards, deleteDeck, addCardToDeck, validateDeck, evaluateDraft } = createDeckApi();
+export const { fetchUserDecks, fetchGuestDecks, fetchDecksForUser, fetchTournamentDecks, fetchDeckFull, createDeck, updateDeckMeta, replaceDeckCards, deleteDeck, addCardToDeck, validateDeck, evaluateDraft, drawDraft, analyzeHand, exportDraft } = createDeckApi();

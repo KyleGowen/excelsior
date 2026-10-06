@@ -47,6 +47,10 @@ export interface DeckDraftEvaluationDto {
         prePlaced: number;
         exportCards: number;
     };
+    /** Server decisions for this exact draft; absent only on older servers/fixtures. */
+    prePlacedEligible?: Record<string, boolean>;
+    koDimming?: Record<string, boolean>;
+    addCardsTeam?: Array<{ cardId: string; energy: number; combat: number; brute_force: number; intelligence: number }>;
     capabilities: {
         drawHand: boolean;
     };

@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "kind": "gate-batch",
+  "environment": "local",
+  "sourceRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+  "fingerprint": "06b1cdab5b5ac361e3ed2005e77cc91ceb5619447e30a340b566d8abb358b6e0",
+  "status": "passed",
+  "gates": [
+    {
+      "name": "architecture",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/unit/module-boundaries.test.mjs"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 0,
+        "tests": 10,
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0,
+        "cancelled": 0
+      },
+      "executedTests": 10,
+      "reused": false,
+      "durationSeconds": 1.638,
+      "evidence": {
+        "log": "private-run-evidence/architecture-ready/architecture.log",
+        "receipt": null
+      },
+      "gaps": []
+    }
+  ],
+  "selected": [
+    "architecture"
+  ],
+  "gaps": [
+    "Gate coverage and release acceptance require main-agent review"
+  ],
+  "cleanup": "no application fixtures created by this wrapper"
+}

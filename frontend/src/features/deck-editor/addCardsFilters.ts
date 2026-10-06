@@ -14,8 +14,6 @@ import type { DbvFilterState } from '../database/filters/dbvFilterTypes';
 import { cardMatchesDbvFilters } from '../database/filters/dbvFilterPredicates';
 import {
   catalogTypeSupportsHideUnusables,
-  isCatalogCardUsable,
-  type DeckUsabilityContext,
 } from '../../lib/deck-usability';
 import type { AddCardsSection } from './addCardsCatalog';
 
@@ -23,7 +21,6 @@ export interface AddCardsFilterOptions {
   searchQuery: string;
   setFilter: string;
   hideUnusables: boolean;
-  usabilityCtx?: DeckUsabilityContext;
   usableByIdentity?: ReadonlyMap<string, boolean>;
   dynamicFilters?: DbvFilterState;
   specialScope?: 'character-specific' | 'any-character';
@@ -90,7 +87,7 @@ export function cardPassesAddCardsFilters(
   if (
     options.hideUnusables &&
     catalogTypeSupportsHideUnusables(catalogType) &&
-    !(options.usableByIdentity ? options.usableByIdentity.get(`${catalogType}:${card.id}`) === true : options.usabilityCtx ? isCatalogCardUsable(card, catalogType, options.usabilityCtx) : false)
+    !(options.usableByIdentity?.get(`${catalogType}:${card.id}`) === true)
   ) {
     return false;
   }

@@ -1,53 +1,16 @@
-import { cardStats } from '../catalog/catalogTypeMap';
-import type { CatalogCard, DeckListItem } from '../api/types';
-import type { DeckStatLine } from '../../components/DeckTile';
-import { effectiveTeamCharacterStats } from '../deck-usability';
-
-type CharStats = NonNullable<ReturnType<typeof cardStats>>;
-type NamedCharStats = CharStats & { name: string };
-
-/** Build a characterId → stat line map from the characters catalog. */
-export function buildCharStatsById(
-  characters: Array<Partial<CatalogCard> & { id: string }> | undefined,
-): Map<string, NamedCharStats> {
-  const m = new Map<string, NamedCharStats>();
-  (characters ?? []).forEach((c) => {
-    const s = cardStats(c);
-    if (s) m.set(c.id, { ...s, name: String(c.name ?? 'Unknown') });
-  });
-  return m;
-}
-
-/**
- * Per-stat maximum across a deck's characters (the "max-stat" tile line).
- * Returns null when no character in the deck has catalog stats loaded.
- */
-export function deckMaxStats(
-  deck: DeckListItem,
-  charStatsById: Map<string, NamedCharStats>,
-): DeckStatLine | null {
-  const chars = (deck.cards ?? []).filter((c) => c.type === 'character');
-  if (chars.length === 0) return null;
-  let energy = 0;
-  let combat = 0;
-  let bruteForce = 0;
-  let intelligence = 0;
-  const characterStats = effectiveTeamCharacterStats(chars.flatMap((c) => {
-    const stats = charStatsById.get(c.cardId);
-    if (!stats) return [];
-    return [{
-      name: stats.name,
-      energy: stats.energy,
-      combat: stats.combat,
-      brute_force: stats.bruteForce,
-      intelligence: stats.intelligence,
-    }];
-  }));
-  characterStats.forEach((stats) => {
-    energy = Math.max(energy, stats.energy);
-    combat = Math.max(combat, stats.combat);
-    bruteForce = Math.max(bruteForce, stats.brute_force);
-    intelligence = Math.max(intelligence, stats.intelligence);
-  });
-  return characterStats.length > 0 ? { energy, combat, bruteForce, intelligence } : null;
+import { useQueries } from '@tanstack/react-query';
+import { api } from '../api/client';
+import { evaluationInputKey } from '../../contracts/draftInput';
+import type { DeckListItem } from '../api/types';
+import type { DeckMetricGrid } from '../../contracts/DeckDraftEvaluationDto';
+/** Display server summaries; this hook contains no effective-grid or deck-rule calculations. */
+export function useDeckGridStats(decks:DeckListItem[]) {
+ const drafts = decks.map(d => ({schemaVersion:1 as const,draftId:d.metadata.id,revision:0,cards:d.cards.map(c => ({type:c.type,cardId:c.cardId,quantity:c.quantity,exclude_from_draw:c.exclude_from_draw === true})),reserveCharacterId:d.metadata.reserve_character ?? null,limited:d.metadata.is_limited ?? false,format:'venture' as const,koCharacterIds:[]}));
+ const batches = Array.from({length:Math.ceil(drafts.length/20)},(_,i) => drafts.slice(i*20,i*20+20));
+ const queries = useQueries({queries:batches.map(batch => ({queryKey:['deck-grid-summaries',batch.map(evaluationInputKey)],queryFn:async () => {
+  const result = await api.post<Array<{draftId:string;inputKey:string;grid:DeckMetricGrid|null}>>('/api/v1/decks/summaries',{drafts:batch});
+  if(result.length !== batch.length || result.some((row,i) => row.draftId !== batch[i].draftId || row.inputKey !== evaluationInputKey(batch[i]))) throw new Error('Summary does not match the requested deck list');
+  return result;
+ },staleTime:0}))});
+ return new Map(queries.flatMap(q => q.data ?? []).map(row => [row.draftId,row.grid]));
 }

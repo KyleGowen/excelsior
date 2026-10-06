@@ -1,6 +1,6 @@
 /** Auth + app-config API calls (session-cookie based). */
 import { api, apiRequest, ApiError } from './client';
-import { setCdnBase } from '../images/cardImages';
+import { setCdnBase } from '../../app/legacyImageAssets';
 import type { AppUser, AppConfig, UserRole } from './types';
 
 interface RawMe {

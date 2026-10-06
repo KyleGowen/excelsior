@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../app/AuthProvider';
-import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
+import { useLayoutMode } from '../../lib/layout/useLayoutMode';
 import { Logo } from '../Logo';
 import { UserMenu } from '../UserMenu';
 import { MobileBottomNav } from '../MobileBottomNav';

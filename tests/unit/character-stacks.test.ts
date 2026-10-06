@@ -5,7 +5,7 @@ import {
   specialCardMatchesCharacter,
   stackCardsInAddOrder,
   stackTotalCardCount,
-} from '../../frontend/src/lib/catalog/characterStacks';
+} from '../../tests/helpers/presentedCatalogCharacterization';
 
 function card(id: string, name: string, extra: Partial<CatalogCard> = {}): CatalogCard {
   return { id, name, ...extra } as CatalogCard;

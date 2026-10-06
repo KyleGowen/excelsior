@@ -1,0 +1,47 @@
+[
+  {
+    "capture": "home-guest-result",
+    "width": 1280,
+    "height": 720,
+    "changedPixelsAbove20": 8,
+    "totalPixels": 921600,
+    "maximumDelta": 24,
+    "baselineRetained": true
+  },
+  {
+    "capture": "database-search-detail-result",
+    "width": 1280,
+    "height": 720,
+    "changedPixelsAbove20": 0,
+    "totalPixels": 921600,
+    "maximumDelta": 0,
+    "baselineRetained": true
+  },
+  {
+    "capture": "database-search-detail-detail",
+    "width": 1280,
+    "height": 720,
+    "changedPixelsAbove20": 0,
+    "totalPixels": 921600,
+    "maximumDelta": 0,
+    "baselineRetained": true
+  },
+  {
+    "capture": "collection-guest-read-result",
+    "width": 1280,
+    "height": 720,
+    "changedPixelsAbove20": 0,
+    "totalPixels": 921600,
+    "maximumDelta": 0,
+    "baselineRetained": true
+  },
+  {
+    "capture": "deck-readonly-draw-export-result",
+    "width": 1280,
+    "height": 720,
+    "changedPixelsAbove20": 701,
+    "totalPixels": 921600,
+    "maximumDelta": 193,
+    "baselineRetained": true
+  }
+]

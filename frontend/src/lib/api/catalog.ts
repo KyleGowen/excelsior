@@ -10,18 +10,23 @@ export interface FoilMapEntry {
   cardType: string;
 }
 
+function requirePresentation(cards:CatalogCard[]):CatalogCard[] {
+ if(!Array.isArray(cards) || cards.some(c => !c.presentation || c.presentation.schemaVersion !== 1 || !Array.isArray(c.presentation.characterNames) || !Array.isArray(c.presentation.printingIds))) throw new Error('Catalog presentation metadata is unavailable. Retry without using client rule fallbacks.');
+ return cards;
+}
+
 /** Bind these existing operations to one host's transport; no global client mutation. */
 export function createCatalogApi(api: typeof defaultApi = defaultApi) {
 
 
-function fetchCatalog(type: CatalogType, signal?: AbortSignal): Promise<CatalogCard[]> {
-  return api.get<CatalogCard[]>(`/api/v1/catalog/presentation/${type}`, signal);
+async function fetchCatalog(type: CatalogType, signal?: AbortSignal): Promise<CatalogCard[]> {
+  return requirePresentation(await api.get<CatalogCard[]>(`/api/v1/catalog/presentation/${type}`, signal));
 }
 
 
 /** Bypass the browser HTTP cache when a selected printing must reflect current catalog data. */
-function fetchCatalogFresh(type: CatalogType, signal?: AbortSignal): Promise<CatalogCard[]> {
-  return api.getFresh<CatalogCard[]>(`/api/v1/catalog/presentation/${type}`, signal);
+async function fetchCatalogFresh(type: CatalogType, signal?: AbortSignal): Promise<CatalogCard[]> {
+  return requirePresentation(await api.getFresh<CatalogCard[]>(`/api/v1/catalog/presentation/${type}`, signal));
 }
 
 

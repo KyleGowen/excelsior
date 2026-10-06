@@ -110,7 +110,13 @@ export class GuestDeckService {
       const dbDecks = await this.deps.deckRepository.getDecksByUserId(userId);
       const dbTransformed = transformDeckList(dbDecks);
       const sessionDecks = this.deps.guestDeckPersistence.getAllDecksForSession(sessionId);
-      const sessionTransformed = sessionDecks.map(transformGuestDeckToListItem);
+      const sessionTransformed = await Promise.all(sessionDecks.map(async deck => {
+        const item = transformGuestDeckToListItem(deck);
+        if (!this.deps.evaluator) return item;
+        const evaluated = await this.deps.evaluator.attach(deck);
+        if (!evaluated.evaluation) throw new Error('Guest deck summary evaluation unavailable');
+        return { ...item, metadata: { ...item.metadata, threat: evaluated.evaluation.threat.editor } };
+      }));
       return ok(200, [...dbTransformed, ...sessionTransformed]);
     } catch (error) {
       console.error('Error fetching guest decks:', error);

@@ -1,0 +1,20 @@
+{
+  "environment": "local",
+  "checks": [
+    {
+      "target": "http://127.0.0.1:8091/health",
+      "status": "OK",
+      "databaseStatus": "OK",
+      "migration": "365",
+      "guestDeckCount": 4
+    },
+    {
+      "target": "http://127.0.0.1:5186/health",
+      "status": "OK",
+      "databaseStatus": "OK",
+      "migration": "365",
+      "guestDeckCount": 4
+    }
+  ],
+  "sourceBinding": "target.json and runtime-inputs.json; health alone does not identify uncommitted files"
+}

@@ -1,0 +1,13 @@
+{
+  "environment": "local M7 candidate",
+  "command": "npm run build",
+  "steps": [
+    "npm run generate:thumbnails",
+    "tsc (emitting JavaScript, declarations and maps)"
+  ],
+  "status": "passed",
+  "exitCode": 0,
+  "emittedJavaScriptFiles": 284,
+  "privateLogSha256": "dc74d5047e5e73d49e2cc40b64c3d4e371901f26d5f32b0b7dd38e6ebb595a97",
+  "production": "not run"
+}

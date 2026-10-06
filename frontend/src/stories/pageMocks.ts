@@ -1,6 +1,7 @@
-import { candidateInputKey, type CandidateEvaluationInput } from '../../../src/services/deck-candidates/inputKey';
+import {exportDeckFixture} from './exportDeckFixture';
+import { candidateInputKey, type CandidateEvaluationInput } from '../contracts/inputKey';
 import presentedCatalog from './catalogPresentation.json';
-import { evaluationInputKey, type DeckEvaluationInput } from '../../../src/services/deck-evaluation/draftInput';
+import { evaluationInputKey, type DeckEvaluationInput } from '../contracts/draftInput';
 import type { DraftEvaluation, DraftEvaluationInput } from '../lib/api/decks';
 import { http, HttpResponse } from 'msw';
 import type { CatalogCard, CatalogType, CollectionCard, DeckCardEntry, DeckListItem, RecentUpdate } from '../lib/api/types';
@@ -52,6 +53,11 @@ export function pageHandlers({
   responseEvaluation?: boolean;
 } = {}) {
   return [
+    http.post('/api/v1/decks/draw',async ({request})=>{const {draft}=await request.json() as {draft:DraftEvaluationInput};return respond({schemaVersion:1,inputKey:evaluationInputKey(draft),revision:draft.revision,cards:Array.from({length:8},(_,i)=>({type:'event',cardId:eventCard.id,quantity:1,instanceId:`fictional-draw-${i}`}))});}),
+    http.post('/api/v1/admin/decks/hand-analysis',async ({request})=>{const {draft}=await request.json() as {draft:DraftEvaluationInput};return respond({schemaVersion:1,inputKey:evaluationInputKey(draft),revision:draft.revision,ventureTotal:0,duplicateCount:0,duplicateCardIndexes:[]});}),
+    http.post('/api/v1/decks/export',async ({request})=>{const {draft,display}=await request.json() as {draft:DraftEvaluationInput;display:{name:string;description:string;exportedBy:string}};return respond({schemaVersion:1,inputKey:evaluationInputKey(draft),revision:draft.revision,deck:{...exportDeckFixture,name:display.name,description:display.description,exported_by:display.exportedBy}});}),
+    http.post('/api/v1/decks/summaries',async ({request})=>{const {drafts}=await request.json() as {drafts:DraftEvaluationInput[]};return respond(drafts.map(d=>({draftId:d.draftId,inputKey:evaluationInputKey(d),grid:{energy:4,combat:7,bruteForce:3,intelligence:8}})));}),
+
     http.get('/api/v1/community/decks', () => respond(decks)),
     http.get('/api/v1/community/preconstructed-decks', () => respond([
       { setCode: 'ERB', setName: 'Example release', decks, featuredUpgradeRecommendations: [] },
@@ -97,7 +103,7 @@ function exampleEvaluation(input: DraftEvaluationInput): DraftEvaluation {
         versions: { catalog: 'fictional-story-catalog', rules: 'venture-editor-compatibility-v1' },
         policy: { format: 'venture', limited: input.limited }, legality: { valid: true, rawValid: true, reasons: [] },
         threat: { editor: 19, legality: 19 }, grids: { printedMaximums: max, effectiveMaximums: max, activeMaximums: max, editorMaximums: max, characters: [] },
-        icons: { energy: 0, combat: 0, bruteForce: 0, intelligence: 0 }, counts: { physicalPlayable: 51, drawPile: 51, prePlaced: 0, exportCards: 51 }, capabilities: { drawHand: true } };
+        icons: { energy: 0, combat: 0, bruteForce: 0, intelligence: 0 }, counts: { physicalPlayable: 51, drawPile: 51, prePlaced: 0, exportCards: 51 }, prePlacedEligible:{},koDimming:{},addCardsTeam:[{cardId:billy.id,energy:4,combat:7,brute_force:3,intelligence:8}], capabilities: { drawHand: true } };
 }
 
 function withEvaluation(deck: DeckListItem | null, enabled = true) {

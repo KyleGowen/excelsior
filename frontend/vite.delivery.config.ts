@@ -1,0 +1,4 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { fileURLToPath } from 'node:url';
+export default defineConfig({root:fileURLToPath(new URL('./examples/module-delivery',import.meta.url)),base:'/delivery-proof/',plugins:[react()],build:{outDir:'../../dist/delivery-proof',emptyOutDir:true},preview:{host:'127.0.0.1',port:5187,strictPort:true,proxy:{'/api':{target:'http://127.0.0.1:8091',changeOrigin:true},'/health':{target:'http://127.0.0.1:8091',changeOrigin:true},'/src/resources':{target:'http://127.0.0.1:8091',changeOrigin:true}}},server:{host:'127.0.0.1',port:5187,strictPort:true,proxy:{'/api':{target:'http://127.0.0.1:8091',changeOrigin:true},'/health':{target:'http://127.0.0.1:8091',changeOrigin:true},'/src/resources':{target:'http://127.0.0.1:8091',changeOrigin:true}}}});

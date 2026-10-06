@@ -1,12 +1,13 @@
-import { assetUrl } from '../../../lib/images/cardImages';
+import { moduleAssets } from '../../../modules/assetRegistry';
+import { useImageAssets } from '../../../lib/images/useImageAssets';
 import type { UseDbvFiltersReturn } from '../filters/useDbvFilters';
 
 const POWER_TYPE_IMG: Record<string, string> = {
-  Energy: '/src/resources/images/icons/energy.png',
-  Combat: '/src/resources/images/icons/combat.png',
-  'Brute Force': '/src/resources/images/icons/brute_force.png',
-  Intelligence: '/src/resources/images/icons/intelligence.png',
-  'Any-Power': '/src/resources/images/icons/any-power.png',
+  Energy: moduleAssets['energy'],
+  Combat: moduleAssets['combat'],
+  'Brute Force': moduleAssets['brute_force'],
+  Intelligence: moduleAssets['intelligence'],
+  'Any-Power': moduleAssets['any-power'],
 };
 
 interface DbvPowerTypeStripProps {
@@ -20,6 +21,7 @@ export function DbvPowerTypeStrip({
   filters,
   ariaLabel = 'Filter by power type',
 }: DbvPowerTypeStripProps) {
+  const { assetUrl } = useImageAssets();
   return (
     <div className="dbv-power-strip" role="group" aria-label={ariaLabel}>
       {powerTypeKeys.map((pt) => {

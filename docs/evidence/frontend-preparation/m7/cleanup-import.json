@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "ownedImportsCreated": 1,
+  "ownedImportsDeleted": 1,
+  "deletionVerified404": true,
+  "originalFourDeckInventoryPreserved": true,
+  "productionRecords": "unchanged",
+  "browserCleanup": "IAB deletion click stalled; API cleanup used exact privately tracked run-owned identity"
+}

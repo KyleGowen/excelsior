@@ -1,4 +1,4 @@
-import { assetUrl } from '../../lib/images/cardImages';
+import { useImageAssets } from '../../lib/images/useImageAssets';
 import './Logo.css';
 
 const LOGO_PATHS = {
@@ -24,6 +24,7 @@ export function Logo({
   height = 34,
   alt = 'Excelsior',
 }: LogoProps) {
+  const { assetUrl } = useImageAssets();
   return (
     <img
       className={`app-logo ${className}`}

@@ -1,0 +1,248 @@
+{
+  "schema": 1,
+  "kind": "gate-batch",
+  "environment": "local",
+  "sourceRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+  "fingerprint": "e9c52f1851f9492c6a7f976e2eca31e0c6dff3bc8f216a2b45af5733a3ab8b83",
+  "status": "failed",
+  "gates": [
+    {
+      "name": "unit",
+      "command": [
+        "npm",
+        "run",
+        "test:unit",
+        "--",
+        "--runInBand",
+        "--forceExit"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 336,
+        "tests": 3940,
+        "passed": 3922,
+        "failed": 0,
+        "skipped": 18,
+        "todo": 0
+      },
+      "executedTests": 3922,
+      "reused": false,
+      "durationSeconds": 37.777,
+      "evidence": {
+        "log": "private-run-evidence/final-gates/unit.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "module",
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "tests/config/jest.frontend-modules.config.js",
+        "--runInBand"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": {
+        "suites": 6,
+        "tests": 87,
+        "passed": 87,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "executedTests": 87,
+      "reused": false,
+      "durationSeconds": 7.86,
+      "evidence": {
+        "log": "private-run-evidence/final-gates/module.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "lint",
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 7.95,
+      "evidence": {
+        "log": "private-run-evidence/final-gates/lint.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "backend-types",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 5.003,
+      "evidence": {
+        "log": "private-run-evidence/final-gates/backend-types.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "audit-root",
+      "command": [
+        "npm",
+        "audit"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 1.511,
+      "evidence": {
+        "log": "private-run-evidence/final-gates/audit-root.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "audit-frontend",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "audit"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 1.245,
+      "evidence": {
+        "log": "private-run-evidence/final-gates/audit-frontend.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "soc2",
+      "command": [
+        "bash",
+        "scripts/soc2-compliance-checks.sh"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 5.688,
+      "evidence": {
+        "log": "private-run-evidence/final-gates/soc2.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "contracts",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "check:contracts"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 0.411,
+      "evidence": {
+        "log": "private-run-evidence/final-gates/contracts.log",
+        "receipt": null
+      },
+      "gaps": []
+    },
+    {
+      "name": "architecture",
+      "command": [
+        "node",
+        "--test",
+        "tests/unit/module-boundaries.test.mjs"
+      ],
+      "status": "failed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 3.176,
+      "evidence": {
+        "log": "private-run-evidence/final-gates/architecture.log",
+        "receipt": null
+      },
+      "gaps": [
+        "Test execution or reusable evidence not confirmed"
+      ]
+    },
+    {
+      "name": "knip-ci",
+      "command": [
+        "npm",
+        "run",
+        "find:unused:ci"
+      ],
+      "status": "passed",
+      "exitCode": 0,
+      "timedOut": false,
+      "counts": null,
+      "executedTests": null,
+      "reused": false,
+      "durationSeconds": 1.836,
+      "evidence": {
+        "log": "private-run-evidence/final-gates/knip-ci.log",
+        "receipt": null
+      },
+      "gaps": []
+    }
+  ],
+  "selected": [
+    "unit",
+    "module",
+    "lint",
+    "backend-types",
+    "audit-root",
+    "audit-frontend",
+    "soc2",
+    "contracts",
+    "architecture",
+    "knip-ci"
+  ],
+  "gaps": [
+    "Gate coverage and release acceptance require main-agent review"
+  ],
+  "cleanup": "no application fixtures created by this wrapper"
+}

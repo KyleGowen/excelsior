@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "kind": "startup",
+  "environment": "local",
+  "status": "passed",
+  "sourceRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://localhost:5186",
+    "apiUrl": "http://localhost:8091",
+    "sourceRoot": "M7 isolated checkout",
+    "sourceRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+    "sourceTreeFingerprint": "e9c52f1851f9492c6a7f976e2eca31e0c6dff3bc8f216a2b45af5733a3ab8b83",
+    "expectedRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+    "expectedMigration": "365",
+    "branch": "codex/frontend-preparation-m7",
+    "verified": true,
+    "observedAt": "2026-10-06T00:37:04.722Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+      "migration": "365"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+      "migration": "365"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "databaseBinding": {
+    "host": "127.0.0.1",
+    "port": 15442,
+    "database": "overpower",
+    "owner": "excelsior-frontend-preparation-m4",
+    "provenance": "listener launch settings plus checkout dotenv/defaults",
+    "verified": true
+  },
+  "durationSeconds": 1.47,
+  "cleanup": "existing servers preserved",
+  "gaps": []
+}

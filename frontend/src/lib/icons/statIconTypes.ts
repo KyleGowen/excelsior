@@ -1,3 +1,4 @@
+import { moduleAssets } from '../../modules/assetRegistry';
 /** Canonical power-type and threat icon keys for PNG badges. */
 export type StatIconType =
   | 'energy'
@@ -7,16 +8,16 @@ export type StatIconType =
   | 'threat_level';
 
 export const STAT_ICON_PATHS: Record<string, string> = {
-  energy: '/src/resources/images/icons/energy.png',
-  combat: '/src/resources/images/icons/combat.png',
-  brute_force: '/src/resources/images/icons/brute_force.png',
-  intelligence: '/src/resources/images/icons/intelligence.png',
-  threat_level: '/src/resources/images/icons/threat.png',
-  Energy: '/src/resources/images/icons/energy.png',
-  Combat: '/src/resources/images/icons/combat.png',
-  'Brute Force': '/src/resources/images/icons/brute_force.png',
-  Intelligence: '/src/resources/images/icons/intelligence.png',
-  'Any-Power': '/src/resources/images/icons/any-power.png',
+  energy: moduleAssets['energy'],
+  combat: moduleAssets['combat'],
+  brute_force: moduleAssets['brute_force'],
+  intelligence: moduleAssets['intelligence'],
+  threat_level: moduleAssets['threat'],
+  Energy: moduleAssets['energy'],
+  Combat: moduleAssets['combat'],
+  'Brute Force': moduleAssets['brute_force'],
+  Intelligence: moduleAssets['intelligence'],
+  'Any-Power': moduleAssets['any-power'],
 };
 
 export const STAT_ICON_LABELS: Record<StatIconType, string> = {

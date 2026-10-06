@@ -1,3 +1,5 @@
+import { cardExistsInCardTable } from './deck-cards';
+import { refreshDeckPreviewMetadata } from './deck-metadata';
 import { Deck, DeckCard, PreconstructedDeckRecord } from '../../types';
 import { invalidateUserDeckListCache, type DeckRepositoryContext } from './context';
 
@@ -987,4 +989,27 @@ export async function deleteDeck(
   } finally {
     client.release();
   }
+}
+
+/** Persist all imported cards and metadata in one transaction; no partial deck survives a failure. */
+export async function createImportedDeck(ctx:DeckRepositoryContext,userId:string,input:{ name:string;description:string;cards:Array<{type:DeckCard['type'];cardId:string;quantity:number}>;isValid:boolean;limited:boolean;reserveCharacterId:string|null;cardCount:number;threat:number }):Promise<Deck> {
+ const client=await ctx.pool.connect();
+ try {
+  await client.query('BEGIN');
+  const result=await client.query('INSERT INTO decks (user_id,name,description,is_valid,is_limited,reserve_character,card_count,threat) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',[userId,input.name,input.description,input.isValid,input.limited,input.reserveCharacterId,input.cardCount,input.threat]);
+  const row=result.rows[0] as DeckRow;
+  const persistedCards:DeckCard[]=[];
+  for (const [i,card] of input.cards.entries()) {
+   if (!await cardExistsInCardTable(client,card.type,card.cardId,false)) throw new Error('An imported catalog identity is no longer available');
+   const saved=await client.query('INSERT INTO deck_cards (deck_id,card_type,card_id,quantity,display_order,exclude_from_draw) VALUES ($1,$2,$3,$4,$5,false) RETURNING id',[row.id,card.type,card.cardId,card.quantity,i]);
+   persistedCards.push({...card,id:String(saved.rows[0].id)});
+  }
+  await refreshDeckPreviewMetadata(ctx,String(row.id),client);
+  const updated=await client.query('SELECT * FROM decks WHERE id = $1',[row.id]);
+  const deck=mapDeckRowWithCards(updated.rows[0] as DeckRow,persistedCards);
+  await client.query('COMMIT');
+  invalidateUserDeckListCache(ctx.cache,userId);
+  return deck;
+ } catch(error) { await client.query('ROLLBACK'); throw error; }
+ finally { client.release(); }
 }

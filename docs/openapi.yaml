@@ -253,6 +253,13 @@ components:
         defaultRank: { type: integer, minimum: 0 }
         addDefaultPrintingId: { type: string }
         basePrintingId: { type: string, nullable: true }
+        missingFoilPrinting:
+          type: object
+          nullable: true
+          required: [printingId, setNumber]
+          properties:
+            printingId: {type: string}
+            setNumber: {type: string}
         foilPrintingId: { type: string, nullable: true }
         printingIds: { type: array, items: { type: string } }
         searchText: { type: string }
@@ -489,6 +496,19 @@ components:
         icons: {type: object, additionalProperties: true}
         counts: {type: object, additionalProperties: true}
         capabilities: {type: object, additionalProperties: true}
+        prePlacedEligible: {type: object, additionalProperties: {type: boolean}}
+        koDimming: {type: object, additionalProperties: {type: boolean}}
+        addCardsTeam:
+          type: array
+          items:
+            type: object
+            required: [cardId, energy, combat, brute_force, intelligence]
+            properties:
+              cardId: {type: string}
+              energy: {type: number}
+              combat: {type: number}
+              brute_force: {type: number}
+              intelligence: {type: number}
     PreconstructedDeckGroup:
       type: object
       required: [setCode, setName, decks, featuredUpgradeRecommendations]
@@ -512,6 +532,616 @@ components:
     Card:
       type: object
       additionalProperties: true
+    DeckPreviewDraft:
+      type: object
+      required:
+        - schemaVersion
+        - draftId
+        - revision
+        - cards
+      additionalProperties: false
+      properties:
+        schemaVersion:
+          type: integer
+          enum:
+            - 1
+        draftId:
+          type: string
+          minLength: 1
+          maxLength: 100
+        revision:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        cards:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - type
+              - cardId
+              - quantity
+            properties:
+              type:
+                type: string
+                enum:
+                  - character
+                  - special
+                  - power
+                  - mission
+                  - event
+                  - location
+                  - battleground
+                  - aspect
+                  - advanced-universe
+                  - advanced_universe
+                  - teamwork
+                  - ally-universe
+                  - ally_universe
+                  - training
+                  - basic-universe
+                  - basic_universe
+              cardId:
+                type: string
+                minLength: 1
+                maxLength: 100
+              quantity:
+                type: integer
+                minimum: 1
+                maximum: 100
+              exclude_from_draw:
+                type: boolean
+        reserveCharacterId:
+          type: string
+          nullable: true
+        limited:
+          type: boolean
+          default: false
+        format:
+          type: string
+          enum:
+            - venture
+          default: venture
+        koCharacterIds:
+          type: array
+          maxItems: 100
+          items:
+            type: string
+    DrawDraftRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - draft
+      properties:
+        draft:
+          $ref: '#/components/schemas/DeckPreviewDraft'
+    ExportDraftRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - draft
+        - display
+      properties:
+        draft:
+          $ref: '#/components/schemas/DeckPreviewDraft'
+        display:
+          type: object
+          additionalProperties: false
+          required:
+            - name
+            - description
+            - exportedBy
+            - surface
+          properties:
+            name:
+              type: string
+              maxLength: 100
+            description:
+              type: string
+              maxLength: 500
+            exportedBy:
+              type: string
+              maxLength: 100
+            surface:
+              type: string
+              enum:
+                - editor
+                - selection
+    AnalyzeHandRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - draft
+        - hand
+      properties:
+        draft:
+          $ref: '#/components/schemas/DeckPreviewDraft'
+        hand:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - type
+              - cardId
+            properties:
+              type:
+                type: string
+                minLength: 1
+                maxLength: 40
+              cardId:
+                type: string
+                minLength: 1
+                maxLength: 100
+                pattern: ^[a-zA-Z0-9_-]+$
+          maxItems: 9
+    DeckSummariesRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - drafts
+      properties:
+        drafts:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeckPreviewDraft'
+          minItems: 1
+          maxItems: 20
+      description: At most 500 typed card identities across this batch; excess is VALIDATION_ERROR.
+    ImportDeckRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - exportData
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        exportData:
+          type: object
+          additionalProperties: true
+          required:
+            - cards
+          properties:
+            name:
+              type: string
+              maxLength: 100
+            description:
+              type: string
+              maxLength: 500
+            limited:
+              type: boolean
+            reserve_character:
+              type: string
+              nullable: true
+              maxLength: 200
+            cards:
+              type: object
+              additionalProperties: false
+              required: []
+              properties:
+                characters:
+                  type: array
+                  items:
+                    type: string
+                    maxLength: 200
+                  maxItems: 1000
+                locations:
+                  type: array
+                  items:
+                    type: string
+                    maxLength: 200
+                  maxItems: 1000
+                battlegrounds:
+                  type: array
+                  items:
+                    type: string
+                    maxLength: 200
+                  maxItems: 1000
+                aspects:
+                  type: array
+                  items:
+                    type: string
+                    maxLength: 200
+                  maxItems: 1000
+                teamwork:
+                  type: array
+                  items:
+                    type: string
+                    maxLength: 200
+                  maxItems: 1000
+                allies:
+                  type: array
+                  items:
+                    type: string
+                    maxLength: 200
+                  maxItems: 1000
+                training:
+                  type: array
+                  items:
+                    type: string
+                    maxLength: 200
+                  maxItems: 1000
+                basic_universe:
+                  type: array
+                  items:
+                    type: string
+                    maxLength: 200
+                  maxItems: 1000
+                power_cards:
+                  type: array
+                  items:
+                    type: string
+                    maxLength: 200
+                  maxItems: 1000
+                special_cards:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: string
+                      maxLength: 200
+                    maxItems: 1000
+                missions:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: string
+                      maxLength: 200
+                    maxItems: 1000
+                events:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: string
+                      maxLength: 200
+                    maxItems: 1000
+                advanced_universe:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: string
+                      maxLength: 200
+                    maxItems: 1000
+      description: >-
+        Structural checks limit the resolved import to 1,000 copies. Extra export metadata is accepted but not trusted for
+        calculations.
+    DrawDraftResult:
+      type: object
+      additionalProperties: false
+      required:
+        - schemaVersion
+        - inputKey
+        - revision
+        - cards
+      properties:
+        schemaVersion:
+          type: integer
+          enum:
+            - 1
+        inputKey:
+          type: string
+        revision:
+          type: integer
+          minimum: 0
+        cards:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - type
+              - cardId
+              - quantity
+            properties:
+              type:
+                type: string
+                enum:
+                  - character
+                  - special
+                  - power
+                  - mission
+                  - event
+                  - location
+                  - battleground
+                  - aspect
+                  - advanced-universe
+                  - teamwork
+                  - ally-universe
+                  - training
+                  - basic-universe
+              cardId:
+                type: string
+              quantity:
+                type: number
+              exclude_from_draw:
+                type: boolean
+              instanceId:
+                type: string
+          maxItems: 9
+    HandAnalysisResult:
+      type: object
+      additionalProperties: false
+      required:
+        - schemaVersion
+        - inputKey
+        - revision
+        - ventureTotal
+        - duplicateCount
+        - duplicateCardIndexes
+      properties:
+        schemaVersion:
+          type: integer
+          enum:
+            - 1
+        inputKey:
+          type: string
+        revision:
+          type: integer
+          minimum: 0
+        ventureTotal:
+          type: number
+        duplicateCount:
+          type: number
+        duplicateCardIndexes:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 8
+    DeckExportResult:
+      type: object
+      additionalProperties: false
+      required:
+        - schemaVersion
+        - inputKey
+        - revision
+        - deck
+      properties:
+        schemaVersion:
+          type: integer
+          enum:
+            - 1
+        inputKey:
+          type: string
+        revision:
+          type: integer
+          minimum: 0
+        deck:
+          type: object
+          additionalProperties: false
+          required:
+            - name
+            - description
+            - export_timestamp
+            - exported_by
+            - total_cards
+            - max_energy
+            - max_combat
+            - max_brute_force
+            - max_intelligence
+            - total_energy_icons
+            - total_combat_icons
+            - total_brute_force_icons
+            - total_intelligence_icons
+            - total_threat
+            - reserve_character
+            - cataclysm_special
+            - assist_special
+            - ambush_special
+            - legal
+            - limited
+            - cards
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            export_timestamp:
+              type: string
+            exported_by:
+              type: string
+            total_cards:
+              type: number
+            max_energy:
+              type: number
+            max_combat:
+              type: number
+            max_brute_force:
+              type: number
+            max_intelligence:
+              type: number
+            total_energy_icons:
+              type: number
+            total_combat_icons:
+              type: number
+            total_brute_force_icons:
+              type: number
+            total_intelligence_icons:
+              type: number
+            total_threat:
+              type: number
+            reserve_character:
+              type: string
+              nullable: true
+            cataclysm_special:
+              type: string
+              nullable: true
+            assist_special:
+              type: string
+              nullable: true
+            ambush_special:
+              type: string
+              nullable: true
+            legal:
+              type: boolean
+            limited:
+              type: boolean
+            cards:
+              type: object
+              additionalProperties: false
+              required:
+                - characters
+                - locations
+                - battlegrounds
+                - aspects
+                - teamwork
+                - allies
+                - training
+                - basic_universe
+                - power_cards
+                - special_cards
+                - missions
+                - events
+                - advanced_universe
+              properties:
+                characters:
+                  type: array
+                  items:
+                    type: string
+                locations:
+                  type: array
+                  items:
+                    type: string
+                battlegrounds:
+                  type: array
+                  items:
+                    type: string
+                aspects:
+                  type: array
+                  items:
+                    type: string
+                teamwork:
+                  type: array
+                  items:
+                    type: string
+                allies:
+                  type: array
+                  items:
+                    type: string
+                training:
+                  type: array
+                  items:
+                    type: string
+                basic_universe:
+                  type: array
+                  items:
+                    type: string
+                power_cards:
+                  type: array
+                  items:
+                    type: string
+                special_cards:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: string
+                missions:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: string
+                events:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: string
+                advanced_universe:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: string
+    DeckSummaryResult:
+      type: object
+      additionalProperties: false
+      required:
+        - draftId
+        - inputKey
+        - grid
+      properties:
+        draftId:
+          type: string
+        inputKey:
+          type: string
+        grid:
+          type: object
+          additionalProperties: false
+          required:
+            - energy
+            - combat
+            - bruteForce
+            - intelligence
+          properties:
+            energy:
+              type: number
+            combat:
+              type: number
+            bruteForce:
+              type: number
+            intelligence:
+              type: number
+          nullable: true
+    DeckImportResult:
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required:
+            - ok
+            - deckId
+            - userId
+            - cardsAdded
+          properties:
+            ok:
+              type: boolean
+              enum:
+                - true
+            deckId:
+              type: string
+            userId:
+              type: string
+            cardsAdded:
+              type: number
+        - type: object
+          additionalProperties: false
+          required:
+            - ok
+            - code
+            - message
+            - unresolved
+          properties:
+            ok:
+              type: boolean
+              enum:
+                - false
+            code:
+              type: string
+              enum:
+                - unresolved
+            message:
+              type: string
+            unresolved:
+              type: array
+              items:
+                type: object
+                additionalProperties: false
+                required:
+                  - name
+                  - type
+                properties:
+                  name:
+                    type: string
+                  type:
+                    type: string
   parameters:
     SinceVersion:
       in: query
@@ -533,6 +1163,7 @@ components:
       description: |
         Standard HTTP conditional GET. If the client's ETag matches the current
         catalog ETag, the server returns `304 Not Modified`.
+
 
 paths:
   /decks/candidates/evaluate:
@@ -1867,3 +2498,219 @@ paths:
       responses: { '200': { description: OK }, '403': { description: Not ADMIN } }
 
 # NOTE: keep this file updated whenever /api/v1 endpoints change.
+
+  /decks/draw:
+    post:
+      summary: Draw a fresh random hand without persisting a deck
+      description: >-
+        Cache-Control: no-store. Shared preview budget 120/minute. Public preview POSTs are decks:read service operations;
+        administration remains unavailable to the application service adapter.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DrawDraftRequest'
+      responses:
+        '200':
+          description: V1 envelope; no deck or collection writes. Draw/export/analysis echo exact revision and inputKey.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DrawDraftResult'
+                  meta:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+        '400':
+          description: VALIDATION_ERROR or DRAFT_STRUCTURE_INVALID
+        '429':
+          description: RATE_LIMITED
+        '503':
+          description: DRAFT_PREVIEW_UNAVAILABLE; retain draft, explicit retry
+      security: []
+  /decks/export:
+    post:
+      summary: Calculate the characterized export from a server-resolved draft
+      description: >-
+        Cache-Control: no-store. Shared preview budget 120/minute. Public preview POSTs are decks:read service operations;
+        administration remains unavailable to the application service adapter.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportDraftRequest'
+      responses:
+        '200':
+          description: V1 envelope; no deck or collection writes. Draw/export/analysis echo exact revision and inputKey.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DeckExportResult'
+                  meta:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+        '400':
+          description: VALIDATION_ERROR or DRAFT_STRUCTURE_INVALID
+        '429':
+          description: RATE_LIMITED
+        '503':
+          description: DRAFT_PREVIEW_UNAVAILABLE; retain draft, explicit retry
+      security: []
+  /decks/summaries:
+    post:
+      summary: Evaluate maximum grids for a bounded batch without persistence
+      description: >-
+        Cache-Control: no-store. Shared preview budget 120/minute. Public preview POSTs are decks:read service operations;
+        administration remains unavailable to the application service adapter.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeckSummariesRequest'
+      responses:
+        '200':
+          description: V1 envelope; no deck or collection writes. Draw/export/analysis echo exact revision and inputKey.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DeckSummaryResult'
+                  meta:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+        '400':
+          description: VALIDATION_ERROR or DRAFT_STRUCTURE_INVALID
+        '429':
+          description: RATE_LIMITED
+        '503':
+          description: DRAFT_PREVIEW_UNAVAILABLE; retain draft, explicit retry
+      security: []
+  /admin/decks/hand-analysis:
+    post:
+      summary: Analyze available hand copies using a verified ADMIN player
+      description: >-
+        Cache-Control: no-store. Shared preview budget 120/minute. Public preview POSTs are decks:read service operations;
+        administration remains unavailable to the application service adapter.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyzeHandRequest'
+      responses:
+        '200':
+          description: V1 envelope; no deck or collection writes. Draw/export/analysis echo exact revision and inputKey.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/HandAnalysisResult'
+                  meta:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+        '400':
+          description: VALIDATION_ERROR or DRAFT_STRUCTURE_INVALID
+        '401':
+          description: UNAUTHORIZED
+        '403':
+          description: FORBIDDEN; ADMIN player required
+        '429':
+          description: RATE_LIMITED
+        '503':
+          description: DRAFT_PREVIEW_UNAVAILABLE; retain draft, explicit retry
+  /decks/import:
+    post:
+      summary: Atomically import a complete owned deck
+      description: >-
+        20/minute; no-store. Resolve and validate all identities before insertion. Owned database insert is one
+        transaction; Guest insert is one complete local/session record. No automatic retry: an unavailable acknowledgement
+        may follow a committed deck. Check inventory before retrying.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportDeckRequest'
+      responses:
+        '201':
+          description: V1 envelope containing DeckImportResult success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DeckImportResult'
+        '400':
+          description: >-
+            VALIDATION_ERROR, DRAFT_STRUCTURE_INVALID, or IMPORT_UNRESOLVED. Only IMPORT_UNRESOLVED carries structured
+            unresolved names in data; no insertion.
+        '401':
+          description: UNAUTHORIZED or SESSION_REQUIRED
+        '403':
+          description: FORBIDDEN or READ_ONLY_MODE; role/owner-session boundary
+        '429':
+          description: RATE_LIMITED
+        '503':
+          description: DECK_IMPORT_UNAVAILABLE; check inventory before retrying
+  /guest/decks/import:
+    post:
+      summary: Atomically import a complete Guest deck
+      description: >-
+        20/minute; no-store. Resolve and validate all identities before insertion. Owned database insert is one
+        transaction; Guest insert is one complete local/session record. No automatic retry: an unavailable acknowledgement
+        may follow a committed deck. Check inventory before retrying.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportDeckRequest'
+      responses:
+        '201':
+          description: V1 envelope containing DeckImportResult success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DeckImportResult'
+        '400':
+          description: >-
+            VALIDATION_ERROR, DRAFT_STRUCTURE_INVALID, or IMPORT_UNRESOLVED. Only IMPORT_UNRESOLVED carries structured
+            unresolved names in data; no insertion.
+        '401':
+          description: UNAUTHORIZED or SESSION_REQUIRED
+        '403':
+          description: FORBIDDEN or READ_ONLY_MODE; role/owner-session boundary
+        '429':
+          description: RATE_LIMITED
+        '503':
+          description: DECK_IMPORT_UNAVAILABLE; check inventory before retrying

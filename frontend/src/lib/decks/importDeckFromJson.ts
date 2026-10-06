@@ -1,10 +1,6 @@
-import type { CreatedDeckRef, DeckCardInput, UpdateDeckMetaInput } from '../api/decks';
-import { extractCardsFromImportJson } from './extractCardsFromImportJson';
-import type { ImportDeckJson, ImportCatalogMap } from './importTypes';
-import {
-  findCharacterIdByName,
-  resolveImportCardIds,
-} from './resolveImportCardIds';
+import { api, ApiError } from '../api/client';
+import type { ImportDeckJson } from './importTypes';
+
 
 export const DEFAULT_IMPORTED_DECK_NAME = 'Imported Deck';
 
@@ -26,23 +22,6 @@ export type ImportDeckFailure =
   | { ok: false; code: 'api'; message: string };
 
 export type ImportDeckResult = ImportDeckSuccess | ImportDeckFailure;
-
-export type CreateDeckFn = (
-  input: { name: string; description?: string },
-  isGuest: boolean,
-) => Promise<CreatedDeckRef>;
-
-export type ReplaceDeckCardsFn = (
-  deckId: string,
-  cards: DeckCardInput[],
-  isGuest: boolean,
-) => Promise<unknown>;
-
-export type UpdateDeckMetaFn = (
-  deckId: string,
-  input: UpdateDeckMetaInput,
-  isGuest: boolean,
-) => Promise<unknown>;
 
 export function parseImportDeckJson(raw: string): ImportDeckJson {
   const trimmed = raw.trim();
@@ -71,115 +50,12 @@ export function deckNameFromImportJson(
   return DEFAULT_IMPORTED_DECK_NAME;
 }
 
-export interface ImportDeckFromJsonParams {
-  exportData: ImportDeckJson;
-  deckName: string;
-  isGuest: boolean;
-  catalogMap: ImportCatalogMap;
-  createDeckFn: CreateDeckFn;
-  replaceDeckCardsFn: ReplaceDeckCardsFn;
-  updateDeckMetaFn: UpdateDeckMetaFn;
-}
-
-/**
- * Resolve import JSON, create a new deck, write cards + metadata.
- * Ported from legacy deck-import.js + server importDeckFromExport.ts.
- */
-export async function importDeckFromJson(
-  params: ImportDeckFromJsonParams,
-): Promise<ImportDeckResult> {
-  const {
-    exportData,
-    deckName,
-    isGuest,
-    catalogMap,
-    createDeckFn,
-    replaceDeckCardsFn,
-    updateDeckMetaFn,
-  } = params;
-
-  const entries = extractCardsFromImportJson(exportData.cards);
-  if (entries.length === 0) {
-    return { ok: false, code: 'no_cards', message: 'No cards found in import data' };
-  }
-
-  const { resolved, unresolved } = resolveImportCardIds(catalogMap, entries);
-  if (unresolved.length > 0) {
-    return {
-      ok: false,
-      code: 'unresolved',
-      message: 'Could not resolve all cards in the import JSON',
-      unresolved: unresolved.map((u) => ({ name: u.name, type: u.type })),
-    };
-  }
-  if (resolved.length === 0) {
-    return { ok: false, code: 'no_cards', message: 'No cards found in import data' };
-  }
-
-  const name = deckNameFromImportJson(exportData, deckName);
-  const description = exportData.description?.trim();
-
-  let created: CreatedDeckRef;
-  try {
-    created = await createDeckFn(
-      description ? { name, description } : { name },
-      isGuest,
-    );
-  } catch (err) {
-    return {
-      ok: false,
-      code: 'api',
-      message: (err as Error)?.message || 'Could not create deck',
-    };
-  }
-
-  const cardPayload: DeckCardInput[] = resolved.map((c) => ({
-    cardType: c.cardType,
-    cardId: c.cardId,
-    quantity: c.quantity,
-  }));
-
-  try {
-    await replaceDeckCardsFn(created.id, cardPayload, isGuest);
-  } catch (err) {
-    return {
-      ok: false,
-      code: 'api',
-      message: (err as Error)?.message || 'Could not save imported cards',
-    };
-  }
-
-  const metaUpdates: UpdateDeckMetaInput = {};
-
-  if (typeof exportData.limited === 'boolean') {
-    metaUpdates.is_limited = exportData.limited;
-  }
-
-  if (exportData.reserve_character) {
-    const reserveId = findCharacterIdByName(catalogMap, exportData.reserve_character);
-    if (reserveId) {
-      metaUpdates.reserve_character = reserveId;
-    }
-  }
-
-  if (Object.keys(metaUpdates).length > 0) {
-    try {
-      await updateDeckMetaFn(created.id, metaUpdates, isGuest);
-    } catch (err) {
-      return {
-        ok: false,
-        code: 'api',
-        message: (err as Error)?.message || 'Could not apply deck metadata',
-      };
-    }
-  }
-
-  return {
-    ok: true,
-    deckId: created.id,
-    userId: created.userId,
-    cardsAdded: resolved.reduce((sum, c) => sum + c.quantity, 0),
-  };
+export async function importDeckFromJson(params:{exportData:ImportDeckJson;deckName:string;isGuest:boolean}):Promise<ImportDeckResult> {
+ try {return await api.post<ImportDeckResult>(params.isGuest ? '/api/v1/guest/decks/import' : '/api/v1/decks/import',{exportData:params.exportData,name:params.deckName});}
+ catch(error) {
+  if (error instanceof ApiError && error.data && typeof error.data === 'object' && 'unresolved' in error.data) return error.data as ImportDeckFailure;
+  return {ok:false,code:'api',message:(error as Error).message || 'Could not import deck'};
+ }
 }
 
 export function formatUnresolvedImportError(

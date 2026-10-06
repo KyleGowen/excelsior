@@ -3,7 +3,7 @@ import {
   deckCatalogIndexKey,
   isCatalogCardUsable,
   statForPowerTypeWithSpecialCases,
-} from '../../frontend/src/lib/deck-usability';
+} from '../../tests/helpers/serverCandidateCharacterization';
 import type { CatalogCard, CatalogType, DeckCardEntry } from '../../frontend/src/lib/api/types';
 
 function charCard(

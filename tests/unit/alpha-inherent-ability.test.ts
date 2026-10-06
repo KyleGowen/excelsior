@@ -1,9 +1,9 @@
-import { buildDeckUsabilityContext, isCatalogCardUsable } from '../../frontend/src/lib/deck-usability';
+import { buildDeckUsabilityContext, isCatalogCardUsable } from '../../tests/helpers/serverCandidateCharacterization';
 import type { CatalogCard, DeckCardEntry } from '../../frontend/src/lib/api/types';
 import {
   buildKoDimmingContext,
   shouldDimDeckCard,
-} from '../../frontend/src/lib/decks/simulateKo';
+} from '../../src/services/deck-preview/simulateKo';
 import { buildDeckValidationContext } from '../../src/services/deck-validation/deck-validation-context';
 import { deckCardMapKey } from '../../src/services/deck-validation/deck-validation-utils';
 import { UnusablePowerRule } from '../../src/services/deck-validation/rules/unusable-power.rule';

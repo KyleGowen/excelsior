@@ -1,6 +1,7 @@
 import { Deck, UIPreferences, DeckCard, PreconstructedDeckRecord } from '../types';
 
 export interface DeckRepository {
+  createImportedDeck?(userId:string, input: { name:string; description:string; cards:Array<{type:DeckCard['type'];cardId:string;quantity:number}>; isValid:boolean; limited:boolean; reserveCharacterId:string|null; cardCount:number; threat:number }):Promise<Deck>;
   // Initialization
   initialize(): Promise<void>;
 

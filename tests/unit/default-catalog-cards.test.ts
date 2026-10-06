@@ -7,7 +7,7 @@ import {
   findLastInstanceIdForRepresentative,
   qtyInDeckForRepresentative,
   resolveDefaultCardForDeckAdd,
-} from '../../frontend/src/lib/catalog/defaultCatalogCards';
+} from '../../tests/helpers/presentedCatalogCharacterization';
 
 function card(id: string, extra: Partial<CatalogCard> = {}): CatalogCard {
   return { id, name: 'Card', ...extra } as CatalogCard;

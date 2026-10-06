@@ -4,17 +4,11 @@ External clients consume Excelsior card images directly from the CDN. This
 document defines the contract so a client can construct image URLs from a
 card payload without extra API calls.
 
-## 1. Base URL
+## 1. Base URL and ownership
 
-- **Production app entry point:** the supported browser entry point is currently
-`http://excelsior.cards`. HTTPS references are leftovers from an incomplete
-rollout unless Kyle explicitly revives that work.
-- **Production image base:** `APP_CDN_BASE` is set from `/js/app-config.js`
-and currently points at the CloudFront distribution defined in
-`[infra/cloudfront.tf](../../infra/cloudfront.tf)`.
-- **Local dev:** images are served by the Express static middleware under
-`/src/resources/...`. `APP_CDN_BASE` is empty; clients should read
-`window.APP_CDN_BASE` or `/js/app-config.js` to pick the right base.
+The ordinary Excelsior app obtains its CDN configuration through `GET /api/v1/config/app` and passes its legacy image resolver through the application host adapter. Local relative artwork is served by Express under `/src/resources/...` and proxied by Vite. These are application adapter conventions, not implicit configuration for an independently mounted module. Resolve actual deployed configuration from the API; this document does not establish a live CDN or app revision.
+
+Portable modules use a per-surface `ModuleHost.assets` contract. Their default accepts absolute HTTP/data/blob URLs and uses the bundled placeholder for missing art. Relative catalog `image`/`image_path` references require host `resolveImageUrl` and `resolveThumbUrl` functions; do not read `window.APP_CDN_BASE` or assume an Excelsior origin. The host also supplies `placeholderImageUrl`, `assetUrl` and optionally `reverseImagePathForImagePath`. Separate module instances receive their own resolver contracts. Excelsior-specific reverse-art naming remains in its adapter rather than the portable module.
 
 When joining a base and a path, always strip trailing `/` from the base and
 leading `/` from the path to avoid `https://cdn.net//src/...` which some
@@ -74,8 +68,7 @@ filename in the catalog payload.
 
 Background images and UI icons are NOT gitignored. They ship with the code and
 are synced to S3 by the deploy workflow (`aws s3 sync src/resources/images/`).
-Paths are returned by `GET /api/v1/dbv/deck-backgrounds` or referenced directly
-from frontend chrome. In production, origin requests for `/src/resources/images/*`
+Background paths are returned by `GET /api/v1/dbv/deck-backgrounds` and resolved by the application host. Portable game/stat icons and the placeholder instead live in `frontend/src/assets/module/` and are emitted by Vite through `moduleAssets`; they do not require that S3 resource tree. Host brand/icon slots remain host-owned. In production, origin requests for `/src/resources/images/*`
 redirect to `APP_CDN_BASE` so repeated icon/background loads do not consume EC2
 bandwidth.
 
@@ -100,3 +93,7 @@ thumbnails are produced.
 - `[.cursorrules](../../.cursorrules)` — "Card Images in Production — Critical
 Architecture."
 
+
+## 8. Frontend delivery assets
+
+The private module artifact includes emitted icons/placeholder and embedded scoped styles. Optional `./modules/fonts` provides Poppins Latin weights 400/500/600/700/800 plus its OFL license; it declares font faces only. Hosts own typography and base-path configuration. Card artwork stays API/host supplied and is not copied into the frontend-only proof. [Module delivery](../../frontend/src/modules/README.md#m7-private-delivery-contract) documents the full contract; [M7 evidence](../evidence/frontend-preparation/m7/README.md) verifies declared asset/base-path resolution on the local compiled consumer. Production host/CDN integration is not inferred from that local proof.

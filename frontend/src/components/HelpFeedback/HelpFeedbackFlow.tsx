@@ -6,7 +6,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
+import { useLayoutMode } from '../../lib/layout/useLayoutMode';
 import {
   OVERPOWER_DISCORD_URL,
   SUPPORT_EMAIL,

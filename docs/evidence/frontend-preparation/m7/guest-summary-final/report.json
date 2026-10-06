@@ -1,0 +1,37 @@
+{
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+  "method": "CUA real local Guest import, metadata save and normal list navigation",
+  "status": "passed",
+  "counts": {
+    "passed": 1,
+    "failed": 0,
+    "blocked": 0,
+    "skipped": 0
+  },
+  "scenarios": [
+    {
+      "id": "guest-import-save-list-limited-threat",
+      "status": "passed",
+      "observed": {
+        "cards": 8,
+        "limited": true,
+        "threat": 18
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "screenshot": "private-run-evidence/guest-summary-final/import-save-limited-threat.jpg",
+      "dom": "private-run-evidence/guest-summary-final/import-save-limited-threat.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://127.0.0.1:5186/users/[fictional-local-id]/decks"
+    }
+  ],
+  "cleanup": "Exact run-owned import cleanup pending",
+  "acceptance": "Automated only; Kyle acceptance separate"
+}

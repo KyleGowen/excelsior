@@ -1,3 +1,4 @@
+import * as legacyImageAssets from '../app/legacyImageAssets';
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import type { ModuleCardActions } from './cardActions';
 import type { ModuleSaveFeedback } from './saveFeedback';
@@ -9,7 +10,7 @@ import { OverlayHostProvider } from '../lib/layout/OverlayHostProvider';
 import { createUnsavedNavigation } from './unsavedNavigation';
 import { harnessAppearance, type HarnessAppearance } from './harnessAppearance';
 import { fetchCurrentUser, fetchAppConfig } from '../lib/api/auth';
-import { useLayoutMode } from '../lib/layout/LayoutModeProvider';
+import { useLayoutMode } from '../lib/layout/useLayoutMode';
 import { saveFixtureApi, type SaveFixtureMode } from './saveFixtureApi';
 type Selection = 'database' | 'deck' | 'collection' | 'together' | 'unmounted';
 /** Local fixture host: neither Excelsior's router nor AuthProvider is mounted. */
@@ -51,7 +52,7 @@ export function ModuleHarness({ user, initialDeckId = '', initialHostOverlay = f
  const onOpenDeck = useCallback((id: string) => request(() => { setDeckId(id); setSelection('deck'); setFeedback('Host opened deck'); }), [request]);
  const onBack = useCallback(() => request(() => { setFeedback('Host received Back'); if (useUnsavedPolicy) setSelection('database'); }), [request, useUnsavedPolicy]);
  const onHome = useCallback(() => request(() => { setFeedback('Host received Home'); if (useUnsavedPolicy) setSelection('unmounted'); }), [request, useUnsavedPolicy]);
- const host = useMemo(() => ({ api, identity: { user, isGuest: !user || user.role === 'GUEST', isAdmin: user?.role === 'ADMIN' }, onOpenDeck, onBack, onHome, backLabel: 'Back to host', ...(useUnsavedPolicy ? { editing } : {}), ...(useHostActions ? { cardActions } : {}), ...(useHostSaveFeedback ? { saveFeedback } : {}), ...(useHostIcons ? { icons, chrome: { brand: <div className="module-harness__brand" role="note" aria-label="Fictional host brand">◇ Fictional host</div> } } : {}), appearance: harnessAppearance[appearance], ...(useContainerLayout ? { layout: { mode: 'container' as const } } : {}), ...(useHostOverlay && overlayRoot ? { overlays: { root: overlayRoot, position: 'absolute' as const } } : {}) }), [api, user, onOpenDeck, onBack, onHome, useHostOverlay, overlayRoot, useContainerLayout, appearance, useHostActions, cardActions, useHostIcons, icons, useHostSaveFeedback, saveFeedback, useUnsavedPolicy, editing]);
+ const host = useMemo(() => ({ api, assets:legacyImageAssets, identity: { user, isGuest: !user || user.role === 'GUEST', isAdmin: user?.role === 'ADMIN' }, onOpenDeck, onBack, onHome, backLabel: 'Back to host', ...(useUnsavedPolicy ? { editing } : {}), ...(useHostActions ? { cardActions } : {}), ...(useHostSaveFeedback ? { saveFeedback } : {}), ...(useHostIcons ? { icons, chrome: { brand: <div className="module-harness__brand" role="note" aria-label="Fictional host brand">◇ Fictional host</div> } } : {}), appearance: harnessAppearance[appearance], ...(useContainerLayout ? { layout: { mode: 'container' as const } } : {}), ...(useHostOverlay && overlayRoot ? { overlays: { root: overlayRoot, position: 'absolute' as const } } : {}) }), [api, user, onOpenDeck, onBack, onHome, useHostOverlay, overlayRoot, useContainerLayout, appearance, useHostActions, cardActions, useHostIcons, icons, useHostSaveFeedback, saveFeedback, useUnsavedPolicy, editing]);
  return <div className={`module-harness${useContainerLayout ? '' : isMobile ? ' layout-mobile' : ' layout-desktop'}`}>
   <div ref={setUnsavedRoot} className="module-harness__unsaved-root" />
   {unsavedRoot && <OverlayHostProvider options={{ root: unsavedRoot, position: 'fixed' }}><SlideOutPanel open={navigation.pending} onClose={guard.stay} ariaLabel="Unsaved deck changes" title="Unsaved deck changes"><p>{navigation.saving ? 'A save is still running. Stay here until it finishes.' : 'Leaving will discard your unsaved deck edits.'}</p><button type="button" className="btn btn-secondary" onClick={guard.stay}>Stay</button><button type="button" className="btn btn-danger" disabled={navigation.saving > 0} onClick={discard}>Discard and continue</button></SlideOutPanel></OverlayHostProvider>}

@@ -111,13 +111,9 @@ Data endpoints used:
   so loaded decks render real card art instead of "No image" placeholders.
 
 ## Card images
-[`lib/images/cardImages.ts`](../../frontend/src/lib/images/cardImages.ts) resolves all art:
-- Applies the CDN base from app config (empty in local dev → served via Vite proxy /
-  Express static from `src/resources`).
-- Produces thumbnail URLs following the repo's `/thumb/` convention.
-- `assetUrl()` resolves non-card UI assets (logo, icons) the same way.
-- Components must use `CardImage` / these helpers — never hardcode paths. This keeps image
-  paths working after the CDN cutover.
+[`CardImage`](../../frontend/src/components/CardImage/CardImage.tsx) uses the per-surface `ModuleImageAssets` contract from [cardImages.ts](../../frontend/src/lib/images/cardImages.ts). Portable modules accept absolute HTTP/data/blob catalog URLs by default; relative artwork requires a declared `ModuleHost.assets` resolver. They do not read application-wide CDN globals or assume repository resource paths.
+
+The ordinary app supplies [legacyImageAssets](../../frontend/src/app/legacyImageAssets.ts), preserving its existing CDN, thumbnail and `/src/resources` conventions outside the portable delivery graph. Bundled game/stat icons and the placeholder live in `frontend/src/assets/module/` and are exported through `moduleAssets`. See the [image contract](API_V1_IMAGE_CONTRACT.md) and [module delivery contract](../../frontend/src/modules/README.md#m7-private-delivery-contract). Components should use these helpers and providers instead of hardcoding resource paths.
 
 ## Collection (guest vs user)
 [`useCollection`](../../frontend/src/lib/collection/useCollection.ts) unifies both:
@@ -232,3 +228,15 @@ The next M6 save-feedback slice adds optional pure host result presentation; it 
 The development-only native route fixture under `/fictional-host` reuses independent modules through host-owned BrowserRouter links/history. See `frontend/src/modules/NativeRouteHarness.md`; ordinary Excelsior routes/build entry remain unchanged.
 
 The fictional local module harness offers opt-in unsaved-return protection using the host editing lifecycle port. See `frontend/src/modules/unsavedNavigation.md`; ordinary hosts omit the port and retain their defaults. Browser history/reload/external destinations require future host adapters.
+
+## M7 current delivery architecture
+
+The preceding M5/M6 sections record incremental preparation; the current candidate completes their delivery boundary. Excelsior's ordinary route adapters consume the same Card Database, Deck Builder and Collection module controllers/views exported from `frontend/src/modules/index.ts`. Application identity, router, navigation and the legacy image adapter remain outside the portable graph. No duplicate product implementation, copied application or published package is introduced.
+
+The private frontend package declares `./modules` ESM/types and optional `./modules/fonts`. `npm --prefix frontend run build:modules` emits `frontend/dist/modules/`; `build:delivery-proof` and `check:delivery` build/typecheck a separate same-repository consumer. `verify:delivery` proves those builds with only declared frontend inputs, without backend source or the repository card-art tree; it reuses installed frontend dependencies, so a second clean install remains unverified. The host supplies compatible React 19, React DOM 19 and React Query 5.62+ peers, one QueryClientProvider and identity-aware cache isolation. See [consumer instructions](../../frontend/examples/module-delivery/README.md).
+
+Frontend request/response copies live in `frontend/src/contracts/` and are parity-checked against server contracts. Backend services own draft evaluation, add-card capabilities, pre-placement/KO metadata, random draw/ADMIN analysis, export, atomic import and route-grid summaries; browser code keeps presentation and interaction state. Request cancellation and matching input keys guard stale preview results. The public API/auth/error semantics are documented in [API_V1](../../API_V1.md).
+
+Native styles are embedded and scoped to each module boundary and its explicit overlay root. Bundled icons/placeholder, optional licensed Poppins Latin fonts and host-resolved card art have declared homes; no body reset or host typography is applied on import. Storybook examples reuse production code and fictional API fixtures; the compiled delivery story links to its separately served consumer. `check:modules` rejects backend/Node/resources, undeclared globals/externals/computed imports and named retired rules; `check:contracts` verifies transport parity, with negative boundary tests in the root suite.
+
+[M7 local evidence](../evidence/frontend-preparation/m7/README.md) distinguishes live browser runs, component/API tests, artifact hashes and cleanup. Kyle accepted the M7 candidate; commit, deployment and production verification remain pending. Actual external host identity, full accessibility/production fallback validation and M8's complete readiness matrix remain separate work. No rebrand or LRG transfer has occurred.

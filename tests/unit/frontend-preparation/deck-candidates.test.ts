@@ -89,3 +89,15 @@ describe('Server Add Cards compatibility decisions', () => {
     expect(serviceScopeForOperation('PUT', '/api/v1/decks/candidates/evaluate')).not.toBe('decks:read');
   });
 });
+
+ describe('stateless preview operation scopes', () => {
+  it.each(['draw','export','summaries'])('classifies POST %s as read and rejects other methods as read', path => {
+   expect(serviceScopeForOperation('POST','/api/v1/decks/'+path)).toBe('decks:read');
+   expect(serviceScopeForOperation('DELETE','/api/v1/decks/'+path)).not.toBe('decks:read');
+  });
+  it('retains import/write, administration and unknown operation boundaries', () => {
+   expect(serviceScopeForOperation('POST','/api/v1/decks/import')).toBe('decks:write');
+   expect(serviceScopeForOperation('POST','/api/v1/admin/decks/hand-analysis')).toBeNull();
+   expect(serviceScopeForOperation('POST','/unregistered/preview')).toBeNull();
+  });
+ });

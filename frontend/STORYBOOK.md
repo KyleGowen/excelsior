@@ -63,3 +63,5 @@ M5 Independent host stories exercise the actual modules with fictional operation
 M6's first overlay slice adds `HostOwnedOverlay`, `NonmodalHostPanel` and `IndependentOverlayRoots` under Modules/Independent host. These are named examples for OverlayHostProvider and host-owned placement; builds do not prove Storybook play functions or live browser behavior.
 
 M6 container examples: **NarrowContainerOnDesktop**, **ResizableContainer**, and Controls/Pagination **NarrowHostPagination** exercise ContainerLayoutModeProvider and configured narrow pagination. Mocked gallery examples/builds remain separate from live browser proof.
+
+M7: ExportDeckPanel has Ready, Loading and Unavailable named states using a frozen fictional server export (no calculation fixture). BuiltModuleDelivery links to the separately compiled host consumer; build the proof and serve its declared base before following that link. Ordinary app/Storybook builds do not depend on generated delivery output. Existing module/native examples import the production components/styles; mocked examples remain distinct from real local browser evidence.

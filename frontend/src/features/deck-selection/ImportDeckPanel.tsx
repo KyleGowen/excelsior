@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { createDeck, replaceDeckCards, updateDeckMeta } from '../../lib/api/decks';
 import { SlideOutPanel } from '../../components/SlideOutPanel';
 import { IconImport } from '../../components/icons';
-import { loadImportCatalogMap } from '../../lib/decks/importCatalogLoader';
 import {
   DEFAULT_IMPORTED_DECK_NAME,
   formatUnresolvedImportError,
@@ -26,7 +23,6 @@ function deckNameFromParsedJson(data: ImportDeckJson): string {
 }
 
 export function ImportDeckPanel({ open, isGuest, onClose, onSuccess }: ImportDeckPanelProps) {
-  const queryClient = useQueryClient();
   const [jsonText, setJsonText] = useState('');
   const [deckName, setDeckName] = useState(DEFAULT_IMPORTED_DECK_NAME);
   const [busy, setBusy] = useState(false);
@@ -82,10 +78,6 @@ export function ImportDeckPanel({ open, isGuest, onClose, onSuccess }: ImportDec
       exportData,
       deckName: deckName.trim() || DEFAULT_IMPORTED_DECK_NAME,
       isGuest,
-      catalogMap: await loadImportCatalogMap(queryClient),
-      createDeckFn: createDeck,
-      replaceDeckCardsFn: replaceDeckCards,
-      updateDeckMetaFn: updateDeckMeta,
     });
 
     setBusy(false);

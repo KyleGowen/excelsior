@@ -1,3 +1,4 @@
+import { moduleAssets } from '../../../modules/assetRegistry';
 import type { CatalogType } from '../../../lib/api/types';
 
 export type CompareOp = 'eq' | 'gte' | 'lte';
@@ -69,11 +70,11 @@ export const FUNCTION_ICON_DEFS: {
   label: string;
   img: string;
 }[] = [
-  { field: 'icon_offensive_swords', label: 'Offensive', img: '/src/resources/images/icons/function/offensive_action.png' },
-  { field: 'icon_defensive_shield', label: 'Defensive', img: '/src/resources/images/icons/function/defensive_action.png' },
-  { field: 'icon_remainder_of_battle', label: 'Remainder of Battle', img: '/src/resources/images/icons/function/reminder_of_battle.png' },
-  { field: 'icon_remainder_of_game', label: 'Remainder of Game', img: '/src/resources/images/icons/function/reminder_of_game.png' },
-  { field: 'icon_astral_plane', label: 'Astral Plane', img: '/src/resources/images/icons/function/astral_plane.png' },
+  { field: 'icon_offensive_swords', label: 'Offensive', img: moduleAssets['function/offensive_action'] },
+  { field: 'icon_defensive_shield', label: 'Defensive', img: moduleAssets['function/defensive_action'] },
+  { field: 'icon_remainder_of_battle', label: 'Remainder of Battle', img: moduleAssets['function/reminder_of_battle'] },
+  { field: 'icon_remainder_of_game', label: 'Remainder of Game', img: moduleAssets['function/reminder_of_game'] },
+  { field: 'icon_astral_plane', label: 'Astral Plane', img: moduleAssets['function/astral_plane'] },
 ];
 
 export const OP_LABELS: Record<CompareOp, string> = {

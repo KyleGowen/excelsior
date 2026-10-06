@@ -1,5 +1,6 @@
+import { api } from '../../../frontend/src/lib/api/client';
 import type { CatalogCard } from '../../../frontend/src/lib/api/types';
-import { extractCardsFromImportJson } from '../../../frontend/src/lib/decks/extractCardsFromImportJson';
+import { extractCardsFromImportJson } from '../../../src/services/deck-preview/extractCardsFromImportJson';
 import {
   DEFAULT_IMPORTED_DECK_NAME,
   deckNameFromImportJson,
@@ -10,7 +11,7 @@ import type { ImportDeckJson } from '../../../frontend/src/lib/decks/importTypes
 import {
   buildImportCatalogMap,
   resolveImportCardIds,
-} from '../../../frontend/src/lib/decks/resolveImportCardIds';
+} from '../../../src/services/deck-preview/resolveImportCardIds';
 
 describe('extractCardsFromImportJson', () => {
   it('flattens v2.0 export cards into typed entries', () => {
@@ -120,81 +121,19 @@ describe('importDeckFromJson helpers', () => {
   });
 });
 
-describe('importDeckFromJson', () => {
-  const catalogMap = buildImportCatalogMap({
-    characters: [{ id: 'c1', name: 'Zeus' } as CatalogCard],
-    'power-cards': [
-      { id: 'p1', name: '1 - Energy', value: 1, power_type: 'Energy' } as CatalogCard,
-    ],
+describe('importDeckFromJson atomic transport', () => {
+  it('sends one complete import request to the selected endpoint', async () => {
+    const post=jest.spyOn(api,'post').mockResolvedValue({ok:true,deckId:'fictional-deck',userId:'fictional-actor',cardsAdded:2});
+    const exportData={cards:{characters:['Zeus'],power_cards:['1 - Energy']}};
+    expect(await importDeckFromJson({exportData,deckName:'Fixture',isGuest:true})).toMatchObject({ok:true,cardsAdded:2});
+    expect(post).toHaveBeenCalledTimes(1);
+    expect(post).toHaveBeenCalledWith('/api/v1/guest/decks/import',{exportData,name:'Fixture'});
+    post.mockRestore();
   });
-
-  const minimalExport: ImportDeckJson = {
-    name: 'Imported Test',
-    description: 'Notes',
-    limited: true,
-    reserve_character: 'Zeus',
-    cards: {
-      characters: ['Zeus'],
-      power_cards: ['1 - Energy'],
-    },
-  };
-
-  it('aborts when cards cannot be resolved', async () => {
-    const result = await importDeckFromJson({
-      exportData: {
-        cards: { characters: ['Nobody'] },
-      },
-      deckName: 'X',
-      isGuest: false,
-      catalogMap,
-      createDeckFn: jest.fn(),
-      replaceDeckCardsFn: jest.fn(),
-      updateDeckMetaFn: jest.fn(),
-    });
-
-    expect(result.ok).toBe(false);
-    if (!result.ok) {
-      expect(result.code).toBe('unresolved');
-    }
-  });
-
-  it('creates deck, writes cards, and applies metadata on success', async () => {
-    const createDeckFn = jest.fn().mockResolvedValue({ id: 'deck-1', userId: 'user-1' });
-    const replaceDeckCardsFn = jest.fn().mockResolvedValue({});
-    const updateDeckMetaFn = jest.fn().mockResolvedValue({});
-
-    const result = await importDeckFromJson({
-      exportData: minimalExport,
-      deckName: 'Imported Test',
-      isGuest: false,
-      catalogMap,
-      createDeckFn,
-      replaceDeckCardsFn,
-      updateDeckMetaFn,
-    });
-
-    expect(result.ok).toBe(true);
-    if (result.ok) {
-      expect(result.deckId).toBe('deck-1');
-      expect(result.cardsAdded).toBe(2);
-    }
-
-    expect(createDeckFn).toHaveBeenCalledWith(
-      { name: 'Imported Test', description: 'Notes' },
-      false,
-    );
-    expect(replaceDeckCardsFn).toHaveBeenCalledWith(
-      'deck-1',
-      expect.arrayContaining([
-        { cardType: 'character', cardId: 'c1', quantity: 1 },
-        { cardType: 'power', cardId: 'p1', quantity: 1 },
-      ]),
-      false,
-    );
-    expect(updateDeckMetaFn).toHaveBeenCalledWith(
-      'deck-1',
-      { is_limited: true, reserve_character: 'c1' },
-      false,
-    );
+  it('reports transport failure without attempting a second write', async () => {
+    const post=jest.spyOn(api,'post').mockRejectedValue(new Error('Fixture unavailable'));
+    expect(await importDeckFromJson({exportData:{cards:{}},deckName:'Fixture',isGuest:false})).toEqual({ok:false,code:'api',message:'Fixture unavailable'});
+    expect(post).toHaveBeenCalledTimes(1);
+    post.mockRestore();
   });
 });

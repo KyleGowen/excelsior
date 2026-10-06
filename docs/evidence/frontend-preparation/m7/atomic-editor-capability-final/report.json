@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "kind": "browser",
+  "environment": "local",
+  "sourceRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+  "sourceFingerprint": "bbcefe3aa017f355fb2be3cc07609f71854a6233c3202da62a36a0e1639b81b8",
+  "method": "CUA live UI; real local API; caller-created fictional Guest import",
+  "scenarios": [
+    {
+      "id": "atomic-import-complete-visible-cards-metrics",
+      "status": "passed"
+    },
+    {
+      "id": "server-preplacement-count-icons-save-reload",
+      "status": "passed"
+    },
+    {
+      "id": "server-ko-dimming-and-restore",
+      "status": "passed"
+    },
+    {
+      "id": "rapid-unsaved-edits-fresh-metrics",
+      "status": "passed"
+    },
+    {
+      "id": "server-add-cards-candidates-available",
+      "status": "passed"
+    },
+    {
+      "id": "edited-save-server-draw-capability-export",
+      "status": "passed"
+    }
+  ],
+  "evidence": [
+    {
+      "screenshot": "private-run-evidence/atomic-editor-capability-final/atomic-import-complete.jpg",
+      "dom": "private-run-evidence/atomic-editor-capability-final/atomic-import-complete.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://127.0.0.1:5186/users/7d03918adb06fa94e1e231d4674b7af6336757299f01eb738f82e6cb41900287/decks/[owned local fixture]"
+    },
+    {
+      "screenshot": "private-run-evidence/atomic-editor-capability-final/server-preplacement-save-reload.jpg",
+      "dom": "private-run-evidence/atomic-editor-capability-final/server-preplacement-save-reload.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://127.0.0.1:5186/users/7d03918adb06fa94e1e231d4674b7af6336757299f01eb738f82e6cb41900287/decks/[owned local fixture]"
+    },
+    {
+      "screenshot": "private-run-evidence/atomic-editor-capability-final/server-ko-dimming.jpg",
+      "dom": "private-run-evidence/atomic-editor-capability-final/server-ko-dimming.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://127.0.0.1:5186/users/7d03918adb06fa94e1e231d4674b7af6336757299f01eb738f82e6cb41900287/decks/[owned local fixture]"
+    },
+    {
+      "screenshot": "private-run-evidence/atomic-editor-capability-final/rapid-edits-fresh-metrics.jpg",
+      "dom": "private-run-evidence/atomic-editor-capability-final/rapid-edits-fresh-metrics.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://127.0.0.1:5186/users/7d03918adb06fa94e1e231d4674b7af6336757299f01eb738f82e6cb41900287/decks/[owned local fixture]"
+    },
+    {
+      "screenshot": "private-run-evidence/atomic-editor-capability-final/server-candidate-panel.jpg",
+      "dom": "private-run-evidence/atomic-editor-capability-final/server-candidate-panel.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://127.0.0.1:5186/users/7d03918adb06fa94e1e231d4674b7af6336757299f01eb738f82e6cb41900287/decks/[owned local fixture]"
+    },
+    {
+      "screenshot": "private-run-evidence/atomic-editor-capability-final/edited-server-export.jpg",
+      "dom": "private-run-evidence/atomic-editor-capability-final/edited-server-export.txt",
+      "dimensions": {
+        "height": 720,
+        "width": 1280
+      },
+      "url": "http://127.0.0.1:5186/users/7d03918adb06fa94e1e231d4674b7af6336757299f01eb738f82e6cb41900287/decks/[owned local fixture]"
+    }
+  ],
+  "acceptance": "Automated only; Kyle acceptance separate",
+  "cleanup": {
+    "applicationRecords": "Caller must delete this exact owned import; preexisting inventory unchanged"
+  },
+  "browserErrorCount": 0,
+  "counts": {
+    "passed": 6,
+    "failed": 0,
+    "blocked": 0,
+    "skipped": 0
+  },
+  "status": "passed"
+}

@@ -11,6 +11,8 @@ export interface ExportDeckPanelProps {
   open: boolean;
   input: BuildDeckExportJsonInput;
   loading?: boolean;
+  error?: unknown;
+  onRetry?: () => void;
   onClose: () => void;
 }
 
@@ -38,6 +40,8 @@ export function ExportDeckPanel({
   open,
   input,
   loading = false,
+  error,
+  onRetry,
   onClose,
 }: ExportDeckPanelProps) {
   const [copied, setCopied] = useState(false);
@@ -45,9 +49,9 @@ export function ExportDeckPanel({
   const copyTimerRef = useRef<number | null>(null);
 
   const exportData = useMemo(() => {
-    if (loading) return null;
+    if (loading || error) return null;
     return buildDeckExportJson(input);
-  }, [loading, input]);
+  }, [loading, error, input]);
 
   const jsonString = useMemo(
     () => (exportData ? JSON.stringify(exportData, null, 2) : ''),
@@ -118,7 +122,7 @@ export function ExportDeckPanel({
       <p className="export-deck-panel__helper">
         Copy this JSON to import the deck elsewhere.
       </p>
-      {loading ? (
+      {error ? (<div role="alert"><p>Could not load the export. Your deck is unchanged.</p><button className="btn" onClick={onRetry}>Retry export</button></div>) : loading ? (
         <LoadingState label="Loading card data…" />
       ) : (
         <pre className="export-deck-panel__json">{jsonString}</pre>

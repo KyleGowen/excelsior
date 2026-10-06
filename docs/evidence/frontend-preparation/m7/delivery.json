@@ -1,0 +1,901 @@
+{
+  "status": "passed",
+  "kind": "frontend-only-delivery",
+  "sourceInputs": [
+    "src",
+    "scripts",
+    "examples",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.app.json",
+    "tsconfig.modules.json",
+    "tsconfig.delivery.json",
+    "vite.modules.config.ts",
+    "vite.delivery.config.ts"
+  ],
+  "backendSourcePresent": false,
+  "cardResourceTreePresent": false,
+  "dependencySource": "installed frontend dependencies; no second installation",
+  "steps": [
+    {
+      "command": "npm run build:modules",
+      "status": "passed"
+    },
+    {
+      "command": "npm run build:delivery-proof",
+      "status": "passed"
+    },
+    {
+      "command": "node_modules/.bin/tsc -p tsconfig.delivery.json --noEmit",
+      "status": "passed"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "dist/modules/AddCardsPanel-C_8UF3S5.js"
+    },
+    {
+      "path": "dist/modules/DrawHandPanel-bQUK3RWe.js"
+    },
+    {
+      "path": "dist/modules/ModuleStyleBoundary-tsK-ucEC.js"
+    },
+    {
+      "path": "dist/modules/POPPINS-LICENSE.txt"
+    },
+    {
+      "path": "dist/modules/assets/fonts/poppins-latin-400-normal.woff2"
+    },
+    {
+      "path": "dist/modules/assets/fonts/poppins-latin-500-normal.woff2"
+    },
+    {
+      "path": "dist/modules/assets/fonts/poppins-latin-600-normal.woff2"
+    },
+    {
+      "path": "dist/modules/assets/fonts/poppins-latin-700-normal.woff2"
+    },
+    {
+      "path": "dist/modules/assets/fonts/poppins-latin-800-normal.woff2"
+    },
+    {
+      "path": "dist/modules/fonts.css"
+    },
+    {
+      "path": "dist/modules/index-CYBHCxSi.js"
+    },
+    {
+      "path": "dist/modules/index.d.ts"
+    },
+    {
+      "path": "dist/modules/index.js"
+    },
+    {
+      "path": "dist/modules/types/components/CardDetailPanel/CardDetailPanel.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/CardDetailPanel/CardDetailPanel.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/CardDetailPanel/cardDetailFields.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/CardDetailPanel/cardDetailFields.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/CardDetailPanel/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/CardDetailPanel/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/CardImage/CardImage.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/CardImage/CardImage.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/CardImage/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/CardImage/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/CardTile/CardTile.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/CardTile/CardTile.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/CardTile/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/CardTile/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/CatalogAllList/CatalogAllList.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/CatalogAllList/CatalogAllList.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/CatalogAllList/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/CatalogAllList/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/Checkbox/Checkbox.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/Checkbox/Checkbox.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/Checkbox/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/Checkbox/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/DeckTile/deckTileLegality.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/DeckTile/deckTileLegality.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/EmptyState/EmptyState.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/EmptyState/EmptyState.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/EmptyState/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/EmptyState/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/FoilCard/FoilCard.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/FoilCard/FoilCard.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/FoilCard/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/FoilCard/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/LegalityErrorsPopover/LegalityErrorsPopover.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/LegalityErrorsPopover/LegalityErrorsPopover.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/LegalityErrorsPopover/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/LegalityErrorsPopover/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/LoadingState/LoadingState.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/LoadingState/LoadingState.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/LoadingState/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/LoadingState/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/Pagination/Pagination.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/Pagination/Pagination.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/Pagination/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/Pagination/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/Pagination/paginationUtils.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/Pagination/paginationUtils.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/QuantityStepper/QuantityStepper.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/QuantityStepper/QuantityStepper.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/QuantityStepper/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/QuantityStepper/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/SlideOutPanel/SlideOutPanel.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/SlideOutPanel/SlideOutPanel.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/SlideOutPanel/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/SlideOutPanel/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/StatIconBadge/StatIconBadge.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/StatIconBadge/StatIconBadge.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/StatIconBadge/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/StatIconBadge/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/components/icons.d.ts"
+    },
+    {
+      "path": "dist/modules/types/components/icons.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/contracts/CatalogPresentationDto.d.ts"
+    },
+    {
+      "path": "dist/modules/types/contracts/CatalogPresentationDto.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/contracts/DeckCandidatesEvaluationDto.d.ts"
+    },
+    {
+      "path": "dist/modules/types/contracts/DeckCandidatesEvaluationDto.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/contracts/DeckDraftEvaluationDto.d.ts"
+    },
+    {
+      "path": "dist/modules/types/contracts/DeckDraftEvaluationDto.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/contracts/DeckExportDto.d.ts"
+    },
+    {
+      "path": "dist/modules/types/contracts/DeckExportDto.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/contracts/DrawDraftDto.d.ts"
+    },
+    {
+      "path": "dist/modules/types/contracts/DrawDraftDto.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/contracts/HandAnalysisDto.d.ts"
+    },
+    {
+      "path": "dist/modules/types/contracts/HandAnalysisDto.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/contracts/draftInput.d.ts"
+    },
+    {
+      "path": "dist/modules/types/contracts/draftInput.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/contracts/inputKey.d.ts"
+    },
+    {
+      "path": "dist/modules/types/contracts/inputKey.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/contracts/validation-error.d.ts"
+    },
+    {
+      "path": "dist/modules/types/contracts/validation-error.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/collection/CollectionModule.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/collection/CollectionModule.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/collection/collectionDefaults.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/collection/collectionDefaults.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/database/CardDatabaseModule.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/database/CardDatabaseModule.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/CatalogFilterRail.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/CatalogFilterRail.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/DbvFilterRail.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/DbvFilterRail.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/DbvFunctionIconStrip.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/DbvFunctionIconStrip.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/DbvMissionSetSelect.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/DbvMissionSetSelect.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/DbvNumericStatInline.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/DbvNumericStatInline.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/DbvPowerTypeStrip.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/DbvPowerTypeStrip.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/SavedDatabaseViewsPanel.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/database/components/SavedDatabaseViewsPanel.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/database/filters/dbvFilterConfig.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/database/filters/dbvFilterConfig.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/database/filters/dbvFilterPredicates.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/database/filters/dbvFilterPredicates.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/database/filters/dbvFilterTypes.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/database/filters/dbvFilterTypes.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/database/filters/useDbvFilters.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/database/filters/useDbvFilters.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/database/savedDatabaseViewState.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/database/savedDatabaseViewState.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/AddCardsFilterBar.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/AddCardsFilterBar.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/AddCardsPanel.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/AddCardsPanel.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/AddCardsQtyOverlay.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/AddCardsQtyOverlay.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/CharacterStackRow.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/CharacterStackRow.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/DeckBuilderModule.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/DeckBuilderModule.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/DeckListView.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/DeckListView.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/DrawHandPanel.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/DrawHandPanel.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/ExportDeckPanel.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/ExportDeckPanel.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/KoToggleButton.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/KoToggleButton.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/MissionSetRow.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/MissionSetRow.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/ReserveCharacterButton.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/ReserveCharacterButton.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/addCardsCatalog.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/addCardsCatalog.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/addCardsFilters.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/addCardsFilters.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/deckEditorCardImage.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/deckEditorCardImage.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/useDrawHandScale.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-editor/useDrawHandScale.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/features/deck-selection/useDeckExportInputController.d.ts"
+    },
+    {
+      "path": "dist/modules/types/features/deck-selection/useDeckExportInputController.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/api/catalog.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/api/catalog.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/api/client.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/api/client.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/api/collection.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/api/collection.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/api/deckCandidates.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/api/deckCandidates.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/api/decks.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/api/decks.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/api/favorites.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/api/favorites.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/api/savedDatabaseViews.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/api/savedDatabaseViews.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/api/types.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/api/types.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/allCatalogSort.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/allCatalogSort.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/cardPrintings.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/cardPrintings.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/catalogSetSort.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/catalogSetSort.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/catalogTypeMap.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/catalogTypeMap.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/characterStacks.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/characterStacks.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/defaultCatalogCards.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/defaultCatalogCards.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/foilCatalog.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/foilCatalog.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/missionSets.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/missionSets.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/setNames.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/setNames.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/useAllCatalogCards.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/catalog/useAllCatalogCards.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/collection/guestCollection.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/collection/guestCollection.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/collection/useCollectionController.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/collection/useCollectionController.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/deck-usability/catalogTypesWithUsability.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/deck-usability/catalogTypesWithUsability.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/deck-usability/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/deck-usability/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/buildDeckExportJson.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/buildDeckExportJson.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/characterOrder.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/characterOrder.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/deckCardCatalog.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/deckCardCatalog.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/deckEditorSectionOrder.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/deckEditorSectionOrder.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/deckInstances.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/deckInstances.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/deckListView.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/deckListView.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/deckThreat.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/deckThreat.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/drawHand.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/drawHand.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/drawHandAnalysis.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/drawHandAnalysis.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/favoritesQueryKey.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/favoritesQueryKey.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/guestCloneOnOpen.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/guestCloneOnOpen.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/prePlaced.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/prePlaced.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/reserveCharacter.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/reserveCharacter.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/simulateKo.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/simulateKo.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/useCandidateEvaluation.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/useCandidateEvaluation.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/useDraftEvaluation.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/useDraftEvaluation.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/useFavoriteToggleController.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/decks/useFavoriteToggleController.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/icons/statIconTypes.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/icons/statIconTypes.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/icons/uiIconOverrides.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/icons/uiIconOverrides.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/images/cardImages.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/images/cardImages.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/images/progressiveImageLoad.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/images/progressiveImageLoad.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/images/useImageAssets.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/images/useImageAssets.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/ContainerLayoutModeProvider.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/ContainerLayoutModeProvider.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/OverlayHostProvider.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/OverlayHostProvider.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/activeElement.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/activeElement.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/cardDetailHistoryController.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/cardDetailHistoryController.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/cyclicalIndex.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/cyclicalIndex.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/layoutModeContext.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/layoutModeContext.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/swipeBlockSelectors.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/swipeBlockSelectors.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/useHorizontalSwipe.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/useHorizontalSwipe.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/useLayoutMode.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/layout/useLayoutMode.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/sort/alphabetical.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/sort/alphabetical.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/lib/visual/foilEffect.d.ts"
+    },
+    {
+      "path": "dist/modules/types/lib/visual/foilEffect.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/modules/ModuleAppearanceBoundary.d.ts"
+    },
+    {
+      "path": "dist/modules/types/modules/ModuleAppearanceBoundary.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/modules/ModuleHost.d.ts"
+    },
+    {
+      "path": "dist/modules/types/modules/ModuleHost.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/modules/ModuleStyleBoundary.d.ts"
+    },
+    {
+      "path": "dist/modules/types/modules/ModuleStyleBoundary.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/modules/NativeOverlaySurface.d.ts"
+    },
+    {
+      "path": "dist/modules/types/modules/NativeOverlaySurface.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/modules/api.d.ts"
+    },
+    {
+      "path": "dist/modules/types/modules/api.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/modules/assetRegistry.d.ts"
+    },
+    {
+      "path": "dist/modules/types/modules/assetRegistry.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/modules/cardActions.d.ts"
+    },
+    {
+      "path": "dist/modules/types/modules/cardActions.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/modules/index.d.ts"
+    },
+    {
+      "path": "dist/modules/types/modules/index.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/modules/nativeStyles.d.ts"
+    },
+    {
+      "path": "dist/modules/types/modules/nativeStyles.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/modules/saveFeedback.d.ts"
+    },
+    {
+      "path": "dist/modules/types/modules/saveFeedback.d.ts.map"
+    },
+    {
+      "path": "dist/modules/types/modules/unsavedNavigation.d.ts"
+    },
+    {
+      "path": "dist/modules/types/modules/unsavedNavigation.d.ts.map"
+    }
+  ],
+  "exports": {
+    "./modules": {
+      "types": "./dist/modules/types/modules/index.d.ts",
+      "import": "./dist/modules/index.js"
+    },
+    "./modules/fonts": "./dist/modules/fonts.css"
+  },
+  "cleanup": "temporary proof sources and outputs removed",
+  "artifactCount": 285,
+  "artifactInventoryDigest": "97520c36b4a83cb90f35711ccea767ce1e41f4af6049705ee6407bcd80eedfa9",
+  "fullHashEvidence": "private-run-evidence/delivery-final-receipt.json"
+}

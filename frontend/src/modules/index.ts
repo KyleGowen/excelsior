@@ -20,3 +20,9 @@ export type { ModuleDeckEditState, ModuleEditingPort } from './unsavedNavigation
 export { createUnsavedNavigation } from './unsavedNavigation';
 
 export type { ModuleStyleOptions } from './ModuleStyleBoundary';
+
+export type { ModuleImageAssets } from '../lib/images/cardImages';
+export { moduleAssets } from './assetRegistry';
+export type * from '../lib/api/types';
+export type * from '../contracts/DeckDraftEvaluationDto';
+export type { DraftEvaluationInput } from '../lib/api/decks';

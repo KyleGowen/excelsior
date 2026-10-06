@@ -1,12 +1,10 @@
+import { isKoCharacter, pruneKoCharacterIds, toggleKoCharacterId } from '../../frontend/src/lib/decks/simulateKo';
 import type { CatalogCard, DeckCardEntry } from '../../frontend/src/lib/api/types';
 import {
   buildKoDimmingContext,
   calculateActiveTeamStats,
-  isKoCharacter,
-  pruneKoCharacterIds,
   shouldDimDeckCard,
-  toggleKoCharacterId,
-} from '../../frontend/src/lib/decks/simulateKo';
+} from '../../src/services/deck-preview/simulateKo';
 
 function deckEntry(
   type: DeckCardEntry['type'],

@@ -48,22 +48,11 @@ function comparePrintings(
   return rawA.localeCompare(rawB);
 }
 
-function missingSkyboundFoilPrinting(
-  base: CatalogCard,
-  foilId: string,
-  catalogById: Map<string, CatalogCard>,
-): CatalogCard | undefined {
-  if (catalogById.has(foilId) || String(base.set ?? '') !== 'SKY') return undefined;
-  const foilNumber = String(base.set_number_foil ?? '').trim();
-  if (!/^\d+F$/i.test(foilNumber)) return undefined;
-  return {
-    ...base,
-    id: foilId,
-    set_number: foilNumber,
-    set_number_foil: null,
-    is_foil: true,
-    ...(base.presentation ? { presentation: { ...base.presentation, printingId: foilId, isFoil: true, basePrintingId: base.id, foilPrintingId: null } } : {}),
-  };
+function declaredFoilPrinting(base: CatalogCard, foilId: string): CatalogCard | undefined {
+  const projection = base.presentation?.missingFoilPrinting;
+  if (!projection || projection.printingId !== foilId) return undefined;
+  return { ...base, id: projection.printingId, set_number: projection.setNumber, set_number_foil: null, is_foil: true,
+    presentation: { ...base.presentation!, printingId: projection.printingId, isFoil: true, basePrintingId: base.id, foilPrintingId: null, missingFoilPrinting: null } };
 }
 
 /**
@@ -82,7 +71,7 @@ export function collectPrintingsForCard(
     for (const base of [...rows]) {
       const foilId = base.presentation?.foilPrintingId;
       if (foilId && !rows.some(row => row.id === foilId)) {
-        const foil = catalogById.get(foilId) ?? missingSkyboundFoilPrinting(base, foilId, catalogById);
+        const foil = catalogById.get(foilId) ?? declaredFoilPrinting(base, foilId);
         if (foil) rows.push(foil);
       }
     }
@@ -112,7 +101,7 @@ export function collectPrintingsForCard(
     if (foilId) {
       addPrinting(
         catalogById.get(foilId)
-          ?? missingSkyboundFoilPrinting(base, foilId, catalogById),
+          ?? declaredFoilPrinting(base, foilId),
       );
     }
   }

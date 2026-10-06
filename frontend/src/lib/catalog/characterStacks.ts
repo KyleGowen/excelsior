@@ -1,6 +1,5 @@
 import type { CatalogCard, CatalogType } from '../api/types';
 import {
-  cardCharacterName,
   cardDisplayName,
   cardMatchesSearchQuery,
   compareCatalogCards,
@@ -27,48 +26,9 @@ function isAnyCharacterName(name: string): boolean {
   return name.trim().toLowerCase() === 'any character';
 }
 
-function normalizeAngryMobVariant(value: string): string {
-  return value.toLowerCase().replace(/\s+/g, ' ').trim().replace(/s$/, '');
-}
-
 /** Port of legacy `specialCardMatchesCharacter` (deck-card-operations / load-available-cards). */
-export function specialCardMatchesCharacter(
-  special: CatalogCard,
-  characterName: string,
-): boolean {
-  if (special.presentation) return special.presentation.characterNames.includes(characterName);
-  const specialCharacter = cardCharacterName(special);
-  if (specialCharacter === 'Any Character') {
-    return false;
-  }
-
-  if (specialCharacter.startsWith('Angry Mob') && characterName.startsWith('Angry Mob')) {
-    if (specialCharacter === 'Angry Mob') {
-      return true;
-    }
-
-    const hasVariantQualifier =
-      specialCharacter.includes(':') || specialCharacter.includes(' - ');
-    if (hasVariantQualifier) {
-      const separator = specialCharacter.includes(':') ? ':' : ' - ';
-      const specialVariant = specialCharacter.split(separator)[1]?.trim() ?? '';
-      const charVariantMatch = characterName.match(/\(([^)]+)\)/);
-      if (!charVariantMatch) return false;
-      const charVariant = charVariantMatch[1].trim();
-      return normalizeAngryMobVariant(specialVariant) === normalizeAngryMobVariant(charVariant);
-    }
-
-    return false;
-  }
-
-  return specialCharacter === characterName;
-}
-
-function advancedUniverseMatchesCharacter(card: CatalogCard, characterName: string): boolean {
-  if (card.presentation) return card.presentation.characterNames.includes(characterName);
-  const linked = cardCharacterName(card);
-  return linked !== '' && linked !== 'Any Character' && linked === characterName;
-}
+export function specialCardMatchesCharacter(special:CatalogCard,characterName:string):boolean { return special.presentation?.characterNames.includes(characterName) === true; }
+function advancedUniverseMatchesCharacter(card:CatalogCard,characterName:string):boolean { return card.presentation?.characterNames.includes(characterName) === true; }
 
 function pickPreferredCharacterRepresentative(group: CatalogCard[]): CatalogCard {
   return group.slice().sort((a, b) => {

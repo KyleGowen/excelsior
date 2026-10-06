@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "kind": "integration-shards",
+  "environment": "isolated-local",
+  "sourceRevision": "ec2af89558dfaf25faf0813944830ff6244f6944",
+  "status": "passed",
+  "selectedFiles": 118,
+  "shards": 2,
+  "counts": {
+    "suites": 118,
+    "tests": 1028,
+    "passed": 1028,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "evidence": {
+    "directory": "private-run-evidence/integration-ready"
+  },
+  "cleanup": "completed",
+  "durationSeconds": "97.8"
+}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import { useLayoutMode } from '../../lib/layout/LayoutModeProvider';
+import { useLayoutMode } from '../../lib/layout/useLayoutMode';
 import {
   COLUMBUS_DESKTOP_MASONRY_ORDER,
   columbusMasonryColumnSpanClass,

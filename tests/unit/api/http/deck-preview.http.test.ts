@@ -1,0 +1,21 @@
+import express, {type RequestHandler} from 'express';
+import request from 'supertest';
+import {registerDeckPreviewV1HttpRoutes} from '../../../../src/api/http/deck-preview.http';
+import {DeckDraftEvaluationService,DraftStructureError} from '../../../../src/api/services/deckDraftEvaluationService';
+import {resetV1RateLimitBucketsForTests} from '../../../../src/api/http/middleware/v1RateLimit';
+const draft={schemaVersion:1,draftId:'fictional-draft',revision:2,cards:[]};
+const cases=[['/decks/draw','draw',{draft}],['/decks/export','exportDraft',{draft,display:{name:'Fixture',description:'',exportedBy:'Fixture',surface:'selection'}}],['/decks/summaries','summaries',{drafts:[draft]}],['/admin/decks/hand-analysis','analyzeHand',{draft,hand:[]}]] as const;
+describe('Deck preview HTTP contract',()=>{
+ const service={draw:jest.fn(),exportDraft:jest.fn(),summaries:jest.fn(),analyzeHand:jest.fn()};
+ let role='ADMIN';
+ const auth:RequestHandler=(req,res,next)=>{if(role==='NONE'){res.status(401).json({errors:[{code:'UNAUTHORIZED'}]});return;}req.user={id:'fictional',role,username:'fictional',name:'Fictional',email:'fixture@example.invalid'} as NonNullable<typeof req.user>;next();};
+ const app=express();app.use(express.json());registerDeckPreviewV1HttpRoutes(app,service as unknown as DeckDraftEvaluationService,auth);
+ beforeEach(()=>{role='ADMIN';Object.values(service).forEach(fn=>fn.mockReset());resetV1RateLimitBucketsForTests();});
+ it.each(cases)('%s returns only a fresh no-store response',async(path,method,body)=>{service[method].mockResolvedValue({schemaVersion:1,inputKey:'fictional'});const r=await request(app).post(path).send(body).expect(200);expect(r.headers['cache-control']).toBe('no-store');expect(service[method]).toHaveBeenCalledTimes(1);});
+ it.each(cases)('%s rejects invalid input before evaluating',async(path,method)=>{await request(app).post(path).send({role:'ADMIN',invalid:true}).expect(400);expect(service[method]).not.toHaveBeenCalled();});
+ it.each(cases)('%s distinguishes invalid structure',async(path,method,body)=>{service[method].mockRejectedValue(new DraftStructureError('Unknown identity'));const r=await request(app).post(path).send(body).expect(400);expect(r.body.errors[0].code).toBe('DRAFT_STRUCTURE_INVALID');});
+ it.each(cases)('%s sanitizes unavailable operations',async(path,method,body)=>{service[method].mockRejectedValue(new Error('private fixture detail'));const r=await request(app).post(path).send(body).expect(503);expect(r.body.errors[0].code).toBe('DRAFT_PREVIEW_UNAVAILABLE');expect(JSON.stringify(r.body)).not.toContain('private fixture detail');});
+ it.each(['USER','GUEST','NONE'])('blocks analysis for %s',async(r)=>{role=r;await request(app).post('/admin/decks/hand-analysis').send({draft,hand:[]}).expect(r==='NONE'?401:403);expect(service.analyzeHand).not.toHaveBeenCalled();});
+ it('keeps draft validation on under the historical switch',async()=>{process.env.DISABLE_ZOD_V1='1';try{await request(app).post('/decks/draw').send({draft:{...draft,role:'ADMIN'}}).expect(400);}finally{delete process.env.DISABLE_ZOD_V1;}});
+ it('bounds the shared preview budget',async()=>{service.draw.mockResolvedValue({});const server=app.listen(0);try{for(let i=0;i<120;i++)await request(server).post('/decks/draw').send({draft}).expect(200);expect((await request(server).post('/decks/draw').send({draft}).expect(429)).headers['retry-after']).toBeDefined();}finally{await new Promise<void>((resolve,reject)=>server.close(error=>error?reject(error):resolve()));}},30000);
+});

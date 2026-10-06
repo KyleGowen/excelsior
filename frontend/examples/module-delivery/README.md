@@ -1,0 +1,7 @@
+# Private compiled-module consumer
+
+Build the ordinary app first if HTML-route integration tests will run. Then from the repository run `npm --prefix frontend run build:modules`, `build:delivery-proof` and `check:delivery`. Start Vite preview with `frontend/vite.delivery.config.ts`; its explicit local defaults are UI5187 and API8091. For another target, configure and verify its proxy and source/data ownership before browser writes. The API runs separately; the build itself needs no backend source or repository card-art tree.
+
+This example imports only the built module artifact, declared peers and optional font stylesheet. Host CSS remains Georgia; the first surface supplies Poppins and the second Georgia. The host maps local API art URLs explicitly and keeps the public deck read-only. Native isolated styles are embedded; a host must provide its own production route/base fallback. Fonts are optional and licensed; no publishing, rebrand or real host authentication is demonstrated.
+
+Run `npm --prefix frontend run verify:delivery -- --report /absolute/fresh/evidence.json` for a frontend-only temporary build/types/export/hash proof; its own temporary sources are cleaned. Actual browser cases stay in `tests/browser/milestone7-delivery.mjs`, with checked source/data/viewport receipts and no record writes. Storybook links to this consumer rather than importing generated output into the ordinary build. Installed frontend dependencies are reused; a second clean installation is not claimed.

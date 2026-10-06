@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { DeckTile } from '../../components/DeckTile';
-import { buildCharStatsById, deckMaxStats } from '../../lib/decks/deckMaxStats';
+import { useDeckGridStats } from '../../lib/decks/deckMaxStats';
 import {
   buildDeckPreviewCatalogImages,
   enrichDeckListPreviewImages,
@@ -50,7 +50,7 @@ export function CommunityDeckGrid({
   showLegality = true,
   className = 'community__grid',
 }: CommunityDeckGridProps) {
-  const charStatsById = useMemo(() => buildCharStatsById(characters), [characters]);
+  const gridStats = useDeckGridStats(decks);
   const missionSetByCardId = useMemo(() => buildMissionSetByCardId(missions ?? []), [missions]);
   const previewCatalogImages = useMemo(
     () => buildDeckPreviewCatalogImages(characters, locations, battlegrounds),
@@ -71,7 +71,7 @@ export function CommunityDeckGrid({
             key={deck.metadata.id}
             deck={deck}
             variant="full"
-            maxStats={deckMaxStats(deck, charStatsById)}
+            maxStats={gridStats.get(deck.metadata.id) ?? null}
             missionSetName={deckMissionSetName(deck, missionSetByCardId)}
             ownerName={showOwner ? (deck.metadata.ownerDisplayName ?? null) : null}
             onOwnerClick={showOwner ? () => onOwnerClick(deck) : undefined}

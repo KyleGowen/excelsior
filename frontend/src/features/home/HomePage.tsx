@@ -1,3 +1,4 @@
+import { useImageAssets } from '../../lib/images/useImageAssets';
 import { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -11,7 +12,6 @@ import {
   enrichDeckListPreviewImages,
 } from '../../lib/decks/deckPreviewImages';
 import { flattenOfficialPreconstructedDecks } from './preconstructedRail';
-import { assetUrl } from '../../lib/images/cardImages';
 import { DeckTile } from '../../components/DeckTile';
 import { LoadingState } from '../../components/LoadingState';
 import { EmptyState } from '../../components/EmptyState';
@@ -58,6 +58,7 @@ const HOME_COMMUNITY_FEED_KEY = ['decks', 'community-feed', ''] as const;
 const HOME_PRECONSTRUCTED_DECKS_KEY = ['decks', 'preconstructed'] as const;
 
 export default function HomePage() {
+  const { assetUrl } = useImageAssets();
   const { user, tournamentDecksUserId } = useAuth();
   const navigate = useNavigate();
 
