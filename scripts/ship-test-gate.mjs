@@ -7,10 +7,19 @@ import { testInputs, sameTestInputs } from './ship-test-inputs.mjs';
 import { createHash } from 'node:crypto';
 import { sourceRevision, readReceipt, writeReceipt, jestCounts } from './verification-receipt.mjs';
 
-export async function runTestGate(root, mode) {
+export async function runTestGate(root, mode, tests = []) {
+  if (!['unit', 'integration'].includes(mode)) throw new Error('Expected unit or integration');
+  if (tests.length && mode !== 'unit') throw new Error('Focused integration tests use their explicit fixture command');
+  tests = [...new Set(tests)].sort();
+  for (const path of tests) {
+    if (!/^tests\/unit\/.+\.(test|spec)\.ts$/.test(path) || path.split('/').includes('..') || !existsSync(join(root, path))) {
+      throw new Error(`Invalid focused unit test: ${path}`);
+    }
+  }
   const started = Date.now();
   const before = testInputs(root, mode);
-  const cacheFile = join(process.env.SHIP_TEST_CACHE_DIR ?? join(root, '.ship-test-cache.d'), `${mode}.v2.json`);
+  const selection = tests.length ? createHash('sha256').update(JSON.stringify(tests)).digest('hex') : null;
+  const cacheFile = join(process.env.SHIP_TEST_CACHE_DIR ?? join(root, '.ship-test-cache.d'), `${mode}${selection ? `-${selection}` : ''}.v2.json`);
   const cache = readReceipt(cacheFile);
   const reportDir = process.env.SHIP_REPORT_DIR ?? mkdtempSync(join(tmpdir(), 'excelsior-test-gate-'));
   mkdirSync(reportDir, { recursive: true });
@@ -19,10 +28,11 @@ export async function runTestGate(root, mode) {
   const force = ['1', 'true'].includes(process.env.SHIP_TESTS_FORCE);
   const logHash = path => { try { return createHash('sha256').update(readFileSync(path)).digest('hex'); } catch { return null; } };
   const current = { schema: 1, kind: 'test-gate', gate: mode, environment: 'local', sourceRevision: sourceRevision(root),
-    inputs: before, command: ['npm', 'run', mode === 'integration' ? 'test:integration:sharded' : 'test:unit'],
+    inputs: before, selectedTests: tests, command: ['npm', 'run', mode === 'integration' ? 'test:integration:sharded' : 'test:unit', ...(tests.length ? ['--', '--runInBand', '--runTestsByPath', ...tests] : [])],
     startedAt: new Date(started).toISOString(), evidence: { log: logPath }, cleanup: 'runner-owned fixtures only' };
   const validCache = cache?.schema === 1 && cache.status === 'passed' && cache.inputs?.fingerprint === before.fingerprint
     && cache.kind === 'test-gate' && cache.gate === mode && (mode !== 'integration' || cache.cleanup === 'completed')
+    && JSON.stringify(cache.selectedTests ?? []) === JSON.stringify(tests)
     && cache.counts?.passed > 0 && cache.counts?.tests > 0 && cache.counts?.suites > 0 && cache.counts.failed === 0
     && Date.now() - Date.parse(cache.finishedAt) >= 0 && Date.now() - Date.parse(cache.finishedAt) < 24 * 60 * 60 * 1000
     && cache.evidence?.log && existsSync(cache.evidence.log) && cache.evidence.sha256 && logHash(cache.evidence.log) === cache.evidence.sha256;
@@ -70,5 +80,5 @@ export async function runTestGate(root, mode) {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
-  runTestGate(root, process.argv[2]).then(code => { process.exitCode = code; }).catch(error => { console.error(error.message); process.exitCode = 1; });
+  runTestGate(root, process.argv[2], process.argv.slice(3)).then(code => { process.exitCode = code; }).catch(error => { console.error(error.message); process.exitCode = 1; });
 }

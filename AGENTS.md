@@ -69,7 +69,7 @@ Repo-local Codex skills live in [`.agents/skills/`](.agents/skills/README.md). U
 ## Core Workflow Rules
 
 - Do not commit or push unless Kyle explicitly asks. The word **ship** is explicit permission for this repo.
-- Before committing, lint and unit tests must pass. Use the `ship` skill for the full release gate.
+- Before committing, lint and proportionate focused unit/regression tests must pass for the final inputs (retained matching receipts may be reused). Full unit/integration suites, production builds, and security scans are enforced by the exact-SHA GitHub `Security Gate`; do not repeat full suites locally solely because Ship was invoked. Run broader local coverage when the change's risk, an explicit request, or path-specific instructions require it. Use the `ship` skill for selection and the full release gate.
 - If a diff touches `src/index.ts`, `src/routes/`, or `src/api/http/`, run `bash scripts/soc2-compliance-checks.sh`.
 - Run `npm audit` before the first push of each calendar day and whenever `package.json` or `package-lock.json` changes.
 - Remove temporary debug logging before committing.

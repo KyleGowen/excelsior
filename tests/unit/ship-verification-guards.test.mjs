@@ -71,11 +71,25 @@ test('Node test receipts reject empty/missing/cancelled execution', () => {
   assert.equal(nodeTestCounts('green'), null);
   assert.deepEqual(nodeTestCounts('# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n'), { tests: 2, suites: 0, passed: 2, failed: 0, cancelled: 0, skipped: 0, todo: 0 });
 });
-function gate(dir, extra = {}) {
-  return spawnSync(process.execPath, ['--input-type=module', '-e', `import {runTestGate} from ${JSON.stringify(join(root, 'scripts/ship-test-gate.mjs'))}; process.exitCode=await runTestGate(process.argv[1], 'unit');`, dir], {
+function gate(dir, extra = {}, tests = []) {
+  return spawnSync(process.execPath, ['--input-type=module', '-e', `import {runTestGate} from ${JSON.stringify(join(root, 'scripts/ship-test-gate.mjs'))}; process.exitCode=await runTestGate(process.argv[1], 'unit', ${JSON.stringify(tests)});`, dir], {
     encoding: 'utf8', env: { ...process.env, PATH: `${join(dir, 'bin')}:${process.env.PATH}`, SHIP_TEST_CACHE_DIR: join(dir, '.cache'), ...extra }, timeout: 15000,
   });
 }
+test('focused unit receipts cannot cover a different selection or the full suite', t => {
+  const dir = fixture(t), a = 'tests/unit/a.test.ts', b = 'tests/unit/b.test.ts';
+  mkdirSync(join(dir, 'tests/unit'), { recursive: true });
+  writeFileSync(join(dir, a), 'fixture'); writeFileSync(join(dir, b), 'fixture');
+  writeFileSync(join(dir, 'bin/npm'), '#!/bin/sh\nprintf "Test Suites: 1 passed, 1 total\\nTests: 2 passed, 2 total\\n"\n', { mode: 0o755 });
+  const first = gate(dir, {}, [a]); assert.equal(first.status, 0, first.stderr);
+  assert.equal(JSON.parse(first.stdout).status, 'passed');
+  assert.deepEqual(JSON.parse(first.stdout).command.slice(-3), ['--runInBand', '--runTestsByPath', a]);
+  assert.equal(JSON.parse(gate(dir, {}, [a]).stdout).status, 'reused');
+  assert.equal(JSON.parse(gate(dir, {}, [b]).stdout).status, 'passed');
+  assert.equal(JSON.parse(gate(dir).stdout).status, 'passed');
+  assert.equal(gate(dir, {}, ['tests/unit/missing.test.ts']).status, 1);
+  assert.equal(gate(dir, {}, ['tests/unit/../../outside.test.ts']).status, 1);
+});
 test('gate reuses confirmed counts, rejects forced and ordinary edits during execution, and never caches zero tests', t => {
   const dir = fixture(t);
   const npm = join(dir, 'bin/npm');

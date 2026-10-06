@@ -7,7 +7,7 @@ The main agent selects coverage. Write a private plan outside the checkout with 
 ```json
 {"gates":[
   {"name":"lint","kind":"check","command":["npx","eslint","src","--ext",".ts","--max-warnings","0"]},
-  {"name":"unit","kind":"test-gate","command":["bash","scripts/ship-conditional-test.sh","unit"]}
+  {"name":"unit","kind":"test-gate","command":["bash","scripts/ship-conditional-test.sh","unit","tests/unit/example.test.ts"]}
 ]}
 ```
 
@@ -15,7 +15,7 @@ Add integration/SOC2/audit/frontend checks only when required. Run `node scripts
 
 ## Test cache contract
 
-The conditional runner stores separate atomic versioned receipts for unit/integration. Legacy hashes are ignored. `SHIP_TESTS_FORCE=1` bypasses reuse but still checks pre/post inputs and test counts.
+The conditional runner stores separate atomic versioned receipts for full unit/integration and each focused unit selection. Focused paths are explicit and part of receipt identity; evidence for one selection never covers another or the full suite. Legacy hashes are ignored. `SHIP_TESTS_FORCE=1` bypasses reuse but still checks pre/post inputs and test counts.
 
 `scripts/ship-test-inputs.mjs` hashes content/modes independently of HEAD/staging, Node version, installed dependency lock receipts, dotenv files and inherited environment (digests only). Integration also binds Docker version and local fixture image IDs. Source/tests/configuration/locks/migrations/data/assets/scripts and unknown files remain inputs. Only explicitly reviewed skill prose/metadata, named report guides and narrow report directories are excluded; Markdown/docs are not blanket exclusions. Do not broaden exclusions without inspecting loaders/fixtures and adding regression coverage. Changed inputs during any execution fail validation. Missing dependency/runtime identity disables reuse. Zero/unavailable actual test execution counts fail. Receipts expire after 24 hours and require retained logs.
 

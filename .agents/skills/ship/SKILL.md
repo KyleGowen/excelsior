@@ -1,9 +1,9 @@
 ---
 name: ship
 description: >-
-  Ships approved Excelsior changes with deterministic scope checks, cached and
-  parallel release gates, a low-cost Git execution agent, exact-SHA GitHub
-  Actions watching, and production health verification. Use when the user says
+  Ships approved Excelsior changes with deterministic scope checks, focused
+  local checks and authoritative CI validation, a low-cost Git execution
+  agent, exact-SHA GitHub Actions watching, and production health verification. Use when the user says
   "ship", "ship it", or asks for the Excelsior release gate.
 ---
 
@@ -68,11 +68,11 @@ Preflight keeps the complete scope fingerprint from `scripts/ship-tree-fingerpri
 
 ### 2. Classify conditional gates
 
-- **Unit tests:** always invoke `bash scripts/ship-conditional-test.sh unit`. Its versioned input receipt may reuse previous successful execution; report reuse separately from newly executed tests.
-- **Integration tests:** invoke `bash scripts/ship-conditional-test.sh integration` only when the user, `AGENTS.md`, path-specific instructions, or the risk of the change requires integration coverage. A valid input/environment receipt counts as reused evidence, never newly executed tests.
+- **Focused tests:** select unit/regression tests covering the approved change. For root Jest unit files, run `bash scripts/ship-conditional-test.sh unit tests/unit/example.test.ts ...`; selection is bound to its own receipt/cache key. Use an explicit `node-test`/`jest` gate for Node tests or the separate frontend-module config. Reuse matching retained evidence from implementation. A documentation-only change may need link/schema checks instead of tests; record the reason. Never select an empty suite or waive applicable regressions. If focused coverage cannot be established safely, invoke the full unit gate without test paths.
+- **Integration tests:** full integration coverage is owned by CI. Run local focused scenarios or `bash scripts/ship-conditional-test.sh integration` only for explicit requirements or material behavior/data/migration risk requiring local verification. Preserve isolated fixtures and retained evidence; full integration is not an automatic Ship phase.
 - **SOC 2:** run `bash scripts/soc2-compliance-checks.sh` only when the ship scope includes `src/index.ts`, `src/routes/**`, or `src/api/http/**`.
 - **Dependency audit:** run `npm audit` before the first push of the calendar day (record the timezone) and whenever backend or frontend dependency manifests changed; audit each affected package. Reuse same-day evidence only when its timestamp is known and no dependency manifest changed afterward; when uncertain, run it.
-- **Changed-area checks:** include any focused typecheck, build, or verification required by `AGENTS.md` or nested instructions for the files being shipped. Do not invent unrelated broad checks.
+- **Changed-area checks:** include focused typecheck, local browser, Storybook, or build verification required by `AGENTS.md` or nested instructions. Production builds are owned by CI; build locally when fixtures/browser checks, the change's risk, or instructions require it. Record selected/executed/reused coverage and why broader checks are needed.
 
 ### 3. Run one parallel gate batch
 
@@ -80,7 +80,7 @@ Start every applicable independent read-only gate together in one direct paralle
 
 ```text
 npx eslint src --ext .ts --max-warnings 0
-bash scripts/ship-conditional-test.sh unit
+bash scripts/ship-conditional-test.sh unit tests/unit/example.test.ts ...
 bash scripts/ship-conditional-test.sh integration   # only when triggered
 bash scripts/soc2-compliance-checks.sh              # only when triggered
 npm audit                                            # only when triggered

@@ -2,4 +2,4 @@
 # Content-based, environment-bound receipts; legacy hash-only entries are ignored.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-exec node "$ROOT/scripts/ship-test-gate.mjs" "${1:-}"
+exec node "$ROOT/scripts/ship-test-gate.mjs" "$@"
