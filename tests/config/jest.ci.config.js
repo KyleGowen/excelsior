@@ -9,6 +9,7 @@ module.exports = {
   // for full type checking. This prevents TS diagnostic errors from failing
   // tests that are functionally correct (e.g., missing type stubs).
   transform: {
+    ...unitConfig.transform,
     '^.+\\.ts$': ['ts-jest', { diagnostics: false }],
   },
   // Override coverage reporters to include JSON for Codecov upload
