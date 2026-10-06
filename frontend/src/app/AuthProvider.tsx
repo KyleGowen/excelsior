@@ -38,6 +38,7 @@ export interface AuthContextValue {
   isAdmin: boolean;
   communityDecksUserId: string | null;
   tournamentDecksUserId: string | null;
+  databaseServiceAdapter?: boolean;
   login: (username: string, password: string) => Promise<AppUser | null>;
   signUp: (username: string, email: string, password: string) => Promise<AppUser | null>;
   signInWithGoogle: () => Promise<AppUser | null>;
@@ -191,6 +192,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAdmin: user?.role === 'ADMIN',
       communityDecksUserId: configQuery.data?.communityDecksUserId ?? null,
       tournamentDecksUserId: configQuery.data?.tournamentDecksUserId ?? null,
+      databaseServiceAdapter: configQuery.data?.databaseServiceAdapter === true,
       login,
       signUp,
       signInWithGoogle,

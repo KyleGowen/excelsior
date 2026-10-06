@@ -8,12 +8,12 @@ import { MobileBottomNav } from '../components/MobileBottomNav';
 import { Logo } from '../components/Logo';
 import { IconHome, IconDatabase, IconDecks, IconCollection, IconUsers } from '../components/icons';
 /** Excelsior alone owns account bootstrap, URLs and branded navigation. */
-export function ExcelsiorModuleHost({ children }: { children: ReactNode }) {
- const { user, isGuest, isAdmin } = useAuth();
+export function ExcelsiorModuleHost({ children, database = false }: { children: ReactNode; database?: boolean }) {
+ const { user, isGuest, isAdmin, databaseServiceAdapter } = useAuth();
  const { userId = '' } = useParams();
  const navigate = useNavigate(); const location = useLocation();
  const returnTo = getDeckEditorReturnTo(location.state);
- const api = useMemo(() => createModuleApi(), []);
+ const api = useMemo(() => createModuleApi({}, database && databaseServiceAdapter ? { pathPrefix: '/api/apps/excelsior' } : undefined), [database, databaseServiceAdapter]);
  const onOpenDeck = useCallback((deckId: string, options?: { replace?: boolean }) => navigate('/users/' + (user?.id ?? userId) + '/decks/' + deckId, options), [navigate, user?.id, userId]);
  const onBack = useCallback(() => navigate(returnTo ?? '/users/' + (user?.id ?? userId) + '/decks'), [navigate, returnTo, user?.id, userId]);
  const onHome = useCallback(() => navigate('/home'), [navigate]);

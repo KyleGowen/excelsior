@@ -7,7 +7,8 @@ set -euo pipefail
 
 AWS_REGION="${AWS_REGION:-us-west-2}"
 PARAMETER_PREFIX="${PARAMETER_PREFIX:-/op-deckbuilder/dev}"
-ENV_FILE="/opt/app/.env"
+APP_DIR="${EXCELSIOR_APP_DIRECTORY:-/opt/app}"
+ENV_FILE="$APP_DIR/.env"
 
 get_parameter() {
   local name="$1"
@@ -64,9 +65,34 @@ FIREBASE_SERVICE_ACCOUNT_JSON="$(
   get_optional_parameter firebase/service_account_json true | jq -c . 2>/dev/null || true
 )"
 
-mkdir -p /opt/app
+# Opt-in only after the TLS origin and zero-cache edge behaviors are established.
+# The BMG secret stays with BMG; Excelsior stores its digest and its own native credential.
+DATABASE_SERVICE_ENABLED="$(get_optional_parameter app/database_service_enabled)"
+case "$DATABASE_SERVICE_ENABLED" in
+  ''|None|0) DATABASE_SERVICE_ENABLED=0 ;;
+  1) ;;
+  *) echo "Invalid database service activation setting." >&2; exit 1 ;;
+esac
+mkdir -p "$APP_DIR/service-access"
+chmod 700 "$APP_DIR/service-access"
+if [[ "$DATABASE_SERVICE_ENABLED" == 1 ]]; then
+  umask 077
+  REGISTRY_TEMP="$(mktemp "$APP_DIR/service-access"/registry.XXXXXX)"
+  NATIVE_TEMP="$(mktemp "$APP_DIR/service-access"/native.XXXXXX)"
+  trap 'rm -f "$REGISTRY_TEMP" "$NATIVE_TEMP"' EXIT
+  get_parameter app/database_service_config true > "$REGISTRY_TEMP"
+  get_parameter app/native_database_credentials true > "$NATIVE_TEMP"
+  jq -e '.environment == "production" and (.clients | length == 2) and ([.clients[].id] | sort == ["bmg-database-ui","excelsior-web"]) and all(.clients[]; .enabled == true and .scopes == ["catalog:read"])' "$REGISTRY_TEMP" >/dev/null
+  jq -e '.environment == "production" and (.clients | length == 1) and .clients[0].clientId == "excelsior-web"' "$NATIVE_TEMP" >/dev/null
+  chmod 600 "$REGISTRY_TEMP" "$NATIVE_TEMP"
+  mv "$REGISTRY_TEMP" "$APP_DIR/service-access"/registry.json
+  mv "$NATIVE_TEMP" "$APP_DIR/service-access"/native.json
+  trap - EXIT
+fi
+
+mkdir -p "$APP_DIR"
 umask 077
-TEMP_ENV_FILE="$(mktemp /opt/app/.env.XXXXXX)"
+TEMP_ENV_FILE="$(mktemp "$APP_DIR/.env.XXXXXX")"
 trap 'rm -f "$TEMP_ENV_FILE"' EXIT
 
 {
@@ -86,6 +112,11 @@ trap 'rm -f "$TEMP_ENV_FILE"' EXIT
   printf 'FLYWAY_PASSWORD=%s\n' "$DB_PASSWORD"
   printf 'CDN_BASE_URL=%s\n' "$CDN_BASE_URL"
   printf 'JWT_SECRET=%s\n' "$JWT_SECRET"
+  if [[ "$DATABASE_SERVICE_ENABLED" == 1 ]]; then
+    printf 'ENABLE_SERVICE_ACCESS=1\nENABLE_DATABASE_SERVICE_GATEWAY=1\nENABLE_NATIVE_DATABASE_SERVICE=1\n'
+    printf 'SERVICE_ACCESS_CONFIG_FILE=/app/runtime/service-access/registry.json\n'
+    printf 'APPLICATION_ACCESS_CREDENTIALS_FILE=/app/runtime/service-access/native.json\n'
+  fi
 
   [[ -n "$FIREBASE_API_KEY" && "$FIREBASE_API_KEY" != "None" ]] && \
     printf 'FIREBASE_API_KEY=%s\n' "$FIREBASE_API_KEY"
@@ -109,6 +140,13 @@ echo "Pulling the exact deployment image..."
 aws ecr get-login-password --region "$AWS_REGION" |
   docker login --username AWS --password-stdin "$ECR_REGISTRY" >/dev/null
 timeout 480 docker pull "$ECR_IMAGE"
+
+if [[ "$DATABASE_SERVICE_ENABLED" == 1 ]]; then
+  echo "Validating production service identity (values withheld)..."
+  docker run --rm --env-file "$ENV_FILE" \
+    -v "$APP_DIR/service-access:/app/runtime/service-access:ro" --entrypoint node "$ECR_IMAGE" \
+    -e 'try { const {ServiceAccessService}=require("./dist/api/access/serviceAccessService"); const {NativeDatabaseAccess}=require("./dist/api/access/nativeDatabaseAccess"); const {readApplicationClientCredentials}=require("./dist/api/access/applicationClientCredentials"); new NativeDatabaseAccess(new ServiceAccessService(),()=>readApplicationClientCredentials("excelsior-web")).authenticate(); } catch { console.error("Production database service configuration is invalid"); process.exit(1); }'
+fi
 
 echo "Running the one authoritative Flyway migrate command..."
 docker run --rm \

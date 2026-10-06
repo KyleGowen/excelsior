@@ -34,6 +34,61 @@ resource "aws_cloudfront_distribution" "card_images" {
     }
   }
 
+  # Confidential service requests use a separate TLS origin; public app/image routing is preserved.
+  dynamic "origin" {
+    for_each = var.enable_database_service_edge ? [1] : []
+    content {
+      domain_name = "origin.${var.domain_name}"
+      origin_id   = "ec2-service-origin"
+      custom_origin_config {
+        http_port              = 80
+        https_port             = 443
+        origin_protocol_policy = "https-only"
+        origin_ssl_protocols   = ["TLSv1.2"]
+      }
+    }
+  }
+
+  dynamic "ordered_cache_behavior" {
+    for_each = var.enable_database_service_edge ? [1] : []
+    content {
+      path_pattern           = "/api/service/*"
+      target_origin_id       = "ec2-service-origin"
+      allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+      cached_methods         = ["GET", "HEAD"]
+      viewer_protocol_policy = "https-only"
+      compress               = true
+      min_ttl                = 0
+      default_ttl            = 0
+      max_ttl                = 0
+      forwarded_values {
+        query_string = true
+        headers      = ["X-Excelsior-Service-Authorization", "Content-Type", "Accept", "If-None-Match", "X-Request-Id"]
+        cookies { forward = "none" }
+      }
+    }
+  }
+
+  dynamic "ordered_cache_behavior" {
+    for_each = var.enable_native_database_edge ? [1] : []
+    content {
+      path_pattern           = "/api/apps/excelsior/*"
+      target_origin_id       = "ec2-origin"
+      allowed_methods        = ["GET", "HEAD"]
+      cached_methods         = ["GET", "HEAD"]
+      viewer_protocol_policy = "redirect-to-https"
+      compress               = true
+      min_ttl                = 0
+      default_ttl            = 0
+      max_ttl                = 0
+      forwarded_values {
+        query_string = true
+        headers      = ["Authorization", "If-None-Match", "X-Request-Id"]
+        cookies { forward = "all" }
+      }
+    }
+  }
+
   # Origin 2: S3 bucket for card image assets (OAC-authenticated)
   origin {
     domain_name              = aws_s3_bucket.card_images.bucket_regional_domain_name
@@ -54,6 +109,7 @@ resource "aws_cloudfront_distribution" "card_images" {
 
     forwarded_values {
       query_string = false
+      headers      = []
       cookies {
         forward = "none"
       }
@@ -77,6 +133,7 @@ resource "aws_cloudfront_distribution" "card_images" {
 
     forwarded_values {
       query_string = false
+      headers      = []
       cookies {
         forward = "none"
       }

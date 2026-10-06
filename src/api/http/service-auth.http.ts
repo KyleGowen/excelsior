@@ -10,9 +10,12 @@ export function registerServiceAuthV1HttpRoutes(router: Router, service: Service
     const parsed = parseV1Body(ServiceTokenRequestSchema, req.body, res);
     if (!parsed) return;
     try {
-      sendV1Success(res, service.issue(parsed.value));
+      const issued = service.issue(parsed.value);
+      req.serviceIdentity = { clientId: parsed.value.client_id };
+      sendV1Success(res, issued);
     } catch (error) {
       if (error instanceof ServiceAccessError) {
+        if (error.clientId) req.serviceIdentity = { clientId: error.clientId };
         if (error.retryAfterSeconds) res.setHeader('Retry-After', String(error.retryAfterSeconds));
         sendV1Json(res, error.status, null, [{ code: error.code, message: error.message }]);
       } else {

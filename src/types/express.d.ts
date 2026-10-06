@@ -6,6 +6,8 @@ declare global {
     interface Request {
       user?: User;
       serviceClient?: ServicePrincipal;
+      serviceIdentity?: { clientId: string };
+      databaseCanonicalPath?: string;
     }
   }
 }

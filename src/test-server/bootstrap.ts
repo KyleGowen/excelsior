@@ -216,7 +216,7 @@ const testDeps = {
 } as unknown as RouteDependencies;
 
 const app = express();
-setupMiddleware(app);
+setupMiddleware(app, dataSource.getPool());
 
 // Global nav component files (test server used these explicit routes)
 app.get('/components/globalNav.html', (_req, res) => {

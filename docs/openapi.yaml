@@ -60,6 +60,11 @@ tags:
 
 components:
   securitySchemes:
+    serviceAuthorization:
+      type: apiKey
+      in: header
+      name: X-Excelsior-Service-Authorization
+      description: Server-only short-lived service JWT with Bearer prefix; no player identity.
     bearerAuth:
       type: http
       scheme: bearer
@@ -1298,6 +1303,127 @@ paths:
         '400': {description: VALIDATION_ERROR or DRAFT_STRUCTURE_INVALID; no persistence}
         '429': {description: RATE_LIMITED}
         '503': {description: DRAFT_EVALUATION_UNAVAILABLE; no fresh legality result}
+  /api/service/v1/catalog/presentation/{type}:
+    get:
+      summary: Confidential service database read
+      description: Literal database-only allowlist; same canonical payload, ETag and since_version semantics. All responses are no-store. See current/DATABASE_SERVICE_ROLLOUT.md.
+      security: [{ serviceAuthorization: [] }]
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema: { type: string, enum: [characters, special-cards, power-cards, locations, battlegrounds, missions, events, aspects, advanced-universe, teamwork, ally-universe, training, basic-universe] }
+      responses:
+        '200': { description: Existing canonical payload; config/app is bare JSON including databaseServiceAdapter }
+        '304': { description: Unchanged catalog; no-store }
+        '401': { description: SERVICE_TOKEN_INVALID or existing explicit player-token failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DATABASE_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE or SERVICE_TRANSPORT_REQUIRED }
+  /api/service/v1/catalog/foil-card-map:
+    get:
+      summary: Confidential service database read
+      description: Literal database-only allowlist; same canonical payload, ETag and since_version semantics. All responses are no-store. See current/DATABASE_SERVICE_ROLLOUT.md.
+      security: [{ serviceAuthorization: [] }]
+      responses:
+        '200': { description: Existing canonical payload; config/app is bare JSON including databaseServiceAdapter }
+        '304': { description: Unchanged catalog; no-store }
+        '401': { description: SERVICE_TOKEN_INVALID or existing explicit player-token failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DATABASE_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE or SERVICE_TRANSPORT_REQUIRED }
+  /api/service/v1/dbv/sets:
+    get:
+      summary: Confidential service database read
+      description: Literal database-only allowlist; same canonical payload, ETag and since_version semantics. All responses are no-store. See current/DATABASE_SERVICE_ROLLOUT.md.
+      security: [{ serviceAuthorization: [] }]
+      responses:
+        '200': { description: Existing canonical payload; config/app is bare JSON including databaseServiceAdapter }
+        '304': { description: Unchanged catalog; no-store }
+        '401': { description: SERVICE_TOKEN_INVALID or existing explicit player-token failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DATABASE_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE or SERVICE_TRANSPORT_REQUIRED }
+  /api/service/v1/config/app:
+    get:
+      summary: Confidential service database read
+      description: Literal database-only allowlist; same canonical payload, ETag and since_version semantics. All responses are no-store. See current/DATABASE_SERVICE_ROLLOUT.md.
+      security: [{ serviceAuthorization: [] }]
+      responses:
+        '200': { description: Existing canonical payload; config/app is bare JSON including databaseServiceAdapter }
+        '304': { description: Unchanged catalog; no-store }
+        '401': { description: SERVICE_TOKEN_INVALID or existing explicit player-token failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DATABASE_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE or SERVICE_TRANSPORT_REQUIRED }
+  /api/apps/excelsior/api/v1/catalog/presentation/{type}:
+    get:
+      summary: Native verified database read
+      description: Literal database-only allowlist; same canonical payload, ETag and since_version semantics. All responses are no-store. See current/DATABASE_SERVICE_ROLLOUT.md.
+      security: []
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema: { type: string, enum: [characters, special-cards, power-cards, locations, battlegrounds, missions, events, aspects, advanced-universe, teamwork, ally-universe, training, basic-universe] }
+      responses:
+        '200': { description: Existing canonical payload; config/app is bare JSON including databaseServiceAdapter }
+        '304': { description: Unchanged catalog; no-store }
+        '401': { description: SERVICE_TOKEN_INVALID or existing explicit player-token failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DATABASE_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE or SERVICE_TRANSPORT_REQUIRED }
+  /api/apps/excelsior/api/v1/catalog/foil-card-map:
+    get:
+      summary: Native verified database read
+      description: Literal database-only allowlist; same canonical payload, ETag and since_version semantics. All responses are no-store. See current/DATABASE_SERVICE_ROLLOUT.md.
+      security: []
+      responses:
+        '200': { description: Existing canonical payload; config/app is bare JSON including databaseServiceAdapter }
+        '304': { description: Unchanged catalog; no-store }
+        '401': { description: SERVICE_TOKEN_INVALID or existing explicit player-token failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DATABASE_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE or SERVICE_TRANSPORT_REQUIRED }
+  /api/apps/excelsior/api/v1/dbv/sets:
+    get:
+      summary: Native verified database read
+      description: Literal database-only allowlist; same canonical payload, ETag and since_version semantics. All responses are no-store. See current/DATABASE_SERVICE_ROLLOUT.md.
+      security: []
+      responses:
+        '200': { description: Existing canonical payload; config/app is bare JSON including databaseServiceAdapter }
+        '304': { description: Unchanged catalog; no-store }
+        '401': { description: SERVICE_TOKEN_INVALID or existing explicit player-token failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DATABASE_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE or SERVICE_TRANSPORT_REQUIRED }
+  /api/apps/excelsior/api/v1/config/app:
+    get:
+      summary: Native verified database read
+      description: Literal database-only allowlist; same canonical payload, ETag and since_version semantics. All responses are no-store. See current/DATABASE_SERVICE_ROLLOUT.md.
+      security: []
+      responses:
+        '200': { description: Existing canonical payload; config/app is bare JSON including databaseServiceAdapter }
+        '304': { description: Unchanged catalog; no-store }
+        '401': { description: SERVICE_TOKEN_INVALID or existing explicit player-token failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DATABASE_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE or SERVICE_TRANSPORT_REQUIRED }
+  /api/service/v1/service-auth/token:
+    post:
+      summary: Issue confidential database application identity over origin HTTPS
+      description: Existing token contract; opt-in, no-store, production HTTPS required. This credential never identifies a player.
+      security: []
+      requestBody:
+        $ref: '#/paths/~1api~1v1~1service-auth~1token/post/requestBody'
+      responses:
+        '200':
+          $ref: '#/paths/~1api~1v1~1service-auth~1token/post/responses/200'
+        '400': { description: VALIDATION_ERROR }
+        '401': { description: INVALID_SERVICE_CREDENTIALS }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '429': { description: RATE_LIMITED or SERVICE_CLIENT_RATE_LIMITED }
+        '503': { description: DATABASE_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE or SERVICE_TRANSPORT_REQUIRED }
   /api/v1/service-auth/token:
     post:
       summary: Issue an optional confidential application token

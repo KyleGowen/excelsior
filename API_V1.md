@@ -1,5 +1,17 @@
 # HTTP API v1 (`/api/v1`)
 
+Database-only application gateways are opt-in transport aliases of existing reads.
+BMG uses POST /api/service/v1/service-auth/token and the X-Excelsior-Service-Authorization
+Bearer header on GET /api/service/v1/catalog/presentation/{type}, /catalog/foil-card-map,
+/dbv/sets and /config/app. The native Database uses /api/apps/excelsior followed by
+the canonical /api/v1 path; its identity is verified inside the server, preserving
+player cookies/IP and existing UI. Neither gateway permits account, saved-view,
+deck or collection operations. Presentation, ETag, since_version and image paths
+are unchanged; config/app retains its existing bare JSON shape plus the public
+databaseServiceAdapter boolean. All gateway responses are no-store, including
+304 and errors; production service transport requires origin HTTPS. See
+[rollout and rollback](docs/current/DATABASE_SERVICE_ROLLOUT.md).
+
 Versioned JSON API for Excelsior. **Legacy** routes remain documented in [API_DOCUMENTATION.md](API_DOCUMENTATION.md).
 
 ## Conventions

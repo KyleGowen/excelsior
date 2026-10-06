@@ -97,6 +97,13 @@ to [`docs/openapi.yaml`](../openapi.yaml)) in the same PR.**
 
 ## Optional service access
 
+Database gateway aliases use the same v1 error envelope. DATABASE_SERVICE_UNAVAILABLE
+(503) means the gateway/native rollout flag is off; SERVICE_TRANSPORT_REQUIRED
+(503) means production service traffic did not arrive over the trusted HTTPS proxy.
+Missing or invalid service identity is SERVICE_TOKEN_INVALID (401); authenticated
+requests outside the literal read allowlist are SERVICE_SCOPE_DENIED (403).
+There is no anonymous fallback. Existing catalog and token-route errors still apply.
+
 | Code | HTTP | Meaning | Remediation |
 | --- | --- | --- | --- |
 | `SERVICE_ACCESS_UNAVAILABLE` | 503 | Disabled or unavailable private API configuration. | Check authorized server configuration; no credential details are returned. |

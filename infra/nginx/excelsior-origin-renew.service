@@ -1,0 +1,8 @@
+[Unit]
+Description=Renew Excelsior service origin certificate
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/excelsior-certbot/bin/certbot renew --quiet --cert-name origin.excelsior.cards --deploy-hook "nginx -t && systemctl reload nginx"

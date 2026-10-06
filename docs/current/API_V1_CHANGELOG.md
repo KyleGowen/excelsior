@@ -1,5 +1,10 @@
 # API v1 — changelog
 
+- 2026-10-06: Add opt-in database-only service/native transport aliases, verified
+  application attribution, additive request fields and atomic daily application
+  aggregates (V368). Preserve canonical contracts and native player operations.
+  Origin TLS and zero-cache edge activation precede enabling native attribution.
+
 One line per change. Newest first. Keep this in sync with
 [`API_V1.md`](../../API_V1.md) and [`docs/openapi.yaml`](../openapi.yaml).
 

@@ -6,6 +6,7 @@ import { sendV1Json } from '../v1Envelope';
 /** Existing session/user-token callers stay compatible; an explicit service credential is always verified. */
 export function createServiceAccessMiddleware(service: ServiceAccessService): RequestHandler {
   return (req, res, next) => {
+    if (req.serviceClient) { next(); return; } // Already verified by the in-process database gateway.
     const header = req.headers[SERVICE_HEADER];
     if (header === undefined) { next(); return; }
     const requiredScope = serviceScopeForOperation(req.method, req.baseUrl + req.path);
@@ -22,6 +23,7 @@ export function createServiceAccessMiddleware(service: ServiceAccessService): Re
       next();
     } catch (error) {
       const failure = error instanceof ServiceAccessError ? error : new ServiceAccessError(503, 'SERVICE_ACCESS_UNAVAILABLE', 'Service access is not configured');
+      if (failure.clientId) req.serviceIdentity = { clientId: failure.clientId };
       service.record({ event: 'service_request', ...(failure.clientId ? { clientId: failure.clientId } : {}), outcome: failure.status === 429 ? 'throttled' : 'denied', code: failure.code, operation, ...(typeof requestId === 'string' ? { requestId } : {}) });
       res.setHeader('Cache-Control', 'no-store');
       if (failure.retryAfterSeconds) res.setHeader('Retry-After', String(failure.retryAfterSeconds));

@@ -77,7 +77,7 @@ export class ServiceAccessService {
     const scopes = input.scope === undefined ? client.scopes : [...new Set(input.scope.split(/\s+/).filter(Boolean))];
     if (!scopes.length || scopes.some(scope => !(client.scopes as readonly string[]).includes(scope))) {
       this.record({ event: 'service_token', clientId: client.id, outcome: 'denied', code: 'SERVICE_SCOPE_DENIED' });
-      throw new ServiceAccessError(403, 'SERVICE_SCOPE_DENIED', 'Requested service scope is not permitted');
+      throw new ServiceAccessError(403, 'SERVICE_SCOPE_DENIED', 'Requested service scope is not permitted', undefined, client.id);
     }
     const now = Math.floor(this.now() / 1000);
     const token = jwt.sign({ sub: client.id, kind: 'service', scopes, credentialVersion: version, tokenEpoch: client.tokenEpoch, iat: now, exp: now + config.tokenTtlSeconds }, config.signingSecret, {
@@ -88,6 +88,15 @@ export class ServiceAccessService {
   }
 
   authenticate(token: string, requiredScope: ServiceScope | null): ServicePrincipal {
+    return this.verify(token, requiredScope, false);
+  }
+
+  /** In-process native adapter only; HTTP callers always use the bounded authenticate method. */
+  authenticateNativeDatabase(token: string): ServicePrincipal {
+    return this.verify(token, 'catalog:read', true);
+  }
+
+  private verify(token: string, requiredScope: ServiceScope | null, native: boolean): ServicePrincipal {
     const config = this.configuration();
     let principal: ServicePrincipal;
     let client: ServiceClientConfig;
@@ -103,7 +112,8 @@ export class ServiceAccessService {
     } catch {
       throw new ServiceAccessError(401, 'SERVICE_TOKEN_INVALID', 'Invalid, expired, or revoked service token');
     }
-    this.limit(client);
+    if (native && client.id !== 'excelsior-web') throw new ServiceAccessError(403, 'SERVICE_SCOPE_DENIED', 'Native database identity is required', undefined, client.id);
+    if (!native) this.limit(client);
     if (!requiredScope || !principal.scopes.includes(requiredScope)) throw new ServiceAccessError(403, 'SERVICE_SCOPE_DENIED', 'Service client cannot perform this operation', undefined, client.id);
     return principal;
   }

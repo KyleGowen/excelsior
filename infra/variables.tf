@@ -178,3 +178,14 @@ variable "common_tags" {
     ManagedBy   = "terraform"
   }
 }
+variable "enable_database_service_edge" {
+  description = "Enable the zero-cache service gateway only after origin HTTPS and runtime credentials are verified."
+  type        = bool
+  default     = false
+}
+
+variable "enable_native_database_edge" {
+  description = "Enable zero-cache native Database attribution before activating its runtime flag."
+  type        = bool
+  default     = false
+}

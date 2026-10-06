@@ -23,9 +23,23 @@ Indexes: `ts`, `user_id`, `request_id`, `route_key`.
 
 ## Middleware
 
-Source: [`src/api/http/middleware/apiAccessLog.ts`](../../src/api/http/middleware/apiAccessLog.ts). Mounted at the top of the `/api/v1` router in [`src/api/http/registerApiV1Routes.ts`](../../src/api/http/registerApiV1Routes.ts) only when a pool is provided.
+Source: [`src/api/http/middleware/apiAccessLog.ts`](../../src/api/http/middleware/apiAccessLog.ts).
+Production composition mounts it before service validation for canonical and gateway
+requests; the standalone v1 router also mounts it when given a pool. A per-request
+marker prevents duplicate records. Finish (or an abandoned request's close) schedules one atomic PostgreSQL statement
+inserting the request and incrementing its UTC daily application/route/method/status
+aggregate. Errors and capacity drops produce a sanitized warning; writes are best
+effort, bounded to 128 pending, and never delay or change a UI response.
 
-The middleware attaches a `res.on('finish')` handler and fires a single `INSERT` asynchronously. The request path is never blocked on the write. INSERT errors are swallowed with a `console.error` — metrics are best-effort.
+V368 adds application_id, service_client_id, identity_verified and duration_ms.
+Verified excelsior-web maps to excelsior; bmg-database-ui maps to bmg-database-ui.
+Direct calls, unverifiable credentials and historical rows remain unknown. Verified
+credential/scope/budget denials retain identity when available. Caller labels are
+ignored; route keys exclude queries and record IDs. api_application_hit_counts
+holds daily totals independently of 90-day request retention. Each origin retry is
+a request; browser/query cache reuse and CDN image downloads are excluded. Existing
+endpoint_hit_counts remains intact. Monitor api_access_log_write_failed warnings
+for incomplete telemetry rather than interpreting a missing row as zero traffic.
 
 ## Env vars / kill switches
 
@@ -39,7 +53,10 @@ The plan specifies 90 days. A nightly job deletes rows older than 90 days; add i
 
 ### Automated (integration)
 
-- `tests/integration/api-access-log-writes.test.ts` — one row per request; correct `request_id`, correct `route_key`, async write does not block response.
+- `tests/integration/database-service-auth.test.ts` — real app, both verified
+  identities, every allowed database read, one row per request, canonical route
+  keys, aggregate agreement and malformed-body handling. The earlier planned
+  api-access-log-writes test file is absent from the inspected baseline.
 
 ### Observability
 
@@ -57,3 +74,5 @@ The plan specifies 90 days. A nightly job deletes rows older than 90 days; add i
 
 - [`API_V1_LOGGING.md`](API_V1_LOGGING.md) — pino/request-id pairing.
 - [`API_V1_AUTH_REFRESH.md`](API_V1_AUTH_REFRESH.md) — refresh rows help correlate long-running sessions.
+Abandoned requests use synthetic status 499; completed responses retain their
+actual HTTP status. Finish/close and global/router hooks cannot double count.

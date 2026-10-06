@@ -204,7 +204,7 @@ function getGitInfo() {
 }
 
 // Middleware (first block: body, cookie, static image mounts)
-setupMiddleware(app);
+setupMiddleware(app, dataSource.getPool());
 
 if (process.env.NODE_ENV !== 'test') {
   app.use(createEndpointHitMetricsMiddleware(dataSource.getPool()));

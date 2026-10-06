@@ -1,0 +1,25 @@
+server {
+    listen 443 ssl;
+    server_name origin.excelsior.cards;
+    ssl_certificate /etc/letsencrypt/live/origin.excelsior.cards/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/origin.excelsior.cards/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    # Render the active blue-green port before installation; deployment switches both configurations.
+    location ^~ /api/service/ {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Excelsior-Service-Authorization $http_x_excelsior_service_authorization;
+        proxy_set_header Authorization "";
+        proxy_set_header Cookie "";
+        proxy_no_cache 1;
+        proxy_cache_bypass 1;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 20s;
+        client_max_body_size 16k;
+    }
+    location / { return 404; }
+}
