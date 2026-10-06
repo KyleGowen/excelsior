@@ -26,7 +26,7 @@ export function verifyCandidateCommit(root, sha, candidate) {
   if (!candidate?.entries?.length || candidateId(candidate) !== candidate.candidateId) throw new Error('Invalid frozen candidate manifest');
   const parents = git(root, ['rev-list', '--parents', '-n', '1', sha]).trim().split(' ');
   if (parents.length !== 2 || parents[1] !== candidate.baseRevision) throw new Error('Commit parent differs from frozen candidate base');
-  const observed = new Map(git(root, ['ls-tree', '-r', '-z', sha]).split('\0').filter(Boolean).map(line => {
+  const observed = new Map(git(root, ['--literal-pathspecs', 'ls-tree', '-r', '-z', sha, '--', ...candidate.entries.map(entry => entry.path)]).split('\0').filter(Boolean).map(line => {
     const [header, path] = line.split('\t'); const [mode, , blob] = header.split(' '); return [path, { mode, blob }];
   }));
   const mismatches = candidate.entries.filter(entry => {

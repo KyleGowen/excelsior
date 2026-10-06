@@ -51,10 +51,24 @@ test('commit with the same file list but changed contents is rejected', t => {
   assert.throws(() => verifyCandidateCommit(dir, git(dir, 'rev-parse', 'HEAD'), candidate), /contents differ/);
 });
 test('exact frozen contents and deletions verify without staging unrelated files', t => {
-  const dir = fixture(t); rmSync(join(dir, 'src/example.ts')); writeFileSync(join(dir, 'src/new.ts'), 'new\n');
-  const candidate = captureCandidate(dir, ['src/example.ts', 'src/new.ts']);
-  git(dir, 'add', 'src/example.ts', 'src/new.ts'); git(dir, 'commit', '-qm', 'Deletion fixture');
+  const dir = fixture(t); rmSync(join(dir, 'src/example.ts')); writeFileSync(join(dir, 'src/[new].ts'), 'new\n');
+  const candidate = captureCandidate(dir, ['src/example.ts', 'src/[new].ts']);
+  git(dir, '--literal-pathspecs', 'add', 'src/example.ts', 'src/[new].ts'); git(dir, 'commit', '-qm', 'Deletion fixture');
   assert.doesNotThrow(() => verifyCandidateCommit(dir, git(dir, 'rev-parse', 'HEAD'), candidate));
+});
+test('commit verification stays bounded when unrelated assets exceed the Git output buffer', t => {
+  const dir = fixture(t);
+  const blob = execFileSync('git', ['hash-object', '-w', '--stdin'], { cwd: dir, encoding: 'utf8', input: 'asset fixture' }).trim();
+  const entries = Array.from({ length: 6000 }, (_, i) => `100644 ${blob}\tsrc/resources/cards/images/${String(i).padStart(5, '0')}-${'a'.repeat(128)}.png\n`).join('');
+  execFileSync('git', ['update-index', '--index-info'], { cwd: dir, input: entries });
+  git(dir, 'commit', '-qm', 'Large asset fixture');
+  writeFileSync(join(dir, 'src/example.ts'), 'approved\n');
+  const candidate = captureCandidate(dir, ['src/example.ts']);
+  git(dir, 'add', 'src/example.ts'); git(dir, 'commit', '-qm', 'Scoped fixture');
+  const sha = git(dir, 'rev-parse', 'HEAD');
+  const unbounded = spawnSync('git', ['ls-tree', '-r', '-z', sha], { cwd: dir, maxBuffer: 1024 * 1024 });
+  assert.equal(unbounded.error?.code, 'ENOBUFS');
+  assert.doesNotThrow(() => verifyCandidateCommit(dir, sha, candidate));
 });
 test('Jest evidence rejects empty, absent and inconsistent counts', () => {
   assert.equal(jestCounts('green'), null);
