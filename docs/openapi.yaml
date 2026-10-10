@@ -1309,6 +1309,134 @@ paths:
         '400': {description: VALIDATION_ERROR or DRAFT_STRUCTURE_INVALID; no persistence}
         '429': {description: RATE_LIMITED}
         '503': {description: DRAFT_EVALUATION_UNAVAILABLE; no fresh legality result}
+  /api/service/deckbuilder/v1/decks/evaluate:
+    post:
+      summary: Confidential stateless builder evaluate
+      description: Opt-in no-store alias of /api/v1/decks/evaluate; 256 KiB body limit. Requires decks:read and strips player identity; never persists a deck.
+      security: [{ serviceAuthorization: [] }]
+      requestBody:
+        $ref: '#/paths/~1api~1v1~1decks~1evaluate/post/requestBody'
+      responses:
+        '200':
+          $ref: '#/paths/~1api~1v1~1decks~1evaluate/post/responses/200'
+        '400': { description: VALIDATION_ERROR or canonical draft validation error }
+        '401': { description: SERVICE_TOKEN_INVALID or existing player authorization failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '413': { description: VALIDATION_ERROR; body exceeds 256 KiB }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DECKBUILDER_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE, SERVICE_TRANSPORT_REQUIRED or canonical operation unavailable }
+  /api/apps/excelsior-deckbuilder/api/v1/decks/evaluate:
+    post:
+      summary: Native verified builder evaluate
+      description: Opt-in no-store alias of /api/v1/decks/evaluate; 256 KiB body limit. Existing player authorization remains mandatory for player operations.
+      security: []
+      requestBody:
+        $ref: '#/paths/~1api~1v1~1decks~1evaluate/post/requestBody'
+      responses:
+        '200':
+          $ref: '#/paths/~1api~1v1~1decks~1evaluate/post/responses/200'
+        '400': { description: VALIDATION_ERROR or canonical draft validation error }
+        '401': { description: SERVICE_TOKEN_INVALID or existing player authorization failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '413': { description: VALIDATION_ERROR; body exceeds 256 KiB }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DECKBUILDER_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE, SERVICE_TRANSPORT_REQUIRED or canonical operation unavailable }
+  /api/service/deckbuilder/v1/decks/candidates/evaluate:
+    post:
+      summary: Confidential stateless builder candidates evaluate
+      description: Opt-in no-store alias of /api/v1/decks/candidates/evaluate; 256 KiB body limit. Requires decks:read and strips player identity; never persists a deck.
+      security: [{ serviceAuthorization: [] }]
+      requestBody:
+        $ref: '#/paths/~1api~1v1~1decks~1candidates~1evaluate/post/requestBody'
+      responses:
+        '200':
+          $ref: '#/paths/~1api~1v1~1decks~1candidates~1evaluate/post/responses/200'
+        '400': { description: VALIDATION_ERROR or canonical draft validation error }
+        '401': { description: SERVICE_TOKEN_INVALID or existing player authorization failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '413': { description: VALIDATION_ERROR; body exceeds 256 KiB }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DECKBUILDER_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE, SERVICE_TRANSPORT_REQUIRED or canonical operation unavailable }
+  /api/apps/excelsior-deckbuilder/api/v1/decks/candidates/evaluate:
+    post:
+      summary: Native verified builder candidates evaluate
+      description: Opt-in no-store alias of /api/v1/decks/candidates/evaluate; 256 KiB body limit. Existing player authorization remains mandatory for player operations.
+      security: []
+      requestBody:
+        $ref: '#/paths/~1api~1v1~1decks~1candidates~1evaluate/post/requestBody'
+      responses:
+        '200':
+          $ref: '#/paths/~1api~1v1~1decks~1candidates~1evaluate/post/responses/200'
+        '400': { description: VALIDATION_ERROR or canonical draft validation error }
+        '401': { description: SERVICE_TOKEN_INVALID or existing player authorization failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '413': { description: VALIDATION_ERROR; body exceeds 256 KiB }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DECKBUILDER_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE, SERVICE_TRANSPORT_REQUIRED or canonical operation unavailable }
+  /api/service/deckbuilder/v1/decks/draw:
+    post:
+      summary: Confidential stateless builder draw
+      description: Opt-in no-store alias of /api/v1/decks/draw; 256 KiB body limit. Requires decks:read and strips player identity; never persists a deck.
+      security: [{ serviceAuthorization: [] }]
+      requestBody:
+        $ref: '#/paths/~1api~1v1~1decks~1draw/post/requestBody'
+      responses:
+        '200':
+          $ref: '#/paths/~1api~1v1~1decks~1draw/post/responses/200'
+        '400': { description: VALIDATION_ERROR or canonical draft validation error }
+        '401': { description: SERVICE_TOKEN_INVALID or existing player authorization failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '413': { description: VALIDATION_ERROR; body exceeds 256 KiB }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DECKBUILDER_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE, SERVICE_TRANSPORT_REQUIRED or canonical operation unavailable }
+  /api/apps/excelsior-deckbuilder/api/v1/decks/draw:
+    post:
+      summary: Native verified builder draw
+      description: Opt-in no-store alias of /api/v1/decks/draw; 256 KiB body limit. Existing player authorization remains mandatory for player operations.
+      security: []
+      requestBody:
+        $ref: '#/paths/~1api~1v1~1decks~1draw/post/requestBody'
+      responses:
+        '200':
+          $ref: '#/paths/~1api~1v1~1decks~1draw/post/responses/200'
+        '400': { description: VALIDATION_ERROR or canonical draft validation error }
+        '401': { description: SERVICE_TOKEN_INVALID or existing player authorization failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '413': { description: VALIDATION_ERROR; body exceeds 256 KiB }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DECKBUILDER_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE, SERVICE_TRANSPORT_REQUIRED or canonical operation unavailable }
+  /api/service/deckbuilder/v1/decks/export:
+    post:
+      summary: Confidential stateless builder export
+      description: Opt-in no-store alias of /api/v1/decks/export; 256 KiB body limit. Requires decks:read and strips player identity; never persists a deck.
+      security: [{ serviceAuthorization: [] }]
+      requestBody:
+        $ref: '#/paths/~1api~1v1~1decks~1export/post/requestBody'
+      responses:
+        '200':
+          $ref: '#/paths/~1api~1v1~1decks~1export/post/responses/200'
+        '400': { description: VALIDATION_ERROR or canonical draft validation error }
+        '401': { description: SERVICE_TOKEN_INVALID or existing player authorization failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '413': { description: VALIDATION_ERROR; body exceeds 256 KiB }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DECKBUILDER_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE, SERVICE_TRANSPORT_REQUIRED or canonical operation unavailable }
+  /api/apps/excelsior-deckbuilder/api/v1/decks/export:
+    post:
+      summary: Native verified builder export
+      description: Opt-in no-store alias of /api/v1/decks/export; 256 KiB body limit. Existing player authorization remains mandatory for player operations.
+      security: []
+      requestBody:
+        $ref: '#/paths/~1api~1v1~1decks~1export/post/requestBody'
+      responses:
+        '200':
+          $ref: '#/paths/~1api~1v1~1decks~1export/post/responses/200'
+        '400': { description: VALIDATION_ERROR or canonical draft validation error }
+        '401': { description: SERVICE_TOKEN_INVALID or existing player authorization failure }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '413': { description: VALIDATION_ERROR; body exceeds 256 KiB }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: DECKBUILDER_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE, SERVICE_TRANSPORT_REQUIRED or canonical operation unavailable }
   /api/service/v1/catalog/presentation/{type}:
     get:
       summary: Confidential service database read

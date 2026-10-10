@@ -70,6 +70,26 @@ resource "aws_cloudfront_distribution" "card_images" {
   }
 
   dynamic "ordered_cache_behavior" {
+    for_each = var.enable_native_deckbuilder_edge ? [1] : []
+    content {
+      path_pattern           = "/api/apps/excelsior-deckbuilder/*"
+      target_origin_id       = "ec2-origin"
+      allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+      cached_methods         = ["GET", "HEAD"]
+      viewer_protocol_policy = "redirect-to-https"
+      compress               = true
+      min_ttl                = 0
+      default_ttl            = 0
+      max_ttl                = 0
+      forwarded_values {
+        query_string = true
+        headers      = ["Authorization", "Content-Type", "Accept", "Origin", "X-Request-Id"]
+        cookies { forward = "all" }
+      }
+    }
+  }
+
+  dynamic "ordered_cache_behavior" {
     for_each = var.enable_native_database_edge ? [1] : []
     content {
       path_pattern           = "/api/apps/excelsior/*"

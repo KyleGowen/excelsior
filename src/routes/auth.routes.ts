@@ -3,6 +3,7 @@ import type { AuthRoutesDeps } from './types';
 import { debugAuth, requestAuthContext } from '../services/authDebug';
 import { COMMUNITY_DECKS_USER_ID } from '../constants/communityDecksUser';
 import { nativeDatabaseEnabled } from '../api/http/middleware/databaseAccess';
+import { nativeDeckbuilderEnabled } from '../api/http/middleware/deckbuilderAccess';
 import { TOURNAMENT_DECKS_USER_ID } from '../constants/tournamentDecksUser';
 
 export function registerAuthRoutes(app: express.Application, deps: AuthRoutesDeps): void {
@@ -39,6 +40,7 @@ export function registerAuthRoutes(app: express.Application, deps: AuthRoutesDep
       communityDecksUserId: COMMUNITY_DECKS_USER_ID,
       tournamentDecksUserId: TOURNAMENT_DECKS_USER_ID,
       databaseServiceAdapter: nativeDatabaseEnabled(),
+      deckbuilderServiceAdapter: nativeDeckbuilderEnabled(),
     });
   });
 }

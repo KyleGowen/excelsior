@@ -5,5 +5,5 @@ import { ExcelsiorModuleHost } from '../../app/ExcelsiorModuleHost';
 export default function DeckEditorPage() {
  const { deckId = '' } = useParams();
  const [params] = useSearchParams();
- return <ExcelsiorModuleHost><DeckBuilderModule deckId={deckId} readonly={params.get('readonly') === 'true'} /></ExcelsiorModuleHost>;
+ return <ExcelsiorModuleHost deckbuilder><DeckBuilderModule deckId={deckId} readonly={params.get('readonly') === 'true'} /></ExcelsiorModuleHost>;
 }

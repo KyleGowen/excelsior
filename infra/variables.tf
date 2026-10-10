@@ -189,3 +189,9 @@ variable "enable_native_database_edge" {
   type        = bool
   default     = false
 }
+
+variable "enable_native_deckbuilder_edge" {
+  description = "Enable zero-cache native builder attribution before activating its runtime flag."
+  type        = bool
+  default     = false
+}

@@ -34,7 +34,7 @@ describe('production database service preparation with isolated fake providers',
       'else if(args.includes("--entrypoint")&&args[args.indexOf("--entrypoint")+1]==="node"){',
       'for(const line of fs.readFileSync(args[args.indexOf("--env-file")+1],"utf8").split("\\n")){const p=line.indexOf("=");if(p>0)process.env[line.slice(0,p)]=line.slice(p+1).replace("/app/runtime/service-access",process.env.MOCK_APP+"/service-access");}',
       'require(path.join(process.env.MOCK_SOURCE,"node_modules/ts-node/register/transpile-only"));',
-      'try{const {ServiceAccessService}=require(path.join(process.env.MOCK_SOURCE,"src/api/access/serviceAccessService"));const {NativeDatabaseAccess}=require(path.join(process.env.MOCK_SOURCE,"src/api/access/nativeDatabaseAccess"));const {readApplicationClientCredentials}=require(path.join(process.env.MOCK_SOURCE,"src/api/access/applicationClientCredentials"));new NativeDatabaseAccess(new ServiceAccessService(),()=>readApplicationClientCredentials("excelsior-web")).authenticate();}catch{console.error("Production database service configuration is invalid");process.exit(1);}',
+      'try{const {ServiceAccessService}=require(path.join(process.env.MOCK_SOURCE,"src/api/access/serviceAccessService"));const {NativeDatabaseAccess}=require(path.join(process.env.MOCK_SOURCE,"src/api/access/nativeDatabaseAccess"));const {readApplicationClientCredentials}=require(path.join(process.env.MOCK_SOURCE,"src/api/access/applicationClientCredentials"));new NativeDatabaseAccess(new ServiceAccessService(),()=>readApplicationClientCredentials("excelsior-web")).authenticate();if(process.env.ENABLE_NATIVE_DECKBUILDER_SERVICE==="1"){const {NativeDeckbuilderAccess}=require(path.join(process.env.MOCK_SOURCE,"src/api/access/nativeDeckbuilderAccess"));new NativeDeckbuilderAccess(new ServiceAccessService(),()=>readApplicationClientCredentials("excelsior-web")).authenticate("decks:read");}}catch{console.error("Production database service configuration is invalid");process.exit(1);}',
       '}else if(args.includes("sh")){process.stdout.write("368\\n");}',
     ].join('\n'));
   });
@@ -70,4 +70,18 @@ describe('production database service preparation with isolated fake providers',
     put('app/database_service_enabled', 'true');
     expect(run).toThrow(); expect(existsSync(join(appDirectory, '.env'))).toBe(false);
   });
+  it('gates builder activation and validates the narrow three-client registry before migration', () => {
+    put('app/database_service_enabled','1'); put('app/deckbuilder_service_enabled','1');
+    put('app/database_service_config',{environment:'production',signingSecret:'fictional-service-signing-key'.repeat(3),tokenTtlSeconds:60,clients:[
+      {id:'excelsior-web',secret:nativeSecret,scopes:['catalog:read','decks:read','decks:write','guest:decks']},
+      {id:'bmg-database-ui',secret:bmgSecret,scopes:['catalog:read']},
+      {id:'bmg-deckbuilder',secret:'fictional-production-builder-secret',scopes:['catalog:read','decks:read']},
+    ].map(({id,secret,scopes}) => ({id,enabled:true,tokenEpoch:0,requestsPerMinute:600,scopes,credentials:[{version:'v1',secretSha256:createHash('sha256').update(secret).digest('hex')}]}))});
+    const output=run(); expect(readFileSync(join(appDirectory,'.env'),'utf8')).toContain('ENABLE_NATIVE_DECKBUILDER_SERVICE=1');
+    expect(output.indexOf('Validating native builder identity')).toBeLessThan(output.indexOf('Flyway migrate'));expect(output).not.toContain('fictional-production-builder-secret');
+  });
+  it.each(['1','true'])('rejects builder activation %s without matching catalog activation and registry', setting => {
+    put('app/deckbuilder_service_enabled',setting);expect(run).toThrow();expect(existsSync(join(appDirectory,'.env'))).toBe(false);
+  });
+
 });

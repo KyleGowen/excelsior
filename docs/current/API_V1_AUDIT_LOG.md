@@ -32,7 +32,7 @@ aggregate. Errors and capacity drops produce a sanitized warning; writes are bes
 effort, bounded to 128 pending, and never delay or change a UI response.
 
 V368 adds application_id, service_client_id, identity_verified and duration_ms.
-Verified excelsior-web maps to excelsior; bmg-database-ui maps to bmg-database-ui.
+Verified excelsior-web maps to excelsior; bmg-database-ui maps to bmg-database-ui; bmg-deckbuilder maps to bmg-deckbuilder. Native builder and BMG preview requests reuse these tables and safe canonical route templates; no new deck storage is introduced.
 Direct calls, unverifiable credentials and historical rows remain unknown. Verified
 credential/scope/budget denials retain identity when available. Caller labels are
 ignored; route keys exclude queries and record IDs. api_application_hit_counts

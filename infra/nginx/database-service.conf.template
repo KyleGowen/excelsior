@@ -6,6 +6,24 @@ server {
     ssl_protocols TLSv1.2 TLSv1.3;
 
     # Render the active blue-green port before installation; deployment switches both configurations.
+    location ^~ /api/service/deckbuilder/v1/ {
+        # Keep edge body-limit failures private as well as upstream responses.
+        proxy_hide_header Cache-Control;
+        add_header Cache-Control "no-store" always;
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Excelsior-Service-Authorization $http_x_excelsior_service_authorization;
+        proxy_set_header Authorization "";
+        proxy_set_header Cookie "";
+        proxy_no_cache 1;
+        proxy_cache_bypass 1;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 20s;
+        client_max_body_size 256k;
+    }
     location ^~ /api/service/ {
         proxy_pass http://localhost:3000;
         proxy_set_header Host $host;

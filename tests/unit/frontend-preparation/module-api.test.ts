@@ -21,3 +21,11 @@ it('routes only Database catalog reads through native service attribution and pr
  expect(player.mock.calls.map(call => (call as unknown as [string])[0])).toEqual(['/api/v1/collections/me/cards', '/api/v1/decks/favorites']);
  expect((catalog.mock.calls[0] as unknown as [string, RequestInit])[1]).toMatchObject({ credentials: 'include' });
 });
+it('attributes builder calls separately while preserving catalog and other player transports', async () => {
+ const builder=jest.fn(async()=>response([])),catalog=jest.fn(async()=>response([])),player=jest.fn(async()=>response([]));
+ const client=createModuleApi({fetcher:player},{fetcher:catalog,pathPrefix:'/api/apps/excelsior'},{fetcher:builder,pathPrefix:'/api/apps/excelsior-deckbuilder'});
+ await client.fetchFavoriteDecks();await client.fetchDeckFull('fictional', false);await client.fetchSets();await client.fetchCollectionCards();
+ expect(builder.mock.calls.map(c=>(c as unknown as [string])[0])).toEqual(['/api/apps/excelsior-deckbuilder/api/v1/decks/favorites','/api/apps/excelsior-deckbuilder/api/v1/decks/fictional/full']);
+ expect(catalog.mock.calls.map(c=>(c as unknown as [string])[0])).toEqual(['/api/apps/excelsior/api/v1/dbv/sets']);expect(player.mock.calls.map(c=>(c as unknown as [string])[0])).toEqual(['/api/v1/collections/me/cards']);
+ expect((builder.mock.calls[0] as unknown as [string,RequestInit])[1]).toMatchObject({credentials:'include'});
+});

@@ -96,6 +96,7 @@ export async function fetchAppConfig(client: typeof api = api): Promise<AppConfi
       communityDecksUserId: cfg?.communityDecksUserId ?? null,
       tournamentDecksUserId: cfg?.tournamentDecksUserId ?? null,
       databaseServiceAdapter: cfg?.databaseServiceAdapter === true,
+      deckbuilderServiceAdapter: cfg?.deckbuilderServiceAdapter === true,
     };
   } catch {
     setCdnBase('');

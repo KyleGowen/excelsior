@@ -39,6 +39,7 @@ export interface AuthContextValue {
   communityDecksUserId: string | null;
   tournamentDecksUserId: string | null;
   databaseServiceAdapter?: boolean;
+  deckbuilderServiceAdapter?: boolean;
   login: (username: string, password: string) => Promise<AppUser | null>;
   signUp: (username: string, email: string, password: string) => Promise<AppUser | null>;
   signInWithGoogle: () => Promise<AppUser | null>;
@@ -193,6 +194,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       communityDecksUserId: configQuery.data?.communityDecksUserId ?? null,
       tournamentDecksUserId: configQuery.data?.tournamentDecksUserId ?? null,
       databaseServiceAdapter: configQuery.data?.databaseServiceAdapter === true,
+      deckbuilderServiceAdapter: configQuery.data?.deckbuilderServiceAdapter === true,
       login,
       signUp,
       signInWithGoogle,

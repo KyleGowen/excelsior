@@ -12,6 +12,22 @@ databaseServiceAdapter boolean. All gateway responses are no-store, including
 304 and errors; production service transport requires origin HTTPS. See
 [rollout and rollback](docs/current/DATABASE_SERVICE_ROLLOUT.md).
 
+Builder-only access uses the same confidential service-token issuance. BMG catalog
+reads keep the gateway above; POST `/api/service/deckbuilder/v1/decks/evaluate`,
+`/decks/candidates/evaluate`, `/decks/draw` and `/decks/export` require `decks:read`
+and delegate to the existing stateless handlers. Bodies are bounded to 256 KiB;
+no account, guest-deck, saved-deck, favorite or admin operation is exposed. The
+service gateway strips player cookies/authorization and never creates a player.
+All outcomes are no-store, and production requires HTTPS.
+
+Opt-in native builder requests use `/api/apps/excelsior-deckbuilder` followed by
+the canonical `/api/v1` path. Server-managed excelsior-web identity preserves
+player credentials, ownership checks, Guest-session rules and existing IP limits.
+The public `deckbuilderServiceAdapter` config boolean is false until both builder
+flags are enabled. Unknown operations are denied; safe route templates feed the
+existing access-log/application-count tables. The direct API is unchanged.
+See [builder handoff](docs/current/BMG_DECKBUILDER_PORT_HANDOFF.md) for activation.
+
 Versioned JSON API for Excelsior. **Legacy** routes remain documented in [API_DOCUMENTATION.md](API_DOCUMENTATION.md).
 
 ## Conventions

@@ -73,6 +73,13 @@ case "$DATABASE_SERVICE_ENABLED" in
   1) ;;
   *) echo "Invalid database service activation setting." >&2; exit 1 ;;
 esac
+# Builder activation is separate and requires the existing catalog gateway.
+DECKBUILDER_SERVICE_ENABLED="$(get_optional_parameter app/deckbuilder_service_enabled)"
+case "$DECKBUILDER_SERVICE_ENABLED" in
+  ''|None|0) DECKBUILDER_SERVICE_ENABLED=0 ;;
+  1) [[ "$DATABASE_SERVICE_ENABLED" == 1 ]] || { echo "Builder access requires database service access." >&2; exit 1; } ;;
+  *) echo "Invalid deckbuilder service activation setting." >&2; exit 1 ;;
+esac
 mkdir -p "$APP_DIR/service-access"
 chmod 700 "$APP_DIR/service-access"
 if [[ "$DATABASE_SERVICE_ENABLED" == 1 ]]; then
@@ -82,7 +89,11 @@ if [[ "$DATABASE_SERVICE_ENABLED" == 1 ]]; then
   trap 'rm -f "$REGISTRY_TEMP" "$NATIVE_TEMP"' EXIT
   get_parameter app/database_service_config true > "$REGISTRY_TEMP"
   get_parameter app/native_database_credentials true > "$NATIVE_TEMP"
-  jq -e '.environment == "production" and (.clients | length == 2) and ([.clients[].id] | sort == ["bmg-database-ui","excelsior-web"]) and all(.clients[]; .enabled == true and .scopes == ["catalog:read"])' "$REGISTRY_TEMP" >/dev/null
+  if [[ "$DECKBUILDER_SERVICE_ENABLED" == 1 ]]; then
+    jq -e '.environment == "production" and (.clients | length == 3) and ([.clients[].id] | sort == ["bmg-database-ui","bmg-deckbuilder","excelsior-web"]) and all(.clients[]; .enabled == true and ((.id == "bmg-database-ui" and .scopes == ["catalog:read"]) or (.id == "bmg-deckbuilder" and (.scopes | sort) == ["catalog:read","decks:read"]) or (.id == "excelsior-web" and (.scopes | sort) == ["catalog:read","decks:read","decks:write","guest:decks"])))' "$REGISTRY_TEMP" >/dev/null
+  else
+    jq -e '.environment == "production" and (.clients | length == 2) and ([.clients[].id] | sort == ["bmg-database-ui","excelsior-web"]) and all(.clients[]; .enabled == true and .scopes == ["catalog:read"])' "$REGISTRY_TEMP" >/dev/null
+  fi
   jq -e '.environment == "production" and (.clients | length == 1) and .clients[0].clientId == "excelsior-web"' "$NATIVE_TEMP" >/dev/null
   chmod 600 "$REGISTRY_TEMP" "$NATIVE_TEMP"
   mv "$REGISTRY_TEMP" "$APP_DIR/service-access"/registry.json
@@ -114,6 +125,9 @@ trap 'rm -f "$TEMP_ENV_FILE"' EXIT
   printf 'JWT_SECRET=%s\n' "$JWT_SECRET"
   if [[ "$DATABASE_SERVICE_ENABLED" == 1 ]]; then
     printf 'ENABLE_SERVICE_ACCESS=1\nENABLE_DATABASE_SERVICE_GATEWAY=1\nENABLE_NATIVE_DATABASE_SERVICE=1\n'
+    if [[ "$DECKBUILDER_SERVICE_ENABLED" == 1 ]]; then
+      printf 'ENABLE_DECKBUILDER_SERVICE_GATEWAY=1\nENABLE_NATIVE_DECKBUILDER_SERVICE=1\n'
+    fi
     printf 'SERVICE_ACCESS_CONFIG_FILE=/app/runtime/service-access/registry.json\n'
     printf 'APPLICATION_ACCESS_CREDENTIALS_FILE=/app/runtime/service-access/native.json\n'
   fi
@@ -146,6 +160,12 @@ if [[ "$DATABASE_SERVICE_ENABLED" == 1 ]]; then
   docker run --rm --env-file "$ENV_FILE" \
     -v "$APP_DIR/service-access:/app/runtime/service-access:ro" --entrypoint node "$ECR_IMAGE" \
     -e 'try { const {ServiceAccessService}=require("./dist/api/access/serviceAccessService"); const {NativeDatabaseAccess}=require("./dist/api/access/nativeDatabaseAccess"); const {readApplicationClientCredentials}=require("./dist/api/access/applicationClientCredentials"); new NativeDatabaseAccess(new ServiceAccessService(),()=>readApplicationClientCredentials("excelsior-web")).authenticate(); } catch { console.error("Production database service configuration is invalid"); process.exit(1); }'
+fi
+if [[ "$DECKBUILDER_SERVICE_ENABLED" == 1 ]]; then
+  echo "Validating native builder identity (values withheld)..."
+  docker run --rm --env-file "$ENV_FILE" \
+    -v "$APP_DIR/service-access:/app/runtime/service-access:ro" --entrypoint node "$ECR_IMAGE" \
+    -e 'try { const {ServiceAccessService}=require("./dist/api/access/serviceAccessService"); const {NativeDeckbuilderAccess}=require("./dist/api/access/nativeDeckbuilderAccess"); const {readApplicationClientCredentials}=require("./dist/api/access/applicationClientCredentials"); new NativeDeckbuilderAccess(new ServiceAccessService(),()=>readApplicationClientCredentials("excelsior-web")).authenticate("decks:read"); } catch { console.error("Production builder service configuration is invalid"); process.exit(1); }'
 fi
 
 echo "Running the one authoritative Flyway migrate command..."

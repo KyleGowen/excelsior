@@ -16,6 +16,7 @@ export function applicationId(clientId: string | undefined): string {
   return clientId ?? 'unknown';
 }
 function routeKey(req: Request): string {
+  if (req.applicationRouteKey) return req.applicationRouteKey;
   const path = req.databaseCanonicalPath ?? databaseCanonicalPath(req.originalUrl.split('?')[0]!);
   if (isDatabaseRead(req.method, path) || path === '/api/v1/service-auth/token' || path === '/api/v1/database/unsupported') return req.method + ' ' + path;
   // Registered patterns contain parameter placeholders; raw URLs and queries never become dimensions.

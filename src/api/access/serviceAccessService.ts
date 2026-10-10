@@ -96,6 +96,11 @@ export class ServiceAccessService {
     return this.verify(token, 'catalog:read', true);
   }
 
+  /** In-process native callers only. Player authorization remains with the existing route. */
+  authenticateNativeApplication(token: string, requiredScope: ServiceScope): ServicePrincipal {
+    return this.verify(token, requiredScope, true);
+  }
+
   private verify(token: string, requiredScope: ServiceScope | null, native: boolean): ServicePrincipal {
     const config = this.configuration();
     let principal: ServicePrincipal;

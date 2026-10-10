@@ -1,5 +1,9 @@
 # API v1 — changelog
 
+- 2026-10-10: Add opt-in stateless BMG builder gateway and in-process native
+  builder identity, preserving player authorization and catalog access. Builder
+  evaluation, candidate evaluation, draw, and JSON/TopDeck export remain no-store.
+
 - 2026-10-06: Add opt-in database-only service/native transport aliases, verified
   application attribution, additive request fields and atomic daily application
   aggregates (V368). Preserve canonical contracts and native player operations.

@@ -13,6 +13,8 @@ import type { Pool } from 'pg';
 import { createApiAccessLogMiddleware } from '../api/http/middleware/apiAccessLog';
 import { createDatabaseAccessMiddleware } from '../api/http/middleware/databaseAccess';
 import { sendV1Json } from '../api/http/v1Envelope';
+import { createDeckbuilderAccessMiddleware } from '../api/http/middleware/deckbuilderAccess';
+import { DECKBUILDER_BODY_LIMIT, DECKBUILDER_SERVICE_PREFIX, NATIVE_DECKBUILDER_PREFIX } from '../api/access/deckbuilderOperations';
 
 /**
  * Applies the first block of app-wide middleware: request-id, structured
@@ -33,16 +35,21 @@ export function setupMiddleware(app: express.Application, pool?: Pool): void {
   const audit = pool ? createApiAccessLogMiddleware({ pool }) : undefined;
   // Include validation/CORS failures. The older HTTP proxy retains its inner-router audit only.
   if (audit && process.env.ENABLE_EXCELSIOR_ACCESS_ADAPTER !== '1') app.use((req, res, next) => {
-    if (/^\/api\/(?:v1(?:\/|$)|service\/v1(?:\/|$)|apps\/excelsior(?:\/|$))/.test(req.path)) audit(req, res, next);
+    if (/^\/api\/(?:v1(?:\/|$)|service\/(?:v1|deckbuilder\/v1)(?:\/|$)|apps\/(?:excelsior|excelsior-deckbuilder)(?:\/|$))/.test(req.path)) audit(req, res, next);
     else next();
   });
   app.use(createCorsMiddleware());
   app.use(createSecurityHeadersMiddleware());
   app.use(createCompressionMiddleware());
 
+  const builderJson = express.json({ limit: DECKBUILDER_BODY_LIMIT });
+  app.use((req, res, next) => {
+    if (req.path.startsWith(DECKBUILDER_SERVICE_PREFIX + '/') || req.path.startsWith(NATIVE_DECKBUILDER_PREFIX + '/')) builderJson(req, res, next);
+    else next();
+  });
   app.use(express.json());
   app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
-    if (req.path.startsWith('/api/service/v1/') || req.path.startsWith('/api/apps/excelsior/') || req.path === '/api/v1/service-auth/token') {
+    if (req.path.startsWith('/api/service/') || req.path.startsWith('/api/apps/') || req.path === '/api/v1/service-auth/token') {
       // Express parse errors can contain submitted credentials; never return/log those details.
       res.setHeader('Cache-Control', 'no-store');
       const status = (error as { status?: number })?.status === 413 ? 413 : 400;
@@ -70,6 +77,7 @@ export function setupMiddleware(app: express.Application, pool?: Pool): void {
     if (process.env.ENABLE_DATABASE_SERVICE_GATEWAY === '1') throw new Error('Choose one native application adapter');
     app.use('/api', createApplicationAccessMiddleware(configuredApplicationAdapter('excelsior-web')));
   }
+  app.use(createDeckbuilderAccessMiddleware(configuredServiceAccess));
   app.use(createDatabaseAccessMiddleware(configuredServiceAccess));
   app.use('/api', createServiceAccessMiddleware(configuredServiceAccess));
 

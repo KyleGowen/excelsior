@@ -132,3 +132,14 @@ Token request schema failures use `VALIDATION_ERROR` (400); the endpoint's 15/IP
 | `DECK_IMPORT_UNAVAILABLE` | 503 | Import acknowledgement unavailable; insertion may have committed. | Inspect inventory before retrying to avoid duplicates. |
 
 `IMPORT_UNRESOLVED` deliberately carries its typed failure in `data` alongside `errors`. Existing deck validation failures also have documented structured data; this is not permission to put arbitrary payloads in other error envelopes. Preview/import reuse `VALIDATION_ERROR`, `DRAFT_STRUCTURE_INVALID`, `UNAUTHORIZED`, `SESSION_REQUIRED`, `FORBIDDEN`, `READ_ONLY_MODE` and `RATE_LIMITED` under their existing meanings.
+
+## Builder gateway aliases
+
+The four POST aliases under `/api/service/deckbuilder/v1/decks/` preserve the
+canonical evaluation/draw/export errors. Gateway failures add `SERVICE_TOKEN_INVALID`
+(401), `SERVICE_SCOPE_DENIED` (403), `SERVICE_CLIENT_RATE_LIMITED` (429),
+`DECKBUILDER_SERVICE_UNAVAILABLE`, `SERVICE_ACCESS_UNAVAILABLE`, and
+`SERVICE_TRANSPORT_REQUIRED` (503). Malformed or over-limit (256 KiB) bodies return
+`VALIDATION_ERROR` (400 or 413). Native aliases under
+`/api/apps/excelsior-deckbuilder/api/v1/` preserve all existing player authorization
+failures and reject caller-supplied service identity.

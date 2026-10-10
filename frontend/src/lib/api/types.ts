@@ -23,6 +23,7 @@ export interface AppUser {
 export interface AppConfig {
   cdnBase: string;
   databaseServiceAdapter?: boolean;
+  deckbuilderServiceAdapter?: boolean;
   communityDecksUserId?: string | null;
   tournamentDecksUserId?: string | null;
 }

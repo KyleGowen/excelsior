@@ -8,6 +8,7 @@ declare global {
       serviceClient?: ServicePrincipal;
       serviceIdentity?: { clientId: string };
       databaseCanonicalPath?: string;
+      applicationRouteKey?: string;
     }
   }
 }
