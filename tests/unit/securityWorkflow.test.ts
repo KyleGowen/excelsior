@@ -5,6 +5,15 @@ import { spawnSync } from 'node:child_process';
 const yaml = require('js-yaml');
 const root = path.resolve(__dirname, '../..');
 const workflow = yaml.load(fs.readFileSync(path.join(root, '.github/workflows/deploy.yml'), 'utf8'));
+const productionJobs = ['build-docker', 'sync-images', 'run-migrations', 'deploy', 'post-production'];
+
+function evaluateCondition(expression: string, event: string, audit = false, ref = 'refs/heads/main') {
+  const substituted = expression.replace(/^\$\{\{\s*|\s*\}\}$/g, '')
+    .replace(/github\.event_name/g, JSON.stringify(event))
+    .replace(/github\.ref/g, JSON.stringify(ref))
+    .replace(/inputs\.security_audit/g, JSON.stringify(audit));
+  return Function(`return (${substituted});`)();
+}
 
 describe('automatic security release gate', () => {
   it('validates every push and schedules daily verification without scheduled deployment', () => {
@@ -13,11 +22,41 @@ describe('automatic security release gate', () => {
     expect(workflow.on.schedule).toHaveLength(1);
     expect(workflow.jobs['integration-tests'].if).toBeUndefined();
     expect(workflow.jobs['frontend-build'].if).toBeUndefined();
-    for (const job of ['build-docker', 'sync-images', 'run-migrations', 'deploy', 'post-production']) {
+    for (const job of productionJobs) {
       expect(workflow.jobs[job].if).toContain("github.ref == 'refs/heads/main'");
       expect(workflow.jobs[job].if).toContain("github.event_name == 'push'");
       expect(workflow.jobs[job].if).not.toContain("github.event_name == 'schedule'");
     }
+  });
+
+  it('runs manual audits with full history and prevents every production mutation', () => {
+    expect(workflow.on.workflow_dispatch.inputs.security_audit).toMatchObject({ type: 'boolean', default: false });
+    expect(workflow['run-name']).toContain('Daily security audit');
+    expect(workflow['run-name']).toContain('Manual security audit');
+    const checkout = workflow.jobs['soc2-compliance'].steps.find((step: any) => step.name === 'Checkout code');
+    expect(evaluateCondition(checkout.with['fetch-depth'], 'schedule')).toBe(0);
+    expect(evaluateCondition(checkout.with['fetch-depth'], 'workflow_dispatch', true)).toBe(0);
+    expect(evaluateCondition(checkout.with['fetch-depth'], 'workflow_dispatch')).toBe(2);
+    for (const job of productionJobs) {
+      const condition = workflow.jobs[job].if;
+      expect(evaluateCondition(condition, 'workflow_dispatch', true)).toBe(false);
+      expect(evaluateCondition(condition, 'schedule')).toBe(false);
+      expect(evaluateCondition(condition, 'push')).toBe(true);
+      expect(evaluateCondition(condition, 'workflow_dispatch')).toBe(true);
+      expect(evaluateCondition(condition, 'push', false, 'refs/heads/candidate')).toBe(false);
+      expect(evaluateCondition(condition, 'pull_request')).toBe(false);
+    }
+  });
+
+  it('limits secret-scanner exceptions to exact historical findings', () => {
+    const fingerprints = fs.readFileSync(path.join(root, '.gitleaksignore'), 'utf8').split('\n')
+      .filter(line => line.trim() && !line.startsWith('#'));
+    for (const fingerprint of fingerprints) {
+      expect(fingerprint).toMatch(/^[a-f0-9]{40}:[^:]+:[a-z-]+:\d+$/);
+    }
+    const evidence = fingerprints.filter(line => line.startsWith('2a9120aec71f13fa9a6a58ab86a54cc4aea33093:'));
+    expect(evidence).toHaveLength(15);
+    expect(evidence.every(line => line.includes(':docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:'))).toBe(true);
   });
 
   it('blocks release if any required validation fails, cancels, or is skipped', () => {

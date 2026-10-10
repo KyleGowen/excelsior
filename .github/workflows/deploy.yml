@@ -1,10 +1,16 @@
 name: Build, Test, and Deploy
+run-name: ${{ github.event_name == 'schedule' && 'Daily security audit' || inputs.security_audit && 'Manual security audit' || github.event.head_commit.message || github.workflow }}
 
 on:
   push:
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
+    inputs:
+      security_audit:
+        description: Run full-history security validation without deploying
+        type: boolean
+        default: false
   schedule:
     - cron: '23 9 * * *'
 
@@ -230,8 +236,8 @@ jobs:
         # manual dispatch has no range and otherwise scans the entire 1,800+
         # commit history. Keep two commits for dispatches so the same release
         # change is scanned without turning a deployment retry into a history
-        # audit. The daily schedule deliberately scans the full history.
-        fetch-depth: ${{ github.event_name == 'workflow_dispatch' && 2 || 0 }}
+        # audit. Daily schedules and explicit security audits scan full history.
+        fetch-depth: ${{ github.event_name == 'workflow_dispatch' && !inputs.security_audit && 2 || 0 }}
         sparse-checkout: |
           /*
           !/src/resources/cards/images/
@@ -500,7 +506,7 @@ jobs:
     name: Build & Push Docker Image
     needs: [security-gate]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && !inputs.security_audit
     
     steps:
     - name: Checkout code
@@ -675,7 +681,7 @@ jobs:
     name: Sync Card Images to S3
     needs: [security-gate]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && !inputs.security_audit
 
     steps:
     - name: Checkout code
@@ -752,7 +758,7 @@ jobs:
     # for both jobs, so these can safely consume the same wall-clock window.
     needs: [build-docker]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && !inputs.security_audit
     outputs:
       expected-migration: ${{ steps.expected-migration.outputs.version }}
     
@@ -827,7 +833,7 @@ jobs:
     name: Deploy to Production
     needs: [run-migrations, sync-images]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && !inputs.security_audit
     
     steps:
     - name: Checkout code
@@ -1103,7 +1109,7 @@ jobs:
     name: Post Production
     needs: [deploy]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && !inputs.security_audit
     
     steps:
         

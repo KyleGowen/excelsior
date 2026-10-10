@@ -26,3 +26,22 @@ e07efc2a39dd044f20037a2cfa608302bc15972e:docs/evidence/frontend-preparation/m4/c
 
 # Exact historical false positive: apiRevision is the verified backend Git commit SHA.
 9408cfe7cc2a19c9dfb28ad05c8ad779e5deb441:docs/evidence/frontend-preparation/m6/container/verification.json:generic-api-key:8
+
+# Reviewed 2026-10-10: SHA-256 source-file hashes in abandoned M6 evidence.
+# Each value was recomputed from the same commit and matched its source file.
+# Exact commit/file/rule/line fingerprints only; future content remains scanned.
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:9
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:96
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:97
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:98
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:247
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:258
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:260
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:261
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:298
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:359
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:sentry-access-token:362
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:372
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:401
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:410
+2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:423

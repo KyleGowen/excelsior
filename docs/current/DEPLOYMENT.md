@@ -581,6 +581,11 @@ For deployment issues:
 
 Every push, PR update targeting main/master, manual run, and daily 09:23 UTC
 schedule runs the same validation. Scheduled and non-main runs cannot deploy.
+Daily runs are labeled `Daily security audit` in Actions. To repeat that audit
+immediately, select **Run workflow**, check **security_audit**, and run it on
+main. This `Manual security audit` scans full Git history and disables every
+production job, including image publication, asset sync, migrations, and deploy.
+Leave the option unchecked for an ordinary deployment retry.
 `Security Gate` requires build, frontend build, all unit shards, coverage, Knip,
 Semgrep, Trivy, technical security regressions, and all eight integration shards
 to succeed. Failure, cancellation, and skipped prerequisites fail the gate.
@@ -605,8 +610,11 @@ and React rules across backend and frontend application code. Trivy scans both
 lockfiles; fixable findings block release at every severity. Its JSON evidence
 also includes findings with no available fix. `.trivyignore` entries require a
 valid expiration date; expired exceptions fail validation until reviewed.
-Gitleaks also scans history daily; `.gitleaksignore` contains only five reviewed
-historical fixture/filename fingerprints, never whole-file or whole-rule exclusions.
+Gitleaks also scans history daily; `.gitleaksignore` contains only reviewed
+historical fixture, filename, and source-hash fingerprints, never whole-file or
+whole-rule exclusions. The October 2026 M6 evidence exceptions identify exact
+findings from an abandoned branch; each SHA-256 value was recomputed from its
+source file at that commit. New content and commits remain scanned.
 Actions are pinned to commit SHAs. Trivy installation verifies an immutable
 release checksum. GitHub's normal Actions failure notifications apply; an owner
 should enable email/web notifications for failed scheduled runs.
