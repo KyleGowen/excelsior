@@ -745,117 +745,123 @@ components:
           type: string
           maxLength: 100
         exportData:
-          type: object
-          additionalProperties: true
-          required:
-            - cards
-          properties:
-            name:
-              type: string
-              maxLength: 100
-            description:
-              type: string
-              maxLength: 500
-            limited:
-              type: boolean
-            reserve_character:
-              type: string
-              nullable: true
-              maxLength: 200
-            cards:
+          oneOf:
+            - type: string
+              minLength: 1
+              maxLength: 100000
+              description: Structured TopDeck category/quantity text; resolved before atomic creation.
+            -
               type: object
-              additionalProperties: false
-              required: []
+              additionalProperties: true
+              required:
+                - cards
               properties:
-                characters:
-                  type: array
-                  items:
-                    type: string
-                    maxLength: 200
-                  maxItems: 1000
-                locations:
-                  type: array
-                  items:
-                    type: string
-                    maxLength: 200
-                  maxItems: 1000
-                battlegrounds:
-                  type: array
-                  items:
-                    type: string
-                    maxLength: 200
-                  maxItems: 1000
-                aspects:
-                  type: array
-                  items:
-                    type: string
-                    maxLength: 200
-                  maxItems: 1000
-                teamwork:
-                  type: array
-                  items:
-                    type: string
-                    maxLength: 200
-                  maxItems: 1000
-                allies:
-                  type: array
-                  items:
-                    type: string
-                    maxLength: 200
-                  maxItems: 1000
-                training:
-                  type: array
-                  items:
-                    type: string
-                    maxLength: 200
-                  maxItems: 1000
-                basic_universe:
-                  type: array
-                  items:
-                    type: string
-                    maxLength: 200
-                  maxItems: 1000
-                power_cards:
-                  type: array
-                  items:
-                    type: string
-                    maxLength: 200
-                  maxItems: 1000
-                special_cards:
+                name:
+                  type: string
+                  maxLength: 100
+                description:
+                  type: string
+                  maxLength: 500
+                limited:
+                  type: boolean
+                reserve_character:
+                  type: string
+                  nullable: true
+                  maxLength: 200
+                cards:
                   type: object
-                  additionalProperties:
-                    type: array
-                    items:
-                      type: string
-                      maxLength: 200
-                    maxItems: 1000
-                missions:
-                  type: object
-                  additionalProperties:
-                    type: array
-                    items:
-                      type: string
-                      maxLength: 200
-                    maxItems: 1000
-                events:
-                  type: object
-                  additionalProperties:
-                    type: array
-                    items:
-                      type: string
-                      maxLength: 200
-                    maxItems: 1000
-                advanced_universe:
-                  type: object
-                  additionalProperties:
-                    type: array
-                    items:
-                      type: string
-                      maxLength: 200
-                    maxItems: 1000
-      description: >-
-        Structural checks limit the resolved import to 1,000 copies. Extra export metadata is accepted but not trusted for
-        calculations.
+                  additionalProperties: false
+                  required: []
+                  properties:
+                    characters:
+                      type: array
+                      items:
+                        type: string
+                        maxLength: 200
+                      maxItems: 1000
+                    locations:
+                      type: array
+                      items:
+                        type: string
+                        maxLength: 200
+                      maxItems: 1000
+                    battlegrounds:
+                      type: array
+                      items:
+                        type: string
+                        maxLength: 200
+                      maxItems: 1000
+                    aspects:
+                      type: array
+                      items:
+                        type: string
+                        maxLength: 200
+                      maxItems: 1000
+                    teamwork:
+                      type: array
+                      items:
+                        type: string
+                        maxLength: 200
+                      maxItems: 1000
+                    allies:
+                      type: array
+                      items:
+                        type: string
+                        maxLength: 200
+                      maxItems: 1000
+                    training:
+                      type: array
+                      items:
+                        type: string
+                        maxLength: 200
+                      maxItems: 1000
+                    basic_universe:
+                      type: array
+                      items:
+                        type: string
+                        maxLength: 200
+                      maxItems: 1000
+                    power_cards:
+                      type: array
+                      items:
+                        type: string
+                        maxLength: 200
+                      maxItems: 1000
+                    special_cards:
+                      type: object
+                      additionalProperties:
+                        type: array
+                        items:
+                          type: string
+                          maxLength: 200
+                        maxItems: 1000
+                    missions:
+                      type: object
+                      additionalProperties:
+                        type: array
+                        items:
+                          type: string
+                          maxLength: 200
+                        maxItems: 1000
+                    events:
+                      type: object
+                      additionalProperties:
+                        type: array
+                        items:
+                          type: string
+                          maxLength: 200
+                        maxItems: 1000
+                    advanced_universe:
+                      type: object
+                      additionalProperties:
+                        type: array
+                        items:
+                          type: string
+                          maxLength: 200
+                        maxItems: 1000
+          description: >-
+            Structural checks limit the resolved import to 1,000 copies. Extra export metadata is accepted but not trusted for
+            calculations.
     DrawDraftResult:
       type: object
       additionalProperties: false

@@ -53,7 +53,7 @@ export async function runHostOverlayCases(tab, { directory, target, deckId, deck
   await role('button', 'Draw Hand').click(); const drawn = role('dialog', 'Drawn Hand'); await wait(drawn);
   check(await drawn.evaluate(e => !!e.closest('[aria-label="Host overlay root"]')), 'Draw Hand must use host portal');
   check(await drawn.getByRole('button').count() === 10, 'Fictional fixture must draw eight cards');
-  await role('button', 'Close panel').click(); await role('button', 'Export').click(); const exported = role('dialog', 'Export deck JSON'); await wait(exported);
+  await role('button', 'Close panel').click(); await role('button', 'Export').click(); await role('button', 'JSON').click(); const exported = role('dialog', 'Export deck JSON'); await wait(exported);
   check(await exported.evaluate(e => !!e.closest('[aria-label="Host overlay root"]')), 'Export must use host portal');
   const values = await exported.evaluate(e => { const data = JSON.parse(e.querySelector('pre').textContent); return { cards: data.total_cards, threat: data.total_threat }; });
   check(values.cards === 8 && values.threat === 18, 'Fixture export values must stay unchanged');

@@ -10,6 +10,8 @@ import type { ImportDeckJson } from '../../services/deck-preview/importTypes';
 import { buildKoDimmingContext, shouldDimDeckCard } from '../../services/deck-preview/simulateKo';
 import { drawRandomHand } from '../../services/deck-preview/drawHand';
 import { analyzeDrawnHand } from '../../services/deck-preview/drawHandAnalysis';
+import { parseTopDeckImport, TopDeckImportError } from '../../services/deck-preview/parseTopDeckImport';
+import { buildDeckExportTopDeck } from '../../services/deck-preview/buildDeckExportTopDeck';
 import { buildDeckExportJson } from '../../services/deck-preview/buildDeckExportJson';
 import type { DeckCardEntry } from '../../services/deck-preview/types';
 import crypto from 'crypto';
@@ -164,8 +166,16 @@ export class DeckDraftEvaluationService {
             capabilities: { drawHand: canDrawHand(cards) }
         };
     }
-    async prepareImport(data:ImportDeckJson, name:string) {
+    async prepareImport(data:ImportDeckJson | string, name:string) {
         const catalog = await this.validator.resolveCatalog();
+        if (typeof data === 'string') {
+            let parsed: ReturnType<typeof parseTopDeckImport>;
+            try { parsed = parseTopDeckImport(data, catalog); }
+            catch (error) { if (error instanceof TopDeckImportError) throw new DraftStructureError(error.message); throw error; }
+            if (!parsed.ok) return parsed;
+            const evaluation = await this.evaluate({schemaVersion:1,draftId:'import-preview',revision:0,cards:parsed.cards,reserveCharacterId:parsed.reserveCharacterId,limited:false,format:'venture',koCharacterIds:[]},catalog);
+            return {ok:true as const,name:name.trim() || 'Imported Deck',description:'',cards:parsed.cards,reserveCharacterId:parsed.reserveCharacterId,limited:false,evaluation};
+        }
         const entries = extractCardsFromImportJson(data.cards);
         if (!entries.length) throw new DraftStructureError('No cards found in import data');
         if (entries.length > 1000) throw new DraftStructureError('Import exceeds 1000 card copies');
@@ -212,7 +222,7 @@ export class DeckDraftEvaluationService {
     }
     async exportDraft(input: EvaluateDraftInput, display: { name:string; description:string; exportedBy:string; surface:'editor'|'selection' }):Promise<DeckExportDto> {
         const { evaluation, cards, cardIndex } = await this.preview(input);
-        return { schemaVersion:1 as const, inputKey:evaluation.inputKey, revision:input.revision, deck:buildDeckExportJson({ ...display, cards, cardIndex,
+        return { schemaVersion:1 as const, inputKey:evaluation.inputKey, revision:input.revision, topDeck:buildDeckExportTopDeck({cards,cardIndex,reserveCharacterId:input.reserveCharacterId,totalThreat:evaluation.threat.editor,totalCards:evaluation.counts.exportCards}), deck:buildDeckExportJson({ ...display, cards, cardIndex,
             reserveCharacterId:input.reserveCharacterId, limited:input.limited, legal:evaluation.legality.rawValid,
             maxStats:display.surface === 'selection' ? evaluation.grids.printedMaximums : evaluation.grids.editorMaximums,
             iconTotals:evaluation.icons, totalThreat:evaluation.threat.editor, totalCards:evaluation.counts.exportCards }) };

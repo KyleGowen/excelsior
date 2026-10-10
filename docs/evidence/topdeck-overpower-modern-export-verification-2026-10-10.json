@@ -1,0 +1,173 @@
+{
+  "dateUtc": "2026-10-10",
+  "environment": "local",
+  "sourceRevision": "3075fba84450919773845ff10159d454119c4132",
+  "formatterSha256": "c18d6596bd7174b0fdd7289f1726e0fdbdde09b8ee3e521e19d2764ea2719575",
+  "target": {
+    "schema": 1,
+    "kind": "target-health",
+    "environment": "local",
+    "frontendUrl": "http://localhost:5173",
+    "apiUrl": "http://localhost:8085",
+    "sourceRoot": "/Users/kyle/cursored",
+    "sourceRevision": "3075fba84450919773845ff10159d454119c4132",
+    "sourceTreeFingerprint": "27bb19bd34d68b2c278d3c83e24b78572e6a41195c8164288a9e189355d958ac",
+    "expectedRevision": "3075fba84450919773845ff10159d454119c4132",
+    "expectedMigration": "367",
+    "branch": "main",
+    "verified": true,
+    "observedAt": "2026-10-10T17:47:34.486Z",
+    "health": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "3075fba84450919773845ff10159d454119c4132",
+      "migration": "367"
+    },
+    "frontendProxyHealth": {
+      "status": "OK",
+      "database": "OK",
+      "revision": "3075fba84450919773845ff10159d454119c4132",
+      "migration": "367"
+    },
+    "frontendStatus": 200,
+    "status": "target health verified; browser still required"
+  },
+  "automatedChecks": {
+    "exportUnitTests": 20,
+    "browserGuardTests": 4,
+    "rootLint": "passed; 426 repository warnings, zero errors",
+    "frontendTypecheck": "passed",
+    "frontendBuild": "passed",
+    "storybookBuild": "passed"
+  },
+  "browser": {
+    "before": {
+      "status": "passed",
+      "counts": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "viewport": {
+        "height": 720,
+        "width": 1280
+      },
+      "observed": {
+        "jsonDefault": true,
+        "formats": [
+          "JSON",
+          "TopDeck"
+        ],
+        "copyFeedback": "both formats; cleared on switch",
+        "jsonPreserved": true,
+        "recordsChanged": false
+      },
+      "setup": null,
+      "reportPath": "/private/tmp/topdeck-modern-browser-20261010/before/report.json"
+    },
+    "after-noor-confirmed": {
+      "status": "passed",
+      "counts": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "viewport": {
+        "height": 720,
+        "width": 1280
+      },
+      "observed": {
+        "jsonDefault": true,
+        "formats": [
+          "JSON",
+          "TopDeck"
+        ],
+        "copyFeedback": "both formats; cleared on switch",
+        "clipboardMatchesPreview": true,
+        "clipboardReadBack": "caller-selected local paste field",
+        "jsonPreserved": true,
+        "recordsChanged": false
+      },
+      "setup": null,
+      "reportPath": "/private/tmp/topdeck-modern-browser-20261010/after-noor-confirmed/report.json"
+    },
+    "after-charlie-confirmed": {
+      "status": "passed",
+      "counts": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "viewport": {
+        "height": 720,
+        "width": 1280
+      },
+      "observed": {
+        "jsonDefault": true,
+        "formats": [
+          "JSON",
+          "TopDeck"
+        ],
+        "copyFeedback": "both formats; cleared on switch",
+        "clipboardMatchesPreview": true,
+        "clipboardReadBack": "caller-selected local paste field",
+        "jsonPreserved": true,
+        "recordsChanged": false
+      },
+      "setup": null,
+      "reportPath": "/private/tmp/topdeck-modern-browser-20261010/after-charlie-confirmed/report.json"
+    },
+    "after-mobile-confirmed": {
+      "status": "needs review",
+      "counts": {
+        "passed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 1
+      },
+      "viewport": null,
+      "observed": null,
+      "setup": {
+        "status": "failed",
+        "reason": "Requested viewport did not apply to this tab"
+      },
+      "reportPath": "/private/tmp/topdeck-modern-browser-20261010/after-mobile-confirmed/report.json"
+    },
+    "after-mobile-retry": {
+      "status": "needs review",
+      "counts": {
+        "passed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 1
+      },
+      "viewport": null,
+      "observed": null,
+      "setup": {
+        "status": "failed",
+        "reason": "Requested viewport did not apply to this tab"
+      },
+      "reportPath": "/private/tmp/topdeck-modern-browser-20261010/after-mobile-retry/report.json"
+    }
+  },
+  "harnessFindings": [
+    "The IAB clipboard reader returned empty after native copy. Native paste into a test-owned local field matched JSON and TopDeck previews exactly on both desktop fixtures. Initial failure reports retained.",
+    "A retry started with an already-open panel; returned Home and reran from a clean state.",
+    "Two mobile viewport attempts did not apply 390x844; override reset. Mobile check remains blocked, not passed.",
+    "Startup/container helper timed out on Docker inspection. API and Vite listener directories match this checkout; direct API and proxy health pass at migration 367. No deck/account fixtures were created."
+  ],
+  "cleanup": {
+    "temporaryClipboardProbe": "removed from source, dist, and Storybook output",
+    "viewport": "reset",
+    "localDeckAccountRecords": "unchanged",
+    "existingServers": "preserved",
+    "nativePasteTab": "closed",
+    "previewTab": "retained read-only for Kyle",
+    "topdeckEventsOrRegistrationsCreated": 0,
+    "topdeckSubmissions": 0
+  },
+  "productionVerification": "not run; no commit, push, or deployment"
+}

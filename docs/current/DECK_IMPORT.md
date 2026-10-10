@@ -1,4 +1,4 @@
-# Deck Import — JSON contract (v2)
+# Deck Import — JSON and TopDeck (v2)
 
 > **Implementation:** `frontend/src/lib/decks/importDeckFromJson.ts` and related modules. Deck selection UI: `frontend/src/features/deck-selection/ImportDeckPanel.tsx`.
 
@@ -15,7 +15,7 @@ The deck import flow parses v2.0 export JSON, resolves card names via catalog, a
 - Deck create via `POST /api/v1/decks` and card mutations
 
 ### Permissions
-- Import is restricted to **ADMIN** users in the v2 deck selection UI.
+- Import is available on the current user’s own Decks screen, including Guest sessions.
 
 ## Functions
 
@@ -418,3 +418,13 @@ This feature ensures that users who prefer List View aren't forced back to Card 
   - Enhanced error handling and validation
   - Added alternate image auto-selection for applicable card types
 
+
+## TopDeck text import
+
+The Import panel has a JSON / TopDeck selector and defaults to TopDeck on each open. Select the matching format, then paste the decklist; switching retains the text and name and clears errors. Existing JSON import is unchanged. Text is resolved against the server catalog before one atomic creation; unknown/ambiguous cards and malformed lines fail without a partial deck. Quantities, printing codes where available, Reserve, and Pre-Placed/`(on location)` annotations are retained. Other Cards, Homebase Cards, and Aspects headings resolve Aspect cards. Known G.D.A. attachment rows resolve as Special cards.
+
+A `Mission Set` summary expands to the complete catalog mission set: text does not identify a selected subset. Text also omits deck name/description and Limited mode; enter a name in the panel, and imported text starts in ordinary Venture mode with legality recalculated. Handwritten prose and arbitrary TopDeck submissions are outside this structured format.
+
+TopDeck matching uses the parent location/battleground rules to disambiguate attachment rows (for example, Basic Universe Trident on Dracula’s Armory versus Poseidon’s Special). A numbered Special foil with missing derived strength can use its same-set base value only when the printing number and all other rules/requirements match. Conflicting printed rules and unverified relationships remain unresolved.
+
+The full `tests/fixtures/topdeck/modern-horror.txt` regression uses a minimal public catalog snapshot in `modern-horror-catalog.json`, captured on 2026-10-10. It retains same-name and alternate-printing candidates, including the reported foil metadata omissions and Basic Universe/Poseidon Trident collision; cosmetic and operational fields are omitted. This verifies local resolution, not TopDeck acceptance or deck legality.

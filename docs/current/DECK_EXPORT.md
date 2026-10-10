@@ -299,3 +299,9 @@ This ensures consistent export output that's easy to read and compare.
 - [`docs/current/DECK_IMPORT.md`](DECK_IMPORT.md)
 - `tests/unit/frontend-v2/buildDeckExportJson.test.ts`
 
+
+## TopDeck text export
+
+The shared export panel defaults to TopDeck each time it opens; JSON remains selectable and unchanged. The server returns `topDeck` alongside the existing JSON `deck` from the same evaluated catalog snapshot. The frontend displays and copies that text without calculating game rules.
+
+Text follows [the past-year Modern template](../../TOPDECK_OVERPOWER_MODERN_FORMAT.md): card/threat totals, printing codes, reserve/frontline roles, mission-set summaries, compact Universe and Power labels, Any Character codes, and location/Battleground attachments. Aspects use Other Cards. Public lists establish a convention; TopDeck submission validation remains unverified.

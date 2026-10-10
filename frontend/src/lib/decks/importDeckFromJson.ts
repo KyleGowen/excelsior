@@ -39,6 +39,25 @@ export function parseImportDeckJson(raw: string): ImportDeckJson {
   return data as ImportDeckJson;
 }
 
+
+export type ImportDeckFormat = 'json' | 'topdeck';
+
+/** Select a transport format; omit format to detect it for existing callers. */
+export function parseImportDeckInput(raw: string, format?: ImportDeckFormat): ImportDeckJson | string {
+  const trimmed = raw.trim();
+  if (!trimmed) throw new Error('Please paste a JSON or TopDeck decklist');
+  const looksLikeJson = trimmed.startsWith('{') || trimmed.startsWith('[');
+  if (format === 'topdeck' && looksLikeJson) {
+    throw new Error('This looks like JSON. Select JSON to import it.');
+  }
+  if (format === 'json' && !looksLikeJson) {
+    throw new Error('This looks like a text decklist. Select TopDeck to import it.');
+  }
+  return format === 'json' || (format === undefined && looksLikeJson)
+    ? parseImportDeckJson(trimmed)
+    : trimmed;
+}
+
 export function deckNameFromImportJson(
   exportData: ImportDeckJson,
   overrideName?: string,
@@ -50,7 +69,7 @@ export function deckNameFromImportJson(
   return DEFAULT_IMPORTED_DECK_NAME;
 }
 
-export async function importDeckFromJson(params:{exportData:ImportDeckJson;deckName:string;isGuest:boolean}):Promise<ImportDeckResult> {
+export async function importDeckFromJson(params:{exportData:ImportDeckJson | string;deckName:string;isGuest:boolean}):Promise<ImportDeckResult> {
  try {return await api.post<ImportDeckResult>(params.isGuest ? '/api/v1/guest/decks/import' : '/api/v1/decks/import',{exportData:params.exportData,name:params.deckName});}
  catch(error) {
   if (error instanceof ApiError && error.data && typeof error.data === 'object' && 'unresolved' in error.data) return error.data as ImportDeckFailure;

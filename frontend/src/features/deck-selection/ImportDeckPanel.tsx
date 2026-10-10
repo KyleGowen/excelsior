@@ -5,8 +5,9 @@ import {
   DEFAULT_IMPORTED_DECK_NAME,
   formatUnresolvedImportError,
   importDeckFromJson,
-  parseImportDeckJson,
+  parseImportDeckInput,
   type ImportDeckResult,
+  type ImportDeckFormat,
 } from '../../lib/decks/importDeckFromJson';
 import type { ImportDeckJson } from '../../lib/decks/importTypes';
 import './ImportDeckPanel.css';
@@ -23,32 +24,38 @@ function deckNameFromParsedJson(data: ImportDeckJson): string {
 }
 
 export function ImportDeckPanel({ open, isGuest, onClose, onSuccess }: ImportDeckPanelProps) {
-  const [jsonText, setJsonText] = useState('');
+  const [deckText, setDeckText] = useState('');
+  const [format, setFormat] = useState<ImportDeckFormat>('topdeck');
   const [deckName, setDeckName] = useState(DEFAULT_IMPORTED_DECK_NAME);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) {
-      setJsonText('');
+      setDeckText('');
+      setFormat('topdeck');
       setDeckName(DEFAULT_IMPORTED_DECK_NAME);
       setBusy(false);
       setError(null);
     }
   }, [open]);
 
-  const handleJsonChange = useCallback((value: string) => {
-    setJsonText(value);
+  const handleDeckTextChange = useCallback((value: string) => {
+    setDeckText(value);
     setError(null);
-    const trimmed = value.trim();
-    if (!trimmed) return;
+    if (format !== 'json' || !value.trim()) return;
     try {
-      const parsed = parseImportDeckJson(trimmed);
-      setDeckName(deckNameFromParsedJson(parsed));
+      const parsed = parseImportDeckInput(value, format);
+      if (typeof parsed !== 'string') setDeckName(deckNameFromParsedJson(parsed));
     } catch {
-      // Keep prior name until JSON is valid enough to parse.
+      // Keep the entered name while JSON is incomplete.
     }
-  }, []);
+  }, [format]);
+
+  const selectFormat = (next: ImportDeckFormat) => {
+    setFormat(next);
+    setError(null);
+  };
 
   const handleFailure = (result: Extract<ImportDeckResult, { ok: false }>) => {
     if (result.code === 'unresolved') {
@@ -60,17 +67,17 @@ export function ImportDeckPanel({ open, isGuest, onClose, onSuccess }: ImportDec
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (busy || !jsonText.trim()) return;
+    if (busy || !deckText.trim()) return;
 
     setBusy(true);
     setError(null);
 
-    let exportData: ImportDeckJson;
+    let exportData: ImportDeckJson | string;
     try {
-      exportData = parseImportDeckJson(jsonText);
+      exportData = parseImportDeckInput(deckText, format);
     } catch (err) {
       setBusy(false);
-      setError((err as Error)?.message || 'Invalid JSON');
+      setError((err as Error)?.message || 'Invalid decklist');
       return;
     }
 
@@ -95,7 +102,7 @@ export function ImportDeckPanel({ open, isGuest, onClose, onSuccess }: ImportDec
       open={open}
       onClose={onClose}
       title="Import deck"
-      ariaLabel="Import deck from JSON"
+      ariaLabel="Import deck from JSON or TopDeck"
       width={480}
       className="import-deck-panel"
       footer={
@@ -104,7 +111,7 @@ export function ImportDeckPanel({ open, isGuest, onClose, onSuccess }: ImportDec
             type="submit"
             form="import-deck-form"
             className="btn btn-primary import-deck-panel__submit"
-            disabled={busy || !jsonText.trim()}
+            disabled={busy || !deckText.trim()}
           >
             <IconImport />
             {busy ? 'Importing…' : 'Import deck'}
@@ -112,8 +119,24 @@ export function ImportDeckPanel({ open, isGuest, onClose, onSuccess }: ImportDec
         </div>
       }
     >
+      <div className="import-deck-panel__formats" role="group" aria-label="Import format">
+        {(['json', 'topdeck'] as const).map((option) => (
+          <button
+            key={option}
+            type="button"
+            className="import-deck-panel__format"
+            aria-pressed={format === option}
+            disabled={busy}
+            onClick={() => selectFormat(option)}
+          >
+            {option === 'json' ? 'JSON' : 'TopDeck'}
+          </button>
+        ))}
+      </div>
       <p className="import-deck-panel__helper">
-        Paste exported deck JSON below to create a new deck.
+        {format === 'json'
+          ? 'Paste exported deck JSON below to create a new deck.'
+          : 'Paste a TopDeck decklist below to create a new deck.'}
       </p>
 
       {error ? (
@@ -135,13 +158,13 @@ export function ImportDeckPanel({ open, isGuest, onClose, onSuccess }: ImportDec
         </label>
 
         <label className="import-deck-panel__field import-deck-panel__field--json">
-          <span>Deck JSON</span>
+          <span>{format === 'json' ? 'Deck JSON' : 'TopDeck decklist'}</span>
           <div className="import-deck-panel__json-wrap">
             <textarea
               className="import-deck-panel__textarea"
-              value={jsonText}
-              onChange={(e) => handleJsonChange(e.target.value)}
-              placeholder='Paste exported deck JSON here…'
+              value={deckText}
+              onChange={(e) => handleDeckTextChange(e.target.value)}
+              placeholder={format === 'json' ? 'Paste exported deck JSON here…' : 'Paste TopDeck text here…'}
               disabled={busy}
               spellCheck={false}
             />

@@ -12,7 +12,7 @@ export function useDeckExportInputController(deckId:string|null,isGuest:boolean,
  const result = useQuery({ queryKey:['deck-export',api, data,user?.username], enabled:enabled && Boolean(data), queryFn:async ({signal}) => {
   const d = data!;
   const response = await (api?.exportDraft ?? exportDraft)({schemaVersion:1,draftId:d.metadata.id,revision:0,cards:d.cards.map(c => ({type:c.type,cardId:c.cardId,quantity:c.quantity,exclude_from_draw:c.exclude_from_draw === true})),reserveCharacterId:d.metadata.reserve_character ?? null,limited:d.metadata.is_limited ?? false,format:'venture',koCharacterIds:[]}, {name:d.metadata.name,description:d.metadata.description ?? '',exportedBy:user?.username ?? 'Guest',surface:'selection'},signal);
-  return {deck:response.deck};
+  return {deck:response.deck,topDeck:response.topDeck};
  }});
  return {input:result.data ?? null, loading:deck.isLoading || deck.isFetching || result.isLoading, error:deck.error ?? result.error, retry:() => {void deck.refetch();void result.refetch();}};
 }

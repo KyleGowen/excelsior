@@ -171,7 +171,7 @@ function findBasicUniverseCardId(
     const t = cardTypeOf(card);
     if (t !== 'basic-universe' && t !== 'basic_universe') continue;
     if (cardNameOf(card) !== cardName) continue;
-    const ct = norm(card.type as string | null);
+    const ct = norm((card.basic_skill_type ?? card.type) as string | null);
     const cv = norm(card.value_to_use as string | null);
     const cb = norm(card.bonus as string | null);
     const st = norm(typeField);

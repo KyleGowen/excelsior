@@ -1,0 +1,1404 @@
+{
+  "characters": [
+    {
+      "id": "5f21a9b5-9bfb-48f4-a34f-4e173d4bd2e6",
+      "name": "Anubis",
+      "set": "ERB",
+      "set_number": "485",
+      "special_abilities": "",
+      "is_foil": false
+    },
+    {
+      "id": "22eaff34-a9f6-402e-bf4c-68a2289258c5",
+      "name": "Anubis",
+      "set": "ERB",
+      "set_number": "485F",
+      "special_abilities": "",
+      "is_foil": true
+    },
+    {
+      "id": "6840e702-6a8a-4b78-ab33-92180d99c9a5",
+      "name": "Anubis",
+      "set": "ERB",
+      "set_number": "014",
+      "special_abilities": "",
+      "is_foil": false
+    },
+    {
+      "id": "a236e426-5411-4573-9d4d-54dbe35244ed",
+      "name": "Anubis",
+      "set": "ERB",
+      "set_number": "540",
+      "special_abilities": "",
+      "is_foil": false
+    },
+    {
+      "id": "a07e2d37-9bb7-4f42-a57e-6f4cb9028f67",
+      "name": "Mina Harker",
+      "set": "ERB",
+      "set_number": "509",
+      "special_abilities": "",
+      "is_foil": false
+    },
+    {
+      "id": "f9aaed48-ca2c-4670-bbbb-7f19a0f39607",
+      "name": "Mina Harker",
+      "set": "ERB",
+      "set_number": "509F",
+      "special_abilities": "",
+      "is_foil": true
+    },
+    {
+      "id": "669ff2ee-9a8c-4acc-817e-f02eecfb98b4",
+      "name": "Mina Harker",
+      "set": "ERB",
+      "set_number": "153F",
+      "special_abilities": "",
+      "is_foil": true
+    },
+    {
+      "id": "f318abe0-36cb-4c31-9600-d439dbca2593",
+      "name": "Mina Harker",
+      "set": "ERB",
+      "set_number": "510F",
+      "special_abilities": "",
+      "is_foil": true
+    },
+    {
+      "id": "8970fb05-d4f8-437f-b91a-60cf07d46088",
+      "name": "Mina Harker",
+      "set": "ERB",
+      "set_number": "153",
+      "special_abilities": "",
+      "is_foil": false
+    },
+    {
+      "id": "5e29ec70-30dc-4100-8e3f-47b757b8b81f",
+      "name": "Mina Harker",
+      "set": "ERB",
+      "set_number": "510",
+      "special_abilities": "",
+      "is_foil": false
+    },
+    {
+      "id": "aaa45b9c-6dad-48bd-99e5-76462e5d337f",
+      "name": "The Mummy",
+      "set": "ERB",
+      "set_number": "525",
+      "special_abilities": "Must have a hit with an Energy icon to be KO'd.",
+      "is_foil": false
+    },
+    {
+      "id": "26a33bc0-2729-4d84-a1f0-78a8e6e26c76",
+      "name": "The Mummy",
+      "set": "ERB",
+      "set_number": "237F",
+      "special_abilities": "Must have a hit with an Energy icon to be KO'd.",
+      "is_foil": true
+    },
+    {
+      "id": "13f1b0c8-3866-40cb-87e6-b13ecef94ec4",
+      "name": "The Mummy",
+      "set": "ERB",
+      "set_number": "237",
+      "special_abilities": "Must have a hit with an Energy icon to be KO'd.",
+      "is_foil": false
+    },
+    {
+      "id": "e4a5644a-b4fe-4dbb-8d8a-5253358f704a",
+      "name": "The Mummy",
+      "set": "ERB",
+      "set_number": "525F",
+      "special_abilities": "Must have a hit with an Energy icon to be KO'd.",
+      "is_foil": true
+    },
+    {
+      "id": "06692620-d267-42f7-a8d5-40117530a540",
+      "name": "Wicked Witch",
+      "set": "ERB",
+      "set_number": "532",
+      "special_abilities": "",
+      "is_foil": false
+    },
+    {
+      "id": "a0a958a7-d855-458d-b1eb-375b6d7995ef",
+      "name": "Wicked Witch",
+      "set": "ERB",
+      "set_number": "272",
+      "special_abilities": "",
+      "is_foil": false
+    }
+  ],
+  "special-cards": [
+    {
+      "id": "fe3748ec-c9fe-4446-86d8-8157bdc9298f",
+      "name": "Book of the Dead",
+      "character": "Anubis",
+      "card_effect": "For remainder of game, immediately after the Draw Phase, Anubis may reveal 1 Special card belonging to a KO'd teammate. Anubis may play, but not place, revealed card this battle. Book of the Dead may be played from Reserve. **One Per Deck**",
+      "set": "ERB",
+      "set_number": "015",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "c559a3bc-e45f-492a-b639-e30aa656d848",
+      "name": "Weighing of the Heart",
+      "character": "Anubis",
+      "card_effect": "Target character must discard all placed cards and may not attack for remainder of battle. **One Per Deck**",
+      "set": "ERB",
+      "set_number": "019",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "ba4ff8e4-2347-4e65-9cd6-1ec0b7e2e0ae",
+      "name": "Charge into Battle!",
+      "character": "Any Character",
+      "card_effect": "**Assist!** Acts as a level 4 Combat attack. May make 1 additional attack. May only have 1 **Assist!** card per deck.",
+      "set": "ERB",
+      "set_number": "450",
+      "value": 4,
+      "is_cataclysm": false,
+      "is_assist": true,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "0f066592-15d7-47b8-889d-2b74157e6d32",
+      "name": "Disorient Opponent",
+      "character": "Any Character",
+      "card_effect": "Avoid all attacks from 1 Teamwork card, or Target Character must discard 1 placed Teamwork card.",
+      "set": "ERB",
+      "set_number": "454",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "a234a1a0-4ea0-44a9-9697-4dd337fdc67c",
+      "name": "Fairy Protection",
+      "character": "Any Character",
+      "card_effect": "**Cataclysm!** Any Character may avoid 1 attack. May not be attacked for remainder of battle. May only have 1 **Cataclysm!** card per deck.",
+      "set": "ERB",
+      "set_number": "443",
+      "value": null,
+      "is_cataclysm": true,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "f96bbf7b-aa46-40f8-8c9e-0c559cfec1ae",
+      "name": "Freya: Goddess of Protection",
+      "character": "Any Character",
+      "card_effect": "Freya gives warning! Any Character may avoid 1 attack.",
+      "set": "ERB",
+      "set_number": "455",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "b690edd2-977f-4b9a-8718-3d11eaae963e",
+      "name": "The Gemini",
+      "character": "Any Character",
+      "card_effect": "Any Character may exchange this card for any one card in the Dead Pile.",
+      "set": "ERB",
+      "set_number": "463",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "e12168ab-6e5d-4d39-ba4e-27ee0998f609",
+      "name": "The Gemini",
+      "character": "Any Character",
+      "card_effect": "Any Character may exchange this card for any one card in the Dead Pile.",
+      "set": "ERB",
+      "set_number": "463",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "618de254-93cd-4237-a03f-5daee69cb247",
+      "name": "Grim Reaper",
+      "character": "Any Character",
+      "card_effect": "Play on Target Character as an attack. If successful, Opponent must immediately discard 4 cards of Opponent's choice with icon of your choice, currently placed or in hand.",
+      "set": "ERB",
+      "set_number": "456",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "0ec6417d-ed4f-47a2-a17e-f9b524245911",
+      "name": "Legendary Escape",
+      "character": "Any Character",
+      "card_effect": "Attack made on Front Line Character is now made on any other Front Line Character, who may defend.",
+      "set": "ERB",
+      "set_number": "459",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "74b5a93a-68e6-4905-b518-9e901b33b38c",
+      "name": "Merlin's Magic",
+      "character": "Any Character",
+      "card_effect": "Negate the effect of any 1 Special card. This card may be Placed.",
+      "set": "ERB",
+      "set_number": "460",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "b90bc48b-815c-4414-8894-0fc5104a694f",
+      "name": "Preternatural Healing",
+      "character": "Any Character",
+      "card_effect": "Any Character may remove 1 hit from their permanent record. This card may be placed.",
+      "set": "ERB",
+      "set_number": "461",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "4bbc45bf-fb7c-4773-9e1b-6bd9892c0446",
+      "name": "Preternatural Healing",
+      "character": "Any Character",
+      "card_effect": "Any Character may remove 1 hit from their permanent record. This card may be placed.",
+      "set": "ERB",
+      "set_number": "461",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "e87b1d50-f30d-4610-98db-a2a25097cd89",
+      "name": "Valkyrie Hildr: Select the Slain",
+      "character": "Any Character",
+      "card_effect": "Any Character may look at top 5 cards of your Draw Pile and choose any 1 card. Draw and reveal chosen card, may not be duplicate. Reshuffle Draw Pile.",
+      "set": "ERB",
+      "set_number": "464",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "5347e2ee-2ee8-4b47-9230-3ea0d85d10a0",
+      "name": "Valkyrie Skeggjold",
+      "character": "Any Character",
+      "card_effect": "**Ambush!** Acts as a level 7 Combat attack. May only have 1 **Ambush!** card per deck.",
+      "set": "ERB",
+      "set_number": "446",
+      "value": 7,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": true,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "e3696ab1-e653-4ec8-b6ce-68814c8a6af1",
+      "name": "The Hunger",
+      "character": "Mina Harker",
+      "card_effect": "Acts as a level 7 Combat attack. If successful, remove one hit from Mina Harker's current battle or permanent record. **One Per Deck**",
+      "set": "ERB",
+      "set_number": "157",
+      "value": 7,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "5eb851a9-a317-4a21-8874-6fad06cf56e1",
+      "name": "Jonathan Harker, Solicitor",
+      "character": "Mina Harker",
+      "card_effect": "Acts as a level 5 Intelligence Power card. May be used to attack or defend.",
+      "set": "ERB",
+      "set_number": "155",
+      "value": 5,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "4fcf6df6-75e6-4281-8a60-836b5c6c0e8c",
+      "name": "Jonathan Harker, Solicitor",
+      "character": "Mina Harker",
+      "card_effect": "Acts as a level 5 Intelligence Power card. May be used to attack or defend.",
+      "set": "ERB",
+      "set_number": "155F",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": true
+    },
+    {
+      "id": "54a9b0ef-3ce5-4ed2-8820-0d20d10b1498",
+      "name": "Nocturnal Hunter",
+      "character": "Mina Harker",
+      "card_effect": "Acts as a level 5 Brute Force attack. May not be defended by a Special card.",
+      "set": "ERB",
+      "set_number": "156F",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": true
+    },
+    {
+      "id": "b72263bb-dc86-41ce-8af1-f70a157c3a29",
+      "name": "Nocturnal Hunter",
+      "character": "Mina Harker",
+      "card_effect": "Acts as a level 5 Brute Force attack. May not be defended by a Special card.",
+      "set": "ERB",
+      "set_number": "156",
+      "value": 5,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "c0aba474-5570-4c5c-a0c4-d69526bf6b3c",
+      "name": "Tracking Movements",
+      "character": "Mina Harker",
+      "card_effect": "Mina Harker may offensively negate 1 of Opponent's Special cards. Mina Harker may reveal her hand and play open handed this battle to defensively negate 1 of Opponent's Special cards.",
+      "set": "ERB",
+      "set_number": "158F",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": true
+    },
+    {
+      "id": "2ad9f9fa-a662-42bd-a170-d4bfe242bfc8",
+      "name": "Tracking Movements",
+      "character": "Mina Harker",
+      "card_effect": "Mina Harker may offensively negate 1 of Opponent's Special cards. Mina Harker may reveal her hand and play open handed this battle to defensively negate 1 of Opponent's Special cards.",
+      "set": "ERB",
+      "set_number": "158",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "28daf25d-a8b2-4e81-9e6a-6a8efff423a7",
+      "name": "Vampiric Celerity",
+      "character": "Mina Harker",
+      "card_effect": "Target character must discard 1 placed card of Mina Harker's choice. May be played from Reserve.",
+      "set": "ERB",
+      "set_number": "159",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "3c2ef2ab-1a52-4711-8774-eed0b6d887b5",
+      "name": "Vampiric Celerity",
+      "character": "Mina Harker",
+      "card_effect": "Target character must discard 1 placed card of Mina Harker's choice. May be played from Reserve.",
+      "set": "ERB",
+      "set_number": "159F",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": true
+    },
+    {
+      "id": "8ea07548-b495-4d5a-951f-07cb011db114",
+      "name": "Ancient Wisdom",
+      "character": "The Mummy",
+      "card_effect": "Teammate may avoid 1 attack made with a Power card. Draw 1 card, discard if duplicate.",
+      "set": "ERB",
+      "set_number": "238F",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": true
+    },
+    {
+      "id": "b30b6699-4afb-4782-a57e-c7f83d2b31de",
+      "name": "Ancient Wisdom",
+      "character": "The Mummy",
+      "card_effect": "Teammate may avoid 1 attack made with a Power card. Draw 1 card, discard if duplicate.",
+      "set": "ERB",
+      "set_number": "238",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "28ae267c-0fbc-4afe-be2c-c5902dc02374",
+      "name": "The Eternal Journey",
+      "character": "The Mummy",
+      "card_effect": "The Mummy may offensively negate 1 of Opponent's Special cards. The Mummy may discard 1 Brute Force Power card usable by The Mummy to defensively negate 1 of Opponent's Special cards.",
+      "set": "ERB",
+      "set_number": "243F",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": true
+    },
+    {
+      "id": "006ae81f-1d9f-4e4c-9101-50dd977709fd",
+      "name": "The Eternal Journey",
+      "character": "The Mummy",
+      "card_effect": "The Mummy may offensively negate 1 of Opponent's Special cards. The Mummy may discard 1 Brute Force Power card usable by The Mummy to defensively negate 1 of Opponent's Special cards.",
+      "set": "ERB",
+      "set_number": "243",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "266897fd-8fff-4d43-a0ab-7a9e6c0c7c43",
+      "name": "Fury of the Desert",
+      "character": "The Mummy",
+      "card_effect": "Acts as a level 5 Brute Force attack. If successful, remove 1 hit from The Mummy's permanent record.",
+      "set": "ERB",
+      "set_number": "239",
+      "value": 5,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "c13408c8-7fcc-44da-840a-b8a527d71960",
+      "name": "Fury of the Desert",
+      "character": "The Mummy",
+      "card_effect": "Acts as a level 5 Brute Force attack. If successful, remove 1 hit from The Mummy's permanent record.",
+      "set": "ERB",
+      "set_number": "239F",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": true
+    },
+    {
+      "id": "e25cd5da-16f9-4b94-ae50-342f81581047",
+      "name": "Pharaoh of the Fourth Dynasty",
+      "character": "The Mummy",
+      "card_effect": "Acts as a level 7 Energy attack. If successful, remove 1 hit from The Mummy's current battle or permanent record. **One Per Deck**",
+      "set": "ERB",
+      "set_number": "240",
+      "value": 7,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "9d9b8fbe-c18f-467c-b03c-8160657b85de",
+      "name": "Trident",
+      "character": "Poseidon",
+      "card_effect": "Acts as a level 4 Combat attack. May make 1 additional attack.",
+      "set": "ERB",
+      "set_number": "179",
+      "value": 4,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "a5bf4e38-873d-4283-a7dc-7bbdb8cfbc70",
+      "name": "Feared by All Witches",
+      "character": "Wicked Witch",
+      "card_effect": "Acts as a level 4 Energy attack. If successful, Wicked Witch may not attack or be attacked for remainder of battle.",
+      "set": "ERB",
+      "set_number": "274",
+      "value": 4,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "d7247807-d47e-40a0-8a01-468fd91253d7",
+      "name": "Harness the Wind",
+      "character": "Wicked Witch",
+      "card_effect": "Any attack made on Wicked Witch or teammate may be shifted to any Front Line teammate for remainder of battle. Character may defend. **One Per Deck**",
+      "set": "ERB",
+      "set_number": "277",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "ff8aa484-3557-48de-9d8b-f0f950514912",
+      "name": "I Will Have Those Silver Shoes!",
+      "character": "Wicked Witch",
+      "card_effect": "Target character must discard 1 placed card of Wicked Witch's choice. If successful, Wicked Witch may search her Dead Pile for any Basic Universe card, reveal it to Opponent, and place it in hand.",
+      "set": "ERB",
+      "set_number": "275",
+      "value": null,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "63cbb7dc-6c0c-4a82-824b-f248d479ea9d",
+      "name": "One Eye",
+      "character": "Wicked Witch",
+      "card_effect": "Acts as a level 7 Intelligence attack. May be made against the character in Reserve. If successful, win target character moved to the Front Line, they may not attack. If Opponent has no other Front Line characters, ignore the secondary effect. **One Per Deck**",
+      "set": "ERB",
+      "set_number": "276",
+      "value": 7,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "77e00ebb-6b6e-495e-888c-39f4865ecc8e",
+      "name": "Wolves, Crows, & Black Bees",
+      "character": "Wicked Witch",
+      "card_effect": "Acts as a level 8 MultiPower attack. **One Per Deck**",
+      "set": "ERB",
+      "set_number": "278",
+      "value": 8,
+      "is_cataclysm": false,
+      "is_assist": false,
+      "is_ambush": false,
+      "one_per_deck": true,
+      "is_foil": false
+    }
+  ],
+  "power-cards": [
+    {
+      "id": "08cda70b-d373-444b-9448-f42f8fa7db83",
+      "name": "5 - Any-Power",
+      "power_type": "Any-Power",
+      "value": 5,
+      "set": "SKY",
+      "set_number": "385",
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "b37d8f9c-364c-4b29-a0f2-cae2a54c157b",
+      "name": "5 - Any-Power",
+      "power_type": "Any-Power",
+      "value": 5,
+      "set": "ERB",
+      "set_number": "473F",
+      "one_per_deck": true,
+      "is_foil": true
+    },
+    {
+      "id": "e088efd5-4f1e-4afe-96a9-8073a95bdb21",
+      "name": "5 - Any-Power",
+      "power_type": "Any-Power",
+      "value": 5,
+      "set": "ERB",
+      "set_number": "473",
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "cc1afdfb-98cd-4b97-9f1c-3b0c7338da2f",
+      "name": "6 - Any-Power",
+      "power_type": "Any-Power",
+      "value": 6,
+      "set": "ERB",
+      "set_number": "474",
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "8dd6bb93-195f-4a0f-9e13-9a05668ead7f",
+      "name": "6 - Any-Power",
+      "power_type": "Any-Power",
+      "value": 6,
+      "set": "SKY",
+      "set_number": "386",
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "c01b1080-309d-4256-80b6-c47a56c86b3c",
+      "name": "6 - Any-Power",
+      "power_type": "Any-Power",
+      "value": 6,
+      "set": "ERB",
+      "set_number": "474F",
+      "one_per_deck": true,
+      "is_foil": true
+    },
+    {
+      "id": "b51581de-6e85-4e55-a6ed-c45446986fe9",
+      "name": "7 - Any-Power",
+      "power_type": "Any-Power",
+      "value": 7,
+      "set": "ERB",
+      "set_number": "475F",
+      "one_per_deck": true,
+      "is_foil": true
+    },
+    {
+      "id": "52ddd43f-8142-40ab-b568-3f2c61394d7d",
+      "name": "7 - Any-Power",
+      "power_type": "Any-Power",
+      "value": 7,
+      "set": "SKYP",
+      "set_number": null,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "71559b3c-ccd7-45b4-8081-486b71e798a5",
+      "name": "7 - Any-Power",
+      "power_type": "Any-Power",
+      "value": 7,
+      "set": "ERB",
+      "set_number": "475",
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "8bc6c74b-d6fa-44e2-b242-b1b7534ca813",
+      "name": "7 - Any-Power",
+      "power_type": "Any-Power",
+      "value": 7,
+      "set": "SKY",
+      "set_number": "387",
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "f18fc925-f845-4b92-9307-5baef2db5c33",
+      "name": "3 - Brute Force",
+      "power_type": "Brute Force",
+      "value": 3,
+      "set": "SKY",
+      "set_number": "272",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "416daba1-3072-4671-aba1-4ea6888f7eb8",
+      "name": "3 - Brute Force",
+      "power_type": "Brute Force",
+      "value": 3,
+      "set": "ERB",
+      "set_number": "313",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "24d06534-65a2-4e72-945c-bcd1220ed221",
+      "name": "4 - Brute Force",
+      "power_type": "Brute Force",
+      "value": 4,
+      "set": "SKY",
+      "set_number": "273",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "51e67644-553f-4bd2-b6d0-7aac96d17abd",
+      "name": "4 - Brute Force",
+      "power_type": "Brute Force",
+      "value": 4,
+      "set": "ERB",
+      "set_number": "312",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "703b7647-ce40-40b9-879e-fd61124d42d8",
+      "name": "5 - Brute Force",
+      "power_type": "Brute Force",
+      "value": 5,
+      "set": "SKY",
+      "set_number": "274",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "03f71980-910e-45c4-8f36-79c97309c5b3",
+      "name": "5 - Brute Force",
+      "power_type": "Brute Force",
+      "value": 5,
+      "set": "ERB",
+      "set_number": "311",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "8651eaf8-ba85-48e3-84f3-4c09f0e1ebb7",
+      "name": "6 - Brute Force",
+      "power_type": "Brute Force",
+      "value": 6,
+      "set": "ERB",
+      "set_number": "310",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "9044bcea-aa4d-4cf9-beb7-0c611577292b",
+      "name": "6 - Brute Force",
+      "power_type": "Brute Force",
+      "value": 6,
+      "set": "SKY",
+      "set_number": "275",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "f46ac960-49d5-4c56-ab88-4d5f437eef13",
+      "name": "7 - Brute Force",
+      "power_type": "Brute Force",
+      "value": 7,
+      "set": "SKY",
+      "set_number": "276",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "b2f62229-bc26-4a43-b21b-8dfcab968d1e",
+      "name": "7 - Brute Force",
+      "power_type": "Brute Force",
+      "value": 7,
+      "set": "ERB",
+      "set_number": "309",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "5a7539d3-161a-45f6-a8c4-58d8cc13be81",
+      "name": "7 - Brute Force",
+      "power_type": "Brute Force",
+      "value": 7,
+      "set": "TFCP",
+      "set_number": null,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "42156cb4-c653-41d8-be8c-91c4c28e54fd",
+      "name": "7 - Brute Force",
+      "power_type": "Brute Force",
+      "value": 7,
+      "set": "TFCP",
+      "set_number": null,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "4578e22d-3644-45bb-9fcc-372277342516",
+      "name": "1 - Combat",
+      "power_type": "Combat",
+      "value": 1,
+      "set": "ERB",
+      "set_number": "307",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "3a0f9a1b-f60b-4cab-a645-af4d05f530a7",
+      "name": "1 - Combat",
+      "power_type": "Combat",
+      "value": 1,
+      "set": "SKY",
+      "set_number": "262",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "ac2f0351-7677-4e87-8115-75321b5a2ad9",
+      "name": "2 - Combat",
+      "power_type": "Combat",
+      "value": 2,
+      "set": "SKY",
+      "set_number": "263",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "484bb955-6176-4cab-bb2f-dd55e0590f86",
+      "name": "2 - Combat",
+      "power_type": "Combat",
+      "value": 2,
+      "set": "ERB",
+      "set_number": "306",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "490bccd1-9522-402e-ae70-98fd6efad940",
+      "name": "6 - Energy",
+      "power_type": "Energy",
+      "value": 6,
+      "set": "SKY",
+      "set_number": "259",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "5e04fce5-cfb9-478d-9833-d64f5e9b86a6",
+      "name": "6 - Energy",
+      "power_type": "Energy",
+      "value": 6,
+      "set": "ERB",
+      "set_number": "294",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "491399f6-94c8-4e4e-8ea8-047e21ff67e6",
+      "name": "8 - Energy",
+      "power_type": "Energy",
+      "value": 8,
+      "set": "SKY",
+      "set_number": "261",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "85246cbd-c26c-4bc9-994d-6f8fc62f5f94",
+      "name": "8 - Energy",
+      "power_type": "Energy",
+      "value": 8,
+      "set": "ERB",
+      "set_number": "292",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "d1dee196-4b13-4c5a-bb1e-1314a4c3f1cc",
+      "name": "8 - Energy",
+      "power_type": "Energy",
+      "value": 8,
+      "set": "ERBP",
+      "set_number": null,
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "fb42f799-d7dc-41fc-aeae-2dd0ba7c9340",
+      "name": "8 - Energy",
+      "power_type": "Energy",
+      "value": 8,
+      "set": "TFCP",
+      "set_number": null,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "48320822-e6f8-429c-8b5c-22146d3331fa",
+      "name": "2 - Intelligence",
+      "power_type": "Intelligence",
+      "value": 2,
+      "set": "SKY",
+      "set_number": "279",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "257ea37a-34cc-4ef5-a8a8-679ffb2af99e",
+      "name": "2 - Intelligence",
+      "power_type": "Intelligence",
+      "value": 2,
+      "set": "ERB",
+      "set_number": "322",
+      "one_per_deck": false,
+      "is_foil": false
+    },
+    {
+      "id": "113153c4-f9ae-4b9e-b607-7c9eb2170797",
+      "name": "3 - Multi Power",
+      "power_type": "Multi Power",
+      "value": 3,
+      "set": "ERB",
+      "set_number": "477",
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "e23789c7-3e66-4b8a-824b-d8adb7843631",
+      "name": "3 - Multi Power",
+      "power_type": "Multi Power",
+      "value": 3,
+      "set": "ERB",
+      "set_number": "477F",
+      "one_per_deck": true,
+      "is_foil": true
+    },
+    {
+      "id": "a2b6aee6-5545-479a-9eb0-25ac4e653677",
+      "name": "4 - Multi Power",
+      "power_type": "Multi Power",
+      "value": 4,
+      "set": "ERB",
+      "set_number": "478F",
+      "one_per_deck": true,
+      "is_foil": true
+    },
+    {
+      "id": "8f18c84c-f744-4c1e-9106-befcf79fda87",
+      "name": "4 - Multi Power",
+      "power_type": "Multi Power",
+      "value": 4,
+      "set": "ERB",
+      "set_number": "478",
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "bc57a6c5-a328-472e-9106-2b31a21bb169",
+      "name": "5 - Multi Power",
+      "power_type": "Multi Power",
+      "value": 5,
+      "set": "ERBP",
+      "set_number": null,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "1860f469-feaa-454a-b82b-f998843675f2",
+      "name": "5 - Multi Power",
+      "power_type": "Multi Power",
+      "value": 5,
+      "set": "TFCP",
+      "set_number": null,
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "4f37136f-85f0-43ab-85cd-6c8b58cb4909",
+      "name": "5 - Multi Power",
+      "power_type": "Multi Power",
+      "value": 5,
+      "set": "ERB",
+      "set_number": "479",
+      "one_per_deck": true,
+      "is_foil": false
+    },
+    {
+      "id": "c77a1983-795e-473f-a2d7-3424f6621c91",
+      "name": "5 - Multi Power",
+      "power_type": "Multi Power",
+      "value": 5,
+      "set": "ERBP",
+      "set_number": null,
+      "one_per_deck": true,
+      "is_foil": true
+    },
+    {
+      "id": "81c4ec72-3994-4a63-a51f-f336c04905d3",
+      "name": "5 - Multi Power",
+      "power_type": "Multi Power",
+      "value": 5,
+      "set": "ERB",
+      "set_number": "479F",
+      "one_per_deck": true,
+      "is_foil": true
+    }
+  ],
+  "locations": [
+    {
+      "id": "e00c7163-76f6-43da-8c5c-29af1b09d607",
+      "name": "Dracula's Armory",
+      "special_ability": "At the beginning of the game, place three unique Basic Universe cards, excluding \"Any-Power,\" under Dracula's Armory. Once per battle, you may remove one of these cards to combine it with a legal attack or defense.",
+      "set": "ERB",
+      "set_number": "465"
+    },
+    {
+      "id": "b0d990da-77c6-44a0-8815-84d656f02dd3",
+      "name": "Dracula's Armory",
+      "special_ability": "At the beginning of the game, place three unique Basic Universe cards, excluding \"Any-Power,\" under Dracula's Armory. Once per battle, you may remove one of these cards to combine it with a legal attack or defense.",
+      "set": "ERBP",
+      "set_number": null
+    }
+  ],
+  "missions": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "mission_set": "King of the Jungle",
+      "card_name": "Beasts of Tarzan",
+      "is_foil": false,
+      "set": "ERB",
+      "set_number": "363",
+      "name": "Beasts of Tarzan"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440002",
+      "mission_set": "King of the Jungle",
+      "card_name": "Tarzan and the Castaways",
+      "is_foil": false,
+      "set": "ERB",
+      "set_number": "368",
+      "name": "Tarzan and the Castaways"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440003",
+      "mission_set": "King of the Jungle",
+      "card_name": "Tarzan and the City of Gold",
+      "is_foil": false,
+      "set": "ERB",
+      "set_number": "366",
+      "name": "Tarzan and the City of Gold"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440004",
+      "mission_set": "King of the Jungle",
+      "card_name": "Tarzan and the Golden Lion",
+      "is_foil": false,
+      "set": "ERB",
+      "set_number": "364",
+      "name": "Tarzan and the Golden Lion"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440005",
+      "mission_set": "King of the Jungle",
+      "card_name": "Tarzan at the Earth's Core",
+      "is_foil": false,
+      "set": "ERB",
+      "set_number": "365",
+      "name": "Tarzan at the Earth's Core"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440006",
+      "mission_set": "King of the Jungle",
+      "card_name": "Tarzan of the Apes",
+      "is_foil": false,
+      "set": "ERB",
+      "set_number": "362",
+      "name": "Tarzan of the Apes"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440007",
+      "mission_set": "King of the Jungle",
+      "card_name": "Tarzan's Quest",
+      "is_foil": false,
+      "set": "ERB",
+      "set_number": "367",
+      "name": "Tarzan's Quest"
+    }
+  ],
+  "events": [
+    {
+      "id": "8ccc03b1-b1a2-4e0e-9504-f0e082866668",
+      "name": "The Lost City of Opar",
+      "mission_set": "King of the Jungle",
+      "one_per_deck": true,
+      "set": "ERB",
+      "set_number": "369"
+    },
+    {
+      "id": "36f8ba85-4392-4c4d-bb1e-6d5c5c30d4d3",
+      "name": "The Power of Gonfal",
+      "mission_set": "King of the Jungle",
+      "one_per_deck": true,
+      "set": "ERB",
+      "set_number": "371"
+    }
+  ],
+  "aspects": [
+    {
+      "id": "f8941e62-9882-4927-bd46-1d5387e7208d",
+      "card_name": "Cheshire Cat",
+      "value": 4,
+      "set": "ERB",
+      "set_number": "437"
+    }
+  ],
+  "teamwork": [
+    {
+      "id": "d06e8e10-ddb0-4cc9-9af0-eff8f2535e1a",
+      "name": "6 Any-Power",
+      "to_use": "6 Any-Power",
+      "acts_as": "6 Attack",
+      "followup_attack_types": "Any-Power / Any-Power",
+      "one_per_deck": false,
+      "set": "ERB",
+      "set_number": "480"
+    },
+    {
+      "id": "2aad396f-b639-4bc0-b2e2-90362a26e997",
+      "name": "6 Brute Force",
+      "to_use": "6 Brute Force",
+      "acts_as": "4 Attack",
+      "followup_attack_types": "Intelligence + Energy",
+      "one_per_deck": false,
+      "set": "ERB",
+      "set_number": "417"
+    },
+    {
+      "id": "efba8540-fe18-49de-bca6-4b34d9cf9cca",
+      "name": "6 Brute Force",
+      "to_use": "6 Brute Force",
+      "acts_as": "4 Attack",
+      "followup_attack_types": "Intelligence + Combat",
+      "one_per_deck": false,
+      "set": "ERB",
+      "set_number": "418"
+    },
+    {
+      "id": "409c8a7e-4130-4c0a-85f1-eb83ba262252",
+      "name": "6 Brute Force",
+      "to_use": "6 Brute Force",
+      "acts_as": "4 Attack",
+      "followup_attack_types": "Energy + Combat",
+      "one_per_deck": false,
+      "set": "ERB",
+      "set_number": "416"
+    },
+    {
+      "id": "370a266f-0e21-4bb4-bd80-a7c777347577",
+      "name": "6 Energy",
+      "to_use": "6 Energy",
+      "acts_as": "4 Attack",
+      "followup_attack_types": "Brute Force + Intelligence",
+      "one_per_deck": false,
+      "set": "ERB",
+      "set_number": "398"
+    },
+    {
+      "id": "c05dc0bd-454f-4576-bda5-60a9c08fb92b",
+      "name": "6 Energy",
+      "to_use": "6 Energy",
+      "acts_as": "4 Attack",
+      "followup_attack_types": "Combat + Intelligence",
+      "one_per_deck": false,
+      "set": "ERB",
+      "set_number": "400"
+    },
+    {
+      "id": "84c95e60-4bee-4811-b98c-a21a389156a0",
+      "name": "6 Energy",
+      "to_use": "6 Energy",
+      "acts_as": "4 Attack",
+      "followup_attack_types": "Brute Force + Combat",
+      "one_per_deck": false,
+      "set": "ERB",
+      "set_number": "399"
+    },
+    {
+      "id": "24d35cfe-2534-4bb4-97d7-f8293bda6828",
+      "name": "7 Any-Power",
+      "to_use": "7 Any-Power",
+      "acts_as": "6 Attack",
+      "followup_attack_types": "Any-Power",
+      "one_per_deck": true,
+      "set": "ERB",
+      "set_number": "481"
+    },
+    {
+      "id": "2f8414c5-dfd8-4737-897e-7c0350dc5825",
+      "name": "6 Any-Power",
+      "to_use": "6 Any-Power",
+      "acts_as": "6 Attack",
+      "followup_attack_types": "Any-Power",
+      "one_per_deck": false,
+      "set": "SKY",
+      "set_number": "392"
+    },
+    {
+      "id": "e688ef3f-d3ba-4947-85ef-bba593e730ed",
+      "name": "6 Brute Force",
+      "to_use": "6 Brute Force",
+      "acts_as": "4 Attack",
+      "followup_attack_types": "Energy + Combat",
+      "one_per_deck": false,
+      "set": "SKY",
+      "set_number": "330"
+    },
+    {
+      "id": "371ae572-607b-41ea-957f-19e325338094",
+      "name": "6 Brute Force",
+      "to_use": "6 Brute Force",
+      "acts_as": "4 Attack",
+      "followup_attack_types": "Energy + Intelligence",
+      "one_per_deck": false,
+      "set": "SKY",
+      "set_number": "331"
+    },
+    {
+      "id": "1a056821-a533-4656-bd1e-148b70283cc5",
+      "name": "6 Brute Force",
+      "to_use": "6 Brute Force",
+      "acts_as": "4 Attack",
+      "followup_attack_types": "Combat + Intelligence",
+      "one_per_deck": false,
+      "set": "SKY",
+      "set_number": "332"
+    },
+    {
+      "id": "bfcd6aa3-985e-437f-90f2-582c3be32e2e",
+      "name": "6 Energy",
+      "to_use": "6 Energy",
+      "acts_as": "4 Attack",
+      "followup_attack_types": "Brute Force + Intelligence",
+      "one_per_deck": false,
+      "set": "SKY",
+      "set_number": "314"
+    },
+    {
+      "id": "e8309d38-9043-49d4-9ec1-fe07a661cbdb",
+      "name": "6 Energy",
+      "to_use": "6 Energy",
+      "acts_as": "4 Attack",
+      "followup_attack_types": "Combat + Brute Force",
+      "one_per_deck": false,
+      "set": "SKY",
+      "set_number": "312"
+    },
+    {
+      "id": "2a238bb4-dff9-4bd9-89c7-93a0e5e3a083",
+      "name": "6 Energy",
+      "to_use": "6 Energy",
+      "acts_as": "4 Attack",
+      "followup_attack_types": "Combat + Intelligence",
+      "one_per_deck": false,
+      "set": "SKY",
+      "set_number": "313"
+    },
+    {
+      "id": "6947397a-a738-4d43-989e-b521ec564e6a",
+      "name": "7 Any-Power",
+      "to_use": "7 Any-Power",
+      "acts_as": "6 Attack",
+      "followup_attack_types": "Any-Power",
+      "one_per_deck": true,
+      "set": "SKY",
+      "set_number": "393"
+    }
+  ],
+  "ally-universe": [
+    {
+      "id": "c974ec8b-5209-4d1c-9e6b-110beacec773",
+      "card_name": "Hucklebuck",
+      "card_text": "Teammate must play 1 Special card.",
+      "one_per_deck": false,
+      "set": "ERB",
+      "set_number": "326"
+    },
+    {
+      "id": "2412aae1-3a4e-490f-94d9-8cbaa0e64378",
+      "card_name": "Professor Porter",
+      "card_text": "Teammate must play 1 Special card.",
+      "one_per_deck": false,
+      "set": "ERB",
+      "set_number": "330"
+    }
+  ],
+  "basic-universe": [
+    {
+      "id": "f1c5585b-ac44-461b-b321-22988c1a37b8",
+      "card_name": "Merlin's Wand",
+      "type": "Energy",
+      "value_to_use": "6 or greater",
+      "bonus": "+3",
+      "one_per_deck": false,
+      "set": "ERB",
+      "set_number": "333"
+    },
+    {
+      "id": "0643118f-c387-4c80-98cb-35092b75f267",
+      "card_name": "Ray Gun",
+      "type": "Energy",
+      "value_to_use": "6 or greater",
+      "bonus": "+2",
+      "one_per_deck": false,
+      "set": "ERB",
+      "set_number": "332"
+    },
+    {
+      "id": "76bd7eb8-266b-4db2-b6d3-19944ac3b863",
+      "card_name": "Trident",
+      "type": "Brute Force",
+      "value_to_use": "6 or greater",
+      "bonus": "+3",
+      "one_per_deck": false,
+      "set": "ERB",
+      "set_number": "339"
+    }
+  ]
+}

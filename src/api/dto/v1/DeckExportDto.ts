@@ -38,4 +38,4 @@ export interface ExportDeckJsonFull {
   cards: ExportDeckCardsJson;
 }
 
-export interface DeckExportDto { schemaVersion:1; inputKey:string; revision:number; deck:ExportDeckJsonFull; }
+export interface DeckExportDto { schemaVersion:1; inputKey:string; revision:number; deck:ExportDeckJsonFull; topDeck:string; }

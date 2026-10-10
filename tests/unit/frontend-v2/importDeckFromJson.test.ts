@@ -6,6 +6,7 @@ import {
   deckNameFromImportJson,
   importDeckFromJson,
   parseImportDeckJson,
+  parseImportDeckInput,
 } from '../../../frontend/src/lib/decks/importDeckFromJson';
 import type { ImportDeckJson } from '../../../frontend/src/lib/decks/importTypes';
 import {
@@ -135,5 +136,27 @@ describe('importDeckFromJson atomic transport', () => {
     expect(await importDeckFromJson({exportData:{cards:{}},deckName:'Fixture',isGuest:false})).toEqual({ok:false,code:'api',message:'Fixture unavailable'});
     expect(post).toHaveBeenCalledTimes(1);
     post.mockRestore();
+  });
+});
+
+describe('automatic JSON or TopDeck detection', () => {
+ it('keeps existing JSON parsing and rejects malformed JSON', () => {expect(parseImportDeckInput('{"cards":{}}')).toEqual({cards:{}});expect(() => parseImportDeckInput('{"cards":')).toThrow();expect(() => parseImportDeckInput('[]')).toThrow();});
+ it('passes TopDeck text intact to the server instead of resolving names in the browser', async () => {const text='-- Other Cards --\n1x Cheshire Cat [ERB]';expect(parseImportDeckInput(text)).toBe(text);const post=jest.spyOn(api,'post').mockResolvedValue({ok:true,deckId:'fictional',userId:'fictional',cardsAdded:1});try {await importDeckFromJson({exportData:text,deckName:'Text deck',isGuest:false});expect(post).toHaveBeenCalledWith('/api/v1/decks/import',{exportData:text,name:'Text deck'});}finally {post.mockRestore();}});
+ it('rejects empty input', () => {expect(() => parseImportDeckInput('  ')).toThrow(/paste/);});
+});
+
+describe('explicit import format selection', () => {
+  const text = '-- Other Cards --\n1x Cheshire Cat [ERB]';
+  it('honors each selected format', () => {
+    expect(parseImportDeckInput(text, 'topdeck')).toBe(text);
+    expect(parseImportDeckInput('{"cards":{}}', 'json')).toEqual({ cards: {} });
+  });
+  it('points to the correct selector when formats do not match', () => {
+    expect(() => parseImportDeckInput(text, 'json')).toThrow(/Select TopDeck/);
+    expect(() => parseImportDeckInput('{"cards":{}}', 'topdeck')).toThrow(/Select JSON/);
+  });
+  it('rejects empty or malformed selected input', () => {
+    expect(() => parseImportDeckInput('  ', 'topdeck')).toThrow(/paste/);
+    expect(() => parseImportDeckInput('{"cards":', 'json')).toThrow();
   });
 });

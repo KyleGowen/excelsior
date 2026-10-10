@@ -54,3 +54,5 @@ regular deck metadata.
   name resolution; persistence uses existing deck HTTP APIs (no import endpoint).
 - The page renders the bare component — `ShelledLayout`/`ProtectedRoute` are applied by the
   router, not here.
+
+Import has a JSON / TopDeck selector that defaults to TopDeck on each open. The selected format controls instructions and parsing; switching keeps the pasted text and clears errors. Both existing JSON and structured TopDeck text resolve against the server catalog. Export defaults to TopDeck, with JSON available in the same panel.

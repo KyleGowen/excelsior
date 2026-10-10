@@ -44,9 +44,11 @@ export function ExportDeckPanel({
   onRetry,
   onClose,
 }: ExportDeckPanelProps) {
+  const [format, setFormat] = useState<'json' | 'topdeck'>('topdeck');
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState<string | null>(null);
   const copyTimerRef = useRef<number | null>(null);
+  const copyRequestRef = useRef(0);
 
   const exportData = useMemo(() => {
     if (loading || error) return null;
@@ -58,19 +60,23 @@ export function ExportDeckPanel({
     [exportData],
   );
 
+  const topDeckString = useMemo(() => loading || error ? '' : input.topDeck ?? '', [loading, error, input]);
+  const exportText = format === 'json' ? jsonString : topDeckString;
+
   useEffect(() => {
-    if (!open) {
-      setCopied(false);
-      setCopyError(null);
-      if (copyTimerRef.current != null) {
-        window.clearTimeout(copyTimerRef.current);
-        copyTimerRef.current = null;
-      }
+    copyRequestRef.current += 1;
+    setCopied(false);
+    setCopyError(null);
+    if (!open) setFormat('topdeck');
+    if (copyTimerRef.current != null) {
+      window.clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = null;
     }
-  }, [open]);
+  }, [open, exportText]);
 
   useEffect(
     () => () => {
+      copyRequestRef.current += 1;
       if (copyTimerRef.current != null) {
         window.clearTimeout(copyTimerRef.current);
       }
@@ -79,10 +85,12 @@ export function ExportDeckPanel({
   );
 
   const handleCopy = useCallback(async () => {
-    if (!jsonString) return;
+    if (!exportText) return;
+    const request = ++copyRequestRef.current;
     setCopyError(null);
     try {
-      await copyTextToClipboard(jsonString);
+      await copyTextToClipboard(exportText);
+      if (request !== copyRequestRef.current) return;
       setCopied(true);
       if (copyTimerRef.current != null) {
         window.clearTimeout(copyTimerRef.current);
@@ -92,16 +100,18 @@ export function ExportDeckPanel({
         copyTimerRef.current = null;
       }, 2000);
     } catch {
-      setCopyError('Could not copy automatically. Select the JSON above and copy manually.');
+      if (request === copyRequestRef.current) {
+        setCopyError('Could not copy automatically. Select the text above and copy manually.');
+      }
     }
-  }, [jsonString]);
+  }, [exportText]);
 
   return (
     <SlideOutPanel
       open={open}
       onClose={onClose}
       title="Export deck"
-      ariaLabel="Export deck JSON"
+      ariaLabel={`Export deck ${format === 'json' ? 'JSON' : 'TopDeck'}`}
       width={600}
       className="export-deck-panel"
       footer={
@@ -110,7 +120,7 @@ export function ExportDeckPanel({
             type="button"
             className={`btn export-deck-panel__copy-btn${copied ? ' is-success' : ''}`}
             onClick={() => void handleCopy()}
-            disabled={loading || !jsonString}
+            disabled={loading || !exportText}
           >
             <IconCopy />
             {copied ? 'Copied!' : 'Copy to clipboard'}
@@ -119,13 +129,27 @@ export function ExportDeckPanel({
         </div>
       }
     >
+      <div className="export-deck-panel__formats" role="group" aria-label="Export format">
+        {(['json', 'topdeck'] as const).map(option => (
+          <button
+            key={option}
+            type="button"
+            className="export-deck-panel__format"
+            aria-pressed={format === option}
+            disabled={loading}
+            onClick={() => setFormat(option)}
+          >
+            {option === 'json' ? 'JSON' : 'TopDeck'}
+          </button>
+        ))}
+      </div>
       <p className="export-deck-panel__helper">
-        Copy this JSON to import the deck elsewhere.
+        {format === 'json' ? 'Copy this JSON to import the deck elsewhere.' : 'Copy this Modern OverPower decklist into your TopDeck event.'}
       </p>
       {error ? (<div role="alert"><p>Could not load the export. Your deck is unchanged.</p><button className="btn" onClick={onRetry}>Retry export</button></div>) : loading ? (
         <LoadingState label="Loading card data…" />
       ) : (
-        <pre className="export-deck-panel__json">{jsonString}</pre>
+        <pre className="export-deck-panel__json">{exportText || 'No cards to export.'}</pre>
       )}
     </SlideOutPanel>
   );

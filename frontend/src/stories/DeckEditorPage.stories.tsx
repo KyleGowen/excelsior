@@ -30,6 +30,8 @@ export const ExportOpen: Story = {
   parameters: { route: '/users/storybook-user/decks/storybook-deck?readonly=true' },
   play: async ({ canvas }) => {
     await userEvent.click(await canvas.findByRole('button', { name: 'Export' }));
+    await canvas.findByRole('dialog', { name: 'Export deck TopDeck' });
+    await userEvent.click(await canvas.findByRole('button', { name: 'JSON' }));
     await canvas.findByRole('dialog', { name: 'Export deck JSON' });
     await canvas.findByText(/"name": "Storybook Sample Deck"/);
   },
@@ -79,3 +81,9 @@ export const AddCardsEligibilityUnavailable: Story = {
   parameters: { msw: { handlers: [http.post('/api/v1/decks/candidates/evaluate', () => HttpResponse.json({ data: null, errors: [{ code: 'DRAFT_EVALUATION_UNAVAILABLE', message: 'Fictional unavailable catalog' }] }, { status: 503 })), ...pageHandlers()] } },
   play: async ({ canvas }) => { await userEvent.click(await canvas.findByRole('button', { name: 'Add Cards' })); await canvas.findByRole('dialog', { name: 'Add cards' }); },
 };
+
+export const TopDeckExportOpen: Story = {
+ parameters: { route: "/users/storybook-user/decks/storybook-deck?readonly=true" },
+ play: async ({canvas}) => { await userEvent.click(await canvas.findByRole("button", {name:"Export"})); await canvas.findByRole("dialog",{name:"Export deck TopDeck"}); await canvas.findByText(/Cards: 8\/56/); },
+};
+export const MobileTopDeckExportOpen: Story = {...TopDeckExportOpen, globals:{viewport:{value:"mobile"}}};

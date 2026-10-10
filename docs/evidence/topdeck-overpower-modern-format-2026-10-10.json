@@ -1,0 +1,4041 @@
+{
+  "auditDateUtc": "2026-10-10",
+  "windowUtc": [
+    "2025-10-10",
+    "2026-10-09"
+  ],
+  "modernIndexedEvents": 39,
+  "selection": "All registered published Overpower events indexed as Modern, regardless of attendance; exclude explicitly named Skirmish and prerelease Draft/Sealed events. Inspect every published registration decklist; metadata is not proof of legal Modern construction.",
+  "selectedEvents": 25,
+  "eventsWithPublishedEntries": 8,
+  "registeredPlayers": 395,
+  "publishedEntries": 100,
+  "styleCounts": {
+    "Detailed/mixed free-form text": 57,
+    "Status/reference only": 8,
+    "Team/setup declaration": 13,
+    "Category-based text": 20,
+    "Escaped JSON-style snapshot": 2
+  },
+  "modalTemplateStatistics": {
+    "structuredInventories": 20,
+    "totalsHeader": 19,
+    "missionSetOnly": 17,
+    "missionCardRows": 0,
+    "battlegroundUnderLocation": 5,
+    "otherCardsSection": 17,
+    "homebaseCardsSection": 1,
+    "universeCardsSection": 20,
+    "anyCharacterCardsSection": 15,
+    "deckMarkerOccurrences": 0
+  },
+  "observedAnyCharacterCodes": {
+    "disorientopponent": {
+      "DB": 15
+    },
+    "freyagoddessofprotection": {
+      "AG": 15
+    },
+    "grimreaper": {
+      "BY": 14
+    },
+    "hadeslordoftheunderworld": {
+      "EN": 11
+    },
+    "legendaryescape": {
+      "AC": 13
+    },
+    "merlinsmagic": {
+      "ZZ": 15
+    },
+    "thegemini": {
+      "BQ": 15
+    },
+    "valkyriehildrselecttheslain": {
+      "OP": 7
+    },
+    "preternaturalhealing": {
+      "AL": 8
+    }
+  },
+  "excludedEvents": [
+    {
+      "id": "skirmish-nationas-weekend-1",
+      "eventName": "Skirmish - Nationals Weekend ",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1772233200,
+      "endDate": 0,
+      "playersRegd": 27,
+      "publish": true,
+      "isConvention": false,
+      "reason": "Skirmish event despite Modern index label"
+    },
+    {
+      "id": "skybound-prerelease-invincible-and-walking-dead",
+      "eventName": "Skybound Prerelease Invincible and Walking Dead",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1786816800,
+      "endDate": 0,
+      "playersRegd": 19,
+      "publish": true,
+      "isConvention": false,
+      "reason": "Prerelease; published entries describe Sealed/Draft or unspecified setup"
+    },
+    {
+      "id": "overpower-skybound-prerelease-part-2",
+      "eventName": "Overpower Skybound Prerelease Part 2",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1786824000,
+      "endDate": 0,
+      "playersRegd": 17,
+      "publish": true,
+      "isConvention": false,
+      "reason": "Prerelease; published entries describe Sealed/Draft or unspecified setup"
+    },
+    {
+      "id": "brazilian-skirmish-april-2026",
+      "eventName": "Brazilian Skirmish - April 2026",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1777122000,
+      "endDate": 0,
+      "playersRegd": 8,
+      "publish": true,
+      "isConvention": false,
+      "reason": "Skirmish event despite Modern index label"
+    },
+    {
+      "id": "overpower-ltp-free-play-copy-3",
+      "eventName": "Overpower LTP/ Free Play",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1791496800,
+      "endDate": 0,
+      "playersRegd": 0,
+      "publish": true,
+      "isConvention": false,
+      "reason": "No registered players"
+    },
+    {
+      "id": "overpower-ltp-free-play-copy-2",
+      "eventName": "Overpower LTP/ Free Play",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1790892000,
+      "endDate": 0,
+      "playersRegd": 0,
+      "publish": true,
+      "isConvention": false,
+      "reason": "No registered players"
+    },
+    {
+      "id": "free-overpower-learn-to-play",
+      "eventName": "FREE OverPower Learn to Play",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1790532000,
+      "endDate": 1790542800,
+      "playersRegd": 0,
+      "publish": true,
+      "isConvention": false,
+      "reason": "No registered players"
+    },
+    {
+      "id": "mayhem-sundays-137",
+      "eventName": "Mayhem Sundays",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1789340400,
+      "endDate": 0,
+      "playersRegd": 0,
+      "publish": true,
+      "isConvention": false,
+      "reason": "No registered players"
+    },
+    {
+      "id": "white-knight",
+      "eventName": "White Knight",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1789232400,
+      "endDate": 0,
+      "playersRegd": 0,
+      "publish": true,
+      "isConvention": false,
+      "reason": "No registered players"
+    },
+    {
+      "id": "learn-to-play-1",
+      "eventName": "Learn to Play",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1772298000,
+      "endDate": 0,
+      "playersRegd": 0,
+      "publish": true,
+      "isConvention": false,
+      "reason": "No registered players"
+    },
+    {
+      "id": "quickfire-modern-04",
+      "eventName": "Quickfire - Modern 04",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1772208000,
+      "endDate": 0,
+      "playersRegd": 0,
+      "publish": true,
+      "isConvention": false,
+      "reason": "No registered players"
+    },
+    {
+      "id": "quickfire-modern-03",
+      "eventName": "Quickfire - Modern 03",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1772208000,
+      "endDate": 0,
+      "playersRegd": 0,
+      "publish": true,
+      "isConvention": false,
+      "reason": "No registered players"
+    },
+    {
+      "id": "quickfire-modern-02",
+      "eventName": "Quickfire - Modern 02",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1772208000,
+      "endDate": 0,
+      "playersRegd": 0,
+      "publish": true,
+      "isConvention": false,
+      "reason": "No registered players"
+    },
+    {
+      "id": "nationals-fill-fire-modern",
+      "eventName": "Quickfire - Modern",
+      "format": "Modern",
+      "game": "Overpower",
+      "startDate": 1772208000,
+      "endDate": 0,
+      "playersRegd": 0,
+      "publish": true,
+      "isConvention": false,
+      "reason": "No registered players"
+    }
+  ],
+  "events": [
+    {
+      "eventId": "nationals-grand-final",
+      "eventName": "Nationals - Grand Final",
+      "dateUtc": "2026-02-28",
+      "registeredPlayers": 63,
+      "standingsEntries": 63,
+      "publishedEntries": 6,
+      "source": "https://battle.overpower.game/PublicPData/nationals-grand-final",
+      "responseSha256": "198f893c71b2e1b92e0a82e6ddd7a7445006a515c4894b3e35a8771b2f6652bc",
+      "bracketUrl": "https://topdeck.gg/bracket/nationals-grand-final",
+      "entries": [
+        {
+          "eventId": "nationals-grand-final",
+          "submitter": "Shawn Hopkins",
+          "textSha256": "7af75d56ecf4909a9b13e2402a0d80182039af431f0deeb427c83dee0eadf64d",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes compact Nx tokens, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 77,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "compact Nx tokens",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "nationals-grand-final",
+          "submitter": "Charlie Hanford",
+          "textSha256": "64900440a8c9a5eda335b124b9824aa4f14f2c280097d5556498d276f60ecdf1",
+          "style": "Status/reference only",
+          "verdict": "Not assessable",
+          "differences": [
+            "Submission acknowledgment only; no deck contents to compare."
+          ],
+          "differenceFlags": [
+            "external_or_missing_content"
+          ],
+          "features": {
+            "nonemptyLines": 1,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "nationals-grand-final",
+          "submitter": "Josh Alexander",
+          "textSha256": "64900440a8c9a5eda335b124b9824aa4f14f2c280097d5556498d276f60ecdf1",
+          "style": "Status/reference only",
+          "verdict": "Not assessable",
+          "differences": [
+            "Submission acknowledgment only; no deck contents to compare."
+          ],
+          "differenceFlags": [
+            "external_or_missing_content"
+          ],
+          "features": {
+            "nonemptyLines": 1,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "nationals-grand-final",
+          "submitter": "Amy Hopkins",
+          "textSha256": "21c1eb891c686f67d9f2fca7127c1f37a2980c5f57bc419e886f6caf22bce12c",
+          "style": "Status/reference only",
+          "verdict": "Not assessable",
+          "differences": [
+            "Submission acknowledgment only; no deck contents to compare."
+          ],
+          "differenceFlags": [
+            "external_or_missing_content"
+          ],
+          "features": {
+            "nonemptyLines": 1,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "nationals-grand-final",
+          "submitter": "Drsnackfood",
+          "textSha256": "475366a1ff42d3f0081a0ac1462f5116a8b9f26b21454bd07816655e311245bc",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 15,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "nationals-grand-final",
+          "submitter": "Nicholas Spivak",
+          "textSha256": "cca02c9654b8d2afded1c3992525604e174329dbd4c248c5747c0719339f9a68",
+          "style": "Team/setup declaration",
+          "verdict": "No",
+          "differences": [
+            "Team/setup summary, not our full category/quantity inventory.",
+            "Roles are written in prose."
+          ],
+          "differenceFlags": [
+            "setup_instead_of_inventory",
+            "unstructured_headings_quantities"
+          ],
+          "features": {
+            "nonemptyLines": 5,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        }
+      ]
+    },
+    {
+      "eventId": "overpower-regional-1-columbus-oh",
+      "eventName": "OverPower Season One Regional #1: Columbus, OH",
+      "dateUtc": "2026-06-27",
+      "registeredPlayers": 54,
+      "standingsEntries": 54,
+      "publishedEntries": 38,
+      "source": "https://battle.overpower.game/PublicPData/overpower-regional-1-columbus-oh",
+      "responseSha256": "c892ddc511385e88c95ec03379ac62fc164e726ced0a2347f5c4e82d90c852c4",
+      "bracketUrl": "https://topdeck.gg/bracket/overpower-regional-1-columbus-oh",
+      "entries": [
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Robert Wilson",
+          "textSha256": "508fd4fcdf07e5c335af6d634aaa571d198b4a3533da1ecfdcbfc6b440272855",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 51,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Jack Stillwell",
+          "textSha256": "b4867f2cdc004b651032e4431e49fad878f6a742650362073d4bada3e20ebf2f",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "Splits some owner/card labels across lines; ours keeps one card per line.",
+            "No Location section/homebase declaration to compare.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "owner_card_line_split",
+            "location_section_absent",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 67,
+            "headings": [
+              "Characters",
+              "Mission",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Events",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 0,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Mark Barnabo",
+          "textSha256": "7c5a93e4c8235cd9e0a9478b89ef900dc1c84356b630490c2fa4a65e623d1198",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 13,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Andy Hauge",
+          "textSha256": "fccd03470291dfcbe6a0bd1365bcba50069de8dbe6b06aabe08061678e36b6fb",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 61,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Bridget Ross",
+          "textSha256": "e328acc23a999db403847686bb7491572bdeffdf87cc30599e54c19e16314a6f",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 53,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Jesse Sudduth",
+          "textSha256": "ae003e8016f53845a8b123273207e14e027293385ff7c1b34d777550e5367742",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 54,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Howard Bertrand",
+          "textSha256": "342ccbe668ffd1a02898234fdd4ecedb1d3c272cdf27e1c3f99ad76f9d0d8025",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes number-dash quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 67,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "number-dash quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Stephen Goff II",
+          "textSha256": "5ab8c788b37d9fc7d1a9e9330a32944f01fac165e6ef51f1d69756a7cac845ab",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "No Mission section/card inventory to compare.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "No Location section/homebase declaration to compare.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_section_absent",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "location_section_absent",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 58,
+            "headings": [
+              "Characters",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 0,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Sawyer F",
+          "textSha256": "95b306b8f9af7d593327610fb17f54ffa6d73c3e7e800a9087d989d45087ad54",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 64,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Patrick O\u2019Neill",
+          "textSha256": "3f5be57264ea7876c451a0173580837e61d512e88b7a8fc0086cae26b23dfb7a",
+          "style": "Team/setup declaration",
+          "verdict": "No",
+          "differences": [
+            "Team/setup summary, not our full category/quantity inventory.",
+            "No explicit reserve marker found."
+          ],
+          "differenceFlags": [
+            "setup_instead_of_inventory",
+            "unstructured_headings_quantities"
+          ],
+          "features": {
+            "nonemptyLines": 7,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Laurence Ross",
+          "textSha256": "73195929682e76f4dfb16c49c27d51e6192b2941f9979db77a020917fd5fa4b6",
+          "style": "Status/reference only",
+          "verdict": "Not assessable",
+          "differences": [
+            "Says the deck was supplied externally; no card inventory is published here."
+          ],
+          "differenceFlags": [
+            "external_or_missing_content"
+          ],
+          "features": {
+            "nonemptyLines": 1,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Doug Simms",
+          "textSha256": "f42b203a7fa35e21d018a6fc59f593f90c0389d063b19e40cfcf7ba4f2fc3212",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 3,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Jessica Simms",
+          "textSha256": "d7cd7c006d5f2a07a5651c90c2fc8cce692a29da74cdd2352a7bdddeb3de7d47",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 48,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Joseph Young",
+          "textSha256": "b17d9aa2f781814667a8ea614f1ef466be11b4b67d079ca43f9c98279b143e51",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 16,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Travis Scott",
+          "textSha256": "085d18b9ce2e7610f1166e2ac518c5954886c33d9118c3bd3f941cd1136c28dc",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Quantities are implicit, compressed, or expressed in grouped notes.",
+            "Uses a JSON-like fragment/repeated names rather than grouped quantity lines.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows",
+            "json_fragment"
+          ],
+          "features": {
+            "nonemptyLines": 82,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": true,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Josh Van Belle",
+          "textSha256": "501c077e331b19ed9259dde735c739dde2b88281935e9a15721f454d5f349c76",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 64,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Events",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Raymond J. Bordier",
+          "textSha256": "8e75f9a2aaa6d00d9272398b9957002542d175fd8a7d5bef358e0dcea78bd2d1",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-dash quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 71,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-dash quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Ben Newcomer",
+          "textSha256": "ce49c01c61abe7aba41a61e88f8c9ad6d9e41340aa6ee42a65ab138206d2e535",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 44,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Joe Peters",
+          "textSha256": "590c058f20e07e36bcacd43f576a8b421e46a4b1d0e47791cebbecd78aa9daf1",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Mission is an informal preamble line, not a Mission section/card inventory.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "No Location section/homebase declaration to compare.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_section_absent",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "location_section_absent",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 59,
+            "headings": [
+              "Characters",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 0,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Chris Rice",
+          "textSha256": "4e1eff391ac25b39cebc3eab2b8b8369d83a0562b87d4c76ef874c60989272d5",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes parenthesized quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 57,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "parenthesized quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Jaylen Langdon Major",
+          "textSha256": "8ec55a80ebfb73906f9bf305fc8c34d9ffaa0f33ccd1f135d6a5bed0c5a141f1",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-dash quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 61,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-dash quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Ricky Sauceda",
+          "textSha256": "35a154ae97b6825eeeda3196509baca0c01ab55842eb4d321b006c7b0726394f",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "No Location section/homebase declaration to compare.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "location_section_absent",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 64,
+            "headings": [
+              "Characters",
+              "Mission",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 0,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "John lolli",
+          "textSha256": "f6fff82d4dffe318abb8791919b3c4a74c57d402372e76ef66c7891022c8ebcc",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 12,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Last Place",
+          "textSha256": "0720b625ac62de504af78c01953e9d708acfa52469a1a10c24fd9cff3a2a8226",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "Location arrows match our placement style, but omit our detailed Universe labels.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "preplaced_label_detail",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 69,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Youssef El-Barrad",
+          "textSha256": "2cdf5f0b60cb84bf8e348011d595261e667bbaeb3d805b8adb829c67249bcd96",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 49,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Cory Simms",
+          "textSha256": "7bdbf428e7a3a2ee9098c148cebc32882992b3859e95cd7f433c7d1e1fd5f08a",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-dash quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 63,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-dash quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Drsnackfood",
+          "textSha256": "9e546844c29274cbec05faa17991babd0384df892c0558e6b7b78749ed740599",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 36,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Dan Bunn",
+          "textSha256": "95441ed11a936062fae368a965525f88c811e0d36289a84f00c03a4e69e6b2c6",
+          "style": "Team/setup declaration",
+          "verdict": "No",
+          "differences": [
+            "Team/setup summary, not our full category/quantity inventory.",
+            "Roles are written in prose."
+          ],
+          "differenceFlags": [
+            "setup_instead_of_inventory",
+            "unstructured_headings_quantities"
+          ],
+          "features": {
+            "nonemptyLines": 4,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Derek Bertrand",
+          "textSha256": "c03a7671d5ef27683d4795aab4d0f77374ed34ea9e97d154cbb2face75fcb7f2",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes number-dash quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 51,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "number-dash quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Noah Hudson",
+          "textSha256": "1082ba83a1e00542c5a4c57dfb5ba69efd8a5dfd10e4455f16fdd0dc77e2e329",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 30,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Nicholas Spivak",
+          "textSha256": "253fe7a8d18337357eb71262997b64add00a623467ceeb70f262d969a2846e82",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-dash quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 54,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-dash quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Noor El-barrad",
+          "textSha256": "bf99faff1471919289e0ade73cc54ffa0c869267ed677e0e7410816456b618cc",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 57,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Brandon West",
+          "textSha256": "14cb3a3682c90958a5bd17b2c3c5dec5bea33ad2a40adaf4edd3302c8ee493d8",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 73,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Ray Tan",
+          "textSha256": "de3717cc3c03e329c577bfe8bd0cad8d669468fd51eca0bf4c4b069e81b7447b",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 48,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Tyler Young",
+          "textSha256": "451e28d06ee14fae5f6ba15d6320304f0669d78f380b98047de61714d02453ae",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 16,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "DanielMacArthur83",
+          "textSha256": "126f5bcaf221260f9335861d6a164b2d7ffd598990d4a3d467a008f24d1f1e11",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 12,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Andy Kwong",
+          "textSha256": "bf409420d9407e19d0ddc75b8c3af4a77aad6ffa51cfda8e23323bf0c0a60d18",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 53,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-regional-1-columbus-oh",
+          "submitter": "Justin Sadaie",
+          "textSha256": "63ddbc54d41fe0ab5e8ba3c739791a2507b6d15bf4c95d76f4ac990e582d3e59",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "Uses Homebase Cards for an Aspect; ours uses Other Cards.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "homebase_cards_section",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 64,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Events",
+              "Homebase Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        }
+      ]
+    },
+    {
+      "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+      "eventName": "OverPower Season One Regional #2: Canada - Niagara Falls, ON",
+      "dateUtc": "2026-08-01",
+      "registeredPlayers": 42,
+      "standingsEntries": 42,
+      "publishedEntries": 29,
+      "source": "https://battle.overpower.game/PublicPData/overpower-season-one-regional-2-canada-niagara-falls-on",
+      "responseSha256": "2458dec4a2e548ae78b501c839da566b7be9f8de8e35759a837945e93147a4a3",
+      "bracketUrl": "https://topdeck.gg/bracket/overpower-season-one-regional-2-canada-niagara-falls-on",
+      "entries": [
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Howard Bertrand",
+          "textSha256": "342ccbe668ffd1a02898234fdd4ecedb1d3c272cdf27e1c3f99ad76f9d0d8025",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes number-dash quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 67,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "number-dash quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Robert Turner",
+          "textSha256": "5749e8f5b8500990948e3b08ad3a03d905ebd9eec571941aa814647644e5d226",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 70,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Events"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Patrick O\u2019Neill",
+          "textSha256": "4325c620daaffd2a2efaba366149c76d1138eec37cc3b0a45687905c404deb95",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 61,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Laurence Ross",
+          "textSha256": "73195929682e76f4dfb16c49c27d51e6192b2941f9979db77a020917fd5fa4b6",
+          "style": "Status/reference only",
+          "verdict": "Not assessable",
+          "differences": [
+            "Says the deck was supplied externally; no card inventory is published here."
+          ],
+          "differenceFlags": [
+            "external_or_missing_content"
+          ],
+          "features": {
+            "nonemptyLines": 1,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "OP G.O.A.T.",
+          "textSha256": "bc93c0007d10169272ebdce83b659cf6fe026a054711ee509be31f056335b726",
+          "style": "Status/reference only",
+          "verdict": "Not assessable",
+          "differences": [
+            "Says the deck was supplied externally; no card inventory is published here."
+          ],
+          "differenceFlags": [
+            "external_or_missing_content"
+          ],
+          "features": {
+            "nonemptyLines": 2,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Jessica Simms",
+          "textSha256": "de3717cc3c03e329c577bfe8bd0cad8d669468fd51eca0bf4c4b069e81b7447b",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 48,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Jean-Philippe Grenier",
+          "textSha256": "338c7bbdc12ce2a4f65b77026d8cf9d5a509ec30a3a8dba32f86c6efc043aa25",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 66,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Raymond J. Bordier",
+          "textSha256": "c180b2b9a5275e9fdcca8ebef023ba0cfac508c2c69ac0a3ae1564113569bde9",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-dash quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 76,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-dash quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Ben Newcomer",
+          "textSha256": "e749289ea5369066c11bd4fa6525183350bca5530c1fcedaee98919b88bbb6d5",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 47,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Bryan",
+          "textSha256": "6b5fa7c8b8f1d8c6a6a1a6f05b3b0b3e0ce47fbe8c500dd60094153577619947",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 44,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Chris Rice",
+          "textSha256": "25034bdcea0cf8003edea4e1dc2f52c9a08c9f66a865dccec78287e35d5d20ba",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes parenthesized quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 48,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "parenthesized quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": true,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Will",
+          "textSha256": "0bd098a4fe8daf0f2ba013c3ea36396104f9a903201efb4efe61f3413cd96fa2",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 45,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Benjamin Turner",
+          "textSha256": "6a7add9ac917e0873731133c556f14dde29e165b580a0308fed09573669b1432",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 79,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Youssef El-Barrad",
+          "textSha256": "71dd0459e7c368ce88ad56228723b2c0317f5422cf774830b5ed4a326f8e97de",
+          "style": "Status/reference only",
+          "verdict": "Not assessable",
+          "differences": [
+            "Says the deck was supplied externally; no card inventory is published here."
+          ],
+          "differenceFlags": [
+            "external_or_missing_content"
+          ],
+          "features": {
+            "nonemptyLines": 1,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Cory Simms",
+          "textSha256": "76fce585aa79770f22301b4f27b9472dc282e35ea6353639bb87e30c1f384f19",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-dash quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 61,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-dash quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Drsnackfood",
+          "textSha256": "c14dca2cab99f7bb4be2a6094d922a009b6eef6fdda80b9e6195c503ff656655",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 22,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Abby Turner",
+          "textSha256": "8f34ac1907e7d85e52dc5aaf9c708a5565518dc9920ea2d8986076ceb6b880e7",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 69,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "William Migory",
+          "textSha256": "6cc453fb0a0d13842ac2fbf8a6175e9e71af08c9fe8f815a717f8ea8258aefa5",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 69,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Ethan Robitaille",
+          "textSha256": "07cc481ba3c7dc01fd14d6180fb552806c939a79eb7bc06dd771dd41da08a31f",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 32,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "FelipeCagnoBR",
+          "textSha256": "4d090dcd74a205ea39477fa285c0f09bfb2c99b69587752e218890905423667c",
+          "style": "Team/setup declaration",
+          "verdict": "No",
+          "differences": [
+            "Team/setup summary, not our full category/quantity inventory.",
+            "Roles are written in prose."
+          ],
+          "differenceFlags": [
+            "setup_instead_of_inventory",
+            "unstructured_headings_quantities"
+          ],
+          "features": {
+            "nonemptyLines": 6,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Jian Zhao",
+          "textSha256": "6d14d4a22ffe8cd728cb23e5a46574f870b40c440278a6aa311144c3d9b916bb",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 51,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Zack Ve",
+          "textSha256": "409d5f71546f4691b4489380912aa8c086805ccc5b223b94299e55f52264effc",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "No Location section/homebase declaration to compare.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "location_section_absent",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 68,
+            "headings": [
+              "Characters",
+              "Mission",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Events",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 0,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Keith Hartman",
+          "textSha256": "63785a8f29e4fbf149f255237d2ba40f708ab30f06cf60ca36b65160a905008b",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 56,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Noor El-barrad",
+          "textSha256": "003ce6d4a5d10eac6ed9bdc0e3ad856bea657d417cf17a71425bd7a521bb708a",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes number-dash quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 56,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "number-dash quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Brandon West",
+          "textSha256": "24b4f96cb9e8bd1ec987cca144c03224b8fd05f8b25bf8bf23d4270d67fdff35",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-dash quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 63,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-dash quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Karl Borst",
+          "textSha256": "c23906ae5406d1746efef92b27e4d31c8ca1fd2aa7080575738e601a2a3e58c1",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-dash quantities; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 50,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-dash quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Marcelo Illipronti de Souza",
+          "textSha256": "05421411e0ccded06e660d92d17b0e45c80a47e97734849ff49adb29e2bada58",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-dash quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 61,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-dash quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Giuseppe Paolo Greco",
+          "textSha256": "8b2958e34f5fb16acacb47228900a11f245fc4d640e7857a189bfef1d05e39c6",
+          "style": "Team/setup declaration",
+          "verdict": "No",
+          "differences": [
+            "Team/setup summary, not our full category/quantity inventory.",
+            "Roles are written in prose."
+          ],
+          "differenceFlags": [
+            "setup_instead_of_inventory",
+            "unstructured_headings_quantities"
+          ],
+          "features": {
+            "nonemptyLines": 8,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "number-dash quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-2-canada-niagara-falls-on",
+          "submitter": "Justin Sadaie",
+          "textSha256": "6ed700fd5480592c5885ae6ac9042ab4edca2180d1f4a434909b53d2840a1c00",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Any Character rows add effect codes and abbreviated cata/assist/ambush labels.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "any_character_codes_and_subtypes",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 64,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Any Character Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Events",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        }
+      ]
+    },
+    {
+      "eventId": "2026-west-coast-melee-seattle",
+      "eventName": "2026 West Coast Melee - Seattle",
+      "dateUtc": "2026-09-06",
+      "registeredPlayers": 37,
+      "standingsEntries": 37,
+      "publishedEntries": 9,
+      "source": "https://battle.overpower.game/PublicPData/2026-west-coast-melee-seattle",
+      "responseSha256": "065061fef52f01584b0b9cff0bd214b68f3d11af2aa499870b3f283db277f69f",
+      "bracketUrl": "https://topdeck.gg/bracket/2026-west-coast-melee-seattle",
+      "entries": [
+        {
+          "eventId": "2026-west-coast-melee-seattle",
+          "submitter": "Andy Hauge",
+          "textSha256": "554e1849155a2e2492cefd949e4400594ea84150d0d502a1b54ad067283d2038",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Battleground and attached specials sit under Location; ours uses Battlegrounds and separate specials.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "battleground_location_and_attachments",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 61,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB",
+              "SKY"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "2026-west-coast-melee-seattle",
+          "submitter": "Keith Bursack",
+          "textSha256": "25d91281b8bf05ebcb27981d5668a2d1ff28a480d705e3d0c2500f5674bba861",
+          "style": "Team/setup declaration",
+          "verdict": "No",
+          "differences": [
+            "Team/setup summary, not our full category/quantity inventory.",
+            "No explicit reserve marker found.",
+            "Battleground is in prose, not our separate section."
+          ],
+          "differenceFlags": [
+            "setup_instead_of_inventory",
+            "unstructured_headings_quantities",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 7,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "2026-west-coast-melee-seattle",
+          "submitter": "OP G.O.A.T.",
+          "textSha256": "aac429c5f54554b00b2d711a552b3fb3127df3bb311101441d9db6cc9aee7790",
+          "style": "Team/setup declaration",
+          "verdict": "No",
+          "differences": [
+            "Team/setup summary, not our full category/quantity inventory.",
+            "Roles are written in prose.",
+            "Battleground is in prose, not our separate section."
+          ],
+          "differenceFlags": [
+            "setup_instead_of_inventory",
+            "unstructured_headings_quantities",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 6,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "2026-west-coast-melee-seattle",
+          "submitter": "Ben Newcomer",
+          "textSha256": "613302deb58451a6a9280a5d9df0bb78bb8b88201288ecddc4d19602ead7576b",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "Battleground/special relationships are declared in prose.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 46,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "2026-west-coast-melee-seattle",
+          "submitter": "Chris Rice",
+          "textSha256": "e3b3b98eac408db575ec4af50f247f1878d7f719ff4f7309b8694f19f01a8ab7",
+          "style": "Team/setup declaration",
+          "verdict": "No",
+          "differences": [
+            "Team/setup summary, not our full category/quantity inventory.",
+            "No explicit reserve marker found."
+          ],
+          "differenceFlags": [
+            "setup_instead_of_inventory",
+            "unstructured_headings_quantities"
+          ],
+          "features": {
+            "nonemptyLines": 6,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "2026-west-coast-melee-seattle",
+          "submitter": "Drsnackfood",
+          "textSha256": "fce7e636fef1096097050c7b7f805ed7be2d155bc4f739510b4726fe37351bd2",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "Battleground/special relationships are declared in prose.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 16,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "2026-west-coast-melee-seattle",
+          "submitter": "Brandon West",
+          "textSha256": "6d16ae02eda63f90a06d4bdb7a76971148d8f442517a0402168648b01c68c46c",
+          "style": "Team/setup declaration",
+          "verdict": "No",
+          "differences": [
+            "Team/setup summary, not our full category/quantity inventory.",
+            "No explicit reserve marker found."
+          ],
+          "differenceFlags": [
+            "setup_instead_of_inventory",
+            "unstructured_headings_quantities"
+          ],
+          "features": {
+            "nonemptyLines": 4,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "2026-west-coast-melee-seattle",
+          "submitter": "Chris Daniels",
+          "textSha256": "120996cda56be7fe4237e61d6f97a17689eddc5395500ed9141ef9a3c6696ceb",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 72,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "2026-west-coast-melee-seattle",
+          "submitter": "Joseph Gagnepain",
+          "textSha256": "ddafd02b09494fda76de8a95e366dd7063c5ab7af41d0f6e24b803b68e9118e7",
+          "style": "Team/setup declaration",
+          "verdict": "No",
+          "differences": [
+            "Team/setup summary, not our full category/quantity inventory.",
+            "Roles are written in prose.",
+            "Battleground is in prose, not our separate section."
+          ],
+          "differenceFlags": [
+            "setup_instead_of_inventory",
+            "unstructured_headings_quantities",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 4,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        }
+      ]
+    },
+    {
+      "eventId": "overpower-season-one-regional-3-seattle",
+      "eventName": "OverPower Season One Regional #3: Seattle",
+      "dateUtc": "2026-09-05",
+      "registeredPlayers": 32,
+      "standingsEntries": 32,
+      "publishedEntries": 15,
+      "source": "https://battle.overpower.game/PublicPData/overpower-season-one-regional-3-seattle",
+      "responseSha256": "aae4e10a569a960cabd7748b4a182e6a8e249947bd2ee103f10f4aa41b69f762",
+      "bracketUrl": "https://topdeck.gg/bracket/overpower-season-one-regional-3-seattle",
+      "entries": [
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "Larry Van Etten",
+          "textSha256": "f39475be5c661427f77c408caf2edc9c5e29dd98d28d1cdb39f99c94accba394",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Quantities are implicit, compressed, or expressed in grouped notes.",
+            "Battleground/special relationships are declared in prose.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 18,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "Andy Hauge",
+          "textSha256": "34cab7910b189f632e255f9936b3d794e2a77bc88a5fe8c16f4c0245dd7c9532",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Battleground and attached specials sit under Location; ours uses Battlegrounds and separate specials.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "battleground_location_and_attachments",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 68,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Events",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB",
+              "SKY"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "Charlie Hanford",
+          "textSha256": "e895f2bdc03a6aa62ae6730e7d186c26c1cc283077ff52b64cd54ade7e0d7032",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Battleground and attached specials sit under Location; ours uses Battlegrounds and separate specials.",
+            "Location arrows match our placement style, but omit our detailed Universe labels.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "battleground_location_and_attachments",
+            "preplaced_label_detail",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 68,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Events",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB",
+              "SKY"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "Adam Abelkop",
+          "textSha256": "bf8b3e6bbb02b3d69f26b4dab2a42abf999e7b36934ad5917379afad2f842ee9",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "Battleground/special relationships are declared in prose.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 59,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": true,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "OP G.O.A.T.",
+          "textSha256": "2c5df30b772560dfb1419653f0b0ff121eae087fa8c4d388172fcbd635d75c7e",
+          "style": "Status/reference only",
+          "verdict": "Not assessable",
+          "differences": [
+            "Says the deck was supplied externally; no card inventory is published here."
+          ],
+          "differenceFlags": [
+            "external_or_missing_content"
+          ],
+          "features": {
+            "nonemptyLines": 1,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "Nic Cannelora",
+          "textSha256": "7075a8b391fc78d17a9ab3a608f49006bb5c6bab47a3a9a37b162549ae564906",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "Adds card/threat totals before the first heading.",
+            "Names only the mission set; ours also lists the selected mission cards.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Battleground and attached specials sit under Location; ours uses Battlegrounds and separate specials.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "cards_threat_preamble",
+            "mission_set_only",
+            "universe_description_syntax",
+            "battleground_location_and_attachments",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 71,
+            "headings": [
+              "Characters",
+              "Location",
+              "Mission",
+              "Special Cards",
+              "Universe Cards",
+              "Power Cards",
+              "Events",
+              "Other Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB",
+              "SKY"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "Ben Newcomer",
+          "textSha256": "0b261722e6e3c66f9ba8fdedac5ab93f823f7a0c1f3978919d35d6ae856c51ad",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "Battleground/special relationships are declared in prose.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 50,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "Chris Rice",
+          "textSha256": "bc26012bedfbd4e2c21168d72ba812f2883f0d312219bf4c91466a918ea05f76",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes parenthesized quantities; other rows are implicit or mixed.",
+            "Battleground/special relationships are declared in prose.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 58,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "parenthesized quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "Pierre | Traveling Goof",
+          "textSha256": "81ac567f9e5282317779561ef62431fee132c193c4a4211fc3309c2518d90bf1",
+          "style": "Escaped JSON-style snapshot",
+          "verdict": "No",
+          "differences": [
+            "JSON object/card arrays with statistics and metadata, not our category/quantity text.",
+            "Literal escaped quotes remain in the published drawer."
+          ],
+          "differenceFlags": [
+            "json_instead_of_topdeck_text",
+            "visible_json_quote_escapes"
+          ],
+          "features": {
+            "nonemptyLines": 136,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": true,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": {
+            "title": "A - Lizard Team",
+            "keys": [
+              "name",
+              "description",
+              "total_cards",
+              "max_energy",
+              "max_combat",
+              "max_brute_force",
+              "max_intelligence",
+              "total_energy_icons",
+              "total_combat_icons",
+              "total_brute_force_icons",
+              "total_intelligence_icons",
+              "total_threat",
+              "legal",
+              "limited",
+              "export_timestamp",
+              "exported_by",
+              "reserve_character",
+              "cataclysm_special",
+              "assist_special",
+              "ambush_special",
+              "cards"
+            ],
+            "cardGroups": [
+              "characters",
+              "special_cards",
+              "locations",
+              "battlegrounds",
+              "missions",
+              "events",
+              "aspects",
+              "advanced_universe",
+              "teamwork",
+              "allies",
+              "training",
+              "basic_universe",
+              "power_cards"
+            ]
+          }
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "Drsnackfood",
+          "textSha256": "fce7e636fef1096097050c7b7f805ed7be2d155bc4f739510b4726fe37351bd2",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "Battleground/special relationships are declared in prose.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 16,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "Noah Hudson",
+          "textSha256": "a910b84c20f7f7993bcbe8e4892844f43c3294a548bef627ec5de7c9ac08bd94",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities; other rows are implicit or mixed.",
+            "Battleground/special relationships are declared in prose.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 55,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "Brandon West",
+          "textSha256": "16c464304ad252184cf5fc1027e3878e5f97abba0f3b6c450db225161a3689b6",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "Battleground/special relationships are declared in prose.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 63,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "Chris Daniels",
+          "textSha256": "1aa2161f796e19843c5e9cbc6eb26bd601b4acf93124956fd98c684afc8512b1",
+          "style": "Detailed/mixed free-form text",
+          "verdict": "No",
+          "differences": [
+            "Uses prose/owner groups rather than our double-hyphen categories and full per-card rows.",
+            "Card/quantity notation includes suffix quantities, number-name lines; other rows are implicit or mixed.",
+            "No bracketed printing codes."
+          ],
+          "differenceFlags": [
+            "unstructured_headings_quantities",
+            "abbreviated_or_implicit_rows"
+          ],
+          "features": {
+            "nonemptyLines": 56,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [
+              "suffix quantities",
+              "number-name lines"
+            ],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "BilboSwaggins",
+          "textSha256": "2155ee5e7b046558c34c99a4df15fb9a786233a7941c8d7351e7c932ba85bc5b",
+          "style": "Escaped JSON-style snapshot",
+          "verdict": "No",
+          "differences": [
+            "JSON object/card arrays with statistics and metadata, not our category/quantity text.",
+            "Literal escaped quotes remain in the published drawer."
+          ],
+          "differenceFlags": [
+            "json_instead_of_topdeck_text",
+            "visible_json_quote_escapes"
+          ],
+          "features": {
+            "nonemptyLines": 128,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": true,
+            "literalApostropheEscapes": true
+          },
+          "jsonShape": {
+            "title": "Black Sampsonites",
+            "keys": [
+              "name",
+              "description",
+              "total_cards",
+              "max_energy",
+              "max_combat",
+              "max_brute_force",
+              "max_intelligence",
+              "total_energy_icons",
+              "total_combat_icons",
+              "total_brute_force_icons",
+              "total_intelligence_icons",
+              "total_threat",
+              "legal",
+              "limited",
+              "export_timestamp",
+              "exported_by",
+              "reserve_character",
+              "cataclysm_special",
+              "assist_special",
+              "ambush_special",
+              "cards"
+            ],
+            "cardGroups": [
+              "characters",
+              "special_cards",
+              "locations",
+              "battlegrounds",
+              "missions",
+              "events",
+              "aspects",
+              "advanced_universe",
+              "teamwork",
+              "allies",
+              "training",
+              "basic_universe",
+              "power_cards"
+            ]
+          }
+        },
+        {
+          "eventId": "overpower-season-one-regional-3-seattle",
+          "submitter": "Charles Rossi Hankins",
+          "textSha256": "8fdb05ed20bf58e448dde267f75cb57ee8bdf8cc3fdb0bc0b432fc814c980aa3",
+          "style": "Category-based text",
+          "verdict": "Partial",
+          "differences": [
+            "No Mission section/card inventory to compare.",
+            "Universe names/inline stats omit our parenthesized use requirements and bonuses.",
+            "Battleground and attached specials sit under Location; ours uses Battlegrounds and separate specials.",
+            "Some character/Universe/Power rows omit set codes we include when catalog data provides them.",
+            "Some owner names are uppercase; ours uses catalog spelling/case."
+          ],
+          "differenceFlags": [
+            "mission_section_absent",
+            "universe_description_syntax",
+            "battleground_location_and_attachments",
+            "printing_codes_omitted",
+            "catalog_case_or_alias"
+          ],
+          "features": {
+            "nonemptyLines": 55,
+            "headings": [
+              "Characters",
+              "Location",
+              "Special Cards",
+              "Universe Cards",
+              "Power Cards"
+            ],
+            "deckMarker": false,
+            "frontlineTags": 3,
+            "reserveTags": 1,
+            "homebaseTags": 1,
+            "setCodes": [
+              "ERB",
+              "SKY"
+            ],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false,
+            "missionQuantityRows": 0,
+            "characterQuantityTotal": 4
+          },
+          "jsonShape": null
+        }
+      ]
+    },
+    {
+      "eventId": "nationals-last-chance-qualifier",
+      "eventName": "Last Chance Qualifier!",
+      "dateUtc": "2026-02-27",
+      "registeredPlayers": 21,
+      "standingsEntries": 21,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/nationals-last-chance-qualifier",
+      "responseSha256": "5463c8f2167828cbfca8b4b019e9f9e039f8200c427de01f2971208aa058ebe8",
+      "bracketUrl": "https://topdeck.gg/bracket/nationals-last-chance-qualifier",
+      "entries": []
+    },
+    {
+      "eventId": "2026-west-coast-melee-second-chance",
+      "eventName": "2026 West Coast Melee \"Second-Chance\"",
+      "dateUtc": "2026-09-07",
+      "registeredPlayers": 16,
+      "standingsEntries": 16,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/2026-west-coast-melee-second-chance",
+      "responseSha256": "301733b42ae602bea1d96029b07bcd17274d0e8986113acb69286ecf7239ac8d",
+      "bracketUrl": "https://topdeck.gg/bracket/2026-west-coast-melee-second-chance",
+      "entries": []
+    },
+    {
+      "eventId": "overpower-learn-to-play",
+      "eventName": "OverPower - Learn To Play",
+      "dateUtc": "2026-09-20",
+      "registeredPlayers": 14,
+      "standingsEntries": 14,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/overpower-learn-to-play",
+      "responseSha256": "4080e1cf330c48bc324ac011ccd6ce918d2a9ed842f0d1802e2413cbf09f9de2",
+      "bracketUrl": "https://topdeck.gg/bracket/overpower-learn-to-play",
+      "entries": []
+    },
+    {
+      "eventId": "july-2026-battle-california-west-coast-online-overpower",
+      "eventName": "July 2026 Battle California - West Coast Online OverPower League",
+      "dateUtc": "2026-07-14",
+      "registeredPlayers": 11,
+      "standingsEntries": 11,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/july-2026-battle-california-west-coast-online-overpower",
+      "responseSha256": "ed33d1505ce0d44bc314d6ace700233ed4965445b409881cb4f78bccc87debcc",
+      "bracketUrl": "https://topdeck.gg/bracket/july-2026-battle-california-west-coast-online-overpower",
+      "entries": []
+    },
+    {
+      "eventId": "2026-sunday-at-the-edge-modern",
+      "eventName": "2026 Sunday at the Edge Modern",
+      "dateUtc": "2026-03-22",
+      "registeredPlayers": 10,
+      "standingsEntries": 10,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/2026-sunday-at-the-edge-modern",
+      "responseSha256": "9ec27195bc40513d6ae173e1c68d829ce9d48df9ce10d01185ef282f63dfd6f8",
+      "bracketUrl": "https://topdeck.gg/bracket/2026-sunday-at-the-edge-modern",
+      "entries": []
+    },
+    {
+      "eventId": "friday-night-overpower-4",
+      "eventName": "Friday Night Overpower",
+      "dateUtc": "2026-10-09",
+      "registeredPlayers": 8,
+      "standingsEntries": 8,
+      "publishedEntries": 1,
+      "source": "https://battle.overpower.game/PublicPData/friday-night-overpower-4",
+      "responseSha256": "bf0177fda26d9c5d31978973e76770298a0a8a99debcd2532344fe8829436216",
+      "bracketUrl": "https://topdeck.gg/bracket/friday-night-overpower-4",
+      "entries": [
+        {
+          "eventId": "friday-night-overpower-4",
+          "submitter": "Andy Hauge",
+          "textSha256": "a8648caacd5445da886f82d2de446d74e5c3e2059684569bcc1061897a2a350b",
+          "style": "Team/setup declaration",
+          "verdict": "No",
+          "differences": [
+            "Team/setup summary, not our full category/quantity inventory.",
+            "Roles are written in prose.",
+            "Battleground is in prose, not our separate section."
+          ],
+          "differenceFlags": [
+            "setup_instead_of_inventory",
+            "unstructured_headings_quantities",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 7,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        }
+      ]
+    },
+    {
+      "eventId": "friday-night-overpower-3",
+      "eventName": "Friday Night Overpower",
+      "dateUtc": "2026-10-02",
+      "registeredPlayers": 8,
+      "standingsEntries": 8,
+      "publishedEntries": 1,
+      "source": "https://battle.overpower.game/PublicPData/friday-night-overpower-3",
+      "responseSha256": "7c1e717cf864aa8e86feacf0a2f424b501664dfc413514bd70e48f3387995b5a",
+      "bracketUrl": "https://topdeck.gg/bracket/friday-night-overpower-3",
+      "entries": [
+        {
+          "eventId": "friday-night-overpower-3",
+          "submitter": "Andy Hauge",
+          "textSha256": "fac9f903a5fcdb8585432b1341e1c697544a03156488f10a042ca17492d1489a",
+          "style": "Team/setup declaration",
+          "verdict": "No",
+          "differences": [
+            "Team/setup summary, not our full category/quantity inventory.",
+            "No explicit reserve marker found.",
+            "Battleground is in prose, not our separate section."
+          ],
+          "differenceFlags": [
+            "setup_instead_of_inventory",
+            "unstructured_headings_quantities",
+            "battleground_prose"
+          ],
+          "features": {
+            "nonemptyLines": 4,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        }
+      ]
+    },
+    {
+      "eventId": "mayhem-sundays-729",
+      "eventName": "Mayhem Sundays",
+      "dateUtc": "2026-09-27",
+      "registeredPlayers": 8,
+      "standingsEntries": 8,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/mayhem-sundays-729",
+      "responseSha256": "d7ae5202bbee335ff47fb6e13140377e285c7051dc08df53e841a9b182e3638c",
+      "bracketUrl": "https://topdeck.gg/bracket/mayhem-sundays-729",
+      "entries": []
+    },
+    {
+      "eventId": "friday-night-overpower-2",
+      "eventName": "Friday Night Overpower",
+      "dateUtc": "2026-09-25",
+      "registeredPlayers": 8,
+      "standingsEntries": 8,
+      "publishedEntries": 1,
+      "source": "https://battle.overpower.game/PublicPData/friday-night-overpower-2",
+      "responseSha256": "26af446f14d5c77fbb62540a2eddc267c2812ae1f23b5abe1b13d5acf4335359",
+      "bracketUrl": "https://topdeck.gg/bracket/friday-night-overpower-2",
+      "entries": [
+        {
+          "eventId": "friday-night-overpower-2",
+          "submitter": "Andy Hauge",
+          "textSha256": "ab008eafe699416a51b4c8a9ecfe22ecfc40280cfc7d99c2a8dd530da04f96de",
+          "style": "Team/setup declaration",
+          "verdict": "No",
+          "differences": [
+            "Team/setup summary, not our full category/quantity inventory.",
+            "Roles are written in prose."
+          ],
+          "differenceFlags": [
+            "setup_instead_of_inventory",
+            "unstructured_headings_quantities"
+          ],
+          "features": {
+            "nonemptyLines": 1,
+            "headings": [],
+            "deckMarker": false,
+            "frontlineTags": 0,
+            "reserveTags": 0,
+            "homebaseTags": 0,
+            "setCodes": [],
+            "quantityStyles": [],
+            "literalQuoteEscapes": false,
+            "literalApostropheEscapes": false
+          },
+          "jsonShape": null
+        }
+      ]
+    },
+    {
+      "eventId": "friday-night-overpower",
+      "eventName": "Friday Night Overpower",
+      "dateUtc": "2026-09-18",
+      "registeredPlayers": 8,
+      "standingsEntries": 8,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/friday-night-overpower",
+      "responseSha256": "216392ca9a7e661b165fb35438be1573980957ab45ed44dd7de5fd486e39fadc",
+      "bracketUrl": "https://topdeck.gg/bracket/friday-night-overpower",
+      "entries": []
+    },
+    {
+      "eventId": "test-tournament-119",
+      "eventName": "Test Tournament",
+      "dateUtc": "2026-09-04",
+      "registeredPlayers": 8,
+      "standingsEntries": 8,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/test-tournament-119",
+      "responseSha256": "1e8f2fbde2493429e6db1fc97734ae2925ef6331c55f126b67c0831f881eb76a",
+      "bracketUrl": "https://topdeck.gg/bracket/test-tournament-119",
+      "entries": []
+    },
+    {
+      "eventId": "edge-weekly-6",
+      "eventName": "Edge Weekly",
+      "dateUtc": "2026-09-20",
+      "registeredPlayers": 7,
+      "standingsEntries": 7,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/edge-weekly-6",
+      "responseSha256": "09bb191bca92dd02319e73880f39af8d18323ab7708445444dae5cbeb107888b",
+      "bracketUrl": "https://topdeck.gg/bracket/edge-weekly-6",
+      "entries": []
+    },
+    {
+      "eventId": "edge-weekly-5",
+      "eventName": "Edge Weekly",
+      "dateUtc": "2026-09-06",
+      "registeredPlayers": 7,
+      "standingsEntries": 7,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/edge-weekly-5",
+      "responseSha256": "dbd0a4a5a26ca66ad5c3de15a58c06eabdca778e2ad0f4830928703bc0377da5",
+      "bracketUrl": "https://topdeck.gg/bracket/edge-weekly-5",
+      "entries": []
+    },
+    {
+      "eventId": "mayhem-sundays-259",
+      "eventName": "Mayhem Sundays",
+      "dateUtc": "2026-08-30",
+      "registeredPlayers": 7,
+      "standingsEntries": 7,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/mayhem-sundays-259",
+      "responseSha256": "40947931d94d8cf9b857e7ae077d3efff852548f2faf1eefe3fc821c2136759c",
+      "bracketUrl": "https://topdeck.gg/bracket/mayhem-sundays-259",
+      "entries": []
+    },
+    {
+      "eventId": "mayhem-sundays-899",
+      "eventName": "Mayhem Sundays",
+      "dateUtc": "2026-09-20",
+      "registeredPlayers": 6,
+      "standingsEntries": 6,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/mayhem-sundays-899",
+      "responseSha256": "86d9eebee05569fe35fd889a6feda5ee41923cb80f258ba362f0ee88fc40010a",
+      "bracketUrl": "https://topdeck.gg/bracket/mayhem-sundays-899",
+      "entries": []
+    },
+    {
+      "eventId": "mayhem-sundays-589",
+      "eventName": "Mayhem Sundays",
+      "dateUtc": "2026-09-06",
+      "registeredPlayers": 6,
+      "standingsEntries": 6,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/mayhem-sundays-589",
+      "responseSha256": "75acc5941affaeb88e99d27019f4eb93e90fd9e6b39f968491008afb8b1c6a81",
+      "bracketUrl": "https://topdeck.gg/bracket/mayhem-sundays-589",
+      "entries": []
+    },
+    {
+      "eventId": "mayhem-sundays-897",
+      "eventName": "Mayhem Sundays",
+      "dateUtc": "2026-08-23",
+      "registeredPlayers": 6,
+      "standingsEntries": 6,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/mayhem-sundays-897",
+      "responseSha256": "fe41af154e28bf249e6d9378403217248dc3a9c5d9adcf8432c956bb1350e0fa",
+      "bracketUrl": "https://topdeck.gg/bracket/mayhem-sundays-897",
+      "entries": []
+    },
+    {
+      "eventId": "mayhem-sundays-6",
+      "eventName": "Mayhem Sundays",
+      "dateUtc": "2026-08-16",
+      "registeredPlayers": 4,
+      "standingsEntries": 4,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/mayhem-sundays-6",
+      "responseSha256": "0f2e643caf50ef5c36b21f6dce47704cb6f6e00d93450afff066a5bd635f2a2c",
+      "bracketUrl": "https://topdeck.gg/bracket/mayhem-sundays-6",
+      "entries": []
+    },
+    {
+      "eventId": "overpower-ltp-free-play-copy",
+      "eventName": "Overpower LTP/ Free Play",
+      "dateUtc": "2026-09-24",
+      "registeredPlayers": 2,
+      "standingsEntries": 2,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/overpower-ltp-free-play-copy",
+      "responseSha256": "1529dfc3c914340350296308049dd0def960d0ddd8d2992ed098ece7be58fe30",
+      "bracketUrl": "https://topdeck.gg/bracket/overpower-ltp-free-play-copy",
+      "entries": []
+    },
+    {
+      "eventId": "mayhem-sundays-5",
+      "eventName": "Mayhem Sundays",
+      "dateUtc": "2026-08-09",
+      "registeredPlayers": 2,
+      "standingsEntries": 2,
+      "publishedEntries": 0,
+      "source": "https://battle.overpower.game/PublicPData/mayhem-sundays-5",
+      "responseSha256": "4ad5eee15b0f813ddce737f261e3cec04fa25711ca42f06d8dd5b38811567b87",
+      "bracketUrl": "https://topdeck.gg/bracket/mayhem-sundays-5",
+      "entries": []
+    }
+  ],
+  "comparisonBaselineFormatterSha256": "f41a52bf912b999c1538af7711f4e9e7538fd3de12e5efd83e0b5c34b73c6b64",
+  "selectedFormatterSha256": "c18d6596bd7174b0fdd7289f1726e0fdbdde09b8ee3e521e19d2764ea2719575",
+  "selectionDecision": "Most common recognizable recurring complete-inventory export template (20 entries), not a majority of the 100 published entries; handwritten/mixed is a heterogeneous bucket."
+}

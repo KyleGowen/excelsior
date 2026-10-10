@@ -1,0 +1,80 @@
+Cards: 64/56 | Threat: 76/76
+
+-- Characters --
+1x Wicked Witch [ERB] [Frontline]
+1x Mina Harker [ERB] [Frontline]
+1x The Mummy [ERB] [Frontline]
+1x Anubis [ERB] [Reserve]
+
+-- Location --
+1x Dracula's Armory [ERBP] [Homebase]
+  → Ray Gun [ERB] (on location)
+  → Trident [ERB] (on location)
+  → Merlin's Wand [ERB] (on location)
+
+-- Mission --
+King of the Jungle - Mission Set
+
+-- Special Cards --
+2x THE MUMMY: The Eternal Journey [ERB]
+1x THE MUMMY: Fury of the Desert [ERB]
+1x MINA HARKER: Vampiric Celerity [ERB]
+2x MINA HARKER: Tracking Movements [ERB]
+2x MINA HARKER: Jonathan Harker, Solicitor [ERB]
+1x WICKED WITCH: One Eye [ERB]
+1x WICKED WITCH: Wolves, Crows, & Black Bees [ERB]
+2x WICKED WITCH: Feared by All Witches [ERB]
+2x THE MUMMY: Ancient Wisdom [ERB]
+1x MINA HARKER: Nocturnal Hunter [ERB]
+1x ANUBIS: Weighing of the Heart [ERB]
+1x WICKED WITCH: Harness the Wind [ERB]
+1x THE MUMMY: Pharaoh of the Fourth Dynasty [ERB]
+1x MINA HARKER: The Hunger [ERB]
+1x ANUBIS: Book of the Dead [ERB]
+1x WICKED WITCH: I Will Have Those Silver Shoes! [ERB]
+
+-- Any Character Cards --
+1x ANY CHARACTER: AC: Legendary Escape [ERB]
+1x ANY CHARACTER: DB: Disorient Opponent [ERB]
+1x ANY CHARACTER: ambush: Valkyrie Skeggjold [ERB]
+1x ANY CHARACTER: BY: Grim Reaper [ERB]
+1x ANY CHARACTER: ZZ: Merlin's Magic [ERB]
+1x ANY CHARACTER: cata: Fairy Protection [ERB]
+1x ANY CHARACTER: AL: Preternatural Healing [ERB]
+1x ANY CHARACTER: assist: Charge into Battle! [ERB]
+1x ANY CHARACTER: BQ: The Gemini [ERB]
+1x ANY CHARACTER: OP: Valkyrie Hildr: Select the Slain [ERB]
+1x ANY CHARACTER: AG: Freya: Goddess of Protection [ERB]
+
+-- Universe Cards --
+1x Professor Porter [ERB]
+1x Hucklebuck [ERB]
+1x Teamwork 7 Anypower [ERB]
+1x Teamwork 6 Brute Force, acts as 4; Intelligence/Energy [ERB]
+1x Teamwork 6 Energy, acts as 4; Brute Force/Intelligence [ERB]
+1x Teamwork 6 Anypower [ERB]
+
+-- Power Cards --
+1x 5 Bruteforce [ERB]
+1x 3 Multipower [ERB]
+1x 2 Intelligence [ERB]
+2x 3 Bruteforce [ERB]
+1x 1 Combat [ERB]
+1x 2 Combat [ERB]
+2x 4 Bruteforce [ERB]
+1x 6 Energy [ERB]
+1x 7 Anypower [ERB]
+1x 6 Bruteforce [ERB]
+1x 4 Multipower [ERB]
+2x 7 Bruteforce [ERB]
+1x 5 Multipower [ERBP]
+1x 6 Anypower [ERB]
+2x 8 Energy [ERBP]
+1x 5 Anypower [ERB]
+
+-- Events --
+1x The Power of Gonfal [ERB]
+1x The Lost City of Opar [ERB]
+
+-- Other Cards --
+1x Cheshire Cat [ERB]

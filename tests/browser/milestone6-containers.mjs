@@ -56,7 +56,7 @@ export async function runContainerCases(tab, { target, evidenceDir, deckId, deck
   check(await role('button','Save').count()===0, 'Read-only fixture exposed Save');
   await wait(role('button','Draw Hand').and(tab.playwright.locator(':enabled'))); await role('button','Draw Hand').click();
   const drawn=role('dialog','Drawn Hand'); await wait(drawn); check(await drawn.getByRole('button').count()===10,'Draw must have8cards');
-  const geometry=await assertPanel(drawn,capture,'draw-panel'); await role('button','Close panel').click(); await role('button','Export').click();
+  const geometry=await assertPanel(drawn,capture,'draw-panel'); await role('button','Close panel').click(); await role('button','Export').click();await role('button','JSON').click();
   const exported=role('dialog','Export deck JSON'); await wait(exported); await assertPanel(exported,capture,'export-panel');
   const values=await exported.evaluate(e=>{const x=JSON.parse(e.querySelector('pre').textContent);return {cards:x.total_cards,threat:x.total_threat};});
   check(values.cards===8&&values.threat===18, 'Fixture export changed'); await role('button','Close panel').click();

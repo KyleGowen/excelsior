@@ -992,7 +992,7 @@ export async function deleteDeck(
 }
 
 /** Persist all imported cards and metadata in one transaction; no partial deck survives a failure. */
-export async function createImportedDeck(ctx:DeckRepositoryContext,userId:string,input:{ name:string;description:string;cards:Array<{type:DeckCard['type'];cardId:string;quantity:number}>;isValid:boolean;limited:boolean;reserveCharacterId:string|null;cardCount:number;threat:number }):Promise<Deck> {
+export async function createImportedDeck(ctx:DeckRepositoryContext,userId:string,input:{ name:string;description:string;cards:Array<{type:DeckCard['type'];cardId:string;quantity:number;exclude_from_draw?:boolean}>;isValid:boolean;limited:boolean;reserveCharacterId:string|null;cardCount:number;threat:number }):Promise<Deck> {
  const client=await ctx.pool.connect();
  try {
   await client.query('BEGIN');
@@ -1001,7 +1001,7 @@ export async function createImportedDeck(ctx:DeckRepositoryContext,userId:string
   const persistedCards:DeckCard[]=[];
   for (const [i,card] of input.cards.entries()) {
    if (!await cardExistsInCardTable(client,card.type,card.cardId,false)) throw new Error('An imported catalog identity is no longer available');
-   const saved=await client.query('INSERT INTO deck_cards (deck_id,card_type,card_id,quantity,display_order,exclude_from_draw) VALUES ($1,$2,$3,$4,$5,false) RETURNING id',[row.id,card.type,card.cardId,card.quantity,i]);
+   const saved=await client.query('INSERT INTO deck_cards (deck_id,card_type,card_id,quantity,display_order,exclude_from_draw) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id',[row.id,card.type,card.cardId,card.quantity,i,card.exclude_from_draw === true]);
    persistedCards.push({...card,id:String(saved.rows[0].id)});
   }
   await refreshDeckPreviewMetadata(ctx,String(row.id),client);
