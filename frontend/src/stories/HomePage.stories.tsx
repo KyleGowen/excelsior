@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AppShell } from '../components/AppShell';
 import HomePage from '../features/home/HomePage';
-import { pageHandlers } from './pageMocks';
+import { pageHandlers, exampleUpdates, topDeckExportUpdate } from './pageMocks';
 
 const meta = {
   title: 'Screens/Home',
@@ -23,4 +23,8 @@ export const Mobile: Story = {
     viewport: { defaultViewport: 'mobile' },
     msw: pageHandlers(),
   },
+};
+
+export const TopDeckExport: Story = {
+  parameters: { msw: pageHandlers({ updates: [topDeckExportUpdate, ...exampleUpdates] }) },
 };

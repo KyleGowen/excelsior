@@ -7,6 +7,9 @@ Landing page after login. Sections, top to bottom:
    `GET /api/v1/recent-updates` (`useRecentUpdates`; rows in `recent_updates` table).
    Shows the **3 newest** tiles (`HOME_RECENT_UPDATES_LIMIT`). When more than 3 exist,
    a **View All** link in the section header navigates to [`/home/updates`](./HomeUpdatesPage.md).
+   The TopDeck export announcement is an **Update** using Battle Beast's Paltry Attempts
+   special (`sky/specials/083_paltry_attempts.png`), cropped around Battle Beast. It explains
+   how to select TopDeck in a deck's Export panel and copy the Modern OverPower decklist.
    The preconstructed-decks announcement uses a tightly cropped Skybound Training Any Power artwork
    thumbnail and credits Andrew Taylor for the featured Skybound precon upgrade recommendations.
    The Seattle Weekend announcement is an **Update** using Advanced Alien Arsenal collector `#053`

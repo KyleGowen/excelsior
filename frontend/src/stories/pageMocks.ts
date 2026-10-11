@@ -26,6 +26,16 @@ export const exampleUpdates: RecentUpdate[] = [
   },
 ];
 
+export const topDeckExportUpdate: RecentUpdate = {
+  id: 'a1000001-0000-4000-8000-000000000013',
+  title: 'Export decks to TopDeck',
+  type: 'update',
+  description: "Your decks can now be exported in TopDeck's modern overpower format. Open a deck, choose Export, select TopDeck, and copy the decklist for Modern OverPower events.",
+  cardImageUrl: 'sky/specials/083_paltry_attempts.png',
+  createdAt: '2026-10-11T12:00:00Z',
+  updatedAt: '2026-10-11T12:00:00Z',
+};
+
 export const exampleCollection: CollectionCard[] = [
   {
     id: 'story-collection-billy',
