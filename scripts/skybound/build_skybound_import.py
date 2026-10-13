@@ -304,6 +304,39 @@ def numeric_icons(row: dict[str, Any]) -> tuple[list[str], int | None]:
     return icons, value
 
 
+def special_numeric_icons(row: dict[str, Any]) -> tuple[list[str], int | None]:
+    """Read numerical Special badges from their acts-as clauses, not power grids.
+
+    The workbook often puts Combat/Brute Force badges in gear_value and records
+    only the front icon of a combined badge. Mentions of another card's Power
+    Type or a permitted Power-card range do not create a badge on this Special.
+    Include the second printed badge on attacks that become a different hit;
+    deck totals separately use the resulting hit's type.
+    """
+    primary_types = ("Energy", "Combat", "Brute Force", "Intelligence")
+    icons: set[str] = set()
+    value = None
+    for match in re.finditer(
+        r"\bacts\s+as\s+(?:a\s+)?(?:level\s+)?(\d+)\s+"
+        r"(.+?)\s+(?:attack|defense|Power\s+card)\b",
+        clean(row.get("card_text")),
+        re.IGNORECASE,
+    ):
+        if value is None:
+            value = int(match.group(1))
+        badge_types = match.group(2)
+        if re.search(r"\bMulti[ -]?Power\b", badge_types, re.IGNORECASE):
+            icons.update(primary_types)
+        elif re.search(r"\bAny[ -]?Power\b", badge_types, re.IGNORECASE):
+            icons.add("Any-Power")
+        else:
+            icons.update(
+                label for label in primary_types
+                if re.search(r"\b" + re.escape(label) + r"\b", badge_types, re.IGNORECASE)
+            )
+    return [label for label in (*primary_types, "Any-Power") if label in icons], value
+
+
 def public_image_path(table: str, set_number: str, display_name: str) -> str:
     return f"sky/{TABLE_TO_DIR[table]}/{set_number.lower()}_{slugify(display_name)}.png"
 
@@ -407,7 +440,7 @@ def build_cards(rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[
             else:
                 owner = "Any Character" if 349 <= number <= 374 else latest_character
             title = choose_special_title(row, owner)
-            icons, value = numeric_icons(row)
+            icons, value = special_numeric_icons(row)
             effect = clean(row.get("card_text"))
             card.update(
                 name=title,
