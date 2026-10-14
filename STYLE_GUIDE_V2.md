@@ -846,3 +846,9 @@ The tournament chart chunk loads with its section. Loading placeholders reserve
 320px for deck sections and 400px for statistics; feed loading states retain room
 for content. Browsers without IntersectionObserver load every section immediately.
 The named Home `DeferredSections` story exercises every new section wrapper.
+
+
+Progressive artwork session hits apply to each visible image element. A URL loaded
+by Draw Hand must also reveal on an already mounted grid copy when scrolled into
+view. Other offscreen copies remain at thumbnail quality until approached. The
+Card Image `CachedElsewhereBeforeScroll` story demonstrates this shared-session case.

@@ -28,3 +28,11 @@ apply consistently (and keep working after the CDN cutover).
   `cardImages.ts` helpers.
 - `.card-image--contain` modifier renders full art without cropping (used by the detail
   panel).
+
+
+A session cache hit records a decoded URL, not completion of every mounted image
+using it. If Draw Hand reveals a URL while a grid copy is offscreen, that grid copy
+must still call the reveal helper when it approaches the viewport. The helper
+attaches the cached URL and decodes this target without another network preload.
+Keep the viewport guard: populating the session alone must not eagerly attach
+full artwork to an offscreen grid card.

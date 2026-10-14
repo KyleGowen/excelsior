@@ -17,3 +17,16 @@ export const Missing: Story = { args: { imagePath: null, alt: 'No card art' } };
 
 /** A fictional missing URL exercises the image error fallback, beyond absent input. */
 export const BrokenUrlFallback: Story = { args: { imagePath: 'fictional-m8-missing.webp', alt: 'Unavailable fictional art', useThumbnail: false } };
+
+
+/** Same URL: the eager surface fills the session after the offscreen copy mounts. */
+export const CachedElsewhereBeforeScroll: Story = {
+  args: { progressive: true, progressiveSessionScope: 'deck-editor' },
+  render: (args) => <div>
+    <p>Another surface loads this image first.</p>
+    <CardImage {...args} loading="eager" />
+    <div style={{ height: '120vh' }} />
+    <p>The already mounted grid copy upgrades when approached.</p>
+    <CardImage {...args} loading="lazy" />
+  </div>,
+};

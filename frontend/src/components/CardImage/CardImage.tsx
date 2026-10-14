@@ -350,7 +350,10 @@ function ProgressiveCardImage({
   };
 
   useEffect(() => {
-    if (fullLoaded || isFullResRevealed(fullSrc, progressiveSessionScope)) return undefined;
+    // A different mounted surface (for example Draw Hand) may have populated
+    // the session after this target mounted. The preload helper restores a
+    // cache hit onto this element; only this element's loaded state can skip it.
+    if (fullLoaded) return undefined;
     if (!inView) return undefined;
 
     const fullImg = fullImgRef.current;

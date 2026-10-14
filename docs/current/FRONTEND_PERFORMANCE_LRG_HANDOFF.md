@@ -140,3 +140,26 @@ View All links, deck opening, back navigation, narrow screens, fallback without
 IntersectionObserver and observer disposal. A Home benchmark that previously waited
 for every offscreen deck rail now needs to scroll or explicitly load those rails;
 its result must be labeled separately from initial visible Home readiness.
+
+
+## Follow-up: a shared session hit must reveal each image target
+
+Production follow-up exposed an existing interaction between lazy deck artwork
+and Draw Hand. A grid image can mount offscreen with no full-image `src`; Draw Hand
+then reveals the same URL into the shared `deck-editor` session. When the grid
+copy later approaches the viewport, treating that session entry as proof that the
+grid element itself is loaded leaves it at thumbnail quality.
+
+In `CardImage.tsx`'s progressive reveal effect, return early only for `fullLoaded`,
+then preserve the existing `inView` guard. Let `preloadAndRevealFullRes` handle
+session hits by attaching the cached URL to this target and decoding it. No new
+preload is required on a session hit. The initial mount restoration remains, and
+an offscreen card still has no full-image `src` just because another surface loaded
+its URL.
+
+Apply `frontend/src/components/CardImage/CardImage.tsx` with its context document.
+The named Card Image `CachedElsewhereBeforeScroll` story shows an eager surface
+above an already mounted offscreen copy. Component regressions cover the exact
+post-mount cache interaction, continued offscreen deferral, and a URL cached before
+mounting. For live verification, draw/redraw before scrolling and check a grid card
+that was loaded into Draw Hand; it must upgrade when approached.
