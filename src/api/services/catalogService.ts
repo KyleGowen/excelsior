@@ -1,4 +1,4 @@
-import { presentCatalog } from '../../services/catalog-presentation/presentCatalog';
+import { catalogPresentationVersion, presentCatalog, type PresentedCatalogCard } from '../../services/catalog-presentation/presentCatalog';
 import type { CatalogType, CatalogCard, FoilMapEntry } from '../../services/catalog-presentation/types';
 import type { CardRepository } from '../../repository/CardRepository';
 import type {
@@ -43,6 +43,9 @@ type CatalogRow = Record<string, unknown> & { id?: unknown };
  * HTTP handlers call this service only; the service calls repositories.
  */
 export class CatalogService {
+  // One completed catalog per type (at most 13); superseded versions are replaced.
+  // Only this read-only service's HTTP adapter consumes these shared results.
+  private readonly presentations = new Map<CatalogType, { version: string; cards: PresentedCatalogCard[] }>();
   constructor(
     private readonly cards: CatalogCardRepository,
     private readonly foilMap: FoilCardMapReader,
@@ -152,7 +155,16 @@ export class CatalogService {
       loaders[type](), this.getFoilCardMap(),
       type === 'special-cards' || type === 'advanced-universe' ? this.getAllCharacters() : Promise.resolve([]),
     ]);
-    return presentCatalog(rows as CatalogCard[], type, foilEntries as FoilMapEntry[], characters as CatalogCard[]);
+    // Re-read inputs through the existing repositories, preserving their freshness
+    // rules. The content version covers errata, foil maps and linked characters;
+    // the process-local HTTP sync counter alone does not track these changes.
+    const version = catalogPresentationVersion(rows as CatalogCard[], type, foilEntries as FoilMapEntry[], characters as CatalogCard[]);
+    const cached = this.presentations.get(type);
+    if (cached?.version === version) return cached.cards;
+
+    const presented = presentCatalog(rows as CatalogCard[], type, foilEntries as FoilMapEntry[], characters as CatalogCard[]);
+    this.presentations.set(type, { version, cards: presented });
+    return presented;
   }
 
   getCardStats() {

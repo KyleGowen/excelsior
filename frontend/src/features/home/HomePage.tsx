@@ -1,5 +1,5 @@
 import { useImageAssets } from '../../lib/images/useImageAssets';
-import { useMemo } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../app/AuthProvider';
@@ -17,7 +17,7 @@ import { LoadingState } from '../../components/LoadingState';
 import { EmptyState } from '../../components/EmptyState';
 import { RecentUpdatesList } from './RecentUpdatesList';
 import { useRecentUpdates } from './useRecentUpdates';
-import { TournamentStatsRail } from './TournamentStatsRail';
+import { DeferredHomeSection } from './DeferredHomeSection';
 import {
   buildDeckEditorNavigateState,
   DECK_EDITOR_RETURN_HOME,
@@ -33,6 +33,8 @@ import {
 import type { DeckListItem } from '../../lib/api/types';
 import './HomePage.css';
 import './recentUpdates.css';
+
+const TournamentStatsRail = lazy(() => import('./TournamentStatsRail').then(module => ({ default: module.TournamentStatsRail })));
 
 const HOME_BANNERS = {
   victoryHarben: {
@@ -61,10 +63,15 @@ export default function HomePage() {
   const { assetUrl } = useImageAssets();
   const { user, tournamentDecksUserId } = useAuth();
   const navigate = useNavigate();
+  const [communityActive, setCommunityActive] = useState(false);
+  const [tournamentActive, setTournamentActive] = useState(false);
+  const [preconstructedActive, setPreconstructedActive] = useState(false);
+  const previewActive = communityActive || tournamentActive || preconstructedActive;
 
   const communityQuery = useQuery({
     queryKey: HOME_COMMUNITY_FEED_KEY,
     queryFn: () => fetchCommunityFeed(),
+    enabled: communityActive,
     staleTime: 10 * 60 * 1000,
   });
 
@@ -72,6 +79,7 @@ export default function HomePage() {
   const tournamentQuery = useQuery({
     queryKey: ['decks', 'tournament'],
     queryFn: () => fetchTournamentDecks(),
+    enabled: tournamentActive,
     staleTime: 10 * 60 * 1000,
   });
 
@@ -82,6 +90,7 @@ export default function HomePage() {
   const preconstructedQuery = useQuery({
     queryKey: HOME_PRECONSTRUCTED_DECKS_KEY,
     queryFn: () => fetchPreconstructedDecks(),
+    enabled: preconstructedActive,
     staleTime: 10 * 60 * 1000,
   });
 
@@ -93,23 +102,27 @@ export default function HomePage() {
   const missionsQuery = useQuery({
     queryKey: ['catalog', 'missions'],
     queryFn: () => fetchCatalog('missions'),
+    enabled: previewActive,
     staleTime: 30 * 60 * 1000,
   });
 
   const charactersQuery = useQuery({
     queryKey: ['catalog', 'characters'],
     queryFn: () => fetchCatalog('characters'),
+    enabled: previewActive,
     staleTime: 30 * 60 * 1000,
   });
 
   const locationsQuery = useQuery({
     queryKey: ['catalog', 'locations'],
     queryFn: () => fetchCatalog('locations'),
+    enabled: previewActive,
     staleTime: 30 * 60 * 1000,
   });
   const battlegroundsQuery = useQuery({
     queryKey: ['catalog', 'battlegrounds'],
     queryFn: () => fetchCatalog('battlegrounds'),
+    enabled: previewActive,
     staleTime: 30 * 60 * 1000,
   });
 
@@ -184,46 +197,56 @@ export default function HomePage() {
 
         <NewsSection />
 
-        <TournamentStatsRail />
+        <DeferredHomeSection title="Tournament Statistics" icon={<IconTrophy />} variant="stats">
+          <Suspense fallback={<LoadingState className="home__deferred-stats-loading" label="Loading tournament statistics..." />}>
+            <TournamentStatsRail />
+          </Suspense>
+        </DeferredHomeSection>
 
-        <DeckRail
-          icon={<IconUsers />}
-          title="Community Decks"
-          viewAllTo="/community#community"
-          loading={communityQuery.isLoading}
-          error={communityQuery.isError}
-          decks={enrichedCommunityDecks}
-          emptyMessage="Community decks will appear here as they are shared."
-          missionSetByCardId={missionSetByCardId}
-          onOpen={openDeck}
-          onOwnerClick={openProfile}
-        />
+        <DeferredHomeSection title="Community Decks" icon={<IconUsers />} onActivate={setCommunityActive}>
+          <DeckRail
+            icon={<IconUsers />}
+            title="Community Decks"
+            viewAllTo="/community#community"
+            loading={communityQuery.isLoading}
+            error={communityQuery.isError}
+            decks={enrichedCommunityDecks}
+            emptyMessage="Community decks will appear here as they are shared."
+            missionSetByCardId={missionSetByCardId}
+            onOpen={openDeck}
+            onOwnerClick={openProfile}
+          />
+        </DeferredHomeSection>
 
-        <DeckRail
-          icon={<IconTrophy />}
-          title="Tournament Winning Decks"
-          viewAllTo="/community#tournament"
-          loading={tournamentQuery.isLoading}
-          error={tournamentQuery.isError}
-          decks={enrichedTournamentDecks}
-          emptyMessage="Tournament-winning decks will appear here as they are added."
-          missionSetByCardId={missionSetByCardId}
-          onOpen={openDeck}
-        />
+        <DeferredHomeSection title="Tournament Winning Decks" icon={<IconTrophy />} onActivate={setTournamentActive}>
+          <DeckRail
+            icon={<IconTrophy />}
+            title="Tournament Winning Decks"
+            viewAllTo="/community#tournament"
+            loading={tournamentQuery.isLoading}
+            error={tournamentQuery.isError}
+            decks={enrichedTournamentDecks}
+            emptyMessage="Tournament-winning decks will appear here as they are added."
+            missionSetByCardId={missionSetByCardId}
+            onOpen={openDeck}
+          />
+        </DeferredHomeSection>
 
-        <DeckRail
-          icon={<IconCards />}
-          title="Preconstructed Decks"
-          viewAllTo="/community#preconstructed"
-          loading={preconstructedQuery.isLoading}
-          error={preconstructedQuery.isError}
-          decks={enrichedPreconstructedDecks}
-          emptyMessage="Preconstructed decks will appear here as sets are added."
-          missionSetByCardId={missionSetByCardId}
-          onOpen={openDeck}
-          showUpdated={false}
-          showLegality={false}
-        />
+        <DeferredHomeSection title="Preconstructed Decks" icon={<IconCards />} onActivate={setPreconstructedActive}>
+          <DeckRail
+            icon={<IconCards />}
+            title="Preconstructed Decks"
+            viewAllTo="/community#preconstructed"
+            loading={preconstructedQuery.isLoading}
+            error={preconstructedQuery.isError}
+            decks={enrichedPreconstructedDecks}
+            emptyMessage="Preconstructed decks will appear here as sets are added."
+            missionSetByCardId={missionSetByCardId}
+            onOpen={openDeck}
+            showUpdated={false}
+            showLegality={false}
+          />
+        </DeferredHomeSection>
 
       </div>
     </div>

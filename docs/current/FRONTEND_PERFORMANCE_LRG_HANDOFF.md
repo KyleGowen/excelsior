@@ -1,6 +1,6 @@
-# Frontend image loading changes for LRG
+# Frontend loading changes for LRG
 
-These changes reduce image work in the shared Card Database and Deck Builder UI.
+These changes reduce image and catalog work in the shared Card Database and Deck Builder UI.
 LRG can apply the same component changes without changing catalog APIs, deck rules,
 authentication, image URL resolution, or host configuration.
 
@@ -81,3 +81,62 @@ production timings only after the same approved revision has deployed and its he
 check reports a healthy application and database. The timing evidence distinguishes
 normal-cache reloads from first visits; full-deck artwork is intentionally deferred
 until scrolling brings it into view.
+
+## Low–medium follow-up: card detail catalog reuse
+
+In `frontend/src/features/database/CardDatabaseModule.tsx`, detail opens and printing
+switches reuse the existing host-scoped `['catalog', type]` QueryClient entry for up
+to one minute. They previously downloaded the whole type on every open/switch.
+After that minute, or after explicit query invalidation, details refresh through
+`host.api.fetchCatalogFresh` with its cancellation signal and existing `no-store`
+transport. A printing advertised by presentation metadata but missing from the
+cached array triggers one forced fresh read before selection. Failed refreshes
+retain the already displayed data and do not manufacture a missing printing.
+
+Apply this controller change to LRG with its existing ModuleHost and QueryClient.
+There is no new host method or HTTP endpoint. The deliberate freshness tradeoff is
+at most one minute of reuse after a successful read; this is not a server version
+poll. Preserve the shorter detail freshness window rather than inheriting the
+30-minute browsing policy. The backend independently keys its bounded presentation
+cache by the full content version, including foil, errata and linked-character
+inputs, and still authenticates every request through the existing adapters.
+
+Component regressions cover repeated opens without another download, stale and
+explicitly invalidated reads, and present/missing printing selection. Recheck the
+ordinary Database route and an independent host, including full detail artwork,
+printing switching, close/reopen, All, search and mobile behavior.
+
+
+## Low–medium follow-up: defer lower Home sections
+
+Excelsior's ordinary Home page now uses `DeferredHomeSection` around tournament
+statistics and each of the three deck rails. It mounts a section once it enters a
+120px viewport margin, retains it thereafter, and offers an explicit Load control.
+Missing IntersectionObserver support loads everything. Observer cleanup ignores
+queued notifications after unmount. Reserved placeholders prevent an empty initial
+layout from immediately pulling all later sections into the viewport.
+
+`HomePage.tsx` enables each feed query only after that rail is activated. The four
+shared preview/mission catalogs are enabled when the first deck rail is activated.
+TournamentStatsRail is imported lazily inside Suspense so its chart code and
+catalog work start only when its section is approached. If that section is already
+visible or near the viewport on a particular screen, it loads immediately. Its
+existing expanded tournament route and its full-catalog selection are unchanged.
+
+For an LRG Home equivalent, apply these together:
+
+- `frontend/src/features/home/DeferredHomeSection.tsx`.
+- `frontend/src/features/home/HomePage.tsx`.
+- `frontend/src/features/home/HomePage.css` (placeholder and loading-state sizing).
+- `frontend/src/stories/HomePage.stories.tsx` (`DeferredSections`).
+
+This Home behavior is outside the independent Database/Deck Builder modules; LRG
+only needs it if it has an equivalent landing page. Do not copy Excelsior's feed
+routes or navigation into a differently structured LRG host. Keep LRG assets and
+API transport host-scoped as before.
+
+Verify initial Hero/Updates, scroll each rail into view, chart/card interactions,
+View All links, deck opening, back navigation, narrow screens, fallback without
+IntersectionObserver and observer disposal. A Home benchmark that previously waited
+for every offscreen deck rail now needs to scroll or explicitly load those rails;
+its result must be labeled separately from initial visible Home readiness.

@@ -1,9 +1,14 @@
 import request from 'supertest';
-import { app } from '../setup-integration';
+import { app, integrationTestUtils } from '../setup-integration';
 import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 
 function uniquePowerCards(cards: any[]): any[] {
-  return [...new Map(cards.map(card => [`${card.power_type}:${card.value}`, card])).values()];
+  // Multi-copy counting needs unrestricted printings. SKY Any-Power printings
+  // can be one-per-deck while equivalent ERB printings are not; SQL ties alone
+  // do not select a stable representative across fresh database replays.
+  const unrestricted = cards.filter(card => !card.one_per_deck && !card.is_one_per_deck)
+    .sort((left, right) => left.id.localeCompare(right.id));
+  return [...new Map(unrestricted.map(card => [`${card.power_type}:${card.value}`, card])).values()];
 }
 
 describe('Power Card Counting Integration Tests', () => {
@@ -15,6 +20,7 @@ describe('Power Card Counting Integration Tests', () => {
     // Create a test user with proper password hash
     const userRepo = DataSourceConfig.getInstance().getUserRepository();
     testUser = await userRepo.createUser('testuser', 'test@example.com', 'testpassword', 'USER');
+    integrationTestUtils.trackTestUser(testUser.id);
     
     // Login to get session cookie
     const loginResponse = await request(app)

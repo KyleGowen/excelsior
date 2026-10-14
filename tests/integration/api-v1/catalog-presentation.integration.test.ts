@@ -16,6 +16,9 @@ describe('M4 catalog presentation through production composition', () => {
       expect(row.presentation.logicalCardId).toMatch(/^[a-f0-9]{64}$/);
       expect(row.presentation.catalogVersion).toMatch(/^[a-f0-9]{64}$/);
     }
+    const repeated = await request(app).get('/api/v1/catalog/presentation/characters').expect(200);
+    expect(repeated.body.data).toEqual(response.body.data);
+    expect(repeated.headers.etag).toBe(response.headers.etag);
     await request(app).get('/api/v1/catalog/presentation/characters').set('If-None-Match', response.headers.etag).expect(304);
     const after = await pool.query('SELECT (SELECT count(*) FROM decks) AS decks, (SELECT count(*) FROM users) AS users');
     expect(after.rows).toEqual(before.rows);

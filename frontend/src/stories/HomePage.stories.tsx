@@ -28,3 +28,9 @@ export const Mobile: Story = {
 export const TopDeckExport: Story = {
   parameters: { msw: pageHandlers({ updates: [topDeckExportUpdate, ...exampleUpdates] }) },
 };
+
+
+/** Exercises every DeferredHomeSection: scroll or use its Load control to mount it. */
+export const DeferredSections: Story = {
+  parameters: { msw: pageHandlers() },
+};

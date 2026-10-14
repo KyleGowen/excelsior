@@ -9,6 +9,11 @@ export const CATALOG_PRESENTATION_TYPES: readonly CatalogType[] = ['characters',
 export type PresentedCatalogCard = CatalogCard & { presentation: CatalogPresentationDto };
 const hash = (value: string) => createHash('sha256').update(value).digest('hex');
 
+/** Content version shared by presentation generation and its bounded service cache. */
+export function catalogPresentationVersion(cards: CatalogCard[], type: CatalogType, foilEntries: FoilMapEntry[], characters: CatalogCard[]): string {
+  return hash(JSON.stringify({ type, cards, foilEntries, characters }));
+}
+
 /** Preserve the characterized Angry Mob association rather than interpreting arbitrary rules text. */
 function linkedCharacterMatches(linked: string, name: string): boolean {
   if (!linked || linked === 'Any Character') return false;
@@ -39,7 +44,7 @@ export function presentCatalog(cards: CatalogCard[], type: CatalogType, foilEntr
     group.push(card); groups.set(key, group);
   }
   // Versions include linked-character and foil inputs as well as card contents.
-  const catalogVersion = hash(JSON.stringify({ type, cards, foilEntries, characters }));
+  const catalogVersion = catalogPresentationVersion(cards, type, foilEntries, characters);
   const characterNames = [...new Set(characters.map(cardDisplayName))];
   const printingIdsFor = (card: CatalogCard, key: string | null) => {
     if (!key) return [card.id];

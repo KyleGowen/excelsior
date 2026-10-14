@@ -66,14 +66,15 @@ describe('TFCP 7 - Intelligence face-down migration', () => {
     expect(visibleThumb.equals(cardBackThumb)).toBe(false);
   });
 
-  it('refreshes and rehydrates a selected printing instead of retaining stale catalog art', () => {
+  it('retains fresh-read and rehydration wiring for stale or missing selected printings', () => {
     expect(databasePage).toContain('enabled: Boolean(selected)');
+    expect(databasePage).toContain('staleTime: DETAIL_CATALOG_STALE_TIME');
     expect(databasePage).toContain('staleTime: 0');
     expect(databasePage).toContain('card.id === selected.id');
     expect(databasePage).toContain('setSelected(freshSelected)');
     expect(databasePage).toContain('currentCatalog = await queryClient.fetchQuery');
     expect(databasePage).toContain('currentCatalog.find((c) => c.id === printingId)');
-    expect(databasePage).toContain('fetchCatalogFresh(detailCatalogType)');
+    expect(databasePage).toContain('fetchCatalogFresh(detailCatalogType, signal)');
     expect(catalogApi).toContain('api.getFresh<CatalogCard[]>');
     expect(apiClient).toContain("cache: 'no-store'");
   });

@@ -210,3 +210,13 @@
 .layout-mobile .home__rail {
   grid-auto-columns: clamp(210px, 78vw, 280px);
 }
+
+
+/* Reserve space while sections wait for the viewport or their first data read. */
+.home__deferred[data-active="false"] { min-height: 320px; }
+.home__deferred--stats[data-active="false"],
+.home__deferred-stats-loading { min-height: 400px; }
+.home__deferred > .home__section > .loading-state { min-height: 260px; }
+.home__deferred-placeholder > .btn { margin-top: var(--space-3); }
+
+.home__deferred-message { color: var(--color-text-muted); }

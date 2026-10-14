@@ -510,3 +510,62 @@ it('keeps a rejected draw closed and allows an explicit retry without changing t
  await act(async()=>draw!.click());await wait();expect(document.querySelector('[aria-label="Drawn Hand"]')).not.toBeNull();
  expect(host.api.drawDraft).toHaveBeenCalledTimes(2);
 });
+
+
+it('reuses a fresh browse catalog across repeated detail opens without downloading it again', async () => {
+  await mount(<CardDatabaseModule />);
+  for (let i = 0; i < 2; i++) {
+    await act(async () => (container.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement).click());
+    await wait();
+    expect(container.querySelector('[role="dialog"]')?.textContent).toContain('Billy the Kid');
+    const close = container.querySelector('[role="dialog"] [aria-label="Close panel"]') as HTMLButtonElement;
+    expect(close).not.toBeNull();
+    await act(async () => close.click());
+    await wait();
+  }
+  expect(host.api.fetchCatalog).toHaveBeenCalledTimes(1);
+  expect(host.api.fetchCatalogFresh).not.toHaveBeenCalled();
+});
+
+it('refreshes an older detail catalog through the supplied host and displays updated card data', async () => {
+  client.setQueryData(['catalog', 'characters'], catalog.characters, { updatedAt: Date.now() - 61_000 });
+  const fresh = (catalog.characters as unknown as import('../../../frontend/src/lib/api/types').CatalogCard[]).map(card => ({ ...card, special_abilities: 'New fictional ruling.' }));
+  host.api.fetchCatalogFresh = jest.fn(async () => fresh);
+  await mount(<CardDatabaseModule />);
+  expect(host.api.fetchCatalog).not.toHaveBeenCalled();
+  await act(async () => (container.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement).click());
+  await wait();
+  expect(host.api.fetchCatalogFresh).toHaveBeenCalledTimes(1);
+  expect(host.api.fetchCatalogFresh).toHaveBeenCalledWith('characters', expect.any(AbortSignal));
+  expect(container.querySelector('[role="dialog"]')?.textContent).toContain('New fictional ruling.');
+});
+
+it('refreshes explicitly invalidated detail data even inside the freshness window', async () => {
+  await mount(<CardDatabaseModule />);
+  await client.invalidateQueries({ queryKey: ['catalog', 'characters'], exact: true, refetchType: 'none' });
+  await act(async () => (container.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement).click());
+  await wait();
+  expect(host.api.fetchCatalogFresh).toHaveBeenCalledTimes(1);
+});
+
+it.each([false, true])('switches printings and refreshes only when the selected printing is missing (missing=%s)', async (missing) => {
+  type Card = import('../../../frontend/src/lib/api/types').CatalogCard;
+  const base = JSON.parse(JSON.stringify(catalog.characters[0])) as Card;
+  const foilId = 'fictional-billy-foil';
+  base.presentation = { ...base.presentation!, foilPrintingId: foilId,
+    printingIds: [base.id, foilId], missingFoilPrinting: { printingId: foilId, setNumber: '999F' } };
+  const foil: Card = { ...base, id: foilId, is_foil: true, set_number: '999F',
+    presentation: { ...base.presentation, printingId: foilId, isFoil: true, basePrintingId: base.id, foilPrintingId: null, missingFoilPrinting: null } };
+  const initial = missing ? [base] : [base, foil];
+  host.api.fetchCatalog = jest.fn(async () => initial);
+  host.api.fetchCatalogFresh = jest.fn(async () => [base, foil]);
+  await mount(<CardDatabaseModule />);
+  await act(async () => (container.querySelector('[aria-label="View Billy the Kid"]') as HTMLButtonElement).click());
+  await wait();
+  const apply = [...container.querySelectorAll<HTMLButtonElement>('[role="dialog"] button')].find(button => button.textContent === 'Apply');
+  expect(apply).toBeDefined();
+  await act(async () => apply!.click());
+  await wait();
+  expect(container.querySelector('[role="dialog"]')?.textContent).toContain('#999F');
+  expect(host.api.fetchCatalogFresh).toHaveBeenCalledTimes(missing ? 1 : 0);
+});

@@ -63,6 +63,9 @@ import {
 
 const PAGE_SIZE_GRID = 24;
 const PAGE_SIZE_ALL = 48;
+// Detail and printing switches share a short freshness window. Stale or explicitly
+// invalidated data still uses the host's HTTP-cache-bypassing operation.
+const DETAIL_CATALOG_STALE_TIME = 60 * 1000;
 
 function useDebounced<T>(value: T, delay = 250): T {
   const [v, setV] = useState(value);
@@ -148,9 +151,9 @@ export function useCardDatabaseController() {
 
   const detailTypeCatalogQuery = useQuery({
     queryKey: ['catalog', detailCatalogType],
-    queryFn: () => fetchCatalogFresh(detailCatalogType),
+    queryFn: ({ signal }) => fetchCatalogFresh(detailCatalogType, signal),
     enabled: Boolean(selected),
-    staleTime: 0,
+    staleTime: DETAIL_CATALOG_STALE_TIME,
   });
 
   const detailTypeCatalogCards = detailCatalogCached ?? detailTypeCatalogQuery.data ?? [];
@@ -190,16 +193,25 @@ export function useCardDatabaseController() {
       try {
         currentCatalog = await queryClient.fetchQuery({
           queryKey: ['catalog', detailCatalogType],
-          queryFn: () => fetchCatalogFresh(detailCatalogType),
-          staleTime: 0,
+          queryFn: ({ signal }) => fetchCatalogFresh(detailCatalogType, signal),
+          staleTime: DETAIL_CATALOG_STALE_TIME,
         });
+        // A printing advertised by metadata may have been added since this
+        // cached array was fetched. Retry that specific selection once fresh.
+        if (!currentCatalog.some((card) => card.id === printingId)) {
+          currentCatalog = await queryClient.fetchQuery({
+            queryKey: ['catalog', detailCatalogType],
+            queryFn: ({ signal }) => fetchCatalogFresh(detailCatalogType, signal),
+            staleTime: 0,
+          });
+        }
       } catch {
         currentCatalog = detailTypeCatalogCards;
       }
       const printing = currentCatalog.find((c) => c.id === printingId);
       if (printing) setSelected(printing);
     },
-    [detailCatalogType, detailTypeCatalogCards, queryClient],
+    [detailCatalogType, detailTypeCatalogCards, queryClient, fetchCatalogFresh],
   );
 
   const perTypeCards = useMemo(

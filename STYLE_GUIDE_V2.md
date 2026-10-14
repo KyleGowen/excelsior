@@ -832,3 +832,17 @@ M7 preserves ordinary Excelsior layout, typography, icons and branding. Stat/ico
 ## Collection evaluation states (M8)
 
 Collection totals show an em dash while the current snapshot is unavailable or a saved write is pending, with `aria-busy` during requests. Quantity controls wait for server capability. Once Guest evaluation has succeeded, edits preserve the mounted grid while the new snapshot is evaluated. Failure uses Collection unavailable plus an explicit retry and retained-quantities message. Existing dark visual tokens, card layouts, icons and branding stay the source of truth. Named Storybook variants cover pending, unavailable and disabled quantity controls.
+
+
+## Home section loading (performance follow-up)
+
+Home keeps Hero, Recent Updates, tournament statistics, Community Decks, Tournament
+Winning Decks and Preconstructed Decks in that order. Lower sections reserve space
+with their existing heading style, muted "Loads as you scroll" text and a ghost
+"Load [section]" button until within 120px of the viewport. Each section mounts once
+and remains mounted when scrolled away. Deck feed requests start with their own
+section; shared preview catalogs start when the first deck section is approached.
+The tournament chart chunk loads with its section. Loading placeholders reserve
+320px for deck sections and 400px for statistics; feed loading states retain room
+for content. Browsers without IntersectionObserver load every section immediately.
+The named Home `DeferredSections` story exercises every new section wrapper.
