@@ -1,6 +1,6 @@
 import express from 'express';
 import type { StaticHealthRoutesDeps } from './types';
-import { setStaticAssetCacheHeaders } from '../middleware/staticAssetCache';
+import { setStaticAssetCacheHeaders, setFrontendAssetCacheHeaders } from '../middleware/staticAssetCache';
 import { resolveSpaIndexPath, isSpaBuilt, spaDistDir } from './spaIndexPath';
 
 /**
@@ -231,7 +231,7 @@ export function registerStaticAndHealthRoutes(app: express.Application, deps: St
           if (filePath.endsWith('index.html')) {
             res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
           } else {
-            setStaticAssetCacheHeaders(res, filePath);
+            setFrontendAssetCacheHeaders(res, filePath);
           }
         },
       })
@@ -244,7 +244,7 @@ export function registerStaticAndHealthRoutes(app: express.Application, deps: St
   if (legacyAssetsDir) {
     app.use('/assets', express.static(legacyAssetsDir, {
       index: false,
-      setHeaders: setStaticAssetCacheHeaders,
+      setHeaders: setFrontendAssetCacheHeaders,
     }));
   }
 

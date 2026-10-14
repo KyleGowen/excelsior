@@ -57,7 +57,8 @@ const cases = {
     const details = role(tab, 'dialog', `${name} details`);
     await wait(details);
     await tab.getAXState({ emit: false });
-    const img = role(tab, 'img', name);
+    // The browse thumbnail and open detail intentionally share the card's alt text.
+    const img = details.getByRole('img', { name, exact: true });
     await wait(img);
     const art = await img.evaluate(image => ({ complete: image.complete, naturalWidth: image.naturalWidth, naturalHeight: image.naturalHeight }));
     check(art.complete && art.naturalWidth > 0 && art.naturalHeight > 0, 'Card artwork has not loaded');

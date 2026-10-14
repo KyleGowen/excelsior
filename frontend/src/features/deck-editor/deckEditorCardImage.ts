@@ -5,12 +5,15 @@ export function deckEditorUsesThumbnail(catalogType?: CatalogType): boolean {
   return catalogType !== 'locations' && catalogType !== 'battlegrounds' && catalogType !== 'events';
 }
 
-/** Shared CardImage loading props for deck grid tiles and Draw Hand (events excepted). */
-export function deckEditorCardImageLoadingProps(catalogType?: CatalogType): {
+/** Grid art loads near the viewport; an opened Draw Hand opts into eager loading. */
+export function deckEditorCardImageLoadingProps(
+  catalogType?: CatalogType,
+  loading: 'lazy' | 'eager' = 'lazy',
+): {
   useThumbnail: boolean;
   progressive: boolean;
   progressiveSessionScope: 'deck-editor';
-  loading: 'eager';
+  loading: 'lazy' | 'eager';
   className: string;
 } {
   const useThumbnail = deckEditorUsesThumbnail(catalogType);
@@ -18,7 +21,7 @@ export function deckEditorCardImageLoadingProps(catalogType?: CatalogType): {
     useThumbnail,
     progressive: useThumbnail,
     progressiveSessionScope: 'deck-editor',
-    loading: 'eager',
+    loading,
     className: 'card-image--contain',
   };
 }

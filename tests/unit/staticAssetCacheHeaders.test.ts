@@ -3,7 +3,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import request from 'supertest';
-import { setStaticAssetCacheHeaders, SHORT_STATIC_CACHE_CONTROL, APP_SHELL_CACHE_CONTROL, buildStaticImageCdnRedirectUrl } from '../../src/middleware/staticAssetCache';
+import { setStaticAssetCacheHeaders, setFrontendAssetCacheHeaders, SHORT_STATIC_CACHE_CONTROL, IMMUTABLE_FRONTEND_CACHE_CONTROL, APP_SHELL_CACHE_CONTROL, buildStaticImageCdnRedirectUrl } from '../../src/middleware/staticAssetCache';
 import { registerStaticAndHealthRoutes } from '../../src/routes/static-health.routes';
 
 function buildStaticApp(): express.Application {
@@ -33,6 +33,52 @@ function buildStaticApp(): express.Application {
 }
 
 describe('static asset cache headers', () => {
+  it('serves retained content-hashed JS and CSS immutably, including conditional responses', async () => {
+    const legacyDir = fs.mkdtempSync(path.join(os.tmpdir(), 'excelsior-hashed-assets-'));
+    const originalDir = process.env.LEGACY_FRONTEND_ASSETS_DIR;
+    try {
+      fs.writeFileSync(path.join(legacyDir, 'DatabasePage-aB3_dE6-.js'), 'export default "retained";');
+      fs.writeFileSync(path.join(legacyDir, 'index-8z--ZXS2.css'), 'body { color: white; }');
+      process.env.LEGACY_FRONTEND_ASSETS_DIR = legacyDir;
+      const app = buildStaticApp();
+      for (const name of ['DatabasePage-aB3_dE6-.js', 'index-8z--ZXS2.css']) {
+        const response = await request(app).get(`/assets/${name}`);
+        expect(response.status).toBe(200);
+        expect(response.headers['cache-control']).toBe(IMMUTABLE_FRONTEND_CACHE_CONTROL);
+        const conditional = await request(app).get(`/assets/${name}`).set('If-None-Match', response.headers.etag);
+        expect(conditional.status).toBe(304);
+        expect(conditional.headers['cache-control']).toBe(IMMUTABLE_FRONTEND_CACHE_CONTROL);
+      }
+    } finally {
+      if (originalDir === undefined) delete process.env.LEGACY_FRONTEND_ASSETS_DIR;
+      else process.env.LEGACY_FRONTEND_ASSETS_DIR = originalDir;
+      fs.rmSync(legacyDir, { recursive: true, force: true });
+    }
+  });
+
+  it('keeps stable frontend names short-lived and HTML non-storable', () => {
+    for (const [name, expected] of [
+      ['vendor.js', SHORT_STATIC_CACHE_CONTROL],
+      ['theme.css', SHORT_STATIC_CACHE_CONTROL],
+      ['page-short.js', SHORT_STATIC_CACHE_CONTROL],
+      ['index.html', APP_SHELL_CACHE_CONTROL],
+    ]) {
+      const headers = new Map<string, string>();
+      const res = { setHeader: (key: string, value: string) => headers.set(key, value) } as unknown as express.Response;
+      setFrontendAssetCacheHeaders(res, `/repo/frontend/dist/${name}`);
+      expect(headers.get('Cache-Control')).toBe(expected);
+    }
+  });
+
+  it('limits immutable caching to frontend mounts and normalizes Windows paths', () => {
+    const headers = new Map<string, string>();
+    const res = { setHeader: (key: string, value: string) => headers.set(key, value) } as unknown as express.Response;
+    setStaticAssetCacheHeaders(res, '/repo/src/resources/scripts/app-AbCd1234.js');
+    expect(headers.get('Cache-Control')).toBe(SHORT_STATIC_CACHE_CONTROL);
+    setFrontendAssetCacheHeaders(res, 'C:\\repo\\frontend\\dist\\assets\\app-AbCd1234.js');
+    expect(headers.get('Cache-Control')).toBe(IMMUTABLE_FRONTEND_CACHE_CONTROL);
+  });
+
   it('serves retained hashed JavaScript bundles for tabs opened before a deploy', async () => {
     const legacyDir = fs.mkdtempSync(path.join(os.tmpdir(), 'excelsior-legacy-assets-'));
     const originalDir = process.env.LEGACY_FRONTEND_ASSETS_DIR;

@@ -518,6 +518,7 @@ export function CardDatabaseView({ model }: { model: ReturnType<typeof useCardDa
                   key={card.id}
                   card={card}
                   catalogType={activeCatalogType}
+                  progressive={false}
                   hasFoilVersion={cardHasFoilVersion(card, foilLookup.baseToFoil)}
                   showFoilEffect={false}
                   onClick={() => selectCard(card, activeCatalogType)}

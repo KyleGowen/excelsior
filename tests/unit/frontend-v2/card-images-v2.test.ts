@@ -316,14 +316,21 @@ describe('CardTile database progressive wiring', () => {
     expect(source).toContain("return 'card-tile--locations'");
   });
 
-  it('passes progressive and catalogType for database grid', () => {
+  it('allows database grids to keep thumbnails without changing other tile consumers', () => {
     const source = fs.readFileSync(
       path.join(__dirname, '../../../frontend/src/components/CardTile/CardTile.tsx'),
       'utf8',
     );
-    expect(source).toContain('progressive={Boolean(catalogType)}');
+    expect(source).toContain('progressive = Boolean(catalogType)');
+    expect(source).toContain('progressive={progressive}');
+    expect(source).toContain('useThumbnail={!progressive}');
     expect(source).toContain('catalogType={catalogType}');
     expect(source).not.toContain('catalogTypeUsesFullImageInDbGrid');
+    const database = fs.readFileSync(
+      path.join(__dirname, '../../../frontend/src/features/database/CardDatabaseModule.tsx'),
+      'utf8',
+    );
+    expect(database).toContain('progressive={false}');
   });
 
   it('gates foil laminate with showFoilEffect', () => {

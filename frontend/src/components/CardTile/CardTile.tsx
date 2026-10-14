@@ -17,6 +17,8 @@ interface CardTileProps {
   showMeta?: boolean;
   /** When set (database grid), picks landscape vs portrait art frame and contain-fit. */
   catalogType?: CatalogType;
+  /** Upgrade thumbnails to full-size art. Disable for browse-only database grids. */
+  progressive?: boolean;
   /** Silver starburst on tile when a foil variant exists (database grid). */
   hasFoilVersion?: boolean;
   /** When false, suppresses the prismatic foil overlay on foil printings (DBV, Add Cards). Default true. */
@@ -47,6 +49,7 @@ export const CardTile = memo(function CardTile({
   dimmed = false,
   showMeta = true,
   catalogType,
+  progressive = Boolean(catalogType),
   hasFoilVersion = false,
   showFoilEffect = true,
   onHoverStart,
@@ -80,8 +83,8 @@ export const CardTile = memo(function CardTile({
         <CardImage
           imagePath={imagePath}
           alt={name}
-          useThumbnail={!catalogType}
-          progressive={Boolean(catalogType)}
+          useThumbnail={!progressive}
+          progressive={progressive}
           catalogType={catalogType}
           className={catalogType ? 'card-image--contain' : ''}
           isFoil={showFoilEffect && isFoilCard(card)}

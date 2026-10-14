@@ -13,6 +13,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Character: Story = {};
+export const DatabaseThumbnail: Story = { args: { progressive: false } };
 export const Event: Story = { args: { card: eventCard, catalogType: 'events' } };
 export const Aspect: Story = { args: { card: aspectCard, catalogType: 'aspects' } };
 export const Unowned: Story = { args: { dimmed: true } };

@@ -58,13 +58,17 @@ Entry points:
 
 - Deck editor: `getDeckEditorCardViewInitialImagePath`, `initDeckEditorCardViewProgressiveLoad()`, `buildDeckCardViewRowContext` / `buildDeckCardViewInstanceHtml`, and `patchDeckCardViewInstance()` in `public/js/deck-editor-rendering.js`.
 - Hover modal: two-layer block in `public/js/card-hover-modal.js` (and inline equivalent in `public/deck-builder.html`).
-- **v2 database grid:** `CardTile` passes `progressive` to `CardImage` when `catalogType` is set (`DatabasePage`). `CardImage` renders `.card-image__img--thumb` + `.card-image__img--full`, preloads via `preloadAndRevealFullRes()` in `frontend/src/lib/images/progressiveImageLoad.ts`, and gates full-res fetch on `IntersectionObserver` (200px root margin). Falls back to single-layer when `canProgressiveLoad()` is false.
+- **v2 database grid:** `CardDatabaseModule` passes `progressive={false}` to `CardTile`.
+  The grid stays on type-aware thumbnails instead of upgrading every visible card to
+  full-size art. A missing thumbnail retains the shared full-art fallback. Opening a
+  detail panel still loads the full image. Other `CardTile` consumers keep the default
+  progressive behavior when `catalogType` is set.
 
 ---
 
-## Session reveal cache (v2 database grid)
+## Session reveal cache for progressive consumers
 
-Search, filter, and pagination remount `CardTile` instances. Without a session cache, each remount reruns the thumb → full progressive pipeline even when the browser already fetched the full-res bytes.
+Progressive consumers can remount `CardTile` instances. Without a session cache, each remount reruns the thumb → full progressive pipeline even when the browser already fetched the full-res bytes. The database grid opts out of that pipeline and needs no full-art reveal cache for its tiles.
 
 **Approach:** an in-memory registry in `progressiveImageLoad.ts` scoped to `'database'`:
 

@@ -192,6 +192,13 @@ account-sheet row (`.account-sheet__toggle`) with `justify-content: space-betwee
   (CDN base + thumbnail rules). Never hardcode image URLs.
 - Progressive thumbnail → full-resolution reveals must preserve the same painted framing;
   loading may improve sharpness but must not visibly scale, crop, or shift the card art.
+- Database browse grids keep the type-aware thumbnail without automatically upgrading to
+  full-size art. Opening a card still shows its full-resolution detail image. Missing
+  thumbnails retain the shared full-art fallback; Collection and Add Cards retain their
+  existing progressive behavior.
+- Deck-grid thumbnails use native lazy loading and progressive full-art upgrades
+  begin only near the viewport. Draw Hand explicitly keeps eager loading for all
+  displayed hand cards, including its full-resolution event images.
 - Two-faced cards expose a compact circular flip control at the lower-right of the
   detail image. The control uses the elevated/input surface, strong border, standard
   pop shadow, and accent focus ring; flipping changes art only and never mutates deck state.

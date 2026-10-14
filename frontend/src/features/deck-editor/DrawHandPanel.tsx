@@ -245,7 +245,7 @@ export function DrawHandPanel({
                             imagePath={imagePath}
                             alt={cardName}
                             catalogType={catalogType}
-                            {...deckEditorCardImageLoadingProps(catalogType)}
+                            {...deckEditorCardImageLoadingProps(catalogType, 'eager')}
                             onImageFailed={() => markImageFailed(index)}
                             isFoil={entryIsFoil}
                             foilSeed={foilSeed}

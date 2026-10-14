@@ -3,6 +3,7 @@ import path from 'path';
 
 export const APP_SHELL_CACHE_CONTROL = 'no-cache, no-store, must-revalidate';
 export const SHORT_STATIC_CACHE_CONTROL = 'public, max-age=300';
+export const IMMUTABLE_FRONTEND_CACHE_CONTROL = 'public, max-age=31536000, immutable';
 
 const SHORT_CACHE_EXTENSIONS = new Set([
   '.css',
@@ -41,6 +42,16 @@ export function setStaticAssetCacheHeaders(res: Response, filePath: string): voi
   if (SHORT_CACHE_EXTENSIONS.has(ext)) {
     res.setHeader('Cache-Control', SHORT_STATIC_CACHE_CONTROL);
   }
+}
+
+/** Only frontend build mounts opt in; a content change generates a new Vite URL. */
+export function setFrontendAssetCacheHeaders(res: Response, filePath: string): void {
+  const filename = path.posix.basename(normalizeFilePath(filePath));
+  if (/^.+-[A-Za-z0-9_-]{8,}\.(?:js|css)$/.test(filename)) {
+    res.setHeader('Cache-Control', IMMUTABLE_FRONTEND_CACHE_CONTROL);
+    return;
+  }
+  setStaticAssetCacheHeaders(res, filePath);
 }
 
 function cdnHostnameFromBaseUrl(cdnBaseUrl: string): string | null {
