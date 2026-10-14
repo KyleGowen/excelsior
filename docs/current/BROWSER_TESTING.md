@@ -97,6 +97,8 @@ M1 screenshot dimensions are mixed: Database/Collection/Deck Editor desktop imag
 
 ## Report contract
 
+The [Add Cards scroll regression](../../tests/browser/deck-add-scroll.mjs) runs against a caller-owned, named local Guest deck. It checks artwork adds, quantity increases/decreases, and removal of the last copy in an actually scrolled list. Run it at mobile, laptop, and wide desktop dimensions with a verified target; it records scroll offsets and screenshots for each action. Card edits remain unsaved, and the caller deletes only the run-owned session deck.
+
 For every run report: local/production/Storybook, URLs, checkout and source SHA/fingerprint, intended and observed deployed/API SHA, database/migration and fixture provenance, actor, actual viewport/theme, exact selected cases and subcases, passed/failed/skipped/blocked with reasons, evidence paths, browser errors, cleanup performed/pending, and gaps. Never include passwords, tokens, cookies, private account data, or raw credential-bearing logs.
 
 Distinguish **automated pass**, **ready for Kyle's local spot check**, and **Kyle explicitly accepted**. Only record acceptance from Kyle's actual response to the identified preview. Browser smoke does not replace Ship's gates. After a shipped production failure, alert prominently, summarize the failed case and evidence, and offer a scoped rollback through Ship; do not roll back automatically or resurrect shelved Supporter.

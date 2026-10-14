@@ -203,7 +203,7 @@ function AddCardsTeamStats({
             : null;
           return (
             <div
-              key={card?.id ?? `empty-${index}`}
+              key={`${card?.id ?? 'empty'}-${index}`}
               className={`add-cards__team-row${card ? ' add-cards__team-row--interactive' : ' add-cards__team-row--empty'}`}
               tabIndex={card ? 0 : undefined}
               onPointerEnter={() => {
@@ -473,7 +473,10 @@ export function AddCardsPanel({
   }, [cards, cardsByType]);
   const candidateEvaluation = useCandidateEvaluation(candidateInput, open && candidateInput.candidates.length > 0);
   const decisions = useMemo(() => new Map(candidateEvaluation.result?.candidates.map(c => [`${c.catalogType}:${c.cardId}`, c]) ?? []), [candidateEvaluation.result]);
-  const usableByIdentity = useMemo(() => new Map([...decisions].map(([key, value]) => [key, value.usable])), [decisions]);
+  const usableByIdentity = useMemo(
+    () => new Map(candidateEvaluation.displayResult?.candidates.map(c => [`${c.catalogType}:${c.cardId}`, c.usable]) ?? []),
+    [candidateEvaluation.displayResult],
+  );
 
   const effectiveHideUnusables = effectiveHideUnusablesForTab(tab, hideUnusables);
 
@@ -673,8 +676,8 @@ export function AddCardsPanel({
     : isAllTab
       ? allCatalogQuery.isError
       : catalogQuery.isError;
-  const isLoading = catalogLoading || candidateEvaluation.pending;
-  const isError = catalogError || candidateEvaluation.error;
+  const isLoading = catalogLoading || (candidateEvaluation.pending && !candidateEvaluation.displayResult);
+  const isError = catalogError || (candidateEvaluation.error && !candidateEvaluation.displayResult);
   const hasResults = totalItems > 0;
   const dynamicFilterCards = activeType ? cardsByType[activeType] ?? [] : [];
 
@@ -739,7 +742,7 @@ export function AddCardsPanel({
           </section>
         </aside>
 
-        <div className="add-cards" ref={addCardsRef} onPointerLeave={clearHoverCard}>
+        <div className="add-cards" ref={addCardsRef} onPointerLeave={clearHoverCard} aria-busy={candidateEvaluation.pending}>
           <div className="add-cards__search">
             <IconSearch className="add-cards__search-icon" />
             <input
@@ -875,6 +878,14 @@ export function AddCardsPanel({
             totalItems={totalItems}
             onPageChange={setPage}
           />
+        ) : null}
+        {candidateEvaluation.error && candidateEvaluation.displayResult ? (
+          <div role="alert">
+            <p>Card eligibility could not be refreshed. Your draft is preserved.</p>
+            <button type="button" className="btn" onClick={() => candidateEvaluation.retry()}>
+              Retry card eligibility
+            </button>
+          </div>
         ) : null}
         </div>
       </div>

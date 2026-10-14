@@ -50,4 +50,46 @@ describe('Exact-input candidate lifecycle', () => {
     expect(evaluate).toHaveBeenCalledTimes(2);
   });
 
+  it('retains presentation during a team refresh without exposing stale action decisions', async () => {
+    evaluate.mockImplementationOnce(async p => result(p));
+    evaluate.mockImplementation(() => new Promise(() => {}));
+    await render(); await tick();
+    const settled = latest.result;
+    await render({ ...input, cards: [{ type: 'character', cardId: 'fictional-character', quantity: 1 }] });
+    expect(latest.pending).toBe(true);
+    expect(latest.result).toBeUndefined();
+    expect(latest.displayResult).toBe(settled);
+    await render(input, false);
+    expect(latest.displayResult).toBeUndefined();
+    await render(input, true);
+    expect(latest.displayResult).toBeUndefined();
+  });
+
+  it('does not carry previous presentation into another candidate catalog or back again', async () => {
+    evaluate.mockImplementationOnce(async p => result(p));
+    evaluate.mockImplementation(() => new Promise(() => {}));
+    await render(); await tick();
+    expect(latest.displayResult).toBeDefined();
+    await render({ ...input, candidates: [{ catalogType: 'characters', cardId: 'fictional-character' }] });
+    expect(latest.displayResult).toBeUndefined();
+    await render(input);
+    expect(latest.displayResult).toBeUndefined();
+  });
+
+  it('retains previous presentation on failure and replaces it after explicit retry', async () => {
+    evaluate.mockImplementationOnce(async p => result(p));
+    evaluate.mockRejectedValue(new Error('offline'));
+    await render(); await tick();
+    const settled = latest.result;
+    await render({ ...input, cards: [{ type: 'character', cardId: 'fictional-character', quantity: 1 }] });
+    await tick(1000); await tick(1001); await tick();
+    expect(latest.error).toBe(true);
+    expect(latest.result).toBeUndefined();
+    expect(latest.displayResult).toBe(settled);
+    evaluate.mockImplementation(async p => result(p));
+    await React.act(async () => latest.retry()); await tick();
+    expect(latest.displayResult).toBe(latest.result);
+    expect(latest.displayResult).not.toBe(settled);
+  });
+
 });

@@ -34,6 +34,7 @@ On desktop viewports wider than 1200px, the Add Cards drawer uses a contextual p
   and horizontally scrollable, and the chevron opens a wrapping overlay with the same controls.
   Set and Hide Unusables live in the rail's trailing section.
 - Filter state should persist while the user remains in the same deck-editor session: closing/reopening Add Cards and switching tabs should restore search, active tab, set, hide-unusable, page/quantity state, and type-specific dynamic filters. Resetting on deck-editor exit or deck change is acceptable.
+- Adding/removing a card keeps the results and pagination mounted while server eligibility refreshes, preserving scroll position on mobile and both desktop layouts. Previous eligibility may retain the displayed Hide Unusables results for the same catalog, but only the exact current response enables additions. A failed refresh keeps the draft/results visible and offers Retry card eligibility; changing catalogs or reopening requires fresh eligibility.
 
 ## Hover Preview
 

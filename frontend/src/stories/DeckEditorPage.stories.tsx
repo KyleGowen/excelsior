@@ -1,9 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { http, HttpResponse, delay } from 'msw';
-import { userEvent } from 'storybook/test';
+import { expect, userEvent, waitFor } from 'storybook/test';
 import { Route, Routes } from 'react-router-dom';
 import DeckEditorPage from '../features/deck-editor/DeckEditorPage';
 import { pageHandlers } from './pageMocks';
+import { sampleDeck } from './fixtures';
+import { candidateInputKey, type CandidateEvaluationInput } from '../contracts/inputKey';
 
 const meta = {
   title: 'Screens/Deck Editor',
@@ -80,6 +82,42 @@ export const EvaluationRefreshUnavailable: Story = {
 export const AddCardsEligibilityUnavailable: Story = {
   parameters: { msw: { handlers: [http.post('/api/v1/decks/candidates/evaluate', () => HttpResponse.json({ data: null, errors: [{ code: 'DRAFT_EVALUATION_UNAVAILABLE', message: 'Fictional unavailable catalog' }] }, { status: 503 })), ...pageHandlers()] } },
   play: async ({ canvas }) => { await userEvent.click(await canvas.findByRole('button', { name: 'Add Cards' })); await canvas.findByRole('dialog', { name: 'Add cards' }); },
+};
+
+function candidateRefreshHandler(unavailable = false) {
+  const originalCount = sampleDeck.cards.reduce((count, card) => count + card.quantity, 0);
+  return http.post('/api/v1/decks/candidates/evaluate', async ({ request }) => {
+    const input = await request.json() as CandidateEvaluationInput & { revision: number };
+    if (input.cards.reduce((count, card) => count + card.quantity, 0) > originalCount) {
+      if (unavailable) return HttpResponse.json({ data: null, errors: [{ code: 'DRAFT_EVALUATION_UNAVAILABLE', message: 'Fictional unavailable refresh' }] }, { status: 503 });
+      await delay('infinite');
+    }
+    return HttpResponse.json({ data: { schemaVersion: 1, revision: input.revision, inputKey: candidateInputKey(input), versions: { catalog: 'fictional', rules: 'fictional' }, candidates: input.candidates.map(card => ({ ...card, usable: true, reasons: [], maxCopies: 99 })), missionLimitReached: false } });
+  });
+}
+
+export const AddCardsEligibilityRefreshing: Story = {
+  parameters: { msw: { handlers: [candidateRefreshHandler(), ...pageHandlers()] } },
+  play: async ({ canvas }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'Add Cards' }));
+    await userEvent.click(await canvas.findByRole('tab', { name: 'Characters' }));
+    const tile = await canvas.findByRole('button', { name: 'View Billy the Kid' });
+    await waitFor(() => expect(tile.querySelector('button[aria-label="Increase"]')).toBeEnabled());
+    await userEvent.click(tile);
+    await waitFor(() => expect(tile).toBeInTheDocument());
+    await waitFor(() => expect(tile.querySelector('button[aria-label="Increase"]')).toBeDisabled());
+  },
+};
+export const MobileAddCardsEligibilityRefreshing: Story = {
+  ...AddCardsEligibilityRefreshing,
+  globals: { viewport: { value: 'mobile' } },
+};
+export const AddCardsEligibilityRefreshUnavailable: Story = {
+  parameters: { msw: { handlers: [candidateRefreshHandler(true), ...pageHandlers()] } },
+  play: async context => {
+    await AddCardsEligibilityRefreshing.play!(context);
+    await context.canvas.findByRole('button', { name: 'Retry card eligibility' }, { timeout: 5000 });
+  },
 };
 
 export const TopDeckExportOpen: Story = {

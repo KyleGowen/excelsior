@@ -786,6 +786,8 @@ A successful Database Add to Deck must appear on normal navigation into that dec
 
 Add Cards uses server eligibility metadata and retains the draft on unavailable evaluation, with an explicit Retry card eligibility action. Existing card filtering and tile quantity ceiling meanings remain compatible. No new visual component or theme is introduced.
 
+Adding/removing cards keeps the Add Cards results and pagination mounted during an eligibility refresh, preserving the results pane's scroll position on desktop and mobile. The last settled response for the same catalog may retain the displayed Hide Unusables results, while additions remain disabled until the current response arrives. A failed refresh leaves the cards visible and shows a retry message below the results. Initial evaluation and a changed catalog retain the existing loading/error states.
+
 ## Independent module development host (M5)
 
 Existing page appearance and controls remain in the production modules. Excelsior supplies branded Deck Builder navigation as host slots; the standalone module omits those slots and uses a single-column layout (`deck-editor--module`). The development harness has a compact sticky wrapped selector/input area with explicit pressed selection states, module borders and an explicit identity/read-only indicator. It uses existing dark theme tokens and shared appStyles; it is not a production page. Per-host theme, overlay/container and CSS isolation remain M6. Catalog/deck load failures provide local Retry; an unavailable deck still offers the host's Home callback. Named standalone/together/Guest/host loading/error examples appear in Independent host stories.
