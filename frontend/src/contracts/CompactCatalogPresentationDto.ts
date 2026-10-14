@@ -3,7 +3,11 @@ import type { CatalogPresentationDto } from './CatalogPresentationDto';
 export type SharedCatalogPresentation = Pick<CatalogPresentationDto,
   'logicalCardId' | 'groupKey' | 'addDefaultPrintingId' | 'printingIds' | 'characterNames'>;
 export type CompactCardPresentation = Omit<CatalogPresentationDto,
-  keyof SharedCatalogPresentation | 'schemaVersion' | 'catalogVersion' | 'rulesVersion'> & { group: number };
+  keyof SharedCatalogPresentation | 'schemaVersion' | 'catalogVersion' | 'rulesVersion' | 'printingId'> & {
+    group: number;
+    /** Defined with the first card in a group; later references point backward. */
+    shared?: SharedCatalogPresentation;
+  };
 
 /** Opt-in wire format. Expands losslessly to the existing per-card contract. */
 export interface CompactCatalogPresentationDto {
@@ -11,6 +15,5 @@ export interface CompactCatalogPresentationDto {
   schemaVersion: 1;
   catalogVersion: string | null;
   rulesVersion: CatalogPresentationDto['rulesVersion'];
-  groups: SharedCatalogPresentation[];
   cards: Array<Record<string, unknown> & { id: string; presentation: CompactCardPresentation }>;
 }

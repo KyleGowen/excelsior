@@ -4,6 +4,7 @@ import { DataSourceConfig } from '../../../src/config/DataSourceConfig';
 import { CATALOG_PRESENTATION_TYPES } from '../../../src/services/catalog-presentation/presentCatalog';
 import { presentCatalog as baseline } from '../../helpers/baselineCatalogPresentation';
 import { decodeCatalogPresentation } from '../../../frontend/src/lib/api/catalogPresentation';
+import { gzipSync } from 'zlib';
 
 describe('M4 catalog presentation through production composition', () => {
   it('preserves every printing in all 13 real catalogs and losslessly expands the compact response', async () => {
@@ -17,6 +18,10 @@ describe('M4 catalog presentation through production composition', () => {
       expect(full.body.data).toEqual(baseline(raw.body.data,type,foils.body.data,linked));
       expect(decodeCatalogPresentation(compact.body.data)).toEqual(full.body.data);
       expect(compact.headers.etag).not.toBe(full.headers.etag);
+      if(type==='characters'||type==='special-cards') {
+        // Guard the actual compressed download, not just decoded JSON length.
+        expect(gzipSync(JSON.stringify(compact.body)).length).toBeLessThan(gzipSync(JSON.stringify(full.body)).length);
+      }
     }
   });
   it('preserves actual row IDs and data while attaching authoritative domain metadata without record writes', async () => {

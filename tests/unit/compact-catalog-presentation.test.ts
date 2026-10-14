@@ -27,10 +27,22 @@ describe('compact catalog wire contract', () => {
     if(error==='version') bad.catalogVersion=null;
     if(error==='group') bad.cards[0].presentation.group=999;
     if(error==='negative group') bad.cards[0].presentation.group=-1;
-    if(error==='printing identity') bad.cards[0].presentation.printingId='wrong';
-    if(error==='missing group') bad.groups=[];
-    if(error==='missing printingIds') delete bad.groups[0].printingIds;
+    if(error==='printing identity') bad.cards[0].id=null;
+    if(error==='missing group') delete bad.cards[0].presentation.shared;
+    if(error==='missing printingIds') delete bad.cards[0].presentation.shared.printingIds;
     if(error==='raw rows') { expect(() => decodeCatalogPresentation([{id:'a'}])).toThrow('metadata is unavailable'); return; }
     expect(() => decodeCatalogPresentation(bad)).toThrow('metadata is unavailable');
+  });
+  it('defines groups once, rejects forward references/redefinition and copies the raw printing identity', () => {
+    const rows=presentCatalog([{id:'a',name:'Hero'},{id:'b',name:'Hero'}],'characters',[],[]);
+    const packed=compactCatalogPresentation(rows);
+    expect(packed.cards[0].presentation.shared).toBeDefined();
+    expect(packed.cards[1].presentation.shared).toBeUndefined();
+    expect(packed.cards.every(card=>!('printingId' in card.presentation))).toBe(true);
+    expect(decodeCatalogPresentation(packed).map(card=>card.presentation?.printingId)).toEqual(['a','b']);
+    const repeated=structuredClone(packed);repeated.cards[1].presentation.shared=repeated.cards[0].presentation.shared!;
+    expect(()=>decodeCatalogPresentation(repeated)).toThrow('metadata is unavailable');
+    const forward=structuredClone(packed);forward.cards.reverse();
+    expect(()=>decodeCatalogPresentation(forward)).toThrow('metadata is unavailable');
   });
 });

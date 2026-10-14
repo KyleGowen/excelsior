@@ -1251,13 +1251,12 @@ paths:
                       - type: array
                         items: { type: object }
                       - type: object
-                        required: [format, schemaVersion, catalogVersion, rulesVersion, groups, cards]
+                        required: [format, schemaVersion, catalogVersion, rulesVersion, cards]
                         properties:
                           format: { type: string, enum: [catalog-presentation-compact-v1] }
                           schemaVersion: { type: integer, enum: [1] }
                           catalogVersion: { type: string, nullable: true }
                           rulesVersion: { type: string, enum: [catalog-presentation-compatibility-v1] }
-                          groups: { type: array, items: { type: object } }
                           cards: { type: array, items: { type: object } }
         '304':
           description: This representation matches its content ETag.
