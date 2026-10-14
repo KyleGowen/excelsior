@@ -1,5 +1,13 @@
 # Frontend loading changes for LRG
 
+## Medium batch: compact catalog responses (#9)
+
+The transport change is in `frontend/src/lib/api/catalog.ts`, the new `catalogPresentation.ts` decoder, and the mirrored `frontend/src/contracts/CompactCatalogPresentationDto.ts`. Include the matching contract-check entry in `frontend/scripts/check-module-contracts.mjs` when porting. No React component, visual layout, query key or ModuleHost method changes are required.
+
+Both normal and forced-fresh presentation reads append `?compact=1`. A compatible backend returns versions once and shares repeated logical/printing group fields; the decoder reconstructs the same per-card presentation before the module sees it. It copies picker arrays per expanded row and performs no game-rule calculations. Bad formats/references fail with the existing metadata-unavailable error. Older backends that ignore the query and return the full array are accepted without an extra request.
+
+Keep LRG's existing host transport, credentials, cancellation and no-store policy for fresh reads. Deploy support for the opt-in wire format to the backend for the byte reduction; frontend-only ports remain compatible but receive full data from older backends. Backend items #5 and #6 additionally precompute printing indexes and reuse content-validated, immutable catalog lookups across deck operations. Those changes need backend deployment and must not be reimplemented as browser rule caches. See `docs/current/CATALOG_PERFORMANCE.md` and `API_V1.md` for the scope and wire format.
+
 These changes reduce image and catalog work in the shared Card Database and Deck Builder UI.
 LRG can apply the same component changes without changing catalog APIs, deck rules,
 authentication, image URL resolution, or host configuration.

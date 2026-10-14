@@ -1,0 +1,16 @@
+import type { CatalogPresentationDto } from './CatalogPresentationDto';
+
+export type SharedCatalogPresentation = Pick<CatalogPresentationDto,
+  'logicalCardId' | 'groupKey' | 'addDefaultPrintingId' | 'printingIds' | 'characterNames'>;
+export type CompactCardPresentation = Omit<CatalogPresentationDto,
+  keyof SharedCatalogPresentation | 'schemaVersion' | 'catalogVersion' | 'rulesVersion'> & { group: number };
+
+/** Opt-in wire format. Expands losslessly to the existing per-card contract. */
+export interface CompactCatalogPresentationDto {
+  format: 'catalog-presentation-compact-v1';
+  schemaVersion: 1;
+  catalogVersion: string | null;
+  rulesVersion: CatalogPresentationDto['rulesVersion'];
+  groups: SharedCatalogPresentation[];
+  cards: Array<Record<string, unknown> & { id: string; presentation: CompactCardPresentation }>;
+}

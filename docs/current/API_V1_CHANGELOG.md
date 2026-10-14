@@ -1,5 +1,7 @@
 # API v1 — changelog
 
+- 2026-10-14: Add opt-in `?compact=1` on existing catalog presentation GETs. Send versions and shared printing metadata once, with lossless client expansion; default arrays, authorization, no-store native gateways, ETags and since-version behavior remain compatible. Precompute printing indexes and reuse content-validated immutable deck catalog lookups without caching player evaluations.
+
 - 2026-10-10: Add opt-in stateless BMG builder gateway and in-process native
   builder identity, preserving player authorization and catalog access. Builder
   evaluation, candidate evaluation, draw, and JSON/TopDeck export remain no-store.

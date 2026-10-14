@@ -1216,6 +1216,55 @@ components:
 
 
 paths:
+  /api/v1/catalog/presentation/{type}:
+    get:
+      tags: [Catalog]
+      summary: Read authoritative catalog presentation, optionally compact
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: [characters, special-cards, power-cards, locations, battlegrounds, missions, events, aspects, advanced-universe, teamwork, ally-universe, training, basic-universe]
+        - in: query
+          name: compact
+          schema: { type: string }
+          description: Only scalar '1' opts into catalog-presentation-compact-v1. Other or repeated values retain the full array.
+        - in: query
+          name: since_version
+          schema: { type: integer, minimum: 0 }
+          description: Current version retains the existing empty data array, including compact requests.
+        - in: header
+          name: If-None-Match
+          schema: { type: string }
+      responses:
+        '200':
+          description: V1 envelope containing the full row array or lossless compact object. See API_V1.md and CompactCatalogPresentationDto for exact fields.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    oneOf:
+                      - type: array
+                        items: { type: object }
+                      - type: object
+                        required: [format, schemaVersion, catalogVersion, rulesVersion, groups, cards]
+                        properties:
+                          format: { type: string, enum: [catalog-presentation-compact-v1] }
+                          schemaVersion: { type: integer, enum: [1] }
+                          catalogVersion: { type: string, nullable: true }
+                          rulesVersion: { type: string, enum: [catalog-presentation-compatibility-v1] }
+                          groups: { type: array, items: { type: object } }
+                          cards: { type: array, items: { type: object } }
+        '304':
+          description: This representation matches its content ETag.
+        '401':
+          description: Existing authentication policy denies access.
+        '500':
+          description: CATALOG_ERROR; no data fallback.
   /decks/candidates/evaluate:
     post:
       summary: Evaluate Add Cards starting-team usability without persistence

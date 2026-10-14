@@ -1,6 +1,6 @@
 import type { CatalogCard, CatalogType } from './types';
 import { cardCharacterName, cardDisplayName } from './displayFields';
-import { isFoilCard, type FoilCardMapLookup } from './foilCatalog';
+import { isFoilCard } from './foilCatalog';
 
 function cardImagePath(card: CatalogCard): string {
   return String(card.image_path ?? card.image ?? '');
@@ -142,69 +142,4 @@ export function variantGroupKey(card: CatalogCard, catalogType: CatalogType): st
     default:
       return `${name}|${normalizeSet(card.set as string | undefined)}`;
   }
-}
-
-function pickDefaultRepresentative(
-  group: CatalogCard[],
-  catalogType: CatalogType,
-  preferredSet?: string,
-): CatalogCard {
-  const normalizedPreferredSet = preferredSet ? normalizeSet(preferredSet) : '';
-  const preferredRows = normalizedPreferredSet
-    ? group.filter((card) => normalizeSet(card.set as string | undefined) === normalizedPreferredSet)
-    : [];
-  const candidates = preferredRows.length > 0 ? preferredRows : group;
-  return candidates.slice().sort((a, b) => compareDefaultRepresentative(a, b, catalogType))[0];
-}
-
-/**
- * Resolve the catalog row to store when adding a card to a deck: non-foil when available,
- * otherwise foil-only; prefer default (non-alternate) art; lowest checklist # among ties.
- */
-export function resolveDefaultCardForDeckAdd(
-  card: CatalogCard,
-  catalogType: CatalogType,
-  allCatalogCards: CatalogCard[],
-  foilLookup?: Pick<FoilCardMapLookup, 'foilToBase' | 'baseToFoil'>,
-): CatalogCard {
-  const foilToBase = foilLookup?.foilToBase ?? new Map<string, string>();
-  const baseToFoil = foilLookup?.baseToFoil ?? new Map<string, string>();
-
-  const anchor = (() => {
-    if (isFoilCard(card)) {
-      const baseId = foilToBase.get(card.id);
-      if (baseId) {
-        const base = allCatalogCards.find((c) => c.id === baseId);
-        if (base) return base;
-      }
-      return card;
-    }
-    return card;
-  })();
-
-  const key = variantGroupKey(anchor, catalogType);
-  if (!key) return card;
-
-  const group: CatalogCard[] = [];
-  const seen = new Set<string>();
-  const add = (row: CatalogCard | undefined) => {
-    if (!row || seen.has(row.id)) return;
-    seen.add(row.id);
-    group.push(row);
-  };
-
-  for (const row of allCatalogCards) {
-    if (variantGroupKey(row, catalogType) === key) {
-      add(row);
-    }
-  }
-
-  for (const row of [...group]) {
-    if (!isFoilCard(row)) {
-      add(allCatalogCards.find((c) => c.id === baseToFoil.get(row.id)));
-    }
-  }
-
-  if (group.length === 0) return card;
-  return pickDefaultRepresentative(group, catalogType);
 }

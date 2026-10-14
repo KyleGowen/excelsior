@@ -397,6 +397,12 @@ Each unchanged catalog row carries `presentation`: `schemaVersion: 1`, `catalogV
 
 Uses the same catalog authentication/kill switch, envelope, ETag/304 and `since` behavior as raw paths. Unknown types return404; query/presentation failures return500 `CATALOG_ERROR`. No player data or writes. Implementation: `CatalogService.getPresentation`, `src/services/catalog-presentation/`, `CatalogPresentationDto`.
 
+Optional **`?compact=1`** returns a lossless compact representation in `data` instead of the full row array. Only the scalar string `1` opts in; absent/other/repeated values retain the full array. Existing clients remain compatible. The SPA requests compact data and expands it into the same `CatalogCard[]` before storing it in its host-scoped query cache. Older hosts that ignore the opt-in can return the existing full array.
+
+The compact object has `format: "catalog-presentation-compact-v1"`, `schemaVersion: 1`, one `catalogVersion` (null for an empty catalog), one `rulesVersion`, a `groups` array, and a `cards` array in original order. Each group contains the exact shared `logicalCardId`, `groupKey`, `addDefaultPrintingId`, `printingIds`, and `characterNames`. Each card retains all raw fields and printing-specific presentation fields, with a zero-based `presentation.group` reference instead of those shared fields and versions. Expansion copies that group and the top-level versions into each presentation. No search/printing rules run in the client. See `CompactCatalogPresentationDto` for the complete transport type.
+
+Compact and full payloads have distinct content ETags. Existing query-aware edge caching separates their URLs; native/service gateways retain `no-store` and authorization on every request. `since_version` retains its existing advisory behavior: a current version returns `data: []` even when compact is requested. The client accepts that empty array. No new error codes, routes, privileges, or image path shapes are introduced.
+
 ### `GET /api/v1/catalog/characters`
 
 **Auth:** Session cookie or Bearer JWT (see introduction above).

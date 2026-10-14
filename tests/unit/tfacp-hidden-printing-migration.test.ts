@@ -75,7 +75,7 @@ describe('TFCP 7 - Intelligence face-down migration', () => {
     expect(databasePage).toContain('currentCatalog = await queryClient.fetchQuery');
     expect(databasePage).toContain('currentCatalog.find((c) => c.id === printingId)');
     expect(databasePage).toContain('fetchCatalogFresh(detailCatalogType, signal)');
-    expect(catalogApi).toContain('api.getFresh<CatalogCard[]>');
+    expect(catalogApi).toContain('decodeCatalogPresentation(await api.getFresh<unknown>');
     expect(apiClient).toContain("cache: 'no-store'");
   });
 });

@@ -3,12 +3,58 @@ import request from 'supertest';
 import { registerDbvCatalogV1HttpRoutes } from '../../../../src/api/http/dbv-catalog.http';
 import type { CatalogCardRepository } from '../../../../src/api/services/catalogService';
 import { CatalogService } from '../../../../src/api/services/catalogService';
+import { CATALOG_PRESENTATION_TYPES } from '../../../../src/services/catalog-presentation/presentCatalog';
+import { decodeCatalogPresentation } from '../../../../frontend/src/lib/api/catalogPresentation';
+import { getCatalogDataVersion } from '../../../../src/api/http/catalogCache';
 
 const foilStub = () => ({ getFoilCardMap: jest.fn().mockResolvedValue([]) });
 
 const passCatalogAuth: RequestHandler = (_req, _res, next) => {
   next();
 };
+
+describe('opt-in compact presentation HTTP representation', () => {
+  function service() {
+    const methods = ['Characters','Locations','Battlegrounds','SpecialCards','Missions','Events','Aspects',
+      'AdvancedUniverse','Teamwork','AllyUniverse','Training','BasicUniverse','PowerCards'];
+    const cards = Object.fromEntries(methods.map(name => ['getAll'+name, jest.fn().mockResolvedValue([{id:'fictional',name:'Hero'}])]));
+    return new CatalogService(cards as unknown as CatalogCardRepository, foilStub());
+  }
+  it.each(CATALOG_PRESENTATION_TYPES)('preserves the full %s contract and distinguishes ETags', async type => {
+    const app = buildApp(service()); const path = '/catalog/presentation/'+type;
+    const full = await request(app).get(path).expect(200);
+    const compact = await request(app).get(path+'?compact=1').expect(200);
+    expect(compact.body.data.format).toBe('catalog-presentation-compact-v1');
+    expect(decodeCatalogPresentation(compact.body.data)).toEqual(full.body.data);
+    expect(compact.headers.etag).not.toBe(full.headers.etag);
+    await request(app).get(path+'?compact=1').set('If-None-Match',compact.headers.etag).expect(304);
+    await request(app).get(path+'?compact=1').set('If-None-Match',full.headers.etag).expect(200);
+  });
+  it.each(['compact=0','compact=true','compact=1&compact=1','compact[flag]=1'])('keeps the legacy array without a scalar opt-in: %s', async query => {
+    const result = await request(buildApp(service())).get('/catalog/presentation/characters?'+query).expect(200);
+    expect(Array.isArray(result.body.data)).toBe(true);
+  });
+  it('preserves the existing since-version empty-array response', async () => {
+    const result=await request(buildApp(service())).get('/catalog/presentation/characters?compact=1&since_version='+getCatalogDataVersion()).expect(200);
+    expect(result.body.data).toEqual([]);
+  });
+  it('preserves cache-header kill switch and loader errors', async () => {
+    const svc=service(); const app=buildApp(svc); const previous=process.env.DISABLE_CATALOG_CACHE_HEADERS;
+    try {
+      process.env.DISABLE_CATALOG_CACHE_HEADERS='1';
+      const response=await request(app).get('/catalog/presentation/characters?compact=1').expect(200);
+      expect(response.headers['cache-control']).toBe('no-store');expect(response.headers.etag).not.toMatch(/^"1-/);
+    } finally { if(previous===undefined)delete process.env.DISABLE_CATALOG_CACHE_HEADERS;else process.env.DISABLE_CATALOG_CACHE_HEADERS=previous; }
+    jest.spyOn(svc,'getCompactPresentation').mockRejectedValueOnce(new Error('catalog unavailable'));
+    const failed=await request(app).get('/catalog/presentation/characters?compact=1').expect(500);
+    expect(failed.body.errors[0].code).toBe('CATALOG_ERROR');expect(failed.body.data).toBeNull();
+  });
+  it('runs the same authorization before either representation loader', async () => {
+    const svc=service();const load=jest.spyOn(svc,'getCompactPresentation');const app=express();const router=express.Router();
+    registerDbvCatalogV1HttpRoutes(router,{catalogService:svc,catalogAuth:(_req,res)=>{res.sendStatus(401);}});app.use(router);
+    await request(app).get('/catalog/presentation/characters?compact=1').expect(401);expect(load).not.toHaveBeenCalled();
+  });
+});
 
 function buildApp(catalogService: CatalogService): express.Application {
   const app = express();

@@ -1,6 +1,7 @@
 import { DeckCard } from '../types';
 import { CardRepository } from '../repository/CardRepository';
-import { buildAvailableCardsMap, type DeckCatalogBundle } from './deck-validation/build-available-cards-map';
+import type { DeckCatalogBundle } from './deck-validation/build-available-cards-map';
+import { DeckCatalogSnapshotCache } from './deck-validation/catalogSnapshot';
 import { buildDeckValidationContext } from './deck-validation/deck-validation-context';
 import type { DeckValidationRuleList } from './deck-validation/deck-validation-rule-list';
 import { defaultDeckValidationRuleList } from './deck-validation/rules';
@@ -9,6 +10,7 @@ import type { ValidationError } from './deck-validation/validation-error';
 export type { ValidationError } from './deck-validation/validation-error';
 
 export class DeckValidationService {
+    private readonly catalogCache = new DeckCatalogSnapshotCache();
     constructor(
         private cardRepository: CardRepository,
         private readonly ruleList: DeckValidationRuleList = defaultDeckValidationRuleList()
@@ -64,7 +66,7 @@ export class DeckValidationService {
             allBasicUniverse
         };
 
-        return buildAvailableCardsMap(bundle);
+        return this.catalogCache.resolve(bundle);
     }
 
     validateResolvedDeck(cards: DeckCard[], availableCardsMap: Map<string, Record<string, unknown>>): ValidationError[] {

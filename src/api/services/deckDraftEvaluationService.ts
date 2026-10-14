@@ -14,7 +14,7 @@ import { parseTopDeckImport, TopDeckImportError } from '../../services/deck-prev
 import { buildDeckExportTopDeck } from '../../services/deck-preview/buildDeckExportTopDeck';
 import { buildDeckExportJson } from '../../services/deck-preview/buildDeckExportJson';
 import type { DeckCardEntry } from '../../services/deck-preview/types';
-import crypto from 'crypto';
+import { deckCatalogArtifacts } from '../../services/deck-validation/catalogSnapshot';
 import { maxCopiesForAddCards } from '../../services/deck-candidates/editorCopyCeiling';
 import { candidateContext, candidateCatalogKey } from '../../services/deck-candidates/context';
 import { candidateInputKey } from '../../services/deck-candidates/inputKey';
@@ -110,7 +110,7 @@ export class DeckDraftEvaluationService {
             const messages = { HOMEBASE: 'Requires a matching homebase.', MISSION_SET: 'Requires a matching mission set.', STARTING_TEAM: 'Requires matching starting-team or battleground conditions.', POWER_GRID: 'No starting-team character meets this card’s use requirement.' };
             return { ...candidate, usable, reasons: usable ? [] : [{ code, message: messages[code] }], maxCopies: maxCopiesForAddCards(card) };
         });
-        return { schemaVersion: 1, revision: input.revision, inputKey: candidateInputKey(input), versions: { catalog: crypto.createHash('sha256').update(JSON.stringify([...catalog])).digest('hex'), rules: 'add-cards-compatibility-v1' }, candidates,
+        return { schemaVersion: 1, revision: input.revision, inputKey: candidateInputKey(input), versions: { catalog: deckCatalogArtifacts(catalog).version, rules: 'add-cards-compatibility-v1' }, candidates,
             missionLimitReached: input.cards.filter(c => c.type === 'mission').reduce((n, c) => n + c.quantity, 0) >= 7 };
     }
     async evaluate(input: EvaluateDraftInput, resolvedCatalog?: Awaited<ReturnType<Validator['resolveCatalog']>>): Promise<DeckDraftEvaluationDto> {
@@ -147,7 +147,7 @@ export class DeckDraftEvaluationService {
         const drawPile = countCardsInDeck(cards);
         const legalityThreat = cards.filter(c => c.type === 'character' || c.type === 'location').reduce((sum, c) => sum + characterThreatValue(catalog.get(deckCardMapKey(c))!) * c.quantity, 0);
         const previewCards = cards.flatMap(c => Array.from({ length:c.quantity }, (_, i) => ({ ...c, quantity:1, exclude_from_draw:c.exclude_from_draw === true && i === 0 })));
-        const previewCatalog = new Map([...catalog].map(([key,c]) => { const type=key.slice(0,-String(c.id).length-1).replace(/_/g,'-'); return [`${type}:${c.id}`, { ...c, id:String(c.id), type:type === 'basic-universe' ? c.basic_skill_type ?? c.type : c.type ?? type } as CatalogCard] as const; }));
+        const { version, preview: previewCatalog } = deckCatalogArtifacts(catalog);
         const koContext = buildKoDimmingContext(previewCards, previewCatalog, ko);
         const prePlacedFlags = computePrePlacedFlags(previewCards,previewCatalog);
         const addTeam = effectiveTeamCharacterStats(printed.slice(0,4));
@@ -156,7 +156,7 @@ export class DeckDraftEvaluationService {
             koDimming: Object.fromEntries(cards.map(c => [`${c.type}:${c.cardId}`, shouldDimDeckCard(c, previewCatalog.get(`${c.type}:${c.cardId}`), koContext)])),
             addCardsTeam: addTeam.map((c,i) => ({ cardId:characterCards[i].cardId, energy:c.energy, combat:c.combat, brute_force:c.brute_force, intelligence:c.intelligence })),
             schemaVersion: 1, draftId: input.draftId, revision: input.revision, inputKey: evaluationInputKey(input),
-            versions: { catalog: crypto.createHash('sha256').update(JSON.stringify([...catalog])).digest('hex'), rules: 'venture-editor-compatibility-v1' },
+            versions: { catalog: version, rules: 'venture-editor-compatibility-v1' },
             policy: { format: input.format, limited: input.limited },
             legality: { valid: input.limited || reasons.length === 0, rawValid: reasons.length === 0, reasons },
             threat: { editor: calculateDeckTotalThreat(cards, input.reserveCharacterId, (type, cardId) => catalog.get(deckCardMapKey({ type: type as DeckCard['type'], cardId }))), legality: legalityThreat },
@@ -197,7 +197,7 @@ export class DeckDraftEvaluationService {
         const catalog = await this.validator.resolveCatalog();
         const evaluation = await this.evaluate(input, catalog);
         const cards: DeckCardEntry[] = input.cards.map(c => ({ ...c, exclude_from_draw:c.exclude_from_draw === true, type:c.type.replace(/_/g,'-') as DeckCardEntry['type'] }));
-        const cardIndex = new Map([...catalog].map(([key,c]) => { const type=key.slice(0,-String(c.id).length-1).replace(/_/g,'-'); return [`${type}:${c.id}`, { ...c, id:String(c.id), type:type === 'basic-universe' ? c.basic_skill_type ?? c.type : c.type ?? type } as CatalogCard] as const; }));
+        const cardIndex = deckCatalogArtifacts(catalog).preview;
         return { evaluation, cards, cardIndex };
     }
     async draw(input: EvaluateDraftInput):Promise<DrawDraftDto> {

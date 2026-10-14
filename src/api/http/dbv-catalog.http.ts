@@ -7,6 +7,7 @@ import {
   sendCachedCatalogResponse
 } from './catalogCache';
 import { sendV1Json } from './v1Envelope';
+import { wantsCompactPresentation } from './models/catalog/CatalogPresentationQuery';
 
 export interface DbvCatalogV1HttpDeps {
   catalogService: CatalogService;
@@ -15,14 +16,14 @@ export interface DbvCatalogV1HttpDeps {
 }
 
 /**
- * Wrap a catalog loader with conditional-GET + cache headers + `?since_version`.
+ * Wrap a catalog payload loader with conditional-GET, cache headers and `?since_version`.
  * Keeps the per-route handler readable (no try/catch duplication).
  */
 function registerCachedCatalogGet<T>(
   router: Router,
   path: string,
   catalogAuth: RequestHandler,
-  loader: () => Promise<T[]>,
+  loader: (req: Request) => Promise<T>,
   errorCode = 'CATALOG_ERROR',
   errorMessage = 'Failed to fetch catalog data'
 ): void {
@@ -32,8 +33,8 @@ function registerCachedCatalogGet<T>(
       const currentVersion = getCatalogDataVersion();
       const payload =
         sinceVersion !== null && sinceVersion >= currentVersion
-          ? ([] as T[])
-          : await loader();
+          ? []
+          : await loader(req);
       sendCachedCatalogResponse(req, res, payload);
     } catch (error) {
       console.error(`v1 ${path} error:`, error);
@@ -44,8 +45,10 @@ function registerCachedCatalogGet<T>(
 
 export function registerDbvCatalogV1HttpRoutes(router: Router, deps: DbvCatalogV1HttpDeps): void {
   for (const type of CATALOG_PRESENTATION_TYPES) {
-    registerCachedCatalogGet(router, '/catalog/presentation/' + type, deps.catalogAuth,
-      () => deps.catalogService.getPresentation(type));
+    registerCachedCatalogGet<unknown>(router, '/catalog/presentation/' + type, deps.catalogAuth,
+      req => wantsCompactPresentation(req)
+        ? deps.catalogService.getCompactPresentation(type)
+        : deps.catalogService.getPresentation(type));
   }
   registerCachedCatalogGet(
     router,

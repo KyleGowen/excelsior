@@ -11,6 +11,7 @@ const pairs = {
  'src/api/dto/v1/DeckDraftEvaluationDto.ts':'DeckDraftEvaluationDto.ts',
  'src/api/dto/v1/DeckCandidatesEvaluationDto.ts':'DeckCandidatesEvaluationDto.ts',
  'src/api/dto/v1/CatalogPresentationDto.ts':'CatalogPresentationDto.ts',
+ 'src/api/dto/v1/CompactCatalogPresentationDto.ts':'CompactCatalogPresentationDto.ts',
  'src/services/deck-validation/validation-error.ts':'validation-error.ts',
  'src/services/deck-evaluation/draftInput.ts':'draftInput.ts',
  'src/services/deck-candidates/inputKey.ts':'inputKey.ts'

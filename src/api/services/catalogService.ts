@@ -1,4 +1,6 @@
 import { catalogPresentationVersion, presentCatalog, type PresentedCatalogCard } from '../../services/catalog-presentation/presentCatalog';
+import { compactCatalogPresentation } from '../../services/catalog-presentation/compactPresentation';
+import type { CompactCatalogPresentationDto } from '../dto/v1/CompactCatalogPresentationDto';
 import type { CatalogType, CatalogCard, FoilMapEntry } from '../../services/catalog-presentation/types';
 import type { CardRepository } from '../../repository/CardRepository';
 import type {
@@ -45,7 +47,7 @@ type CatalogRow = Record<string, unknown> & { id?: unknown };
 export class CatalogService {
   // One completed catalog per type (at most 13); superseded versions are replaced.
   // Only this read-only service's HTTP adapter consumes these shared results.
-  private readonly presentations = new Map<CatalogType, { version: string; cards: PresentedCatalogCard[] }>();
+  private readonly presentations = new Map<CatalogType, { version: string; cards: PresentedCatalogCard[]; compact?: CompactCatalogPresentationDto }>();
   constructor(
     private readonly cards: CatalogCardRepository,
     private readonly foilMap: FoilCardMapReader,
@@ -162,9 +164,19 @@ export class CatalogService {
     const cached = this.presentations.get(type);
     if (cached?.version === version) return cached.cards;
 
-    const presented = presentCatalog(rows as CatalogCard[], type, foilEntries as FoilMapEntry[], characters as CatalogCard[]);
+    const presented = presentCatalog(rows as CatalogCard[], type, foilEntries as FoilMapEntry[], characters as CatalogCard[], version);
     this.presentations.set(type, { version, cards: presented });
     return presented;
+  }
+
+  async getCompactPresentation(type: CatalogType): Promise<CompactCatalogPresentationDto> {
+    const cards = await this.getPresentation(type);
+    const cached = this.presentations.get(type)!;
+    // getPresentation's final cache read/build is synchronous after its inputs.
+    // An overlapping request can replace the entry before this continuation.
+    if (cached.cards !== cards) return compactCatalogPresentation(cards);
+    cached.compact ??= compactCatalogPresentation(cards);
+    return cached.compact;
   }
 
   getCardStats() {
