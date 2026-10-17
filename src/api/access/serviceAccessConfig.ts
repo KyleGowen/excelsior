@@ -1,7 +1,7 @@
 import { readFileSync, statSync } from 'fs';
 import { z } from 'zod';
 
-export const SERVICE_SCOPES = ['catalog:read', 'decks:read', 'decks:write', 'collections:read', 'collections:write', 'auth:session', 'guest:decks'] as const;
+export const SERVICE_SCOPES = ['catalog:read', 'decks:read', 'decks:write', 'collections:read', 'collections:write', 'auth:session', 'guest:decks', 'account:self'] as const;
 export type ServiceScope = typeof SERVICE_SCOPES[number];
 
 const credentialSchema = z.object({

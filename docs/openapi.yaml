@@ -1216,6 +1216,338 @@ components:
 
 
 paths:
+  /api/service/account/v1/auth/login:
+    post:
+      tags: [Auth]
+      summary: Account password login
+      description: >-
+        Disabled unless ENABLE_ACCOUNT_SERVICE_GATEWAY=1. Requires explicitly granted
+        account:self. Native handler semantics/envelope are preserved; see
+        current/EXTERNAL_ACCOUNT_ACCESS.md. Ambient Cookie/Authorization are ignored.
+      security:
+        - serviceAuthorization: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: Existing target response; all outcomes no-store. Session issuance/clearing uses only the private response header.
+          headers:
+            X-Excelsior-Account-Session:
+              schema: { type: string }
+              description: Server-only session credential or empty logout clearing; absent if no cookie issued.
+        '400': { description: Existing validation error or sanitized malformed JSON }
+        '401': { description: Invalid service token or required account session }
+        '403': { description: SERVICE_SCOPE_DENIED or existing role/provider restriction }
+        '409': { description: Existing username/email conflict when applicable }
+        '413': { description: Sanitized request-size limit }
+        '429': { description: Service or isolated authentication budget exhausted }
+        '503': { description: Gateway disabled or service/transport unavailable }
+  /api/service/account/v1/auth/signup:
+    post:
+      tags: [Auth]
+      summary: Account registration
+      description: >-
+        Disabled unless ENABLE_ACCOUNT_SERVICE_GATEWAY=1. Requires explicitly granted
+        account:self. Native handler semantics/envelope are preserved; see
+        current/EXTERNAL_ACCOUNT_ACCESS.md. Ambient Cookie/Authorization are ignored.
+      security:
+        - serviceAuthorization: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, password]
+              properties:
+                username: { type: string }
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '201':
+          description: Existing target response; all outcomes no-store. Session issuance/clearing uses only the private response header.
+          headers:
+            X-Excelsior-Account-Session:
+              schema: { type: string }
+              description: Server-only session credential or empty logout clearing; absent if no cookie issued.
+        '400': { description: Existing validation error or sanitized malformed JSON }
+        '401': { description: Invalid service token or required account session }
+        '403': { description: SERVICE_SCOPE_DENIED or existing role/provider restriction }
+        '409': { description: Existing username/email conflict when applicable }
+        '413': { description: Sanitized request-size limit }
+        '429': { description: Service or isolated authentication budget exhausted }
+        '503': { description: Gateway disabled or service/transport unavailable }
+  /api/service/account/v1/auth/google/preview:
+    post:
+      tags: [Auth]
+      summary: Google registration preview
+      description: >-
+        Disabled unless ENABLE_ACCOUNT_SERVICE_GATEWAY=1. Requires explicitly granted
+        account:self. Native handler semantics/envelope are preserved; see
+        current/EXTERNAL_ACCOUNT_ACCESS.md. Ambient Cookie/Authorization are ignored.
+      security:
+        - serviceAuthorization: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [idToken]
+              properties:
+                idToken: { type: string }
+      responses:
+        '200':
+          description: Existing target response; all outcomes no-store. Session issuance/clearing uses only the private response header.
+          headers:
+            X-Excelsior-Account-Session:
+              schema: { type: string }
+              description: Server-only session credential or empty logout clearing; absent if no cookie issued.
+        '400': { description: Existing validation error or sanitized malformed JSON }
+        '401': { description: Invalid service token or required account session }
+        '403': { description: SERVICE_SCOPE_DENIED or existing role/provider restriction }
+        '409': { description: Existing username/email conflict when applicable }
+        '413': { description: Sanitized request-size limit }
+        '429': { description: Service or isolated authentication budget exhausted }
+        '503': { description: Gateway disabled or service/transport unavailable }
+  /api/service/account/v1/auth/google:
+    post:
+      tags: [Auth]
+      summary: Google completion
+      description: >-
+        Disabled unless ENABLE_ACCOUNT_SERVICE_GATEWAY=1. Requires explicitly granted
+        account:self. Native handler semantics/envelope are preserved; see
+        current/EXTERNAL_ACCOUNT_ACCESS.md. Ambient Cookie/Authorization are ignored.
+      security:
+        - serviceAuthorization: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [idToken]
+              properties:
+                idToken: { type: string }
+                confirmRegistration: { type: boolean }
+      responses:
+        '200':
+          description: Existing target response; all outcomes no-store. Session issuance/clearing uses only the private response header.
+          headers:
+            X-Excelsior-Account-Session:
+              schema: { type: string }
+              description: Server-only session credential or empty logout clearing; absent if no cookie issued.
+        '400': { description: Existing validation error or sanitized malformed JSON }
+        '401': { description: Invalid service token or required account session }
+        '403': { description: SERVICE_SCOPE_DENIED or existing role/provider restriction }
+        '409': { description: Existing username/email conflict when applicable }
+        '413': { description: Sanitized request-size limit }
+        '429': { description: Service or isolated authentication budget exhausted }
+        '503': { description: Gateway disabled or service/transport unavailable }
+  /api/service/account/v1/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout only the supplied account session
+      description: >-
+        Disabled unless ENABLE_ACCOUNT_SERVICE_GATEWAY=1. Requires explicitly granted
+        account:self. Native handler semantics/envelope are preserved; see
+        current/EXTERNAL_ACCOUNT_ACCESS.md. Ambient Cookie/Authorization are ignored.
+      security:
+        - serviceAuthorization: []
+      responses:
+        '200':
+          description: Existing target response; all outcomes no-store. Session issuance/clearing uses only the private response header.
+          headers:
+            X-Excelsior-Account-Session:
+              schema: { type: string }
+              description: Server-only session credential or empty logout clearing; absent if no cookie issued.
+        '400': { description: Existing validation error or sanitized malformed JSON }
+        '401': { description: Invalid service token or required account session }
+        '403': { description: SERVICE_SCOPE_DENIED or existing role/provider restriction }
+        '409': { description: Existing username/email conflict when applicable }
+        '413': { description: Sanitized request-size limit }
+        '429': { description: Service or isolated authentication budget exhausted }
+        '503': { description: Gateway disabled or service/transport unavailable }
+  /api/service/account/v1/auth/me:
+    get:
+      tags: [Auth]
+      summary: Current account identity
+      description: >-
+        Disabled unless ENABLE_ACCOUNT_SERVICE_GATEWAY=1. Requires explicitly granted
+        account:self. Native handler semantics/envelope are preserved; see
+        current/EXTERNAL_ACCOUNT_ACCESS.md. Ambient Cookie/Authorization are ignored.
+      security:
+        - serviceAuthorization: []
+      parameters:
+        - in: header
+          name: X-Excelsior-Account-Session
+          required: true
+          schema: { type: string, pattern: "^[a-f0-9]{64}$" }
+          description: Private host-server credential; never browser-accessible.
+      responses:
+        '200':
+          description: Existing target response; all outcomes no-store. Session issuance/clearing uses only the private response header.
+          headers:
+            X-Excelsior-Account-Session:
+              schema: { type: string }
+              description: Server-only session credential or empty logout clearing; absent if no cookie issued.
+        '400': { description: Existing validation error or sanitized malformed JSON }
+        '401': { description: Invalid service token or required account session }
+        '403': { description: SERVICE_SCOPE_DENIED or existing role/provider restriction }
+        '409': { description: Existing username/email conflict when applicable }
+        '413': { description: Sanitized request-size limit }
+        '429': { description: Service or isolated authentication budget exhausted }
+        '503': { description: Gateway disabled or service/transport unavailable }
+  /api/service/account/v1/config/firebase:
+    get:
+      tags: [Auth]
+      summary: Public Firebase configuration via confidential gateway
+      description: >-
+        Disabled unless ENABLE_ACCOUNT_SERVICE_GATEWAY=1. Requires explicitly granted
+        account:self. Native handler semantics/envelope are preserved; see
+        current/EXTERNAL_ACCOUNT_ACCESS.md. Ambient Cookie/Authorization are ignored.
+      security:
+        - serviceAuthorization: []
+      responses:
+        '200':
+          description: Existing target response; all outcomes no-store. Session issuance/clearing uses only the private response header.
+          headers:
+            X-Excelsior-Account-Session:
+              schema: { type: string }
+              description: Server-only session credential or empty logout clearing; absent if no cookie issued.
+        '400': { description: Existing validation error or sanitized malformed JSON }
+        '401': { description: Invalid service token or required account session }
+        '403': { description: SERVICE_SCOPE_DENIED or existing role/provider restriction }
+        '409': { description: Existing username/email conflict when applicable }
+        '413': { description: Sanitized request-size limit }
+        '429': { description: Service or isolated authentication budget exhausted }
+        '503': { description: Gateway disabled or service/transport unavailable }
+  /api/service/account/v1/users/change-email:
+    post:
+      tags: [Auth]
+      summary: Change own email
+      description: >-
+        Disabled unless ENABLE_ACCOUNT_SERVICE_GATEWAY=1. Requires explicitly granted
+        account:self. Native handler semantics/envelope are preserved; see
+        current/EXTERNAL_ACCOUNT_ACCESS.md. Ambient Cookie/Authorization are ignored.
+      security:
+        - serviceAuthorization: []
+      parameters:
+        - in: header
+          name: X-Excelsior-Account-Session
+          required: true
+          schema: { type: string, pattern: "^[a-f0-9]{64}$" }
+          description: Private host-server credential; never browser-accessible.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string }
+      responses:
+        '200':
+          description: Existing target response; all outcomes no-store. Session issuance/clearing uses only the private response header.
+          headers:
+            X-Excelsior-Account-Session:
+              schema: { type: string }
+              description: Server-only session credential or empty logout clearing; absent if no cookie issued.
+        '400': { description: Existing validation error or sanitized malformed JSON }
+        '401': { description: Invalid service token or required account session }
+        '403': { description: SERVICE_SCOPE_DENIED or existing role/provider restriction }
+        '409': { description: Existing username/email conflict when applicable }
+        '413': { description: Sanitized request-size limit }
+        '429': { description: Service or isolated authentication budget exhausted }
+        '503': { description: Gateway disabled or service/transport unavailable }
+  /api/service/account/v1/users/change-password:
+    post:
+      tags: [Auth]
+      summary: Change own password
+      description: >-
+        Disabled unless ENABLE_ACCOUNT_SERVICE_GATEWAY=1. Requires explicitly granted
+        account:self. Native handler semantics/envelope are preserved; see
+        current/EXTERNAL_ACCOUNT_ACCESS.md. Ambient Cookie/Authorization are ignored.
+      security:
+        - serviceAuthorization: []
+      parameters:
+        - in: header
+          name: X-Excelsior-Account-Session
+          required: true
+          schema: { type: string, pattern: "^[a-f0-9]{64}$" }
+          description: Private host-server credential; never browser-accessible.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [newPassword, confirmPassword]
+              properties:
+                newPassword: { type: string }
+                confirmPassword: { type: string }
+      responses:
+        '200':
+          description: Existing target response; all outcomes no-store. Session issuance/clearing uses only the private response header.
+          headers:
+            X-Excelsior-Account-Session:
+              schema: { type: string }
+              description: Server-only session credential or empty logout clearing; absent if no cookie issued.
+        '400': { description: Existing validation error or sanitized malformed JSON }
+        '401': { description: Invalid service token or required account session }
+        '403': { description: SERVICE_SCOPE_DENIED or existing role/provider restriction }
+        '409': { description: Existing username/email conflict when applicable }
+        '413': { description: Sanitized request-size limit }
+        '429': { description: Service or isolated authentication budget exhausted }
+        '503': { description: Gateway disabled or service/transport unavailable }
+  /api/service/account/v1/users/display-name:
+    post:
+      tags: [Auth]
+      summary: Set own username or Google display name
+      description: >-
+        Disabled unless ENABLE_ACCOUNT_SERVICE_GATEWAY=1. Requires explicitly granted
+        account:self. Native handler semantics/envelope are preserved; see
+        current/EXTERNAL_ACCOUNT_ACCESS.md. Ambient Cookie/Authorization are ignored.
+      security:
+        - serviceAuthorization: []
+      parameters:
+        - in: header
+          name: X-Excelsior-Account-Session
+          required: true
+          schema: { type: string, pattern: "^[a-f0-9]{64}$" }
+          description: Private host-server credential; never browser-accessible.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [displayName]
+              properties:
+                displayName: { type: string }
+      responses:
+        '200':
+          description: Existing target response; all outcomes no-store. Session issuance/clearing uses only the private response header.
+          headers:
+            X-Excelsior-Account-Session:
+              schema: { type: string }
+              description: Server-only session credential or empty logout clearing; absent if no cookie issued.
+        '400': { description: Existing validation error or sanitized malformed JSON }
+        '401': { description: Invalid service token or required account session }
+        '403': { description: SERVICE_SCOPE_DENIED or existing role/provider restriction }
+        '409': { description: Existing username/email conflict when applicable }
+        '413': { description: Sanitized request-size limit }
+        '429': { description: Service or isolated authentication budget exhausted }
+        '503': { description: Gateway disabled or service/transport unavailable }
   /api/v1/catalog/presentation/{type}:
     get:
       tags: [Catalog]

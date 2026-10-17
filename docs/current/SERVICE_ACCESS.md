@@ -1,5 +1,11 @@
 # Milestone 2: application access and player identity
 
+The separate [external account gateway](EXTERNAL_ACCOUNT_ACCESS.md) adds an
+explicitly granted `account:self` scope behind `ENABLE_ACCOUNT_SERVICE_GATEWAY=1`.
+It does not broaden the general operation map or catalog/builder credentials.
+Its private session header and ambient-cookie isolation differ from the general
+adapter described here. Existing clients retain their configured scopes.
+
 The optional service-access path identifies a confidential server application separately from the player. The existing session and user JWT routes remain available. No production credentials or flags are provisioned by this change.
 
 ## Configuration and boundary

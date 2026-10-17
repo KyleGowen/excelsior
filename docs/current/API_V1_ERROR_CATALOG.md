@@ -143,3 +143,23 @@ canonical evaluation/draw/export errors. Gateway failures add `SERVICE_TOKEN_INV
 `VALIDATION_ERROR` (400 or 413). Native aliases under
 `/api/apps/excelsior-deckbuilder/api/v1/` preserve all existing player authorization
 failures and reject caller-supplied service identity.
+# External account gateway additions
+
+`/api/service/account/v1/*` aliases only the operations in
+[EXTERNAL_ACCOUNT_ACCESS.md](EXTERNAL_ACCOUNT_ACCESS.md). Gateway errors use the
+v1 envelope, while successful forwarding preserves the target handler envelope.
+
+| Code | HTTP | Meaning |
+| --- | --- | --- |
+| `ACCOUNT_SERVICE_UNAVAILABLE` | 503 | Gateway activation flag absent; native login remains available. |
+| `ACCOUNT_SESSION_INVALID` | 401 | Private session header is not exactly one 64-character lowercase hex token. |
+| `SERVICE_TRANSPORT_REQUIRED` | 503 | Production origin transport is not HTTPS. |
+| `SERVICE_ACCESS_UNAVAILABLE` | 503 | Confidential service configuration unavailable or invalid. |
+| `SERVICE_TOKEN_INVALID` | 401 | Missing, malformed, expired, or revoked service token. |
+| `SERVICE_SCOPE_DENIED` | 403 | Scope missing or literal method/path not allowed; includes all admin/deck operations. |
+| `SERVICE_CLIENT_RATE_LIMITED` | 429 | Existing confidential-client budget exhausted; honor Retry-After. |
+| `RATE_LIMITED` | 429 | Separate external authentication attempt budget exhausted. |
+
+Forwarded auth/account errors retain their existing status and payload. Malformed
+or oversized JSON is sanitized to VALIDATION_ERROR (400/413). A service token
+alone never satisfies player-session authorization.

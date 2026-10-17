@@ -25,6 +25,8 @@ export function createApplicationLogger(destination?: DestinationStream): Logger
       'req.headers.cookie',
       'req.headers["x-excelsior-service-authorization"]',
       'res.headers["set-cookie"]',
+      'req.headers["x-excelsior-account-session"]',
+      'res.headers["x-excelsior-account-session"]',
       'password',
       'req.body.password',
       'req.body.idToken',

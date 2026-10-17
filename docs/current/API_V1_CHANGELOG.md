@@ -1,5 +1,10 @@
 # API v1 — changelog
 
+- 2026-10-17: Prepare disabled-by-default external account aliases under
+  `/api/service/account/v1`, explicit `account:self` scope and private upstream
+  session headers. Preserve native login, signup, Google, logout, cookies,
+  session expiry, hashing, roles, and UI behavior. No production activation.
+
 - 2026-10-14: Add opt-in `?compact=1` on existing catalog presentation GETs. Send versions and shared printing metadata once, with lossless client expansion; default arrays, authorization, no-store native gateways, ETags and since-version behavior remain compatible. Precompute printing indexes and reuse content-validated immutable deck catalog lookups without caching player evaluations.
 
 - 2026-10-10: Add opt-in stateless BMG builder gateway and in-process native

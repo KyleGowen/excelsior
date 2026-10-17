@@ -1,5 +1,14 @@
 # HTTP API v1 (`/api/v1`)
 
+The opt-in account gateway `/api/service/account/v1` requires a new explicitly
+granted `account:self` confidential-client scope and remains disabled unless
+`ENABLE_ACCOUNT_SERVICE_GATEWAY=1`. It aliases the current legacy authentication
+and v1 self-service profile handlers, ignores ambient browser cookies/Bearer
+tokens, and transports upstream sessions only in a private server header.
+It grants no administration, decks, or collections. See the complete
+[account gateway contract](docs/current/EXTERNAL_ACCOUNT_ACCESS.md); the native
+routes and authentication policies remain unchanged.
+
 Database-only application gateways are opt-in transport aliases of existing reads.
 BMG uses POST /api/service/v1/service-auth/token and the X-Excelsior-Service-Authorization
 Bearer header on GET /api/service/v1/catalog/presentation/{type}, /catalog/foil-card-map,
@@ -48,8 +57,8 @@ Versioned JSON API for Excelsior. **Legacy** routes remain documented in [API_DO
 | ------------ | :------------: | :--------: | ----- |
 | `POST /api/v1/auth/login` | — | — | Open — returns access + refresh tokens |
 | `POST /api/v1/auth/refresh` | — | — | Open — accepts refresh token in body |
-| `GET /api/v1/auth/me` | ✓ | ✓ | Returns current user; 401 if not authed |
-| `POST /api/v1/auth/logout` | ✓ | ✓ | Clears session / revokes refresh token |
+| `GET /api/v1/auth/me` | — | ✓ | Requires player Bearer JWT; use legacy /api/auth/me for cookie sessions |
+| `POST /api/v1/auth/logout` | — | — | Best-effort revokes body.refreshToken; does not destroy a cookie session or access JWT |
 | `GET /api/v1/catalog/*` | ✓ (optional) | ✓ (optional) | Unauthenticated allowed (guest catalog reads) |
 | `GET /api/v1/dbv/*` | ✓ (optional) | ✓ (optional) | Same as catalog |
 | `GET /api/v1/recent-updates` | ✓ (optional) | ✓ (optional) | Same as catalog |

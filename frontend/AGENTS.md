@@ -52,3 +52,5 @@ Read first: [`.cursorrules`](.cursorrules) (this dir), repo-root
   `tests/unit/frontend-v2/`). Run `npm run test:unit` from the repo root.
 - Browser-verify UI changes at `:5173` per `.cursor/rules/browser-verification.mdc`
   (login as `kyle` / `test`).
+
+Authentication/account source and role/provider behavior: [native guide](../docs/current/FRONTEND_AUTH_AND_SESSION.md). External preparation must leave native UI unchanged; scoped context is beside ProfileMenu, app identity, and lib/auth.

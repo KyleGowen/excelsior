@@ -38,6 +38,10 @@ Key docs:
 - [docs/current/VENTURE_TOTAL.md](docs/current/VENTURE_TOTAL.md) — concise Modern-rulebook reference for calculating Venture Total and the Draw Hand estimate's scope.
 - [docs/current/COLLECTION_CHECKLIST_SOURCE.md](docs/current/COLLECTION_CHECKLIST_SOURCE.md) — Source of truth for collection card names and numbers (OverPower Check List).
 
+## Authentication context
+
+Read [the native authentication guide](docs/current/FRONTEND_AUTH_AND_SESSION.md) and [external account handoff](docs/current/EXTERNAL_ACCOUNT_ACCESS.md) for account work. Scoped AGENTS.md / CLAUDE.md files sit beside the menu, host identity, Google client, services, and confidential adapters. External account preparation is additive and default-off; preserve native login/session behavior and leave production activation to the owner.
+
 ## External API hardening
 
 Before touching auth, transport, CORS, caching, or `/api/v1` routes, read [`src/api/.cursorrules`](src/api/.cursorrules) — it has the full Phase 0–3 security index (kill switches, middleware files, per-phase doc links).

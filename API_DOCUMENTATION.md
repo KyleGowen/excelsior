@@ -536,3 +536,12 @@ When adding or changing **legacy** routes, update the corresponding `src/routes/
 When adding or changing **`/api/v1`** routes, update **[API_V1.md](API_V1.md)** in the same change and tick **[API_MIGRATION_CHECKLIST.md](API_MIGRATION_CHECKLIST.md)**.
 
 When a route’s implementation moves into **`src/api/`** (encapsulated API layer), update the route’s section and the [Route index](#route-index) to reference both the route file and the API module. Agent workflow: `.cursor/skills/api-layer-migration/SKILL.md`.
+# External account host integration
+
+The independently hosted account UI uses the additive, disabled-by-default
+[account gateway](docs/current/EXTERNAL_ACCOUNT_ACCESS.md), which aliases the
+legacy handlers below and the existing v1 profile handlers. Native URLs, payloads,
+cookie flags, and session behavior are unchanged. Service credentials and the
+private upstream-session header are server-only. See the corrected
+[frontend authentication guide](docs/current/FRONTEND_AUTH_AND_SESSION.md) for
+current Google popup/redirect completion and Guest bootstrap behavior.

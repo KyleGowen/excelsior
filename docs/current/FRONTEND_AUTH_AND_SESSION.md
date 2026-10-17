@@ -1,325 +1,150 @@
-# Frontend Auth & Session Guide
-
-Authoritative reference for any frontend (new SPA or existing vanilla JS) integrating with the Excelsior Deckbuilder backend. The backend source of truth is [`src/services/AuthenticationService.ts`](../../src/services/AuthenticationService.ts) and [`src/routes/auth.routes.ts`](../../src/routes/auth.routes.ts).
-
----
-
-## Table of contents
-
-1. [Auth mechanisms overview](#1-auth-mechanisms-overview)
-2. [Session cookie login (POST /api/auth/login)](#2-session-cookie-login)
-3. [Guest session](#3-guest-session)
-4. [Google Sign-In (OAuth)](#4-google-sign-in-oauth)
-5. [JWT Bearer login (POST /api/v1/auth/login)](#5-jwt-bearer-login)
-6. [Token refresh (POST /api/v1/auth/refresh)](#6-token-refresh)
-7. [Bootstrap — who am I? (GET /api/auth/me)](#7-bootstrap--who-am-i)
-8. [Logout and session revocation](#8-logout-and-session-revocation)
-9. [Sending credentials in fetch()](#9-sending-credentials-in-fetch)
-10. [401 / 403 response shapes](#10-401--403-response-shapes)
-11. [GUEST collection — localStorage only](#11-guest-collection--localstorage-only)
-12. [Role reference](#12-role-reference)
-
----
-
-## 1. Auth mechanisms overview
-
-The app supports two parallel auth mechanisms:
-
-| Mechanism | Cookie name | Accepted by | Use case |
-| --------- | ----------- | ----------- | -------- |
-| **Session cookie** | `sessionId` (custom, Postgres-backed) | All `/api/*` and `/api/v1/*` routes | Main web app, server-rendered flow |
-| **Bearer JWT** | — (header: `Authorization: Bearer <token>`) | Catalog, deck, and auth v1 routes | API-first / mobile clients, CI |
-
-Both mechanisms go through the same `AuthenticationService`; the user record fetched is identical. Roles (`GUEST`, `USER`, `ADMIN`) are stored on the session row and returned in both token payloads and the session.
-
-> For a route-by-route matrix of which mechanism each endpoint accepts, see [API_V1.md § Authentication](../../API_V1.md#authentication).
-
----
-
-## 2. Session cookie login
-
-```
-POST /api/auth/login
-Content-Type: application/json
-
-{ "username": "<username>", "password": "<password>" }
-```
-
-**Success 200:**
-
-```json
-{ "success": true, "data": { "userId": "...", "username": "...", "role": "USER" } }
-```
-
-The response sets a `Set-Cookie: sessionId=...` header. The cookie is **HttpOnly** and **SameSite=Lax** (the HTTP-safe default; it becomes `Secure; SameSite=Strict` only when `COOKIE_SECURE=true` for a real HTTPS deployment). **Lifetime:** a **sliding 2-hour** session — the server slides the expiry and re-issues the cookie on every authenticated request, so active users stay logged in; the session only expires after ~2 hours of inactivity.
-
-> **Legacy vs v1 envelope:** `/api/auth/login` uses the legacy `{ success, data, error }` shape, not the v1 envelope. For new frontend code, prefer the v1 login endpoint (see §5).
-
----
-
-## 3. Guest session
-
-Send `POST /api/auth/login` with `username: "guest"` and **no password** (empty string or omit):
-
-```json
-{ "username": "guest", "password": "" }
-```
-
-**Success 200:**
-
-```json
-{ "success": true, "data": { "userId": "<guest-uuid>", "username": "guest", "role": "GUEST" } }
-```
-
-The guest account is a shared read-only user seeded in the database. Its role is `GUEST`. Key GUEST constraints:
-
-- **Cannot** create/update/delete database-backed decks (POST/PUT/DELETE `/api/v1/decks*` → **403 GUEST_FORBIDDEN**)
-- **Can** create/edit guest session decks stored in-memory (`/api/v1/guest/decks*`)
-- **Cannot** access `/api/v1/collections/me*` — GUEST has no server-side collection (→ **401**)
-- **Collection is localStorage-only** (see §11)
-- The `+Deck` button in DBV is **disabled** for GUEST — do not re-enable without a product decision (see [`docs/current/GUEST_DECK_LESSONS_LEARNED.md`](GUEST_DECK_LESSONS_LEARNED.md))
-
----
-
-## 4. Google Sign-In (OAuth)
-
-```
-GET /api/auth/google          → redirects to Google OAuth consent
-GET /api/auth/google/callback → handles OAuth callback, sets session cookie, redirects to /
-```
-
-After a successful Google callback the user has a live session cookie (same as §2). No JWT is issued on the OAuth path. The frontend does not need to handle any part of this flow — just offer a link to `/api/auth/google` and handle the redirect back to `/`.
-
----
-
-## 5. JWT Bearer login
-
-```
-POST /api/v1/auth/login
-Content-Type: application/json
-
-{ "username": "<username>", "password": "<password>" }
-```
-
-**Success 200 — v1 envelope:**
-
-```json
-{
-  "data": {
-    "accessToken": "<jwt>",
-    "refreshToken": "<refresh-jwt>",
-    "expiresIn": 900,
-    "userId": "...",
-    "username": "...",
-    "role": "USER"
-  },
-  "meta": {},
-  "errors": [],
-  "success": true
-}
-```
-
-Token lifetimes (env-configurable; defaults):
-
-| Token | Default lifetime | Secret env var |
-| ----- | ---------------- | -------------- |
-| Access token | **15 minutes** (`JWT_ACCESS_EXPIRY`) | `JWT_SECRET` |
-| Refresh token | **7 days** (`JWT_REFRESH_EXPIRY`) | `JWT_REFRESH_SECRET` |
-
-Use `Authorization: Bearer <accessToken>` on subsequent requests. Do **not** send the session cookie if using Bearer — pick one mechanism per client.
-
----
-
-## 6. Token refresh
-
-```
-POST /api/v1/auth/refresh
-Content-Type: application/json
-
-{ "refreshToken": "<refresh-jwt>" }
-```
-
-**Success 200:**
-
-```json
-{
-  "data": {
-    "accessToken": "<new-jwt>",
-    "refreshToken": "<new-refresh-jwt>",
-    "expiresIn": 900
-  },
-  "meta": {},
-  "errors": [],
-  "success": true
-}
-```
-
-Refresh tokens rotate on every use (old refresh token is invalidated server-side). If the refresh token is expired or revoked:
-
-```json
-{
-  "data": null,
-  "errors": [{ "code": "UNAUTHORIZED", "message": "Invalid or expired refresh token" }],
-  "success": false
-}
-```
-
-**Client strategy:** store access and refresh tokens in memory (not localStorage — XSS risk). Schedule a refresh ~60 s before `expiresIn`. On 401 from any API call, attempt one refresh; if that also fails, redirect to login.
-
----
-
-## 7. Bootstrap — who am I?
-
-```
-GET /api/auth/me
-```
-
-Returns the current user from either a session cookie or Bearer token:
-
-**Success 200 (legacy shape):**
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "c567175f-...",
-    "username": "kyle",
-    "email": "kyle@example.com",
-    "role": "ADMIN",
-    "created_at": "2025-01-01T00:00:00.000Z"
-  }
-}
-```
-
-**Unauthenticated (no session, no valid token):**
-
-```json
-{ "success": false, "error": "Not authenticated" }
-```
-
-> **Bootstrap pattern:** Call `GET /api/auth/me` on app init (before rendering protected routes) to restore session state without re-prompting for credentials. The session cookie is sent automatically if the browser has one; Bearer clients must include the `Authorization` header.
-
-There is also a v1-envelope equivalent accessible via the same session:
-
-```
-GET /api/v1/auth/me
-```
-
-Returns the same user data wrapped in `{ "data": {...}, "errors": [], "success": true }`.
-
----
-
-## 8. Logout and session revocation
-
-**Legacy (session cookie):**
-
-```
-POST /api/auth/logout
-```
-
-Destroys the server-side session and clears the cookie. Returns `{ "success": true }`.
-
-**v1 (session cookie or Bearer):**
-
-```
-POST /api/v1/auth/logout
-```
-
-Same session destruction. If a Bearer token was used, the refresh token is revoked server-side. Returns v1 envelope `{ "data": { "message": "Logged out successfully" }, ... }`.
-
-After logout, redirect the user to `/` or `/login`. Clear any in-memory tokens.
-
----
-
-## 9. Sending credentials in fetch()
-
-**Session cookie clients** must opt in to cross-origin credential forwarding:
-
-```js
-fetch('/api/v1/decks', {
-  credentials: 'include',   // required for session cookie to be sent
-  headers: { 'Content-Type': 'application/json' }
-});
-```
-
-**Bearer clients** send the token in the header instead (no `credentials: 'include'` needed):
-
-```js
-fetch('/api/v1/decks', {
-  headers: {
-    'Authorization': `Bearer ${accessToken}`,
-    'Content-Type': 'application/json'
-  }
-});
-```
-
-Do **not** send both at once — the middleware will use whichever it finds first (Bearer checked before cookie on routes that accept both).
-
----
-
-## 10. 401 / 403 response shapes
-
-All `/api/v1/*` routes return the **v1 envelope** on auth failures, regardless of whether session or Bearer auth was used:
-
-```json
-{
-  "data": null,
-  "meta": {},
-  "errors": [{ "code": "UNAUTHORIZED", "message": "Authentication required" }],
-  "success": false,
-  "error": "Authentication required"
-}
-```
-
-The legacy `error` field is included for backwards compatibility but new code should read `errors[0].code`.
-
-Common error codes:
-
-| Code | HTTP | Meaning |
-| ---- | ---- | ------- |
-| `UNAUTHORIZED` | 401 | No valid session or token |
-| `INVALID_TOKEN` | 401 | Bearer token malformed or expired |
-| `SESSION_REQUIRED` | 401 | Route requires a `sessionId` cookie (guest deck routes) |
-| `GUEST_FORBIDDEN` | 403 | GUEST role attempted a USER-only action |
-| `GUEST_ONLY` | 403 | Non-GUEST attempted a GUEST-only action |
-| `DECK_ACCESS_DENIED` | 403 | Authenticated user is not the deck owner |
-| `ADMIN_REQUIRED` | 403 | Non-ADMIN attempted an admin route |
-
-Legacy routes outside `/api/v1/` (e.g. `POST /api/auth/login`, `GET /api/auth/me`) return the legacy shape `{ "success": false, "error": "..." }` on 401.
-
-**Client 401 handling (vanilla frontend):** the global `fetch` interceptor in [`public/js/index-page.js`](../../public/js/index-page.js) does **not** log the user out on the first 401 from an arbitrary endpoint. A 401 from `/api/auth/me` is treated as authoritative (immediate logout); a 401 from any other endpoint triggers a single re-verification against `/api/auth/me`, and the session is only torn down (login modal shown) if that confirms the session is gone. This prevents a transient/endpoint-specific 401 from causing a spurious logout. Set `window.__AUTH_DEBUG = false` to silence the `[auth-debug]` client logs.
-
----
-
-## 11. GUEST collection — localStorage only
-
-GUEST users have no server-side collection row. All collection endpoints (`/api/v1/collections/me*`) return **401** for GUEST. The existing frontend stores the guest collection in **`localStorage`** under the key `guestCollection`.
-
-Expected shape stored in localStorage:
-
-```json
-{
-  "cardId-1": { "quantity": 2, "cardType": "character" },
-  "cardId-2": { "quantity": 1, "cardType": "special" }
-}
-```
-
-A new frontend must:
-1. Read `localStorage.getItem('guestCollection')` on load when the user role is `GUEST`.
-2. Write back to `localStorage` on any collection mutation (add/remove card).
-3. **Never** call `/api/v1/collections/me*` for GUEST users.
-4. Optionally offer to migrate the guest collection to the user's server collection on sign-up/login.
-
----
-
-## 12. Role reference
-
-| Role | Login | DB decks | Guest decks | Collection (server) | Collection (localStorage) | Admin |
-| ---- | ----- | -------- | ----------- | ------------------- | ------------------------- | ----- |
-| `GUEST` | `guest` / no password | ✗ (403) | ✓ | ✗ (401) | ✓ | ✗ |
-| `USER` | normal credentials | ✓ | ✗ (403) | ✓ | — | ✗ |
-| `ADMIN` | normal credentials | ✓ | ✗ (403) | ✓ | — | ✓ |
-
----
-
-*Last updated during Phase 2 pre-migration readiness work (May 2026). Source code: [`src/services/AuthenticationService.ts`](../../src/services/AuthenticationService.ts), [`src/routes/auth.routes.ts`](../../src/routes/auth.routes.ts), [`src/api/http/auth.http.ts`](../../src/api/http/auth.http.ts).*
+# Frontend authentication and account guide
+
+This guide describes the current React SPA and backend source, not production
+configuration. Native behavior is preserved while the external account gateway
+is prepared. See [the external account handoff](EXTERNAL_ACCOUNT_ACCESS.md) for
+its separate opt-in contract.
+
+## Source map
+
+| Responsibility | Source |
+| --- | --- |
+| Account menu, forms, dropdown/sheet, guest warning, host navigation | [ProfileMenuContent](../../frontend/src/components/ProfileMenu/ProfileMenuContent.tsx) |
+| Identity bootstrap, account switching, query cleanup, Google lifecycle | [AuthProvider](../../frontend/src/app/AuthProvider.tsx) |
+| Legacy response normalization and guest bootstrap | [auth client](../../frontend/src/lib/api/auth.ts) |
+| Profile requests | [account client](../../frontend/src/lib/api/account.ts) |
+| Firebase popup/redirect client | [googleAuthClient](../../frontend/src/lib/auth/googleAuthClient.ts) |
+| Safe return navigation | [postAuthNavigation](../../frontend/src/lib/auth/postAuthNavigation.ts) |
+| Session creation/validation and signup/Google/logout handlers | [AuthenticationService](../../src/services/AuthenticationService.ts) |
+| Session storage and expiry | [sessionRepository](../../src/database/sessionRepository.ts) |
+| Account rules | [UserAccountService](../../src/api/services/userAccountService.ts) |
+| HTTP registration | [legacy auth routes](../../src/routes/auth.routes.ts), [v1 account routes](../../src/api/http/users.http.ts), [v1 token auth](../../src/api/http/auth.http.ts) |
+
+## Native session flow
+
+The SPA calls GET `/api/auth/me`. Its legacy success data uses `id` and
+`name`; login/signup use `userId` and `username`. The client normalizes
+these differences. Only a 401 means no current session; network/server failures
+remain errors with retry rather than silently changing the user to Guest.
+
+POST `/api/auth/login` accepts `{ username, password }`; the login field
+supports the existing username/email credential lookup. POST
+`/api/auth/signup` accepts `{ username, email, password }`, checks duplicate
+username/email and email format, creates a USER, and starts a session. The
+backend chooses the role. Success uses `{ success, data }`; errors use
+`{ success: false, error }`. See [legacy API documentation](../../API_DOCUMENTATION.md).
+
+Sessions are cryptographically random 32-byte hex tokens stored in PostgreSQL.
+They have a sliding two-hour inactivity expiry. Validation slides database
+expiry; the authentication middleware also renews the cookie. The dedicated
+legacy `/me` handler validates/slides the database session but does not itself
+issue a replacement cookie.
+
+The browser cookie is `sessionId`, HttpOnly, with deterministic flags from
+[authCookieOptions](../../src/services/authCookieOptions.ts). Secure/Strict is
+explicitly selected by `COOKIE_SECURE=true`; the fallback is Lax without
+Secure. Do not change flags, expiry, hashing, keys, or stored credentials as
+part of external-component preparation.
+
+POST `/api/auth/logout` deletes the supplied session token and clears its
+cookie. The SPA then starts Guest mode. There is a known limitation:
+`destroySession` catches repository deletion errors, so an HTTP logout success
+is not proof of revocation during a store failure. This preparation preserves
+native behavior. A future host must always destroy its own local session and
+must not claim guaranteed upstream revocation under that failure.
+
+## Guest mode and host ownership
+
+The native SPA starts the seeded Guest account using `guest` / `guest`
+when no valid session exists. Omitting the password does not work. Native
+session guest decks use the existing guest deck service; they do not become
+ordinary saved account decks. Signing in does not automatically transfer them.
+
+A standalone external component should represent a logged-out Guest locally.
+Public browsing and host-owned per-tab drafts must work without an upstream
+login, service credential in the browser, or a server guest deck. The account
+gateway deliberately exposes no deck or collection operation. The current
+native guest flow is not being replaced.
+
+The host owns routes, deck count, draft storage, collections, Help/Feedback,
+and navigation. A reusable account component should take data/callbacks for
+these features rather than importing database/deckbuilder internals.
+AuthProvider currently removes identity-dependent query data on account
+changes. Preserve the host's draft rules separately from that cache cleanup.
+[Post-auth navigation](../../frontend/src/lib/auth/postAuthNavigation.ts)
+prevents returning to writable resources belonging to the previous identity.
+
+## Google sign-in
+
+The SPA loads public Firebase configuration from GET `/api/config/firebase`,
+preloads Firebase, and starts a popup directly from user interaction. It offers
+redirect fallback and processes the redirect result once. Both paths obtain a
+Firebase ID token and complete through POST `/api/auth/google` with
+`{ idToken, confirmRegistration: true }`. POST
+`/api/auth/google/preview` verifies the token and reports existing versus new
+account without creating a session. The backend validates the Firebase token
+and controls registration/linking. Missing provider configuration and invalid
+tokens remain failures.
+
+There is no mounted GET OAuth redirect/callback pair at
+`/api/auth/google` or `/api/auth/google/callback`. Do not implement a consumer
+from those historical URLs.
+
+The existing Firebase client reuses the first initialized Firebase app. A future
+independent host must use an explicit named app and scoped persistence, safe
+return paths, and its own provider lifecycle. Provider-authorized domains and
+non-production test configuration need separate setup. Do not change native
+Firebase behavior for this preparation.
+
+## Account features and roles
+
+| Feature | GUEST | Password USER/ADMIN | Google USER/ADMIN |
+| --- | --- | --- | --- |
+| Login/signup/Google entry | Available | Account already signed in | Account already signed in |
+| Username/display-name edit | Denied | Renames unique username and login ID | Changes public display name only |
+| Email edit | Denied | Validated; duplicate/unchanged errors | Denied by backend |
+| Password edit and confirmation | Denied | Must match; existing hash implementation | Denied by backend |
+| Logout | Available through native host | Supplied session only | Supplied session only |
+| Help, Create Deck, deck count | Host-owned | Host-owned | Host-owned |
+| Administration | Denied | ADMIN only on native site | ADMIN only on native site |
+
+Profile mutations use POST `/api/v1/users/change-email` (`{ email }`),
+`/users/change-password` (`{ newPassword, confirmPassword }`), and
+`/users/display-name` (`{ displayName }`), with the current session and v1
+`{ data, meta, errors }` envelopes. The actor comes from the authenticated
+session. Body-supplied user IDs/roles confer no authority.
+
+The native menu currently includes User Analytics and BizOps links for ADMIN.
+A future external component may show disabled placeholders; it receives no
+admin API access. Keep native administration behavior unchanged. Existing
+profile updates do not require current-password reauthentication; a future
+host's recent-auth policy must be documented and enforced separately.
+
+## JWT API is a distinct contract
+
+The native account UI uses cookie auth, not the v1 token flow. POST
+`/api/v1/auth/login` returns `data.accessToken`, `tokenType`,
+`expiresInSeconds`, `user: { id, username, role }`, and optional
+`refreshToken` / `refreshExpiresInSeconds`. Access TTL is
+`JWT_ACCESS_TTL` (15m default); refresh TTL is `JWT_REFRESH_TTL_SECONDS`
+(30 days default). `JWT_SECRET` is required in production.
+
+GET `/api/v1/auth/me` currently requires a player Bearer JWT. POST
+`/api/v1/auth/refresh` rotates a body-supplied refresh token. POST
+`/api/v1/auth/logout` best-effort revokes the body-supplied refresh token;
+it does not destroy the native session cookie or revoke an already issued
+access JWT. Do not substitute these endpoints for native session logout.
+See [API v1](../../API_V1.md) and [refresh behavior](API_V1_AUTH_REFRESH.md).
+
+## Verification and change boundaries
+
+Existing auth tests include `tests/unit/AuthenticationService.test.ts`,
+`authenticationServiceAuthorization.test.ts`, `authCookieOptions.test.ts`,
+`api/http/auth.http.test.ts`, and frontend auth/navigation tests. External
+gateway coverage is in `tests/unit/api/account-service.test.ts` and
+`tests/integration/account-service.integration.test.ts`.
+
+Use isolated fictional accounts and disposable databases. No production account
+testing, migrations, credential rotation, or flag activation is part of this
+preparation. A feature branch runs CI; merging main can deploy. The human owner
+chooses that release time after the tournament.
