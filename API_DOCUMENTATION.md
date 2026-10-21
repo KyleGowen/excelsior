@@ -204,7 +204,8 @@ Host: localhost:8085
     "username": "kyle",
     "email": "user@example.com",
     "role": "USER",
-    "authProvider": "password"
+    "authProvider": "password",
+    "topdeckHandle": null
   }
 }
 ```
@@ -280,7 +281,8 @@ Clears server session and `sessionId` cookie.
     "email": "kyle@example.com",
     "role": "USER",
     "authProvider": "password",
-    "lastLoginAt": "2026-04-03T10:00:00.000Z"
+    "lastLoginAt": "2026-04-03T10:00:00.000Z",
+    "topdeckHandle": null
   }
 }
 ```

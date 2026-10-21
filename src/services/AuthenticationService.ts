@@ -159,7 +159,8 @@ export class AuthenticationService {
             username: user.name,
             email: user.email,
             role: user.role,
-            authProvider: user.authProvider ?? 'password'
+            authProvider: user.authProvider ?? 'password',
+            topdeckHandle: user.topdeckHandle ?? null
           }
         });
       } else {
@@ -272,7 +273,8 @@ export class AuthenticationService {
           username: user.name,
           email: user.email,
           role: user.role,
-          authProvider: 'google'
+          authProvider: 'google',
+          topdeckHandle: user.topdeckHandle ?? null
         }
       });
     } catch (error) {

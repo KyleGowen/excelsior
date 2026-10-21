@@ -21,6 +21,8 @@ export interface User {
    * See `resolveUserDisplayName`.
    */
   displayName?: string | null;
+  /** Optional explicitly saved TopDeck handle, without the leading @. */
+  topdeckHandle?: string | null;
 }
 
 // Deck table

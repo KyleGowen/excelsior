@@ -60,6 +60,10 @@ tags:
 
 components:
   securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: sessionId
     serviceAuthorization:
       type: apiKey
       in: header
@@ -1712,6 +1716,74 @@ paths:
           description: User envelope.
         '401':
           description: Not authenticated.
+  /api/v1/users/topdeck:
+    post:
+      tags: [Users]
+      summary: Save or remove the authenticated user's TopDeck handle.
+      description: Session USER/ADMIN only, including Google accounts. User supplied; ownership is not verified. Successful writes use Cache-Control no-store.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [topdeckHandle]
+              properties:
+                topdeckHandle:
+                  type: string
+                  nullable: true
+                  description: Trimmed handle, optional leading @. Up to 255 Unicode letters/numbers/dots/underscores/hyphens after normalization. Null or blank clears it. URLs are rejected.
+      responses:
+        '200':
+          description: Handle saved or removed. data contains topdeckHandle and topdeckProfileUrl, both nullable strings.
+        '400':
+          description: VALIDATION_ERROR or TOPDECK_HANDLE_INVALID.
+        '401':
+          description: UNAUTHORIZED.
+        '403':
+          description: FORBIDDEN (GUEST).
+        '404':
+          description: USER_NOT_FOUND.
+        '500':
+          description: SET_TOPDECK_ERROR.
+  /api/v1/users/{userId}/profile:
+    get:
+      tags: [Community]
+      summary: Public user identity and explicitly saved TopDeck link.
+      description: No email, role, or auth-provider fields. Works without public decks. Cache-Control no-store. Missing handles/URLs are null; clients omit the TopDeck line.
+      security: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Public profile envelope.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - properties:
+                      data:
+                        type: object
+                        additionalProperties: false
+                        required: [id, displayName, topdeckHandle, topdeckProfileUrl]
+                        properties:
+                          id: { type: string, format: uuid }
+                          displayName: { type: string }
+                          topdeckHandle: { type: string, nullable: true }
+                          topdeckProfileUrl: { type: string, format: uri, nullable: true }
+        '400':
+          description: VALIDATION_ERROR (malformed UUID).
+        '404':
+          description: USER_NOT_FOUND (missing or GUEST account).
+        '500':
+          description: PUBLIC_PROFILE_ERROR.
   /api/v1/users/change-email:
     post:
       tags: [Users]

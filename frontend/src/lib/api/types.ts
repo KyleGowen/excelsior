@@ -18,6 +18,17 @@ export interface AppUser {
   authProvider?: string | null;
   /** Optional public display name (SSO users). Null/absent for password users. */
   displayName?: string | null;
+  topdeckHandle?: string | null;
+}
+
+export interface TopDeckAccount {
+  topdeckHandle: string | null;
+  topdeckProfileUrl: string | null;
+}
+
+export interface PublicUserProfile extends TopDeckAccount {
+  id: string;
+  displayName: string;
 }
 
 export interface AppConfig {

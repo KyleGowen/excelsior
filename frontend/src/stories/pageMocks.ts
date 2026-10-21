@@ -4,7 +4,7 @@ import presentedCatalog from './catalogPresentation.json';
 import { evaluationInputKey, type DeckEvaluationInput } from '../contracts/draftInput';
 import type { DraftEvaluation, DraftEvaluationInput } from '../lib/api/decks';
 import { http, HttpResponse } from 'msw';
-import type { CatalogCard, CatalogType, CollectionCard, DeckCardEntry, DeckListItem, RecentUpdate } from '../lib/api/types';
+import type { CatalogCard, CatalogType, CollectionCard, DeckCardEntry, DeckListItem, RecentUpdate, PublicUserProfile } from '../lib/api/types';
 import { aspectCard, billy, eventCard, sampleDeck, sherlock } from './fixtures';
 
 /** All screen examples use invented data and never contact the Excelsior API. */
@@ -56,13 +56,16 @@ export function pageHandlers({
   updates = exampleUpdates,
   collection = exampleCollection,
   responseEvaluation = true,
+  profile = { id: 'storybook-owner', displayName: 'Example owner', topdeckHandle: null, topdeckProfileUrl: null },
 }: {
   decks?: DeckListItem[];
   updates?: RecentUpdate[];
   collection?: CollectionCard[];
   responseEvaluation?: boolean;
+  profile?: PublicUserProfile;
 } = {}) {
   return [
+    http.get('/api/v1/users/:userId/profile', () => respond(profile)),
     http.post('/api/v1/decks/draw',async ({request})=>{const {draft}=await request.json() as {draft:DraftEvaluationInput};return respond({schemaVersion:1,inputKey:evaluationInputKey(draft),revision:draft.revision,cards:Array.from({length:8},(_,i)=>({type:'event',cardId:eventCard.id,quantity:1,instanceId:`fictional-draw-${i}`}))});}),
     http.post('/api/v1/admin/decks/hand-analysis',async ({request})=>{const {draft}=await request.json() as {draft:DraftEvaluationInput};return respond({schemaVersion:1,inputKey:evaluationInputKey(draft),revision:draft.revision,ventureTotal:0,duplicateCount:0,duplicateCardIndexes:[]});}),
     http.post('/api/v1/decks/export',async ({request})=>{const {draft,display}=await request.json() as {draft:DraftEvaluationInput;display:{name:string;description:string;exportedBy:string}};return respond({schemaVersion:1,inputKey:evaluationInputKey(draft),revision:draft.revision,topDeck:'Cards: 8/56 | Threat: 19/76\n\n-- Characters --\n1x Billy the Kid [ERB] [Frontline]\n\n-- Events --\n1x Heroes We Need',deck:{...exportDeckFixture,name:display.name,description:display.description,exported_by:display.exportedBy}});}),

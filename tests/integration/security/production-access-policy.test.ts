@@ -8,7 +8,7 @@ const routes = enumerateExpressRoutes(app).filter(key => key.includes(' /api/v1/
 // These reads deliberately support public card browsing and shared deck links.
 const publicReads = new Set([
   '/config/app', '/decks/:id', '/decks/:id/full', '/community/decks', '/community/preconstructed-decks',
-  '/users/:userId/public-decks', '/recent-updates', '/dbv/sets', '/dbv/deck-backgrounds', '/supporter/status'
+  '/users/:userId/public-decks', '/users/:userId/profile', '/recent-updates', '/dbv/sets', '/dbv/deck-backgrounds', '/supporter/status'
 ]);
 const publicMutations = new Set(['/auth/login', '/auth/refresh', '/auth/logout', '/service-auth/token', '/decks/evaluate', '/decks/candidates/evaluate', '/decks/draw', '/decks/export', '/decks/summaries', '/collections/evaluate', '/supporter/webhook']);
 const protectedRoutes = routes.filter(key => {
@@ -57,6 +57,15 @@ describe('Production endpoint access policy', () => {
       const response = await call(key).set('Cookie', cookie).send({});
       expect(response.status).toBe(403);
     }
+  });
+
+  it('keeps TopDeck profile reads public while rejecting anonymous and guest edits', async () => {
+    const { user } = await login('USER');
+    const profile = await request(app).get(`/api/v1/users/${user.id}/profile`).expect(200);
+    expect(profile.headers['cache-control']).toBe('no-store');
+    expect(profile.body.data).toEqual({ id: user.id, displayName: user.username, topdeckHandle: null, topdeckProfileUrl: null });
+    await request(app).post('/api/v1/users/topdeck').send({ topdeckHandle: 'Example' }).expect(401);
+    await request(app).post('/api/v1/users/topdeck').set('Cookie', guestCookie).send({ topdeckHandle: 'Example' }).expect(403);
   });
 
   it('keeps candidate evaluation stateless and public while rejecting malformed drafts', async () => {

@@ -2,6 +2,8 @@ import type { Deck, PreconstructedDeckRecord, User } from '../../types';
 import { transformDeckListItem } from '../deckTransform';
 import { resolveUserDisplayName } from '../../utils/resolveUserDisplayName';
 import type { PreconstructedDeckGroupV1DataDto } from '../dto/v1/PreconstructedDeckGroupV1DataDto';
+import type { PublicUserProfileV1DataDto } from '../dto/v1/PublicUserProfileV1DataDto';
+import { topdeckProfileUrl } from '../../utils/topdeckProfile';
 
 /** Deck reads/writes needed by the community + favorites + public-profile features. */
 export interface CommunityDeckRepository {
@@ -75,6 +77,20 @@ export class CommunityService {
     /** Internal/curated accounts excluded from the community feed + search. */
     private readonly excludeUserIds: string[] = []
   ) {}
+
+  async getPublicUserProfile(userId: string): Promise<PublicUserProfileV1DataDto | null> {
+    const users = await this.userLookup.getUsersByIds([userId]);
+    const user = users.find((candidate) => candidate.id === userId && candidate.role !== 'GUEST');
+    if (!user) return null;
+    return {
+      id: user.id,
+      // A profile can be viewed without any public decks. Do not use the SSO
+      // email fallback when introducing this independently public identity read.
+      displayName: resolveUserDisplayName({ name: user.name, displayName: user.displayName ?? null }),
+      topdeckHandle: user.topdeckHandle ?? null,
+      topdeckProfileUrl: topdeckProfileUrl(user.topdeckHandle),
+    };
+  }
 
   private async enrich(
     decks: Deck[],

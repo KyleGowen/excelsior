@@ -20,6 +20,17 @@ type Story = StoryObj<typeof meta>;
 
 export const MyDecks: Story = {};
 export const Empty: Story = { parameters: { msw: pageHandlers({ decks: [] }) } };
+export const PublicProfileWithoutTopDeck: Story = { parameters: { route: '/users/storybook-owner/decks', msw: pageHandlers({ decks: [] }) } };
+export const PublicProfileWithTopDeck: Story = {
+  parameters: { route: '/users/storybook-owner/decks', msw: pageHandlers({ decks: [], profile: {
+    id: 'storybook-owner', displayName: 'Example owner', topdeckHandle: 'Example_Player', topdeckProfileUrl: 'https://topdeck.gg/profile/@Example_Player',
+  } }) },
+  play: async ({ canvas }) => {
+    await expect(await canvas.findByRole('link', { name: 'TopDeck: @Example_Player' })).toHaveAttribute('href', 'https://topdeck.gg/profile/@Example_Player');
+    await expect(canvas.getByText('No public decks yet')).toBeVisible();
+  },
+};
+export const PublicProfileTopDeckMobile: Story = { ...PublicProfileWithTopDeck, globals: { viewport: { value: 'mobile' } } };
 export const Mobile: Story = { parameters: { viewport: { defaultViewport: 'mobile' } } };
 
 export const TopDeckImportOpen: Story = {

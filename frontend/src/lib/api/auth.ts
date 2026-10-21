@@ -16,6 +16,7 @@ interface RawMe {
   auth_provider?: string | null;
   displayName?: string | null;
   display_name?: string | null;
+  topdeckHandle?: string | null;
 }
 
 import { resolveAuthProvider } from '../auth/resolveAuthProvider';
@@ -31,6 +32,7 @@ function normaliseUser(raw: RawMe | null | undefined): AppUser | null {
     lastLoginAt: raw.lastLoginAt ?? null,
     authProvider: resolveAuthProvider(raw),
     displayName: raw.displayName ?? raw.display_name ?? null,
+    topdeckHandle: raw.topdeckHandle ?? null,
   };
 }
 

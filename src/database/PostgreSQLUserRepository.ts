@@ -192,7 +192,8 @@ export class PostgreSQLUserRepository implements UserRepository {
       role: user.role as UserRole,
       lastLoginAt: user.last_login_at ? new Date(user.last_login_at as string) : null,
       authProvider: this.normalizeAuthProvider(user.auth_provider),
-      displayName: (user.display_name as string | null) ?? null
+      displayName: (user.display_name as string | null) ?? null,
+      topdeckHandle: (user.topdeck_handle as string | null) ?? null
     };
   }
 
@@ -271,6 +272,10 @@ export class PostgreSQLUserRepository implements UserRepository {
       if (updates.displayName !== undefined) {
         setClause.push(`display_name = $${paramCount++}`);
         values.push(updates.displayName);
+      }
+      if (updates.topdeckHandle !== undefined) {
+        setClause.push(`topdeck_handle = $${paramCount++}`);
+        values.push(updates.topdeckHandle);
       }
 
       if (setClause.length === 0) {

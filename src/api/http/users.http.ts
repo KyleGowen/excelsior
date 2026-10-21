@@ -4,6 +4,8 @@ import { ChangeEmailRequestBody } from './models/users/ChangeEmailRequestBody';
 import { ChangePasswordRequestBody } from './models/users/ChangePasswordRequestBody';
 import { SetDisplayNameRequestBody } from './models/users/SetDisplayNameRequestBody';
 import { sendV1Json, sendV1Success } from './v1Envelope';
+import { parseV1Body } from './parseV1Body';
+import { SetTopDeckRequestBody } from './models/users/SetTopDeckRequestBody';
 
 export interface UsersV1HttpDeps {
   userAccountService: UserAccountService;
@@ -25,6 +27,26 @@ function requireSelfServiceUser(req: Request, res: Response): boolean {
 }
 
 export function registerUsersV1HttpRoutes(router: Router, deps: UsersV1HttpDeps): void {
+  router.post('/users/topdeck', deps.authenticateUser, async (req, res) => {
+    if (!requireSelfServiceUser(req, res)) return;
+    const parsed = parseV1Body(SetTopDeckRequestBody, req.body, res);
+    if (!parsed) return;
+    try {
+      const result = await deps.userAccountService.setTopDeckHandle(
+        req.user!.id, req.user!.role, parsed.value?.topdeckHandle
+      );
+      if (!result.ok) {
+        sendV1Json(res, result.status, null, [{ code: result.code, message: result.message }]);
+        return;
+      }
+      res.set('Cache-Control', 'no-store');
+      sendV1Success(res, result.data, result.status);
+    } catch (error) {
+      console.error('v1 POST /users/topdeck error:', error);
+      sendV1Json(res, 500, null, [{ code: 'SET_TOPDECK_ERROR', message: 'Failed to save TopDeck handle' }]);
+    }
+  });
+
   router.post('/users/change-email', deps.authenticateUser, async (req, res) => {
     if (!requireSelfServiceUser(req, res)) return;
     const parsed = ChangeEmailRequestBody.parse(req.body);

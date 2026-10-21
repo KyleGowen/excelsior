@@ -19,6 +19,19 @@ to [`docs/openapi.yaml`](../openapi.yaml)) in the same PR.**
 
 ## Table
 
+TopDeck account/profile routes additionally use:
+
+| Code | HTTP | Meaning | Remediation |
+| --- | --- | --- | --- |
+| `TOPDECK_HANDLE_INVALID` | 400 | Invalid handle type, syntax, or length. | Enter a handle, not a URL; up to 255 letters/numbers/dots/underscores/hyphens. |
+| `SET_TOPDECK_ERROR` | 500 | Unexpected failure saving a handle. | Retry the request. |
+| `PUBLIC_PROFILE_ERROR` | 500 | Unexpected failure loading a public profile. | Retry the request. |
+
+`POST /users/topdeck` also returns `VALIDATION_ERROR` (400), `UNAUTHORIZED` (401),
+`FORBIDDEN` (403 for GUEST), and `USER_NOT_FOUND` (404). `GET /users/:userId/profile`
+returns `VALIDATION_ERROR` (400 for a malformed UUID) and `USER_NOT_FOUND` (404 for
+an unknown or GUEST account). Both use the standard v1 envelope.
+
 | Code                          | HTTP | Meaning                                                                 | Typical remediation                                                                 |
 | ----------------------------- | ---- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | `UNAUTHORIZED`                | 401  | Missing/expired/invalid access token.                                   | Call `/api/v1/auth/refresh`; if that also 401s, re-login.                           |

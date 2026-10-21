@@ -31,6 +31,7 @@ export interface AuthV1HttpDeps {
           role: AuthMeDataDto['role'];
           lastLoginAt?: Date | null;
           displayName?: string | null;
+          topdeckHandle?: string | null;
           authProvider?: string;
         }
       | undefined
@@ -171,7 +172,8 @@ export function registerAuthV1HttpRoutes(router: Router, deps: AuthV1HttpDeps): 
         role: full.role,
         lastLoginAt: full.lastLoginAt ? full.lastLoginAt.toISOString() : null,
         displayName: full.displayName ?? null,
-        authProvider: full.authProvider ?? 'password'
+        authProvider: full.authProvider ?? 'password',
+        topdeckHandle: full.topdeckHandle ?? null
       };
       sendV1Success(res, data);
     } catch (error) {

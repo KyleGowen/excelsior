@@ -1,4 +1,9 @@
 import { api } from './client';
+import type { TopDeckAccount } from './types';
+
+export function setTopDeckHandle(topdeckHandle: string | null): Promise<TopDeckAccount> {
+  return api.post<TopDeckAccount>('/api/v1/users/topdeck', { topdeckHandle });
+}
 
 export async function changeEmail(email: string): Promise<{ email: string }> {
   return api.post<{ email: string }>('/api/v1/users/change-email', { email });
