@@ -14,6 +14,16 @@ const catalog: Partial<Record<CatalogType, CatalogCard[]>> = {
   aspects: [aspectCard],
 };
 
+export const topDeckProfileFeature: RecentUpdate = {
+  id: 'a1000001-0000-4000-8000-000000000014',
+  title: 'Link your TopDeck account',
+  type: 'feature',
+  description: 'Add your TopDeck handle in your profile menu. Your saved handle links to your TopDeck account in your menu and public profile.',
+  cardImageUrl: 'sky/specials/110_global_coordination_network.png',
+  createdAt: '2026-10-21T12:00:00Z',
+  updatedAt: '2026-10-21T12:00:00Z',
+};
+
 export const exampleUpdates: RecentUpdate[] = [
   {
     id: 'story-update-1',

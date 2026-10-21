@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AppShell } from '../components/AppShell';
 import HomeUpdatesPage from '../features/home/HomeUpdatesPage';
-import { exampleUpdates, pageHandlers } from './pageMocks';
+import { exampleUpdates, pageHandlers, topDeckProfileFeature } from './pageMocks';
 
 const meta = {
   title: 'Screens/Recent Updates',
@@ -17,4 +17,8 @@ export const Populated: Story = {
 };
 export const Empty: Story = {
   parameters: { msw: pageHandlers({ updates: [] }) },
+};
+
+export const TopDeckProfileAnnouncement: Story = {
+  parameters: { msw: pageHandlers({ updates: [topDeckProfileFeature, ...exampleUpdates] }) },
 };

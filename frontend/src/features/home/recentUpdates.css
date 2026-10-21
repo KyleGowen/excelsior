@@ -81,6 +81,11 @@
   transform: translateY(-5px) scale(1.71);
   transform-origin: 60% 8%;
 }
+.home__news-thumb img.home__news-thumb-image--topdeck-profile {
+  object-position: right 22%;
+  transform: scale(1.21);
+  transform-origin: right 56%;
+}
 .home__news-thumb-icon {
   color: var(--color-accent-dim);
   font-size: 1.5rem;

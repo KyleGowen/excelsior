@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AppShell } from '../components/AppShell';
 import HomePage from '../features/home/HomePage';
-import { pageHandlers, exampleUpdates, topDeckExportUpdate } from './pageMocks';
+import { pageHandlers, exampleUpdates, topDeckExportUpdate, topDeckProfileFeature } from './pageMocks';
 
 const meta = {
   title: 'Screens/Home',
@@ -33,4 +33,8 @@ export const TopDeckExport: Story = {
 /** Exercises every DeferredHomeSection: scroll or use its Load control to mount it. */
 export const DeferredSections: Story = {
   parameters: { msw: pageHandlers() },
+};
+
+export const TopDeckProfileAnnouncement: Story = {
+  parameters: { msw: pageHandlers({ updates: [topDeckProfileFeature, topDeckExportUpdate, ...exampleUpdates] }) },
 };

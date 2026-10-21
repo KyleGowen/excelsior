@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { RecentUpdateTile } from '../features/home/RecentUpdateTile';
-import { topDeckExportUpdate } from './pageMocks';
+import { topDeckExportUpdate, topDeckProfileFeature } from './pageMocks';
 
 const item = {
   id: 'storybook-recent-update',
@@ -26,3 +26,6 @@ export const Expanded: Story = { args: { isOpen: true } };
 
 export const TopDeckExport: Story = { args: { item: topDeckExportUpdate } };
 export const TopDeckExportExpanded: Story = { args: { item: topDeckExportUpdate, isOpen: true } };
+
+export const TopDeckProfile: Story = { args: { item: topDeckProfileFeature } };
+export const TopDeckProfileExpanded: Story = { args: { item: topDeckProfileFeature, isOpen: true } };

@@ -593,6 +593,7 @@ News/announcement tiles on `/home` (rail) and `/home/updates` (full list). Share
 | Skybound alternate-art reveal thumbnail (`.home__news-thumb-image--skybound-alt-art`) | Omni-Man #420 enlarged to `1.15×`, anchored at left center with matching `object-position` and `transform-origin` |
 | Seattle Weekend thumbnail (`.home__news-thumb-image--seattle-weekend`) | Advanced Alien Arsenal #053 at `2.5017671188125×`, offset `25px` right and `35px` down to center the Flaxan action while keeping the printed card frame outside the compact crop |
 | TopDeck export thumbnail (`.home__news-thumb-image--topdeck-export`) | Battle Beast's Paltry Attempts #083 at `1.71×` (5% smaller), shifted up `5px`, anchored at `60% 8%` to emphasize Battle Beast and keep the yellow name rail outside the crop; announcement uses the default **Update** badge |
+| TopDeck profile thumbnail (`.home__news-thumb-image--topdeck-profile`) | Global Coordination Network #110 at `1.21×`, `object-position: right 22%`, `transform-origin: right 56%`; follows the monitor-and-foreground-figures reference crop with the yellow rail and rules outside the image; uses the **Feature** badge |
 | Type badge (`.home__news-tag`) | `10px` bold caps; default accent soft; `.home__news-tag--feature` uses `--color-info` |
 | Summary clamped (`.home__news-summary--clamped`) | `-webkit-line-clamp: 2` |
 | Summary expanded (`.home__news-summary--expanded`) | `-webkit-line-clamp: 6` |

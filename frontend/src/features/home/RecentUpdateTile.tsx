@@ -19,6 +19,7 @@ export function RecentUpdateTile({ item, isOpen, onToggle }: RecentUpdateTilePro
   const isErrataFeature = item.id === 'a1000001-0000-4000-8000-000000000010';
   const isPreconstructedDecksUpdate = item.id === 'a1000001-0000-4000-8000-000000000011';
   const isSeattleWeekendUpdate = item.id === 'a1000001-0000-4000-8000-000000000012';
+  const isTopDeckProfileFeature = item.id === 'a1000001-0000-4000-8000-000000000014';
   const isTopDeckExportUpdate = item.id === 'a1000001-0000-4000-8000-000000000013';
   const thumbnailClassName = isSkyboundLaunch
     ? 'home__news-thumb-image--skybound-launch'
@@ -32,7 +33,9 @@ export function RecentUpdateTile({ item, isOpen, onToggle }: RecentUpdateTilePro
             ? 'home__news-thumb-image--seattle-weekend'
             : isTopDeckExportUpdate
               ? 'home__news-thumb-image--topdeck-export'
-              : undefined;
+              : isTopDeckProfileFeature
+                ? 'home__news-thumb-image--topdeck-profile'
+                : undefined;
 
   return (
     <button
