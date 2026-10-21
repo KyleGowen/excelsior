@@ -1,10 +1,14 @@
 /** Favorites + community + public-profile deck APIs (all `/api/v1`). */
 import { api as defaultApi } from './client';
 
-import type { DeckListItem, PreconstructedDeckGroup } from './types';
+import type { DeckListItem, PreconstructedDeckGroup, PublicUserProfile } from './types';
 
 /** Bind these existing operations to one host's transport; no global client mutation. */
 export function createFavoritesApi(api: typeof defaultApi = defaultApi) {
+
+function fetchPublicUserProfile(userId: string): Promise<PublicUserProfile> {
+  return api.get<PublicUserProfile>(`/api/v1/users/${encodeURIComponent(userId)}/profile`);
+}
 
 
 /** The current user's favorited decks (public, still-existing). */
@@ -40,7 +44,7 @@ function fetchPreconstructedDecks(): Promise<PreconstructedDeckGroup[]> {
 function fetchPublicDecksForUser(userId: string): Promise<DeckListItem[]> {
   return api.get<DeckListItem[]>(`/api/v1/users/${userId}/public-decks`);
 }
-return { fetchFavoriteDecks, addFavorite, removeFavorite, fetchCommunityFeed, fetchPreconstructedDecks, fetchPublicDecksForUser };
+return { fetchFavoriteDecks, addFavorite, removeFavorite, fetchCommunityFeed, fetchPreconstructedDecks, fetchPublicDecksForUser, fetchPublicUserProfile };
 }
 
-export const { fetchFavoriteDecks, addFavorite, removeFavorite, fetchCommunityFeed, fetchPreconstructedDecks, fetchPublicDecksForUser } = createFavoritesApi();
+export const { fetchFavoriteDecks, addFavorite, removeFavorite, fetchCommunityFeed, fetchPreconstructedDecks, fetchPublicDecksForUser, fetchPublicUserProfile } = createFavoritesApi();

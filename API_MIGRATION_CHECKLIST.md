@@ -196,8 +196,13 @@ Legacy **DELETE** requires query `cardType` (see `API_DOCUMENTATION.md`); keep t
 | ------ | -- | -------- |
 | POST /api/users/change-password | POST /api/v1/users/change-password | [x] |
 | — | POST /api/v1/users/change-email | [x] |
+| — | POST /api/v1/users/topdeck | [x] |
+| — | GET /api/v1/users/:userId/profile | [x] |
 
 Service: `UserAccountService` + `users.http.ts`. Legacy change-password delegates to the same service.
+The public profile uses `CommunityService` + `community.http.ts`; its explicit
+public DTO is independent of deck listings. Both TopDeck routes include unit,
+integration, OpenAPI, and local desktop/mobile browser coverage.
 
 ---
 

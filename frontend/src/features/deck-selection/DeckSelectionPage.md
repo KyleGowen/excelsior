@@ -12,7 +12,13 @@ per-deck actions. Titled "My Decks" (or "Guest Decks").
   friendly empty state when the user has no public decks. Unlisted decks never appear in this
   view, even though their direct deck URL remains readable.
 
+Public profiles separately fetch `GET /api/v1/users/:userId/profile` with
+`['user-profile', userId]` and `staleTime: 0`. The name and optional `TopDeck: @handle`
+link therefore work even with zero public decks. Unset handles render no line or
+placeholder; TopDeck links open a new tab with `noopener noreferrer`.
+
 ## Mobile tabs (owner mode only)
+
 On `.layout-mobile`, five swipeable pill tabs — **My Decks / Favorites / Community /
 Preconstructed / Tournament** (`DECK_SELECTION_TAB_ORDER`) — built with `useHorizontalSwipe` +
 `stepCyclicalIndex` and `DECK_SELECTION_SWIPE_BLOCK_SELECTOR` (from

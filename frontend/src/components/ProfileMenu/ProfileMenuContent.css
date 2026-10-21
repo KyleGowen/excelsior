@@ -22,6 +22,14 @@
   padding: var(--space-2);
 }
 
+.profile-menu__topdeck {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--font-size-sm);
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+}
+
 .profile-menu__item {
   display: flex;
   align-items: center;

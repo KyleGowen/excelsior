@@ -61,6 +61,7 @@ export interface RegisterApiV1Deps {
           role: UserRole;
           lastLoginAt?: Date | null;
           displayName?: string | null;
+          topdeckHandle?: string | null;
           authProvider?: string;
         }
       | undefined

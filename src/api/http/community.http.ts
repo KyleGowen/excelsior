@@ -2,6 +2,7 @@ import type { Request, RequestHandler, Response, Router } from 'express';
 import type { CommunityService } from '../services/communityService';
 import { setPrivateUserCacheHeaders } from './privateUserCache';
 import { sendV1Json, sendV1Success } from './v1Envelope';
+import { PublicUserProfileParams } from './models/users/PublicUserProfileParams';
 
 export interface CommunityV1HttpDeps {
   communityService: CommunityService;
@@ -32,6 +33,26 @@ function requireRealUser(req: Request, res: Response): boolean {
  * matched before the `GET /decks/:id` param route.
  */
 export function registerCommunityV1HttpRoutes(router: Router, deps: CommunityV1HttpDeps): void {
+  router.get('/users/:userId/profile', deps.optionalAuth, async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    const parsed = PublicUserProfileParams.safeParse(req.params);
+    if (!parsed.success) {
+      sendV1Json(res, 400, null, [{ code: 'VALIDATION_ERROR', field: 'userId', message: 'A valid user ID is required' }]);
+      return;
+    }
+    try {
+      const profile = await deps.communityService.getPublicUserProfile(parsed.data.userId);
+      if (!profile) {
+        sendV1Json(res, 404, null, [{ code: 'USER_NOT_FOUND', message: 'User not found' }]);
+        return;
+      }
+      sendV1Success(res, profile);
+    } catch (error) {
+      console.error('v1 GET /users/:userId/profile error:', error);
+      sendV1Json(res, 500, null, [{ code: 'PUBLIC_PROFILE_ERROR', message: 'Failed to load profile' }]);
+    }
+  });
+
   // The viewer's own favorited decks.
   router.get('/decks/favorites', deps.authenticateUser, async (req, res) => {
     if (!requireRealUser(req, res)) return;

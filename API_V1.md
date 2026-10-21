@@ -62,6 +62,8 @@ Versioned JSON API for Excelsior. **Legacy** routes remain documented in [API_DO
 | `GET /api/v1/decks/favorites` | ✓ | ✓ | USER/ADMIN; guests→401/403 |
 | `POST/DELETE /api/v1/decks/:id/favorite` | ✓ | ✓ | USER/ADMIN; guests→403; cannot favorite own |
 | `POST /api/v1/users/display-name` | ✓ | — | USER/ADMIN; GUEST→403 |
+| `POST /api/v1/users/topdeck` | ✓ | — | USER/ADMIN; GUEST→403; self-service only |
+| `GET /api/v1/users/:userId/profile` | ✓ (optional) | ✓ (optional) | Public profile allowlist; no-store |
 | `POST /api/v1/feedback` | ✓ | — | Any authenticated role; 5 submissions/minute |
 | `/api/v1/guest/decks*` | ✓ (GUEST only) | ✗ | GUEST role required; wrong role→403 |
 | `/api/v1/collections/me*` | ✓ | ✗ | USER/ADMIN; GUEST→401 (no collection) |
@@ -332,6 +334,45 @@ The resolved public name everywhere in the app comes from `resolveUserDisplayNam
 **Response 409:** `USERNAME_TAKEN` (password user, name already in use).
 
 **Implementation:** `[UserAccountService.setDisplayName](src/api/services/userAccountService.ts)`, `[src/api/http/users.http.ts](src/api/http/users.http.ts)`.
+
+### `POST /api/v1/users/topdeck`
+
+Saves/removes the authenticated USER/ADMIN's optional, self-reported TopDeck handle.
+Session cookie required; password and Google accounts are both eligible. No target
+user ID is accepted. Unknown body properties are rejected.
+
+**Body:** `{ "topdeckHandle": "@Example_Player" }`. The property is required;
+`null`, empty text, or whitespace clears the setting. Trim surrounding whitespace
+and remove one leading `@`; preserve case. Excelsior accepts up to 255 Unicode
+letters/numbers, dots, underscores, or hyphens. URLs and path/query/control characters
+are rejected. These are application input rules, not a TopDeck account-existence check.
+
+**Response 200 (`data`):**
+`{ "topdeckHandle": "Example_Player", "topdeckProfileUrl": "https://topdeck.gg/profile/@Example_Player" }`.
+Removal returns both fields as `null`. Successful writes use `Cache-Control: no-store`.
+Only explicitly saved handles appear in the account menu and public profile.
+Session/login/Google-login responses and `GET /api/v1/auth/me` include
+`topdeckHandle` (`string | null`); no username is used to populate it.
+
+**Errors:** 400 `VALIDATION_ERROR` / `TOPDECK_HANDLE_INVALID`, 401 `UNAUTHORIZED`,
+403 `FORBIDDEN`, 404 `USER_NOT_FOUND`, 500 `SET_TOPDECK_ERROR`.
+**Implementation:** `SetTopDeckRequestBody` → `UserAccountService.setTopDeckHandle` →
+`PostgreSQLUserRepository.updateUser`; migration V372 adds `users.topdeck_handle`.
+
+### `GET /api/v1/users/:userId/profile`
+
+Guest-viewable public metadata, independent of deck listings. `userId` must be a
+valid UUID. Returns 404 for missing/GUEST accounts. Always `Cache-Control: no-store`.
+
+**Response 200 (`data`):**
+`{ "id": "uuid", "displayName": "Example player", "topdeckHandle": "Example_Player", "topdeckProfileUrl": "https://topdeck.gg/profile/@Example_Player" }`.
+Unset handles/URLs are `null`; the UI omits the TopDeck line entirely. Names resolve
+from an explicit display name, then username; this endpoint does not use the SSO
+email fallback. No email, role, auth-provider, or private deck fields are returned.
+URLs use the fixed TopDeck HTTPS host and an encoded handle path segment.
+
+**Errors:** 400 `VALIDATION_ERROR`, 404 `USER_NOT_FOUND`, 500 `PUBLIC_PROFILE_ERROR`.
+**Implementation:** `PublicUserProfileParams` → `CommunityService.getPublicUserProfile`.
 
 ---
 
@@ -1503,6 +1544,8 @@ Clears card repository caches.
 | POST   | /api/v1/users/change-email              | users.http.ts       |
 | POST   | /api/v1/users/change-password           | users.http.ts       |
 | POST   | /api/v1/users/display-name              | users.http.ts       |
+| POST   | /api/v1/users/topdeck                   | users.http.ts       |
+| GET    | /api/v1/users/:userId/profile           | community.http.ts   |
 | POST   | /api/v1/feedback                        | feedback.http.ts    |
 | GET    | /api/v1/catalog/characters              | dbv-catalog.http.ts |
 | GET    | /api/v1/catalog/locations               | dbv-catalog.http.ts |

@@ -171,6 +171,14 @@ account-sheet row (`.account-sheet__toggle`) with `justify-content: space-betwee
   If Guest session setup fails, a centered retry card appears before the app shell.
 - When a phone is set to **Use desktop layout**, the top tabs scroll within the header so the
   profile menu remains reachable at narrow widths.
+- **TopDeck profile link:** Signed-in accounts can add/edit/remove a self-reported
+  handle in the existing inline profile settings. Show the underlined, wrapping
+  `TopDeck: @handle` link beneath account details and beneath the public profile
+  heading only when explicitly saved. Unset accounts have no line/placeholder.
+  Keep the owner Add/Edit action separate from the link. The form explains public
+  visibility, links to TopDeck Account Settings, and supports removal. The same
+  form is used in the desktop dropdown and mobile account sheet. Public profiles
+  show the link even with no public decks. External links use a new tab.
 - Nav, dropdowns, and tooltips sit at `--z-nav: 9999` so they always clear page content.
 
 ### Branding & favicon

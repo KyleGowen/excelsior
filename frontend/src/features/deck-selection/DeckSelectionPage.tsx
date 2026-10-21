@@ -5,6 +5,7 @@ import { useAuth } from '../../app/AuthProvider';
 import { fetchDecksForUser, createDeck, deleteDeck, fetchTournamentDecks } from '../../lib/api/decks';
 import {
   fetchPublicDecksForUser,
+  fetchPublicUserProfile,
   fetchFavoriteDecks,
   fetchCommunityFeed,
   fetchPreconstructedDecks,
@@ -106,6 +107,12 @@ export default function DeckSelectionPage() {
     enabled: isReadOnlyProfile,
   });
   const decksQuery = isReadOnlyProfile ? profileDecksQuery : myDecksQuery;
+  const profileQuery = useQuery({
+    queryKey: ['user-profile', profileUserId ?? ''],
+    queryFn: () => fetchPublicUserProfile(profileUserId as string),
+    enabled: isReadOnlyProfile,
+    staleTime: 0,
+  });
 
   const favoriteToggle = useFavoriteToggle([[...publicDecksKey], PRECONSTRUCTED_DECKS_KEY]);
 
@@ -122,9 +129,9 @@ export default function DeckSelectionPage() {
     favoriteToggle.mutate({ deckId: deck.metadata.id, next });
   };
 
-  // Owner display name for the profile header (from any returned deck).
+  // Public identity is independent of whether the owner has shared any decks.
   const profileOwnerName =
-    (profileDecksQuery.data ?? []).find((d) => d.metadata.ownerDisplayName)?.metadata
+    profileQuery.data?.displayName ?? (profileDecksQuery.data ?? []).find((d) => d.metadata.ownerDisplayName)?.metadata
       .ownerDisplayName ?? null;
   const charactersQuery = useQuery({
     queryKey: ['catalog', 'characters'],
@@ -373,6 +380,11 @@ export default function DeckSelectionPage() {
           <header className="dsel__header">
             <div>
               <h1 className="dsel__title"><IconDecks /> {profileTitle}</h1>
+              {profileQuery.data?.topdeckHandle && profileQuery.data.topdeckProfileUrl ? (
+                <a className="dsel__topdeck" href={profileQuery.data.topdeckProfileUrl} target="_blank" rel="noopener noreferrer">
+                  TopDeck: @{profileQuery.data.topdeckHandle}
+                </a>
+              ) : null}
               <div className="dsel__stats">
                 <span><strong>{decks.length}</strong> public decks</span>
               </div>

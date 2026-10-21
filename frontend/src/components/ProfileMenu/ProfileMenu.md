@@ -5,6 +5,15 @@ inline subforms for display name / email / password, Help & Feedback, plus log o
 Log In, Create Account, and Sign in with Google here. Rendered inside a desktop
 dropdown or a mobile sheet by the nav.
 
+Signed-in USER/ADMIN accounts (password and Google) can add/edit/remove an optional
+TopDeck handle inline. Only an explicitly saved nonempty handle adds the header
+link `TopDeck: @handle`; unset accounts have no TopDeck line or placeholder. The
+owner Add/Edit action remains available separately. The hint explains that the
+handle is public and self-reported, and links to TopDeck Account Settings.
+Save/Remove use `POST /api/v1/users/topdeck`, refresh auth state, and invalidate
+`['user-profile', user.id]` so the public header updates too. Blank input removes
+the handle. External links open a new tab with `noopener noreferrer`.
+
 ## Props
 | Prop | Type | Default | Notes |
 |---|---|---|---|

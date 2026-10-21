@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../app/AuthProvider';
 import { fetchDecksForUser, isGuestDeckId } from '../../lib/api/decks';
-import { changeEmail, changePassword, setDisplayName } from '../../lib/api/account';
+import { changeEmail, changePassword, setDisplayName, setTopDeckHandle } from '../../lib/api/account';
+import { topdeckProfileUrl } from '../../lib/auth/topdeckProfile';
 import { resolveUserDisplayName } from '../../lib/auth/resolveUserDisplayName';
 import { isValidEmail } from '../../lib/validation/email';
 import { describeGoogleSignInError } from '../../lib/auth/googleSignInErrors';
@@ -13,7 +14,7 @@ import type { AppUser } from '../../lib/api/types';
 import { IconAnalytics, IconChartBar, IconPlus, IconLogout, IconLock, IconSettings, IconProfile, IconHelp, IconGoogle } from '../icons';
 import './ProfileMenuContent.css';
 
-type OpenForm = 'displayName' | 'email' | 'password' | 'login' | 'signup' | null;
+type OpenForm = 'displayName' | 'email' | 'password' | 'login' | 'signup' | 'topdeck' | null;
 
 export interface ProfileMenuContentProps {
   onClose: () => void;
@@ -50,6 +51,9 @@ export function ProfileMenuContent({ onClose, onOpenHelp, variant = 'dropdown' }
   const [displayNameValue, setDisplayNameValue] = useState('');
   const [displayNameError, setDisplayNameError] = useState<string | null>(null);
   const [displayNameBusy, setDisplayNameBusy] = useState(false);
+  const [topdeckValue, setTopdeckValue] = useState('');
+  const [topdeckError, setTopdeckError] = useState<string | null>(null);
+  const [topdeckBusy, setTopdeckBusy] = useState(false);
 
   const userId = user?.id ?? '';
 
@@ -87,6 +91,7 @@ export function ProfileMenuContent({ onClose, onOpenHelp, variant = 'dropdown' }
   const hasGuestSessionDecks = isGuest && decksQuery.data?.some((deck) => isGuestDeckId(deck.metadata.id));
   const canChangeAccountSettings = !isGuest && !isGoogleUser;
   const canSetDisplayName = !isGuest;
+  const topdeckUrl = !isGuest ? topdeckProfileUrl(user.topdeckHandle) : null;
   // Password users edit their (unique) username; SSO users set a separate display name.
   const displayNameFieldLabel = isGoogleUser ? 'Display name' : 'Username';
   const displayNameHint = isGoogleUser
@@ -98,6 +103,8 @@ export function ProfileMenuContent({ onClose, onOpenHelp, variant = 'dropdown' }
     setEmailError(null);
     setPasswordError(null);
     setDisplayNameError(null);
+    setTopdeckError(null);
+    if (form === 'topdeck') setTopdeckValue(user.topdeckHandle ?? '');
     setAuthError(null);
     setOfferGoogleRedirect(false);
     if (form === 'login' || form === 'signup') {
@@ -113,6 +120,28 @@ export function ProfileMenuContent({ onClose, onOpenHelp, variant = 'dropdown' }
     if (form === 'displayName') {
       setDisplayNameValue(isGoogleUser ? (user.displayName ?? '') : user.username);
     }
+  };
+
+  const saveTopDeck = async (handle: string | null) => {
+    if (topdeckBusy) return;
+    setTopdeckBusy(true);
+    setTopdeckError(null);
+    try {
+      await setTopDeckHandle(handle);
+      // Invalidate even an inactive public-profile cache after edits/removal.
+      await queryClient.invalidateQueries({ queryKey: ['user-profile', user.id] });
+      await refresh();
+      setOpenForm(null);
+    } catch (error) {
+      setTopdeckError((error as Error)?.message || 'Could not save TopDeck handle');
+    } finally {
+      setTopdeckBusy(false);
+    }
+  };
+
+  const handleTopDeckSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    void saveTopDeck(topdeckValue);
   };
 
   const handleCreateDeck = () => {
@@ -345,6 +374,11 @@ export function ProfileMenuContent({ onClose, onOpenHelp, variant = 'dropdown' }
           <div className="profile-menu__email">{user.email}</div>
         ) : null}
         <div className="profile-menu__deck-count">{deckLabel}</div>
+        {topdeckUrl && user.topdeckHandle ? (
+          <a className="profile-menu__topdeck" href={topdeckUrl} target="_blank" rel="noopener noreferrer">
+            TopDeck: @{user.topdeckHandle}
+          </a>
+        ) : null}
       </div>
 
       <div className="profile-menu__actions" role="menu">
@@ -445,6 +479,54 @@ export function ProfileMenuContent({ onClose, onOpenHelp, variant = 'dropdown' }
                   </button>
                   <button type="submit" className="btn btn-primary" disabled={displayNameBusy}>
                     {displayNameBusy ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
+              </form>
+            ) : null}
+          </>
+        ) : null}
+
+        {!isGuest ? (
+          <>
+            <button
+              type="button"
+              className={`profile-menu__item${openForm === 'topdeck' ? ' is-active' : ''}`}
+              role="menuitem"
+              onClick={() => toggleForm('topdeck')}
+              aria-expanded={openForm === 'topdeck'}
+              disabled={topdeckBusy}
+            >
+              <IconProfile /> {user.topdeckHandle ? 'Edit TopDeck Account' : 'Add TopDeck Account'}
+            </button>
+            {openForm === 'topdeck' ? (
+              <form className="profile-menu__subform" onSubmit={handleTopDeckSubmit}>
+                <label className="profile-menu__field">
+                  <span>TopDeck handle</span>
+                  <input
+                    type="text"
+                    value={topdeckValue}
+                    onChange={(event) => setTopdeckValue(event.target.value)}
+                    maxLength={256}
+                    autoComplete="off"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    disabled={topdeckBusy}
+                    aria-describedby={`topdeck-hint-${variant}`}
+                  />
+                </label>
+                <div className="profile-menu__hint" id={`topdeck-hint-${variant}`}>
+                  Enter your handle with or without @. It appears on your public Excelsior profile.
+                  {' '}Find or claim it in <a href="https://topdeck.gg/account" target="_blank" rel="noopener noreferrer">TopDeck Account Settings</a>.
+                  {' '}This saves a profile link; account ownership is not verified.
+                </div>
+                {topdeckError ? <div className="profile-menu__error" role="alert">{topdeckError}</div> : null}
+                <div className="profile-menu__subform-actions">
+                  <button type="button" className="btn btn-ghost" onClick={() => setOpenForm(null)} disabled={topdeckBusy}>Cancel</button>
+                  {user.topdeckHandle ? (
+                    <button type="button" className="btn btn-ghost" onClick={() => void saveTopDeck(null)} disabled={topdeckBusy}>Remove</button>
+                  ) : null}
+                  <button type="submit" className="btn btn-primary" disabled={topdeckBusy}>
+                    {topdeckBusy ? 'Saving...' : 'Save'}
                   </button>
                 </div>
               </form>

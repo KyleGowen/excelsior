@@ -1,6 +1,8 @@
 import type { User, UserRole } from '../../types';
 import { isValidEmail } from '../../utils/emailValidation';
 import { resolveUserDisplayName } from '../../utils/resolveUserDisplayName';
+import { parseTopDeckHandle, topdeckProfileUrl } from '../../utils/topdeckProfile';
+import type { TopDeckAccountV1DataDto } from '../dto/v1/TopDeckAccountV1DataDto';
 
 type Fail = { ok: false; status: number; code: string; message: string };
 type Ok<T> = { ok: true; status: number; data: T };
@@ -40,6 +42,23 @@ function assertSelfServiceRole(role: UserRole | undefined): Fail | null {
  */
 export class UserAccountService {
   constructor(private readonly userRepository: UserAccountRepository) {}
+
+  async setTopDeckHandle(
+    userId: string,
+    role: UserRole | undefined,
+    rawHandle: unknown
+  ): Promise<Ok<TopDeckAccountV1DataDto> | Fail> {
+    const roleError = assertSelfServiceRole(role);
+    if (roleError) return roleError;
+    const parsed = parseTopDeckHandle(rawHandle);
+    if (!parsed.ok) return fail(400, 'TOPDECK_HANDLE_INVALID', parsed.message);
+    const updated = await this.userRepository.updateUser(userId, { topdeckHandle: parsed.value });
+    if (!updated) return fail(404, 'USER_NOT_FOUND', 'User not found');
+    return ok(200, {
+      topdeckHandle: updated.topdeckHandle ?? null,
+      topdeckProfileUrl: topdeckProfileUrl(updated.topdeckHandle),
+    });
+  }
 
   async changeEmail(
     userId: string,

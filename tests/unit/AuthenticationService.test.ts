@@ -298,7 +298,8 @@ describe('AuthenticationService', () => {
           username: user.name,
           email: user.email,
           role: user.role,
-          authProvider: 'password'
+          authProvider: 'password',
+          topdeckHandle: null
         }
       });
       expect((mockUserRepository as any).updateLastLoginAt).toHaveBeenCalledWith(user.id);
@@ -553,7 +554,8 @@ describe('AuthenticationService', () => {
         id: 'existing-id',
         name: 'Existing User',
         email: 'existing@example.com',
-        role: 'USER' as UserRole
+        role: 'USER' as UserRole,
+        topdeckHandle: 'ExistingTopDeck'
       };
       mockRequest.body = { idToken: 'valid-token' };
       const mockAuth = {
@@ -580,7 +582,8 @@ describe('AuthenticationService', () => {
           username: existingUser.name,
           email: existingUser.email,
           role: existingUser.role,
-          authProvider: 'google'
+          authProvider: 'google',
+          topdeckHandle: 'ExistingTopDeck'
         }
       });
     });
@@ -618,7 +621,8 @@ describe('AuthenticationService', () => {
           username: existingUser.name,
           email: existingUser.email,
           role: existingUser.role,
-          authProvider: 'google'
+          authProvider: 'google',
+          topdeckHandle: null
         }
       });
     });
@@ -699,7 +703,8 @@ describe('AuthenticationService', () => {
           username: newUser.name,
           email: newUser.email,
           role: newUser.role,
-          authProvider: 'google'
+          authProvider: 'google',
+          topdeckHandle: null
         }
       });
     });
