@@ -44,6 +44,7 @@ const cases = {
     await home(tab, origin);
     await role(tab, 'link', 'Database').click();
     await wait(role(tab, 'heading', 'Card Database'));
+    if (options.catalogTab) await role(tab, 'tab', options.catalogTab).click();
     const search = role(tab, 'searchbox', 'Search cards');
     if (!options.skipEmptySearch) {
       await search.fill('unmatched-fictional-baseline');
@@ -51,8 +52,12 @@ const cases = {
       await capture('empty');
     }
     const name = options.cardName ?? 'Lancelot';
-    await search.fill(name);
-    await wait(role(tab, 'button', `View ${name}`));
+    const queries = options.searchQueries ?? [name];
+    for (const [index, query] of queries.entries()) {
+      await search.fill(query);
+      await wait(role(tab, 'button', `View ${name}`));
+      await capture(`search-${index + 1}`);
+    }
     await role(tab, 'button', `View ${name}`).click();
     const details = role(tab, 'dialog', `${name} details`);
     await wait(details);
@@ -68,7 +73,7 @@ const cases = {
     await details.press('Escape');
     await details.waitFor({ state: 'hidden', timeoutMs: 15000 });
     await wait(role(tab, 'button', `View ${name}`));
-    return { emptySearch: options.skipEmptySearch ? 'skipped by selection' : 'passed', cardName: name, artwork: art, detailsClosed: true };
+    return { emptySearch: options.skipEmptySearch ? 'skipped by selection' : 'passed', cardName: name, searchQueries: queries, artwork: art, detailsClosed: true };
   },
   'collection-guest-read': async ({ tab, origin, options }) => {
     await home(tab, origin);

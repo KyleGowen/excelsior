@@ -67,6 +67,45 @@ describe('cardMatchesSearchQuery foil keyword', () => {
   });
 });
 
+describe.each(['raw', 'presented'] as const)('cardMatchesSearchQuery %s aspect location', (source) => {
+  const fragileInsignificantBeings: CatalogCard = {
+    id: 'fragile-insignificant-beings',
+    card_name: 'Fragile Insignificant Beings',
+    set: 'SKY',
+    set_number: '376',
+    location: 'Streets of Chicago',
+    aspect_description: 'Each player is -3 to Venture Total for each Special card they have in play at the End of Battle Phase.',
+  };
+  const matches = (card: CatalogCard, query: string) => cardMatchesSearchQuery(
+    source === 'presented' ? presentCatalog([card], 'aspects', [], [])[0] as CatalogCard : card,
+    query,
+  );
+
+  it.each(['street', 'Chicago', 'Streets of Chicago', 'STREETS OF CHICAGO'])(
+    'finds Fragile Insignificant Beings using %s',
+    (query) => {
+      expect(matches(fragileInsignificantBeings, query)).toBe(true);
+    },
+  );
+
+  it('keeps card-name and rules-text search working', () => {
+    expect(matches(fragileInsignificantBeings, 'fragile')).toBe(true);
+    expect(matches(fragileInsignificantBeings, 'Venture Total')).toBe(true);
+  });
+
+  it('does not match a different or missing location', () => {
+    expect(matches(fragileInsignificantBeings, 'The Greene Farm')).toBe(false);
+    expect(matches({ ...fragileInsignificantBeings, location: null }, 'street')).toBe(false);
+    const { location: _location, ...withoutLocation } = fragileInsignificantBeings;
+    expect(matches(withoutLocation, 'street')).toBe(false);
+  });
+
+  it('still requires a foil printing when foil is combined with a location', () => {
+    expect(matches({ ...fragileInsignificantBeings, is_foil: false }, 'foil chicago')).toBe(false);
+    expect(matches({ ...fragileInsignificantBeings, is_foil: true }, 'foil chicago')).toBe(true);
+  });
+});
+
 describe('cardMatchesSearchQuery printed card typo', () => {
   const matches = (card:CatalogCard, query:string) => cardMatchesSearchQuery(presentCatalog([card], 'aspects', [], [])[0] as CatalogCard, query);
   const hiddenDanger: CatalogCard = {

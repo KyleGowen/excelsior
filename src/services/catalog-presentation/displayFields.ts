@@ -8,6 +8,7 @@ export function cardCharacterName(card: Partial<CatalogCard> | null | undefined)
   return String(card.character ?? card.character_name ?? '').trim();
 }
 const DBV_SEARCH_TEXT_FIELDS: (keyof CatalogCard)[] = [
+  'location',
   'mission_set',
   'special_abilities',
   'special_ability',
@@ -33,7 +34,7 @@ export function cardSearchAliases(card: Partial<CatalogCard>): string[] {
   return [];
 }
 
-/** Lowercase haystack for catalog search across name, character, mission set, and card text/abilities. */
+/** Lowercase search text across name, linked character/location, mission set, and card text/abilities. */
 export function cardSearchHaystack(card: Partial<CatalogCard> | null | undefined): string {
   if (!card) return '';
   return [

@@ -3,8 +3,10 @@
 Browse, search, filter, and sort the full modern OverPower catalog.
 
 ## Controls
-- **Search** by card name, character name, mission-set name, or card text including inherent abilities
+- **Search** by card name, linked character or location name, mission-set name, or card text including inherent abilities
   (debounced, header bar; `cardMatchesSearchQuery` in `catalogTypeMap`).
+  Aspects match their linked location in Database, Collection, and Add Cards; for example,
+  "street", "Chicago", or "Streets of Chicago" finds Fragile Insignificant Beings (#376).
   Skybound Hidden Danger (#379) also matches both "Green Farm" (printed typo) and
   "Greene Farm" (canonical location) in this shared search, including Collection and Add Cards.
 - **Type tabs**: Characters, Special Cards, Any Character, Power Cards, Locations, Missions, Events,

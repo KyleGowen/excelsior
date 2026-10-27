@@ -4,9 +4,25 @@ import { DataSourceConfig } from '../../../src/config/DataSourceConfig';
 import { CATALOG_PRESENTATION_TYPES } from '../../../src/services/catalog-presentation/presentCatalog';
 import { presentCatalog as baseline } from '../../helpers/baselineCatalogPresentation';
 import { decodeCatalogPresentation } from '../../../frontend/src/lib/api/catalogPresentation';
+import { cardMatchesSearchQuery } from '../../../frontend/src/lib/catalog/catalogTypeMap';
 import { gzipSync } from 'zlib';
 
 describe('M4 catalog presentation through production composition', () => {
+  it('finds an aspect by its linked location in full and compact catalog responses', async () => {
+    for (const suffix of ['', '?compact=1']) {
+      const response = await request(app).get('/api/v1/catalog/presentation/aspects' + suffix).expect(200);
+      const cards = suffix ? decodeCatalogPresentation(response.body.data) : response.body.data;
+      const card = cards.find((row: { set: string; set_number: string }) => row.set === 'SKY' && row.set_number === '376');
+      expect(card).toBeDefined();
+      expect(card.location).toBe('Streets of Chicago');
+      expect(card.presentation.searchText).toContain('streets of chicago');
+      for (const query of ['street', 'Chicago', 'Streets of Chicago', 'fragile']) {
+        expect(cardMatchesSearchQuery(card, query)).toBe(true);
+      }
+      expect(cardMatchesSearchQuery(card, 'The Greene Farm')).toBe(false);
+    }
+  });
+
   it('preserves every printing in all 13 real catalogs and losslessly expands the compact response', async () => {
     const characters=await request(app).get('/api/v1/catalog/characters').expect(200);
     const foils=await request(app).get('/api/v1/catalog/foil-card-map').expect(200);
