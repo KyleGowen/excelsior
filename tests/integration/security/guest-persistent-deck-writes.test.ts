@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { randomUUID } from 'crypto';
 import { Pool } from 'pg';
 import { app } from '../../../src/test-server';
 import { integrationTestUtils } from '../../setup-integration';
@@ -10,7 +11,7 @@ type Write = { method: 'post' | 'put' | 'delete'; path: string; body: object };
 type Credentials = { cookie: string; bearer: string };
 
 describe('Guest persistence boundary with real session and Bearer authentication', () => {
-  const password = 'GuestBoundaryTest1';
+  const password = randomUUID();
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower'
   });
