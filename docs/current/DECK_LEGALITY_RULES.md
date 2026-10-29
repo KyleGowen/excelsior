@@ -91,6 +91,13 @@ and identifies the required `battleground` row by the catalog name `Global Defen
 
 **Persistence snapshot:** Server **`is_valid`** is recomputed on every deck mutation. The v2 SPA uses `POST /api/v1/decks/validate` for live feedback and shared `deckLegalityBadge` on tiles; client mirror in [`validateDeckClient.ts`](../../frontend/src/lib/decks/validateDeckClient.ts) is kept aligned with `DeckValidationService` where editor-side checks run.
 
+**Level-7 Power copy limits:** Energy, Combat, Brute Force, and Intelligence Power
+cards allow multiple copies, including TFCP promo, alternate-art, and foil
+printings. V375 corrects the erroneous catalog `one_per_deck` flags introduced
+by promo migrations. Any-Power and Multi-Power restrictions are unchanged.
+Existing saved legality snapshots refresh on the next deck mutation; the live
+editor validation uses the corrected catalog after the server restarts.
+
 ### 3.1 Any-Power semantics
 
 **Any-Power is not a fifth stat on the character grid** — it always refers to the four primaries: Energy, Combat, Brute Force, and Intelligence. Deck construction uses **different math** for Training than for Power / Teamwork:
