@@ -44,6 +44,9 @@ export const deckValidationMessages = {
     gdaAnyCharacterCannotMix(): string {
         return 'G.D.A. Any Character Special cards cannot be combined with non-G.D.A. Any Character Special cards';
     },
+    erbAnyCharacterNeedsBattleground(): string {
+        return 'ERB Any Character Special cards (including ERBP promos) require the "Rainbow Bridge" Battleground in your deck';
+    },
     unusableEventMissionSet(cardName: string, missionSet: string): string {
         return `"${cardName}" requires mission set "${missionSet}" in your deck`;
     },

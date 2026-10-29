@@ -14,13 +14,17 @@ describe('Atomic import real HTTP and persistence',()=>{
   const first=await agent.post('/api/v1/decks/import').send({name:'Modern text fixture',exportData:sample}).expect(201);integrationTestUtils.trackTestDeck(first.body.data.deckId);
   const full=(await agent.get(`/api/v1/decks/${first.body.data.deckId}/full`).expect(200)).body.data;
   expect(first.body.data.cardsAdded).toBe(76);expect(full.cards.filter((c:any)=>c.type==='basic-universe'&&c.exclude_from_draw)).toHaveLength(3);expect(full.cards.filter((c:any)=>c.type==='aspect')).toHaveLength(1);
-  expect(full.evaluation.counts.drawPile).toBe(61);expect(full.evaluation.legality.rawValid).toBe(true);
+  expect(full.evaluation.counts.drawPile).toBe(61);expect(full.evaluation.legality.rawValid).toBe(false);
+  // This historical sample includes ERB Any Character cards but no Rainbow Bridge.
+  expect(full.evaluation.legality.reasons).toContainEqual(expect.objectContaining({rule:'erb_any_character_requires_battleground'}));
   const draft={schemaVersion:1,draftId:first.body.data.deckId,revision:0,cards:full.cards.map((c:any)=>({type:c.type,cardId:c.cardId,quantity:c.quantity,exclude_from_draw:c.exclude_from_draw})),reserveCharacterId:full.metadata.reserve_character,limited:false,format:'venture',koCharacterIds:[]};
   const exported=(await agent.post('/api/v1/decks/export').send({draft,display:{name:'Modern fixture',description:'',exportedBy:'Fictional',surface:'selection'}}).expect(200)).body.data;
   expect(exported.topDeck).toContain('Cards: 64/56 | Threat: 76/76');expect(exported.topDeck).toContain('→ Trident [ERB] (on location)');
   expect(exported.deck.cards.basic_universe).toEqual(expect.arrayContaining(['Ray Gun - Energy 6 or greater +2','Trident - Brute Force 6 or greater +3',"Merlin's Wand - Energy 6 or greater +3"]));
   const second=await agent.post('/api/v1/decks/import').send({name:'Modern JSON fixture',exportData:exported.deck}).expect(201);integrationTestUtils.trackTestDeck(second.body.data.deckId);
   const roundTrip=(await agent.get(`/api/v1/decks/${second.body.data.deckId}/full`).expect(200)).body.data;
+  expect(roundTrip.evaluation.legality.rawValid).toBe(false);
+  expect(roundTrip.evaluation.legality.reasons).toContainEqual(expect.objectContaining({rule:'erb_any_character_requires_battleground'}));
   expect(second.body.data.cardsAdded).toBe(76);expect(roundTrip.cards.filter((c:any)=>c.type==='basic-universe')).toHaveLength(3);expect(roundTrip.cards.filter((c:any)=>c.type==='aspect')).toHaveLength(1);
   const pool=DataSourceConfig.getInstance().getPool();
   expect((await pool.query('SELECT name FROM characters WHERE id=$1',[roundTrip.metadata.reserve_character])).rows[0].name).toBe('Anubis');

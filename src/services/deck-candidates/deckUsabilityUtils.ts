@@ -59,6 +59,18 @@ export function specialLinkedCharacterName(special: {
 }
 
 export const GLOBAL_DEFENSE_AGENCY_BATTLEGROUND_NAME = 'Global Defense Agency';
+export const RAINBOW_BRIDGE_BATTLEGROUND_NAME = 'Rainbow Bridge';
+
+/** ERB and its promo printings share Rainbow Bridge's Any Character permission. */
+export function isRainbowBridgeAnyCharacterSpecial(special: {
+  set?: unknown;
+  character?: string;
+  character_name?: string;
+  characters?: string[];
+}): boolean {
+  return ['ERB', 'ERBP'].includes(String(special.set ?? '').trim().toUpperCase())
+    && specialLinkedCharacterName(special).toLowerCase() === 'any character';
+}
 
 /** Skybound collectors 349–374 are the G.D.A.-branded Any Character subset. */
 export function isGdaAnyCharacterSpecial(special: {

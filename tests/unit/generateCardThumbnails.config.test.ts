@@ -103,6 +103,11 @@ describe('generateCardThumbnails THUMB_CONFIGS', () => {
     expect(tfacp).toEqual({ subdir: 'tfacp/power', preset: PRESET_PORTRAIT });
   });
 
+  it('uses the landscape preset for ERB promo Battleground art', () => {
+    expect(PROMO_ART_SUBDIRS.find((entry) => entry.subdir === 'erbp/battlegrounds'))
+      .toEqual({ subdir: 'erbp/battlegrounds', preset: PRESET_LOCATION });
+  });
+
   it('includes tfacp/ally in promo art subdirs with portrait preset', () => {
     const tfacpAlly = PROMO_ART_SUBDIRS.find((entry) => entry.subdir === 'tfacp/ally');
     expect(tfacpAlly).toEqual({ subdir: 'tfacp/ally', preset: PRESET_PORTRAIT });

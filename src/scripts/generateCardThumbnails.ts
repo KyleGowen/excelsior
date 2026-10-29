@@ -85,6 +85,7 @@ const THUMBNAIL_DIRS = [
 
 /** Promo set art uses set-scoped folders with mixed aspect ratios. */
 export const PROMO_ART_SUBDIRS: { subdir: string; preset: ThumbResizeConfig }[] = [
+  { subdir: 'erbp/battlegrounds', preset: PRESET_LOCATION },
   { subdir: 'skyp/characters', preset: PRESET_CHARACTER },
   { subdir: 'skyp/power', preset: PRESET_PORTRAIT },
   { subdir: 'tfacp/power', preset: PRESET_PORTRAIT },

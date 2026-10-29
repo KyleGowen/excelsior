@@ -5,6 +5,7 @@ import { BattlegroundCountRule } from './battleground-count.rule';
 import { CharacterCountRule } from './character-count.rule';
 import { DeckSizeRule } from './deck-size.rule';
 import { GdaAnyCharacterBattlegroundRule } from './gda-any-character-battleground.rule';
+import { RainbowBridgeAnyCharacterBattlegroundRule } from './rainbow-bridge-any-character-battleground.rule';
 import { LocationCountRule } from './location-count.rule';
 import { MissionCountAndSetRule } from './mission-count-and-set.rule';
 import { OnePerDeckRule } from './one-per-deck.rule';
@@ -46,6 +47,7 @@ export function defaultDeckValidationRuleList(): DeckValidationRuleList {
         new UnusableAllyUniverseRule(),
         new UnusableAdvancedUniverseRule(),
         new UnusableAspectRule(),
-        new GdaAnyCharacterBattlegroundRule()
+        new GdaAnyCharacterBattlegroundRule(),
+        new RainbowBridgeAnyCharacterBattlegroundRule()
     );
 }

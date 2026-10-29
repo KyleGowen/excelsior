@@ -9,8 +9,8 @@ export function candidateContext(cards: CandidateDraftCard[], catalog: Map<strin
   const characters = cards.filter(c => c.type === 'character').map(resolve);
   const characterNames = characters.map(c => String(c.name ?? 'Unknown'));
   const characterStats = effectiveTeamCharacterStats(characters.map(c => ({ name: String(c.name ?? 'Unknown'), energy: Number(c.energy) || 0, combat: Number(c.combat) || 0, brute_force: Number(c.brute_force) || 0, intelligence: Number(c.intelligence) || 0 })));
-  const first = (type: string) => { const c = cards.find(c => c.type === type); return c ? resolve(c) : undefined; };
-  const specials = cards.filter(c => c.type === 'special').map(resolve).filter(c => specialLinkedCharacterName(c).toLowerCase() === 'any character');
+  const first = (type: string) => { const c = cards.find(c => c.type === type && c.quantity > 0); return c ? resolve(c) : undefined; };
+  const specials = cards.filter(c => c.type === 'special' && c.quantity > 0).map(resolve).filter(c => specialLinkedCharacterName(c).toLowerCase() === 'any character');
   return { characterNames, characterStats, angryMobCharacterNames: characterNames.filter(n => n.startsWith('Angry Mob')),
     missionSets: new Set(cards.filter(c => c.type === 'mission').map(resolve).map(c => String(c.mission_set ?? '').trim()).filter(Boolean)),
     homebaseName: String(first('location')?.name ?? first('location')?.card_name ?? '').trim(),

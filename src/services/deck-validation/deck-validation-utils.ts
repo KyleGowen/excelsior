@@ -14,6 +14,7 @@ export function deckCardMapKey(card: Pick<DeckCard, 'type' | 'cardId'>): string 
 /** True when the deck contains a Battleground whose catalog name matches `name` (exact). */
 export function deckHasBattlegroundNamed(ctx: DeckValidationContext, name: string): boolean {
     return ctx.battlegroundCards.some((battleground) => {
+        if (battleground.quantity <= 0) return false;
         const available = ctx.availableCardsMap.get(deckCardMapKey(battleground));
         const battlegroundName = String(
             (available?.name as string) || (available?.card_name as string) || ''
@@ -151,6 +152,18 @@ export function specialLinkedCharacterName(special: {
 }
 
 export const GLOBAL_DEFENSE_AGENCY_BATTLEGROUND_NAME = 'Global Defense Agency';
+export const RAINBOW_BRIDGE_BATTLEGROUND_NAME = 'Rainbow Bridge';
+
+/** ERB promo printings keep the same Any Character permission as their ERB base. */
+export function isRainbowBridgeAnyCharacterSpecial(special: {
+    set?: unknown;
+    character?: string;
+    character_name?: string;
+    characters?: string[];
+}): boolean {
+    return ['ERB', 'ERBP'].includes(String(special.set ?? '').trim().toUpperCase())
+        && isAnyCharacterSpecial(special);
+}
 
 /**
  * Skybound collectors 349–374 are the G.D.A.-branded Any Character subset.

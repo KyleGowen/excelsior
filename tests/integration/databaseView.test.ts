@@ -184,9 +184,12 @@ describe('Database View Integration Tests', () => {
       console.log('✅ Location count verified:', count);
     });
 
-    it('should store Global Defense Agency as the only Battleground', async () => {
-      const result = await pool.query('SELECT name, set_number FROM battlegrounds');
-      expect(result.rows).toEqual([{ name: 'Global Defense Agency', set_number: '348' }]);
+    it('should store Global Defense Agency and the Rainbow Bridge promo as Battlegrounds', async () => {
+      const result = await pool.query('SELECT name, set_number FROM battlegrounds ORDER BY name');
+      expect(result.rows).toEqual([
+        { name: 'Global Defense Agency', set_number: '348' },
+        { name: 'Rainbow Bridge', set_number: null },
+      ]);
       const locationResult = await pool.query(
         "SELECT COUNT(*)::int AS count FROM locations WHERE name = 'Global Defense Agency'"
       );

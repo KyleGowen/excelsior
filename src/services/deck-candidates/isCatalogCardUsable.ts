@@ -4,6 +4,8 @@ import {
   GLOBAL_DEFENSE_AGENCY_BATTLEGROUND_NAME,
   hasAlphaIntelligencePowerCardAllowance,
   isGdaAnyCharacterSpecial,
+  isRainbowBridgeAnyCharacterSpecial,
+  RAINBOW_BRIDGE_BATTLEGROUND_NAME,
   isMultiPowerPowerCardType,
   normalizeAngryMobVariant,
   specialLinkedCharacterName,
@@ -28,6 +30,10 @@ function isSpecialCardUsable(card: CatalogCard, ctx: DeckUsabilityContext): bool
       );
     }
     if (characterName === 'Any Character' && ctx.hasGdaAnyCharacterSpecial) return false;
+    if (isRainbowBridgeAnyCharacterSpecial(card)) {
+      return ctx.battlegroundName === RAINBOW_BRIDGE_BATTLEGROUND_NAME
+        && !ctx.hasGdaAnyCharacterSpecial;
+    }
     return true;
   }
 

@@ -74,6 +74,17 @@ Columns: **Rule** | **Rulebook (Learn-to-Play txt)** | **Server** ([`deckValidat
 
 **Deck card `type` strings:** API/editor rows use hyphens (e.g. `basic-universe`). Server validation normalizes to underscore map keys via `deckCardTypeKeyPrefix` in [`deckValidationService.ts`](../../src/services/deckValidationService.ts) so lookups match catalog rows.
 
+**ERB Rainbow Bridge identity:** ERB Any Character Specials, including ERBP promo/foil
+printings, require the `Rainbow Bridge` Battleground. The server rule
+`erb_any_character_requires_battleground` matches the `ERB`/`ERBP` set codes and
+`Any Character` owner, rather than environment-specific UUIDs. Add Cards **Hide
+Unusables** mirrors the dependency and updates when the Battleground changes.
+Character-specific specials and other sets are outside this permission. Existing
+G.D.A. exclusivity prevents mixing the two Any Character pools, and the one
+Battleground limit still applies. The Rainbow Bridge migration invalidates stale
+saved validity flags for ERB/ERBP Any Character decks without Rainbow Bridge;
+it does not change their card contents.
+
 **Skybound G.D.A. identity:** Production UUIDs are environment-specific, so the legality rule identifies
 the G.D.A.-branded Any Character Special subset by stable set code + collector numbers (`SKY` 349–374)
 and identifies the required `battleground` row by the catalog name `Global Defense Agency`.

@@ -150,6 +150,7 @@ Thumbs.db
 src/resources/cards/images/characters/thumb/
 src/resources/cards/images/missions/thumb/
 src/resources/cards/images/locations/thumb/
+src/resources/cards/images/erbp/thumb/
 
 # Draft energy icon candidates (npm run generate:energy-icons); ship winner as energy.png only
 src/resources/images/icons/candidates/

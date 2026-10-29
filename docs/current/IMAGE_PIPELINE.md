@@ -50,6 +50,9 @@ src/resources/cards/images/
 │   ├── specials/, power/, missions/, aspects/
 │   ├── advanced-universe/, teamwork/, ally/, training/, basic-universe/
 │   └── thumb/                      ← generated; mirrors all folders above
+├── erbp/                           ← Edgar Rice Burroughs - Promos
+│   ├── battlegrounds/              ← landscape Battleground promos (Rainbow Bridge)
+│   └── thumb/battlegrounds/        ← generated landscape thumbnails
 └── tfacp/                          ← The Few and the Cursed - Promos
     ├── ally/                       ← portrait ally promos (e.g. White Demon Of Mazandaran)
     ├── missions/                   ← portrait mission promos (e.g. Chronicles of TFAC)
@@ -63,6 +66,11 @@ src/resources/cards/images/
 The same generator also fills `thumb/` under every **card-art** top-level folder (excluding `backgrounds/`). **Set-scoped folders** (`sky/`, `erb/`, `skyp/`, `tfacp/`) are handled via `PROMO_ART_SUBDIRS` in `generateCardThumbnails.ts`: e.g. `sky/characters/`, `erb/characters/`, and `skyp/characters/` → character preset; `sky/locations/` and `erb/locations/` → location preset; all portrait types → portrait preset; `sky/events/` and `erb/events/` → event preset. Generated paths insert `thumb/` after the set folder, such as `erb/thumb/characters/001_angry_mob_middle_ages.webp`. Nested source folders are preserved. The `thumb/` directories are auto-generated. Never edit files inside `thumb/` directly — they will be overwritten on the next run.
 
 ---
+
+ERB promo Battleground art under `erbp/battlegrounds/` is registered in
+`PROMO_ART_SUBDIRS` with `PRESET_LOCATION` (472×302, contain). Rainbow Bridge's
+source is `erbp/battlegrounds/rainbow_bridge.png`; its generated thumbnail is
+`erbp/thumb/battlegrounds/rainbow_bridge.webp`.
 
 ## Thumbnail Dimensions
 
