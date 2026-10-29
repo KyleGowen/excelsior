@@ -1208,7 +1208,7 @@ Unfavorite a deck. Idempotent.
 
 Session-scoped decks for **GUEST** users: stored **in memory** keyed by `**sessionId`** cookie (not persisted to PostgreSQL). **GET list** merges DB decks for the guest user (`getDecksByUserId` + `transformDeckList`) with session guest decks (same list shape as `**GET /api/v1/decks`** entries).
 
-> **Clone-on-open pattern:** When a GUEST user navigates to a deck URL that belongs to a logged-in user (e.g. a shared link), the frontend checks deck ownership from `metadata.isOwner`. If `isOwner` is `false`, the client can offer to clone the deck into a new guest session deck via `POST /api/v1/guest/decks` (copy name/description) followed by `PUT /api/v1/guest/decks/:id/cards` (copy cards). There is no server-side clone endpoint — the client drives this sequence.
+> **Guest shared links and samples:** Another account's shared database deck opens read-only for GUEST, even without `?readonly=true`; opening it or returning to Guest Decks must not create a copy. Only preloaded samples owned by the current guest account are automatically copied into guest session decks. The frontend checks the loaded `metadata.userId` against the current guest account before `POST /api/v1/guest/decks` (copy name/description) followed by `PUT /api/v1/guest/decks/:id/cards` (copy cards). There is no server-side clone endpoint — the client drives this sequence.
 
 **Auth:** Valid **session cookie** (`authenticateUser`) **and** `**GUEST`** role **and** `**sessionId`** cookie. Unauthenticated → **401** v1 envelope (`UNAUTHORIZED`). Wrong role → **403** v1 envelope, code `**GUEST_ONLY`**. Missing `**sessionId`** → 401, code `**SESSION_REQUIRED**`.
 

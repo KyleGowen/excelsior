@@ -373,6 +373,12 @@ official tiles, and full-metadata featured upgrade row as the Community page.
 
 ### Deck Editor — Desktop header compaction
 
+Shared links to another account's deck show the read-only header for Guest on desktop
+and mobile, including when the URL has no `readonly` flag. The deck name is static;
+Save, Add Cards, and card-removal controls are hidden. Opening or leaving this view
+does not add a guest deck. The guest account's built-in samples still open as editable
+temporary copies.
+
 DTV and mobile deck views show an **Export** action pill beside Draw Hand. It uses the existing compact header-pill treatment and opens the shared Export deck slide-out. The action is visible to owners and read-only viewers; the mobile bottom nav hides while the slide-out is open.
 
 DTV topbar (`.deck-editor__topbar`) uses a 3-column grid on wide viewports: leading (name + meta) | stats panel | actions. When the main column is narrow (`@container deck-editor-main (max-width: 1700px)`, desktop only), it switches to a **two-row** layout in [`DeckEditorPage.css`](frontend/src/features/deck-editor/DeckEditorPage.css):

@@ -4,6 +4,11 @@ Full-screen editor with its **own** chrome (no AppShell). It is **unguarded** so
 shared deck links work for signed-out visitors (`?readonly=true` forces read-only; non-owners
 are read-only automatically).
 
+Opening another account's shared deck as Guest remains on the original URL and
+opens read-only even without `?readonly=true`; it never creates a session copy or
+adds that deck to Guest Decks. Only the guest account's built-in sample decks are
+copied on open for temporary editing. Existing `guest_` session decks stay editable.
+
 ## Layout
 - **Left rail**: quick nav (Home, Decks, Collection).
 - **Sticky page header** (`.deck-editor__header`): on **desktop**, stays pinned while the card list scrolls. On **mobile**, the header, type tabs, and card list share one scroll container (`.deck-editor__main`) so metadata scrolls off-screen for more card space. Single **topbar row** (`.deck-editor__topbar`) with three zones:
@@ -126,8 +131,9 @@ via `setQueryData` only so navigation away/back stays consistent, without remoun
 flashing card images.
 
 ## Notes
-- Owner vs read-only is resolved from the auth user vs the route `userId` and the `readonly`
-  query param.
+- Owner vs read-only uses the loaded deck's server-provided ownership and the `readonly`
+  query param. Guests can edit only `guest_` session decks; sample copying checks the
+  loaded deck's owner against the current guest account, independently of the route `userId`.
 - Deck card-view layout conventions: see `docs/current/DECK_EDITOR_CARD_VIEW_LAYOUT.md` for
   the landscape/portrait rules to preserve.
 

@@ -363,6 +363,7 @@ it('does not create a feedback-expiration timer after an in-flight module unmoun
 
 it('never exposes preloaded source ownership while a Guest clone is pending', async () => {
  installSaveFixture(); host.identity = { user: { id: 'fictional-guest', username: 'Fictional Guest', email: null, role: 'GUEST' }, isGuest: true, isAdmin: false };
+ host.api.fetchDeckFull = jest.fn(async () => ({ ...sampleDeck, metadata: { ...sampleDeck.metadata, userId: 'fictional-guest' } }));
  host.api.createDeck = jest.fn(() => new Promise(() => {}));
  await mount(<DeckBuilderModule deckId="fictional-source" readonly />);
  let exposedOwnerInput = false;
@@ -376,6 +377,19 @@ it('never exposes preloaded source ownership while a Guest clone is pending', as
  expect(container.textContent).toContain('Preparing deck...');
  expect(host.api.updateDeckMeta).not.toHaveBeenCalled();
  expect(host.api.replaceDeckCards).not.toHaveBeenCalled();
+});
+
+it('opens another account\'s shared deck read-only for Guest without copying it', async () => {
+ installSaveFixture(); host.identity = { user: { id: 'fictional-guest', username: 'Fictional Guest', email: null, role: 'GUEST' }, isGuest: true, isAdmin: false };
+ host.api.createDeck = jest.fn();
+ await mount(<DeckBuilderModule deckId="fictional-shared-source" />);
+ expect(container.textContent).toContain('Read-only');
+ expect(container.querySelector('[aria-label="Deck name"]')).toBeNull();
+ expect([...container.querySelectorAll('button')].some(button => ['Save', 'Saved', 'Add Cards'].includes(button.textContent?.trim() ?? ''))).toBe(false);
+ expect(host.api.createDeck).not.toHaveBeenCalled();
+ expect(host.api.updateDeckMeta).not.toHaveBeenCalled();
+ expect(host.api.replaceDeckCards).not.toHaveBeenCalled();
+ expect(host.onOpenDeck).not.toHaveBeenCalled();
 });
 
 
