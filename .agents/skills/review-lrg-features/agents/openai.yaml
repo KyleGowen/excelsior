@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review LRG Features"
+  short_description: "Review LRG changes for selective Excelsior ports"
+  default_prompt: "Use $review-lrg-features to review the four LRG repositories for new features and fixes worth porting to Excelsior, and return a numbered table for my individual approval."

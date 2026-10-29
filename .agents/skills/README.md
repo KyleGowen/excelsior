@@ -11,6 +11,7 @@ AWS phases use **AWS Core** by default under [AWS operations](../../docs/current
 | `start-excelsior` | `/start`, "Start Excelsior", "start dev servers" | Active | Merged from `.cursor/skills/start` plus existing Codex helper |
 | [`test-local-browser`](test-local-browser/SKILL.md) | local browser checks, before/after UI verification, spot-check handoff | Active | M1 CUA workflow; shared scenarios and evidence under `tests/` and `docs/` |
 | [`verify-production-browser`](verify-production-browser/SKILL.md) | post-release browser smoke, verify deployed UI | Active read-only workflow | Exact-SHA health contract and selected M1 production-safe cases |
+| [`review-lrg-features`](review-lrg-features/SKILL.md) | review LRG/BMG releases, reverse ports, feature parity | Active review-first workflow | Personal GitHub access; origin/equivalence checks and individual feature approval |
 | `ship` | "ship", "ship it" | Active | Migrated from `.cursor/skills/ship` |
 | `add-card` | "add card", `/add-card`, image path under `src/resources/cards/images/` | Active | Migrated from `.cursor/skills/add-card` |
 | `api-layer-migration` | route migration, `/api/v1`, thinning `src/routes` | Active | Migrated from `.cursor/skills/api-layer-migration` |

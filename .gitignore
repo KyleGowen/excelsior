@@ -178,3 +178,6 @@ infra/firebase-service-account.json
 
 # Retained verification evidence for the skill hygiene change.
 !docs/evidence/skill-hygiene/*.log
+
+# Private LRG reverse-port review state; never publish source review evidence.
+/.local/lrg-port-review/
