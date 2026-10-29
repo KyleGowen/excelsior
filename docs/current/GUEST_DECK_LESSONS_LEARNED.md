@@ -8,7 +8,8 @@ This document captures what we tried for GUEST users and deck editing, why it di
 
 ## Current behavior (as of this doc)
 
-- **GUEST can:** Use Deck Builder, create/edit/delete **session-scoped** decks via `/api/guest/decks`, open preloaded DB decks (which are **cloned to a session copy** so the DB is never modified), and save that session copy. They cannot persist anything to the database.
+- **GUEST can:** Use Deck Builder, create/edit/delete **session-scoped** decks via `/api/v1/guest/decks`, open the guest account's preloaded sample decks (which are **cloned to a session copy** so the DB is never modified), and save that session copy. They cannot persist deck changes to the database.
+- **Shared links:** Another account's database deck opens **read-only**, even without `?readonly=true`. Viewing it and using Back must not create a copy or add it to Guest Decks. Clone-on-open is restricted to samples owned by the current guest account, using the loaded owner rather than the route's user id.
 - **GUEST cannot:** Use the **+Deck** button on the Card Database view. The button is **disabled** for GUEST (greyed out, “Log in to add to decks...”).
 - **Backend:** GUEST is blocked from mutating database decks: `blockGuestMutation` is used on POST/PUT/DELETE for `/api/decks/:id` and `/api/decks/:id/cards`. Session-only behavior is achieved via guest deck APIs and clone-on-open for DB decks.
 
@@ -72,7 +73,7 @@ This document captures what we tried for GUEST users and deck editing, why it di
 
 - **Do not** re-enable +Deck for GUEST without a clear product decision and a simple design (e.g. “only allow adding to existing session decks” with no DB-deck → session-copy logic in the dropdown).
 - **Do not** remove `blockGuestMutation` from deck mutation routes for GUEST; that leads to DB persistence.
-- **Keep** clone-on-open for GUEST when opening a DB deck; it cleanly preserves “session only” for the editor.
+- **Keep** clone-on-open only for the guest account's own preloaded samples. Shared decks owned by other accounts must open read-only without creating a guest deck.
 - When touching guest vs deck behavior, **re-read this doc** and the guest sections in API_DOCUMENTATION.md and .cursorrules so implementation matches the intended policy.
 
 ---

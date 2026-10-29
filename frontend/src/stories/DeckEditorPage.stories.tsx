@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { http, HttpResponse, delay } from 'msw';
-import { expect, userEvent, waitFor } from 'storybook/test';
+import { expect, fn, userEvent, waitFor } from 'storybook/test';
 import { Route, Routes } from 'react-router-dom';
 import DeckEditorPage from '../features/deck-editor/DeckEditorPage';
 import { pageHandlers } from './pageMocks';
@@ -23,6 +23,34 @@ type Story = StoryObj<typeof meta>;
 export const Editable: Story = {};
 export const ReadOnly: Story = {
   parameters: { route: '/users/storybook-user/decks/storybook-deck?readonly=true' },
+};
+const unexpectedGuestCopy = fn();
+export const GuestSharedLinkReadOnly: Story = {
+  parameters: {
+    route: '/users/storybook-other-owner/decks/storybook-deck',
+    authUser: { id: 'storybook-guest', username: 'guest', role: 'GUEST' },
+    msw: [
+      http.post('/api/v1/guest/decks', () => {
+        unexpectedGuestCopy();
+        return HttpResponse.json({ data: { id: 'guest_unexpected-copy' } });
+      }),
+      ...pageHandlers({ decks: [{
+        ...sampleDeck,
+        metadata: { ...sampleDeck.metadata, userId: 'storybook-other-owner', isOwner: false },
+      }] }),
+    ],
+  },
+  beforeEach: () => { unexpectedGuestCopy.mockClear(); },
+  play: async ({ canvas }) => {
+    await canvas.findByText('Read-only', { exact: true });
+    await expect(canvas.queryByRole('textbox', { name: 'Deck name' })).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('button', { name: 'Add Cards' })).not.toBeInTheDocument();
+    await expect(unexpectedGuestCopy).not.toHaveBeenCalled();
+  },
+};
+export const GuestSharedLinkReadOnlyMobile: Story = {
+  ...GuestSharedLinkReadOnly,
+  globals: { viewport: { value: 'mobile' } },
 };
 export const Mobile: Story = {
   globals: { viewport: { value: 'mobile' } },

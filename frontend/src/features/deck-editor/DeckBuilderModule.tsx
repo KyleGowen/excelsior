@@ -9,7 +9,7 @@ import { type DeckCardInput, type UpdateDeckMetaInput } from '../../lib/api/deck
 
 import { useFavoriteToggleController } from '../../lib/decks/useFavoriteToggleController';
 import { favoritesQueryKey } from '../../lib/decks/favoritesQueryKey';
-import { clonePreloadedGuestDeck, guestNeedsCloneOnOpen } from '../../lib/decks/guestCloneOnOpen';
+import { clonePreloadedGuestDeck, guestNeedsCloneOnOpen, isGuestDeckId } from '../../lib/decks/guestCloneOnOpen';
 import { formatThreatTooltip } from '../../lib/decks/deckThreat';
 import { evaluationInputKey } from '../../contracts/draftInput';
 import { useDraftEvaluation } from '../../lib/decks/useDraftEvaluation';
@@ -256,10 +256,18 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
   const { isMobile } = useLayoutMode();
   const backAriaLabel = host.backLabel ?? 'Back';
   const forceReadonly = readonly;
-  const needsGuestClone = guestNeedsCloneOnOpen(deckId, isGuest, forceReadonly);
-  const [guestCloning, setGuestCloning] = useState(needsGuestClone);
+  const [guestCloning, setGuestCloning] = useState(false);
 
   const queryClient = useQueryClient();
+  const deckQuery = useQuery({
+    queryKey: ['deck', deckId],
+    queryFn: ({ signal }: { signal: AbortSignal }) => fetchDeckFull(deckId, isGuest, signal),
+    enabled: Boolean(deckId),
+  });
+  const deck = deckQuery.data;
+  const needsGuestClone = guestNeedsCloneOnOpen(
+    deckId, isGuest, forceReadonly, deck?.metadata.userId, user?.id,
+  );
 
   useEffect(() => {
     if (!needsGuestClone || !user) {
@@ -268,7 +276,7 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
     }
     let cancelled = false;
     setGuestCloning(true);
-    clonePreloadedGuestDeck(deckId, host.api)
+    clonePreloadedGuestDeck(deckId, user.id, host.api)
       .then((guestDeckId) => {
         if (!cancelled) {
           host.onOpenDeck(guestDeckId, { replace: true });
@@ -284,14 +292,8 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
     };
   }, [needsGuestClone, deckId, user, host.api, host.onOpenDeck]);
 
-  const deckQuery = useQuery({
-    queryKey: ['deck', deckId],
-    queryFn: ({ signal }: { signal: AbortSignal }) => fetchDeckFull(deckId, isGuest, signal),
-    enabled: Boolean(deckId) && !needsGuestClone && !guestCloning,
-  });
-
-  const deck = deckQuery.data;
-  const isOwner = Boolean(deck?.metadata.isOwner) && !forceReadonly && !needsGuestClone && !guestCloning;
+  // Guests edit only session decks; shared database links stay read-only without copying.
+  const isOwner = Boolean(deck?.metadata.isOwner) && !forceReadonly && !needsGuestClone && !guestCloning && (!isGuest || isGuestDeckId(deckId));
   // A real (non-guest) user can favorite any deck that isn't their own.
   const canFavorite =
     Boolean(user) && !isGuest && Boolean(deck) && deck?.metadata.userId !== user?.id;
