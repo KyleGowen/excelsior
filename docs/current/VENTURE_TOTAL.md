@@ -42,7 +42,8 @@ The estimate:
 
 - counts base numerical Power, Special, Teamwork, Ally, Aspect, and other attack values represented in catalog data;
 - excludes Basic and Training Universe bonuses;
-- honors a card's explicit “does not count toward Venture Total” wording when represented by the analyzer; and
+- honors a Special's explicit “does not count to/toward Venture Total” wording before using its catalog attack value (for example, **Complex Criminal Scheme** contributes 0);
+- treats conditional exclusions such as **Godly Strength** as 0 because the hand cannot establish its Defeated Missions Pile condition; and
 - does not simulate targets, defenses, action order, cards already in play, or every conditional Venture modifier.
 
 The actual cards and game state always control the final Venture Total.

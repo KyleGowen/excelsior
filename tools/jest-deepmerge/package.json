@@ -1,0 +1,11 @@
+{
+  "name": "@excelsior/jest-deepmerge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Safe default deepmerge API for Jest configuration",
+  "main": "index.cjs",
+  "types": "index.d.ts",
+  "dependencies": {
+    "@fastify/deepmerge": "3.2.4"
+  }
+}

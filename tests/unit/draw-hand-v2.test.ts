@@ -303,16 +303,61 @@ describe('drawHand (v2)', () => {
       });
     });
 
-    it('does not infer a missing Special value when its text excludes it from Venture Total', () => {
+    it.each([null, 3])('excludes a Special from Venture Total even with catalog value %s', (value) => {
       const excludedSpecial = {
         id: 'excluded-special',
         name: 'Excluded Special',
-        value: null,
+        value,
         card_effect: 'Acts as a level 8 attack. Does not count to Venture Total.',
       } as CatalogCard;
       const index = buildAnalysisIndex({ specials: [excludedSpecial] });
 
       expect(drawHandVentureValue(entry('special', excludedSpecial.id), index)).toBe(0);
+    });
+
+    it('returns 23 for the Moriarty hand because Complex Criminal Scheme contributes no Venture', () => {
+      const specials = [
+        { id: 'monstrous-leadership', name: 'Monstrous Leadership', character: 'The Flaxans', value: 8 },
+        {
+          id: 'complex-criminal-scheme',
+          name: 'Complex Criminal Scheme',
+          character: 'Professor Moriarty',
+          value: 3,
+          card_effect: 'Acts as a level 3 Brute Force or Intelligence MultiPower attack. Does not count to Venture Total. If defended, Professor Moriarty may search Draw Pile or Dead Pile for "Mathematical Genius" and play it immediately.',
+        },
+        { id: 'logical-reasoning', name: 'Logical Reasoning', character: 'Sherlock Holmes', value: null },
+        { id: 'damien-darkblood', name: 'Damien Darkblood', character: 'G.D.A.: Any Character', value: null },
+        { id: 'shrinking-ray', name: 'Shrinking Ray', character: 'G.D.A.: Any Character', value: null },
+      ] as CatalogCard[];
+      const teamwork = { id: 'teamwork-4', name: 'Teamwork', acts_as: 4 } as CatalogCard;
+      const powerCard = { id: 'power-8', name: '8 Combat', value: 8, power_type: 'Combat' } as CatalogCard;
+      const ally = { id: 'huckle-buck', card_name: 'Huckle-Buck', attack_value: 3 } as CatalogCard;
+      const index = buildAnalysisIndex({ specials, teamwork: [teamwork], powers: [powerCard], allies: [ally] });
+      const hand = [
+        ...specials.map((card) => entry('special', card.id)),
+        entry('teamwork', teamwork.id),
+        power(powerCard.id),
+        entry('ally-universe', ally.id),
+      ];
+
+      expect(analyzeDrawnHand(hand, hand, index)).toEqual({
+        ventureTotal: 23,
+        duplicateCount: 0,
+        duplicateCardIndexes: new Set(),
+      });
+    });
+
+    it('does not assume Godly Strength meets its conditional Venture requirement', () => {
+      const godlyStrength = {
+        id: 'godly-strength',
+        name: 'Godly Strength',
+        character: 'Sun Wukong',
+        value: 11,
+        card_effect: "Acts as a level 11 Brute Force attack. This attack does not count to Venture Total unless Sun Wukong's team has more Missions in the Defeated Missions Pile than Opponent. **One Per Deck**",
+      } as CatalogCard;
+      const index = buildAnalysisIndex({ specials: [godlyStrength] });
+
+      expect(drawHandVentureValue(entry('special', godlyStrength.id), index)).toBe(0);
     });
 
     it('counts every unkeepable copy across duplicate pairs and triples', () => {

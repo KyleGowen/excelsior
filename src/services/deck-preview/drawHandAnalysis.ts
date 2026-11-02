@@ -56,11 +56,13 @@ function firstNonNegativeNumber(value: unknown): number {
 }
 
 function specialVentureValue(card: CatalogCard): number {
+  const effect = String(card.card_effect ?? '');
+  // Card text overrides attack metadata. Conditional exceptions need battle
+  // state that Draw Hand does not track, so do not assume they are satisfied.
+  if (EXCLUDED_FROM_VENTURE_TOTAL.test(effect)) return 0;
+
   const catalogValue = optionalNonNegativeNumber(card.value);
   if (catalogValue !== null) return catalogValue;
-
-  const effect = String(card.card_effect ?? '');
-  if (EXCLUDED_FROM_VENTURE_TOTAL.test(effect)) return 0;
 
   const printedLevel = effect.match(SPECIAL_ACTS_AS_LEVEL)?.[1];
   return firstNonNegativeNumber(printedLevel);

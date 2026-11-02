@@ -45,3 +45,12 @@ e07efc2a39dd044f20037a2cfa608302bc15972e:docs/evidence/frontend-preparation/m4/c
 2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:401
 2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:410
 2a9120aec71f13fa9a6a58ab86a54cc4aea33093:docs/evidence/frontend-preparation/m6/completion/runtime-inputs.json:generic-api-key:423
+
+# Reviewed 2026-11-02: disposable integration-test passwords in historical commits.
+# Current tests generate randomUUID() values; exact historical findings only.
+34668c56aa4c2787044d5c9709ec19ad57026f8b:tests/integration/security/guest-persistent-deck-writes.test.ts:generic-api-key:13
+88bedbda85041216a0d0510a3569d066707d940b:tests/integration/api-v1/v1-topdeck-profile.integration.test.ts:generic-api-key:15
+88bedbda85041216a0d0510a3569d066707d940b:tests/integration/api-v1/v1-topdeck-profile.integration.test.ts:generic-api-key:23
+88bedbda85041216a0d0510a3569d066707d940b:tests/integration/api-v1/v1-topdeck-profile.integration.test.ts:generic-api-key:24
+88bedbda85041216a0d0510a3569d066707d940b:tests/integration/api-v1/v1-topdeck-profile.integration.test.ts:generic-api-key:53
+88bedbda85041216a0d0510a3569d066707d940b:tests/integration/api-v1/v1-topdeck-profile.integration.test.ts:generic-api-key:55
