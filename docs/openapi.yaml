@@ -60,6 +60,11 @@ tags:
 
 components:
   securitySchemes:
+    accountSession:
+      type: apiKey
+      in: header
+      name: X-Excelsior-Account-Session
+      description: Confidential server-side account session; never send it to the browser.
     sessionCookie:
       type: apiKey
       in: cookie
@@ -74,6 +79,83 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    AccountDeckSnapshot:
+      type: object
+      additionalProperties: false
+      required:
+        - operationId
+        - deckId
+        - expectedUpdatedAt
+        - name
+        - cards
+        - reserveCharacterId
+        - limited
+      properties:
+        operationId:
+          type: string
+          format: uuid
+        deckId:
+          type: string
+          format: uuid
+          nullable: true
+        expectedUpdatedAt:
+          type: string
+          nullable: true
+          maxLength: 80
+          description: Exact opaque microsecond revision returned by the backend; null for create.
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        cards:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - type
+              - cardId
+              - quantity
+            properties:
+              type:
+                type: string
+                enum:
+                  - character
+                  - special
+                  - power
+                  - mission
+                  - event
+                  - location
+                  - battleground
+                  - aspect
+                  - advanced-universe
+                  - advanced_universe
+                  - teamwork
+                  - ally-universe
+                  - ally_universe
+                  - training
+                  - basic-universe
+                  - basic_universe
+              cardId:
+                type: string
+                format: uuid
+              quantity:
+                type: integer
+                minimum: 1
+                maximum: 100
+              exclude_from_draw:
+                type: boolean
+        reserveCharacterId:
+          type: string
+          format: uuid
+          nullable: true
+        limited:
+          type: boolean
+      description: >-
+        Create requires null deckId and expectedUpdatedAt; update requires both. Typed card identities
+        must be unique. Actor and legality are server derived. Reuse operationId with exactly the same
+        normalized snapshot after an ambiguous timeout.
     CollectionEvaluation:
       type: object
       required: [totalOwned, uniqueCards, quantities, capabilities]
@@ -3176,3 +3258,107 @@ paths:
           description: RATE_LIMITED
         '503':
           description: DECK_IMPORT_UNAVAILABLE; check inventory before retrying
+
+  /api/service/account/v1/decks:
+    get:
+      summary: List the current player decks
+      description: >-
+        Internal alias reached only through the enabled confidential account gateway. Requires
+        account:self and decks:read plus a verified USER/ADMIN account session. Never callable through
+        native browser cookies or an actor selector. Responses are Cache-Control no-store. Existing
+        shared-read semantics remain in force.
+      responses:
+        '200':
+          description: >-
+            V1 data/meta/errors envelope containing deck summaries or a complete
+            metadata/cards/updatedAt snapshot.
+        '400':
+          description: VALIDATION_ERROR, DRAFT_STRUCTURE_INVALID or INVALID_DECK_CARD; snapshot not applied.
+        '401':
+          description: A valid confidential service token and player session are required.
+        '403':
+          description: Disabled gateway, missing grant, guest or unauthorized write.
+        '404':
+          description: Deck not found.
+        '409':
+          description: 'DECK_SAVE_CONFLICT: stale revision or operation UUID reused with a different payload.'
+        '503':
+          description: >-
+            Deck service unavailable; result may be ambiguous, retry the same operation UUID and
+            payload.
+      security:
+        - serviceAuthorization: []
+          accountSession: []
+  /api/service/account/v1/decks/{id}/full:
+    get:
+      summary: Load an existing shared-readable deck
+      description: >-
+        Internal alias reached only through the enabled confidential account gateway. Requires
+        account:self and decks:read plus a verified USER/ADMIN account session. Never callable through
+        native browser cookies or an actor selector. Responses are Cache-Control no-store. Existing
+        shared-read semantics remain in force.
+      responses:
+        '200':
+          description: >-
+            V1 data/meta/errors envelope containing deck summaries or a complete
+            metadata/cards/updatedAt snapshot.
+        '400':
+          description: VALIDATION_ERROR, DRAFT_STRUCTURE_INVALID or INVALID_DECK_CARD; snapshot not applied.
+        '401':
+          description: A valid confidential service token and player session are required.
+        '403':
+          description: Disabled gateway, missing grant, guest or unauthorized write.
+        '404':
+          description: Deck not found.
+        '409':
+          description: 'DECK_SAVE_CONFLICT: stale revision or operation UUID reused with a different payload.'
+        '503':
+          description: >-
+            Deck service unavailable; result may be ambiguous, retry the same operation UUID and
+            payload.
+      security:
+        - serviceAuthorization: []
+          accountSession: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+  /api/service/account/v1/decks/save:
+    post:
+      summary: Atomically create or update an owned deck snapshot
+      description: >-
+        Internal alias reached only through the enabled confidential account gateway. Requires
+        account:self and decks:write plus a verified USER/ADMIN account session. Never callable
+        through native browser cookies or an actor selector. Responses are Cache-Control no-store.
+        Existing shared-read semantics remain in force.
+      responses:
+        '200':
+          description: >-
+            V1 data/meta/errors envelope containing deck summaries or a complete
+            metadata/cards/updatedAt snapshot.
+        '400':
+          description: VALIDATION_ERROR, DRAFT_STRUCTURE_INVALID or INVALID_DECK_CARD; snapshot not applied.
+        '401':
+          description: A valid confidential service token and player session are required.
+        '403':
+          description: Disabled gateway, missing grant, guest or unauthorized write.
+        '404':
+          description: Deck not found.
+        '409':
+          description: 'DECK_SAVE_CONFLICT: stale revision or operation UUID reused with a different payload.'
+        '503':
+          description: >-
+            Deck service unavailable; result may be ambiguous, retry the same operation UUID and
+            payload.
+      security:
+        - serviceAuthorization: []
+          accountSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountDeckSnapshot'

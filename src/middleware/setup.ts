@@ -1,3 +1,4 @@
+import { createAccountAccessMiddleware } from '../api/http/middleware/accountAccess';
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import { createRequestIdMiddleware } from './requestId';
@@ -35,7 +36,7 @@ export function setupMiddleware(app: express.Application, pool?: Pool): void {
   const audit = pool ? createApiAccessLogMiddleware({ pool }) : undefined;
   // Include validation/CORS failures. The older HTTP proxy retains its inner-router audit only.
   if (audit && process.env.ENABLE_EXCELSIOR_ACCESS_ADAPTER !== '1') app.use((req, res, next) => {
-    if (/^\/api\/(?:v1(?:\/|$)|service\/(?:v1|deckbuilder\/v1)(?:\/|$)|apps\/(?:excelsior|excelsior-deckbuilder)(?:\/|$))/.test(req.path)) audit(req, res, next);
+    if (/^\/api\/(?:v1(?:\/|$)|service\/(?:v1|(?:deckbuilder|account)\/v1)(?:\/|$)|apps\/(?:excelsior|excelsior-deckbuilder)(?:\/|$))/.test(req.path)) audit(req, res, next);
     else next();
   });
   app.use(createCorsMiddleware());
@@ -77,6 +78,7 @@ export function setupMiddleware(app: express.Application, pool?: Pool): void {
     if (process.env.ENABLE_DATABASE_SERVICE_GATEWAY === '1') throw new Error('Choose one native application adapter');
     app.use('/api', createApplicationAccessMiddleware(configuredApplicationAdapter('excelsior-web')));
   }
+  app.use(createAccountAccessMiddleware(configuredServiceAccess));
   app.use(createDeckbuilderAccessMiddleware(configuredServiceAccess));
   app.use(createDatabaseAccessMiddleware(configuredServiceAccess));
   app.use('/api', createServiceAccessMiddleware(configuredServiceAccess));

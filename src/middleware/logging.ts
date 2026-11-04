@@ -23,6 +23,8 @@ export function createApplicationLogger(destination?: DestinationStream): Logger
     paths: [
       'req.headers.authorization',
       'req.headers.cookie',
+      'req.headers["x-excelsior-account-session"]',
+      'res.headers["x-excelsior-account-session"]',
       'req.headers["x-excelsior-service-authorization"]',
       'res.headers["set-cookie"]',
       'password',

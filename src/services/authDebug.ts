@@ -8,8 +8,7 @@ import type { Request } from 'express';
  * issue is confirmed fixed. All logs are prefixed with `[auth-debug]` so they
  * are easy to grep/exclude in the container logs.
  *
- * IMPORTANT: never log full session tokens. Use `tokenPrefix()` so only the
- * first 8 hex chars ever reach the logs.
+ * Never log session material, including token prefixes.
  */
 export function isAuthDebugEnabled(): boolean {
   const flag = process.env.DEBUG_AUTH;
@@ -27,12 +26,12 @@ export function debugAuth(message: string, details?: Record<string, unknown>): v
   }
 }
 
-/** Redact a session token to its first 8 chars for safe logging. */
+/** Retained caller API; no part of a session credential reaches diagnostics. */
 export function tokenPrefix(token: string | undefined | null): string {
   if (!token) {
     return '(none)';
   }
-  return `${token.slice(0, 8)}…`;
+  return '[REDACTED]';
 }
 
 /**

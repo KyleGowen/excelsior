@@ -1,3 +1,6 @@
+import { registerAccountDeckRoutes } from './api/http/account-decks.http';
+import { AccountDeckService } from './api/services/accountDeckService';
+import { PostgreSQLAccountDeckRepository } from './database/PostgreSQLAccountDeckRepository';
 import { DeckImportService } from './api/services/deckImportService';
 import { DeckDraftEvaluationService } from './api/services/deckDraftEvaluationService';
 import 'dotenv/config';
@@ -285,6 +288,7 @@ if (process.env.NODE_ENV !== 'test') {
 // Authentication middleware
 const authenticateUser = authService.createAuthMiddleware();
 const optionalAuthenticate = authService.createOptionalAuthMiddleware();
+registerAccountDeckRoutes(app, new AccountDeckService(new PostgreSQLAccountDeckRepository(dataSource.getPool(), async () => { (deckRepository as { clearCache?: () => void }).clearCache?.(); }), deckDraftEvaluationService), authenticateUser);
 
 registerRoutes(app, {
   authService,
