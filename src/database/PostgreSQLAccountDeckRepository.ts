@@ -6,7 +6,6 @@ import { cardExistsInCardTable } from './deck/deck-cards';
 import { createDeckRepositoryContext } from './deck/context';
 import { refreshDeckPreviewMetadata } from './deck/deck-metadata';
 
-const versionSql = `to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SS.US') || 'Z'`;
 /** Atomic metadata/cards/receipt writes. Runtime roles only need DML on the migrated tables. */
 export class PostgreSQLAccountDeckRepository implements AccountDeckPersistence {
   constructor(private readonly pool: Pool, private readonly invalidate: () => Promise<void>) {}
@@ -15,7 +14,7 @@ export class PostgreSQLAccountDeckRepository implements AccountDeckPersistence {
     return result.rows;
   }
   private async snapshot(client: PoolClient, id: string, viewerId: string): Promise<AccountDeckView | null> {
-    const result = await client.query(`SELECT *, ${versionSql} AS revision_token FROM decks WHERE id=$1`, [id]);
+    const result = await client.query(`SELECT *, to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SS.US') || 'Z' AS revision_token FROM decks WHERE id=$1`, [id]);
     const row = result.rows[0];
     if (!row) return null;
     const cards = await client.query('SELECT id, card_type AS type, card_id AS "cardId", quantity, exclude_from_draw, display_order AS "displayOrder" FROM deck_cards WHERE deck_id=$1 ORDER BY display_order NULLS LAST, id', [id]);
@@ -45,7 +44,7 @@ export class PostgreSQLAccountDeckRepository implements AccountDeckPersistence {
       } else {
         const id = input.deckId ?? randomUUID();
         if (input.deckId) {
-          const current = await client.query(`SELECT user_id, ${versionSql} AS revision_token FROM decks WHERE id=$1 FOR UPDATE`, [id]);
+          const current = await client.query(`SELECT user_id, to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SS.US') || 'Z' AS revision_token FROM decks WHERE id=$1 FOR UPDATE`, [id]);
           if (!current.rows[0]) throw new AccountDeckError(404, 'DECK_NOT_FOUND');
           if (current.rows[0].user_id !== userId) throw new AccountDeckError(403, 'DECK_ACCESS_DENIED');
           if (current.rows[0].revision_token !== input.expectedUpdatedAt) throw new AccountDeckError(409, 'DECK_SAVE_CONFLICT');

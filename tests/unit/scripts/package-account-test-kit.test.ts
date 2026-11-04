@@ -7,7 +7,8 @@ import { dirname, join, resolve } from 'path';
 const packager = resolve('scripts/package-account-test-kit.mjs');
 const required = ['src/api/http/middleware/accountAccess.ts', 'src/api/http/account-decks.http.ts',
   'src/database/PostgreSQLAccountDeckRepository.ts', 'migrations/V376__external_account_deck_save_receipts.sql',
-  'tests/integration/account-service.integration.test.ts', 'tests/production/account-decks.test.mjs', 'package-lock.json'];
+  'tests/integration/account-service.integration.test.ts', 'tests/production/account-decks.test.mjs', 'package-lock.json',
+  'tools/jest-deepmerge/package.json', 'tools/jest-deepmerge/index.cjs', 'tools/jest-deepmerge/index.d.ts'];
 const owned: string[] = [];
 function fixture(omit?: string, extra: string[] = []) {
   const root = mkdtempSync(join(tmpdir(), 'synthetic-account-kit-')); owned.push(root);

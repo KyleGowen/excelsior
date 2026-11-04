@@ -13,7 +13,7 @@ if (existsSync(output) || existsSync(output + '.json')) throw new Error('Refusin
 const git = args => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 });
 if (git(['rev-parse', revision + '^{commit}']).trim() !== revision) throw new Error('Expected an immutable commit');
 const paths = git(['ls-tree', '-rz', '--name-only', revision, '--',
-  'src', 'migrations', 'scripts', 'tests/config', 'tests/helpers',
+  'src', 'migrations', 'scripts', 'tools/jest-deepmerge', 'tests/config', 'tests/helpers',
   'tests/setup-integration.ts', 'tests/teardown-integration.ts',
   'tests/integration/account-service.integration.test.ts',
   'tests/production/account-decks.test.mjs',
@@ -22,7 +22,8 @@ const paths = git(['ls-tree', '-rz', '--name-only', revision, '--',
 ]).split('\0').filter(Boolean).filter(path => !/^src\/resources\/(?:cards\/images|images|legacy)\//.test(path));
 for (const required of ['src/api/http/middleware/accountAccess.ts', 'src/api/http/account-decks.http.ts',
   'src/database/PostgreSQLAccountDeckRepository.ts', 'migrations/V376__external_account_deck_save_receipts.sql',
-  'tests/integration/account-service.integration.test.ts', 'tests/production/account-decks.test.mjs', 'package-lock.json']) {
+  'tests/integration/account-service.integration.test.ts', 'tests/production/account-decks.test.mjs', 'package-lock.json',
+  'tools/jest-deepmerge/package.json', 'tools/jest-deepmerge/index.cjs', 'tools/jest-deepmerge/index.d.ts']) {
   if (!paths.includes(required)) throw new Error('Commit does not contain the complete account/deck preparation contract');
 }
 if (paths.some(path => path.split('/').some(part => part === '.env' || part.startsWith('.env.') || part === 'data' || part === 'node_modules'))) {
