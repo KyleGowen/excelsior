@@ -125,3 +125,8 @@ Save accepts exactly operationId, deckId, expectedUpdatedAt, name, cards, reserv
 The additive receipt migration must run through the owning serialized migration workflow before enabling writes. Runtime uses DML only. Native auth cookies/session behavior remains independent; diagnostic helpers redact all session bytes. Neither source preparation nor fixture success proves a deployed gateway or grants release permission.
 
 New kits produced by the official helper require the complete account/deck source and both contract tests, include the receipt migration, and identify `account-decks-snapshot-v1` in schema version 2 provenance. Existing schema version 1 archives retain their original meaning and must not be relabeled as deck-contract evidence. Packaging tests use only disposable synthetic Git repositories; they do not create application commits or establish real backend compatibility.
+
+
+## Production configuration handoff
+
+The existing deployment preparation reads independent opt-in SSM settings app/account_service_enabled and app/account_decks_enabled. Account access requires catalog service access; account decks also require builder access. When enabled, the shared independently hosted account UI uses one dedicated bmg-shared-account-ui client with account:self, decks:read and decks:write. The existing native and catalog clients retain their exact scope checks. The service registry stores only the client digest, while each consumer retains its own private credential file. Runtime activation and live verification are separate from source delivery; this change creates no client or activation setting itself.

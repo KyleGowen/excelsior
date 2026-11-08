@@ -84,4 +84,43 @@ describe('production database service preparation with isolated fake providers',
     put('app/deckbuilder_service_enabled',setting);expect(run).toThrow();expect(existsSync(join(appDirectory,'.env'))).toBe(false);
   });
 
+  const configureAccounts = () => {
+    put('app/database_service_enabled', '1'); put('app/account_service_enabled', '1');
+    const registry = JSON.parse(readFileSync(join(parameters, 'app_database_service_config'), 'utf8'));
+    registry.clients.push({ id: 'bmg-shared-account-ui', enabled: true, tokenEpoch: 0, requestsPerMinute: 600,
+      scopes: ['account:self', 'decks:read', 'decks:write'], credentials: [{ version: 'v1', secretSha256: createHash('sha256').update('fictional-dedicated-account-secret').digest('hex') }] });
+    put('app/database_service_config', registry);
+  };
+  it('enables the dedicated account gateway while retaining the native and catalog identities', () => {
+    configureAccounts(); const output = run(); const env = readFileSync(join(appDirectory, '.env'), 'utf8');
+    expect(env).toContain('ENABLE_ACCOUNT_SERVICE_GATEWAY=1'); expect(env).not.toContain('ENABLE_ACCOUNT_DECK_GATEWAY=1');
+    expect(JSON.parse(readFileSync(join(appDirectory, 'service-access/registry.json'), 'utf8')).clients).toHaveLength(3);
+    expect(output).not.toContain('fictional-dedicated-account-secret');
+  });
+  it.each(['account_service_enabled', 'account_decks_enabled'])('rejects unsupported %s before runtime writes', key => {
+    put('app/' + key, 'true'); expect(run).toThrow(); expect(existsSync(join(appDirectory, '.env'))).toBe(false);
+  });
+  it('requires an enabled exact-scope account client', () => {
+    configureAccounts(); const registry = JSON.parse(readFileSync(join(parameters, 'app_database_service_config'), 'utf8'));
+    registry.clients[2].scopes.push('guest:decks'); put('app/database_service_config', registry);
+    expect(run).toThrow(); expect(existsSync(join(appDirectory, '.env'))).toBe(false);
+  });
+  it('rejects an extra account client while account access is disabled', () => {
+    configureAccounts(); put('app/account_service_enabled', '0'); expect(run).toThrow();
+  });
+  it('requires builder activation for account decks', () => {
+    configureAccounts(); put('app/account_decks_enabled', '1'); expect(run).toThrow();
+    expect(existsSync(join(appDirectory, '.env'))).toBe(false);
+  });
+  it('enables account decks with prerequisite gates and preserves every catalog scope', () => {
+    configureAccounts(); put('app/account_decks_enabled', '1'); put('app/deckbuilder_service_enabled', '1');
+    const registry = JSON.parse(readFileSync(join(parameters, 'app_database_service_config'), 'utf8'));
+    registry.clients[0].scopes = ['catalog:read', 'decks:read', 'decks:write', 'guest:decks'];
+    registry.clients.push({ id: 'bmg-deckbuilder', enabled: true, tokenEpoch: 0, requestsPerMinute: 600,
+      scopes: ['catalog:read', 'decks:read'], credentials: [{ version: 'v1', secretSha256: createHash('sha256').update('fictional-production-builder-secret').digest('hex') }] });
+    put('app/database_service_config', registry); run();
+    expect(readFileSync(join(appDirectory, '.env'), 'utf8')).toContain('ENABLE_ACCOUNT_DECK_GATEWAY=1');
+    expect(JSON.parse(readFileSync(join(appDirectory, 'service-access/registry.json'), 'utf8')).clients).toEqual(registry.clients);
+  });
+
 });

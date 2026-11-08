@@ -80,6 +80,19 @@ case "$DECKBUILDER_SERVICE_ENABLED" in
   1) [[ "$DATABASE_SERVICE_ENABLED" == 1 ]] || { echo "Builder access requires database service access." >&2; exit 1; } ;;
   *) echo "Invalid deckbuilder service activation setting." >&2; exit 1 ;;
 esac
+# Account access remains independently opt-in and requires the existing service identity.
+ACCOUNT_SERVICE_ENABLED="$(get_optional_parameter app/account_service_enabled)"
+case "$ACCOUNT_SERVICE_ENABLED" in
+  ''|None|0) ACCOUNT_SERVICE_ENABLED=0 ;;
+  1) [[ "$DATABASE_SERVICE_ENABLED" == 1 ]] || { echo "Account access requires service access." >&2; exit 1; } ;;
+  *) echo "Invalid account service activation setting." >&2; exit 1 ;;
+esac
+ACCOUNT_DECKS_ENABLED="$(get_optional_parameter app/account_decks_enabled)"
+case "$ACCOUNT_DECKS_ENABLED" in
+  ''|None|0) ACCOUNT_DECKS_ENABLED=0 ;;
+  1) [[ "$ACCOUNT_SERVICE_ENABLED" == 1 && "$DECKBUILDER_SERVICE_ENABLED" == 1 ]] || { echo "Account decks require account and builder access." >&2; exit 1; } ;;
+  *) echo "Invalid account deck activation setting." >&2; exit 1 ;;
+esac
 mkdir -p "$APP_DIR/service-access"
 chmod 700 "$APP_DIR/service-access"
 if [[ "$DATABASE_SERVICE_ENABLED" == 1 ]]; then
@@ -89,10 +102,17 @@ if [[ "$DATABASE_SERVICE_ENABLED" == 1 ]]; then
   trap 'rm -f "$REGISTRY_TEMP" "$NATIVE_TEMP"' EXIT
   get_parameter app/database_service_config true > "$REGISTRY_TEMP"
   get_parameter app/native_database_credentials true > "$NATIVE_TEMP"
+  # Validate the dedicated account client separately; do not broaden existing clients.
+  if [[ "$ACCOUNT_SERVICE_ENABLED" == 1 ]]; then
+    jq -e '[.clients[] | select(.id == "bmg-shared-account-ui")] | length == 1 and all(.[]; .enabled == true and (.scopes | sort) == ["account:self","decks:read","decks:write"])' "$REGISTRY_TEMP" >/dev/null
+  fi
+  catalog_registry() {
+    jq --arg account "$ACCOUNT_SERVICE_ENABLED" 'if $account == "1" then .clients |= map(select(.id != "bmg-shared-account-ui")) else . end' "$REGISTRY_TEMP"
+  }
   if [[ "$DECKBUILDER_SERVICE_ENABLED" == 1 ]]; then
-    jq -e '.environment == "production" and (.clients | length == 3) and ([.clients[].id] | sort == ["bmg-database-ui","bmg-deckbuilder","excelsior-web"]) and all(.clients[]; .enabled == true and ((.id == "bmg-database-ui" and .scopes == ["catalog:read"]) or (.id == "bmg-deckbuilder" and (.scopes | sort) == ["catalog:read","decks:read"]) or (.id == "excelsior-web" and (.scopes | sort) == ["catalog:read","decks:read","decks:write","guest:decks"])))' "$REGISTRY_TEMP" >/dev/null
+    catalog_registry | jq -e '.environment == "production" and (.clients | length == 3) and ([.clients[].id] | sort == ["bmg-database-ui","bmg-deckbuilder","excelsior-web"]) and all(.clients[]; .enabled == true and ((.id == "bmg-database-ui" and .scopes == ["catalog:read"]) or (.id == "bmg-deckbuilder" and (.scopes | sort) == ["catalog:read","decks:read"]) or (.id == "excelsior-web" and (.scopes | sort) == ["catalog:read","decks:read","decks:write","guest:decks"])))' >/dev/null
   else
-    jq -e '.environment == "production" and (.clients | length == 2) and ([.clients[].id] | sort == ["bmg-database-ui","excelsior-web"]) and all(.clients[]; .enabled == true and .scopes == ["catalog:read"])' "$REGISTRY_TEMP" >/dev/null
+    catalog_registry | jq -e '.environment == "production" and (.clients | length == 2) and ([.clients[].id] | sort == ["bmg-database-ui","excelsior-web"]) and all(.clients[]; .enabled == true and .scopes == ["catalog:read"])' >/dev/null
   fi
   jq -e '.environment == "production" and (.clients | length == 1) and .clients[0].clientId == "excelsior-web"' "$NATIVE_TEMP" >/dev/null
   chmod 600 "$REGISTRY_TEMP" "$NATIVE_TEMP"
@@ -127,6 +147,12 @@ trap 'rm -f "$TEMP_ENV_FILE"' EXIT
     printf 'ENABLE_SERVICE_ACCESS=1\nENABLE_DATABASE_SERVICE_GATEWAY=1\nENABLE_NATIVE_DATABASE_SERVICE=1\n'
     if [[ "$DECKBUILDER_SERVICE_ENABLED" == 1 ]]; then
       printf 'ENABLE_DECKBUILDER_SERVICE_GATEWAY=1\nENABLE_NATIVE_DECKBUILDER_SERVICE=1\n'
+    fi
+    if [[ "$ACCOUNT_SERVICE_ENABLED" == 1 ]]; then
+      printf 'ENABLE_ACCOUNT_SERVICE_GATEWAY=1\n'
+      if [[ "$ACCOUNT_DECKS_ENABLED" == 1 ]]; then
+        printf 'ENABLE_ACCOUNT_DECK_GATEWAY=1\n'
+      fi
     fi
     printf 'SERVICE_ACCESS_CONFIG_FILE=/app/runtime/service-access/registry.json\n'
     printf 'APPLICATION_ACCESS_CREDENTIALS_FILE=/app/runtime/service-access/native.json\n'
