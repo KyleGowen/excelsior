@@ -1,3 +1,6 @@
+import {AccountDeckDeleteRequestBody} from './models/decks/AccountDeckDeleteRequestBody';
+import {AccountDeckMetadataRequestBody} from './models/decks/AccountDeckMetadataRequestBody';
+import {AccountDeckImportRequestBody} from './models/decks/AccountDeckImportRequestBody';
 import type { Application, RequestHandler } from 'express';
 import { AccountDeckService, AccountDeckError } from '../services/accountDeckService';
 import { DraftStructureError } from '../services/deckDraftEvaluationService';
@@ -24,6 +27,21 @@ export function registerAccountDeckRoutes(app: Application, service: AccountDeck
   };
   app.get('/api/account-decks', guard, authenticate, action(req => service.list(req.user!.id)));
   app.get('/api/account-decks/:id/full', guard, authenticate, action(req => service.load(req.params.id!, req.user!.id)));
+  app.post('/api/account-decks/import',guard,authenticate,action(async req=>{
+    const input=AccountDeckImportRequestBody.safeParse(req.body);
+    if(!input.success) throw new AccountDeckError(400,'VALIDATION_ERROR');
+    return service.import(req.user!.id,input.data);
+  }));
+  app.post('/api/account-decks/delete',guard,authenticate,action(async req=>{
+    const input=AccountDeckDeleteRequestBody.safeParse(req.body);
+    if(!input.success) throw new AccountDeckError(400,'VALIDATION_ERROR');
+    return service.action(req.user!.id,input.data,'delete');
+  }));
+  app.post('/api/account-decks/metadata',guard,authenticate,action(async req=>{
+    const input=AccountDeckMetadataRequestBody.safeParse(req.body);
+    if(!input.success) throw new AccountDeckError(400,'VALIDATION_ERROR');
+    return service.action(req.user!.id,input.data,'metadata');
+  }));
   app.post('/api/account-decks/save', guard, authenticate, action(async req => {
     const result = AccountDeckSnapshotRequestBody.safeParse(req.body);
     if (!result.success) throw new AccountDeckError(400, 'VALIDATION_ERROR');

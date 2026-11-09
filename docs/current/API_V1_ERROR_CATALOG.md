@@ -156,3 +156,9 @@ canonical evaluation/draw/export errors. Gateway failures add `SERVICE_TOKEN_INV
 `VALIDATION_ERROR` (400 or 413). Native aliases under
 `/api/apps/excelsior-deckbuilder/api/v1/` preserve all existing player authorization
 failures and reject caller-supplied service identity.
+
+## Owner selection account extension
+
+The enabled confidential account gateway adds POST `/api/service/account/v1/decks/import`, `/decks/delete` and `/decks/metadata` with exact aliases. Import accepts operationId UUID, name and the native JSON/TopDeck exportData contract; complete server resolution precedes one atomic snapshot/receipt. Unresolved imports return data `{ok:false,code,message,unresolved}` with no write. Delete and metadata require operationId, deckId and the opaque microsecond expectedUpdatedAt token; metadata allows name, description and isPrivate. Ownership is reconstructed from the authenticated player, never input. Conflicts return409, wrong owners403, missing decks404, invalid bodies400, and unavailable storage503. Receipts survive deck deletion; retrying a prior successful operation returns its original result without resurrecting data.
+
+Account GET `/decks` now returns rich owner snapshots (metadata, art-only ordered cards, fresh server evaluation, grid and missionSetName) using one bulk SQL statement and one catalog resolution. A missing evaluation is unavailable, not confirmed legality. Full snapshots retain description/visibility and ordinary saves preserve omitted fields. New stateless POST `/api/v1/decks/import/prepare` and its confidential deckbuilder alias accept native import input and return resolved draft/evaluation or unresolved diagnostics, with no player or persistence. Old routes remain compatible.

@@ -996,7 +996,7 @@ export async function createImportedDeck(ctx:DeckRepositoryContext,userId:string
  const client=await ctx.pool.connect();
  try {
   await client.query('BEGIN');
-  const result=await client.query('INSERT INTO decks (user_id,name,description,is_valid,is_limited,reserve_character,card_count,threat) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',[userId,input.name,input.description,input.isValid,input.limited,input.reserveCharacterId,input.cardCount,input.threat]);
+  const result=await client.query('INSERT INTO decks (user_id,name,description,is_valid,is_limited,reserve_character,card_count,threat) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',[userId,input.name,input.description,input.isValid,input.limited,input.reserveCharacterId,0,input.threat]);
   const row=result.rows[0] as DeckRow;
   const persistedCards:DeckCard[]=[];
   for (const [i,card] of input.cards.entries()) {

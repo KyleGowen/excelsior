@@ -1,0 +1,7 @@
+# Approved account deck selection contract handoff
+
+Kyle approved local implementation of owner deck selection, JSON/TopDeck import, metadata and delete through the confidential account gateway, plus stateless guest import preparation. This additive scope preserves native routes, independent native sessions, existing deck ownership and Excelsior ownership. No publication, deployment, credentials or production mutation is authorized.
+
+Source: Excelsior 4d214628d5fbb1930ab239ea0a88b7d525e357d0. Consumers must preserve rc.2 federation. Account writes use authenticated actors, strict schemas, operation receipts and optimistic revisions. Omitted snapshot metadata is preserved. Imports resolve completely before one atomic snapshot save. Delete retains old operation receipts, so a prior save retry cannot recreate a deleted record. Acceptance includes shared real disposable records, conflicts, wrong actors, malformed imports and changed-payload replay.
+
+Disposable integration exposed pre-existing cached-count double application: native atomic imports initialized card_count before per-card triggers incremented it; account replacements assigned the count before delete/insert trigger deltas. Native imports now start at zero; account snapshots finalize evaluated metrics after triggers within the same transaction. Rich summaries use current evaluated draw-pile counts. No historical migration, production data repair or quantity change is included. Acceptance compares normalized typed IDs, quantities, pre-placement, reserve and Limited across both product paths.

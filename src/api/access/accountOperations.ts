@@ -15,6 +15,9 @@ const operations: Readonly<Record<string, string>> = {
   'POST /users/topdeck': '/api/v1/users/topdeck',
   'POST /users/display-name': '/api/v1/users/display-name',
   'GET /decks': '/api/account-decks',
+  'POST /decks/import': '/api/account-decks/import',
+  'POST /decks/delete': '/api/account-decks/delete',
+  'POST /decks/metadata': '/api/account-decks/metadata',
   'POST /decks/save': '/api/account-decks/save',
 };
 

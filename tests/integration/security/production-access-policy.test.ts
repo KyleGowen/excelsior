@@ -1,5 +1,6 @@
 /** Exercise the production app and real authentication, never x-test-user-id. */
 import request from 'supertest';
+import { DataSourceConfig } from '../../../src/config/DataSourceConfig';
 import { app } from '../../../src/index';
 import { enumerateExpressRoutes } from '../../../src/metrics/endpointHitMetrics';
 import { integrationTestUtils } from '../../setup-integration';
@@ -10,7 +11,7 @@ const publicReads = new Set([
   '/config/app', '/decks/:id', '/decks/:id/full', '/community/decks', '/community/preconstructed-decks',
   '/users/:userId/public-decks', '/users/:userId/profile', '/recent-updates', '/dbv/sets', '/dbv/deck-backgrounds', '/supporter/status'
 ]);
-const publicMutations = new Set(['/auth/login', '/auth/refresh', '/auth/logout', '/service-auth/token', '/decks/evaluate', '/decks/candidates/evaluate', '/decks/draw', '/decks/export', '/decks/summaries', '/collections/evaluate', '/supporter/webhook']);
+const publicMutations = new Set(['/auth/login', '/auth/refresh', '/auth/logout', '/service-auth/token', '/decks/import/prepare', '/decks/evaluate', '/decks/candidates/evaluate', '/decks/draw', '/decks/export', '/decks/summaries', '/collections/evaluate', '/supporter/webhook']);
 const protectedRoutes = routes.filter(key => {
   const [method, path] = key.split(' ');
   const relative = path.replace('/api/v1', '');
@@ -74,6 +75,21 @@ describe('Production endpoint access policy', () => {
     expect(response.headers['cache-control']).toBe('no-store');
     expect(response.body.data.candidates).toEqual([]);
     await request(app).post('/api/v1/decks/candidates/evaluate').send({}).expect(400);
+  });
+
+  it('prepares anonymous imports without creating a deck or session', async () => {
+    const pool = DataSourceConfig.getInstance().getPool();
+    const before = (await pool.query('SELECT count(*) FROM decks')).rows;
+    const response = await request(app).post('/api/v1/decks/import/prepare').send({
+      name: 'Synthetic preparation only',
+      exportData: { limited: true, reserve_character: 'Lancelot', cards: { characters: ['Lancelot'], power_cards: ['5 - Combat'] } }
+    }).expect(200);
+    expect(response.headers['cache-control']).toBe('no-store');
+    expect(response.headers['set-cookie']).toBeUndefined();
+    expect(response.body.data.cards).toContainEqual(expect.objectContaining({ type: 'character', quantity: 1 }));
+    expect(response.body.data.cards).toContainEqual(expect.objectContaining({ type: 'power', quantity: 1 }));
+    await request(app).post('/api/v1/decks/import/prepare').send({ actor: 'untrusted' }).expect(400);
+    expect((await pool.query('SELECT count(*) FROM decks')).rows).toEqual(before);
   });
 
   it('keeps unconfigured service issuance disabled even for a player session', async () => {

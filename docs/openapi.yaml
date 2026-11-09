@@ -3362,3 +3362,23 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AccountDeckSnapshot'
+
+  /decks/import/prepare:
+    post:
+      summary: Prepare a complete import without persistence or player state
+      description: Exact stateless preview; 120/minute, no-store. Also exposed by the confidential deckbuilder gateway.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportDeckRequest'
+      responses:
+        '200':
+          description: Resolved draft/evaluation or bounded unresolved diagnostics; no write
+        '400':
+          description: VALIDATION_ERROR or DRAFT_STRUCTURE_INVALID
+        '429':
+          description: RATE_LIMITED
+        '503':
+          description: DRAFT_PREVIEW_UNAVAILABLE

@@ -1,3 +1,4 @@
+import { ImportDeckRequestBody } from './models/decks/ImportDeckRequestBody';
 import { DeckSummariesRequestBody } from './models/decks/DeckSummariesRequestBody';
 import type { Router, RequestHandler } from 'express';
 import { DraftStructureError, type DeckDraftEvaluationService } from '../services/deckDraftEvaluationService';
@@ -13,6 +14,12 @@ export function registerDeckPreviewV1HttpRoutes(router: Router, service: DeckDra
         if (error instanceof DraftStructureError) sendV1Json(res,400,null,[{ code:'DRAFT_STRUCTURE_INVALID', message:error.message }]);
         else sendV1Json(res,503,null,[{ code:'DRAFT_PREVIEW_UNAVAILABLE', message:'Deck preview is unavailable. Retry without discarding the draft.' }]);
     };
+    router.post('/decks/import/prepare',limit,async(req,res)=>{
+        res.set('Cache-Control','no-store');
+        const input=ImportDeckRequestBody.safeParse(req.body);
+        if(!input.success) {sendV1Json(res,400,null,[{code:'VALIDATION_ERROR',message:'Invalid import input'}]);return;}
+        try {sendV1Success(res,await service.prepareImport(input.data.exportData,input.data.name));} catch(error){unavailable(res,error);}
+    });
     router.post('/decks/summaries', limit, async (req,res) => {
         res.set('Cache-Control','no-store');
         const input = DeckSummariesRequestBody.safeParse(req.body);

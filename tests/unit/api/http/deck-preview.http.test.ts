@@ -4,9 +4,9 @@ import {registerDeckPreviewV1HttpRoutes} from '../../../../src/api/http/deck-pre
 import {DeckDraftEvaluationService,DraftStructureError} from '../../../../src/api/services/deckDraftEvaluationService';
 import {resetV1RateLimitBucketsForTests} from '../../../../src/api/http/middleware/v1RateLimit';
 const draft={schemaVersion:1,draftId:'fictional-draft',revision:2,cards:[]};
-const cases=[['/decks/draw','draw',{draft}],['/decks/export','exportDraft',{draft,display:{name:'Fixture',description:'',exportedBy:'Fixture',surface:'selection'}}],['/decks/summaries','summaries',{drafts:[draft]}],['/admin/decks/hand-analysis','analyzeHand',{draft,hand:[]}]] as const;
+const cases=[['/decks/import/prepare','prepareImport',{name:'Fixture',exportData:'-- Characters --\n1x Lancelot'}],['/decks/draw','draw',{draft}],['/decks/export','exportDraft',{draft,display:{name:'Fixture',description:'',exportedBy:'Fixture',surface:'selection'}}],['/decks/summaries','summaries',{drafts:[draft]}],['/admin/decks/hand-analysis','analyzeHand',{draft,hand:[]}]] as const;
 describe('Deck preview HTTP contract',()=>{
- const service={draw:jest.fn(),exportDraft:jest.fn(),summaries:jest.fn(),analyzeHand:jest.fn()};
+ const service={prepareImport:jest.fn(),draw:jest.fn(),exportDraft:jest.fn(),summaries:jest.fn(),analyzeHand:jest.fn()};
  let role='ADMIN';
  const auth:RequestHandler=(req,res,next)=>{if(role==='NONE'){res.status(401).json({errors:[{code:'UNAUTHORIZED'}]});return;}req.user={id:'fictional',role,username:'fictional',name:'Fictional',email:'fixture@example.invalid'} as NonNullable<typeof req.user>;next();};
  const app=express();app.use(express.json());registerDeckPreviewV1HttpRoutes(app,service as unknown as DeckDraftEvaluationService,auth);

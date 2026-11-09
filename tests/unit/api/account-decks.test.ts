@@ -40,7 +40,7 @@ describe('confidential current-player deck HTTP contract', () => {
  });
  it('evaluates on the backend before persistence and reports absent decks', async () => {
   const repository = { list: jest.fn(async () => []), load: jest.fn(async () => null), save: jest.fn(async () => ({ metadata: {}, cards: [], updatedAt: 'fixture' })) };
-  const evaluator = { evaluate: jest.fn(async () => ({ legality:{valid:false},counts:{drawPile:0},threat:{editor:0} })), attach:jest.fn(async (v: unknown) => v) };
+  const evaluator = { library:jest.fn(async (v:unknown)=>v),evaluate: jest.fn(async () => ({ legality:{valid:false},counts:{drawPile:0},threat:{editor:0} })), attach:jest.fn(async (v: unknown) => v) };
   const service = new AccountDeckService(repository as unknown as ConstructorParameters<typeof AccountDeckService>[0],evaluator as unknown as ConstructorParameters<typeof AccountDeckService>[1]);
   expect(await service.list('player')).toEqual([]); await expect(service.load(id,'player')).rejects.toMatchObject({status:404});
   await service.save('player',AccountDeckSnapshotRequestBody.parse(input())); expect(repository.save).toHaveBeenCalledWith('player',input(),{valid:false,cardCount:0,threat:0}); expect(evaluator.attach).toHaveBeenCalled();

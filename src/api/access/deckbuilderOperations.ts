@@ -5,6 +5,7 @@ export const NATIVE_DECKBUILDER_PREFIX = '/api/apps/excelsior-deckbuilder';
 export const DECKBUILDER_BODY_LIMIT = 256 * 1024;
 export const DECKBUILDER_PREVIEWS = [
   '/api/v1/decks/evaluate', '/api/v1/decks/candidates/evaluate',
+  '/api/v1/decks/import/prepare',
   '/api/v1/decks/draw', '/api/v1/decks/export',
 ] as const;
 

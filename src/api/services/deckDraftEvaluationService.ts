@@ -182,9 +182,24 @@ export class DeckDraftEvaluationService {
         const { resolved, unresolved } = resolveImportCardIds(catalog,entries);
         if (unresolved.length) return { ok:false as const, code:'unresolved' as const, message:'Could not resolve all cards in the import JSON', unresolved:unresolved.map(c => ({name:c.name,type:c.type})) };
         const reserve = data.reserve_character ? findCharacterIdByName(catalog,data.reserve_character) : null;
+        if(data.reserve_character && !reserve) throw new DraftStructureError('The reserve character could not be resolved');
         const cards = resolved.map(c => ({type:c.cardType.replace(/_/g,'-') as DeckCardEntry['type'], cardId:c.cardId,quantity:c.quantity}));
         const evaluation = await this.evaluate({schemaVersion:1,draftId:'import-preview',revision:0,cards,reserveCharacterId:reserve,limited:data.limited ?? false,format:'venture',koCharacterIds:[]},catalog);
         return {ok:true as const, name:name.trim() || data.name?.trim() || 'Imported Deck', description:data.description?.trim() || '', cards, reserveCharacterId:reserve, limited:data.limited ?? false, evaluation};
+    }
+    /** One catalog resolution for the owner library; full inputs stay server-side. */
+    async library<T extends {metadata:{id:string;name:string;cardCount:number;is_limited?:boolean;reserve_character?:string|null};cards:DeckCard[]}>(views:T[]) {
+        const catalog=await this.validator.resolveCatalog();
+        return Promise.all(views.map(async view => {
+            let evaluation:DeckDraftEvaluationDto|null=null;
+            try { evaluation=await this.evaluate({schemaVersion:1,draftId:view.metadata.id,revision:0,cards:view.cards.map(c=>({type:c.type,cardId:c.cardId,quantity:c.quantity,exclude_from_draw:c.exclude_from_draw===true})),reserveCharacterId:view.metadata.reserve_character??null,limited:view.metadata.is_limited??false,format:'venture',koCharacterIds:[]},catalog); } catch { /* Retired cards leave a readable tile without invented legality. */ }
+            const cards=view.cards.filter(c=>['character','location','battleground','mission'].includes(c.type)).map(c=>{
+                const row=catalog.get(deckCardMapKey(c));
+                return {...c,name:row?.name ?? row?.card_name,defaultImage:typeof (row?.image ?? row?.image_path)==='string' ? String(row?.image ?? row?.image_path) : undefined,is_foil:row?.is_foil,mission_set:row?.mission_set};
+            });
+            const mission=cards.find(c=>c.type==='mission');
+            return {...view,metadata:{...view.metadata,cardCount:evaluation?.counts.drawPile??view.metadata.cardCount},id:view.metadata.id,name:view.metadata.name,cardCount:evaluation?.counts.drawPile??view.metadata.cardCount,cards,evaluation:evaluation?{legality:{valid:evaluation.legality.valid,rawValid:evaluation.legality.rawValid},versions:evaluation.versions}:null,grid:evaluation?.grids.characters.length ? evaluation.grids.editorMaximums : null,missionSetName:typeof mission?.mission_set === 'string' ? mission.mission_set : null};
+        }));
     }
     async summaries(inputs: EvaluateDraftInput[]):Promise<DeckSummaryDto[]> {
         const catalog = await this.validator.resolveCatalog();

@@ -101,3 +101,30 @@ test('repository transaction rolls back replaced metadata/cards and orphan creat
  assert.equal((await repository.list(first.id)).length, before);
  assert.equal((await pool.query('SELECT count(*)::int AS n FROM external_deck_save_receipts WHERE user_id=$1 AND operation_id=$2', [first.id, invalid.operationId])).rows[0].n, 0);
 });
+
+test('new account import, metadata and deletion preserve atomicity, ownership, complete metadata and old receipts',async()=>{
+ sessionA=await login(first);
+ const input={operationId:randomUUID(),name:'Imported owner team',exportData:{description:'Retained description',limited:true,reserve_character:'Lancelot',cards:{characters:['Lancelot'],power_cards:['5 - Combat','5 - Combat']}}};
+ const responses=await Promise.all([call('post','/decks/import',sessionA).send(input).expect(200),call('post','/decks/import',sessionA).send(input).expect(200)]);
+ const saved=responses[0].body.data;assert.equal(saved.metadata.id,responses[1].body.data.metadata.id);assert.equal(saved.metadata.cardCount,2);assert.equal(saved.metadata.description,'Retained description');assert.equal(saved.cards.find(c=>c.type==='power').quantity,2);
+ const list=(await call('get','/decks',sessionA).expect(200)).body.data;const summary=list.find(d=>d.metadata.id===saved.metadata.id);assert.equal(summary.id,saved.metadata.id);assert.equal(summary.name,saved.metadata.name);assert.equal(summary.cardCount,saved.metadata.cardCount);assert.equal(summary.metadata.description,'Retained description');assert.ok(summary.evaluation);assert.ok(summary.grid);assert.ok(summary.cards.find(c=>c.type==='character').defaultImage);
+ const before=Number((await pool.query('SELECT count(*)::int AS n FROM decks WHERE user_id=$1',[first.id])).rows[0].n);
+ const unresolved=await call('post','/decks/import',sessionA).send({...input,operationId:randomUUID(),exportData:{cards:{characters:['Unknown synthetic card']}}}).expect(200);assert.equal(unresolved.body.data.ok,false);assert.equal(unresolved.body.data.unresolved[0].name,'Unknown synthetic card');
+ assert.equal(Number((await pool.query('SELECT count(*)::int AS n FROM decks WHERE user_id=$1',[first.id])).rows[0].n),before);
+ const patch={operationId:randomUUID(),deckId:saved.metadata.id,expectedUpdatedAt:saved.updatedAt,description:'Updated description',isPrivate:false};
+ await call('post','/decks/metadata',sessionB).send(patch).expect(403);
+ const updated=(await call('post','/decks/metadata',sessionA).send(patch).expect(200)).body.data;assert.equal(updated.metadata.is_private,false);assert.equal(updated.metadata.description,'Updated description');assert.deepEqual(updated.cards,saved.cards);
+ await call('post','/decks/metadata',sessionA).send({...patch,operationId:randomUUID()}).expect(409);
+ const snapshot={operationId:randomUUID(),deckId:saved.metadata.id,expectedUpdatedAt:updated.updatedAt,name:'Ordinary save keeps details',cards:updated.cards.map(c=>({type:c.type,cardId:c.cardId,quantity:c.quantity,exclude_from_draw:c.exclude_from_draw})),reserveCharacterId:updated.metadata.reserve_character,limited:true};
+ const ordinary=(await call('post','/decks/save',sessionA).send(snapshot).expect(200)).body.data;assert.equal(ordinary.metadata.description,'Updated description');assert.equal(ordinary.metadata.is_private,false);
+ const deletion={operationId:randomUUID(),deckId:saved.metadata.id,expectedUpdatedAt:ordinary.updatedAt};
+ await call('post','/decks/delete',sessionB).send(deletion).expect(403);
+ await call('post','/decks/delete',sessionA).send({...deletion,expectedUpdatedAt:updated.updatedAt}).expect(409);
+ await call('post','/decks/delete',sessionA).send(deletion).expect(200);
+ await call('post','/decks/delete',sessionA).send(deletion).expect(200);
+ await call('get','/decks/'+saved.metadata.id+'/full',sessionA).expect(404);
+ const retry=await call('post','/decks/save',sessionA).send(snapshot).expect(200);assert.equal(retry.body.data.metadata.id,saved.metadata.id);
+ await call('get','/decks/'+saved.metadata.id+'/full',sessionA).expect(404);
+ await call('post','/decks/delete',sessionA).send({...deletion,expectedUpdatedAt:saved.updatedAt}).expect(409);
+ const importedRetry=await call('post','/decks/import',sessionA).send(input).expect(200);assert.equal(importedRetry.body.data.metadata.id,saved.metadata.id);await call('get','/decks/'+saved.metadata.id+'/full',sessionA).expect(404);
+});
