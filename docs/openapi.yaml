@@ -2476,6 +2476,11 @@ paths:
     get:
       tags: [Decks]
       summary: List my decks.
+      parameters:
+        - in: query
+          name: include
+          schema: { type: string, enum: [cardNames] }
+          description: Add all unique card names as metadata.cardNames on each deck.
       responses: { '200': { description: OK } }
     post:
       tags: [Decks]
@@ -2799,6 +2804,11 @@ paths:
     get:
       tags: [Guest Decks]
       summary: List guest session decks (merged with DB decks for guest user).
+      parameters:
+        - in: query
+          name: include
+          schema: { type: string, enum: [cardNames] }
+          description: Add all unique card names as metadata.cardNames on each deck.
       responses: { '200': { description: OK }, '401': { description: Unauthenticated }, '403': { description: Not GUEST role } }
     post:
       tags: [Guest Decks]

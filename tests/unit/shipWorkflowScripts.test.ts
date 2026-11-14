@@ -216,7 +216,16 @@ describe('integration shard runner', () => {
     fs.mkdirSync(binaryDirectory);
     fs.writeFileSync(
       path.join(binaryDirectory, 'npm'),
-      '#!/usr/bin/env bash\nprintf \'%s\\n\' "$*" > "$MOCK_NPM_ARGS"\nprintf \'Test Suites: 1 passed, 1 total\\nTests: 1 passed, 1 total\\n{"status":"passed","cleanup":"completed"}\\n\'\n',
+      `#!/usr/bin/env node
+const fs = require('fs'), path = require('path'), cp = require('child_process');
+fs.writeFileSync(process.env.MOCK_NPM_ARGS, process.argv.slice(2).join(' '));
+fs.mkdirSync(process.env.INTEGRATION_REPORT_DIR, { recursive: true });
+fs.writeFileSync(path.join(process.env.INTEGRATION_REPORT_DIR, 'receipt.json'), JSON.stringify({
+  schema: 1, kind: 'integration-shards', status: 'passed', cleanup: 'completed',
+  sourceRevision: cp.execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+  counts: { suites: 1, tests: 1, passed: 1, failed: 0, skipped: 0, todo: 0 }
+}));
+`,
       { mode: 0o755 },
     );
 

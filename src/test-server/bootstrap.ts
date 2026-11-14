@@ -26,6 +26,7 @@ import { CatalogService } from '../api/services/catalogService';
 import { DbvSupportService } from '../api/services/dbvSupportService';
 import { RecentUpdatesService } from '../api/services/recentUpdatesService';
 import { DeckListService } from '../api/services/deckListService';
+import { DeckCardNames } from '../api/services/deckCardNames';
 import { DeckStatsService } from '../api/services/deckStatsService';
 import { DeckWriteService } from '../api/services/deckWriteService';
 import { DeckDetailService } from '../api/services/deckDetailService';
@@ -85,7 +86,8 @@ const cardErrataRepository = testPool ? new CardErrataRepository(testPool) : und
 const catalogService = new CatalogService(cardRepository, foilCardMapRepository, cardErrataRepository);
 const dbvSupportService = new DbvSupportService(() => dataSource.getPool());
 const recentUpdatesService = new RecentUpdatesService(() => dataSource.getPool());
-const deckListService = new DeckListService(deckRepository);
+const deckCardNames = new DeckCardNames(deckRepository, deckValidationService);
+const deckListService = new DeckListService(deckRepository, deckCardNames);
 const deckStatsService = new DeckStatsService(deckRepository);
 const deckWriteService = new DeckWriteService(deckBusinessService, deckValidationService, deckDraftEvaluationService, deckRepository);
 const deckDetailService = new DeckDetailService(deckRepository, deckDraftEvaluationService);
@@ -101,6 +103,7 @@ const deckCardsService = new DeckCardsService(deckRepository, {
 const deckUIPreferencesService = new DeckUIPreferencesService(deckRepository);
 
 const guestDeckService = new GuestDeckService({
+  cardNames: deckCardNames,
   evaluator: deckDraftEvaluationService,
   guestDeckPersistence,
   deckRepository,

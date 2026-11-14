@@ -122,7 +122,8 @@
   box-shadow: none;
 }
 .dsel__search {
-  width: 220px;
+  width: 244px;
+  min-width: 0;
   padding: 4px 12px;
   font-size: var(--font-size-sm);
   border-radius: var(--radius-full);

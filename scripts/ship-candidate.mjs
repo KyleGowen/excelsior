@@ -2,12 +2,14 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, lstatSync, readlinkSync } from 'node:fs';
 import { resolve, relative, sep } from 'node:path';
 import { createHash } from 'node:crypto';
+import { gitBlobHash } from './ship-test-inputs.mjs';
 
 const git = (root, args, options = {}) => execFileSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024, ...options });
 export function candidateId(candidate) {
   return createHash('sha256').update(JSON.stringify({ baseRevision: candidate.baseRevision, entries: candidate.entries })).digest('hex');
 }
 export function captureCandidate(root, paths) {
+  const objectFormat = git(root, ['rev-parse', '--show-object-format']).trim();
   const entries = [...new Set(paths)].sort().map(input => {
     const path = relative(root, resolve(root, input)).split(sep).join('/');
     if (!path || path === '..' || path.startsWith('../')) throw new Error('Candidate path outside repository');
@@ -16,7 +18,7 @@ export function captureCandidate(root, paths) {
     if (!stat.isFile() && !stat.isSymbolicLink()) throw new Error('Candidate paths must be individual files');
     const mode = stat.isSymbolicLink() ? '120000' : stat.mode & 0o111 ? '100755' : '100644';
     const content = stat.isSymbolicLink() ? Buffer.from(readlinkSync(resolve(root, path))) : readFileSync(resolve(root, path));
-    const blob = git(root, ['hash-object', '--stdin'], { input: content }).trim();
+    const blob = gitBlobHash(content, objectFormat);
     return { path, mode, blob };
   });
   const result = { schema: 1, baseRevision: git(root, ['rev-parse', 'HEAD']).trim(), entries };

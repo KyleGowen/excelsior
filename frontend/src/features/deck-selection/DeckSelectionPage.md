@@ -38,7 +38,7 @@ regular deck metadata.
   resolution against all catalog types → **creates a new deck** (`createDeck` + `replaceDeckCards` +
   optional `updateDeckMeta` for `limited` / `reserve_character`) → navigates to the editor. Unlike v1 deck-editor import,
   this does **not** merge into an open deck. Available to GUEST, USER, and ADMIN.
-- **Search** decks by name (sorted alphabetically).
+- **Search** personal or current-session Guest decks by deck name or cards anywhere in the saved deck. Card searches match from the start of a word or phrase, ignoring case and punctuation. One- and two-character searches match whole words. Results stay alphabetical and identify the matching card names.
 - Deck tiles use browser links, supporting same-tab navigation and the browser's new-tab gestures.
 - **Actions** panel (kebab on a tile): Open/Edit, **Open in new tab**, View (read-only
   `?readonly=true`), **Export deck**, and Delete (with confirm).

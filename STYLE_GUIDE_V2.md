@@ -365,6 +365,8 @@ Each screen has a companion doc in its feature folder:
 - Database (DBV) — [`frontend/src/features/database/DatabasePage.md`](frontend/src/features/database/DatabasePage.md)
 - Collection — [`frontend/src/features/collection/CollectionPage.md`](frontend/src/features/collection/CollectionPage.md)
 - Deck Selection — [`frontend/src/features/deck-selection/DeckSelectionPage.md`](frontend/src/features/deck-selection/DeckSelectionPage.md)
+
+My Decks and Guest Decks show the filtered count by the heading and the matched card names in each result tile. Title-only results show **Deck name match**.
 - Deck Editor (DEV) — [`frontend/src/features/deck-editor/DeckEditorPage.md`](frontend/src/features/deck-editor/DeckEditorPage.md)
 
 On mobile, Deck Selection exposes the discovery collections as a horizontally scrollable tab strip

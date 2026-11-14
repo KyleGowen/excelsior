@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import { AppShell } from '../components/AppShell';
 import DeckSelectionPage from '../features/deck-selection/DeckSelectionPage';
 import { pageHandlers } from './pageMocks';
+import { sampleDeck } from './fixtures';
 
 const meta = {
   title: 'Screens/Decks',
@@ -19,6 +20,19 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const MyDecks: Story = {};
+export const SearchByCardName: Story = {
+  parameters: { msw: pageHandlers({ decks: [
+    { ...sampleDeck, metadata: { ...sampleDeck.metadata, id: 'story-paris', name: 'Paris at Dawn', cardNames: ['Dr. Watson', 'The Three Musketeers', 'War Woman'] } },
+    { ...sampleDeck, metadata: { ...sampleDeck.metadata, id: 'story-desert', name: 'Desert Patrol', cardNames: ['Ra'] } },
+    { ...sampleDeck, metadata: { ...sampleDeck.metadata, id: 'story-night', name: 'Night Watch', cardNames: ['Dracula', 'Korak', 'Time Traveler'] } },
+  ] }) },
+  play: async ({ canvas }) => {
+    await userEvent.type(await canvas.findByRole('searchbox', { name: 'Search decks' }), 'Wats');
+    await expect(await canvas.findByText('Dr. Watson', { exact: true })).toBeVisible();
+    await expect(canvas.queryByRole('heading', { name: 'Night Watch' })).not.toBeInTheDocument();
+  },
+};
+export const MobileSearchByCardName: Story = { ...SearchByCardName, globals: { viewport: { value: 'mobile' } } };
 export const Empty: Story = { parameters: { msw: pageHandlers({ decks: [] }) } };
 export const PublicProfileWithoutTopDeck: Story = { parameters: { route: '/users/storybook-owner/decks', msw: pageHandlers({ decks: [] }) } };
 export const PublicProfileWithTopDeck: Story = {

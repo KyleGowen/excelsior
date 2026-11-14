@@ -179,6 +179,13 @@
   gap: var(--space-3);
   z-index: 2;
 }
+.deck-tile__search-match {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  overflow-wrap: anywhere;
+}
+
 .deck-tile--compact .deck-tile__body {
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4) var(--space-4);
