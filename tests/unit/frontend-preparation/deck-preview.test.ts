@@ -38,7 +38,15 @@ describe('Atomic import orchestration',()=>{
  const input={name:'Fixture import',exportData:{limited:true,reserve_character:'Lancelot',cards:{characters:['Lancelot'],special_cards:{Lancelot:['Sword and Shield']},power_cards:['5 - Combat']}}};
  beforeEach(()=>{owned.mockClear();guest.mockClear();});
  it('resolves everything before a single owned transaction call',async()=>{expect(await service.import(input,{userId:'fictional-user'})).toEqual({ok:true,deckId:'fictional-deck',userId:'fictional-user',cardsAdded:3});expect(owned).toHaveBeenCalledTimes(1);expect(owned).toHaveBeenCalledWith('fictional-user',expect.objectContaining({limited:true,reserveCharacterId:'lancelot',cards:expect.arrayContaining([{type:'character',cardId:'lancelot',quantity:1}])}));expect(guest).not.toHaveBeenCalled();});
- it('creates one complete Guest snapshot with bound session ownership',async()=>{const r=await service.import(input,{userId:'guest-user',guestSessionId:'fictional-session'});expect(r).toMatchObject({ok:true,deckId:'fictional-guest-deck',userId:'fictional-session'});expect(guest).toHaveBeenCalledTimes(1);expect(owned).not.toHaveBeenCalled();});
+ it('stores the Guest snapshot in the session and returns the account ID', async () => {
+   const result = await service.import(input, { userId: 'guest-user', guestSessionId: 'fictional-session' });
+   expect(result).toMatchObject({ ok: true, deckId: 'fictional-guest-deck', userId: 'guest-user' });
+   expect(guest).toHaveBeenCalledTimes(1);
+   expect(guest).toHaveBeenCalledWith('fictional-session', expect.objectContaining({
+     metadata: expect.objectContaining({ userId: 'guest-user' }),
+   }));
+   expect(owned).not.toHaveBeenCalled();
+ });
  it('leaves both persistence stores unchanged for unresolved identities',async()=>{const r=await service.import({name:'Fixture',exportData:{cards:{characters:['Absent']}}},{userId:'fictional'});expect(r).toMatchObject({ok:false,code:'unresolved'});expect(owned).not.toHaveBeenCalled();expect(guest).not.toHaveBeenCalled();});
  it('refuses partial fallback when an atomic repository is unavailable',async()=>{await expect(new DeckImportService(evaluator,{}, {createDeck:guest}).import(input,{userId:'fictional'})).rejects.toThrow('Atomic import persistence is unavailable');expect(guest).not.toHaveBeenCalled();});
 });

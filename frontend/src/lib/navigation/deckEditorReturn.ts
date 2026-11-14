@@ -6,6 +6,10 @@ export const DECK_EDITOR_RETURN_HOME = '/home';
 export const DECK_EDITOR_RETURN_COLUMBUS = '/home/columbus-regional';
 export const DECK_EDITOR_RETURN_REGIONALS = '/home/regionals';
 
+export function buildDeckEditorPath(userId: string, deckId: string, readonly = false): string {
+  return `/users/${encodeURIComponent(userId)}/decks/${encodeURIComponent(deckId)}${readonly ? '?readonly=true' : ''}`;
+}
+
 function isSafeInternalPath(path: string): boolean {
   return path.startsWith('/') && !path.startsWith('//');
 }

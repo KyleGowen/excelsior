@@ -20,7 +20,7 @@ describe('GuestDeckService', () => {
       checkIfCardIsOnePerDeck: jest.fn(),
       checkIfCardIsCataclysm: jest.fn(),
     });
-    const created = await service.createDeck('session-1', { name: 'Guest copy', description: '' });
+    const created = await service.createDeck('session-1', 'guest-user-1', { name: 'Guest copy', description: '' });
     if (!created.ok) throw new Error(created.message);
 
     const result = await service.replaceCards('session-1', created.data.id, [
@@ -52,7 +52,7 @@ describe('GuestDeckService', () => {
       checkIfCardIsOnePerDeck: jest.fn(),
       checkIfCardIsCataclysm: jest.fn(),
     });
-    const created = await service.createDeck('session-1', { name: 'Guest duplicate', description: '' });
+    const created = await service.createDeck('session-1', 'guest-user-1', { name: 'Guest duplicate', description: '' });
     if (!created.ok) throw new Error(created.message);
 
     const result = await service.replaceCards('session-1', created.data.id, [
@@ -72,7 +72,7 @@ describe('GuestDeckService', () => {
       checkIfCardIsOnePerDeck: jest.fn(),
       checkIfCardIsCataclysm: jest.fn(),
     });
-    const created = await service.createDeck('session-1', { name: 'Ordered team', description: '' });
+    const created = await service.createDeck('session-1', 'guest-user-1', { name: 'Ordered team', description: '' });
     if (!created.ok) throw new Error(created.message);
 
     const result = await service.replaceCards('session-1', created.data.id, [

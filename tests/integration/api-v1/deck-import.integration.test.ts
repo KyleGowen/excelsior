@@ -74,6 +74,7 @@ describe('Atomic import real HTTP and persistence',()=>{
   const password='Fictional-guest-import-123';const user=await integrationTestUtils.createTestUser({name:'M7ImportGuest',email:'m7-guest@example.invalid',role:'GUEST',password});
   const agent=request.agent(app);await agent.post('/api/auth/login').send({username:user.username,password}).expect(200);
   const input={name:'Fictional Guest import',exportData:{limited:true,cards:{characters:['Lancelot']}}};const r=await agent.post('/api/v1/guest/decks/import').send(input).expect(201);
+  expect(r.body.data.userId).toBe(user.id);
   try{expect(r.body.data.deckId).toMatch(/^guest_/);const list=await agent.get('/api/v1/guest/decks').expect(200);expect(list.body.data.find((d:any)=>d.metadata.id===r.body.data.deckId).metadata).toMatchObject({is_limited:true,threat:18});const full=await agent.get(`/api/v1/guest/decks/${r.body.data.deckId}`).expect(200);expect(full.body.data.cards).toHaveLength(1);await request(app).get(`/api/v1/guest/decks/${r.body.data.deckId}`).expect(401);expect((await DataSourceConfig.getInstance().getPool().query('SELECT count(*) FROM decks WHERE user_id=$1',[user.id])).rows[0].count).toBe('0');}finally{await agent.delete(`/api/v1/guest/decks/${r.body.data.deckId}`).expect(200);}
  });
 });

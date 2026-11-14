@@ -8,7 +8,7 @@ import { integrationTestUtils } from '../../setup-integration';
 const routes = enumerateExpressRoutes(app).filter(key => key.includes(' /api/v1/') && !key.startsWith('HEAD '));
 // These reads deliberately support public card browsing and shared deck links.
 const publicReads = new Set([
-  '/config/app', '/decks/:id', '/decks/:id/full', '/community/decks', '/community/preconstructed-decks',
+  '/config/app', '/decks/:id', '/decks/:id/full', '/guest/decks/:id/share', '/community/decks', '/community/preconstructed-decks',
   '/users/:userId/public-decks', '/users/:userId/profile', '/recent-updates', '/dbv/sets', '/dbv/deck-backgrounds', '/supporter/status'
 ]);
 const publicMutations = new Set(['/auth/login', '/auth/refresh', '/auth/logout', '/service-auth/token', '/decks/import/prepare', '/decks/evaluate', '/decks/candidates/evaluate', '/decks/draw', '/decks/export', '/decks/summaries', '/collections/evaluate', '/supporter/webhook']);
@@ -67,6 +67,26 @@ describe('Production endpoint access policy', () => {
     expect(profile.body.data).toEqual({ id: user.id, displayName: user.username, topdeckHandle: null, topdeckProfileUrl: null });
     await request(app).post('/api/v1/users/topdeck').send({ topdeckHandle: 'Example' }).expect(401);
     await request(app).post('/api/v1/users/topdeck').set('Cookie', guestCookie).send({ topdeckHandle: 'Example' }).expect(403);
+  });
+
+  it('publishes only explicitly shared Guest decks without giving viewers edit access', async () => {
+    const created = await request(app).post('/api/v1/guest/decks').set('Cookie', guestCookie)
+      .send({ name: 'Public Guest link policy', description: '' }).expect(201);
+    const path = `/api/v1/guest/decks/${created.body.data.id}`;
+    try {
+      await request(app).get(`${path}/share`).expect('Cache-Control', 'no-store').expect(404);
+      await request(app).post(`${path}/share`).expect(401);
+      await request(app).post(`${path}/share`).set('Cookie', guestCookie).expect(200);
+      const shared = await request(app).get(`${path}/share`).expect('Cache-Control', 'no-store').expect(200);
+      expect(shared.body.data.metadata).toMatchObject({ id: created.body.data.id, isOwner: false });
+      expect(JSON.stringify(shared.body)).not.toContain(guestCookie.slice('sessionId='.length));
+      await request(app).put(path).send({ name: 'Anonymous edit' }).expect(401);
+      const owner = await request(app).get(path).set('Cookie', guestCookie).expect(200);
+      expect(owner.body.data.metadata.isOwner).toBe(true);
+    } finally {
+      await request(app).delete(path).set('Cookie', guestCookie).expect(200);
+    }
+    await request(app).get(`${path}/share`).expect(404);
   });
 
   it('keeps candidate evaluation stateless and public while rejecting malformed drafts', async () => {

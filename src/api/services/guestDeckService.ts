@@ -29,6 +29,8 @@ function countCardsInDeck(cards: readonly CardCountInput[]): number {
 export type GuestDeckPersistencePort = {
   createDeck: (sessionId: string, deckData: DeckData) => string;
   getDeck: (sessionId: string, deckId: string) => DeckData | null | undefined;
+  shareDeck: (sessionId: string, deckId: string) => boolean;
+  getSharedDeck: (deckId: string) => DeckData | null;
   getAllDecksForSession: (sessionId: string) => DeckData[];
   updateDeck: (sessionId: string, deckId: string, deckData: DeckData) => boolean;
   deleteDeck: (sessionId: string, deckId: string) => boolean;
@@ -69,6 +71,7 @@ export class GuestDeckService {
 
   async createDeck(
     sessionId: string,
+    userId: string,
     input: { name: string; description: string }
   ): Promise<Ok<{ id: string; name: string; description: string; created_at: string; updated_at: string }> | Fail> {
     const { name, description } = input;
@@ -88,7 +91,7 @@ export class GuestDeckService {
         lastModified: now,
         cardCount: 0,
         is_valid: false,
-        userId: sessionId
+        userId
       },
       cards: []
     };
@@ -125,14 +128,27 @@ export class GuestDeckService {
   }
 
   async getDeck(sessionId: string, deckId: string): Promise<Ok<{ metadata: Record<string, unknown>; cards: DeckCard[] }> | Fail> {
-    const deckData = this.deps.guestDeckPersistence.getDeck(sessionId, deckId);
+    return this.deckView(this.deps.guestDeckPersistence.getDeck(sessionId, deckId), true);
+  }
+
+  shareDeck(sessionId: string, deckId: string): Ok<{ id: string }> | Fail {
+    return this.deps.guestDeckPersistence.shareDeck(sessionId, deckId)
+      ? ok(200, { id: deckId })
+      : fail(404, 'DECK_NOT_FOUND', 'Deck not found');
+  }
+
+  async getSharedDeck(deckId: string) {
+    return this.deckView(this.deps.guestDeckPersistence.getSharedDeck(deckId), false);
+  }
+
+  private async deckView(deckData: DeckData | null | undefined, isOwner: boolean): Promise<Ok<{ metadata: Record<string, unknown>; cards: DeckCard[] }> | Fail> {
     if (!deckData) {
       return fail(404, 'DECK_NOT_FOUND', 'Deck not found');
     }
     const view = {
       metadata: {
         ...deckData.metadata,
-        isOwner: true
+        isOwner
       },
       cards: deckData.cards || []
     };

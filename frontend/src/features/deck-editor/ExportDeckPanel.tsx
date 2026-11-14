@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SlideOutPanel } from '../../components/SlideOutPanel';
 import { LoadingState } from '../../components/LoadingState';
 import { IconCopy } from '../../components/icons';
+import { Link as LinkIcon } from 'lucide-react';
 import {
   buildDeckExportJson,
   type BuildDeckExportJsonInput,
@@ -10,6 +11,9 @@ import {
 export interface ExportDeckPanelProps {
   open: boolean;
   input: BuildDeckExportJsonInput;
+  shareUrl?: string | undefined;
+  temporaryLink?: boolean;
+  onPrepareLink?: (() => Promise<void>) | undefined;
   loading?: boolean;
   error?: unknown;
   onRetry?: () => void;
@@ -29,16 +33,71 @@ async function copyTextToClipboard(text: string): Promise<void> {
   textarea.style.left = '-9999px';
   document.body.appendChild(textarea);
   textarea.select();
-  const ok = document.execCommand('copy');
-  document.body.removeChild(textarea);
+  let ok: boolean;
+  try {
+    ok = document.execCommand('copy');
+  } finally {
+    textarea.remove();
+  }
   if (!ok) {
     throw new Error('Copy failed');
   }
 }
 
+function CopyDeckLink({ url, temporaryLink, onPrepareLink }: Pick<ExportDeckPanelProps, 'temporaryLink' | 'onPrepareLink'> & { url: string }) {
+  const [status, setStatus] = useState<'idle' | 'pending' | 'copied' | 'manual' | 'unavailable'>('idle');
+  const selectLink = useCallback((input: HTMLInputElement | null) => {
+    input?.focus();
+    input?.select();
+  }, []);
+
+  async function copyLink() {
+    setStatus('pending');
+    if (onPrepareLink) {
+      try {
+        await onPrepareLink();
+      } catch {
+        setStatus('unavailable');
+        return;
+      }
+    }
+    try {
+      await copyTextToClipboard(url);
+      setStatus('copied');
+    } catch {
+      setStatus('manual');
+    }
+  }
+
+  return (
+    <div className="export-deck-panel__share">
+      <div className="export-deck-panel__share-actions">
+        <button className="btn export-deck-panel__share-button" type="button" onClick={() => void copyLink()} disabled={status === 'pending'}>
+          <LinkIcon aria-hidden="true" size={16} /> Copy deck link
+        </button>
+        <span role="status" className={status === 'copied' ? 'export-deck-panel__share-success' : undefined}>
+          {status === 'copied' ? 'Deck link copied' : status === 'manual' ? 'Copy the selected link' : status === 'unavailable' ? 'Could not share this deck. Try again.' : ''}
+        </span>
+      </div>
+      {temporaryLink ? (
+        <p className="export-deck-panel__share-note">Anyone with the link can view the deck until it expires.</p>
+      ) : null}
+      {status === 'manual' ? (
+        <label className="export-deck-panel__share-url">
+          Deck link
+          <input ref={selectLink} type="text" readOnly value={url} />
+        </label>
+      ) : null}
+    </div>
+  );
+}
+
 export function ExportDeckPanel({
   open,
   input,
+  shareUrl,
+  temporaryLink = false,
+  onPrepareLink,
   loading = false,
   error,
   onRetry,
@@ -123,12 +182,13 @@ export function ExportDeckPanel({
             disabled={loading || !exportText}
           >
             <IconCopy />
-            {copied ? 'Copied!' : 'Copy to clipboard'}
+            {copied ? 'Copied!' : format === 'json' ? 'Copy JSON' : 'Copy decklist'}
           </button>
           {copyError ? <p className="export-deck-panel__error">{copyError}</p> : null}
         </div>
       }
     >
+      {open && shareUrl ? <CopyDeckLink key={shareUrl} url={shareUrl} temporaryLink={temporaryLink} onPrepareLink={onPrepareLink} /> : null}
       <div className="export-deck-panel__formats" role="group" aria-label="Export format">
         {(['json', 'topdeck'] as const).map(option => (
           <button

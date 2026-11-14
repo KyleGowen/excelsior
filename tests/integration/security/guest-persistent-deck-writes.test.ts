@@ -1,17 +1,23 @@
 import request from 'supertest';
 import { randomUUID } from 'crypto';
+import { once } from 'node:events';
+import { createServer } from 'node:http';
 import { Pool } from 'pg';
 import { app } from '../../../src/test-server';
 import { integrationTestUtils } from '../../setup-integration';
 import type { UserRole } from '../../../src/types';
 import { api } from '../../../frontend/src/lib/api/client';
 import { clonePreloadedGuestDeck, guestNeedsCloneOnOpen } from '../../../frontend/src/lib/decks/guestCloneOnOpen';
+import { buildDeckShareUrl } from '../../../frontend/src/lib/navigation/deckShareUrl';
 
 type Write = { method: 'post' | 'put' | 'delete'; path: string; body: object };
 type Credentials = { cookie: string; bearer: string };
 
 describe('Guest persistence boundary with real session and Bearer authentication', () => {
   const password = randomUUID();
+  // Keep one listener for this request-heavy suite instead of opening a port per assertion.
+  const server = createServer(app);
+  const client = request(server);
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower'
   });
@@ -23,8 +29,8 @@ describe('Guest persistence boundary with real session and Bearer authentication
   let powerId: string;
 
   async function login(username: string): Promise<Credentials> {
-    const session = await request(app).post('/api/auth/login').send({ username, password }).expect(200);
-    const bearer = await request(app).post('/api/v1/auth/login').send({ username, password }).expect(200);
+    const session = await client.post('/api/auth/login').send({ username, password }).expect(200);
+    const bearer = await client.post('/api/v1/auth/login').send({ username, password }).expect(200);
     return {
       cookie: session.headers['set-cookie'][0].split(';')[0],
       bearer: `Bearer ${bearer.body.data.accessToken}`
@@ -51,6 +57,8 @@ describe('Guest persistence boundary with real session and Bearer authentication
   }
 
   beforeAll(async () => {
+    server.listen(0, '127.0.0.1');
+    await once(server, 'listening');
     for (const role of ['GUEST', 'USER', 'ADMIN'] as const) {
       const user = await integrationTestUtils.createTestUser({
         name: `guest-boundary-${role.toLowerCase()}`,
@@ -84,14 +92,20 @@ describe('Guest persistence boundary with real session and Bearer authentication
   });
 
   afterAll(async () => {
-    await pool.end();
+    try {
+      if (server.listening) {
+        await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
+      }
+    } finally {
+      await pool.end();
+    }
   });
 
   describe.each(['anonymous', 'session', 'bearer'] as const)('%s requests', (mode) => {
     it.each([0, 1, 2, 3, 4, 5, 6])('rejects persistent write operation %i without changing DB rows', async (index) => {
       const before = await snapshot();
       const write = writes()[index];
-      let pending = request(app)[write.method](write.path).send(write.body);
+      let pending = client[write.method](write.path).send(write.body);
       if (mode === 'session') pending = pending.set('Cookie', guestAuth.cookie);
       if (mode === 'bearer') pending = pending.set('Authorization', guestAuth.bearer);
       const response = await pending.expect(mode === 'anonymous' ? 401 : 403);
@@ -111,7 +125,7 @@ describe('Guest persistence boundary with real session and Bearer authentication
     const beforeCards = await pool.query('SELECT * FROM deck_cards WHERE deck_id = $1 ORDER BY id', [deckId]);
     for (const mode of ['session', 'bearer'] as const) {
       for (const write of writes()) {
-        const response = await request(app)[write.method](write.path)
+        const response = await client[write.method](write.path)
           .set(mode === 'session' ? 'Cookie' : 'Authorization', credentials[mode === 'session' ? 'cookie' : 'bearer'])
           .send(write.body).expect(403);
         expect(response.body.errors[0].code).toBe('GUEST_FORBIDDEN');
@@ -126,56 +140,85 @@ describe('Guest persistence boundary with real session and Bearer authentication
     const auth = role === 'USER' ? userAuth : adminAuth;
     const header = role === 'USER' ? 'Cookie' : 'Authorization';
     const value = role === 'USER' ? auth.cookie : auth.bearer;
-    const created = await request(app).post('/api/v1/decks').set(header, value)
+    const created = await client.post('/api/v1/decks').set(header, value)
       .send({ name: 'Registered owner control' }).expect(201);
     const id: string = created.body.data.id;
     integrationTestUtils.trackTestDeck(id);
-    await request(app).put(`/api/v1/decks/${id}`).set(header, value).send({ name: 'Updated owner deck' }).expect(200);
-    await request(app).post(`/api/v1/decks/${id}/cards`).set(header, value)
+    await client.put(`/api/v1/decks/${id}`).set(header, value).send({ name: 'Updated owner deck' }).expect(200);
+    await client.post(`/api/v1/decks/${id}/cards`).set(header, value)
       .send({ cardType: 'power', cardId: powerId, quantity: 1 }).expect(200);
-    await request(app).put(`/api/v1/decks/${id}/cards`).set(header, value)
+    await client.put(`/api/v1/decks/${id}/cards`).set(header, value)
       .send({ cards: [{ cardType: 'power', cardId: powerId, quantity: 2 }] }).expect(200);
-    await request(app).delete(`/api/v1/decks/${id}/cards`).set(header, value)
+    await client.delete(`/api/v1/decks/${id}/cards`).set(header, value)
       .send({ cardType: 'power', cardId: powerId, quantity: 1 }).expect(200);
-    await request(app).put(`/api/v1/decks/${id}/ui-preferences`).set(header, value)
+    await client.put(`/api/v1/decks/${id}/ui-preferences`).set(header, value)
       .send({ viewMode: 'list' }).expect(200);
     expect((await pool.query('SELECT name FROM decks WHERE id = $1', [id])).rows[0].name).toBe('Updated owner deck');
     expect((await pool.query('SELECT quantity FROM deck_cards WHERE deck_id = $1', [id])).rows[0].quantity).toBe(1);
-    await request(app).delete(`/api/v1/decks/${id}`).set(header, value).expect(200);
+    await client.delete(`/api/v1/decks/${id}`).set(header, value).expect(200);
     expect((await pool.query('SELECT id FROM decks WHERE id = $1', [id])).rows).toEqual([]);
   });
 
   it('saves guest edits across reloads only in the owning session, leaving PostgreSQL unchanged', async () => {
     const before = await snapshot();
-    const created = await request(app).post('/api/v1/guest/decks').set('Cookie', guestAuth.cookie)
+    const created = await client.post('/api/v1/guest/decks').set('Cookie', guestAuth.cookie)
       .send({ name: 'Session save before', description: '' }).expect(201);
     const id: string = created.body.data.id;
     expect(id).toMatch(/^guest_/);
-    await request(app).put(`/api/v1/guest/decks/${id}`).set('Cookie', guestAuth.cookie)
+    await client.put(`/api/v1/guest/decks/${id}`).set('Cookie', guestAuth.cookie)
       .send({ name: 'Session save after' }).expect(200);
-    await request(app).put(`/api/v1/guest/decks/${id}/cards`).set('Cookie', guestAuth.cookie)
+    await client.put(`/api/v1/guest/decks/${id}/cards`).set('Cookie', guestAuth.cookie)
       .send({ cards: [{ cardType: 'power', cardId: powerId, quantity: 3 }] }).expect(200);
-    const reloaded = await request(app).get(`/api/v1/guest/decks/${id}`).set('Cookie', guestAuth.cookie).expect(200);
+    const reloaded = await client.get(`/api/v1/guest/decks/${id}`).set('Cookie', guestAuth.cookie).expect(200);
+    const sessionCredential = guestAuth.cookie.slice('sessionId='.length);
+    expect(reloaded.body.data.metadata.userId).toBe(guestId);
+    expect(JSON.stringify(created.body)).not.toContain(sessionCredential);
+    expect(JSON.stringify(reloaded.body)).not.toContain(sessionCredential);
+    const shareUrl = buildDeckShareUrl('https://excelsior.cards', reloaded.body.data.metadata);
+    expect(shareUrl).toBe(`https://excelsior.cards/users/${guestId}/decks/${id}`);
+    expect(shareUrl).not.toContain(sessionCredential);
+    const sharePage = await client.get(new URL(shareUrl!).pathname).set('Cookie', guestAuth.cookie).accept('html').expect(200);
+    expect(sharePage.text).toContain('id="root"');
     expect(reloaded.body.data.metadata.name).toBe('Session save after');
     expect(reloaded.body.data.cards[0].quantity).toBe(3);
     expect(await snapshot()).toEqual(before);
-    const otherSession = await request(app).post('/api/auth/login')
+    const otherSession = await client.post('/api/auth/login')
       .send({ username: (await pool.query('SELECT username FROM users WHERE id = $1', [guestId])).rows[0].username, password })
       .expect(200);
-    await request(app).get(`/api/v1/guest/decks/${id}`).set('Cookie', otherSession.headers['set-cookie']).expect(404);
-    await request(app).delete(`/api/v1/guest/decks/${id}`).set('Cookie', guestAuth.cookie).expect(200);
+    await client.get(`/api/v1/guest/decks/${id}`).set('Cookie', otherSession.headers['set-cookie']).expect(404);
+    const deckPath = `/api/v1/guest/decks/${id}`;
+    const sharedPath = `${deckPath}/share`;
+    const otherCookie = otherSession.headers['set-cookie'];
+    await client.get(sharedPath).expect('Cache-Control', 'no-store').expect(404);
+    await client.post(sharedPath).expect(401);
+    await client.post(sharedPath).set('Cookie', otherCookie).expect(404);
+    await client.post(sharedPath).set('Cookie', guestAuth.cookie).expect(200);
+    await client.post(sharedPath).set('Cookie', guestAuth.cookie).expect(200);
+    const shared = await client.get(sharedPath).expect('Cache-Control', 'no-store').expect(200);
+    expect(shared.body.data.metadata).toMatchObject({ id, userId: guestId, isOwner: false, name: 'Session save after' });
+    expect(shared.body.data.cards).toEqual(reloaded.body.data.cards);
+    expect(JSON.stringify(shared.body)).not.toContain(sessionCredential);
+    const guestViewer = await client.get(sharedPath).set('Cookie', otherCookie).expect(200);
+    expect(guestViewer.body.data.metadata.isOwner).toBe(false);
+    expect((await client.get(deckPath).set('Cookie', guestAuth.cookie).expect(200)).body.data.metadata.isOwner).toBe(true);
+    await client.put(deckPath).set('Cookie', otherCookie).send({ name: 'Unauthorized edit' }).expect(404);
+    await client.put(`${deckPath}/cards`).set('Cookie', otherCookie).send({ cards: [] }).expect(404);
+    await client.delete(deckPath).set('Cookie', otherCookie).expect(404);
+    await client.delete(deckPath).set('Cookie', guestAuth.cookie).expect(200);
+    await client.get(sharedPath).expect(404);
+    expect(await snapshot()).toEqual(before);
   });
 
-  it('keeps another owner\'s shared deck read-only without adding it to either guest session', async () => {
-    const source = await request(app).post('/api/v1/decks').set('Cookie', userAuth.cookie)
-      .send({ name: 'Shared registered-owner deck', is_private: false }).expect(201);
+  it.each([false, true])('keeps a shared deck read-only in both guest sessions (unlisted: %s)', async isPrivate => {
+    const source = await client.post('/api/v1/decks').set('Cookie', userAuth.cookie)
+      .send({ name: 'Shared registered-owner deck', is_private: isPrivate }).expect(201);
     const sourceId: string = source.body.data.id;
     integrationTestUtils.trackTestDeck(sourceId);
-    await request(app).put(`/api/v1/decks/${sourceId}/cards`).set('Cookie', userAuth.cookie)
+    await client.put(`/api/v1/decks/${sourceId}/cards`).set('Cookie', userAuth.cookie)
       .send({ cards: [{ cardType: 'power', cardId: powerId, quantity: 2 }] }).expect(200);
     const sourceBefore = await pool.query('SELECT * FROM decks WHERE id = $1', [sourceId]);
     const cardsBefore = await pool.query('SELECT * FROM deck_cards WHERE deck_id = $1 ORDER BY id', [sourceId]);
-    const otherLogin = await request(app).post('/api/auth/login')
+    const otherLogin = await client.post('/api/auth/login')
       .send({ username: (await pool.query('SELECT username FROM users WHERE id = $1', [guestId])).rows[0].username, password })
       .expect(200);
     const otherCookie: string = otherLogin.headers['set-cookie'][0].split(';')[0];
@@ -184,7 +227,7 @@ describe('Guest persistence boundary with real session and Bearer authentication
     // Run the real frontend clone helper through real HTTP handlers and auth;
     // only adapt its browser transport to this disposable integration app.
     const get = jest.spyOn(api, 'get').mockImplementation(async <T>(path: string): Promise<T> => {
-      const response = await request(app).get(path).set('Cookie', activeCookie).expect(200);
+      const response = await client.get(path).set('Cookie', activeCookie).expect(200);
       return response.body.data as T;
     });
     const post = jest.spyOn(api, 'post');
@@ -192,12 +235,16 @@ describe('Guest persistence boundary with real session and Bearer authentication
     try {
       for (const cookie of [guestAuth.cookie, otherCookie]) {
         activeCookie = cookie;
-        const beforeList = await request(app).get('/api/v1/guest/decks').set('Cookie', cookie).expect(200);
-        const shared = await request(app).get(`/api/v1/decks/${sourceId}/full`).set('Cookie', cookie).expect(200);
+        const beforeList = await client.get('/api/v1/guest/decks').set('Cookie', cookie).expect(200);
+        const shared = await client.get(`/api/v1/decks/${sourceId}/full`).set('Cookie', cookie).expect(200);
         expect(shared.body.data.metadata.isOwner).toBe(false);
+        const shareUrl = buildDeckShareUrl('https://excelsior.cards', shared.body.data.metadata);
+        expect(shareUrl).toBe(`https://excelsior.cards/users/${shared.body.data.metadata.userId}/decks/${sourceId}`);
+        const sharePage = await client.get(new URL(shareUrl!).pathname).set('Cookie', cookie).accept('html').expect(200);
+        expect(sharePage.text).toContain('id="root"');
         expect(guestNeedsCloneOnOpen(sourceId, true, false, shared.body.data.metadata.userId, guestId)).toBe(false);
         await expect(clonePreloadedGuestDeck(sourceId, guestId)).rejects.toThrow('Only guest sample decks can be copied');
-        const afterList = await request(app).get('/api/v1/guest/decks').set('Cookie', cookie).expect(200);
+        const afterList = await client.get('/api/v1/guest/decks').set('Cookie', cookie).expect(200);
         expect(afterList.body.data).toEqual(beforeList.body.data);
       }
       expect(post).not.toHaveBeenCalled();

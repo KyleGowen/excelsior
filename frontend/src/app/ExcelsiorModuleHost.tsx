@@ -4,6 +4,7 @@ import { useAuth } from './AuthProvider';
 import { createModuleApi } from '../modules/api';
 import { ModuleHostProvider, type ModuleHost } from '../modules/ModuleHost';
 import { getDeckEditorReturnTo, getDeckEditorBackAriaLabel } from '../lib/navigation/deckEditorReturn';
+import { buildDeckShareUrl } from '../lib/navigation/deckShareUrl';
 import { MobileBottomNav } from '../components/MobileBottomNav';
 import { Logo } from '../components/Logo';
 import { IconHome, IconDatabase, IconDecks, IconCollection, IconUsers } from '../components/icons';
@@ -20,6 +21,7 @@ export function ExcelsiorModuleHost({ children, database = false, deckbuilder = 
  const onHome = useCallback(() => navigate('/home'), [navigate]);
  const host: ModuleHost = {
   api, identity: { user, isGuest, isAdmin }, onOpenDeck, onBack, onHome,
+  getDeckShareUrl: deck => buildDeckShareUrl(window.location.origin, deck),
   backLabel: getDeckEditorBackAriaLabel(returnTo),
   history: { navigate, state: location.state as object | null },
   chrome: { desktopRail: (

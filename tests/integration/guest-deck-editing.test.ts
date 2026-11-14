@@ -1,5 +1,6 @@
 import request from 'supertest';
-import { app } from '../../src/test-server';
+import type { Server } from 'node:http';
+import { app, initializeTestServer } from '../../src/test-server';
 import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 import { integrationTestUtils } from '../setup-integration';
 import { makeDeckPublic } from './helpers/makeDeckPublic';
@@ -15,7 +16,12 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
   let pool: Pool;
   let testCharacterId: string;
 
+  let server: Server;
+
   beforeAll(async () => {
+    // Reuse the suite listener; per-request listeners can race local port reuse.
+    server = (await initializeTestServer()).server;
+    expect(server.listening).toBe(true);
     // Initialize database connection
     pool = new Pool({
       connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:1337/overpower'
@@ -43,7 +49,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     // Login to get cookies
-    const guestResponse = await request(app)
+    const guestResponse = await request(server)
       .post('/api/auth/login')
       .send({ username: 'Test-Guest', password: 'test-guest' });
     
@@ -51,7 +57,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
       guestCookie = guestResponse.headers['set-cookie'][0].split(';')[0];
     }
 
-    const userResponse = await request(app)
+    const userResponse = await request(server)
       .post('/api/auth/login')
       .send({
         username: testUser.username,
@@ -62,7 +68,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
       userCookie = userResponse.headers['set-cookie'][0].split(';')[0];
     }
 
-    const adminResponse = await request(app)
+    const adminResponse = await request(server)
       .post('/api/auth/login')
       .send({
         username: testAdmin.username,
@@ -79,7 +85,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     expect(adminCookie).toBeDefined();
 
     // Create a fresh test deck for each test
-    const createDeckResponse = await request(app)
+    const createDeckResponse = await request(server)
       .post('/api/v1/decks')
       .set('Cookie', userCookie)
       .send({
@@ -105,7 +111,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     // Clean up test deck at the end of all tests
     if (testDeckId) {
       try {
-        await request(app)
+        await request(server)
           .delete(`/api/v1/decks/${testDeckId}`)
           .set('Cookie', userCookie);
       } catch (error) {
@@ -121,7 +127,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
 
   describe('Deck Creation Restrictions', () => {
     it('should block guest from creating decks', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .post('/api/v1/decks')
         .set('Cookie', guestCookie)
         .send({
@@ -135,7 +141,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should allow regular user to create decks', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .post('/api/v1/decks')
         .set('Cookie', userCookie)
         .send({
@@ -152,7 +158,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should allow admin to create decks', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .post('/api/v1/decks')
         .set('Cookie', adminCookie)
         .send({
@@ -171,7 +177,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
 
   describe('Deck Modification Restrictions', () => {
     it('should block guest from updating deck metadata', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .put(`/api/v1/decks/${testDeckId}`)
         .set('Cookie', guestCookie)
         .send({
@@ -185,7 +191,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should allow deck owner to update deck metadata', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .put(`/api/v1/decks/${testDeckId}`)
         .set('Cookie', userCookie)
         .send({
@@ -199,7 +205,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should block non-owner from updating deck metadata', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .put(`/api/v1/decks/${testDeckId}`)
         .set('Cookie', adminCookie)
         .send({
@@ -215,7 +221,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
 
   describe('Card Addition Restrictions', () => {
     it('should block guest from adding cards to deck', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .post(`/api/v1/decks/${testDeckId}/cards`)
         .set('Cookie', guestCookie)
         .send({
@@ -230,7 +236,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should allow deck owner to add cards', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .post(`/api/v1/decks/${testDeckId}/cards`)
         .set('Cookie', userCookie)
         .send({
@@ -244,7 +250,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should block non-owner from adding cards', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .post(`/api/v1/decks/${testDeckId}/cards`)
         .set('Cookie', adminCookie)
         .send({
@@ -262,7 +268,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
   describe('Card Removal Restrictions', () => {
     beforeEach(async () => {
       // Add a card to the deck first
-      await request(app)
+      await request(server)
         .post(`/api/v1/decks/${testDeckId}/cards`)
         .set('Cookie', userCookie)
         .send({
@@ -273,7 +279,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should block guest from removing cards from deck', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .delete(`/api/v1/decks/${testDeckId}/cards`)
         .set('Cookie', guestCookie)
         .send({
@@ -288,7 +294,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should allow deck owner to remove cards', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .delete(`/api/v1/decks/${testDeckId}/cards`)
         .set('Cookie', userCookie)
         .send({
@@ -302,7 +308,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should block non-owner from removing cards', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .delete(`/api/v1/decks/${testDeckId}/cards`)
         .set('Cookie', adminCookie)
         .send({
@@ -319,7 +325,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
 
   describe('UI Preferences Restrictions', () => {
     it('should block guest from updating UI preferences', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .put(`/api/v1/decks/${testDeckId}/ui-preferences`)
         .set('Cookie', guestCookie)
         .send({
@@ -332,7 +338,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should allow deck owner to update UI preferences', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .put(`/api/v1/decks/${testDeckId}/ui-preferences`)
         .set('Cookie', userCookie)
         .send({
@@ -344,7 +350,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should block non-owner from updating UI preferences', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .put(`/api/v1/decks/${testDeckId}/ui-preferences`)
         .set('Cookie', adminCookie)
         .send({
@@ -359,7 +365,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
 
   describe('Deck Deletion Restrictions', () => {
     it('should block guest from deleting decks', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .delete(`/api/v1/decks/${testDeckId}`)
         .set('Cookie', guestCookie);
 
@@ -369,7 +375,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should block non-owner from deleting deck', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .delete(`/api/v1/decks/${testDeckId}`)
         .set('Cookie', adminCookie);
 
@@ -385,7 +391,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
   describe('Read-Only Access Verification', () => {
     it('should allow guest to view deck details', async () => {
       console.log('🔍 Attempting to view deck with ID:', testDeckId);
-      const response = await request(app)
+      const response = await request(server)
         .get(`/api/v1/decks/${testDeckId}`)
         .set('Cookie', guestCookie);
 
@@ -396,7 +402,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should allow guest to view deck cards', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .get(`/api/v1/decks/${testDeckId}/cards`)
         .set('Cookie', guestCookie);
 
@@ -405,7 +411,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
     });
 
     it('should allow guest to view UI preferences', async () => {
-      const response = await request(app)
+      const response = await request(server)
         .get(`/api/v1/decks/${testDeckId}/ui-preferences`)
         .set('Cookie', guestCookie);
 
@@ -428,17 +434,17 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
       for (const endpoint of modificationEndpoints) {
         let response: any;
         if (endpoint.method === 'POST') {
-          response = await request(app)
+          response = await request(server)
             .post(endpoint.path)
             .set('Cookie', guestCookie)
             .send(endpoint.data || {});
         } else if (endpoint.method === 'PUT') {
-          response = await request(app)
+          response = await request(server)
             .put(endpoint.path)
             .set('Cookie', guestCookie)
             .send(endpoint.data || {});
         } else if (endpoint.method === 'DELETE') {
-          response = await request(app)
+          response = await request(server)
             .delete(endpoint.path)
             .set('Cookie', guestCookie)
             .send(endpoint.data || {});
@@ -463,7 +469,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
       ];
 
       for (const endpoint of readEndpoints) {
-        const response = await request(app)
+        const response = await request(server)
           .get(endpoint.path)
           .set('Cookie', guestCookie);
 
@@ -476,7 +482,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
         }
       }
       // UI preferences: only deck owner can read; guest gets 403
-      const uiPrefResponse = await request(app)
+      const uiPrefResponse = await request(server)
         .get(`/api/v1/decks/${testDeckId}/ui-preferences`)
         .set('Cookie', guestCookie);
       expect(uiPrefResponse.status).toBe(403);
@@ -484,7 +490,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
 
     it('should test deck deletion with a separate deck', async () => {
       // Create a separate deck for deletion testing
-      const createDeckResponse = await request(app)
+      const createDeckResponse = await request(server)
         .post('/api/v1/decks')
         .set('Cookie', userCookie)
         .send({
@@ -496,7 +502,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
       const deletionTestDeckId = createDeckResponse.body.data.id;
 
       // Test that guest cannot delete
-      const guestDeleteResponse = await request(app)
+      const guestDeleteResponse = await request(server)
         .delete(`/api/v1/decks/${deletionTestDeckId}`)
         .set('Cookie', guestCookie);
 
@@ -505,7 +511,7 @@ describe('Guest Deck Editing Restrictions Integration Tests', () => {
       expect(guestDeleteResponse.body.error).toBe('Guests may not delete decks');
 
       // Test that owner can delete
-      const ownerDeleteResponse = await request(app)
+      const ownerDeleteResponse = await request(server)
         .delete(`/api/v1/decks/${deletionTestDeckId}`)
         .set('Cookie', userCookie);
 

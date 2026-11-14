@@ -316,6 +316,7 @@ OverPower stat colors (also exposed as `.stat-energy` etc. utility classes):
 
 ## Panels & Overlays
 - **Export deck:** opens in TopDeck with a JSON / TopDeck segmented selector. Reopening resets to TopDeck; Copy follows the selected preview and switching clears feedback. Selected buttons use accent-soft background, accent border/text, `aria-pressed`, and a visible focus ring. The same control appears on desktop and mobile in Decks and the editor.
+- **Copy deck link:** sits above the export format selector. It confirms with **Deck link copied** or reveals and selects the link for manual copying. Temporary Guest decks explain that anyone with the link can view the deck until it expires. **Copy decklist** and **Copy JSON** label the footer action by active format.
 - **Import deck:** uses the same JSON / TopDeck segmented selector as Export, defaulting to TopDeck each time it opens. The selected format controls the helper, textarea label, and placeholder. Switching retains the pasted list and deck name, clears errors, and both buttons are disabled during import. Text lists use the entered deck name.
 
 - `SlideOutPanel` is the standard right-hand drawer for details and forms (card detail,

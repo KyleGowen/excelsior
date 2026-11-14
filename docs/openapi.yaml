@@ -2830,6 +2830,29 @@ paths:
       tags: [Guest Decks]
       summary: Delete a guest deck.
       responses: { '200': { description: OK } }
+  /api/v1/guest/decks/{id}/share:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Guest Decks]
+      summary: View a shared temporary Guest deck read-only.
+      security: []
+      responses:
+        '200': { description: Shared deck with metadata.isOwner false and Cache-Control no-store }
+        '404': { description: Deck is unshared, expired, or missing (DECK_NOT_FOUND) }
+    post:
+      tags: [Guest Decks]
+      summary: Enable a link for the originating Guest session's temporary deck.
+      security:
+        - sessionCookie: []
+      responses:
+        '200': { description: Sharing enabled, returns the same deck ID on retry }
+        '401': { description: Guest session required }
+        '403': { description: Not GUEST role }
+        '404': { description: Deck is unavailable to this session (DECK_NOT_FOUND) }
   /api/v1/guest/decks/{id}/cards:
     parameters:
       - in: path

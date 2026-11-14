@@ -11,7 +11,7 @@ export class DeckImportService {
   if (!prepared.ok) return prepared;
   const p=prepared;
   let deckId:string;
-  const userId=actor.guestSessionId ?? actor.userId;
+  const { userId } = actor;
   if (actor.guestSessionId) {
    const now=new Date().toISOString();
    const data:DeckData={metadata:{id:'',name:p.name,description:p.description,created:now,lastModified:now,cardCount:p.evaluation.counts.drawPile,is_valid:p.evaluation.legality.rawValid,is_limited:p.limited,reserve_character:p.reserveCharacterId,userId},cards:p.cards.map((c,i) => ({...c,id:`import-${i}`}))};

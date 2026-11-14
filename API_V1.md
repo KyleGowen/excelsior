@@ -54,7 +54,7 @@ Versioned JSON API for Excelsior. **Legacy** routes remain documented in [API_DO
 | `GET /api/v1/dbv/*` | ✓ (optional) | ✓ (optional) | Same as catalog |
 | `GET /api/v1/recent-updates` | ✓ (optional) | ✓ (optional) | Same as catalog |
 | `GET /api/v1/config/app` | — | — | Open — no auth required |
-| `GET /api/v1/decks/:id` (+ `/full`) | ✓ (optional) | ✓ (optional) | Any persistent deck readable by direct URL; guest-session decks remain session-only |
+| `GET /api/v1/decks/:id` (+ `/full`) | ✓ (optional) | ✓ (optional) | Any persistent deck readable by direct URL |
 | `GET /api/v1/decks` (list), `/stats`, `/community`, `/tournament` | ✓ | ✓ | Auth required |
 | `POST/PUT/DELETE /api/v1/decks*` | ✓ | ✓ | Owner only; GUEST→403 |
 | `GET /api/v1/community/decks` | ✓ (optional) | ✓ (optional) | Public read; guests allowed (`isFavorited:false`) |
@@ -65,7 +65,8 @@ Versioned JSON API for Excelsior. **Legacy** routes remain documented in [API_DO
 | `POST /api/v1/users/topdeck` | ✓ | — | USER/ADMIN; GUEST→403; self-service only |
 | `GET /api/v1/users/:userId/profile` | ✓ (optional) | ✓ (optional) | Public profile allowlist; no-store |
 | `POST /api/v1/feedback` | ✓ | — | Any authenticated role; 5 submissions/minute |
-| `/api/v1/guest/decks*` | ✓ (GUEST only) | ✗ | GUEST role required; wrong role→403 |
+| `GET /api/v1/guest/decks/:id/share` | — | — | Read-only view of an explicitly shared Guest deck |
+| Other `/api/v1/guest/decks*` | ✓ (GUEST only) | ✗ | GUEST role required; wrong role→403 |
 | `/api/v1/collections/me*` | ✓ | ✗ | USER/ADMIN; GUEST→401 (no collection) |
 | `/api/v1/saved-database-views*` | ✓ | ✓ | Current-user-owned records; temporarily ADMIN-only via centralized eligibility policy |
 | `/api/v1/admin/*` | ✓ | — | ADMIN role required; other roles→403 |
@@ -1208,11 +1209,13 @@ Unfavorite a deck. Idempotent.
 
 Session-scoped decks for **GUEST** users: stored **in memory** keyed by `**sessionId`** cookie (not persisted to PostgreSQL). **GET list** merges DB decks for the guest user (`getDecksByUserId` + `transformDeckList`) with session guest decks (same list shape as `**GET /api/v1/decks`** entries).
 
+New session decks use an opaque `guest_<uuid>` ID. Guest deck metadata and import responses use the Guest account ID as `userId`. The originating Guest session controls editing and can enable a share link.
+
 > **Guest shared links and samples:** Another account's shared database deck opens read-only for GUEST, even without `?readonly=true`; opening it or returning to Guest Decks must not create a copy. Only preloaded samples owned by the current guest account are automatically copied into guest session decks. The frontend checks the loaded `metadata.userId` against the current guest account before `POST /api/v1/guest/decks` (copy name/description) followed by `PUT /api/v1/guest/decks/:id/cards` (copy cards). There is no server-side clone endpoint — the client drives this sequence.
 
 **Auth:** Valid **session cookie** (`authenticateUser`) **and** `**GUEST`** role **and** `**sessionId`** cookie. Unauthenticated → **401** v1 envelope (`UNAUTHORIZED`). Wrong role → **403** v1 envelope, code `**GUEST_ONLY`**. Missing `**sessionId`** → 401, code `**SESSION_REQUIRED**`.
 
-> **Note:** Guest deck routes use **session cookie only** — Bearer JWT is not accepted on these endpoints.
+> **Note:** Guest deck routes use **session cookie only**. The public shared view is the exception and requires no credentials.
 
 **Implementation:** `[GuestDeckService](src/api/services/guestDeckService.ts)` · HTTP `[guest-decks.http.ts](src/api/http/guest-decks.http.ts)`
 
@@ -1231,6 +1234,14 @@ Session-scoped decks for **GUEST** users: stored **in memory** keyed by `**sessi
 **Response 200:** v1 envelope; `**data`** = `{ "metadata": { ..., "isOwner": true }, "cards": [...] }`.
 
 **Response 404:** `**DECK_NOT_FOUND`**.
+
+### `POST /api/v1/guest/decks/:id/share`
+
+The originating Guest session enables a link for this temporary deck. No body required. Returns `200` with `data: { "id": "guest_<uuid>" }` on the first request and on retries. Returns `404 DECK_NOT_FOUND` for an unavailable deck or a different Guest session.
+
+### `GET /api/v1/guest/decks/:id/share`
+
+Public, read-only view of an explicitly shared temporary deck. Returns `200` with `data: { "metadata": { ..., "isOwner": false }, "cards": [...] }` and `Cache-Control: no-store`. Returns `404 DECK_NOT_FOUND` for an unshared, deleted, missing, or expired deck. Viewing does not extend its lifetime.
 
 ### `PUT /api/v1/guest/decks/:id`
 
@@ -1587,6 +1598,8 @@ Clears card repository caches.
 | GET    | /api/v1/guest/decks                     | guest-decks.http.ts |
 | POST   | /api/v1/guest/decks                     | guest-decks.http.ts |
 | GET    | /api/v1/guest/decks/:id                 | guest-decks.http.ts |
+| GET    | /api/v1/guest/decks/:id/share           | guest-decks.http.ts |
+| POST   | /api/v1/guest/decks/:id/share           | guest-decks.http.ts |
 | PUT    | /api/v1/guest/decks/:id                 | guest-decks.http.ts |
 | DELETE | /api/v1/guest/decks/:id                 | guest-decks.http.ts |
 | PUT    | /api/v1/guest/decks/:id/cards           | guest-decks.http.ts |

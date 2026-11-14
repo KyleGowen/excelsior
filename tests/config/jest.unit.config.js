@@ -20,6 +20,8 @@ module.exports = {
   coverageReporters: ['text', 'lcov', 'html'],
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   testTimeout: 10000,
+  // Match CI and leave capacity for the concurrent isolated integration shards.
+  maxWorkers: 2,
   verbose: true,
   // Environment variables for unit tests
   testEnvironmentOptions: {

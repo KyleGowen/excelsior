@@ -5,5 +5,8 @@ const meta={title:'Decks/Server Export',component:ExportDeckPanel,args:{open:tru
 export default meta;
 type Story=StoryObj<typeof meta>;
 export const Ready:Story={};
+export const WithShareLink:Story={args:{shareUrl:'https://excelsior.cards/users/storybook-owner/decks/storybook-deck'}};
+export const WithShareLinkWhileLoading:Story={args:{...WithShareLink.args,loading:true}};
+export const WithTemporaryGuestLink:Story={args:{shareUrl:'https://excelsior.cards/users/storybook-guest/decks/guest_1ccc190f-37c5-4dd1-a226-b30c65ae04be',temporaryLink:true,onPrepareLink:async()=>{}}};
 export const Loading:Story={args:{loading:true}};
 export const Unavailable:Story={args:{error:new Error('Fictional outage'),onRetry:()=>{}}};

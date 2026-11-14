@@ -16,6 +16,8 @@ One line per change. Newest first. Keep this in sync with
 
 ## Unreleased — Phase 3 (scale + docs)
 
+- Guest-session deck IDs use opaque `guest_<uuid>` values. The originating session can enable sharing via `POST /api/v1/guest/decks/:id/share`. The corresponding public GET provides a read-only view until the deck expires.
+
 - Added self-service `POST /api/v1/users/topdeck`, public `GET /api/v1/users/:userId/profile`,
   and nullable `topdeckHandle` on current-user responses. Handles are user supplied;
   no TopDeck authentication, verification, or synchronization is performed.

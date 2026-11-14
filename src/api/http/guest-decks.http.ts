@@ -41,7 +41,7 @@ export function registerGuestDecksV1HttpRoutes(router: Router, deps: GuestDecksV
       sendV1Json(res, 400, null, parsed.errors);
       return;
     }
-    const result = await deps.guestDeckService.createDeck(sessionId, parsed.value);
+    const result = await deps.guestDeckService.createDeck(sessionId, req.user!.id, parsed.value);
     if (!result.ok) {
       sendV1Json(res, result.status, null, [{ code: result.code, message: result.message }]);
       return;
@@ -71,6 +71,28 @@ export function registerGuestDecksV1HttpRoutes(router: Router, deps: GuestDecksV
       return;
     }
     sendV1Success(res, result.data);
+  });
+
+  router.post('/guest/decks/:id/share', deps.authenticateUser, (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    const sessionId = requireGuestSessionV1(req, res);
+    if (!sessionId) return;
+    const result = deps.guestDeckService.shareDeck(sessionId, req.params.id);
+    if (!result.ok) {
+      sendV1Json(res, result.status, null, [{ code: result.code, message: result.message }]);
+      return;
+    }
+    sendV1Success(res, result.data, result.status);
+  });
+
+  router.get('/guest/decks/:id/share', async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    const result = await deps.guestDeckService.getSharedDeck(req.params.id);
+    if (!result.ok) {
+      sendV1Json(res, result.status, null, [{ code: result.code, message: result.message }]);
+      return;
+    }
+    sendV1Success(res, result.data, result.status);
   });
 
   router.put('/guest/decks/:id', deps.authenticateUser, async (req, res) => {

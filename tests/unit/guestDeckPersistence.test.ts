@@ -53,16 +53,16 @@ describe('GuestDeckPersistenceService', () => {
     it('should create a new guest deck', () => {
       const deckId = service.createDeck(mockSessionId, mockDeckData);
 
-      expect(deckId).toMatch(/^guest_session123_\d+_[a-z0-9]+$/);
+      expect(deckId).toMatch(/^guest_[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/);
       expect((service as any).guestDecks.has(deckId)).toBe(true);
     });
 
-    it('should set correct deck data with session ID as userId', () => {
+    it('stores the account ID in metadata and keeps the session ID internal', () => {
       const deckId = service.createDeck(mockSessionId, mockDeckData);
       const guestDeck = (service as any).guestDecks.get(deckId);
 
       expect(guestDeck.deckData.metadata.id).toBe(deckId);
-      expect(guestDeck.deckData.metadata.userId).toBe(mockSessionId);
+      expect(guestDeck.deckData.metadata.userId).toBe(mockDeckData.metadata.userId);
       expect(guestDeck.sessionId).toBe(mockSessionId);
     });
 
@@ -85,9 +85,9 @@ describe('GuestDeckPersistenceService', () => {
     });
 
     it('should log deck creation', () => {
-      const deckId = service.createDeck(mockSessionId, mockDeckData);
+      service.createDeck(mockSessionId, mockDeckData);
 
-      expect(mockConsoleLog).toHaveBeenCalledWith(`✅ Created guest deck ${deckId} for session ${mockSessionId}`);
+      expect(mockConsoleLog).toHaveBeenCalledWith('✅ Created guest deck');
     });
 
     it('should handle multiple decks for same session', () => {
@@ -99,6 +99,18 @@ describe('GuestDeckPersistenceService', () => {
       expect(sessionDecks.has(deckId1)).toBe(true);
       expect(sessionDecks.has(deckId2)).toBe(true);
     });
+  });
+
+  it('serves shared decks without renewing their expiration', () => {
+    const deckId = service.createDeck(mockSessionId, mockDeckData);
+    expect(service.getSharedDeck(deckId)).toBeNull();
+    expect(service.shareDeck('another-session', deckId)).toBe(false);
+    expect(service.shareDeck(mockSessionId, deckId)).toBe(true);
+    const lifetime = 24 * 60 * 60 * 1000;
+    jest.advanceTimersByTime(lifetime - 1000);
+    expect(service.getSharedDeck(deckId)?.metadata.id).toBe(deckId);
+    jest.advanceTimersByTime(1000);
+    expect(service.getSharedDeck(deckId)).toBeNull();
   });
 
   describe('updateDeck', () => {
@@ -118,7 +130,7 @@ describe('GuestDeckPersistenceService', () => {
       const guestDeck = (service as any).guestDecks.get(deckId);
       expect(guestDeck.deckData.metadata.name).toBe('Updated Deck Name');
       expect(guestDeck.deckData.metadata.id).toBe(deckId);
-      expect(guestDeck.deckData.metadata.userId).toBe(mockSessionId);
+      expect(guestDeck.deckData.metadata.userId).toBe(mockDeckData.metadata.userId);
     });
 
     it('should extend expiration time on update', () => {
@@ -166,7 +178,7 @@ describe('GuestDeckPersistenceService', () => {
 
       expect(result).toBeDefined();
       expect(result?.metadata.id).toBe(deckId);
-      expect(result?.metadata.userId).toBe(mockSessionId);
+      expect(result?.metadata.userId).toBe(mockDeckData.metadata.userId);
     });
 
     it('should extend expiration time on access', () => {
@@ -269,7 +281,7 @@ describe('GuestDeckPersistenceService', () => {
       const deckId = service.createDeck(mockSessionId, mockDeckData);
       service.deleteDeck(mockSessionId, deckId);
 
-      expect(mockConsoleLog).toHaveBeenCalledWith(`🗑️ Deleted guest deck ${deckId} for session ${mockSessionId}`);
+      expect(mockConsoleLog).toHaveBeenCalledWith('🗑️ Deleted guest deck');
     });
 
     it('should return false for non-existent deck', () => {
@@ -308,7 +320,7 @@ describe('GuestDeckPersistenceService', () => {
 
       service.cleanupSessionDecks(mockSessionId);
 
-      expect(mockConsoleLog).toHaveBeenCalledWith(`🧹 Cleaned up 2 decks for session ${mockSessionId}`);
+      expect(mockConsoleLog).toHaveBeenCalledWith('🧹 Cleaned up 2 guest decks');
     });
   });
 

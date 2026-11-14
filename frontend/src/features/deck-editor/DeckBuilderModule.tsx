@@ -1,10 +1,11 @@
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, lazy, Suspense, type ReactNode } from 'react';
 
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useModuleHost, useModuleDetailHistory, useModuleEditingState } from '../../modules/ModuleHost';
+import { useModuleHost, useModuleDetailHistory, useModuleEditingState, type ModuleHost } from '../../modules/ModuleHost';
 import { renderModuleCardActions } from '../../modules/cardActions';
 import { renderModuleSaveFeedback, type ModuleSaveFeedbackContext } from '../../modules/saveFeedback';
 import { type DeckCardInput, type UpdateDeckMetaInput } from '../../lib/api/decks';
+import { ApiError } from '../../lib/api/client';
 
 
 import { useFavoriteToggleController } from '../../lib/decks/useFavoriteToggleController';
@@ -296,7 +297,7 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
   const isOwner = Boolean(deck?.metadata.isOwner) && !forceReadonly && !needsGuestClone && !guestCloning && (!isGuest || isGuestDeckId(deckId));
   // A real (non-guest) user can favorite any deck that isn't their own.
   const canFavorite =
-    Boolean(user) && !isGuest && Boolean(deck) && deck?.metadata.userId !== user?.id;
+    Boolean(user) && !isGuest && !isGuestDeckId(deckId) && Boolean(deck) && deck?.metadata.userId !== user?.id;
   const favListKey = favoritesQueryKey(user?.id);
   const favoritesQuery = useQuery({
     queryKey: favListKey,
@@ -1008,10 +1009,14 @@ export function useDeckBuilderController({ deckId, readonly = false }: DeckBuild
   };
   useModuleEditingState(isOwner, dirty, saving);
   const saveFeedbackContext: ModuleSaveFeedbackContext | null = saving ? { status: 'saving', message: 'Saving deck…', newerEditsPending: latestSaveKey.current !== activeSaveKey.current } : saveMsg && saveResult ? { ...saveResult, message: saveMsg } : null;
-  return { features: host.features, saveFeedback: host.saveFeedback, saveFeedbackContext, cardActions: host.cardActions, isGuest, chrome: host.chrome, onHome: host.onHome, deckLoading: deckQuery.isLoading, deckError: deckQuery.isError, retryDeck: () => void deckQuery.refetch(), user, isMobile, backAriaLabel, guestCloning: needsGuestClone || guestCloning, deck, isOwner, canFavorite, favoritePending: favoriteToggle.isPending, isFavorited, cards, name, setName, dirty, setDirty, saving, saveMsg, privacyBusy, limitedBusy, addOpen, setAddOpen, addCardsMounted, selected, reserveCharacterId, koCharacterIds, setKoCharacterIds, drawHandOpen, exportOpen, setExportOpen, exportDeckInput, exportLoading, exportError, retryExport, drawnCards, mobileDeckTypeTab, setMobileDeckTypeTab, deckViewMode, activeCharacterReorderId, setActiveCharacterReorderId, draggedCharacterId, setDraggedCharacterId, dragOverCharacterId, setDragOverCharacterId, mainRef, contentRef, typeTabsRef, suppressCharacterOpenRef, canSimulateKo, closeCardDetail, evaluation, displayMetrics, cardIndex, foilLookup, setNameLookup, totalCards, koCtx, drawHandKoCtx, canDraw, keepDrawAppearance, drawHandAnalysis, maxStats, iconTotals, totalThreat, characterEntries, immersiveOpen, deckTypeTabs, visibleGroups, removeDeckInstance, reorderCharacter, startCharacterHold, moveCharacterHold, finishCharacterHold, dropCharacterOn, selectReserveCharacter, deselectReserveCharacter, selectDeckCard, closeDrawHand, handleBackToDecks, handleDrawHandToggle, handleViewModeToggle, handleDrawHandRedraw, handleDrawHandReorder, selectedDeckEntry, printingRows, applyPrinting, togglePrePlaced, selectedPrePlacedEligible, addCard, addStack, handleSave, handleTogglePrivacy, handleToggleLimited, handleToggleFavorite, deckId };
+  return { features: host.features, saveFeedback: host.saveFeedback, saveFeedbackContext, cardActions: host.cardActions, isGuest, chrome: host.chrome, onHome: host.onHome, deckLoading: deckQuery.isLoading, deckError: deckQuery.error, retryDeck: () => void deckQuery.refetch(), user, isMobile, backAriaLabel, guestCloning: needsGuestClone || guestCloning, deck, isOwner, canFavorite, favoritePending: favoriteToggle.isPending, isFavorited, cards, name, setName, dirty, setDirty, saving, saveMsg, privacyBusy, limitedBusy, addOpen, setAddOpen, addCardsMounted, selected, reserveCharacterId, koCharacterIds, setKoCharacterIds, drawHandOpen, exportOpen, setExportOpen, exportDeckInput, exportLoading, exportError, retryExport, drawnCards, mobileDeckTypeTab, setMobileDeckTypeTab, deckViewMode, activeCharacterReorderId, setActiveCharacterReorderId, draggedCharacterId, setDraggedCharacterId, dragOverCharacterId, setDragOverCharacterId, mainRef, contentRef, typeTabsRef, suppressCharacterOpenRef, canSimulateKo, closeCardDetail, evaluation, displayMetrics, cardIndex, foilLookup, setNameLookup, totalCards, koCtx, drawHandKoCtx, canDraw, keepDrawAppearance, drawHandAnalysis, maxStats, iconTotals, totalThreat, characterEntries, immersiveOpen, deckTypeTabs, visibleGroups, removeDeckInstance, reorderCharacter, startCharacterHold, moveCharacterHold, finishCharacterHold, dropCharacterOn, selectReserveCharacter, deselectReserveCharacter, selectDeckCard, closeDrawHand, handleBackToDecks, handleDrawHandToggle, handleViewModeToggle, handleDrawHandRedraw, handleDrawHandReorder, selectedDeckEntry, printingRows, applyPrinting, togglePrePlaced, selectedPrePlacedEligible, addCard, addStack, handleSave, handleTogglePrivacy, handleToggleLimited, handleToggleFavorite, deckId };
 }
 
-export function DeckBuilderView({ model }: { model: ReturnType<typeof useDeckBuilderController> }) {
+export function DeckBuilderView({ model, getDeckShareUrl, shareGuestDeck }: {
+  model: ReturnType<typeof useDeckBuilderController>;
+  getDeckShareUrl?: ModuleHost['getDeckShareUrl'];
+  shareGuestDeck?: ModuleHost['api']['shareGuestDeck'];
+}) {
  const { features, saveFeedback, saveFeedbackContext, cardActions, isGuest, chrome, onHome, deckLoading, deckError, retryDeck, user, isMobile, backAriaLabel, guestCloning, deck, isOwner, canFavorite, favoritePending, isFavorited, cards, name, setName, dirty, setDirty, saving, saveMsg, privacyBusy, limitedBusy, addOpen, setAddOpen, addCardsMounted, selected, reserveCharacterId, koCharacterIds, setKoCharacterIds, drawHandOpen, exportOpen, setExportOpen, exportDeckInput, exportLoading, exportError, retryExport, drawnCards, mobileDeckTypeTab, setMobileDeckTypeTab, deckViewMode, activeCharacterReorderId, setActiveCharacterReorderId, draggedCharacterId, setDraggedCharacterId, dragOverCharacterId, setDragOverCharacterId, mainRef, contentRef, typeTabsRef, suppressCharacterOpenRef, canSimulateKo, closeCardDetail, evaluation, displayMetrics, cardIndex, foilLookup, setNameLookup, totalCards, koCtx, drawHandKoCtx, canDraw, keepDrawAppearance, drawHandAnalysis, maxStats, iconTotals, totalThreat, characterEntries, immersiveOpen, deckTypeTabs, visibleGroups, removeDeckInstance, reorderCharacter, startCharacterHold, moveCharacterHold, finishCharacterHold, dropCharacterOn, selectReserveCharacter, deselectReserveCharacter, selectDeckCard, closeDrawHand, handleBackToDecks, handleDrawHandToggle, handleViewModeToggle, handleDrawHandRedraw, handleDrawHandReorder, selectedDeckEntry, printingRows, applyPrinting, togglePrePlaced, selectedPrePlacedEligible, addCard, addStack, handleSave, handleTogglePrivacy, handleToggleLimited, handleToggleFavorite, deckId } = model;
 
 
@@ -1613,6 +1618,11 @@ export function DeckBuilderView({ model }: { model: ReturnType<typeof useDeckBui
       {exportOpen && features?.exportDeck !== false ? (
         <ExportDeckPanel
           open
+          shareUrl={getDeckShareUrl?.(deck.metadata)}
+          temporaryLink={isGuestDeckId(deck.metadata.id)}
+          onPrepareLink={deck.metadata.isOwner && isGuestDeckId(deck.metadata.id) && shareGuestDeck
+            ? () => shareGuestDeck(deck.metadata.id)
+            : undefined}
           input={exportDeckInput ?? createStubDeckExportInput(user?.username ?? 'Guest')}
           loading={exportLoading || !exportDeckInput}
           error={exportError}
@@ -1626,11 +1636,21 @@ export function DeckBuilderView({ model }: { model: ReturnType<typeof useDeckBui
   );
 
 }
-export interface DeckBuilderModuleProps { deckId: string; readonly?: boolean }
+export interface DeckBuilderModuleProps {
+  deckId: string;
+  readonly?: boolean;
+  missingGuestDeckFallback?: ReactNode;
+}
 
 export function DeckBuilderModule(props: DeckBuilderModuleProps) {
  return <DeckBuilderSession key={props.deckId} {...props} />;
 }
 function DeckBuilderSession(props: DeckBuilderModuleProps) {
- return <DeckBuilderView model={useDeckBuilderController(props)} />;
+ const { api, getDeckShareUrl } = useModuleHost();
+ const model = useDeckBuilderController(props);
+ if (props.missingGuestDeckFallback && isGuestDeckId(props.deckId) && !model.deck &&
+     model.deckError instanceof ApiError && model.deckError.status === 404) {
+  return props.missingGuestDeckFallback;
+ }
+ return <DeckBuilderView model={model} getDeckShareUrl={getDeckShareUrl} shareGuestDeck={api.shareGuestDeck} />;
 }

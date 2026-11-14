@@ -67,6 +67,10 @@ function stubGuestDeckService(over: Partial<GuestDeckService> = {}): GuestDeckSe
       status: 200,
       data: { metadata: { id: 'guest_x_1', isOwner: true }, cards: [] }
     }),
+    shareDeck: jest.fn().mockReturnValue({ ok: true, status: 200, data: { id: 'guest_deck' } }),
+    getSharedDeck: jest.fn().mockResolvedValue({
+      ok: true, status: 200, data: { metadata: { id: 'guest_deck', isOwner: false }, cards: [] }
+    }),
     updateDeckMetadata: jest.fn().mockReturnValue({
       ok: true,
       status: 200,
@@ -117,7 +121,7 @@ describe('guest-decks.http', () => {
       .expect(201);
     expect(res.body.errors).toEqual([]);
     expect(res.body.data.id).toBe('guest_x_1');
-    expect(svc.createDeck).toHaveBeenCalledWith('sess-a', { name: 'A', description: '' });
+    expect(svc.createDeck).toHaveBeenCalledWith('sess-a', 'guest-user-1', { name: 'A', description: '' });
   });
 
   it('GET /guest/decks lists decks', async () => {
@@ -143,6 +147,29 @@ describe('guest-decks.http', () => {
     const app = buildApp({ guestDeckService: svc, authenticateUser: guestAuth });
     await request(app).put('/guest/decks/g1').set('Cookie', 'sessionId=s1').send({ name: 'N' }).expect(200);
     expect(svc.updateDeckMetadata).toHaveBeenCalledWith('s1', 'g1', { name: 'N' });
+  });
+
+  it('enables sharing for a verified Guest session', async () => {
+    const svc = stubGuestDeckService();
+    const app = buildApp({ guestDeckService: svc, authenticateUser: guestAuth });
+    await request(app).post('/guest/decks/guest_deck/share').set('Cookie', 'sessionId=s1')
+      .expect('Cache-Control', 'no-store').expect(200);
+    expect(svc.shareDeck).toHaveBeenCalledWith('s1', 'guest_deck');
+  });
+
+  it('rejects non-Guest callers trying to enable sharing', async () => {
+    const svc = stubGuestDeckService();
+    const app = buildApp({ guestDeckService: svc, authenticateUser: userAuth });
+    await request(app).post('/guest/decks/guest_deck/share').set('Cookie', 'sessionId=s1').expect(403);
+    expect(svc.shareDeck).not.toHaveBeenCalled();
+  });
+
+  it('provides an anonymous read-only view of a shared deck', async () => {
+    const svc = stubGuestDeckService();
+    const app = buildApp({ guestDeckService: svc, authenticateUser: (_req, res) => { res.sendStatus(401); } });
+    const res = await request(app).get('/guest/decks/guest_deck/share').expect('Cache-Control', 'no-store').expect(200);
+    expect(res.body.data.metadata.isOwner).toBe(false);
+    expect(svc.getSharedDeck).toHaveBeenCalledWith('guest_deck');
   });
 
   it('PUT /guest/decks/:id/cards replaces cards', async () => {

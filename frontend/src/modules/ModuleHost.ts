@@ -1,7 +1,7 @@
 import { ImageAssetsContext, useImageAssets } from '../lib/images/useImageAssets';
 import type { ModuleImageAssets } from '../lib/images/cardImages';
 import { Fragment, Suspense, lazy, createElement, createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
-import type { AppUser } from '../lib/api/types';
+import type { AppUser, DeckMetadata } from '../lib/api/types';
 import type { ModuleApi } from './api';
 import type { ModuleCardActions } from './cardActions';
 import type { ModuleSaveFeedback } from './saveFeedback';
@@ -25,6 +25,8 @@ export interface ModuleHost {
  features?: { drawHand?: boolean; simulateKo?: boolean; exportDeck?: boolean; addCards?: boolean };
  identity: { user: AppUser | null; isGuest: boolean; isAdmin: boolean };
  onOpenDeck: (deckId: string, options?: { replace?: boolean }) => void;
+ /** Optional share link supplied by the host for decks it can share. */
+ getDeckShareUrl?: (deck: Pick<DeckMetadata, 'id' | 'userId'>) => string | undefined;
  onBack: () => void;
  onHome: () => void;
  backLabel?: string;

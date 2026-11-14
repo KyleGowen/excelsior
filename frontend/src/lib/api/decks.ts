@@ -92,11 +92,23 @@ function fetchTournamentDecks(): Promise<DeckListItem[]> {
 }
 
 
-function fetchDeckFull(deckId: string, isGuest: boolean, signal?: AbortSignal): Promise<DeckDetail> {
-  if (isGuest && isGuestDeckId(deckId)) {
-    return api.get<DeckDetail>(`/api/v1/guest/decks/${deckId}`, signal);
+async function fetchDeckFull(deckId: string, isGuest: boolean, signal?: AbortSignal): Promise<DeckDetail> {
+  if (isGuestDeckId(deckId)) {
+    const path = `/api/v1/guest/decks/${deckId}`;
+    if (isGuest) {
+      try {
+        return await api.get<DeckDetail>(path, signal);
+      } catch (error) {
+        if (!(error instanceof ApiError) || error.status !== 404) throw error;
+      }
+    }
+    return api.get<DeckDetail>(`${path}/share`, signal);
   }
   return api.get<DeckDetail>(`/api/v1/decks/${deckId}/full`, signal);
+}
+
+async function shareGuestDeck(deckId: string): Promise<void> {
+  await api.post(`/api/v1/guest/decks/${deckId}/share`);
 }
 
 
@@ -220,7 +232,7 @@ async function exportDraft(input:DraftEvaluationInput, display:{ name:string; de
  if (result.inputKey !== evaluationInputKey(input) || result.revision !== input.revision) throw new Error('Export revision does not match the current draft');
  return result;
 }
-return { fetchUserDecks, fetchGuestDecks, fetchDecksForUser, fetchTournamentDecks, fetchDeckFull, createDeck, updateDeckMeta, replaceDeckCards, deleteDeck, addCardToDeck, validateDeck, evaluateDraft, drawDraft, analyzeHand, exportDraft };
+return { fetchUserDecks, fetchGuestDecks, fetchDecksForUser, fetchTournamentDecks, fetchDeckFull, shareGuestDeck, createDeck, updateDeckMeta, replaceDeckCards, deleteDeck, addCardToDeck, validateDeck, evaluateDraft, drawDraft, analyzeHand, exportDraft };
 }
 
-export const { fetchUserDecks, fetchGuestDecks, fetchDecksForUser, fetchTournamentDecks, fetchDeckFull, createDeck, updateDeckMeta, replaceDeckCards, deleteDeck, addCardToDeck, validateDeck, evaluateDraft, drawDraft, analyzeHand, exportDraft } = createDeckApi();
+export const { fetchUserDecks, fetchGuestDecks, fetchDecksForUser, fetchTournamentDecks, fetchDeckFull, shareGuestDeck, createDeck, updateDeckMeta, replaceDeckCards, deleteDeck, addCardToDeck, validateDeck, evaluateDraft, drawDraft, analyzeHand, exportDraft } = createDeckApi();

@@ -148,7 +148,9 @@ These fields export the first occurrence of each special card type that has the 
 
 ## Usage (v2)
 
-Export is triggered from the deck editor actions menu → **Export** → [`ExportDeckPanel`](../../frontend/src/features/deck-editor/ExportDeckPanel.tsx) shows formatted JSON with copy-to-clipboard.
+Open **Export** in the deck editor or **Export deck** in the Deck actions panel. The [export panel](../../frontend/src/features/deck-editor/ExportDeckPanel.tsx) opens with **TopDeck** selected and offers **JSON**. Use **Copy decklist** or **Copy JSON** to copy the selected format.
+
+**Copy deck link** copies the deck's URL. Public and unlisted saved decks can be opened by anyone with their link. For temporary Guest decks, copying enables read-only access for anyone with the URL until the deck expires. The original Guest session can edit the deck. The panel reveals a selected URL for manual copying if clipboard access fails.
 
 ## Security
 

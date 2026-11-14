@@ -24,8 +24,8 @@ export function nativeDeckbuilderScope(method: string, path: string): ServiceSco
   if (method === 'GET' && (path === '/api/v1/decks/favorites' || new RegExp('^/api/v1/decks/' + id + '/full$').test(path))) return 'decks:read';
   if (new RegExp('^/api/v1/decks/' + id + '/favorite$').test(path) && ['POST', 'DELETE'].includes(method)) return 'decks:write';
   if (method === 'PUT' && new RegExp('^/api/v1/decks/' + id + '(?:/cards)?$').test(path)) return 'decks:write';
-  if ((method === 'POST' && path === '/api/v1/guest/decks') ||
-    (method === 'GET' && new RegExp('^/api/v1/guest/decks/' + id + '$').test(path)) ||
+  if ((method === 'POST' && (path === '/api/v1/guest/decks' || new RegExp('^/api/v1/guest/decks/' + id + '/share$').test(path))) ||
+    (method === 'GET' && new RegExp('^/api/v1/guest/decks/' + id + '(?:/share)?$').test(path)) ||
     (method === 'PUT' && new RegExp('^/api/v1/guest/decks/' + id + '(?:/cards)?$').test(path))) return 'guest:decks';
   return null;
 }

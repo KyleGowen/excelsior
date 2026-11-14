@@ -3,6 +3,7 @@ import { http, HttpResponse, delay } from 'msw';
 import { expect, fn, userEvent, waitFor } from 'storybook/test';
 import { Route, Routes } from 'react-router-dom';
 import DeckEditorPage from '../features/deck-editor/DeckEditorPage';
+import HomePage from '../features/home/HomePage';
 import { pageHandlers } from './pageMocks';
 import { sampleDeck } from './fixtures';
 import { candidateInputKey, type CandidateEvaluationInput } from '../contracts/inputKey';
@@ -15,7 +16,12 @@ const meta = {
     route: '/users/storybook-user/decks/storybook-deck',
     msw: pageHandlers(),
   },
-  render: () => <Routes><Route path="/users/:userId/decks/:deckId" element={<DeckEditorPage />} /></Routes>,
+  render: () => (
+    <Routes>
+      <Route path="/users/:userId/decks/:deckId" element={<DeckEditorPage />} />
+      <Route path="/home" element={<HomePage />} />
+    </Routes>
+  ),
 } satisfies Meta<typeof DeckEditorPage>;
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -51,6 +57,34 @@ export const GuestSharedLinkReadOnly: Story = {
 export const GuestSharedLinkReadOnlyMobile: Story = {
   ...GuestSharedLinkReadOnly,
   globals: { viewport: { value: 'mobile' } },
+};
+export const GuestLinkRedirectsToHome: Story = {
+  parameters: {
+    route: '/users/storybook-guest/decks/guest_0edb822f-5b62-4f71-9c1d-3363bc6a45cb',
+    authUser: { id: 'storybook-guest', username: 'guest', role: 'GUEST' },
+    msw: [
+      http.get('/api/v1/guest/decks/:deckId', () => HttpResponse.json({
+        data: null,
+        errors: [{ code: 'DECK_NOT_FOUND', message: 'Deck not found' }],
+      }, { status: 404 })),
+      ...pageHandlers(),
+    ],
+  },
+  play: async ({ canvas }) => {
+    await canvas.findByRole('heading', { name: 'Welcome to Excelsior' });
+  },
+};
+export const SharedTemporaryGuestLink: Story = {
+  parameters: {
+    ...GuestLinkRedirectsToHome.parameters,
+    msw: [
+      http.get('/api/v1/guest/decks/:deckId/share', ({ params }) => HttpResponse.json({
+        data: { ...sampleDeck, metadata: { ...sampleDeck.metadata, id: params.deckId, userId: 'storybook-guest', isOwner: false } },
+      })),
+      ...GuestLinkRedirectsToHome.parameters!.msw,
+    ],
+  },
+  play: GuestSharedLinkReadOnly.play,
 };
 export const Mobile: Story = {
   globals: { viewport: { value: 'mobile' } },

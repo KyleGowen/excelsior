@@ -146,6 +146,10 @@ Token request schema failures use `VALIDATION_ERROR` (400); the endpoint's 15/IP
 
 `IMPORT_UNRESOLVED` deliberately carries its typed failure in `data` alongside `errors`. Existing deck validation failures also have documented structured data; this is not permission to put arbitrary payloads in other error envelopes. Preview/import reuse `VALIDATION_ERROR`, `DRAFT_STRUCTURE_INVALID`, `UNAUTHORIZED`, `SESSION_REQUIRED`, `FORBIDDEN`, `READ_ONLY_MODE` and `RATE_LIMITED` under their existing meanings.
 
+## Temporary Guest deck sharing
+
+`GET /api/v1/guest/decks/:id/share` returns `DECK_NOT_FOUND` (404) when the deck is unshared, deleted, expired, or missing. `POST` on the same path also returns 404 for a deck outside the caller's session and uses `UNAUTHORIZED`, `SESSION_REQUIRED`, and `GUEST_ONLY` for session or role failures.
+
 ## Builder gateway aliases
 
 The four POST aliases under `/api/service/deckbuilder/v1/decks/` preserve the

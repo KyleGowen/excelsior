@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { DeckData } from '../types';
 
 interface GuestDeck {
@@ -7,6 +8,7 @@ interface GuestDeck {
   createdAt: Date;
   lastAccessedAt: Date;
   expiresAt: Date;
+  shared?: boolean;
 }
 
 export class GuestDeckPersistenceService {
@@ -60,7 +62,7 @@ export class GuestDeckPersistenceService {
   }
 
   createDeck(sessionId: string, deckData: DeckData): string {
-    const deckId = `guest_${sessionId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const deckId = `guest_${randomUUID()}`;
     const now = new Date();
     const GUEST_DECK_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours - session-scoped
     const expiresAt = new Date(now.getTime() + GUEST_DECK_TTL_MS);
@@ -72,8 +74,7 @@ export class GuestDeckPersistenceService {
         ...deckData,
         metadata: {
           ...deckData.metadata,
-          id: deckId,
-          userId: sessionId // Use sessionId as userId for guest decks
+          id: deckId
         }
       },
       createdAt: now,
@@ -89,7 +90,7 @@ export class GuestDeckPersistenceService {
     }
     this.sessionToDecks.get(sessionId)!.add(deckId);
 
-    console.log(`✅ Created guest deck ${deckId} for session ${sessionId}`);
+    console.log('✅ Created guest deck');
     return deckId;
   }
 
@@ -107,7 +108,7 @@ export class GuestDeckPersistenceService {
       metadata: {
         ...deckData.metadata,
         id: deckId,
-        userId: sessionId
+        userId: deck.deckData.metadata.userId
       }
     };
     deck.lastAccessedAt = now;
@@ -132,6 +133,20 @@ export class GuestDeckPersistenceService {
     deck.expiresAt = new Date(now.getTime() + GUEST_DECK_TTL_MS);
 
     this.guestDecks.set(deckId, deck);
+    return deck.deckData;
+  }
+
+  shareDeck(sessionId: string, deckId: string): boolean {
+    if (!/^guest_[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(deckId)) return false;
+    const deck = this.guestDecks.get(deckId);
+    if (!deck || deck.sessionId !== sessionId || deck.expiresAt.getTime() <= Date.now()) return false;
+    deck.shared = true;
+    return true;
+  }
+
+  getSharedDeck(deckId: string): DeckData | null {
+    const deck = this.guestDecks.get(deckId);
+    if (!deck?.shared || deck.expiresAt.getTime() <= Date.now()) return null;
     return deck.deckData;
   }
 
@@ -177,7 +192,7 @@ export class GuestDeckPersistenceService {
 
     // Remove from main storage
     this.guestDecks.delete(deckId);
-    console.log(`🗑️ Deleted guest deck ${deckId} for session ${sessionId}`);
+    console.log('🗑️ Deleted guest deck');
     return true;
   }
 
@@ -196,7 +211,7 @@ export class GuestDeckPersistenceService {
     }
 
     this.sessionToDecks.delete(sessionId);
-    console.log(`🧹 Cleaned up ${cleanedCount} decks for session ${sessionId}`);
+    console.log(`🧹 Cleaned up ${cleanedCount} guest decks`);
     return cleanedCount;
   }
 

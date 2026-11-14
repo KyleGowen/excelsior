@@ -1,6 +1,8 @@
 import express, { type Request, type RequestHandler } from 'express';
 import request from 'supertest';
 import crypto from 'crypto';
+import { once } from 'node:events';
+import { createServer, type Server } from 'node:http';
 import { registerDecksV1HttpRoutes, type DecksV1HttpDeps } from '../../../../src/api/http/decks.http';
 import type { DeckListService } from '../../../../src/api/services/deckListService';
 import type { DeckWriteService } from '../../../../src/api/services/deckWriteService';
@@ -70,16 +72,32 @@ const passAuthGuest: RequestHandler = (req: Request, _res, next) => {
   next();
 };
 
-function buildApp(deps: DecksV1HttpDeps): express.Application {
+// Keep the HTTP listener stable while each case gets its own app and mocks.
+let currentApp = express();
+const server = createServer((req, res) => currentApp(req, res));
+
+function buildServer(deps: DecksV1HttpDeps): Server {
   const app = express();
   app.use(express.json());
   const router = express.Router();
   registerDecksV1HttpRoutes(router, deps);
   app.use(router);
-  return app;
+  currentApp = app;
+  return server;
 }
 
 describe('decks.http', () => {
+  beforeAll(async () => {
+    server.listen(0, '127.0.0.1');
+    await once(server, 'listening');
+  });
+
+  afterAll(async () => {
+    if (server.listening) {
+      await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
+    }
+  });
+
   const sampleList = [
     {
       metadata: { id: 'd1', name: 'A', cardCount: 0 },
@@ -105,7 +123,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps)).get('/decks').expect(200);
+    const res = await request(buildServer(deps)).get('/decks').expect(200);
     expect(res.body.errors).toEqual([]);
     expect(res.body.meta).toEqual({});
     expect(res.body.data).toEqual(sampleList);
@@ -135,7 +153,7 @@ describe('decks.http', () => {
       authenticateUser: passAuth,
       communityDecksUserId: 'community-decks-id'
     };
-    const res = await request(buildApp(deps)).get('/decks/community').expect(200);
+    const res = await request(buildServer(deps)).get('/decks/community').expect(200);
     expect(res.body.success).toBe(true);
     expect(res.body.data).toEqual(sampleList);
     expect(deckListService.getTransformedCommunityListForUser).toHaveBeenCalledWith(
@@ -162,7 +180,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    await request(buildApp(deps)).get('/decks/community').expect(200);
+    await request(buildServer(deps)).get('/decks/community').expect(200);
     expect(deckListService.getTransformedCommunityListForUser).toHaveBeenCalledWith(
       '00000000-0000-0000-0000-000000000002'
     );
@@ -189,7 +207,7 @@ describe('decks.http', () => {
       authenticateUser: passAuth,
       tournamentDecksUserId: 'tournament-decks-id'
     };
-    const res = await request(buildApp(deps)).get('/decks/tournament').expect(200);
+    const res = await request(buildServer(deps)).get('/decks/tournament').expect(200);
     expect(res.body.success).toBe(true);
     expect(res.body.data).toEqual(sampleList);
     expect(deckListService.getTransformedTournamentListForUser).toHaveBeenCalledWith(
@@ -217,7 +235,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    await request(buildApp(deps)).get('/decks/tournament').expect(200);
+    await request(buildServer(deps)).get('/decks/tournament').expect(200);
     expect(deckListService.getTransformedTournamentListForUser).toHaveBeenCalledWith(
       '00000000-0000-0000-0000-000000000003'
     );
@@ -241,7 +259,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const app = buildApp(deps);
+    const app = buildServer(deps);
     const first = await request(app).get('/decks').expect(200);
     const etag = first.headers.etag;
     expect(etag).toBeDefined();
@@ -268,7 +286,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps)).get('/decks').expect(200);
+    const res = await request(buildServer(deps)).get('/decks').expect(200);
     const expectedBody = JSON.stringify({ data: sampleList, meta: {}, errors: [], success: true });
     const expectedEtag = `"${crypto.createHash('sha1').update(expectedBody).digest('hex')}"`;
     expect(res.headers.etag).toBe(expectedEtag);
@@ -292,7 +310,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps)).get('/decks').expect(500);
+    const res = await request(buildServer(deps)).get('/decks').expect(500);
     expect(res.body.data).toBeNull();
     expect(res.body.errors[0].code).toBe('DECK_LIST_ERROR');
   });
@@ -323,7 +341,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps)).get('/decks/stats').expect(200);
+    const res = await request(buildServer(deps)).get('/decks/stats').expect(200);
     expect(res.body.errors).toEqual([]);
     expect(res.body.data).toEqual({
       totalDecks: 2,
@@ -355,7 +373,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps)).get('/decks/stats').expect(500);
+    const res = await request(buildServer(deps)).get('/decks/stats').expect(500);
     expect(res.body.data).toBeNull();
     expect(res.body.errors[0].code).toBe('DECK_STATS_ERROR');
   });
@@ -385,7 +403,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps))
+    const res = await request(buildServer(deps))
       .post('/decks')
       .send({ name: 'N', description: 'd' })
       .expect(201);
@@ -416,7 +434,7 @@ describe('decks.http', () => {
       authenticateUser: passAuth,
     };
 
-    const res = await request(buildApp(deps))
+    const res = await request(buildServer(deps))
       .post('/decks')
       .send({ name: 'Public deck', is_private: false })
       .expect(201);
@@ -447,7 +465,7 @@ describe('decks.http', () => {
       authenticateUser: passAuth,
     };
 
-    const res = await request(buildApp(deps))
+    const res = await request(buildServer(deps))
       .post('/decks')
       .send({ name: 'Bad visibility', is_private: 'no' })
       .expect(400);
@@ -472,7 +490,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps)).post('/decks').send({ name: '   ' }).expect(400);
+    const res = await request(buildServer(deps)).post('/decks').send({ name: '   ' }).expect(400);
     expect(res.body.data).toBeNull();
     expect(res.body.errors.length).toBeGreaterThan(0);
     expect(deckWriteService.createDeck).not.toHaveBeenCalled();
@@ -494,7 +512,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuthGuest
     };
-    const res = await request(buildApp(deps)).post('/decks').send({ name: 'x' }).expect(403);
+    const res = await request(buildServer(deps)).post('/decks').send({ name: 'x' }).expect(403);
     expect(res.body.errors[0].code).toBe('GUEST_FORBIDDEN');
     expect(deckWriteService.createDeck).not.toHaveBeenCalled();
   });
@@ -515,7 +533,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps))
+    const res = await request(buildServer(deps))
       .post('/decks')
       .send({ name: 'x', characters: ['a', 'b', 'c', 'd', 'e'] })
       .expect(400);
@@ -538,7 +556,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps))
+    const res = await request(buildServer(deps))
       .post('/decks/validate')
       .send({ cards: [{ cardType: 'character', cardId: 'x', quantity: 1 }] })
       .expect(200);
@@ -563,7 +581,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps))
+    const res = await request(buildServer(deps))
       .post('/decks/validate')
       .send({ cards: [] })
       .expect(400);
@@ -587,7 +605,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps)).post('/decks/validate').send({}).expect(400);
+    const res = await request(buildServer(deps)).post('/decks/validate').send({}).expect(400);
     expect(res.body.errors[0].field).toBe('cards');
     expect(deckWriteService.validateDeckCards).not.toHaveBeenCalled();
   });
@@ -630,7 +648,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps)).get('/decks/d1').expect(200);
+    const res = await request(buildServer(deps)).get('/decks/d1').expect(200);
     expect(res.body.errors).toEqual([]);
     expect(res.body.data).toEqual(sampleDetail);
     expect(res.headers['cache-control']).toBe('no-store');
@@ -656,7 +674,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps)).get('/decks/d1/full').expect(200);
+    const res = await request(buildServer(deps)).get('/decks/d1/full').expect(200);
     expect(res.body.data).toEqual(sampleDetail);
     expect(res.headers['cache-control']).toBe('no-store');
     expect(deckDetailService.getDeckFullDetail).toHaveBeenCalledWith('d1', 'user-1');
@@ -681,7 +699,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps)).get('/decks/missing').expect(404);
+    const res = await request(buildServer(deps)).get('/decks/missing').expect(404);
     expect(res.body.data).toBeNull();
     expect(res.body.errors[0].code).toBe('DECK_NOT_FOUND');
   });
@@ -709,7 +727,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps)).put('/decks/d1').send({ name: 'X' }).expect(200);
+    const res = await request(buildServer(deps)).put('/decks/d1').send({ name: 'X' }).expect(200);
     expect(res.body.data).toEqual(updated);
     expect(deckDetailService.updateDeckMetadata).toHaveBeenCalledWith('d1', 'user-1', { name: 'X' }, {
       strictReserveTestValidation: false
@@ -736,7 +754,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    await request(buildApp(deps)).put('/decks/d1').send({ name: 'X', is_valid: true }).expect(200);
+    await request(buildServer(deps)).put('/decks/d1').send({ name: 'X', is_valid: true }).expect(200);
     const passedUpdates = (deckDetailService.updateDeckMetadata as jest.Mock).mock.calls[0][2];
     expect(passedUpdates).toEqual({ name: 'X' });
     expect(passedUpdates).not.toHaveProperty('is_valid');
@@ -756,7 +774,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuthGuest
     };
-    const res = await request(buildApp(deps)).put('/decks/d1').send({ name: 'X' }).expect(403);
+    const res = await request(buildServer(deps)).put('/decks/d1').send({ name: 'X' }).expect(403);
     expect(res.body.errors[0].code).toBe('GUEST_FORBIDDEN');
   });
 
@@ -779,7 +797,7 @@ describe('decks.http', () => {
       deckUIPreferencesService: stubDeckUIPreferences(),
       authenticateUser: passAuth
     };
-    const res = await request(buildApp(deps)).delete('/decks/d1').expect(200);
+    const res = await request(buildServer(deps)).delete('/decks/d1').expect(200);
     expect(res.body.data.message).toBe('Deck deleted successfully');
   });
 
@@ -803,7 +821,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: stubDeckUIPreferences(),
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps)).get('/decks/d1/cards').expect(200);
+      const res = await request(buildServer(deps)).get('/decks/d1/cards').expect(200);
       expect(res.body.errors).toEqual([]);
       expect(res.body.data).toEqual([{ type: 'character', cardId: 'c1', quantity: 1 }]);
     });
@@ -821,7 +839,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: stubDeckUIPreferences(),
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps)).get('/decks/d1/cards').expect(501);
+      const res = await request(buildServer(deps)).get('/decks/d1/cards').expect(501);
       expect(res.body.errors[0].code).toBe('NOT_IMPLEMENTED');
     });
 
@@ -838,7 +856,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: stubDeckUIPreferences(),
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps)).get('/decks/d1/cards').expect(500);
+      const res = await request(buildServer(deps)).get('/decks/d1/cards').expect(500);
       expect(res.body.errors[0].code).toBe('DECK_CARDS_FETCH_ERROR');
     });
 
@@ -855,7 +873,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: stubDeckUIPreferences(),
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps))
+      const res = await request(buildServer(deps))
         .post('/decks/d1/cards')
         .send({ cardType: 'character', cardId: 'x', quantity: 1 })
         .expect(200);
@@ -874,7 +892,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: stubDeckUIPreferences(),
         authenticateUser: passAuthGuest
       };
-      const res = await request(buildApp(deps))
+      const res = await request(buildServer(deps))
         .post('/decks/d1/cards')
         .send({ cardType: 'character', cardId: 'x', quantity: 1 })
         .expect(403);
@@ -894,7 +912,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: stubDeckUIPreferences(),
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps)).post('/decks/d1/cards').send({}).expect(400);
+      const res = await request(buildServer(deps)).post('/decks/d1/cards').send({}).expect(400);
       expect(res.body.errors.length).toBeGreaterThan(0);
       expect(deckCardsService.postCard).not.toHaveBeenCalled();
     });
@@ -917,7 +935,7 @@ describe('decks.http', () => {
         message: 'no'
       });
       expect(
-        (await request(buildApp(deps)).post('/decks/d1/cards').send({ cardType: 'c', cardId: 'i', quantity: 1 }))
+        (await request(buildServer(deps)).post('/decks/d1/cards').send({ cardType: 'c', cardId: 'i', quantity: 1 }))
           .status
       ).toBe(403);
 
@@ -927,7 +945,7 @@ describe('decks.http', () => {
         message: 'nf'
       });
       expect(
-        (await request(buildApp(deps)).post('/decks/d1/cards').send({ cardType: 'c', cardId: 'i', quantity: 1 }))
+        (await request(buildServer(deps)).post('/decks/d1/cards').send({ cardType: 'c', cardId: 'i', quantity: 1 }))
           .status
       ).toBe(404);
 
@@ -936,7 +954,7 @@ describe('decks.http', () => {
         kind: 'bad_request',
         message: 'bad'
       });
-      const bad = await request(buildApp(deps))
+      const bad = await request(buildServer(deps))
         .post('/decks/d1/cards')
         .send({ cardType: 'c', cardId: 'i', quantity: 1 })
         .expect(400);
@@ -956,7 +974,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: stubDeckUIPreferences(),
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps))
+      const res = await request(buildServer(deps))
         .put('/decks/d1/cards')
         .send({ cards: [{ cardType: 'character', cardId: 'x', quantity: 1, displayOrder: 3 }] })
         .expect(200);
@@ -980,7 +998,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: stubDeckUIPreferences(),
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps))
+      const res = await request(buildServer(deps))
         .put('/decks/d1/cards')
         .send({ cards: [{ cardType: 'character', cardId: 'x', quantity: 1, displayOrder: -1 }] })
         .expect(400);
@@ -1000,7 +1018,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: stubDeckUIPreferences(),
         authenticateUser: passAuthGuest
       };
-      await request(buildApp(deps))
+      await request(buildServer(deps))
         .put('/decks/d1/cards')
         .send({ cards: [{ cardType: 'character', cardId: 'x', quantity: 1 }] })
         .expect(403);
@@ -1026,7 +1044,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: stubDeckUIPreferences(),
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps))
+      const res = await request(buildServer(deps))
         .put('/decks/d1/cards')
         .send({ cards: [{ cardType: 'character', cardId: 'x', quantity: 1 }] })
         .expect(400);
@@ -1046,7 +1064,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: stubDeckUIPreferences(),
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps))
+      const res = await request(buildServer(deps))
         .delete('/decks/d1/cards')
         .send({ cardType: 'character', cardId: 'x', quantity: 1 })
         .expect(200);
@@ -1065,7 +1083,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: stubDeckUIPreferences(),
         authenticateUser: passAuthGuest
       };
-      await request(buildApp(deps))
+      await request(buildServer(deps))
         .delete('/decks/d1/cards')
         .send({ cardType: 'character', cardId: 'x', quantity: 1 })
         .expect(403);
@@ -1090,7 +1108,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: svc,
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps)).get('/decks/d1/ui-preferences').expect(200);
+      const res = await request(buildServer(deps)).get('/decks/d1/ui-preferences').expect(200);
       expect(res.body.data).toEqual({ viewMode: 'list' });
       expect(svc.getForOwner).toHaveBeenCalledWith('d1', 'user-1');
     });
@@ -1107,7 +1125,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: svc,
         authenticateUser: passAuthGuest
       };
-      await request(buildApp(deps)).get('/decks/d1/ui-preferences').expect(403);
+      await request(buildServer(deps)).get('/decks/d1/ui-preferences').expect(403);
       expect(svc.getForOwner).not.toHaveBeenCalled();
     });
 
@@ -1124,7 +1142,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: svc,
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps)).get('/decks/d1/ui-preferences').expect(403);
+      const res = await request(buildServer(deps)).get('/decks/d1/ui-preferences').expect(403);
       expect(res.body.errors[0].code).toBe('DECK_ACCESS_DENIED');
     });
 
@@ -1141,7 +1159,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: svc,
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps)).put('/decks/d1/ui-preferences').send({ viewMode: 'tile' }).expect(200);
+      const res = await request(buildServer(deps)).put('/decks/d1/ui-preferences').send({ viewMode: 'tile' }).expect(200);
       expect(res.body.data).toEqual({ viewMode: 'tile' });
       expect(svc.updateForOwner).toHaveBeenCalledWith('d1', 'user-1', { viewMode: 'tile' });
     });
@@ -1163,7 +1181,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: svc,
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps)).put('/decks/d1/ui-preferences').send({}).expect(400);
+      const res = await request(buildServer(deps)).put('/decks/d1/ui-preferences').send({}).expect(400);
       expect(res.body.errors[0].code).toBe('VALIDATION_ERROR');
     });
 
@@ -1184,7 +1202,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: svc,
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps)).put('/decks/x/ui-preferences').send({ viewMode: 'tile' }).expect(404);
+      const res = await request(buildServer(deps)).put('/decks/x/ui-preferences').send({ viewMode: 'tile' }).expect(404);
       expect(res.body.errors[0].code).toBe('DECK_NOT_FOUND');
     });
 
@@ -1205,7 +1223,7 @@ describe('decks.http', () => {
         deckUIPreferencesService: svc,
         authenticateUser: passAuth
       };
-      const res = await request(buildApp(deps)).put('/decks/d1/ui-preferences').send({ viewMode: 'tile' }).expect(403);
+      const res = await request(buildServer(deps)).put('/decks/d1/ui-preferences').send({ viewMode: 'tile' }).expect(403);
       expect(res.body.errors[0].code).toBe('DECK_ACCESS_DENIED');
     });
   });

@@ -2,7 +2,7 @@ import { useMemo, useRef, useState, useEffect, type FormEvent } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../app/AuthProvider';
-import { fetchDecksForUser, createDeck, deleteDeck, fetchTournamentDecks } from '../../lib/api/decks';
+import { fetchDecksForUser, createDeck, deleteDeck, fetchTournamentDecks, isGuestDeckId, shareGuestDeck } from '../../lib/api/decks';
 import {
   fetchPublicDecksForUser,
   fetchPublicUserProfile,
@@ -26,6 +26,7 @@ import {
   buildDeckEditorNavigateState,
   buildDeckSelectionReturnPath,
 } from '../../lib/navigation/deckEditorReturn';
+import { buildDeckShareUrl } from '../../lib/navigation/deckShareUrl';
 import { compareAlphabetically } from '../../lib/sort/alphabetical';
 import { DeckTile, type DeckStatLine } from '../../components/DeckTile';
 import { CommunityDeckGrid } from '../community/CommunityDeckGrid';
@@ -46,7 +47,7 @@ import {
   IconCards,
   IconSearch,
 } from '../../components/icons';
-import type { DeckListItem, PreconstructedDeckGroup } from '../../lib/api/types';
+import type { DeckListItem, DeckMetadata, PreconstructedDeckGroup } from '../../lib/api/types';
 import { ExportDeckPanel } from '../deck-editor/ExportDeckPanel';
 import { ImportDeckPanel } from './ImportDeckPanel';
 import { useDeckExportInput, createStubDeckExportInput } from './useDeckExportInput';
@@ -225,7 +226,7 @@ export default function DeckSelectionPage() {
   const [busy, setBusy] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const [menuDeck, setMenuDeck] = useState<DeckListItem | null>(null);
-  const [exportDeckId, setExportDeckId] = useState<string | null>(null);
+  const [deckToExport, setDeckToExport] = useState<DeckMetadata | null>(null);
 
   const openCreatePanel = () => {
     setNewDeckPrivate(true);
@@ -234,9 +235,9 @@ export default function DeckSelectionPage() {
   };
 
   const { input: exportDeckInput, loading: exportLoading, error: exportError, retry: retryExport } = useDeckExportInput(
-    exportDeckId,
+    deckToExport?.id ?? null,
     isGuest,
-    Boolean(exportDeckId),
+    Boolean(deckToExport),
   );
 
   const gridStats = useDeckGridStats(decksQuery.data ?? []);
@@ -769,7 +770,7 @@ export default function DeckSelectionPage() {
               type="button"
               className="dsel__menu-item"
               onClick={() => {
-                setExportDeckId(menuDeck.metadata.id);
+                setDeckToExport(menuDeck.metadata);
                 setMenuDeck(null);
               }}
             >
@@ -784,14 +785,17 @@ export default function DeckSelectionPage() {
         ) : null}
       </SlideOutPanel>
 
-      {exportDeckId ? (
+      {deckToExport ? (
         <ExportDeckPanel
           open
+          shareUrl={buildDeckShareUrl(window.location.origin, deckToExport)}
+          temporaryLink={isGuestDeckId(deckToExport.id)}
+          onPrepareLink={isGuestDeckId(deckToExport.id) ? () => shareGuestDeck(deckToExport.id) : undefined}
           input={exportDeckInput ?? createStubDeckExportInput(user?.username ?? 'Guest')}
           loading={exportLoading || !exportDeckInput}
           error={exportError}
           onRetry={retryExport}
-          onClose={() => setExportDeckId(null)}
+          onClose={() => setDeckToExport(null)}
         />
       ) : null}
     </div>

@@ -108,7 +108,7 @@ const cases = {
     await role(tab, 'button', 'JSON').click();
     const exported = role(tab, 'dialog', 'Export deck JSON');
     await wait(exported);
-    await wait(exported.getByRole('button', { name: 'Copy to clipboard', exact: true }).and(tab.playwright.locator(':enabled')));
+    await wait(exported.getByRole('button', { name: 'Copy JSON', exact: true }).and(tab.playwright.locator(':enabled')));
     const values = await exported.evaluate(el => {
       const value = JSON.parse(el.querySelector('pre').textContent);
       return { total_cards: value.total_cards, total_threat: value.total_threat, reserve_character: value.reserve_character, legal: value.legal };
@@ -140,25 +140,25 @@ const cases = {
     const values = JSON.parse(jsonText);
     for (const [key, value] of Object.entries(options.expectedExport)) check(values[key] === value, `Export ${key} differs from selected fixture`);
     await capture('json');
-    await role(tab, 'button', 'Copy to clipboard').click();
+    await role(tab, 'button', 'Copy JSON').click();
     await wait(role(tab, 'button', 'Copied!'));
     check(await readClipboard() === jsonText, 'JSON clipboard differs from its preview');
     await role(tab, 'button', 'TopDeck').click();
     const topDeckDialog = role(tab, 'dialog', 'Export deck TopDeck');
     await wait(topDeckDialog);
     check(await role(tab, 'button', 'TopDeck').getAttribute('aria-pressed') === 'true', 'TopDeck must be selected');
-    await wait(role(tab, 'button', 'Copy to clipboard'));
+    await wait(role(tab, 'button', 'Copy decklist'));
     const topDeckText = await topDeckDialog.locator('pre').innerText();
     for (const line of options.expectedTopDeckLines) check(topDeckText.split('\n').includes(line), `TopDeck line missing: ${line}`);
     for (const line of options.absentTopDeckLines ?? []) check(!topDeckText.split('\n').includes(line), `Unexpected TopDeck line: ${line}`);
     check(!topDeckText.startsWith('~Deck') && !topDeckText.startsWith('{'), 'TopDeck must be a published-style text list');
     await capture('topdeck');
-    await role(tab, 'button', 'Copy to clipboard').click();
+    await role(tab, 'button', 'Copy decklist').click();
     await wait(role(tab, 'button', 'Copied!'));
     check(await readClipboard() === topDeckText, 'TopDeck clipboard differs from its preview');
     await role(tab, 'button', 'JSON').click();
     await wait(jsonDialog);
-    await wait(role(tab, 'button', 'Copy to clipboard'));
+    await wait(role(tab, 'button', 'Copy JSON'));
     // Catalog refreshes can rebuild the existing JSON export timestamp.
     const { export_timestamp: initialTimestamp, ...initialDeck } = values;
     const { export_timestamp: switchedTimestamp, ...switchedDeck } = JSON.parse(await jsonDialog.locator('pre').innerText());

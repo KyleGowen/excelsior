@@ -15,6 +15,7 @@ import { IconDatabase, IconSearch, IconHeart } from '../../../frontend/src/compo
 import type { UIIconContext } from '../../../frontend/src/modules';
 import type { ModuleApi } from '../../../frontend/src/modules/api';
 import { renderModuleSaveFeedback, type ModuleSaveFeedbackContext } from '../../../frontend/src/modules/saveFeedback';
+import { ApiError } from '../../../frontend/src/lib/api/client';
 
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
@@ -117,6 +118,18 @@ it('keeps a failed deck request local and retries through the supplied client', 
  await act(async () => retry.click()); await wait();
  expect(container.textContent).toContain('Storybook Sample Deck');
  expect(host.api.fetchDeckFull).toHaveBeenCalledTimes(2);
+});
+it.each([
+  { id: 'guest_other-session', status: 404, useFallback: true, showsFallback: true },
+  { id: 'guest_other-session', status: 404, useFallback: false, showsFallback: false },
+  { id: 'guest_other-session', status: 503, useFallback: true, showsFallback: false },
+  { id: 'saved-deck', status: 404, useFallback: true, showsFallback: false },
+])('handles deck $id returning $status with fallback=$useFallback', async ({ id, status, useFallback, showsFallback }) => {
+  host.api.fetchDeckFull = jest.fn().mockRejectedValue(new ApiError('Fictional deck error', status));
+  await mount(<DeckBuilderModule deckId={id} missingGuestDeckFallback={useFallback ? <h1>Dashboard</h1> : undefined} />);
+  await wait();
+  expect(container.textContent).toContain(showsFallback ? 'Dashboard' : 'Retry deck');
+  expect(container.textContent).not.toContain(showsFallback ? 'Deck not found' : 'Dashboard');
 });
 it('mounts account Collection using the supplied collection operation without requiring Deck Builder', async () => {
  host.identity = { user: { id: 'fictional-user', username: 'Fictional Player', email: null, role: 'USER' }, isGuest: false, isAdmin: false };
