@@ -26,6 +26,10 @@ class MockDeckRepository {
     return Array.from(this.decks.values()).filter(deck => deck.user_id === userId);
   }
 
+  async getDeckCardReferencesByUserId(): Promise<[]> {
+    return [];
+  }
+
   async getAllDecks(): Promise<any[]> {
     return Array.from(this.decks.values());
   }

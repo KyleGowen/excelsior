@@ -55,6 +55,7 @@ import {
 } from './metrics/endpointHitMetrics';
 import { execSync } from 'child_process';
 import { createDeckAddValidation } from './services/deck-add-validation/deck-add-validation';
+import { DeckCardNames } from './api/services/deckCardNames';
 
 export const app = express();
 const PORT = process.env.PORT || 8085;
@@ -114,7 +115,8 @@ const cardErrataRepository = new CardErrataRepository(dataSource.getPool());
 const catalogService = new CatalogService(cardRepository, foilCardMapRepository, cardErrataRepository);
 const dbvSupportService = new DbvSupportService(() => dataSource.getPool());
 const recentUpdatesService = new RecentUpdatesService(() => dataSource.getPool());
-const deckListService = new DeckListService(deckRepository);
+const deckCardNames = new DeckCardNames(deckRepository, deckValidationService);
+const deckListService = new DeckListService(deckRepository, deckCardNames);
 const deckStatsService = new DeckStatsService(deckRepository);
 const deckWriteService = new DeckWriteService(deckBusinessService, deckValidationService, deckDraftEvaluationService, deckRepository);
 const deckDetailService = new DeckDetailService(deckRepository, deckDraftEvaluationService);
@@ -130,6 +132,7 @@ const deckCardsService = new DeckCardsService(deckRepository, {
 const deckUIPreferencesService = new DeckUIPreferencesService(deckRepository);
 
 const guestDeckService = new GuestDeckService({
+  cardNames: deckCardNames,
   evaluator: deckDraftEvaluationService,
   guestDeckPersistence,
   deckRepository,

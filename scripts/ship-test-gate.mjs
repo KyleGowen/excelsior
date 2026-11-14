@@ -16,10 +16,16 @@ export async function runTestGate(root, mode) {
   mkdirSync(reportDir, { recursive: true });
   const receiptFile = join(reportDir, `${mode}-${Date.now()}-${process.pid}.json`);
   const logPath = receiptFile.replace(/\.json$/, '.log');
+  const integrationReportDir = receiptFile.replace(/\.json$/, '-integration');
+  const integrationReceiptFile = join(integrationReportDir, 'receipt.json');
   const force = ['1', 'true'].includes(process.env.SHIP_TESTS_FORCE);
   const logHash = path => { try { return createHash('sha256').update(readFileSync(path)).digest('hex'); } catch { return null; } };
   const current = { schema: 1, kind: 'test-gate', gate: mode, environment: 'local', sourceRevision: sourceRevision(root),
-    inputs: before, command: ['npm', 'run', mode === 'integration' ? 'test:integration:sharded' : 'test:unit'],
+    // Unit and integration gates run together; leave CPU capacity for the two
+    // integration shards and their disposable databases instead of using every core.
+    inputs: before, command: mode === 'integration'
+      ? ['npm', 'run', 'test:integration:sharded']
+      : ['npm', 'run', 'test:unit', '--', '--maxWorkers=2'],
     startedAt: new Date(started).toISOString(), evidence: { log: logPath }, cleanup: 'runner-owned fixtures only' };
   const validCache = cache?.schema === 1 && cache.status === 'passed' && cache.inputs?.fingerprint === before.fingerprint
     && cache.kind === 'test-gate' && cache.gate === mode && (mode !== 'integration' || cache.cleanup === 'completed')
@@ -36,7 +42,8 @@ export async function runTestGate(root, mode) {
   const log = createWriteStream(logPath, { flags: 'wx', mode: 0o600 });
   let interrupted = false;
   const exitCode = await new Promise(resolveExit => {
-    const child = spawn(current.command[0], current.command.slice(1), { cwd: root, env: process.env, stdio: ['ignore', 'pipe', 'pipe'], detached: process.platform !== 'win32' });
+    const env = mode === 'integration' ? { ...process.env, INTEGRATION_REPORT_DIR: integrationReportDir } : process.env;
+    const child = spawn(current.command[0], current.command.slice(1), { cwd: root, env, stdio: ['ignore', 'pipe', 'pipe'], detached: process.platform !== 'win32' });
     child.stdout.pipe(log, { end: false }); child.stderr.pipe(log, { end: false });
     const send = signal => { try { process.platform !== 'win32' ? process.kill(-child.pid, signal) : child.kill(signal); } catch {} };
     let hardKill;
@@ -49,17 +56,20 @@ export async function runTestGate(root, mode) {
   });
   const after = testInputs(root, mode);
   const output = readFileSync(logPath, 'utf8').replace(/\x1b\[[0-9;]*m/g, '');
-  const counts = jestCounts(output);
-  const nested = output.split('\n').filter(line => line.startsWith('{')).map(line => { try { return JSON.parse(line); } catch { return null; } }).filter(Boolean).at(-1);
-  current.cleanup = mode === 'integration' ? nested?.cleanup ?? 'unverified' : 'not applicable; no DB fixtures in unit gate';
-  if (mode === 'integration') current.evidence.integrationReceipt = nested?.receipt ?? null;
+  // The runner's unique receipt survives truncated npm/stdout output. Missing,
+  // mismatched or failed receipts still block release; no console retry is used.
+  const nested = mode === 'integration' ? readReceipt(integrationReceiptFile) : null;
+  const validNested = nested?.kind === 'integration-shards' && nested.sourceRevision === current.sourceRevision;
+  const counts = mode === 'integration' ? validNested ? nested.counts : null : jestCounts(output);
+  current.cleanup = mode === 'integration' ? validNested ? nested.cleanup : 'unverified' : 'not applicable; no DB fixtures in unit gate';
+  if (mode === 'integration') current.evidence.integrationReceipt = existsSync(integrationReceiptFile) ? integrationReceiptFile : null;
   const changed = !sameTestInputs(before, after);
   current.evidence.sha256 = logHash(logPath);
   const gaps = [...before.gaps, ...(changed ? ['Inputs changed while tests ran; result cannot be cached or released'] : []), ...(!counts || !counts.passed || !counts.suites ? ['Actual executed test counts unavailable or empty'] : [])];
   if (interrupted) gaps.push('Execution interrupted or timed out; inspect fixture cleanup');
   const cleaned = mode !== 'integration' || current.cleanup === 'completed';
   if (!cleaned) gaps.push('Integration fixture cleanup not confirmed');
-  const passed = exitCode === 0 && !interrupted && !changed && cleaned && counts?.passed > 0 && counts?.suites > 0 && counts.failed === 0;
+  const passed = exitCode === 0 && (mode !== 'integration' || validNested && nested.status === 'passed') && !interrupted && !changed && cleaned && counts?.passed > 0 && counts?.suites > 0 && counts.failed === 0;
   const receipt = { ...current, status: passed ? 'passed' : 'failed', subprocessExitCode: exitCode, counts, executedTests: counts?.passed ?? 0,
     durationSeconds: (Date.now() - started) / 1000, finishedAt: new Date().toISOString(), gaps };
   writeReceipt(receiptFile, receipt);

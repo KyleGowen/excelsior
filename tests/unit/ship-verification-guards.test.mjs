@@ -56,20 +56,20 @@ test('exact frozen contents and deletions verify without staging unrelated files
   git(dir, 'add', 'src/example.ts', 'src/new.ts'); git(dir, 'commit', '-qm', 'Deletion fixture');
   assert.doesNotThrow(() => verifyCandidateCommit(dir, git(dir, 'rev-parse', 'HEAD'), candidate));
 });
-test('commit verification handles repository trees larger than the default subprocess buffer', t => {
+test('candidate verification handles repositories whose tree exceeds the subprocess default buffer', t => {
   const dir = fixture(t);
-  const blob = git(dir, 'rev-parse', 'HEAD:src/example.ts');
-  const entries = Array.from({ length: 5000 }, (_, index) =>
-    `100644 blob ${blob}\t${String(index).padStart(5, '0')}-${'x'.repeat(200)}\n`).join('');
-  const tree = execFileSync('git', ['mktree'], { cwd: dir, input: entries, encoding: 'utf8' }).trim();
-  git(dir, 'read-tree', '--prefix=unrelated/', tree);
-  git(dir, 'commit', '-qm', 'Large repository fixture');
+  const assets = join(dir, 'assets', 'a'.repeat(120));
+  mkdirSync(assets, { recursive: true });
+  for (let index = 0; index < 4000; index++) {
+    writeFileSync(join(assets, `${String(index).padStart(4, '0')}-${'b'.repeat(180)}.txt`), 'fixture');
+  }
+  git(dir, 'add', 'assets'); git(dir, 'commit', '-qm', 'Large fixture');
   writeFileSync(join(dir, 'src/example.ts'), 'approved\n');
   const candidate = captureCandidate(dir, ['src/example.ts']);
   git(dir, 'add', 'src/example.ts'); git(dir, 'commit', '-qm', 'Approved fixture');
   const sha = git(dir, 'rev-parse', 'HEAD');
-  const listing = execFileSync('git', ['ls-tree', '-r', '-z', sha], { cwd: dir, maxBuffer: 128 * 1024 * 1024 });
-  assert.ok(listing.length > 1024 * 1024, 'fixture must exceed the default output buffer');
+  const tree = execFileSync('git', ['ls-tree', '-r', '-z', sha], { cwd: dir, maxBuffer: 8 * 1024 * 1024 });
+  assert.ok(tree.length > 1024 * 1024);
   assert.doesNotThrow(() => verifyCandidateCommit(dir, sha, candidate));
 });
 test('Jest evidence rejects empty, absent and inconsistent counts', () => {
@@ -87,8 +87,8 @@ test('Node test receipts reject empty/missing/cancelled execution', () => {
   assert.equal(nodeTestCounts('green'), null);
   assert.deepEqual(nodeTestCounts('# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n'), { tests: 2, suites: 0, passed: 2, failed: 0, cancelled: 0, skipped: 0, todo: 0 });
 });
-function gate(dir, extra = {}) {
-  return spawnSync(process.execPath, ['--input-type=module', '-e', `import {runTestGate} from ${JSON.stringify(join(root, 'scripts/ship-test-gate.mjs'))}; process.exitCode=await runTestGate(process.argv[1], 'unit');`, dir], {
+function gate(dir, extra = {}, mode = 'unit') {
+  return spawnSync(process.execPath, ['--input-type=module', '-e', `import {runTestGate} from ${JSON.stringify(join(root, 'scripts/ship-test-gate.mjs'))}; process.exitCode=await runTestGate(process.argv[1], ${JSON.stringify(mode)});`, dir], {
     encoding: 'utf8', env: { ...process.env, PATH: `${join(dir, 'bin')}:${process.env.PATH}`, SHIP_TEST_CACHE_DIR: join(dir, '.cache'), ...extra }, timeout: 15000,
   });
 }
@@ -97,6 +97,7 @@ test('gate reuses confirmed counts, rejects forced and ordinary edits during exe
   const npm = join(dir, 'bin/npm');
   writeFileSync(npm, '#!/bin/sh\nprintf "Test Suites: 1 passed, 1 total\\nTests: 2 passed, 2 total\\n"\n', { mode: 0o755 });
   const first = gate(dir); assert.equal(first.status, 0, first.stderr); assert.equal(JSON.parse(first.stdout).status, 'passed');
+  assert.deepEqual(JSON.parse(first.stdout).command, ['npm', 'run', 'test:unit', '--', '--maxWorkers=2']);
   const second = gate(dir); assert.equal(second.status, 0, second.stderr); assert.equal(JSON.parse(second.stdout).status, 'reused'); assert.equal(JSON.parse(second.stdout).executedTests, 0);
   writeFileSync(JSON.parse(second.stdout).evidence.log, 'tampered\n');
   assert.equal(JSON.parse(gate(dir).stdout).status, 'passed');
@@ -107,6 +108,33 @@ test('gate reuses confirmed counts, rejects forced and ordinary edits during exe
   rmSync(join(dir, '.cache'), { recursive: true });
   writeFileSync(npm, '#!/bin/sh\nexit 0\n', { mode: 0o755 });
   assert.equal(gate(dir).status, 1); assert.equal(existsSync(join(dir, '.cache/unit.v2.json')), false);
+});
+test('integration gates require the unique complete receipt even when stdout is truncated', t => {
+  const dir = fixture(t);
+  writeFileSync(join(dir, 'bin/docker'), '#!/bin/sh\nprintf "fixture-runtime\\n"\n', { mode: 0o755 });
+  writeFileSync(join(dir, 'bin/npm'), `#!/usr/bin/env node
+const fs=require('node:fs'), path=require('node:path'), cp=require('node:child_process');
+if (!process.env.MOCK_MISSING_RECEIPT) {
+  fs.mkdirSync(process.env.INTEGRATION_REPORT_DIR, {recursive:true});
+  const passed=process.env.MOCK_EMPTY_COUNTS ? 0 : 3;
+  fs.writeFileSync(path.join(process.env.INTEGRATION_REPORT_DIR,'receipt.json'), JSON.stringify({
+    schema:1, kind:'integration-shards', status:process.env.MOCK_FAILED_RECEIPT?'failed':'passed',
+    sourceRevision:cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
+    cleanup:process.env.MOCK_BLOCKED_CLEANUP?'blocked':'completed',
+    counts:{suites:1,tests:passed,passed,failed:0,skipped:0,todo:0}
+  }));
+}
+console.log('Console output ends without the final receipt line');
+`, { mode: 0o755 });
+  const passed = gate(dir, {}, 'integration');
+  assert.equal(passed.status, 0, passed.stderr);
+  assert.equal(JSON.parse(passed.stdout).counts.passed, 3);
+  assert.equal(JSON.parse(passed.stdout).cleanup, 'completed');
+  for (const key of ['MOCK_MISSING_RECEIPT', 'MOCK_FAILED_RECEIPT', 'MOCK_BLOCKED_CLEANUP', 'MOCK_EMPTY_COUNTS']) {
+    const result = gate(dir, { [key]: '1' }, 'integration');
+    assert.equal(result.status, 1, `${key}: ${result.stderr}`);
+    assert.equal(JSON.parse(result.stdout).status, 'failed');
+  }
 });
 test('Actions replay suppresses duplicates and retains exact-SHA and stall failures', t => {
   const dir = fixture(t), sha = 'a'.repeat(40), replay = join(dir, 'states.json');
@@ -186,7 +214,8 @@ test('in-process blob hashes match Git for empty, Unicode and large binary input
     t.after(() => rmSync(dir, { recursive: true, force: true }));
     git(dir, 'init', '-q', `--object-format=${objectFormat}`);
     for (const input of [Buffer.alloc(0), Buffer.from('catalog \u00e9 \u2660\n'), Buffer.from([0, 255, 128, 10]), Buffer.alloc(256 * 1024, 173)]) {
-      const oracle = execFileSync('git', ['hash-object', '--stdin'], { cwd: dir, input, encoding: 'utf8', timeout: 5000 }).trim();
+      writeFileSync(join(dir, 'input.bin'), input);
+      const oracle = execFileSync('git', ['hash-object', '--no-filters', 'input.bin'], { cwd: dir, encoding: 'utf8', timeout: 5000 }).trim();
       assert.equal(gitBlobHash(input, objectFormat), oracle);
     }
   }

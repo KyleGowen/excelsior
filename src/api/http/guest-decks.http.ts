@@ -53,7 +53,9 @@ export function registerGuestDecksV1HttpRoutes(router: Router, deps: GuestDecksV
     res.set('Cache-Control', 'no-store');
     const sessionId = requireGuestSessionV1(req, res);
     if (!sessionId) return;
-    const result = await deps.guestDeckService.listDecks(sessionId, req.user!.id);
+    const result = req.query.include === 'cardNames'
+      ? await deps.guestDeckService.listDecks(sessionId, req.user!.id, true)
+      : await deps.guestDeckService.listDecks(sessionId, req.user!.id);
     if (!result.ok) {
       sendV1Json(res, result.status, null, [{ code: result.code, message: result.message }]);
       return;

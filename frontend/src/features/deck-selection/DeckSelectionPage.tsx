@@ -51,6 +51,7 @@ import type { DeckListItem, DeckMetadata, PreconstructedDeckGroup } from '../../
 import { ExportDeckPanel } from '../deck-editor/ExportDeckPanel';
 import { ImportDeckPanel } from './ImportDeckPanel';
 import { useDeckExportInput, createStubDeckExportInput } from './useDeckExportInput';
+import { matchDeckSearch, normalizeDeckSearch } from './matchDeckSearch';
 import './DeckSelectionPage.css';
 
 type DeckTab = 'mine' | 'favorites' | 'community' | 'preconstructed' | 'tournament';
@@ -98,8 +99,8 @@ export default function DeckSelectionPage() {
   }, [searchParams, setSearchParams]);
 
   const myDecksQuery = useQuery({
-    queryKey: ['decks', 'mine', ownerId],
-    queryFn: () => fetchDecksForUser(isGuest),
+    queryKey: ['decks', 'mine', ownerId, 'cardNames'],
+    queryFn: ({ signal }) => fetchDecksForUser(isGuest, { includeCardNames: true, signal }),
     enabled: !isReadOnlyProfile,
   });
   const profileDecksQuery = useQuery({
@@ -263,14 +264,19 @@ export default function DeckSelectionPage() {
     gridStats.get(deck.metadata.id) ?? null;
 
   const decks = decksQuery.data ?? [];
+  const searchQuery = normalizeDeckSearch(search);
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    const list = q ? decks.filter((d) => d.metadata.name.toLowerCase().includes(q)) : decks;
-    const sorted = [...list].sort((a, b) =>
+    const sorted = [...decks].sort((a, b) =>
       compareAlphabetically(a.metadata.name, b.metadata.name),
     );
-    return enrichDeckListPreviewImages(sorted, previewCatalogImages);
-  }, [decks, search, previewCatalogImages]);
+    const matches = new Map<string, string[]>();
+    const list = searchQuery ? sorted.filter(({ metadata }) => {
+      const match = matchDeckSearch(metadata, searchQuery);
+      matches.set(metadata.id, match.cards);
+      return match.matches;
+    }) : sorted;
+    return { decks: enrichDeckListPreviewImages(list, previewCatalogImages), matches };
+  }, [decks, searchQuery, previewCatalogImages]);
 
   const openDeck = (deck: DeckListItem) => {
     const suffix = isReadOnlyProfile ? '?readonly=true' : '';
@@ -452,7 +458,9 @@ export default function DeckSelectionPage() {
             <h1 className="dsel__title">{tabTitle}</h1>
             {tab === 'mine' ? (
               <div className="dsel__stats">
-                <span><strong>{decks.length}</strong> decks</span>
+                <span aria-live="polite">
+                  {searchQuery ? <><strong>{filtered.decks.length}</strong> of {decks.length} decks</> : <><strong>{decks.length}</strong> decks</>}
+                </span>
                 {isGuest ? <span className="dsel__guest-note">Stored for this session</span> : null}
               </div>
             ) : null}
@@ -462,7 +470,7 @@ export default function DeckSelectionPage() {
               <input
                 type="search"
                 className="dsel__search"
-                placeholder="Search decks..."
+                placeholder="Search by deck or card name"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 aria-label="Search decks"
@@ -521,13 +529,13 @@ export default function DeckSelectionPage() {
             <LoadingState label="Loading decks..." />
           ) : decksQuery.isError ? (
             <EmptyState variant="error" title="Couldn't load decks" message="Please try again." icon={<IconDecks />} />
-          ) : filtered.length === 0 ? (
+          ) : filtered.decks.length === 0 ? (
             <EmptyState
-              title={search ? 'No decks match' : 'No decks yet'}
-              message={search ? 'Try a different search.' : 'Create your first deck to get started.'}
+              title={searchQuery ? 'No decks match' : 'No decks yet'}
+              message={searchQuery ? 'Try a different search.' : 'Create your first deck to get started.'}
               icon={<IconDecks />}
               action={
-                !search ? (
+                !searchQuery ? (
                   <div className="dsel__empty-actions">
                     <button type="button" className="btn btn-ghost" onClick={() => setImportOpen(true)}>
                       <IconImport /> Import Deck
@@ -541,18 +549,22 @@ export default function DeckSelectionPage() {
             />
           ) : (
             <div className="dsel__grid">
-              {filtered.map((deck) => (
-                <DeckTile
-                  key={deck.metadata.id}
-                  deck={deck}
-                  variant="full"
-                  maxStats={deckMaxStats(deck)}
-                  missionSetName={deckMissionSetLabel(deck)}
-                  showVisibility={!isGuest}
-                  onOpen={() => openDeck(deck)}
-                  onMenu={() => setMenuDeck(deck)}
-                />
-              ))}
+              {filtered.decks.map((deck) => {
+                const names = filtered.matches.get(deck.metadata.id);
+                return (
+                  <DeckTile
+                    key={deck.metadata.id}
+                    deck={deck}
+                    variant="full"
+                    maxStats={deckMaxStats(deck)}
+                    missionSetName={deckMissionSetLabel(deck)}
+                    showVisibility={!isGuest}
+                    searchMatch={searchQuery ? names?.join(', ') || 'Deck name match' : undefined}
+                    onOpen={() => openDeck(deck)}
+                    onMenu={() => setMenuDeck(deck)}
+                  />
+                );
+              })}
             </div>
           )
         ) : tab === 'favorites' ? (

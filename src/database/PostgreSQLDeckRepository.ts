@@ -65,6 +65,16 @@ export class PostgreSQLDeckRepository implements DeckRepository {
     return deckCrud.getDecksByUserId(this.getContext(), userId, orderBy);
   }
 
+  async getDeckCardReferencesByUserId(userId: string) {
+    const { rows } = await this.pool.query<Awaited<ReturnType<DeckRepository['getDeckCardReferencesByUserId']>>[number]>(
+      `SELECT d.id AS "deckId", dc.card_type AS type, dc.card_id AS "cardId"
+       FROM decks d JOIN deck_cards dc ON dc.deck_id = d.id
+       WHERE d.user_id = $1 AND dc.quantity > 0`,
+      [userId],
+    );
+    return rows;
+  }
+
   async getPublicDecksByUserId(userId: string): Promise<Deck[]> {
     return deckCrud.getPublicDecksByUserId(this.getContext(), userId);
   }

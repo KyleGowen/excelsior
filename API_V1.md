@@ -786,6 +786,8 @@ Hand-maintained news cards for the Home screen (v2 SPA). Rows live in the `recen
 
 ### `GET /api/v1/decks`
 
+**Query:** Optional `include=cardNames` adds a deduplicated `metadata.cardNames` array for each deck. Names are resolved from all cards in the deck. The preview `cards` array retains its existing shape.
+
 **Auth:** Valid **session cookie** OR `**Authorization: Bearer <accessToken>`** (`ownedAuth` middleware — accepts either; Bearer can be disabled via env `DISABLE_BEARER_DECKS_COLLECTIONS=1`). Send `credentials: 'include'` when using session cookies. Unauthenticated → **401** v1 envelope.
 
 **Request model:** none.
@@ -1226,6 +1228,8 @@ New session decks use an opaque `guest_<uuid>` ID. Guest deck metadata and impor
 **Response 201:** v1 envelope; `**data`** = `{ "id", "name", "description", "created_at", "updated_at" }`.
 
 ### `GET /api/v1/guest/decks`
+
+**Query:** Optional `include=cardNames` adds `metadata.cardNames` on Guest sample decks and temporary decks in the requesting session.
 
 **Response 200:** v1 envelope; `**data`** = merged array (DB + session guest decks).
 

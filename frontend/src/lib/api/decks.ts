@@ -81,7 +81,11 @@ function fetchGuestDecks(): Promise<DeckListItem[]> {
 }
 
 
-function fetchDecksForUser(isGuest: boolean): Promise<DeckListItem[]> {
+function fetchDecksForUser(isGuest: boolean, options?: { includeCardNames?: boolean; signal?: AbortSignal }): Promise<DeckListItem[]> {
+  if (options?.includeCardNames) {
+    const path = isGuest ? '/api/v1/guest/decks' : '/api/v1/decks';
+    return api.get<DeckListItem[]>(`${path}?include=cardNames`, options.signal);
+  }
   return isGuest ? fetchGuestDecks() : fetchUserDecks();
 }
 

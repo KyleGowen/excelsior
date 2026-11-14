@@ -9,6 +9,7 @@ const mockDeckRepository: jest.Mocked<DeckRepository> = {
   getDeckById: jest.fn(),
   createDeck: jest.fn(),
   getDecksByUserId: jest.fn(),
+  getDeckCardReferencesByUserId: jest.fn(),
   getAllDecks: jest.fn(),
   updateDeck: jest.fn(),
   deleteDeck: jest.fn(),

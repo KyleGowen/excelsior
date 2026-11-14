@@ -51,6 +51,7 @@ interface DeckTileProps {
   showUpdated?: boolean;
   /** Hide Limited/Not Legal badges in contexts where the format is implied. */
   showLegality?: boolean;
+  searchMatch?: string | undefined;
 }
 
 function firstCardOfType(deck: DeckListItem, type: DeckCardEntry['type']): DeckCardEntry | undefined {
@@ -80,6 +81,7 @@ export function DeckTile({
   onOwnerClick,
   showUpdated = true,
   showLegality = true,
+  searchMatch,
 }: DeckTileProps) {
   const meta = deck.metadata;
   const artSlides = useMemo(() => deckArtSlides(deck), [deck]);
@@ -314,6 +316,8 @@ export function DeckTile({
             />
           </span>
         </div>
+
+        {searchMatch ? <p className="deck-tile__search-match">{searchMatch}</p> : null}
 
         {visibilityBadge ? (
           <div className="deck-tile__subrow">

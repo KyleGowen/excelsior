@@ -87,7 +87,9 @@ export function registerDecksV1HttpRoutes(router: Router, deps: DecksV1HttpDeps)
   router.get('/decks', deps.authenticateUser, async (req, res) => {
     try {
       const userId = req.user!.id;
-      const list = await deps.deckListService.getTransformedListForUser(userId);
+      const list = req.query.include === 'cardNames'
+        ? await deps.deckListService.getTransformedListForUser(userId, true)
+        : await deps.deckListService.getTransformedListForUser(userId);
       const body = stableV1DeckListBody(list);
       const etag = `"${crypto.createHash('sha1').update(body).digest('hex')}"`;
 

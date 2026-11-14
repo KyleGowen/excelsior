@@ -2,6 +2,7 @@ import { DraftStructureError, type DeckDraftEvaluationService } from './deckDraf
 import type { ValidationError } from '../../services/deck-validation/validation-error';
 import type { Deck, DeckCard, DeckData } from '../../types';
 import { transformDeckList, transformGuestDeckToListItem } from '../deckTransform';
+import { attachDeckCardNames, type DeckCardNames } from './deckCardNames';
 
 const MAX_CARD_QUANTITY_PER_ENTRY = 100;
 const NON_DECK_CARD_TYPES = new Set(['character', 'location', 'battleground', 'mission']);
@@ -41,6 +42,7 @@ export type GuestDeckRepositoryPort = {
 };
 
 export interface GuestDeckServiceDeps {
+  cardNames?: DeckCardNames;
   evaluator?: Pick<DeckDraftEvaluationService, 'attach'>;
   validateDeck?: (cards: DeckCard[]) => Promise<ValidationError[]>;
   guestDeckPersistence: GuestDeckPersistencePort;
@@ -108,7 +110,7 @@ export class GuestDeckService {
     });
   }
 
-  async listDecks(sessionId: string, userId: string): Promise<Ok<unknown[]> | Fail> {
+  async listDecks(sessionId: string, userId: string, includeCardNames = false): Promise<Ok<unknown[]> | Fail> {
     try {
       const dbDecks = await this.deps.deckRepository.getDecksByUserId(userId);
       const dbTransformed = transformDeckList(dbDecks);
@@ -120,7 +122,12 @@ export class GuestDeckService {
         if (!evaluated.evaluation) throw new Error('Guest deck summary evaluation unavailable');
         return { ...item, metadata: { ...item.metadata, threat: evaluated.evaluation.threat.editor } };
       }));
-      return ok(200, [...dbTransformed, ...sessionTransformed]);
+      const list = [...dbTransformed, ...sessionTransformed];
+      if (!includeCardNames || !this.deps.cardNames) return ok(200, list);
+      const sessionCards = sessionDecks.flatMap(deck => deck.cards
+        .filter(card => card.quantity > 0)
+        .map(card => ({ deckId: deck.metadata.id, type: card.type, cardId: card.cardId })));
+      return ok(200, attachDeckCardNames(list, await this.deps.cardNames.forUser(userId, sessionCards)));
     } catch (error) {
       console.error('Error fetching guest decks:', error);
       return fail(500, 'GUEST_DECK_LIST_ERROR', 'Failed to fetch guest decks');

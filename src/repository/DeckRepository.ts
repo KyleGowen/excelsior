@@ -9,6 +9,7 @@ export interface DeckRepository {
   createDeck(userId: string, name: string, description?: string, characterIds?: string[], isPrivate?: boolean): Promise<Deck>;
   getDeckById(id: string): Promise<Deck | undefined>;
   getDecksByUserId(userId: string, orderBy?: 'created_at' | 'updated_at'): Promise<Deck[]>;
+  getDeckCardReferencesByUserId(userId: string): Promise<Array<Pick<DeckCard, 'type' | 'cardId'> & { deckId: string }>>;
   getDeckSummaryWithAllCards(deckId: string): Promise<Deck | undefined>;
   getAllDecks(): Promise<Deck[]>;
   updateDeck(id: string, updates: Partial<Deck>): Promise<Deck | undefined>;

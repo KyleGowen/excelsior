@@ -163,6 +163,8 @@ export interface DeckCardEntry {
 export interface DeckMetadata {
   id: string;
   name: string;
+  /** Present when the personal deck list requests card names. */
+  cardNames?: string[];
   description?: string | null;
   created?: string;
   lastModified?: string;
