@@ -56,6 +56,22 @@ test('exact frozen contents and deletions verify without staging unrelated files
   git(dir, 'add', 'src/example.ts', 'src/new.ts'); git(dir, 'commit', '-qm', 'Deletion fixture');
   assert.doesNotThrow(() => verifyCandidateCommit(dir, git(dir, 'rev-parse', 'HEAD'), candidate));
 });
+test('commit verification handles repository trees larger than the default subprocess buffer', t => {
+  const dir = fixture(t);
+  const blob = git(dir, 'rev-parse', 'HEAD:src/example.ts');
+  const entries = Array.from({ length: 5000 }, (_, index) =>
+    `100644 blob ${blob}\t${String(index).padStart(5, '0')}-${'x'.repeat(200)}\n`).join('');
+  const tree = execFileSync('git', ['mktree'], { cwd: dir, input: entries, encoding: 'utf8' }).trim();
+  git(dir, 'read-tree', '--prefix=unrelated/', tree);
+  git(dir, 'commit', '-qm', 'Large repository fixture');
+  writeFileSync(join(dir, 'src/example.ts'), 'approved\n');
+  const candidate = captureCandidate(dir, ['src/example.ts']);
+  git(dir, 'add', 'src/example.ts'); git(dir, 'commit', '-qm', 'Approved fixture');
+  const sha = git(dir, 'rev-parse', 'HEAD');
+  const listing = execFileSync('git', ['ls-tree', '-r', '-z', sha], { cwd: dir, maxBuffer: 128 * 1024 * 1024 });
+  assert.ok(listing.length > 1024 * 1024, 'fixture must exceed the default output buffer');
+  assert.doesNotThrow(() => verifyCandidateCommit(dir, sha, candidate));
+});
 test('Jest evidence rejects empty, absent and inconsistent counts', () => {
   assert.equal(jestCounts('green'), null);
   assert.equal(jestCounts('Test Suites: 1 passed, 1 total\nTests: 1 passed, 9 total\n'), null);

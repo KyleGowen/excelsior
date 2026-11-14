@@ -3,7 +3,7 @@ import { readFileSync, lstatSync, readlinkSync } from 'node:fs';
 import { resolve, relative, sep } from 'node:path';
 import { createHash } from 'node:crypto';
 
-const git = (root, args, options = {}) => execFileSync('git', args, { cwd: root, encoding: 'utf8', ...options });
+const git = (root, args, options = {}) => execFileSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024, ...options });
 export function candidateId(candidate) {
   return createHash('sha256').update(JSON.stringify({ baseRevision: candidate.baseRevision, entries: candidate.entries })).digest('hex');
 }
