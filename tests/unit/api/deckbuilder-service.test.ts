@@ -52,7 +52,7 @@ describe('builder application boundary', () => {
     expect(response.headers['cache-control']).toBe('no-store'); expect(response.headers[SERVICE_HEADER]).toBeUndefined();
     await new Promise(resolve => setImmediate(resolve));
     expect(query).toHaveBeenCalledTimes(1);
-    expect(query.mock.calls[0]![1]).toEqual([null, 'POST ' + path, 'POST', 200, '::ffff:127.0.0.1', null, 'bmg-deckbuilder', 'bmg-deckbuilder', true, expect.any(Number)]);
+    expect(query.mock.calls[0]![1]).toEqual([null, 'POST ' + path, 'POST', 200, '127.0.0.1', null, 'bmg-deckbuilder', 'bmg-deckbuilder', true, expect.any(Number)]);
   });
   it.each([['POST', '/decks'], ['PUT', '/decks/fictional/cards'], ['POST', '/guest/decks'], ['GET', '/decks/fictional/full'], ['POST', '/admin/decks/hand-analysis'], ['POST', '/decks/summaries'], ['POST', '/decks/draw/'], ['POST', '/decks/%64raw'], ['POST', '/decks/candidates/evaluate/extra']])('denies remote %s %s', async (method, suffix) => {
     const host = request(app()); const call = method === 'GET' ? host.get(remote + suffix) : method === 'PUT' ? host.put(remote + suffix) : host.post(remote + suffix);

@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, useEffect, type FormEvent } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../app/AuthProvider';
 import { fetchDecksForUser, createDeck, deleteDeck, fetchTournamentDecks, isGuestDeckId, shareGuestDeck } from '../../lib/api/decks';
@@ -24,6 +24,7 @@ import { stepCyclicalIndex } from '../../lib/layout/cyclicalIndex';
 import { DECK_SELECTION_SWIPE_BLOCK_SELECTOR, useHorizontalSwipe } from '../../lib/layout/useHorizontalSwipe';
 import {
   buildDeckEditorNavigateState,
+  buildDeckEditorPath,
   buildDeckSelectionReturnPath,
 } from '../../lib/navigation/deckEditorReturn';
 import { buildDeckShareUrl } from '../../lib/navigation/deckShareUrl';
@@ -41,6 +42,7 @@ import {
   IconPlay,
   IconImport,
   IconExport,
+  IconExternalLink,
   IconHeart,
   IconUsers,
   IconTrophy,
@@ -272,19 +274,8 @@ export default function DeckSelectionPage() {
     return enrichDeckListPreviewImages(sorted, previewCatalogImages);
   }, [decks, search, previewCatalogImages]);
 
-  const openDeck = (deck: DeckListItem) => {
-    const suffix = isReadOnlyProfile ? '?readonly=true' : '';
-    navigate(`/users/${deck.metadata.userId}/decks/${deck.metadata.id}${suffix}`, {
-      state: buildDeckEditorNavigateState(deckSelectionReturnPath),
-    });
-  };
-
   const canFavorite = Boolean(viewerId) && !isGuest;
-
-  const openReadonly = (deck: DeckListItem) =>
-    navigate(`/users/${deck.metadata.userId}/decks/${deck.metadata.id}?readonly=true`, {
-      state: buildDeckEditorNavigateState(deckSelectionReturnPath),
-    });
+  const deckNavigationState = buildDeckEditorNavigateState(deckSelectionReturnPath);
   const openProfile = (deck: DeckListItem) =>
     navigate(`/users/${deck.metadata.userId}/decks`);
 
@@ -411,7 +402,8 @@ export default function DeckSelectionPage() {
                   variant="full"
                   maxStats={deckMaxStats(deck)}
                   missionSetName={deckMissionSetLabel(deck)}
-                  onOpen={() => openDeck(deck)}
+                  to={buildDeckEditorPath(deck.metadata.userId, deck.metadata.id, true)}
+                  navigationState={deckNavigationState}
                   onToggleFavorite={
                     canFavorite ? () => handleToggleFavorite(deck) : undefined
                   }
@@ -549,7 +541,8 @@ export default function DeckSelectionPage() {
                   maxStats={deckMaxStats(deck)}
                   missionSetName={deckMissionSetLabel(deck)}
                   showVisibility={!isGuest}
-                  onOpen={() => openDeck(deck)}
+                  to={buildDeckEditorPath(deck.metadata.userId, deck.metadata.id)}
+                  navigationState={deckNavigationState}
                   onMenu={() => setMenuDeck(deck)}
                 />
               ))}
@@ -577,7 +570,7 @@ export default function DeckSelectionPage() {
               favoriteBusy={favoriteToggle.isPending}
               onToggleFavorite={removeListFavorite}
               favoriteFilled
-              onOpen={openReadonly}
+              navigationState={deckNavigationState}
               onOwnerClick={openProfile}
             />
           )
@@ -604,7 +597,7 @@ export default function DeckSelectionPage() {
               canFavorite={canFavorite}
               favoriteBusy={favoriteToggle.isPending}
               onToggleFavorite={toggleListFavorite}
-              onOpen={openReadonly}
+              navigationState={deckNavigationState}
               onOwnerClick={openProfile}
             />
           )
@@ -631,7 +624,7 @@ export default function DeckSelectionPage() {
                     canFavorite={canFavorite}
                     favoriteBusy={favoriteToggle.isPending}
                     onToggleFavorite={togglePreconstructedFavorite}
-                    onOpen={openReadonly}
+                    navigationState={deckNavigationState}
                     onOwnerClick={openProfile}
                     showOwner={false}
                     showUpdated={false}
@@ -653,7 +646,7 @@ export default function DeckSelectionPage() {
                         canFavorite={canFavorite}
                         favoriteBusy={favoriteToggle.isPending}
                         onToggleFavorite={togglePreconstructedFavorite}
-                        onOpen={openReadonly}
+                        navigationState={deckNavigationState}
                         onOwnerClick={openProfile}
                       />
                     </div>
@@ -680,7 +673,7 @@ export default function DeckSelectionPage() {
             canFavorite={canFavorite}
             favoriteBusy={favoriteToggle.isPending}
             onToggleFavorite={toggleListFavorite}
-            onOpen={openReadonly}
+            navigationState={deckNavigationState}
             onOwnerClick={openProfile}
           />
         )}
@@ -760,12 +753,28 @@ export default function DeckSelectionPage() {
       >
         {menuDeck ? (
           <div className="dsel__menu">
-            <button type="button" className="dsel__menu-item" onClick={() => openDeck(menuDeck)}>
+            <Link
+              className="dsel__menu-item"
+              to={buildDeckEditorPath(menuDeck.metadata.userId, menuDeck.metadata.id)}
+              state={deckNavigationState}
+            >
               <IconEdit /> Open / Edit
-            </button>
-            <button type="button" className="dsel__menu-item" onClick={() => openReadonly(menuDeck)}>
+            </Link>
+            <Link
+              className="dsel__menu-item"
+              to={buildDeckEditorPath(menuDeck.metadata.userId, menuDeck.metadata.id)}
+              target="_blank"
+              rel="noopener"
+            >
+              <IconExternalLink /> Open in new tab
+            </Link>
+            <Link
+              className="dsel__menu-item"
+              to={buildDeckEditorPath(menuDeck.metadata.userId, menuDeck.metadata.id, true)}
+              state={deckNavigationState}
+            >
               <IconPlay /> View (read-only)
-            </button>
+            </Link>
             <button
               type="button"
               className="dsel__menu-item"

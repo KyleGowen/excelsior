@@ -753,14 +753,16 @@
   background: var(--color-bg-elevated);
   color: var(--color-text);
   text-align: left;
+  text-decoration: none;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.tournament-podium-tile__row:hover:not(:disabled),
-.tournament-podium-tile__row:focus-visible {
+a.tournament-podium-tile__row:hover,
+a.tournament-podium-tile__row:focus-visible {
   background: var(--color-bg-hover);
   border-color: var(--color-border-accent);
+  color: var(--color-text);
   outline: none;
 }
 

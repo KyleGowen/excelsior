@@ -17,21 +17,21 @@ export interface TournamentPlacardSlide {
 interface TournamentPlacardCarouselTileProps {
   slides: TournamentPlacardSlide[];
   variant?: DashboardTileVariant;
-  onOpenPodiumDeck?: (deckId: string, userId: string) => void;
+  deckReturnTo?: string;
   showWinnerWithPodium?: boolean;
 }
 
 export function TournamentPlacardCarouselTile({
   slides,
   variant = 'rail',
-  onOpenPodiumDeck,
+  deckReturnTo,
   showWinnerWithPodium = false,
 }: TournamentPlacardCarouselTileProps) {
   const [activeSlideId, setActiveSlideId] = useState(slides[0]?.id ?? '');
   const activeSlide = slides.find((slide) => slide.id === activeSlideId) ?? slides[0];
   if (!activeSlide) return null;
 
-  const showPodium = Boolean(activeSlide.podiumEntries?.length && onOpenPodiumDeck);
+  const showPodium = Boolean(activeSlide.podiumEntries?.length);
   const sections = getTournamentPlacardSections(
     activeSlide.meta,
     showPodium,
@@ -61,10 +61,10 @@ export function TournamentPlacardCarouselTile({
         </div>
       )}
       footer={
-        showPodium && activeSlide.podiumEntries && onOpenPodiumDeck ? (
+        showPodium && activeSlide.podiumEntries ? (
           <TournamentPodiumDeckRows
             entries={activeSlide.podiumEntries}
-            onOpenDeck={onOpenPodiumDeck}
+            deckReturnTo={deckReturnTo}
           />
         ) : undefined
       }

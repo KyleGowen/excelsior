@@ -5,7 +5,7 @@ import { sampleDeck } from './fixtures';
 const meta = {
   title: 'Decks/Deck Tile',
   component: DeckTile,
-  args: { deck: sampleDeck, onOpen: () => {} },
+  args: { deck: sampleDeck, to: '/users/storybook-owner/decks/storybook-deck' },
   decorators: [(Story) => <div style={{ width: 310 }}><Story /></div>],
 } satisfies Meta<typeof DeckTile>;
 export default meta;

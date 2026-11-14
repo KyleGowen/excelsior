@@ -6,6 +6,7 @@ import {
   enrichDeckListPreviewImages,
 } from '../../lib/decks/deckPreviewImages';
 import { buildMissionSetByCardId, deckMissionSetName } from '../../lib/decks/missionSetLabel';
+import { buildDeckEditorPath } from '../../lib/navigation/deckEditorReturn';
 import type { CatalogCard, DeckListItem } from '../../lib/api/types';
 
 export interface CommunityDeckGridProps {
@@ -23,7 +24,7 @@ export interface CommunityDeckGridProps {
   onToggleFavorite?: (deck: DeckListItem) => void;
   /** Force the heart filled (favorites section, where every tile is a favorite). */
   favoriteFilled?: boolean;
-  onOpen: (deck: DeckListItem) => void;
+  navigationState?: object | undefined;
   onOwnerClick: (deck: DeckListItem) => void;
   showOwner?: boolean;
   showUpdated?: boolean;
@@ -43,7 +44,7 @@ export function CommunityDeckGrid({
   favoriteBusy,
   onToggleFavorite,
   favoriteFilled,
-  onOpen,
+  navigationState,
   onOwnerClick,
   showOwner = true,
   showUpdated = true,
@@ -77,7 +78,8 @@ export function CommunityDeckGrid({
             onOwnerClick={showOwner ? () => onOwnerClick(deck) : undefined}
             showUpdated={showUpdated}
             showLegality={showLegality}
-            onOpen={() => onOpen(deck)}
+            to={buildDeckEditorPath(deck.metadata.userId, deck.metadata.id, true)}
+            navigationState={navigationState}
             onToggleFavorite={showFavorite ? () => onToggleFavorite!(deck) : undefined}
             isFavorited={favoriteFilled ?? Boolean(deck.metadata.isFavorited)}
             favoriteBusy={favoriteBusy}

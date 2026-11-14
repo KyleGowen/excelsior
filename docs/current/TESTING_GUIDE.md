@@ -1,5 +1,17 @@
 # Excelsior Deckbuilder Testing Guide
 
+## Release test runtime and HTTP listeners
+
+Run release checks with Node 20, matching the deployment workflow and Docker images.
+The unit configuration uses two workers so unit tests can run alongside the isolated
+integration shards without launching one worker per available CPU.
+
+Supertest 7.3.2 or later binds temporary HTTP servers to the same loopback address
+used by its client and keeps shared servers alive until all requests finish. This
+prevents macOS requests from reaching an unrelated local process on the same port.
+`tests/unit/supertest-loopback.test.ts` verifies loopback binding, overlapping
+requests, and cookie isolation with real HTTP requests and no retries.
+
 ## Live browser verification
 
 Use [Test Local Browser](../../.agents/skills/test-local-browser/SKILL.md) for the running local app and [Verify Production Browser](../../.agents/skills/verify-production-browser/SKILL.md) for selected production-safe smoke checks. [Browser testing](BROWSER_TESTING.md) records M1's demonstrated scenarios, fixtures, mixed screenshot dimensions, recovery lessons, and reporting contract.

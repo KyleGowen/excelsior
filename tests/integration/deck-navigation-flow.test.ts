@@ -7,6 +7,7 @@ import request from 'supertest';
 import { app, initializeTestServer } from '../../src/test-server';
 import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 import { integrationTestUtils } from '../setup-integration';
+import { buildDeckEditorPath } from '../../frontend/src/lib/navigation/deckEditorReturn';
 
 describe('Deck Navigation Flow Integration Tests', () => {
   let testUser: any;
@@ -79,6 +80,17 @@ describe('Deck Navigation Flow Integration Tests', () => {
   });
 
   describe('Deck Editor Navigation Flow', () => {
+    it.each([false, true])('serves the deck editor on a direct browser request (read-only: %s)', async (readonly) => {
+      const response = await request(app)
+        .get(buildDeckEditorPath(testUser.id, testDeck.id, readonly))
+        .set('Cookie', authCookie)
+        .accept('html');
+
+      expect(response.status).toBe(200);
+      expect(response.headers['content-type']).toMatch(/text\/html/);
+      expect(response.text).toContain('id="root"');
+    });
+
     it('should load deck data correctly in editor', async () => {
       // Get deck data via API
       const deckDataResponse = await request(app)

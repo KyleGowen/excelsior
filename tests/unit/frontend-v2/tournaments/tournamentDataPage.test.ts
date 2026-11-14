@@ -34,6 +34,10 @@ const carouselTile = fs.readFileSync(
   path.join(repoRoot, 'frontend/src/components/TournamentCharts/TournamentPlacardCarouselTile.tsx'),
   'utf8',
 );
+const podiumRows = fs.readFileSync(
+  path.join(repoRoot, 'frontend/src/components/TournamentCharts/TournamentPodiumDeckRows.tsx'),
+  'utf8',
+);
 const regionalRegistry = fs.readFileSync(
   path.join(repoRoot, 'frontend/src/lib/tournaments/regionalTournaments.ts'),
   'utf8',
@@ -99,10 +103,15 @@ describe('Tournament Data page', () => {
     expect(carouselTile).toContain('aria-pressed={slide.id === activeSlide.id}');
     expect(statsTiles).not.toContain('titlePrefix');
     expect(statsRail).toContain('enabled: expanded');
-    expect(statsRail).toContain('onOpenPodiumDeck: expanded ? openPodiumDeck : undefined');
+    expect(statsRail).toContain('deckReturnTo: expanded ? buildRegionalEventPath(post.id) : undefined');
     expect(statsRail).toContain('showWinnerWithPodium: expanded');
     expect(tables).toContain('resolveTournamentPodiumDecks');
     expect(tables).toContain('className="tournament-data__deck-link"');
     expect(highlightTile).toContain('showFlipControl={false}');
+  });
+
+  it('renders published podium decks as native read-only links', () => {
+    expect(podiumRows).toContain('<Link');
+    expect(podiumRows).toContain('to={buildDeckEditorPath(userId, deckId, true)}');
   });
 });

@@ -30,7 +30,7 @@ export interface BuildColumbusTilesOptions {
   renderSpotlight: (spot: SpotlightEntry | null, key: string) => ReactNode;
   podiumEntries?: TournamentPodiumDeckEntry[];
   summarySlides?: TournamentPlacardSlide[];
-  onOpenPodiumDeck?: (deckId: string, userId: string) => void;
+  deckReturnTo?: string;
   eventSubtitle?: string;
   showWinnerWithPodium?: boolean;
 }
@@ -58,7 +58,7 @@ export function buildColumbusTileById(
     renderSpotlight,
     podiumEntries,
     summarySlides,
-    onOpenPodiumDeck,
+    deckReturnTo,
     eventSubtitle,
     showWinnerWithPodium,
   } = options;
@@ -74,7 +74,7 @@ export function buildColumbusTileById(
           <TournamentPlacardCarouselTile
             slides={summarySlides}
             variant={variant}
-            onOpenPodiumDeck={onOpenPodiumDeck}
+            deckReturnTo={deckReturnTo}
             showWinnerWithPodium={showWinnerWithPodium}
           />
         );
@@ -84,7 +84,7 @@ export function buildColumbusTileById(
           meta={stats.meta}
           variant={variant}
           podiumEntries={podiumEntries}
-          onOpenPodiumDeck={onOpenPodiumDeck}
+          deckReturnTo={deckReturnTo}
           showWinnerWithPodium={showWinnerWithPodium}
         />
       );

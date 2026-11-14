@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { CardImage } from '../CardImage';
 import { EmptyState } from '../EmptyState';
 import { IconCards, IconDots, IconHeart } from '../icons';
@@ -35,7 +36,8 @@ interface DeckTileProps {
   /** Mission set name from catalog lookup (not the display mission card name). */
   missionSetName?: string | null;
   rankLabel?: string;
-  onOpen?: () => void;
+  to: string;
+  navigationState?: object | undefined;
   onMenu?: () => void;
   /** Show the Public/Unlisted chip (display-only). Use on the owner's own decks. */
   showVisibility?: boolean;
@@ -70,7 +72,8 @@ export function DeckTile({
   maxStats,
   missionSetName,
   rankLabel,
-  onOpen,
+  to,
+  navigationState,
   onMenu,
   showVisibility,
   onToggleFavorite,
@@ -169,28 +172,16 @@ export function DeckTile({
     };
 
     const onTouchEnd = () => finishTouchHold();
-    const onContextMenu = (e: Event) => e.preventDefault();
-
     el.addEventListener('touchstart', onTouchStart, { passive: true });
     el.addEventListener('touchend', onTouchEnd);
     el.addEventListener('touchcancel', onTouchEnd);
-    el.addEventListener('contextmenu', onContextMenu);
 
     return () => {
       el.removeEventListener('touchstart', onTouchStart);
       el.removeEventListener('touchend', onTouchEnd);
       el.removeEventListener('touchcancel', onTouchEnd);
-      el.removeEventListener('contextmenu', onContextMenu);
     };
   }, []);
-
-  const handleTileClick = useCallback(() => {
-    if (suppressOpenClickRef.current) {
-      suppressOpenClickRef.current = false;
-      return;
-    }
-    onOpen?.();
-  }, [onOpen]);
 
   useEffect(() => () => stopArtCycle(), [stopArtCycle]);
 
@@ -205,177 +196,176 @@ export function DeckTile({
     : null;
 
   return (
-    <article
-      className={`deck-tile deck-tile--${variant}`}
-      onClick={onOpen ? handleTileClick : undefined}
-      role={onOpen ? 'button' : undefined}
-      tabIndex={onOpen ? 0 : undefined}
-      onKeyDown={(e) => {
-        if (onOpen && (e.key === 'Enter' || e.key === ' ')) {
-          e.preventDefault();
-          onOpen();
-        }
-      }}
-    >
-      <div
-        ref={artRef}
-        className="deck-tile__art"
-        onPointerEnter={handleArtPointerEnter}
-        onPointerLeave={handleArtPointerLeave}
-        onContextMenu={(e) => e.preventDefault()}
+    <article className={`deck-tile deck-tile--${variant}`}>
+      <Link
+        className="deck-tile__link"
+        to={to}
+        state={navigationState}
+        aria-label={meta.name}
+        onPointerDown={() => { suppressOpenClickRef.current = false; }}
+        onClick={(event) => {
+          if (event.detail > 0 && suppressOpenClickRef.current) {
+            suppressOpenClickRef.current = false;
+            event.preventDefault();
+          }
+        }}
       >
-        {shownSlide ? (
-          <div
-            className={`deck-tile__hero${isStructuralSlide ? ' deck-tile__hero--structural' : ''}`}
-            aria-hidden="true"
-          >
-            <CardImage
-              imagePath={shownSlide.imagePath}
-              catalogType={shownSlide.catalogType}
-              alt={shownSlide.name || 'Character'}
-              useThumbnail={!isStructuralSlide}
-              loading="eager"
-              className={isStructuralSlide ? undefined : 'card-image--contain'}
-              isFoil={shownSlide.isFoil}
-              foilSeed={shownSlide.cardId}
-              foilSize="hero"
-            />
-          </div>
-        ) : (
-          <div className="deck-tile__art-empty">
-            <IconCards />
-          </div>
-        )}
-        <div className="deck-tile__art-veil" />
-
-        {rankLabel ? <span className="deck-tile__rank">{rankLabel}</span> : null}
-        {onToggleFavorite ? (
-          <button
-            type="button"
-            className={`deck-tile__fav${isFavorited ? ' is-active' : ''}`}
-            aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
-            aria-pressed={Boolean(isFavorited)}
-            disabled={favoriteBusy}
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleFavorite();
-            }}
-          >
-            <IconHeart filled={isFavorited} />
-          </button>
-        ) : null}
-        {onMenu ? (
-          <button
-            type="button"
-            className="deck-tile__menu"
-            aria-label="Deck actions"
-            onClick={(e) => {
-              e.stopPropagation();
-              onMenu();
-            }}
-          >
-            <IconDots />
-          </button>
-        ) : null}
-
-        <div className="deck-tile__overlay">
-          <h3 className="deck-tile__name" title={meta.name}>{meta.name}</h3>
-        </div>
-      </div>
-
-      <div className="deck-tile__body">
-        <div className="deck-tile__meta-bar" aria-label="Deck summary">
-          <span className="deck-tile__metric deck-tile__metric--start" title="Cards">
-            <span className="deck-tile__metric-icon" aria-hidden="true">
-              <IconCards />
-            </span>
-            {meta.cardCount}
-          </span>
-          {missionChipLabel ? (
-            <span className="deck-tile__chip" title={`Mission set: ${missionChipLabel}`}>
-              <span className="deck-tile__chip-text">{missionChipLabel}</span>
-            </span>
-          ) : null}
-          {showLegality ? (
-            <span
-              className={`deck-tile__legality deck-tile__legality--meta badge ${legalityBadgeClass(
-                legalityBadge.variant,
-              )}`}
+        <div
+          ref={artRef}
+          className="deck-tile__art"
+          onPointerEnter={handleArtPointerEnter}
+          onPointerLeave={handleArtPointerLeave}
+          onContextMenu={(event) => {
+            const source = event.nativeEvent;
+            if (touchHoldActiveRef.current || ('pointerType' in source && source.pointerType === 'touch')) {
+              event.preventDefault();
+            }
+          }}
+        >
+          {shownSlide ? (
+            <div
+              className={`deck-tile__hero${isStructuralSlide ? ' deck-tile__hero--structural' : ''}`}
+              aria-hidden="true"
             >
-              {legalityBadge.label}
-            </span>
-          ) : null}
-          <span className="deck-tile__metric deck-tile__metric--end">
-            <StatIconBadge
-              type="threat_level"
-              value={meta.threat ?? 0}
-              size="sm"
-              title={formatThreatTooltip(meta.threat ?? 0)}
-            />
-          </span>
+              <CardImage
+                imagePath={shownSlide.imagePath}
+                catalogType={shownSlide.catalogType}
+                alt={shownSlide.name || 'Character'}
+                useThumbnail={!isStructuralSlide}
+                loading="eager"
+                className={isStructuralSlide ? undefined : 'card-image--contain'}
+                isFoil={shownSlide.isFoil}
+                foilSeed={shownSlide.cardId}
+                foilSize="hero"
+              />
+            </div>
+          ) : (
+            <div className="deck-tile__art-empty">
+              <IconCards />
+            </div>
+          )}
+          <div className="deck-tile__art-veil" />
+
+          {rankLabel ? <span className="deck-tile__rank">{rankLabel}</span> : null}
+          <div className="deck-tile__overlay">
+            <h3 className="deck-tile__name" title={meta.name}>{meta.name}</h3>
+          </div>
         </div>
 
-        {visibilityBadge ? (
-          <div className="deck-tile__subrow">
-            <span className="deck-tile__subrow-spacer" aria-hidden="true" />
-            <span className={`deck-tile__visibility badge badge-visibility--${visibilityBadge.variant}`}>
-              {visibilityBadge.label}
+        <div className="deck-tile__body">
+          <div className="deck-tile__meta-bar" aria-label="Deck summary">
+            <span className="deck-tile__metric deck-tile__metric--start" title="Cards">
+              <span className="deck-tile__metric-icon" aria-hidden="true">
+                <IconCards />
+              </span>
+              {meta.cardCount}
+            </span>
+            {missionChipLabel ? (
+              <span className="deck-tile__chip" title={`Mission set: ${missionChipLabel}`}>
+                <span className="deck-tile__chip-text">{missionChipLabel}</span>
+              </span>
+            ) : null}
+            {showLegality ? (
+              <span
+                className={`deck-tile__legality deck-tile__legality--meta badge ${legalityBadgeClass(
+                  legalityBadge.variant,
+                )}`}
+              >
+                {legalityBadge.label}
+              </span>
+            ) : null}
+            <span className="deck-tile__metric deck-tile__metric--end">
+              <StatIconBadge
+                type="threat_level"
+                value={meta.threat ?? 0}
+                size="sm"
+                title={formatThreatTooltip(meta.threat ?? 0)}
+              />
             </span>
           </div>
-        ) : null}
 
-        {variant === 'full' && maxStats ? (
-          <div className="deck-tile__stats" aria-label="Character maximums">
-            {STAT_DEFS.map((s) => (
-              <StatIconBadge
-                key={s.key}
-                type={s.iconKey}
-                value={maxStats[s.key]}
-                size="md"
-              />
-            ))}
-          </div>
-        ) : null}
-
-        {ownerName || updatedLabel || showLegality ? (
-          <div className="deck-tile__footer">
-            {/* Owner/date/legality are independently optional by tile context. */}
-            {ownerName ? (
-              onOwnerClick ? (
-                <button
-                  type="button"
-                  className="deck-tile__owner deck-tile__owner--link"
-                  title={`View ${ownerName}'s public decks`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOwnerClick();
-                  }}
-                >
-                  {ownerName}
-                </button>
-              ) : (
-                <span className="deck-tile__owner">{ownerName}</span>
-              )
-            ) : (
-              <span className="deck-tile__footer-spacer" aria-hidden="true" />
-            )}
-            <div className="deck-tile__footer-end">
-              {updatedLabel ? (
-                <span className="deck-tile__updated">Updated {updatedLabel}</span>
-              ) : null}
-              {showLegality ? (
-                <span
-                  className={`deck-tile__legality deck-tile__legality--footer badge ${legalityBadgeClass(
-                    legalityBadge.variant,
-                  )}`}
-                >
-                  {legalityBadge.label}
-                </span>
-              ) : null}
+          {visibilityBadge ? (
+            <div className="deck-tile__subrow">
+              <span className="deck-tile__subrow-spacer" aria-hidden="true" />
+              <span className={`deck-tile__visibility badge badge-visibility--${visibilityBadge.variant}`}>
+                {visibilityBadge.label}
+              </span>
             </div>
+          ) : null}
+
+          {variant === 'full' && maxStats ? (
+            <div className="deck-tile__stats" aria-label="Character maximums">
+              {STAT_DEFS.map((s) => (
+                <StatIconBadge
+                  key={s.key}
+                  type={s.iconKey}
+                  value={maxStats[s.key]}
+                  size="md"
+                />
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </Link>
+
+      {onToggleFavorite ? (
+        <button
+          type="button"
+          className={`deck-tile__fav${isFavorited ? ' is-active' : ''}`}
+          aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+          aria-pressed={Boolean(isFavorited)}
+          disabled={favoriteBusy}
+          onClick={onToggleFavorite}
+        >
+          <IconHeart filled={isFavorited} />
+        </button>
+      ) : null}
+      {onMenu ? (
+        <button
+          type="button"
+          className="deck-tile__menu"
+          aria-label="Deck actions"
+          onClick={onMenu}
+        >
+          <IconDots />
+        </button>
+      ) : null}
+
+      {ownerName || updatedLabel || showLegality ? (
+        <div className="deck-tile__footer">
+          {/* Owner/date/legality are independently optional by tile context. */}
+          {ownerName ? (
+            onOwnerClick ? (
+              <button
+                type="button"
+                className="deck-tile__owner deck-tile__owner--link"
+                title={`View ${ownerName}'s public decks`}
+                onClick={onOwnerClick}
+              >
+                {ownerName}
+              </button>
+            ) : (
+              <span className="deck-tile__owner">{ownerName}</span>
+            )
+          ) : (
+            <span className="deck-tile__footer-spacer" aria-hidden="true" />
+          )}
+          <div className="deck-tile__footer-end">
+            {updatedLabel ? (
+              <span className="deck-tile__updated">Updated {updatedLabel}</span>
+            ) : null}
+            {showLegality ? (
+              <span
+                className={`deck-tile__legality deck-tile__legality--footer badge ${legalityBadgeClass(
+                  legalityBadge.variant,
+                )}`}
+              >
+                {legalityBadge.label}
+              </span>
+            ) : null}
           </div>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </article>
   );
 }

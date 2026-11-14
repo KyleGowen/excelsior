@@ -372,6 +372,12 @@ ordered **My Decks, Favorites, Community, Preconstructed, Tournament**. The Prec
 the same teal set headings, centered 85%-width two-column deck rows, set separators, simplified
 official tiles, and full-metadata featured upgrade row as the Community page.
 
+Deck tiles and linked tournament entries use browser links. A click or tap opens the deck in the
+current tab, and the browser supports modifier clicks, middle-click, and its link menu. Deck tiles
+keep the favorite, owner profile, and ⋯ controls independently interactive. My Decks and Guest Decks
+show **Open in new tab** immediately below **Open / Edit** in the Deck actions panel on desktop and mobile.
+Press-and-hold on tile art on mobile cycles the art.
+
 ### Deck Editor — Desktop header compaction
 
 Shared links to another account's deck show the read-only header for Guest on desktop

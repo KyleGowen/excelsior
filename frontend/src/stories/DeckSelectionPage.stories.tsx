@@ -33,6 +33,21 @@ export const PublicProfileWithTopDeck: Story = {
 export const PublicProfileTopDeckMobile: Story = { ...PublicProfileWithTopDeck, globals: { viewport: { value: 'mobile' } } };
 export const Mobile: Story = { parameters: { viewport: { defaultViewport: 'mobile' } } };
 
+export const DeckActionsOpen: Story = {
+  play: async ({ canvas }) => {
+    const tile = await canvas.findByRole('link', { name: 'Storybook Sample Deck' });
+    await userEvent.click(await canvas.findByRole('button', { name: 'Deck actions' }));
+    const panel = within(await canvas.findByRole('dialog', { name: 'Deck actions' }));
+    const newTab = panel.getByRole('link', { name: 'Open in new tab' });
+    await expect(newTab).toHaveAttribute('target', '_blank');
+    await expect(newTab).toHaveAttribute('href', await tile.getAttribute('href'));
+    await expect(panel.getByRole('link', { name: 'View (read-only)' })).toHaveAttribute(
+      'href', '/users/storybook-user/decks/storybook-deck?readonly=true',
+    );
+  },
+};
+export const MobileDeckActionsOpen: Story = { ...DeckActionsOpen, globals: { viewport: { value: 'mobile' } } };
+
 export const TopDeckImportOpen: Story = {
   play: async ({ canvas }) => {
     await userEvent.click(await canvas.findByRole('button', { name: /^Import/ }));

@@ -5,14 +5,14 @@ import './TournamentCharts.css';
 
 interface TournamentPodiumDecksTileProps {
   entries: TournamentPodiumDeckEntry[];
-  onOpenDeck: (deckId: string, userId: string) => void;
+  deckReturnTo?: string;
   variant?: DashboardTileVariant;
 }
 
 /** Standalone podium tile — retained for export compatibility; View All uses placard footer instead. */
 export function TournamentPodiumDecksTile({
   entries,
-  onOpenDeck,
+  deckReturnTo,
   variant = 'md',
 }: TournamentPodiumDecksTileProps) {
   return (
@@ -22,7 +22,7 @@ export function TournamentPodiumDecksTile({
       title="Podium Finishes"
       className="stats-chart-tile tournament-podium-tile"
     >
-      <TournamentPodiumDeckRows entries={entries} onOpenDeck={onOpenDeck} />
+      <TournamentPodiumDeckRows entries={entries} deckReturnTo={deckReturnTo} />
     </DashboardTile>
   );
 }

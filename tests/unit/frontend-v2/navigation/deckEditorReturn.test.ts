@@ -1,5 +1,6 @@
 import {
   buildDeckEditorNavigateState,
+  buildDeckEditorPath,
   buildDeckSelectionReturnPath,
   DECK_EDITOR_RETURN_HOME,
   DECK_EDITOR_RETURN_REGIONALS,
@@ -8,6 +9,15 @@ import {
 } from '../../../../frontend/src/lib/navigation/deckEditorReturn';
 
 describe('deckEditorReturn', () => {
+  it.each([
+    ['user-123', 'deck-456', false, '/users/user-123/decks/deck-456'],
+    ['guest-user', 'guest_789', false, '/users/guest-user/decks/guest_789'],
+    ['user-123', 'deck-456', true, '/users/user-123/decks/deck-456?readonly=true'],
+    ['user#1', 'deck?2', true, '/users/user%231/decks/deck%3F2?readonly=true'],
+  ])('builds a direct deck link for %s / %s with read-only mode %s', (userId, deckId, readonly, path) => {
+    expect(buildDeckEditorPath(userId, deckId, readonly)).toBe(path);
+  });
+
   it('returns a validated internal path from location state', () => {
     expect(getDeckEditorReturnTo(buildDeckEditorNavigateState('/home/columbus-regional'))).toBe(
       '/home/columbus-regional',

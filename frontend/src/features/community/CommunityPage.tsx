@@ -308,12 +308,6 @@ export default function CommunityPage() {
 
 
 
-  const openDeck = (deck: DeckListItem) => {
-
-    navigate(`/users/${deck.metadata.userId}/decks/${deck.metadata.id}?readonly=true`);
-
-  };
-
   const openProfile = (deck: DeckListItem) => {
 
     navigate(`/users/${deck.metadata.userId}/decks`);
@@ -473,8 +467,6 @@ export default function CommunityPage() {
     canFavorite,
 
     favoriteBusy: favoriteToggle.isPending,
-
-    onOpen: openDeck,
 
     onOwnerClick: openProfile,
 

@@ -20,6 +20,7 @@ import { useRecentUpdates } from './useRecentUpdates';
 import { DeferredHomeSection } from './DeferredHomeSection';
 import {
   buildDeckEditorNavigateState,
+  buildDeckEditorPath,
   DECK_EDITOR_RETURN_HOME,
 } from '../../lib/navigation/deckEditorReturn';
 import {
@@ -155,13 +156,6 @@ export default function HomePage() {
     [missionsQuery.data],
   );
 
-  const openDeck = (deck: DeckListItem) => {
-    const m = deck.metadata;
-    navigate(`/users/${m.userId}/decks/${m.id}?readonly=true`, {
-      state: buildDeckEditorNavigateState(DECK_EDITOR_RETURN_HOME),
-    });
-  };
-
   const openProfile = (deck: DeckListItem) => {
     navigate(`/users/${deck.metadata.userId}/decks`);
   };
@@ -213,7 +207,6 @@ export default function HomePage() {
             decks={enrichedCommunityDecks}
             emptyMessage="Community decks will appear here as they are shared."
             missionSetByCardId={missionSetByCardId}
-            onOpen={openDeck}
             onOwnerClick={openProfile}
           />
         </DeferredHomeSection>
@@ -228,7 +221,6 @@ export default function HomePage() {
             decks={enrichedTournamentDecks}
             emptyMessage="Tournament-winning decks will appear here as they are added."
             missionSetByCardId={missionSetByCardId}
-            onOpen={openDeck}
           />
         </DeferredHomeSection>
 
@@ -242,7 +234,6 @@ export default function HomePage() {
             decks={enrichedPreconstructedDecks}
             emptyMessage="Preconstructed decks will appear here as sets are added."
             missionSetByCardId={missionSetByCardId}
-            onOpen={openDeck}
             showUpdated={false}
             showLegality={false}
           />
@@ -262,7 +253,6 @@ interface DeckRailProps {
   decks: DeckListItem[];
   emptyMessage: string;
   missionSetByCardId: Map<string, string>;
-  onOpen: (deck: DeckListItem) => void;
   onOwnerClick?: (deck: DeckListItem) => void;
   showUpdated?: boolean;
   showLegality?: boolean;
@@ -277,7 +267,6 @@ function DeckRail({
   decks,
   emptyMessage,
   missionSetByCardId,
-  onOpen,
   onOwnerClick,
   showUpdated,
   showLegality,
@@ -308,7 +297,8 @@ function DeckRail({
                 missionSetName={deckMissionSetName(deck, missionSetByCardId)}
                 ownerName={onOwnerClick ? (deck.metadata.ownerDisplayName ?? null) : undefined}
                 onOwnerClick={onOwnerClick ? () => onOwnerClick(deck) : undefined}
-                onOpen={() => onOpen(deck)}
+                to={buildDeckEditorPath(deck.metadata.userId, deck.metadata.id, true)}
+                navigationState={buildDeckEditorNavigateState(DECK_EDITOR_RETURN_HOME)}
                 showUpdated={showUpdated}
                 showLegality={showLegality}
               />

@@ -344,6 +344,7 @@
   color: var(--color-text);
   font-size: var(--font-size-base);
   text-align: left;
+  text-decoration: none;
 }
 .dsel__menu-item svg {
   color: var(--color-text-muted);
@@ -351,6 +352,7 @@
 }
 .dsel__menu-item:hover {
   background: var(--color-bg-hover);
+  text-decoration: none;
 }
 .dsel__menu-item--danger {
   color: var(--color-danger);

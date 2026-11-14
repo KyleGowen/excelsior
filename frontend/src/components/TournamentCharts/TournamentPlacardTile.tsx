@@ -10,7 +10,7 @@ interface TournamentPlacardTileProps {
   meta: TournamentEventMeta;
   variant?: DashboardTileVariant;
   podiumEntries?: TournamentPodiumDeckEntry[];
-  onOpenPodiumDeck?: (deckId: string, userId: string) => void;
+  deckReturnTo?: string;
   showWinnerWithPodium?: boolean;
 }
 
@@ -18,10 +18,10 @@ export function TournamentPlacardTile({
   meta,
   variant = 'rail',
   podiumEntries,
-  onOpenPodiumDeck,
+  deckReturnTo,
   showWinnerWithPodium = false,
 }: TournamentPlacardTileProps) {
-  const showPodium = Boolean(podiumEntries?.length && onOpenPodiumDeck);
+  const showPodium = Boolean(podiumEntries?.length);
   const sections = getTournamentPlacardSections(meta, showPodium, showWinnerWithPodium);
 
   return (
@@ -32,8 +32,8 @@ export function TournamentPlacardTile({
       subtitle={meta.seasonLabel}
       sections={sections}
       footer={
-        showPodium && podiumEntries && onOpenPodiumDeck ? (
-          <TournamentPodiumDeckRows entries={podiumEntries} onOpenDeck={onOpenPodiumDeck} />
+        showPodium && podiumEntries ? (
+          <TournamentPodiumDeckRows entries={podiumEntries} deckReturnTo={deckReturnTo} />
         ) : undefined
       }
     />

@@ -62,7 +62,7 @@ export const Highlight: Story = {
 };
 
 export const Placard: Story = {
-  render: () => <TournamentPlacardTile meta={event} podiumEntries={podiumEntries} onOpenPodiumDeck={() => {}} />,
+  render: () => <TournamentPlacardTile meta={event} podiumEntries={podiumEntries} />,
 };
 
 export const PlacardCarousel: Story = {
@@ -70,5 +70,5 @@ export const PlacardCarousel: Story = {
 };
 
 export const PodiumDecks: Story = {
-  render: () => <TournamentPodiumDecksTile entries={podiumEntries} onOpenDeck={() => {}} />,
+  render: () => <TournamentPodiumDecksTile entries={podiumEntries} />
 };

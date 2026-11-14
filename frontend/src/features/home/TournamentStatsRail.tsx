@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { CardDetailPanel } from '../../components/CardDetailPanel';
 import { ColumbusDashboardGrid, DashboardRail, DashboardRailItem } from '../../components/dashboard';
@@ -11,7 +11,6 @@ import type { CatalogCard, CatalogType } from '../../lib/api/types';
 import { buildFoilCardMapLookup } from '../../lib/catalog/foilCatalog';
 import { useAllCatalogCards } from '../../lib/catalog/useAllCatalogCards';
 import { useCardDetailHistory } from '../../lib/layout/useCardDetailHistory';
-import { buildDeckEditorNavigateState } from '../../lib/navigation/deckEditorReturn';
 import { buildColumbusTileById, HOME_CHART_LIMIT } from '../../lib/tournaments/buildColumbusStatsTiles';
 import {
   COLUMBUS_TILE_ORDER,
@@ -53,7 +52,6 @@ export function TournamentStatsRail({
   tournamentId = FEATURED_TOURNAMENT_ID,
 }: TournamentStatsRailProps) {
   const post = getTournamentPost(tournamentId);
-  const navigate = useNavigate();
   const { cards: allCards } = useAllCatalogCards();
   const tournamentQuery = useQuery({
     queryKey: ['decks', 'tournament'],
@@ -131,15 +129,6 @@ export function TournamentStatsRail({
     [allCards, foilLookup],
   );
 
-  const openPodiumDeck = useCallback(
-    (deckId: string, userId: string) => {
-      navigate(`/users/${userId}/decks/${deckId}?readonly=true`, {
-        state: buildDeckEditorNavigateState(buildRegionalEventPath(post.id)),
-      });
-    },
-    [navigate, post.id],
-  );
-
   const buildTileOptions = (
     tournament: RegionalTournamentDefinition,
     eventSubtitle?: string,
@@ -195,7 +184,7 @@ export function TournamentStatsRail({
       renderSpotlight,
       podiumEntries: expanded ? podiumEntriesByEvent.get(tournament.id) : undefined,
       summarySlides,
-      onOpenPodiumDeck: expanded ? openPodiumDeck : undefined,
+      deckReturnTo: expanded ? buildRegionalEventPath(post.id) : undefined,
       eventSubtitle,
       showWinnerWithPodium: expanded,
     };
