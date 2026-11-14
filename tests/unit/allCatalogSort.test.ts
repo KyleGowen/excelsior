@@ -108,3 +108,16 @@ describe('compareCollectionCatalogCards', () => {
     expect(compareCollectionCatalogCards(a, b)).toBe(0);
   });
 });
+
+it.each([compareAllCatalogCards, compareCollectionCatalogCards])(
+  'appends Skybound Prize Pack printings in collector order',
+  compare => {
+    const cards = [
+      { id: 'late', name: 'Alpha', set: 'SKY', set_number: 'PP256', is_foil: true },
+      { id: 'early', name: 'Zeta', set: 'SKY', set_number: 'PP001', is_foil: true },
+      { id: 'foil', set: 'SKY', set_number: '472F', is_foil: true },
+      { id: 'regular', set: 'SKY', set_number: '472' },
+    ];
+    expect(cards.sort(compare).map(row => row.id)).toEqual(['regular', 'foil', 'early', 'late']);
+  },
+);

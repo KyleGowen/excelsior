@@ -14,6 +14,7 @@ const assets = [
   'src/resources/images/login/login-bg.png',
   'src/resources/images/home/banners/skybound-immortal.png',
   'src/resources/images/home/banners/skybound-immortal-2x.png',
+  'src/resources/images/home/skybound-prize-pack-dupli-kate-art.png',
   'src/resources/images/icons',
   'src/resources/cards/images/placeholder.webp',
   'src/resources/cards/images/characters/billy_the_kid.webp',

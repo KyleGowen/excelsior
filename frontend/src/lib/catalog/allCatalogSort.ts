@@ -1,6 +1,6 @@
 import type { CatalogCard } from '../api/types';
 import { cardDisplayName } from './catalogTypeMap';
-import { parseSetNumber, setCodeForCard } from './catalogSetSort';
+import { comparePrizePackNumbers, parseSetNumber, setCodeForCard } from './catalogSetSort';
 import { isFoilCard } from './foilCatalog';
 import { compareAlphabetically } from '../sort/alphabetical';
 
@@ -8,6 +8,8 @@ import { compareAlphabetically } from '../sort/alphabetical';
 export function compareAllCatalogCards(a: CatalogCard, b: CatalogCard): number {
   const setCmp = setCodeForCard(a).localeCompare(setCodeForCard(b), undefined, { sensitivity: 'base' });
   if (setCmp !== 0) return setCmp;
+  const prizePackCmp = comparePrizePackNumbers(a, b);
+  if (prizePackCmp !== 0) return prizePackCmp;
 
   const aFoil = isFoilCard(a);
   const bFoil = isFoilCard(b);
@@ -33,6 +35,8 @@ export function sortAllCatalogCards(cards: CatalogCard[]): CatalogCard[] {
 export function compareCollectionCatalogCards(a: CatalogCard, b: CatalogCard): number {
   const setCmp = setCodeForCard(a).localeCompare(setCodeForCard(b), undefined, { sensitivity: 'base' });
   if (setCmp !== 0) return setCmp;
+  const prizePackCmp = comparePrizePackNumbers(a, b);
+  if (prizePackCmp !== 0) return prizePackCmp;
 
   const aFoil = isFoilCard(a);
   const bFoil = isFoilCard(b);

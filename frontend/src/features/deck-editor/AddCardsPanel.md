@@ -2,6 +2,9 @@
 
 Feature context for [`AddCardsPanel.tsx`](AddCardsPanel.tsx), the deck-editor drawer used to browse and add catalog cards to the current deck.
 
+Tiles with Skybound Prize Pack variants show a **Printings** button. Select a printing
+with **Apply**, then choose **Add selected printing** to add that exact card to the draft.
+
 ## UX Goals
 
 - Make it easier to build a deck without relying on memory of card text or character stats.

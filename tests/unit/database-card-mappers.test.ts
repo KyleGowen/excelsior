@@ -69,6 +69,7 @@ describe('mapAdvancedUniverseRow', () => {
       icon_defensive_shield: true,
       icon_remainder_of_game: true,
       icon_first_action_only: true,
+      is_foil: true,
     });
 
     expect(mapped.icon_offensive_swords).toBe(true);
@@ -77,5 +78,6 @@ describe('mapAdvancedUniverseRow', () => {
     expect(mapped.icon_remainder_of_battle).toBe(false);
     expect(mapped.icon_astral_plane).toBe(false);
     expect(mapped.icon_first_action_only).toBe(true);
+    expect(mapped.is_foil).toBe(true);
   });
 });

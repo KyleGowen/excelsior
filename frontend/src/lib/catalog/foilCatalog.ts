@@ -1,5 +1,6 @@
 import type { FoilMapEntry } from '../api/catalog';
 import type { CatalogCard } from '../api/types';
+import { isSkyboundPrizePackPrinting } from './catalogSetSort';
 
 export interface FoilCardMapLookup {
   baseToFoil: Map<string, string>;
@@ -26,15 +27,15 @@ export function buildFoilCardMapLookup(entries: FoilMapEntry[]): FoilCardMapLook
 /**
  * One row per logical card: hide foil duplicates when the mapped base row is in the
  * same catalog list **and the same set** (e.g. ERB base + ERB foil in one view).
- * Cross-set foil promos (TFCP foil → ERB base via foil_card_map) stay visible as
- * their own tile — e.g. TFCP 7 - Combat foil art alongside 7_combat_2.jpg.
+ * Cross-set foil promos and numbered Skybound Prize Pack printings stay visible
+ * in the checklist even when their base is present.
  */
 export function dedupeFoilCatalogCards(cards: CatalogCard[], foilToBase: Map<string, string>): CatalogCard[] {
   const baseById = new Map(
     cards.filter((c) => !isFoilCard(c)).map((c) => [c.id, c] as const),
   );
   return cards.filter((card) => {
-    if (!isFoilCard(card)) return true;
+    if (!isFoilCard(card) || isSkyboundPrizePackPrinting(card)) return true;
     const baseId = foilToBase.get(card.id);
     if (!baseId) return true;
     const base = baseById.get(baseId);

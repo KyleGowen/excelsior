@@ -125,6 +125,13 @@ reverse faces. The source filename's `F` marker is authoritative even when the w
 collector-number cell omits it; the complete source-derived character map has 53 foils, including
 alternate Angstrom Levy `#430F`. Collectors `#448` and `#450` have no foil source file.
 
+Skybound Prize Pack printings use the supplied `PP###.jpg` artwork under the matching
+`sky/<type>/` directory. PP254–PP268 live under `sky/characters/alternate/`. Their
+generated WebP thumbnails follow the same paths under `sky/thumb/` and publish
+through the standard CDN sync. PP226 uses the existing Skybound Walkers reverse
+image. The import migration records each foil's collector number, rarity, and base
+printing.
+
 ERB replacement art is audited in `scripts/erb/lrg-erb-manifest.json`. The LRG folder supplies
 534 usable card fronts: collectors `001`–`535` except `205`. Collector `205` (`Read the Bones`)
 therefore keeps its pre-existing image. Mission backs and obvious Drive copy duplicates are not

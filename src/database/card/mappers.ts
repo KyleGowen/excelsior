@@ -211,6 +211,7 @@ export function mapAdvancedUniverseRow(row: DbRow): AdvancedUniverse {
     icon_remainder_of_game: (row.icon_remainder_of_game as boolean) || false,
     icon_astral_plane: (row.icon_astral_plane as boolean) || false,
     icon_first_action_only: (row.icon_first_action_only as boolean) || false,
+    is_foil: (row.is_foil as boolean) || false,
   };
 }
 

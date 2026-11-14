@@ -9,6 +9,7 @@ import { app } from '../../src/test-server';
 import { DataSourceConfig } from '../../src/config/DataSourceConfig';
 import { integrationTestUtils } from '../setup-integration';
 import { expectOkCatalogList } from './utils/catalogListResponse';
+import { sortAllCatalogCards } from '../../frontend/src/lib/catalog/allCatalogSort';
 
 describe('All Tab Integration Tests', () => {
   let pool: Pool;
@@ -119,59 +120,21 @@ describe('All Tab Integration Tests', () => {
       }
     });
 
-    it('should return cards sorted by set then set_number when loaded', async () => {
-      // Get cards from multiple types
-      const [charactersRes, specialsRes, powerRes] = await Promise.all([
-        request(app).get('/api/v1/catalog/characters').set('Cookie', adminAuthCookie),
-        request(app).get('/api/v1/catalog/special-cards').set('Cookie', adminAuthCookie),
-        request(app).get('/api/v1/catalog/power-cards').set('Cookie', adminAuthCookie)
-      ]);
-
-      const allCards = [
-        ...charactersRes.body.data.map((c: any) => ({ ...c, cardType: 'character' })),
-        ...specialsRes.body.data.map((c: any) => ({ ...c, cardType: 'special' })),
-        ...powerRes.body.data.map((c: any) => ({ ...c, cardType: 'power' }))
-      ];
-
-      // Sort by set then set_number (as the frontend does)
-      const sorted = [...allCards].sort((a, b) => {
-        const setA = String(a.set || a.universe || 'ERB').toUpperCase().trim();
-        const setB = String(b.set || b.universe || 'ERB').toUpperCase().trim();
-        
-        if (setA !== setB) {
-          return setA.localeCompare(setB);
-        }
-        
-        const numAStr = String(a.set_number || '').trim();
-        const numBStr = String(b.set_number || '').trim();
-        
-        if (!numAStr && !numBStr) return 0;
-        if (!numAStr) return 1;
-        if (!numBStr) return -1;
-        
-        const numA = parseInt(numAStr, 10) || 0;
-        const numB = parseInt(numBStr, 10) || 0;
-        
-        return numA - numB;
-      });
-
-      // Verify sorting: cards from same set should be ordered by set_number
-      for (let i = 0; i < sorted.length - 1; i++) {
-        const current = sorted[i];
-        const next = sorted[i + 1];
-        
-        const currentSet = String(current.set || current.universe || 'ERB').toUpperCase();
-        const nextSet = String(next.set || next.universe || 'ERB').toUpperCase();
-        
-        if (currentSet === nextSet) {
-          const currentNumStr = String(current.set_number || '').trim();
-          const nextNumStr = String(next.set_number || '').trim();
-          // Match the sort rule: missing set_number sorts last
-          const currentNum = currentNumStr ? (parseInt(currentNumStr, 10) || Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER;
-          const nextNum = nextNumStr ? (parseInt(nextNumStr, 10) || Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER;
-          expect(currentNum).toBeLessThanOrEqual(nextNum);
-        }
-      }
+    it('appends Prize Pack collector numbers to the Skybound checklist', async () => {
+      const endpoints = ['characters', 'special-cards', 'power-cards', 'advanced-universe'];
+      const responses = await Promise.all(endpoints.map(type =>
+        request(app).get('/api/v1/catalog/' + type).set('Cookie', adminAuthCookie).expect(200)
+      ));
+      const sorted = sortAllCatalogCards(responses.flatMap(response => response.body.data));
+      const skybound = sorted.filter(card => card.set === 'SKY');
+      const firstPrizePack = skybound.findIndex(card => /^PP\d{3}$/.test(String(card.set_number)));
+      expect(firstPrizePack).toBeGreaterThan(0);
+      expect(skybound.slice(0, firstPrizePack).some(card => String(card.set_number).endsWith('F'))).toBe(true);
+      expect(skybound.slice(firstPrizePack).map(card => card.set_number)).toEqual(
+        Array.from({ length: 268 }, (_, index) => index + 1)
+          .filter(number => number !== 227)
+          .map(number => `PP${String(number).padStart(3, '0')}`)
+      );
     });
 
     it('should return cards with consistent data structure across all types', async () => {

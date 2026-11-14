@@ -33,6 +33,22 @@ function linkedCharacterMatches(linked: string, name: string): boolean {
 export function presentCatalog(cards: CatalogCard[], type: CatalogType, foilEntries: FoilMapEntry[], characters: CatalogCard[], catalogVersion = catalogPresentationVersion(cards, type, foilEntries, characters)): PresentedCatalogCard[] {
   const lookup = buildFoilCardMapLookup(foilEntries);
   const byId = new Map(cards.map(card => [card.id, card]));
+  const prizePackFoilsByBase = new Map<string, string[]>();
+  for (const { foilCardId, baseCardId } of foilEntries) {
+    const foil = byId.get(foilCardId);
+    if (foil?.set !== 'SKY' || !/^PP\d{3}$/.test(String(foil.set_number ?? ''))) continue;
+    const printings = prizePackFoilsByBase.get(baseCardId) ?? [];
+    printings.push(foilCardId);
+    prizePackFoilsByBase.set(baseCardId, printings);
+  }
+  // A Prize Pack printing can coexist with a standard foil. Preserve the
+  // standard foil in the existing singular field and include both in the picker.
+  for (const { foilCardId, baseCardId } of foilEntries) {
+    const prizePackFoils = prizePackFoilsByBase.get(baseCardId);
+    if (prizePackFoils && !prizePackFoils.includes(foilCardId)) {
+      lookup.baseToFoil.set(baseCardId, foilCardId);
+    }
+  }
   const keyFor = (card: CatalogCard) => {
     const base = isFoilCard(card) ? byId.get(lookup.foilToBase.get(card.id) ?? '') : undefined;
     return variantGroupKey(base ?? card, type);
@@ -65,9 +81,14 @@ export function presentCatalog(cards: CatalogCard[], type: CatalogType, foilEntr
     for (const row of group) {
       if (isFoilCard(row)) continue;
       selected.add(row.id);
-      const foilId = lookup.baseToFoil.get(row.id);
-      const foil = byId.get(foilId ?? '');
-      if (foil) { selected.add(foil.id); if (!candidates.has(foil.id)) candidates.set(foil.id, foil); }
+      const foilIds = prizePackFoilsByBase.get(row.id) ?? [];
+      const primaryFoilId = lookup.baseToFoil.get(row.id);
+      for (const foilId of primaryFoilId ? [primaryFoilId, ...foilIds] : foilIds) {
+        const foil = byId.get(foilId);
+        if (!foil) continue;
+        selected.add(foil.id);
+        if (!candidates.has(foil.id)) candidates.set(foil.id, foil);
+      }
     }
     for (const row of group) {
       if (!isFoilCard(row)) continue;

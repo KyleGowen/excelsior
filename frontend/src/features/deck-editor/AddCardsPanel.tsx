@@ -17,9 +17,13 @@ import {
   prepareAddCardsCatalogList,
   qtyInDeckForRepresentative,
 } from '../../lib/catalog/defaultCatalogCards';
-import { buildFoilCardMapLookup } from '../../lib/catalog/foilCatalog';
+import { buildFoilCardMapLookup, isFoilCard } from '../../lib/catalog/foilCatalog';
+import { collectPrintingsForCard } from '../../lib/catalog/cardPrintings';
+import { isSkyboundPrizePackPrinting } from '../../lib/catalog/catalogSetSort';
+import { buildSetNameLookup, resolveSetDisplayName } from '../../lib/catalog/setNames';
 import { useCandidateEvaluation } from '../../lib/decks/useCandidateEvaluation';
 import { useAllCatalogCards } from '../../lib/catalog/useAllCatalogCards';
+import { CardDetailPanel } from '../../components/CardDetailPanel';
 import { CardImage } from '../../components/CardImage';
 import { CardTile } from '../../components/CardTile';
 import { Pagination } from '../../components/Pagination';
@@ -284,6 +288,15 @@ export function AddCardsPanel({
  const fetchFoilCardMapForHost = hostApi?.fetchFoilCardMap ?? fetchFoilCardMap;
 
   const { isMobile } = useLayoutMode();
+  const [printingPicker, setPrintingPicker] = useState<{
+    representative: CatalogCard;
+    type: CatalogType;
+    selectedId: string;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!open) setPrintingPicker(null);
+  }, [open]);
   const addCardsRef = useRef<HTMLDivElement>(null);
   const typeTabsRef = useRef<HTMLDivElement>(null);
   const [tab, setTab] = useState<CatalogTabSelection>('all');
@@ -376,6 +389,22 @@ export function AddCardsPanel({
     })),
   });
 
+  const rawCardsByType = useMemo(() => (
+    isAllTab ? groupAllCatalogByType(allCatalogQuery.cards)
+      : activeType ? { [activeType]: catalogQuery.data ?? [] } : {}
+  ), [isAllTab, allCatalogQuery.cards, activeType, catalogQuery.data]);
+  const setNameLookup = useMemo(() => buildSetNameLookup(setsQuery.data ?? []), [setsQuery.data]);
+  const prizePackGroupKeys = useMemo(() => {
+    const keys = new Set<string>();
+    for (const group of Object.values(rawCardsByType)) {
+      for (const card of group) {
+        const key = card.presentation?.groupKey;
+        if (key && isSkyboundPrizePackPrinting(card)) keys.add(key);
+      }
+    }
+    return keys;
+  }, [rawCardsByType]);
+
   const { cardsByType, variantLookupByType } = useMemo(() => {
     const variantLookupByType = new Map<CatalogType, Map<string, string[]>>();
 
@@ -418,10 +447,9 @@ export function AddCardsPanel({
     }
 
     if (isAllTab) {
-      const rawByType = groupAllCatalogByType(allCatalogQuery.cards);
       const dedupedByType: Partial<Record<CatalogType, CatalogCard[]>> = {};
       for (const meta of CATALOG_TYPES) {
-        const raw = rawByType[meta.type] ?? [];
+        const raw = rawCardsByType[meta.type] ?? [];
         if (raw.length === 0) continue;
         const prepared = prepareAddCardsCatalogList(
           raw,
@@ -437,7 +465,7 @@ export function AddCardsPanel({
 
     if (activeType) {
       const prepared = prepareAddCardsCatalogList(
-        catalogQuery.data ?? [],
+        rawCardsByType[activeType] ?? [],
         activeType,
         foilLookup.foilToBase,
         setFilter || undefined,
@@ -454,8 +482,7 @@ export function AddCardsPanel({
     isAllTab,
     isStacksTab,
     activeType,
-    allCatalogQuery.cards,
-    catalogQuery.data,
+    rawCardsByType,
     stackCatalogQueries,
     foilLookup.foilToBase,
     setFilter,
@@ -620,6 +647,37 @@ export function AddCardsPanel({
     onAdd(card, catalogType);
   };
 
+  const renderPrintingsButton = (card: CatalogCard, type: CatalogType) => {
+    const groupKey = card.presentation?.groupKey;
+    if (!groupKey || !prizePackGroupKeys.has(groupKey)) return undefined;
+    return (
+      <button
+        type="button"
+        className="btn btn-secondary"
+        aria-label={`Printings for ${cardDisplayName(card)}`}
+        onClick={() => setPrintingPicker({ representative: card, type, selectedId: card.id })}
+      >
+        Printings
+      </button>
+    );
+  };
+
+  const pickerPrintings = printingPicker ? collectPrintingsForCard(
+    printingPicker.representative,
+    printingPicker.type,
+    rawCardsByType[printingPicker.type] ?? [],
+    foilLookup,
+    (set) => resolveSetDisplayName(set, setNameLookup) ?? String(set ?? ''),
+  ) : [];
+  const selectedPrinting = pickerPrintings.find((printing) => printing.id === printingPicker?.selectedId);
+  const addSelectedPrinting = () => {
+    if (!printingPicker || !selectedPrinting) return;
+    const { representative, type } = printingPicker;
+    if (qtyInDeck(representative, type) >= maxCopiesForCard(representative, type)) return;
+    onAdd(selectedPrinting, type);
+    setPrintingPicker(null);
+  };
+
   const showHoverCard = useCallback((card: CatalogCard, catalogType: CatalogType) => {
     setHoveredCard({ card, catalogType });
   }, []);
@@ -681,10 +739,11 @@ export function AddCardsPanel({
   const hasResults = totalItems > 0;
   const dynamicFilterCards = activeType ? cardsByType[activeType] ?? [] : [];
 
-  return (
+  const resultsPanel = (
     <SlideOutPanel
       open={open}
       onClose={onClose}
+      closeOnEscape={!printingPicker}
       title="Add Cards"
       ariaLabel="Add cards"
       width={575}
@@ -840,6 +899,7 @@ export function AddCardsPanel({
                         showFoilEffect={false}
                         onClick={() => handleAddCard(card, catalogType)}
                         overlay={renderQtyOverlay(card, catalogType)}
+                        footer={renderPrintingsButton(card, catalogType)}
                         onHoverStart={() => showHoverCard(card, catalogType)}
                         onHoverEnd={clearHoverCard}
                       />
@@ -862,6 +922,7 @@ export function AddCardsPanel({
                   showFoilEffect={false}
                   onClick={() => handleAddCard(card, catalogType)}
                   overlay={renderQtyOverlay(card, catalogType)}
+                  footer={renderPrintingsButton(card, catalogType)}
                   onHoverStart={() => showHoverCard(card, catalogType)}
                   onHoverEnd={clearHoverCard}
                 />
@@ -890,5 +951,40 @@ export function AddCardsPanel({
         </div>
       </div>
     </SlideOutPanel>
+  );
+
+  return (
+    <>
+      {resultsPanel}
+      {printingPicker && selectedPrinting && (
+        <CardDetailPanel
+          card={selectedPrinting}
+          type={printingPicker.type}
+          open={open}
+          onClose={() => setPrintingPicker(null)}
+          isFoil={isFoilCard(selectedPrinting)}
+          showFoilEffect={false}
+          setDisplayName={resolveSetDisplayName(selectedPrinting.set, setNameLookup) ?? String(selectedPrinting.set ?? '')}
+          printings={pickerPrintings.map((printing) => ({
+            card: printing,
+            setDisplayName: resolveSetDisplayName(printing.set, setNameLookup) ?? String(printing.set ?? ''),
+            setNumber: printing.set_number ?? null,
+            isCurrent: printing.id === selectedPrinting.id,
+          }))}
+          onApplyPrinting={(selectedId) => setPrintingPicker({ ...printingPicker, selectedId })}
+          actions={
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={qtyInDeck(printingPicker.representative, printingPicker.type)
+                >= maxCopiesForCard(printingPicker.representative, printingPicker.type)}
+              onClick={addSelectedPrinting}
+            >
+              Add selected printing
+            </button>
+          }
+        />
+      )}
+    </>
   );
 }

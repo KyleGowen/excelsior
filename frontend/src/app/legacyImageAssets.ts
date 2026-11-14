@@ -139,6 +139,9 @@ export function imagePathFromCard(card: Partial<CatalogCard> | null | undefined)
 export function reverseImagePathForImagePath(
   imagePath: string | null | undefined,
 ): string | null {
+  if (imagePath && /(^|\/)sky\/characters\/PP226\.jpg$/i.test(imagePath)) {
+    return imagePath.replace(/PP226\.jpg$/i, '226_walkers.png');
+  }
   if (!imagePath || !/(^|\/)sky\/characters\/(226|450)_walkers_herd\.png$/i.test(imagePath)) {
     return null;
   }

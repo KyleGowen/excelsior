@@ -153,3 +153,45 @@ export const TopDeckExportOpen: Story = {
  play: async ({canvas}) => { await userEvent.click(await canvas.findByRole("button", {name:"Export"})); await canvas.findByRole("dialog",{name:"Export deck TopDeck"}); await canvas.findByText(/Cards: 8\/56/); },
 };
 export const MobileTopDeckExportOpen: Story = {...TopDeckExportOpen, globals:{viewport:{value:"mobile"}}};
+
+const prizePackExample = {
+  id: 'storybook-prize-pack', name: 'Example Adventurer', set: 'SKY',
+  set_number: 'PP256', rarity: 'Ultra Rare', is_foil: true,
+};
+const originalExample = {
+  id: 'storybook-original-printing', name: prizePackExample.name, set: 'SKY',
+  set_number: '086', rarity: 'Common', is_foil: false,
+};
+const examplePrintings = [originalExample, prizePackExample].map((card, index) => ({
+  ...card,
+  presentation: {
+    schemaVersion: 1, catalogVersion: 'storybook-prize-pack', rulesVersion: 'catalog-presentation-compatibility-v1',
+    logicalCardId: 'example-adventurer', groupKey: 'Example Adventurer|SKY', printingId: card.id,
+    isFoil: card.is_foil, isAlternateArt: card.is_foil, normalizedSet: 'SKY', defaultRank: index,
+    addDefaultPrintingId: originalExample.id, basePrintingId: index ? originalExample.id : null,
+    foilPrintingId: index ? null : prizePackExample.id, missingFoilPrinting: null,
+    printingIds: [originalExample.id, prizePackExample.id], searchText: 'example adventurer',
+    searchAliases: [], characterNames: [],
+  },
+}));
+
+export const AddCardsPrizePackPrintings: Story = {
+  parameters: {
+    msw: { handlers: [
+      http.get('/api/v1/catalog/presentation/characters', () => HttpResponse.json({ data: examplePrintings })),
+      http.get('/api/v1/dbv/sets', () => HttpResponse.json({ data: [{ code: 'SKY', name: 'Skybound' }] })),
+      http.get('/api/v1/catalog/foil-card-map', () => HttpResponse.json({ data: [{
+        baseCardId: originalExample.id, foilCardId: prizePackExample.id, cardType: 'character',
+      }] })),
+      ...pageHandlers(),
+    ] },
+  },
+  play: async ({ canvas }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'Add Cards' }));
+    await userEvent.click(await canvas.findByRole('tab', { name: 'Characters' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'Printings for Example Adventurer' }));
+    await userEvent.click(await canvas.findByRole('button', { name: /^Apply$/ }));
+    await canvas.findByRole('button', { name: 'Add selected printing' });
+    await expect((await canvas.findAllByText('Ultra Rare', { exact: true }))[0]).toBeVisible();
+  },
+};

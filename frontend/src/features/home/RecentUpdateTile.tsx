@@ -11,7 +11,12 @@ interface RecentUpdateTileProps {
 }
 
 export function RecentUpdateTile({ item, isOpen, onToggle }: RecentUpdateTileProps) {
-  const { resolveThumbUrl } = useImageAssets();
+  const { assetUrl, resolveThumbUrl } = useImageAssets();
+  const imagePath = item.cardImageUrl;
+  const isPreparedThumbnail = imagePath?.startsWith('/src/resources/images/');
+  const thumbnailUrl = imagePath
+    ? (isPreparedThumbnail ? assetUrl(imagePath) : resolveThumbUrl(imagePath))
+    : null;
   const typeLabel = formatUpdateTypeLabel(item.type);
   const typeClass = item.type.replace(/_/g, '-');
   const isSkyboundLaunch = item.id === 'a1000001-0000-4000-8000-000000000007';
@@ -45,10 +50,10 @@ export function RecentUpdateTile({ item, isOpen, onToggle }: RecentUpdateTilePro
       onClick={onToggle}
     >
       <div className="home__news-thumb">
-        {item.cardImageUrl ? (
+        {thumbnailUrl ? (
           <img
-            className={thumbnailClassName}
-            src={resolveThumbUrl(item.cardImageUrl)}
+            className={isPreparedThumbnail ? 'home__news-thumb-image--prepared' : thumbnailClassName}
+            src={thumbnailUrl}
             alt=""
             loading="lazy"
             draggable={false}

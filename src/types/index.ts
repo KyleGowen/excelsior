@@ -201,6 +201,7 @@ export interface AdvancedUniverse {
   set?: string;
   set_number?: string | null;
   rarity?: CardRarity | null;
+  is_foil?: boolean;
 }
 
 export interface Teamwork {

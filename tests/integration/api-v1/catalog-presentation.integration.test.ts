@@ -2,10 +2,49 @@ import request from 'supertest';
 import { app } from '../../../src/index';
 import { DataSourceConfig } from '../../../src/config/DataSourceConfig';
 import { CATALOG_PRESENTATION_TYPES } from '../../../src/services/catalog-presentation/presentCatalog';
-import { presentCatalog as baseline } from '../../helpers/baselineCatalogPresentation';
+import { catalogPresentationVersion, presentCatalog as baseline, type PresentedCatalogCard } from '../../helpers/baselineCatalogPresentation';
 import { decodeCatalogPresentation } from '../../../frontend/src/lib/api/catalogPresentation';
 import { cardMatchesSearchQuery } from '../../../frontend/src/lib/catalog/catalogTypeMap';
 import { gzipSync } from 'zlib';
+import type { CatalogCard, CatalogType, FoilMapEntry } from '../../../src/services/catalog-presentation/types';
+
+function expectedPresentation(cards: CatalogCard[], type: CatalogType, foils: FoilMapEntry[], linked: CatalogCard[]) {
+  const prizePackIds = new Set(cards.filter(card => card.set === 'SKY'
+    && /^PP\d{3}$/.test(card.set_number ?? '')).map(card => card.id));
+  const prizePackLinks = foils.filter(link => prizePackIds.has(link.foilCardId));
+  if (!prizePackLinks.length) return baseline(cards, type, foils, linked);
+
+  // The singular foil stays compatible with the old API. Each mapped Prize
+  // Pack row is additionally listed for any member of the same printing group.
+  const orderedLinks = [...prizePackLinks, ...foils.filter(link => !prizePackIds.has(link.foilCardId))];
+  const rows = baseline(cards, type, orderedLinks, linked);
+  const byId = new Map(rows.map(row => [row.id, row]));
+  const catalogVersion = catalogPresentationVersion(cards, type, foils, linked);
+  const extraIdsByGroup = new Map<string, string[]>();
+  for (const { foilCardId, baseCardId } of prizePackLinks) {
+    const group = byId.get(baseCardId)?.presentation.groupKey;
+    if (!group) throw new Error('Prize Pack printing has no base group');
+    extraIdsByGroup.set(group, [...(extraIdsByGroup.get(group) ?? []), foilCardId]);
+  }
+  return rows.map(row => ({
+    ...row,
+    presentation: {
+      ...row.presentation,
+      catalogVersion,
+      printingIds: [...new Set([
+        ...row.presentation.printingIds,
+        ...(extraIdsByGroup.get(row.presentation.groupKey ?? '') ?? []),
+      ])],
+    },
+  }));
+}
+
+function withUnorderedPrintingIds(rows: PresentedCatalogCard[]) {
+  return rows.map(row => ({
+    ...row,
+    presentation: { ...row.presentation, printingIds: [...row.presentation.printingIds].sort() },
+  }));
+}
 
 describe('M4 catalog presentation through production composition', () => {
   it('finds an aspect by its linked location in full and compact catalog responses', async () => {
@@ -31,7 +70,9 @@ describe('M4 catalog presentation through production composition', () => {
       const full=await request(app).get('/api/v1/catalog/presentation/'+type).expect(200);
       const compact=await request(app).get('/api/v1/catalog/presentation/'+type+'?compact=1').expect(200);
       const linked=type==='special-cards'||type==='advanced-universe'?characters.body.data:[];
-      expect(full.body.data).toEqual(baseline(raw.body.data,type,foils.body.data,linked));
+      expect(withUnorderedPrintingIds(full.body.data)).toEqual(
+        withUnorderedPrintingIds(expectedPresentation(raw.body.data, type, foils.body.data, linked))
+      );
       expect(decodeCatalogPresentation(compact.body.data)).toEqual(full.body.data);
       expect(compact.headers.etag).not.toBe(full.headers.etag);
       if(type==='characters'||type==='special-cards') {

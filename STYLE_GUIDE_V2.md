@@ -243,7 +243,7 @@ account-sheet row (`.account-sheet__toggle`) with `justify-content: space-betwee
   and Universe value cards use OverPower type order then ascending value. Selecting a specific
   set keeps Characters in that same name → numeric collector order so default and alternate art
   stay adjacent; other tabs restore collector-number order. Database All and every Collection view
-  retain checklist order.
+  retain checklist order, with Skybound Prize Pack printings appended in PP number order.
 - Missing art shows a neutral "No image" placeholder frame (no broken-image icon).
 - **Deck tiles (`DeckTile`)** use a feature-character art zone at landscape card ratio
   (`aspect-ratio: 380 / 280`): characters (and the location card when set) cycle on hover after a
@@ -437,7 +437,7 @@ Top slide-out overlay ([`DrawHandPanel.css`](frontend/src/features/deck-editor/D
 | Duplicate group (`.draw-hand__card--duplicate`) | Restrained `--color-danger` border/ring/glow on every card in an over-limit group; mobile reduces each layer’s color intensity by roughly 20% to compensate for the larger cards; no duplicate styling is rendered outside the ADMIN gate |
 
 ### Deck Editor — Card detail Printings (owners)
-Shown in [`CardDetailPanel`](frontend/src/components/CardDetailPanel/CardDetailPanel.tsx) when a deck tile has **more than one** catalog printing. Section sits **above Details** (after Ability/stats).
+Shown in [`CardDetailPanel`](frontend/src/components/CardDetailPanel/CardDetailPanel.tsx) when a deck tile has **more than one** catalog printing. Section sits **above Details** (after Ability/stats). In Add Cards, tiles with Skybound Prize Pack printings use a secondary **Printings** button in the tile footer. It opens the same detail drawer. **Apply** previews the printing, including its collector number and rarity. **Add selected printing** adds that printing to the draft.
 
 | Element | Tokens / values |
 |---|---|
@@ -597,6 +597,7 @@ News/announcement tiles on `/home` (rail) and `/home/updates` (full list). Share
 | Thumbnail (`.home__news-thumb`) | `72×72px`, `--radius-md`, `object-position: center 22%` |
 | Skybound launch thumbnail (`.home__news-thumb-image--skybound-launch`) | Invincible #003 art centered near the upper action pose with a `1.78×` crop, keeping the printed yellow name rail, card frame, and rules text outside the thumbnail |
 | Skybound alternate-art reveal thumbnail (`.home__news-thumb-image--skybound-alt-art`) | Omni-Man #420 enlarged to `1.15×`, anchored at left center with matching `object-position` and `transform-origin` |
+| Skybound Prize Pack thumbnail | Dupli-Kate #PP261 artwork from the supplied crop, centered in the square thumbnail with no foil effect. Uses the **New Cards** badge |
 | Seattle Weekend thumbnail (`.home__news-thumb-image--seattle-weekend`) | Advanced Alien Arsenal #053 at `2.5017671188125×`, offset `25px` right and `35px` down to center the Flaxan action while keeping the printed card frame outside the compact crop |
 | TopDeck export thumbnail (`.home__news-thumb-image--topdeck-export`) | Battle Beast's Paltry Attempts #083 at `1.71×` (5% smaller), shifted up `5px`, anchored at `60% 8%` to emphasize Battle Beast and keep the yellow name rail outside the crop; announcement uses the default **Update** badge |
 | TopDeck profile thumbnail (`.home__news-thumb-image--topdeck-profile`) | Global Coordination Network #110 at `1.21×`, `object-position: right 22%`, `transform-origin: right 56%`; follows the monitor-and-foreground-figures reference crop with the yellow rail and rules outside the image; uses the **Feature** badge |

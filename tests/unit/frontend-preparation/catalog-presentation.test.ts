@@ -59,3 +59,31 @@ describe('M4 catalog presentation compatibility', () => {
     expect(present(changed, 'power-cards')[0].presentation!.logicalCardId).toBe(present(powers, 'power-cards')[0].presentation!.logicalCardId);
   });
 });
+
+describe('Skybound Prize Pack printings', () => {
+  it('keeps the ordinary foil and both Prize Pack printings in the same picker', () => {
+    const base = { id: 'base', name: 'Example', set: 'SKY', set_number: '086' };
+    const originalFoil = { ...base, id: 'foil', set_number: '086F', is_foil: true };
+    const prizePack = { ...originalFoil, id: 'pp086', set_number: 'PP086' };
+    const alternateArt = {
+      ...prizePack, id: 'pp256', set_number: 'PP256', rarity: 'Ultra Rare',
+      image_path: 'sky/characters/alternate/PP256.jpg',
+    };
+    const map = [originalFoil.id, prizePack.id, alternateArt.id].map(foilCardId => ({
+      foilCardId, baseCardId: base.id, cardType: 'character',
+    }));
+    const rows = presentCatalog([base, prizePack, originalFoil, alternateArt], 'characters', map, []) as CatalogCard[];
+    const foilMap = buildFoilCardMapLookup(map);
+    expect(rows[0].presentation?.foilPrintingId).toBe(originalFoil.id);
+    expect(rows[3].presentation?.isAlternateArt).toBe(true);
+    expect(rows[3].presentation?.logicalCardId).toBe(rows[0].presentation?.logicalCardId);
+    expect(ids(collectPrintingsForCard(rows[0], 'characters', rows, foilMap))).toEqual([
+      base.id, originalFoil.id, prizePack.id, alternateArt.id,
+    ]);
+    expect(rows.filter(card => cardMatchesSearchQuery(card, 'foil pp256')).map(card => card.id)).toEqual([alternateArt.id]);
+    expect(prepareAddCardsCatalogList(rows, 'characters', foilMap.foilToBase)).toEqual({
+      cards: [rows[0]],
+      variantIdsByRepresentative: new Map([[base.id, [base.id, prizePack.id, alternateArt.id]]]),
+    });
+  });
+});

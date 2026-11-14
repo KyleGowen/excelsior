@@ -11,7 +11,7 @@ import type {
   CollectionCardType,
   CatalogCard,
 } from '../api/types';
-import { compareSetThenSetNumber, parseSetNumber } from './catalogSetSort';
+import { comparePrizePackNumbers, compareSetThenSetNumber, isSkyboundPrizePackPrinting, parseSetNumber } from './catalogSetSort';
 import { isFoilCard } from './foilCatalog';
 import { compareAlphabetically } from '../sort/alphabetical';
 
@@ -346,6 +346,8 @@ export function compareDbvAllSetsCatalogCards(
   // Character alternates share a display name. Keep their default/earliest
   // printing first by using the numeric collector number before the stable ID.
   if (type === 'characters') {
+    const prizePackCmp = comparePrizePackNumbers(a, b);
+    if (prizePackCmp !== 0) return prizePackCmp;
     const numberA = parseSetNumber(a);
     const numberB = parseSetNumber(b);
     if (numberA !== null && numberB !== null && numberA !== numberB) return numberA - numberB;
@@ -510,5 +512,6 @@ export function cardMatchesSearchQuery(
   const { textQuery, requireFoil } = parseSearchTokens(q);
   if (requireFoil && !isFoilCard(card)) return false;
   if (!textQuery) return true;
+  if (card && isSkyboundPrizePackPrinting(card) && textQuery === String(card.set_number).toLowerCase()) return true;
   return cardSearchHaystack(card).includes(textQuery);
 }
