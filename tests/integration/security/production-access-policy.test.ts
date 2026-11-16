@@ -8,7 +8,7 @@ import { integrationTestUtils } from '../../setup-integration';
 const routes = enumerateExpressRoutes(app).filter(key => key.includes(' /api/v1/') && !key.startsWith('HEAD '));
 // These reads deliberately support public card browsing and shared deck links.
 const publicReads = new Set([
-  '/config/app', '/decks/:id', '/decks/:id/full', '/guest/decks/:id/share', '/community/decks', '/community/preconstructed-decks',
+  '/config/app', '/decks/featured', '/decks/:id', '/decks/:id/full', '/guest/decks/:id/share', '/community/decks', '/community/preconstructed-decks',
   '/users/:userId/public-decks', '/users/:userId/profile', '/recent-updates', '/dbv/sets', '/dbv/deck-backgrounds', '/supporter/status'
 ]);
 const publicMutations = new Set(['/auth/login', '/auth/refresh', '/auth/logout', '/service-auth/token', '/decks/import/prepare', '/decks/evaluate', '/decks/candidates/evaluate', '/decks/draw', '/decks/export', '/decks/summaries', '/collections/evaluate', '/supporter/webhook']);
