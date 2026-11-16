@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express';
-import { DATABASE_SERVICE_PREFIX, NATIVE_DATABASE_PREFIX, databaseCanonicalPath, isDatabaseRead } from '../../access/databaseOperations';
+import { DATABASE_SERVICE_PREFIX, FEATURED_DECKS_PATH, NATIVE_DATABASE_PREFIX, databaseCanonicalPath, isDatabaseRead } from '../../access/databaseOperations';
 import { NativeDatabaseAccess } from '../../access/nativeDatabaseAccess';
 import { readApplicationClientCredentials } from '../../access/applicationClientCredentials';
 import { ServiceAccessError, SERVICE_HEADER, type ServiceAccessService } from '../../access/serviceAccessService';
@@ -16,7 +16,10 @@ export function createDatabaseAccessMiddleware(service: ServiceAccessService, na
     if (!isNative && !isService) { next(); return; }
     const canonical = databaseCanonicalPath(path);
     const issuance = !isNative && req.method === 'POST' && canonical === '/api/v1/service-auth/token';
-    req.databaseCanonicalPath = isDatabaseRead(req.method, canonical) || issuance ? canonical : '/api/v1/database/unsupported';
+    const featuredRead = isService && req.method === 'GET' && canonical === FEATURED_DECKS_PATH;
+    const allowedRead = featuredRead || isDatabaseRead(req.method, canonical);
+    req.databaseCanonicalPath = allowedRead || issuance ? canonical : '/api/v1/database/unsupported';
+    if (featuredRead) req.applicationRouteKey = 'GET ' + FEATURED_DECKS_PATH;
     // Override downstream public catalog headers: neither credentials nor validation may be cached.
     const setHeader = res.setHeader.bind(res);
     res.setHeader = ((name: string, value: string | number | readonly string[]) => setHeader(name, name.toLowerCase() === 'cache-control' ? 'no-store' : value)) as typeof res.setHeader;
@@ -31,9 +34,11 @@ export function createDatabaseAccessMiddleware(service: ServiceAccessService, na
       } else if (!issuance) {
         const header = req.headers[SERVICE_HEADER];
         if (typeof header !== 'string' || !/^Bearer [a-zA-Z0-9_.-]{1,8192}$/.test(header)) throw new ServiceAccessError(401, 'SERVICE_TOKEN_INVALID', 'A valid service token is required');
-        req.serviceClient = service.authenticate(header.slice(7), 'catalog:read');
+        req.serviceClient = service.authenticate(header.slice(7), featuredRead ? 'decks:read' : 'catalog:read');
       }
-      if (!issuance && !isDatabaseRead(req.method, canonical)) throw new ServiceAccessError(403, 'SERVICE_SCOPE_DENIED', 'Database gateway permits catalog reads only');
+      if (!issuance && !allowedRead) {
+        throw new ServiceAccessError(403, 'SERVICE_SCOPE_DENIED', 'Unsupported service gateway operation');
+      }
       // Rewrite only a literal allowlisted operation; preserve query, original IP and player cookies.
       req.url = canonical + req.url.slice(path.length);
       next();

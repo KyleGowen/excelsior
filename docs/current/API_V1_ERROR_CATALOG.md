@@ -80,6 +80,7 @@ an unknown or GUEST account). Both use the standard v1 envelope.
 | `DECK_CARDS_REPLACE_ERROR`    | 500  | Replacing cards failed.                                                  | Retry.                                                                                |
 | `DECK_CARDS_REPLACE_FAILED`   | varies | Deck-card replace rejected with structured status.                     | Inspect status + message.                                                            |
 | `DECK_CARD_REMOVE_ERROR`      | 500  | Removing a card failed.                                                  | Retry.                                                                                |
+| `FEATURED_DECKS_UNAVAILABLE`  | 503  | Featured deck data could not be read or evaluated.                       | Retry.                                                                                |
 | `DECK_FETCH_ERROR`            | 500  | Fetching a deck failed.                                                  | Retry.                                                                                |
 | `DECK_NOT_FOUND`              | 404  | Deck id does not exist or is not visible to you.                         | Verify ID or ownership.                                                              |
 | `DECK_ACCESS_DENIED`          | 403  | You do not own this deck.                                                | Use your own deck.                                                                   |

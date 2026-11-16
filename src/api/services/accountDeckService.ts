@@ -1,4 +1,5 @@
 import type {AccountDeckLibraryDto} from '../dto/v1/AccountDeckLibraryDto';
+import type { FeaturedDeckV1Dto } from '../dto/v1/FeaturedDeckV1Dto';
 import type {AccountDeckDeleteInput} from '../http/models/decks/AccountDeckDeleteRequestBody';
 import type {AccountDeckMetadataInput} from '../http/models/decks/AccountDeckMetadataRequestBody';
 import type { ImportDeckRequest } from '../http/models/decks/ImportDeckRequestBody';
@@ -16,6 +17,7 @@ export interface AccountDeckView {
 }
 export interface AccountDeckPersistence {
   list(userId: string): Promise<AccountDeckView[]>;
+  listFeatured(userId: string): Promise<AccountDeckView[]>;
   action(userId:string, input:AccountDeckDeleteInput | AccountDeckMetadataInput, kind: 'delete' | 'metadata'):Promise<unknown>;
   load(id: string, viewerId: string): Promise<AccountDeckView | null>;
   save(userId: string, input: AccountDeckSnapshotInput, metrics: { valid: boolean; cardCount: number; threat: number }): Promise<AccountDeckView>;
@@ -24,6 +26,19 @@ export interface AccountDeckPersistence {
 export class AccountDeckService {
   constructor(private readonly repository: AccountDeckPersistence, private readonly evaluator: Pick<DeckDraftEvaluationService, 'evaluate' | 'attach' | 'prepareImport' | 'library'>) {}
   async list(userId: string):Promise<AccountDeckLibraryDto[]> { return this.evaluator.library(await this.repository.list(userId)); }
+
+  async listFeatured(userId: string): Promise<FeaturedDeckV1Dto[]> {
+    const decks = await this.repository.listFeatured(userId);
+    if (decks.length === 0) return [];
+    const rows = await this.evaluator.library(decks.map(deck => ({
+      ...deck,
+      deckCards: deck.cards.map(({ type, cardId, quantity, exclude_from_draw }) => ({
+        type, cardId, quantity, exclude_from_draw: exclude_from_draw === true,
+      })),
+    })));
+    // The saved validity flag can include Limited or predate a change in card rules.
+    return rows.filter(row => row.evaluation?.legality.rawValid === true);
+  }
   action(userId:string, input:AccountDeckDeleteInput | AccountDeckMetadataInput, kind:'delete'|'metadata') { return this.repository.action(userId,input,kind); }
   async import(userId:string, input:ImportDeckRequest & {operationId:string}) {
     const prepared = await this.evaluator.prepareImport(input.exportData, input.name);

@@ -291,7 +291,13 @@ if (process.env.NODE_ENV !== 'test') {
 // Authentication middleware
 const authenticateUser = authService.createAuthMiddleware();
 const optionalAuthenticate = authService.createOptionalAuthMiddleware();
-registerAccountDeckRoutes(app, new AccountDeckService(new PostgreSQLAccountDeckRepository(dataSource.getPool(), async () => { (deckRepository as { clearCache?: () => void }).clearCache?.(); }), deckDraftEvaluationService), authenticateUser);
+const accountDeckService = new AccountDeckService(
+  new PostgreSQLAccountDeckRepository(dataSource.getPool(), async () => {
+    (deckRepository as { clearCache?: () => void }).clearCache?.();
+  }),
+  deckDraftEvaluationService,
+);
+registerAccountDeckRoutes(app, accountDeckService, authenticateUser);
 
 registerRoutes(app, {
   authService,
@@ -331,6 +337,7 @@ registerApiV1Routes(app, {
   optionalAuthenticate,
   deckBackgroundService,
   deckListService,
+  featuredDeckService: accountDeckService,
   deckStatsService,
   deckWriteService,
   deckDraftEvaluationService,

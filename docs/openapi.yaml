@@ -575,6 +575,56 @@ components:
           type: string
           enum: [DRAFT_EVALUATION_UNAVAILABLE]
           description: Readable deck retained, with unchecked stats; no fresh legality claim.
+    FeaturedDeckList:
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          properties:
+            data:
+              type: array
+              maxItems: 48
+              items:
+                type: object
+                description: Account deck-list row with a complete card list for opening a copy.
+                required: [metadata, cards, deckCards, evaluation, grid, missionSetName, updatedAt]
+                properties:
+                  metadata:
+                    type: object
+                    required: [id, name, userId, isOwner, is_private, cardCount, is_limited, reserve_character]
+                    properties:
+                      id: { type: string, format: uuid }
+                      name: { type: string }
+                      userId: { type: string, format: uuid }
+                      isOwner: { type: boolean, enum: [false] }
+                      is_private: { type: boolean, enum: [false] }
+                      cardCount: { type: integer, minimum: 0 }
+                      is_limited: { type: boolean }
+                      reserve_character: { type: string, format: uuid, nullable: true }
+                  cards:
+                    type: array
+                    description: Art-only card rows for the list tile.
+                    items: { type: object }
+                  deckCards:
+                    type: array
+                    items:
+                      type: object
+                      required: [type, cardId, quantity, exclude_from_draw]
+                      properties:
+                        type: { type: string }
+                        cardId: { type: string, format: uuid }
+                        quantity: { type: integer, minimum: 1 }
+                        exclude_from_draw: { type: boolean }
+                  evaluation:
+                    type: object
+                    properties:
+                      legality:
+                        type: object
+                        properties:
+                          valid: { type: boolean, enum: [true] }
+                          rawValid: { type: boolean, enum: [true] }
+                  grid: { type: object, nullable: true }
+                  missionSetName: { type: string, nullable: true }
+                  updatedAt: { type: string, format: date-time }
     DeckCandidatesEvaluation:
       type: object
       required: [schemaVersion, revision, inputKey, versions, candidates, missionLimitReached]
@@ -1612,6 +1662,23 @@ paths:
         '403': { description: SERVICE_SCOPE_DENIED }
         '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
         '503': { description: DATABASE_SERVICE_UNAVAILABLE, SERVICE_ACCESS_UNAVAILABLE or SERVICE_TRANSPORT_REQUIRED }
+  /api/service/v1/decks/featured:
+    get:
+      tags: [Decks]
+      summary: Featured decks for the Builder service.
+      description: Requires decks:read on the confidential service token. No player session required.
+      security: [{ serviceAuthorization: [] }]
+      responses:
+        '200':
+          description: Featured deck list. Empty when unconfigured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeaturedDeckList'
+        '401': { description: SERVICE_TOKEN_INVALID }
+        '403': { description: SERVICE_SCOPE_DENIED }
+        '429': { description: SERVICE_CLIENT_RATE_LIMITED or RATE_LIMITED }
+        '503': { description: FEATURED_DECKS_UNAVAILABLE or gateway unavailable }
   /api/service/v1/config/app:
     get:
       summary: Confidential service database read
@@ -2508,6 +2575,21 @@ paths:
                           $ref: '#/components/schemas/PreconstructedDeckGroup'
         '500':
           description: PRECONSTRUCTED_DECKS_ERROR.
+  /api/v1/decks/featured:
+    get:
+      tags: [Decks]
+      summary: List the configured account's public, legal Featured decks, newest first.
+      security: [{}, { serviceAuthorization: [] }]
+      responses:
+        '200':
+          description: Featured deck list. Empty when unconfigured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeaturedDeckList'
+        '401': { description: SERVICE_TOKEN_INVALID if an invalid service token is supplied }
+        '403': { description: "SERVICE_SCOPE_DENIED if a supplied service token lacks decks:read" }
+        '503': { description: FEATURED_DECKS_UNAVAILABLE }
   /api/v1/decks/stats:
     get:
       tags: [Decks]
@@ -2891,6 +2973,11 @@ paths:
                 type: object
                 properties:
                   cdnBase: { type: string, description: Base URL for CDN-served static assets. }
+                  communityDecksUserId: { type: string, format: uuid }
+                  featuredDecksUserId:
+                    type: string
+                    format: uuid
+                    description: Configured Featured account UUID. Omitted when unconfigured.
   /api/v1/admin/users:
     get:
       tags: [Admin]

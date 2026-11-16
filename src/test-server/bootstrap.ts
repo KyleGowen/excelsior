@@ -26,6 +26,8 @@ import { CatalogService } from '../api/services/catalogService';
 import { DbvSupportService } from '../api/services/dbvSupportService';
 import { RecentUpdatesService } from '../api/services/recentUpdatesService';
 import { DeckListService } from '../api/services/deckListService';
+import { AccountDeckService } from '../api/services/accountDeckService';
+import { PostgreSQLAccountDeckRepository } from '../database/PostgreSQLAccountDeckRepository';
 import { DeckCardNames } from '../api/services/deckCardNames';
 import { DeckStatsService } from '../api/services/deckStatsService';
 import { DeckWriteService } from '../api/services/deckWriteService';
@@ -249,6 +251,10 @@ registerApiV1Routes(app, {
   optionalAuthenticate: optionalAuthNeverReject,
   deckBackgroundService,
   deckListService,
+  featuredDeckService: new AccountDeckService(
+    new PostgreSQLAccountDeckRepository(dataSource.getPool(), async () => {}),
+    deckDraftEvaluationService,
+  ),
   deckStatsService,
   deckWriteService,
   deckDraftEvaluationService,

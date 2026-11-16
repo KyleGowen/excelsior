@@ -24,6 +24,8 @@ import { registerDeckEvaluationV1HttpRoutes } from './deck-evaluation.http';
 import type { DeckDraftEvaluationService } from '../services/deckDraftEvaluationService';
 import { registerDecksV1HttpRoutes } from './decks.http';
 import { registerCommunityV1HttpRoutes } from './community.http';
+import { registerFeaturedDecksV1HttpRoutes } from './featured-decks.http';
+import type { AccountDeckService } from '../services/accountDeckService';
 import { registerCollectionsV1HttpRoutes } from './collections.http';
 import { registerGuestDecksV1HttpRoutes } from './guest-decks.http';
 import { registerAdminV1HttpRoutes } from './admin.http';
@@ -77,6 +79,7 @@ export interface RegisterApiV1Deps {
   optionalAuthenticate: RequestHandler;
   deckBackgroundService: DeckBackgroundListReader;
   deckListService: DeckListService;
+  featuredDeckService: Pick<AccountDeckService, 'listFeatured'>;
   deckStatsService: DeckStatsService;
   deckWriteService: DeckWriteService;
   deckDraftEvaluationService?: DeckDraftEvaluationService;
@@ -194,6 +197,7 @@ export function createApiV1Router(deps: RegisterApiV1Deps): IRouter {
 
   if (deps.deckImportService) registerDeckImportV1HttpRoutes(router,deps.deckImportService,ownedAuth);
   if (deps.deckDraftEvaluationService) registerDeckPreviewV1HttpRoutes(router, deps.deckDraftEvaluationService, ownedAuth);
+  registerFeaturedDecksV1HttpRoutes(router, deps.featuredDeckService);
   registerDecksV1HttpRoutes(router, {
     deckListService: deps.deckListService,
     deckStatsService: deps.deckStatsService,

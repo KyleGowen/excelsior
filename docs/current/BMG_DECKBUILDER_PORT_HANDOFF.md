@@ -37,3 +37,12 @@ resources/{brand,mocks,assets} have concise READMEs and separate AGENTS.md.
 5. To stop builder access, disable both builder flags and native edge behavior. Keep catalog access if DBUI remains active. If using strict production preparation with builder disabled, restore the accepted two-client catalog-only registry. Revoke the BMG builder identity if retiring access. Reload native UI configuration after rollback.
 
 Real issuance, private delivery, deployment and activation await Kyle’s explicit authorization.
+
+## Featured decks activation
+
+Set the optional production parameter `app/featured_decks_user_id` under
+the existing Excelsior parameter prefix to the verified UUID of the intended
+curated account. Deployment preparation passes it as `FEATURED_DECKS_USER_ID`.
+An unset value keeps Featured decks hidden and the public list empty. Verify
+that the Builder loads the guest list and opens a local copy of a public, legal
+deck through its existing service identity.
