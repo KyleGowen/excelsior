@@ -18,12 +18,22 @@ interface AccountDeckRow {
 export class PostgreSQLAccountDeckRepository implements AccountDeckPersistence {
   constructor(private readonly pool: Pool, private readonly invalidate: () => Promise<void>) {}
   async list(userId: string) {
+    return this.listForUser(userId, false);
+  }
+  async listFeatured(userId: string) {
+    return this.listForUser(userId, true);
+  }
+  private async listForUser(userId: string, featured: boolean) {
     const result = await this.pool.query(`SELECT d.*, to_char(d.updated_at, 'YYYY-MM-DD"T"HH24:MI:SS.US') || 'Z' AS revision_token,
       COALESCE((SELECT jsonb_agg(jsonb_build_object('id',c.id,'type',c.card_type,'cardId',c.card_id,'quantity',c.quantity,'exclude_from_draw',c.exclude_from_draw,'displayOrder',c.display_order) ORDER BY c.display_order NULLS LAST,c.id) FROM deck_cards c WHERE c.deck_id=d.id),'[]'::jsonb) AS cards
-      FROM decks d WHERE d.user_id=$1 ORDER BY lower(d.name),d.id`, [userId]);
-    return result.rows.map(row => this.view(row,row.cards,userId));
+      FROM decks d
+      WHERE d.user_id = $1 AND (NOT $2::boolean OR (d.is_private = false AND d.is_valid = true))
+      ORDER BY CASE WHEN $2 THEN d.updated_at END DESC,
+        CASE WHEN NOT $2 THEN lower(d.name) END, d.id
+      LIMIT $3`, [userId, featured, featured ? 48 : null]);
+    return result.rows.map(row => this.view(row, row.cards, featured ? undefined : userId));
   }
-  private view(row:AccountDeckRow, cards:AccountDeckView['cards'], viewerId:string):AccountDeckView {
+  private view(row:AccountDeckRow, cards:AccountDeckView['cards'], viewerId?:string):AccountDeckView {
     return {metadata:{id:row.id,name:row.name,userId:row.user_id,isOwner:row.user_id===viewerId,cardCount:row.card_count,is_limited:row.is_limited,reserve_character:row.reserve_character,updatedAt:row.revision_token,lastModified:row.revision_token,created:row.created_at,description:row.description ?? '',is_private:row.is_private,threat:row.threat,is_valid:row.is_valid},cards,updatedAt:row.revision_token};
   }
   private async snapshot(client: PoolClient, id: string, viewerId: string): Promise<AccountDeckView | null> {

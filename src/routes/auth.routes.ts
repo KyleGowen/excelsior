@@ -2,6 +2,7 @@ import express from 'express';
 import type { AuthRoutesDeps } from './types';
 import { debugAuth, requestAuthContext } from '../services/authDebug';
 import { COMMUNITY_DECKS_USER_ID } from '../constants/communityDecksUser';
+import { getFeaturedDecksUserId } from '../constants/featuredDecksUser';
 import { nativeDatabaseEnabled } from '../api/http/middleware/databaseAccess';
 import { nativeDeckbuilderEnabled } from '../api/http/middleware/deckbuilderAccess';
 import { TOURNAMENT_DECKS_USER_ID } from '../constants/tournamentDecksUser';
@@ -38,6 +39,7 @@ export function registerAuthRoutes(app: express.Application, deps: AuthRoutesDep
     res.json({
       cdnBase,
       communityDecksUserId: COMMUNITY_DECKS_USER_ID,
+      featuredDecksUserId: getFeaturedDecksUserId(),
       tournamentDecksUserId: TOURNAMENT_DECKS_USER_ID,
       databaseServiceAdapter: nativeDatabaseEnabled(),
       deckbuilderServiceAdapter: nativeDeckbuilderEnabled(),

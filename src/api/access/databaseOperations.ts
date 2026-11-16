@@ -2,6 +2,7 @@ import { CATALOG_PRESENTATION_TYPES } from '../../services/catalog-presentation/
 
 export const DATABASE_SERVICE_PREFIX = '/api/service/v1';
 export const NATIVE_DATABASE_PREFIX = '/api/apps/excelsior';
+export const FEATURED_DECKS_PATH = '/api/v1/decks/featured';
 const reads = new Set([
   ...CATALOG_PRESENTATION_TYPES.map(type => '/api/v1/catalog/presentation/' + type),
   '/api/v1/catalog/foil-card-map', '/api/v1/dbv/sets', '/api/v1/config/app',

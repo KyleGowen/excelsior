@@ -49,6 +49,15 @@ describe('production database service preparation with isolated fake providers',
     expect(readFileSync(join(directory, 'calls.log'), 'utf8')).not.toContain('app/database_service_config');
     expect(output).not.toContain('fictional-password'); expect(statSync(join(appDirectory, '.env')).mode & 0o777).toBe(0o600);
   });
+  it('loads an optional Featured account UUID and rejects malformed values', () => {
+    const userId = 'a2d00000-0000-4000-8000-000000000001';
+    put('app/featured_decks_user_id', 'malformed');
+    expect(run).toThrow();
+    expect(existsSync(join(appDirectory, '.env'))).toBe(false);
+    put('app/featured_decks_user_id', userId);
+    run();
+    expect(readFileSync(join(appDirectory, '.env'), 'utf8')).toContain('FEATURED_DECKS_USER_ID=' + userId);
+  });
   it('loads private production configuration and verifies real native identity before migration', () => {
     put('app/database_service_enabled', '1'); const output = run();
     expect(readFileSync(join(appDirectory, '.env'), 'utf8')).toContain('ENABLE_NATIVE_DATABASE_SERVICE=1');

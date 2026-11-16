@@ -5,8 +5,8 @@ BMG uses POST /api/service/v1/service-auth/token and the X-Excelsior-Service-Aut
 Bearer header on GET /api/service/v1/catalog/presentation/{type}, /catalog/foil-card-map,
 /dbv/sets and /config/app. The native Database uses /api/apps/excelsior followed by
 the canonical /api/v1 path; its identity is verified inside the server, preserving
-player cookies/IP and existing UI. Neither gateway permits account, saved-view,
-deck or collection operations. Presentation, ETag, since_version and image paths
+player cookies/IP and existing UI. Account, saved-view, arbitrary deck and
+collection operations are outside these gateways. Presentation, ETag, since_version and image paths
 are unchanged; config/app retains its existing bare JSON shape plus the public
 databaseServiceAdapter boolean. All gateway responses are no-store, including
 304 and errors; production service transport requires origin HTTPS. See
@@ -18,7 +18,9 @@ reads keep the gateway above; POST `/api/service/deckbuilder/v1/decks/evaluate`,
 and delegate to the existing stateless handlers. Bodies are bounded to 256 KiB;
 no account, guest-deck, saved-deck, favorite or admin operation is exposed. The
 service gateway strips player cookies/authorization and never creates a player.
-All outcomes are no-store, and production requires HTTPS.
+All outcomes are no-store, and production requires HTTPS. Featured decks uses
+`GET /api/service/v1/decks/featured` with `decks:read` through the BMG read
+gateway. This permits only the fixed curated list and requires no player session.
 
 Opt-in native builder requests use `/api/apps/excelsior-deckbuilder` followed by
 the canonical `/api/v1` path. Server-managed excelsior-web identity preserves
@@ -54,6 +56,7 @@ Versioned JSON API for Excelsior. **Legacy** routes remain documented in [API_DO
 | `GET /api/v1/dbv/*` | ✓ (optional) | ✓ (optional) | Same as catalog |
 | `GET /api/v1/recent-updates` | ✓ (optional) | ✓ (optional) | Same as catalog |
 | `GET /api/v1/config/app` | — | — | Open — no auth required |
+| `GET /api/v1/decks/featured` | — | — | Public read. Service tokens require `decks:read`. |
 | `GET /api/v1/decks/:id` (+ `/full`) | ✓ (optional) | ✓ (optional) | Any persistent deck readable by direct URL |
 | `GET /api/v1/decks` (list), `/stats`, `/community`, `/tournament` | ✓ | ✓ | Auth required |
 | `POST/PUT/DELETE /api/v1/decks*` | ✓ | ✓ | Owner only; GUEST→403 |
@@ -828,6 +831,22 @@ Hand-maintained news cards for the Home screen (v2 SPA). Rows live in the `recen
 **Response 500:** v1 envelope — `errors` with code `**COMMUNITY_DECKS_ERROR**`.
 
 **Note:** registered before `GET /api/v1/decks/:id` so the literal `community` segment is not parsed as a deck id.
+
+### GET /api/v1/decks/featured
+
+Public read for the curated account configured by `FEATURED_DECKS_USER_ID`.
+Returns the owner's public decks with saved `is_valid = true` and current
+`evaluation.legality.rawValid = true`, newest by `updated_at` first, up to 48.
+The v1 envelope's `data` is an array of account deck-list rows with
+`metadata.isOwner = false`, art-only `cards`, and a `deckCards` array
+of the full `{ type, cardId, quantity, exclude_from_draw }` entries.
+An unconfigured account returns `data: []`. Responses use
+`Cache-Control: no-store` so visibility changes apply to the next read.
+
+Service-token calls require `decks:read`. The BMG Builder calls
+`GET /api/service/v1/decks/featured` with its existing server credential.
+A read failure returns `503 FEATURED_DECKS_UNAVAILABLE`.
+
 
 ### `GET /api/v1/decks/tournament`
 
@@ -1636,7 +1655,7 @@ These endpoints are **intentionally not** under `**/api/v1`**:
 | `GET /health/ready` | Readiness for deploy gates — live payload + `SELECT 1` DB ping. |
 | `GET /health/live` | Lightweight liveness probe (no DB). Returns `{ "status": "OK" }`. |
 | `GET /health/deep` | Same as `GET /health` — alias for deep health check. |
-| `GET /api/v1/config/app` | JSON: `{ "cdnBase": "<string>", "communityDecksUserId": "<uuid>", "tournamentDecksUserId": "<uuid>" }`. No auth required. v2 SPA loads this at boot. `communityDecksUserId` backs the Home "Community Decks" pool; `tournamentDecksUserId` backs the "Tournament Winning Decks" pool. |
+| `GET /api/v1/config/app` | Public bare JSON with `cdnBase`, `communityDecksUserId`, `tournamentDecksUserId`, and the application adapter flags. When configured, `featuredDecksUserId` contains the Featured account's UUID. |
 | **Static assets** | `src/resources/` (card images, UI assets) and `frontend/dist/assets/*` when built — see [API_DOCUMENTATION.md](API_DOCUMENTATION.md). |
 | **HTML shell routes** | `/`, `/home`, `/login`, `/users/:userId/decks`, `/users/:userId/collection`, `/data` — serve `frontend/dist/index.html`; see [API_DOCUMENTATION.md](API_DOCUMENTATION.md). |
 

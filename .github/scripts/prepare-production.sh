@@ -40,6 +40,14 @@ DB_USER="$(get_parameter database/username true)"
 DB_PASSWORD="$(get_parameter database/password true)"
 CDN_BASE_URL="$(get_parameter app/cdn_base_url)"
 JWT_SECRET="$(get_parameter app/jwt_secret true)"
+FEATURED_DECKS_USER_ID="$(get_optional_parameter app/featured_decks_user_id)"
+case "$FEATURED_DECKS_USER_ID" in
+  ''|None) FEATURED_DECKS_USER_ID='' ;;
+  *) [[ "$FEATURED_DECKS_USER_ID" =~ ^[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$ ]] || {
+    echo "Invalid Featured decks account ID." >&2
+    exit 1
+  } ;;
+esac
 
 for required_value in \
   "$DB_HOST" "$DB_PORT" "$DB_NAME" "$DB_USER" "$DB_PASSWORD" \
@@ -143,6 +151,9 @@ trap 'rm -f "$TEMP_ENV_FILE"' EXIT
   printf 'FLYWAY_PASSWORD=%s\n' "$DB_PASSWORD"
   printf 'CDN_BASE_URL=%s\n' "$CDN_BASE_URL"
   printf 'JWT_SECRET=%s\n' "$JWT_SECRET"
+  if [[ -n "$FEATURED_DECKS_USER_ID" ]]; then
+    printf 'FEATURED_DECKS_USER_ID=%s\n' "$FEATURED_DECKS_USER_ID"
+  fi
   if [[ "$DATABASE_SERVICE_ENABLED" == 1 ]]; then
     printf 'ENABLE_SERVICE_ACCESS=1\nENABLE_DATABASE_SERVICE_GATEWAY=1\nENABLE_NATIVE_DATABASE_SERVICE=1\n'
     if [[ "$DECKBUILDER_SERVICE_ENABLED" == 1 ]]; then
