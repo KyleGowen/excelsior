@@ -129,6 +129,16 @@ describe('tfacp promo power progressive paths', () => {
   });
 });
 
+describe('UI images used as thumbnails', () => {
+  it.each([
+    '/src/resources/images/home/artist-search-the-saviors.png',
+    'src/resources/images/home/skybound-prize-pack-dupli-kate-art.png',
+  ])('uses the original asset path for %s', (asset) => {
+    expect(resolveThumbUrl(asset)).toBe(resolveImageUrl(asset));
+    expect(canProgressiveLoad(asset)).toBe(false);
+  });
+});
+
 describe('canProgressiveLoad', () => {
   it('returns true when thumb and full asset paths differ', () => {
     expect(canProgressiveLoad('characters/angry_mob.webp')).toBe(true);

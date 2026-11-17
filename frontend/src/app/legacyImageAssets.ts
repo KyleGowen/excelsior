@@ -113,6 +113,7 @@ function applyCdn(assetPath: string): string {
 /** Insert `/thumb/` after the type folder and switch to `.webp`. */
 function thumbify(raw: string): string {
   if (!raw || isAbsolute(raw)) return raw;
+  if (raw.replace(/^\/+/, '').startsWith('src/resources/images/')) return raw;
   if (raw.includes('/thumb/')) return raw;
 
   const idx = raw.indexOf(ASSET_MARKER);
