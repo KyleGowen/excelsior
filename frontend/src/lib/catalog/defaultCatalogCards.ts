@@ -1,4 +1,5 @@
 import type { CatalogCard, CatalogType } from '../api/types';
+import { cardMatchesArtist } from './catalogTypeMap';
 import { dedupeFoilCatalogCards, type FoilCardMapLookup } from './foilCatalog';
 
 export interface DefaultCatalogCardsResult {
@@ -19,12 +20,13 @@ export function resolveDefaultCardForDeckAdd(card:CatalogCard,_catalogType:Catal
 }
 
 /**
- * One row per logical card: keep the default (non-alternate) representative per variant group.
+ * One row per logical card, preferring printings by the searched artist when applicable.
  */
 export function dedupeToDefaultCatalogCards(
   cards: CatalogCard[],
   catalogType: CatalogType,
   preferredSet?: string,
+  artistQuery?: string,
 ): DefaultCatalogCardsResult {
   const groups = new Map<string, CatalogCard[]>();
 
@@ -43,7 +45,11 @@ export function dedupeToDefaultCatalogCards(
   const variantIdsByRepresentative = new Map<string, string[]>();
 
   for (const group of groups.values()) {
-    const representative = pickDefaultRepresentative(group, catalogType, preferredSet);
+    const artistMatches = artistQuery
+      ? group.filter((card) => (!preferredSet || card.set === preferredSet) && cardMatchesArtist(card, artistQuery))
+      : [];
+    const candidates = artistMatches.length > 0 ? artistMatches : group;
+    const representative = pickDefaultRepresentative(candidates, catalogType, preferredSet);
     const variantIds = group.map((c) => c.id);
     result.push(representative);
     variantIdsByRepresentative.set(representative.id, variantIds);
@@ -60,9 +66,10 @@ export function prepareAddCardsCatalogList(
   catalogType: CatalogType,
   foilToBase: Map<string, string>,
   preferredSet?: string,
+  artistQuery?: string,
 ): DefaultCatalogCardsResult {
   const foilDeduped = dedupeFoilCatalogCards(cards, foilToBase);
-  return dedupeToDefaultCatalogCards(foilDeduped, catalogType, preferredSet);
+  return dedupeToDefaultCatalogCards(foilDeduped, catalogType, preferredSet, artistQuery);
 }
 
 /** Sum deck quantities for any variant id in the representative's group. */

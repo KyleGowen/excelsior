@@ -1,5 +1,6 @@
 import type { CatalogCard, CatalogType } from '../../lib/api/types';
 import {
+  cardMatchesArtist,
   cardMatchesSearchQuery,
   compareCatalogCards,
   CATALOG_TYPES,
@@ -155,24 +156,19 @@ export function filterCharacterStackForDisplay(
 export function filterCharacterStacksWithOptions(
   stacks: CharacterStack[],
   options: AddCardsFilterOptions,
-  opts?: { characterNameSearchOnly?: boolean },
 ): CharacterStack[] {
   const q = options.searchQuery.trim();
-  let working = stacks;
-
-  if (q && opts?.characterNameSearchOnly) {
-    working = stacks.filter((stack) =>
-      cardMatchesSearchQuery({ name: stack.characterName }, q),
-    );
-  }
-
-  const cardOptions =
-    q && opts?.characterNameSearchOnly ? { ...options, searchQuery: '' } : options;
+  const cardOptions = { ...options, searchQuery: '' };
 
   const result: CharacterStack[] = [];
-  for (const stack of working) {
+  for (const stack of stacks) {
     const filtered = filterCharacterStackForDisplay(stack, cardOptions);
-    if (filtered) result.push(filtered);
+    if (!filtered) continue;
+    const matches = !q || cardMatchesSearchQuery({ name: filtered.characterName }, q) ||
+      stackCardsInAddOrder(filtered).some(({ card, catalogType }) =>
+        cardMatchesArtist(card, q) && cardPassesAddCardsFilters(card, catalogType, cardOptions),
+      );
+    if (matches) result.push(filtered);
   }
   return result;
 }

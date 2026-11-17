@@ -15,12 +15,14 @@ export interface CatalogErrataItem {
   source_url: string;
 }
 
-export interface CatalogItemWithErrata {
+export interface CatalogPrintingMetadata {
+  /** Artist credited for this exact card printing, when recorded. */
+  artist: string | null;
   /** Present only when this exact card printing has linked official errata. */
   errata?: CatalogErrataItem[];
 }
 
-export interface CatalogCharacterItem extends CatalogItemWithErrata {
+export interface CatalogCharacterItem extends CatalogPrintingMetadata {
   id: string;
   name: string;
   set: string;
@@ -38,7 +40,7 @@ export interface CatalogCharacterItem extends CatalogItemWithErrata {
   is_foil: boolean;
 }
 
-export interface CatalogLocationItem extends CatalogItemWithErrata {
+export interface CatalogLocationItem extends CatalogPrintingMetadata {
   id: string;
   name: string;
   threat_level: number;
@@ -50,7 +52,7 @@ export interface CatalogLocationItem extends CatalogItemWithErrata {
   rarity: string | null;
 }
 
-export interface CatalogBattlegroundItem extends CatalogItemWithErrata {
+export interface CatalogBattlegroundItem extends CatalogPrintingMetadata {
   id: string;
   name: string;
   special_ability: string;
@@ -63,7 +65,7 @@ export interface CatalogBattlegroundItem extends CatalogItemWithErrata {
 }
 
 /** Shared shape for special-cards, events, aspects, UA, TW, Ally, Training, Basic Universe. */
-export interface CatalogSpecialCardItem extends CatalogItemWithErrata {
+export interface CatalogSpecialCardItem extends CatalogPrintingMetadata {
   id: string;
   name: string;
   character: string;
@@ -90,7 +92,7 @@ export interface CatalogSpecialCardItem extends CatalogItemWithErrata {
   is_foil: boolean;
 }
 
-export interface CatalogMissionItem extends CatalogItemWithErrata {
+export interface CatalogMissionItem extends CatalogPrintingMetadata {
   id: string;
   mission_set: string;
   card_name: string;
@@ -103,7 +105,7 @@ export interface CatalogMissionItem extends CatalogItemWithErrata {
   is_foil: boolean;
 }
 
-export interface CatalogPowerCardItem extends CatalogItemWithErrata {
+export interface CatalogPowerCardItem extends CatalogPrintingMetadata {
   id: string;
   name: string;
   power_type: string;

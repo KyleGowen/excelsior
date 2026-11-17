@@ -3,7 +3,7 @@
 Browse, search, filter, and sort the full modern OverPower catalog.
 
 ## Controls
-- **Search** by card name, linked character or location name, mission-set name, or card text including inherent abilities
+- **Search** by artist, card name, linked character or location name, mission-set name, or card text including inherent abilities
   (debounced, header bar; `cardMatchesSearchQuery` in `catalogTypeMap`).
   Aspects match their linked location in Database, Collection, and Add Cards; for example,
   "street", "Chicago", or "Streets of Chicago" finds Fragile Insignificant Beings (#376).

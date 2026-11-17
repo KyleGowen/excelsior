@@ -120,7 +120,7 @@ export async function getTrainingById(
   const client = await ctx.pool.connect();
   try {
     const result = await client.query(
-      'SELECT id, name, type_1, type_2, value_to_use, bonus, image_path, one_per_deck FROM training_cards WHERE id = $1',
+      'SELECT id, name, type_1, type_2, value_to_use, bonus, image_path, one_per_deck, artist FROM training_cards WHERE id = $1',
       [id]
     );
     if (result.rows.length === 0) return undefined;

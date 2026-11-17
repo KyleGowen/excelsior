@@ -14,6 +14,21 @@ import {
   parseSearchTokens,
 } from '../../frontend/src/lib/catalog/catalogTypeMap';
 
+describe('cardMatchesSearchQuery artist credit', () => {
+  const card: CatalogCard = { id: '1', name: 'Card', artist: 'M. Ordoñez', is_foil: true };
+
+  it('matches partial artist names, ignoring case and accents, alongside the foil qualifier', () => {
+    expect(cardMatchesSearchQuery(card, '  ORDOnez  ')).toBe(true);
+    expect(cardMatchesSearchQuery(card, 'foil m. ordoñez')).toBe(true);
+    expect(cardMatchesSearchQuery({ ...card, is_foil: false }, 'foil ordonez')).toBe(false);
+  });
+
+  it('still matches card names when the artist is missing', () => {
+    expect(cardMatchesSearchQuery({ ...card, artist: null }, 'card')).toBe(true);
+    expect(cardMatchesSearchQuery({ ...card, artist: null }, 'ordonez')).toBe(false);
+  });
+});
+
 describe('cardMatchesSearchQuery foil keyword', () => {
   const foilCard: CatalogCard = {
     id: 'foil-1',

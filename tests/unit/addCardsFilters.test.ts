@@ -89,12 +89,27 @@ describe('addCardsFilters hide unusables', () => {
       usableByIdentity: new Map([[`special-cards:${unusableSpecial.id}`,false]]),
     };
 
-    const filtered = filterCharacterStacksWithOptions(stacks, stacksOptions, {
-      characterNameSearchOnly: true,
-    });
+    const filtered = filterCharacterStacksWithOptions(stacks, stacksOptions);
 
     expect(filtered).toHaveLength(1);
     expect(filtered[0].specials.map((c) => c.id)).toEqual(['s1']);
+  });
+});
+
+describe('Add Cards stack artist search', () => {
+  it('finds a stack by the artist of an eligible card and keeps the rest of the stack', () => {
+    const character = { id: 'hero', name: 'Hero', set: 'ERB', artist: null };
+    const special = { id: 'special', name: 'Heroic Deed', set: 'ERB', character: 'Hero', artist: 'Avery Rivera' };
+    const stacks = buildCharacterStacks({ characters: [character], specials: [special], advancedUniverse: [] });
+    const options: AddCardsFilterOptions = {
+      searchQuery: 'rivEra',
+      setFilter: 'ERB',
+      hideUnusables: false,
+    };
+
+    expect(filterCharacterStacksWithOptions(stacks, options).map(stack => stack.characterName)).toEqual(['Hero']);
+    expect(filterCharacterStacksWithOptions(stacks, { ...options, setFilter: 'SKY' })).toEqual([]);
+    expect(filterCharacterStacksWithOptions(stacks, { ...options, searchQuery: 'hero' })).toEqual(stacks);
   });
 });
 

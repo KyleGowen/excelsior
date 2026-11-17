@@ -27,6 +27,15 @@ describe('defaultCatalogCards', () => {
       ['foil-1', 'base-1'],
     ]);
 
+    it('keeps a matching alternate artist visible and includes all printings in the quantity group', () => {
+      const base = card('base', { set: 'ERB', set_number: '001', artist: 'Avery Rivera' });
+      const alt = card('alt', { set: 'ERB', set_number: '502', artist: 'Sam Lee' });
+      const result = prepareAddCardsCatalogList([base, alt], 'characters', new Map(), 'ERB', 'lee');
+
+      expect(result.cards.map((card) => card.id)).toEqual(['alt']);
+      expect(result.variantIdsByRepresentative.get('alt')).toEqual(['base', 'alt']);
+    });
+
     it('hides foil when base exists and keeps foil-only promos', () => {
       const base = card('base-1', { name: 'Promo Base', is_foil: false });
       const foil = card('foil-1', { name: 'Promo Base', is_foil: true });

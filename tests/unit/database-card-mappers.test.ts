@@ -1,8 +1,28 @@
 import {
   mapAdvancedUniverseRow,
+  mapAllyUniverseRow,
+  mapAspectRow,
+  mapBasicUniverseRow,
+  mapBattlegroundRow,
   mapCharacterRow,
+  mapEventRow,
+  mapLocationRow,
+  mapMissionRow,
+  mapPowerCardRow,
   mapSpecialCardRow,
+  mapTeamworkRow,
+  mapTrainingRow,
 } from '../../src/database/card/mappers';
+
+it.each([
+  mapAdvancedUniverseRow, mapAllyUniverseRow, mapAspectRow, mapBasicUniverseRow,
+  mapBattlegroundRow, mapCharacterRow, mapEventRow, mapLocationRow, mapMissionRow,
+  mapPowerCardRow, mapSpecialCardRow, mapTeamworkRow, mapTrainingRow,
+])('%p exposes nullable artist metadata', (mapRow) => {
+  expect(mapRow({ artist: 'Avery Rivera' }).artist).toBe('Avery Rivera');
+  expect(mapRow({ artist: null }).artist).toBeNull();
+  expect(mapRow({}).artist).toBeNull();
+});
 
 describe('mapCharacterRow', () => {
   it('exposes an optional reverse image path for two-faced characters', () => {

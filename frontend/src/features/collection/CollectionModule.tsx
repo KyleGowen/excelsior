@@ -195,7 +195,7 @@ export function CollectionView({ model }: { model: ReturnType<typeof useCollecti
               <IconSearch className="col__search-icon" />
               <input
                 type="search"
-                placeholder="Search name, character, mission set, card text, or foil..."
+                placeholder="Search name, artist, mission set, card text, or foil…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 aria-label="Search collection"

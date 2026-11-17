@@ -110,6 +110,8 @@ export interface CatalogCard {
   set?: string;
   set_number?: string | null;
   rarity?: CardRarity | null;
+  /** Artist credited for this exact printing. Older catalog responses may omit it. */
+  artist?: string | null;
   image?: string;
   image_path?: string;
   reverse_image_path?: string | null;

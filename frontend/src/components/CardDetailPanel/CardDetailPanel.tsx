@@ -75,6 +75,7 @@ const HIDDEN_FIELDS = new Set([
   'is_foil',
   'threat_level',
   'set',
+  'artist',
   'errata',
 ]);
 
@@ -134,7 +135,8 @@ export function CardDetailContent({
   const moreFields = extraFields.filter(([key]) => isMoreCardDetailField(key));
   const errata = card.errata ?? [];
 
-  const showDetails = Boolean(card.set) || hasFoil !== undefined || isFoil !== undefined || extraFields.length > 0;
+  const artist = card.artist?.trim();
+  const showDetails = Boolean(card.set || artist) || hasFoil !== undefined || isFoil !== undefined || extraFields.length > 0;
   const setLabel = card.set ? (setDisplayName ?? String(card.set)) : null;
 
   const showPrintings = Boolean(printings && printings.length > 1);
@@ -237,6 +239,12 @@ export function CardDetailContent({
               <div className="card-detail__field">
                 <dt>Set</dt>
                 <dd>{setLabel}</dd>
+              </div>
+            ) : null}
+            {artist ? (
+              <div className="card-detail__field">
+                <dt>Artist</dt>
+                <dd>{artist}</dd>
               </div>
             ) : null}
             {isFoil !== undefined ? (

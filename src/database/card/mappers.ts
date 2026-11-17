@@ -20,6 +20,7 @@ type DbRow = Record<string, unknown>;
 export function mapCharacterRow(row: DbRow): Character {
   return {
     id: row.id as string,
+    artist: (row.artist as string | null) ?? null,
     name: row.name as string,
     set: (row.set as string) || 'ERB',
     set_number: (row.set_number as string) ?? null,
@@ -41,6 +42,7 @@ export function mapSpecialCardRow(row: DbRow): SpecialCard {
   const icons = row.icons as string[] | undefined;
   return {
     id: row.id as string,
+    artist: (row.artist as string | null) ?? null,
     name: row.name as string,
     card_type: row.card_type as string,
     character: row.character_name as string,
@@ -71,6 +73,7 @@ export function mapSpecialCardRow(row: DbRow): SpecialCard {
 export function mapPowerCardRow(row: DbRow): PowerCard {
   return {
     id: row.id as string,
+    artist: (row.artist as string | null) ?? null,
     name: row.name as string,
     power_type: row.power_type as string,
     value: row.value as number,
@@ -88,6 +91,7 @@ export function mapPowerCardRow(row: DbRow): PowerCard {
 export function mapLocationRow(row: DbRow): Location {
   return {
     id: row.id as string,
+    artist: (row.artist as string | null) ?? null,
     name: row.name as string,
     threat_level: row.threat_level as number,
     special_ability: row.special_ability as string,
@@ -109,6 +113,7 @@ export function mapLocationRowWithSet(row: DbRow): Location & { set?: string; se
 export function mapBattlegroundRow(row: DbRow): Battleground {
   return {
     id: row.id as string,
+    artist: (row.artist as string | null) ?? null,
     name: row.name as string,
     special_ability: row.special_ability as string,
     image: (row.image_path as string) ?? '',
@@ -123,6 +128,7 @@ export function mapBattlegroundRow(row: DbRow): Battleground {
 export function mapMissionRow(row: DbRow): Mission {
   return {
     id: row.id as string,
+    artist: (row.artist as string | null) ?? null,
     mission_set: row.mission_set as string,
     card_name: row.name as string,
     image: (row.image_path as string) ?? '',
@@ -145,6 +151,7 @@ export function mapMissionRowWithSet(row: DbRow): Mission & { set?: string; set_
 export function mapEventRow(row: DbRow): Event {
   return {
     id: row.id as string,
+    artist: (row.artist as string | null) ?? null,
     name: row.name as string,
     mission_set: row.mission_set as string,
     game_effect: row.game_effect as string,
@@ -168,6 +175,7 @@ export function mapEventRowWithSet(row: DbRow): Event & { set?: string; set_numb
 export function mapAspectRow(row: DbRow): Aspect {
   return {
     id: row.id as string,
+    artist: (row.artist as string | null) ?? null,
     card_name: row.name as string,
     card_type: row.card_type as string,
     location: row.location as string,
@@ -198,6 +206,7 @@ export function mapAspectRowWithSet(row: DbRow): Aspect {
 export function mapAdvancedUniverseRow(row: DbRow): AdvancedUniverse {
   return {
     id: row.id as string,
+    artist: (row.artist as string | null) ?? null,
     name: row.name as string,
     card_type: row.card_type as string,
     character: row.character as string,
@@ -230,6 +239,7 @@ export function mapAdvancedUniverseRowWithSet(row: DbRow): AdvancedUniverse & { 
 export function mapTeamworkRow(row: DbRow): Teamwork {
   return {
     id: row.id as string,
+    artist: (row.artist as string | null) ?? null,
     name: row.name as string,
     card_type: row.card_type as string,
     to_use: row.to_use as string,
@@ -256,6 +266,7 @@ export function mapTeamworkRowWithSet(row: DbRow): Teamwork & { set?: string; se
 export function mapAllyUniverseRow(row: DbRow): AllyUniverse {
   return {
     id: row.id as string,
+    artist: (row.artist as string | null) ?? null,
     card_name: row.name as string,
     card_type: row.card_type as string,
     stat_to_use: row.stat_to_use as string,
@@ -282,6 +293,7 @@ export function mapAllyUniverseRowWithSet(row: DbRow): AllyUniverse & { set?: st
 export function mapTrainingRow(row: DbRow): TrainingCard {
   return {
     id: row.id as string,
+    artist: (row.artist as string | null) ?? null,
     card_name: row.name as string,
     type_1: row.type_1 as string,
     type_2: row.type_2 as string,
@@ -307,6 +319,7 @@ export function mapTrainingRowWithSet(row: DbRow): TrainingCard & { set?: string
 export function mapBasicUniverseRow(row: DbRow): BasicUniverse {
   return {
     id: row.id as string,
+    artist: (row.artist as string | null) ?? null,
     card_name: row.name as string,
     type: row.type as string,
     value_to_use: row.value_to_use as string,

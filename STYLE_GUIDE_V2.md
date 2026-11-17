@@ -236,8 +236,10 @@ account-sheet row (`.account-sheet__toggle`) with `justify-content: space-betwee
   row click only (deck/collection actions in panel). Pagination uses 48 rows per page on All
   (24 on image grids). Search + set filter apply; DBV hides `DbvFilterRail` on All.
 - **Catalog search copy and scope:** Database, Collection, and deck-editor Add Cards placeholders
-  advertise mission-set search. Their shared search matches card name, linked character or
-  location, mission-set name, and card text; Collection also advertises the `foil` keyword.
+  advertise artist and mission-set search. Their shared search matches card name, linked character
+  or location, mission-set name, card text, and artist. Artist matching ignores case and accents.
+  Collection also advertises the `foil` keyword. Add Cards Stacks matches character names and artists
+  credited on cards in the stack.
 - **Database per-type grids with All Sets selected** ignore set/collector number: linked
   character/location or mission-set alphabetic order applies to named categories, while Power
   and Universe value cards use OverPower type order then ascending value. Selecting a specific
@@ -458,7 +460,8 @@ Shown in [`CardDetailPanel`](frontend/src/components/CardDetailPanel/CardDetailP
 
 ### Card detail — More disclosure and official errata
 
-The shared card-detail slide-out keeps commonly useful metadata visible. Secondary rules
+The shared card-detail slide-out shows the selected printing's **Artist** in **Details**, directly
+below **Set** when a credit is available. Secondary rules
 metadata (One Per Deck, function-icon flags, and Banned) is collapsed by default beneath
 a native **More** disclosure. Official errata always sits at the bottom of the drawer so
 it follows the card's printed ability and catalog details.

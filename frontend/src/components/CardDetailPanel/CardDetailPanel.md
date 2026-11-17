@@ -20,6 +20,9 @@ linked official errata at the bottom.
 | `prePlacedEligible` + `onTogglePrePlaced` | `boolean` + callback | Makes that status pill editable for an eligible deck owner; read-only viewers see the status but no control. |
 
 ## Details list
+The **Artist** row below **Set** uses the credit for the selected printing. The row appears when a
+credit is available.
+
 Auto-built from the card's own fields, minus a `HIDDEN_FIELDS` set (ids, image paths,
 stats, ability/effect fields, timestamps, `is_foil`, `threat_level`, `set`). Keys are humanized
 (`set_number` → "Set Number"); booleans render Yes/No; arrays join with commas; empty

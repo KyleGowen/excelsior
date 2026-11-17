@@ -9,7 +9,7 @@ per-card quantity steppers and an "Owned only" toggle.
 - **Mobile type-tab swipe** (`layout-mobile`): horizontal swipe on card grid, All list, or empty content cycles type tabs cyclically (`DBV_TAB_ORDER`: All → Characters → … → Basic → wrap). Uses shared `useHorizontalSwipe` (50px threshold, 12px axis lock): swipe left = next tab, swipe right = previous tab. `touch-action: pan-y` on `.col` preserves vertical page scroll. Blocked regions (`COLLECTION_SWIPE_BLOCK_SELECTOR`): `.col__types`, `.col__header`, `.pagination`, `.qty-stepper`, `input`/`textarea`/`select`. Disabled while `CardDetailPanel` is open. On tab change: `window.scrollTo(0,0)` and active `[data-col-tab]` chip `scrollIntoView` in `.col__types`.
 - **Mobile back / swipe-back** from card detail: `useCardDetailHistory` pushes one React Router history entry while `CardDetailPanel` is open so OS back closes the slide-out without leaving Collection (tab, filters, pagination, and scroll preserved). Backdrop/Escape use the same `close` helper (`navigate(-1)` pops the dummy entry).
 - Search uses `cardMatchesSearchQuery` (same as DBV), including card name, linked character,
-  mission-set name, and card text. The keyword **`foil`** filters to foil printing rows only
+  mission-set name, artist, and card text. The keyword **`foil`** filters to foil printing rows only
   (`is_foil = true`); combine with name/text (e.g. `foil tarzan`). Distinct from DBV **Has Foil**
   checkbox (foil-capable base cards).
 - Header shows `totalOwned` and `uniqueCards`.

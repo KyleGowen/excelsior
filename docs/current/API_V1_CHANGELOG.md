@@ -18,6 +18,8 @@ One line per change. Newest first. Keep this in sync with
 
 ## Unreleased — Phase 3 (scale + docs)
 
+- Catalog card lists include the nullable `artist` field for each printing.
+
 - Guest-session deck IDs use opaque `guest_<uuid>` values. The originating session can enable sharing via `POST /api/v1/guest/decks/:id/share`. The corresponding public GET provides a read-only view until the deck expires.
 - Personal and Guest deck lists accept `include=cardNames` for the deck search UI. Existing requests retain their response shape.
 

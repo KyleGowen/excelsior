@@ -503,6 +503,19 @@ export function parseSearchTokens(query: string): { textQuery: string; requireFo
   return { textQuery, requireFoil };
 }
 
+function normalizeArtistSearch(text: string): string {
+  return text.trim().toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
+}
+
+export function cardMatchesArtist(
+  card: Partial<CatalogCard> | null | undefined,
+  query: string,
+): boolean {
+  if (!card?.artist) return false;
+  const term = normalizeArtistSearch(query);
+  return term.length > 0 && normalizeArtistSearch(card.artist).includes(term);
+}
+
 export function cardMatchesSearchQuery(
   card: Partial<CatalogCard> | null | undefined,
   query: string,
@@ -513,5 +526,5 @@ export function cardMatchesSearchQuery(
   if (requireFoil && !isFoilCard(card)) return false;
   if (!textQuery) return true;
   if (card && isSkyboundPrizePackPrinting(card) && textQuery === String(card.set_number).toLowerCase()) return true;
-  return cardSearchHaystack(card).includes(textQuery);
+  return cardSearchHaystack(card).includes(textQuery) || cardMatchesArtist(card, textQuery);
 }

@@ -82,10 +82,10 @@ import { useDraftEvaluation } from '../../lib/decks/useDraftEvaluation';
 const STACK_CATALOG_TYPES = ['characters', 'special-cards', 'advanced-universe'] as const;
 
 
-const ADD_CARDS_SEARCH_PLACEHOLDER = 'Search name, character, mission set, or card text...';
-const STACKS_SEARCH_PLACEHOLDER = 'Search character names...';
+const ADD_CARDS_SEARCH_PLACEHOLDER = 'Search name, artist, mission set, or card text…';
+const STACKS_SEARCH_PLACEHOLDER = 'Search characters or artists…';
 const ADD_CARDS_SEARCH_ARIA_LABEL = 'Search cards to add';
-const STACKS_SEARCH_ARIA_LABEL = 'Search character names';
+const STACKS_SEARCH_ARIA_LABEL = 'Search characters or artists';
 const EMPTY_CHARACTER_SLOT_COUNT = 4;
 
 function useDebounced<T>(value: T, delay = 250): T {
@@ -418,18 +418,21 @@ export function AddCardsPanel({
         'characters',
         foilLookup.foilToBase,
         setFilter || undefined,
+        debouncedSearch,
       );
       const specials = prepareAddCardsCatalogList(
         specialsRaw,
         'special-cards',
         foilLookup.foilToBase,
         setFilter || undefined,
+        debouncedSearch,
       );
       const advancedUniverse = prepareAddCardsCatalogList(
         uaRaw,
         'advanced-universe',
         foilLookup.foilToBase,
         setFilter || undefined,
+        debouncedSearch,
       );
 
       variantLookupByType.set('characters', characters.variantIdsByRepresentative);
@@ -456,6 +459,7 @@ export function AddCardsPanel({
           meta.type,
           foilLookup.foilToBase,
           setFilter || undefined,
+          debouncedSearch,
         );
         dedupedByType[meta.type] = prepared.cards;
         variantLookupByType.set(meta.type, prepared.variantIdsByRepresentative);
@@ -469,6 +473,7 @@ export function AddCardsPanel({
         activeType,
         foilLookup.foilToBase,
         setFilter || undefined,
+        debouncedSearch,
       );
       variantLookupByType.set(activeType, prepared.variantIdsByRepresentative);
       return {
@@ -486,6 +491,7 @@ export function AddCardsPanel({
     stackCatalogQueries,
     foilLookup.foilToBase,
     setFilter,
+    debouncedSearch,
   ]);
 
   const candidateInput = useMemo(() => {
@@ -552,9 +558,7 @@ export function AddCardsPanel({
 
   const filteredStacks = useMemo(
     () =>
-      filterCharacterStacksWithOptions(characterStacks, filterOptions, {
-        characterNameSearchOnly: true,
-      }),
+      filterCharacterStacksWithOptions(characterStacks, filterOptions),
     [characterStacks, filterOptions],
   );
 

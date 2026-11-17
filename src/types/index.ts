@@ -58,7 +58,11 @@ export interface PreconstructedDeckRecord {
 }
 
 // Character table (from overpower-erb-characters.md)
-export interface Character {
+interface CardArtistCredit {
+  artist?: string | null;
+}
+
+export interface Character extends CardArtistCredit {
   id: string;
   name: string;
   set?: string; // Optional for backward compatibility (renamed from universe)
@@ -76,7 +80,7 @@ export interface Character {
   is_foil?: boolean;   // TRUE for foil card rows; foil effect applied via CSS only
 }
 
-export interface Location {
+export interface Location extends CardArtistCredit {
   id: string;
   name: string;
   threat_level: number;
@@ -88,7 +92,7 @@ export interface Location {
   rarity?: CardRarity | null;
 }
 
-export interface Battleground {
+export interface Battleground extends CardArtistCredit {
   id: string;
   name: string;
   special_ability: string;
@@ -110,7 +114,7 @@ export interface Card {
 // (PowerCard defined later with full fields)
 
 // Special card structure (from overpower-erb-specials.md)
-export interface SpecialCard {
+export interface SpecialCard extends CardArtistCredit {
   id: string;
   name: string;
   card_type: string;
@@ -138,7 +142,7 @@ export interface SpecialCard {
   is_foil?: boolean;    // TRUE for foil card rows; foil effect applied via CSS only
 }
 
-export interface Mission {
+export interface Mission extends CardArtistCredit {
   id: string;
   mission_set: string;
   card_name: string;
@@ -150,7 +154,7 @@ export interface Mission {
   is_foil?: boolean;
 }
 
-export interface Event {
+export interface Event extends CardArtistCredit {
   id: string;
   name: string;
   mission_set: string;
@@ -164,7 +168,7 @@ export interface Event {
   rarity?: CardRarity | null;
 }
 
-export interface Aspect {
+export interface Aspect extends CardArtistCredit {
   id: string;
   card_name: string;
   card_type: string;
@@ -182,7 +186,7 @@ export interface Aspect {
   rarity?: CardRarity | null;
 }
 
-export interface AdvancedUniverse {
+export interface AdvancedUniverse extends CardArtistCredit {
   id: string;
   name: string;
   card_type: string;
@@ -204,7 +208,7 @@ export interface AdvancedUniverse {
   is_foil?: boolean;
 }
 
-export interface Teamwork {
+export interface Teamwork extends CardArtistCredit {
   id: string;
   name: string;
   card_type: string;
@@ -221,7 +225,7 @@ export interface Teamwork {
   rarity?: CardRarity | null;
 }
 
-export interface AllyUniverse {
+export interface AllyUniverse extends CardArtistCredit {
   id: string;
   card_name: string;
   card_type: string;
@@ -238,7 +242,7 @@ export interface AllyUniverse {
   rarity?: CardRarity | null;
 }
 
-export interface TrainingCard {
+export interface TrainingCard extends CardArtistCredit {
   id: string;
   card_name: string;
   type_1: string;      // Energy | Combat | Brute Force | Intelligence
@@ -254,7 +258,7 @@ export interface TrainingCard {
   rarity?: CardRarity | null;
 }
 
-export interface BasicUniverse {
+export interface BasicUniverse extends CardArtistCredit {
   id: string;
   card_name: string;
   type: string;         // Energy | Combat | Brute Force | Intelligence
@@ -268,7 +272,7 @@ export interface BasicUniverse {
   rarity?: CardRarity | null;
 }
 
-export interface PowerCard {
+export interface PowerCard extends CardArtistCredit {
   id: string;
   name: string;         // Formatted name like "4 - Brute Force"
   power_type: string;   // Energy | Combat | Brute Force | Intelligence | Any-Power | Multi-Power

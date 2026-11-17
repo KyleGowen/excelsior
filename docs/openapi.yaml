@@ -420,6 +420,7 @@ components:
         set: { type: string }
         set_number: { type: string, nullable: true }
         rarity: { type: string, nullable: true }
+        artist: { type: string, nullable: true, description: Artist credited for this printing. }
         energy: { type: integer }
         combat: { type: integer }
         brute_force: { type: integer }
@@ -445,6 +446,7 @@ components:
         set: { type: string }
         set_number: { type: string, nullable: true }
         rarity: { type: string, nullable: true }
+        artist: { type: string, nullable: true, description: Artist credited for this printing. }
         errata:
           type: array
           items: { $ref: '#/components/schemas/CatalogErrataItem' }
@@ -464,6 +466,7 @@ components:
         set: { type: string }
         set_number: { type: string, nullable: true }
         rarity: { type: string, nullable: true }
+        artist: { type: string, nullable: true, description: Artist credited for this printing. }
         icons: { type: array, items: { type: string } }
         value: { type: integer, nullable: true }
         is_cataclysm: { type: boolean }
@@ -495,6 +498,7 @@ components:
         set: { type: string }
         set_number: { type: string, nullable: true }
         rarity: { type: string, nullable: true }
+        artist: { type: string, nullable: true, description: Artist credited for this printing. }
         errata:
           type: array
           items: { $ref: '#/components/schemas/CatalogErrataItem' }
@@ -511,6 +515,7 @@ components:
         set: { type: string }
         set_number: { type: string, nullable: true }
         rarity: { type: string, nullable: true }
+        artist: { type: string, nullable: true, description: Artist credited for this printing. }
         set_name: { type: string }
         one_per_deck: { type: boolean }
         is_foil: { type: boolean }

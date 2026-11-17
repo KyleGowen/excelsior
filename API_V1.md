@@ -426,6 +426,9 @@ addresses are also set as the email's reply-to address.
 
 ## DBV catalog
 
+Card rows include `artist` (string or `null`) for the exact printing. A `null` value means
+the catalog has no recorded credit for that printing.
+
 **Authentication (all paths in this section):** Valid **session cookie** (`sessionId` after `POST /api/auth/login`) **or** `**Authorization: Bearer <accessToken>`** (after `POST /api/v1/auth/login`). The main web app should send cookies (`credentials: 'include'` in `fetch` when needed). **GUEST**, **USER**, and **ADMIN** all receive full catalog data; only anonymous/unauthenticated clients are denied.
 
 **Response 401:** Missing, invalid, or expired session; missing/invalid Bearer token; or user record missing. Body: `{ "data": null, "meta": {}, "errors": [{ "code": "UNAUTHORIZED", "message": "..." }] }`.
